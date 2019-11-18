@@ -1,5 +1,5 @@
 # Testing the loading functions
-from dis_ import run_dis
+from yadism.runner import run_dis
 
 def test_loader():
     """Test the loading mechanism"""
@@ -50,8 +50,7 @@ def test_loader():
     process = {
         'process': 'F2',
         'x': 0.1,
-        'Q': 90,
-        'y': None
+        'Q2': 90
     }
 
     test_dict = {**theory, **process}
@@ -59,4 +58,4 @@ def test_loader():
     # esecute DIS
     result = run_dis(test_dict)
 
-    assert(result == 0)
+    assert(result["F2"] == 0)

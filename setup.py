@@ -1,10 +1,10 @@
 # Installation script for python
 from setuptools import setup, find_packages
 
-setup(name='dis',
+setup(name='yadism',
       version='0.0.1',
       description='Deep Inelastic Scattering',
-      author = 'F. Hekhorn,  S.Carrazza, A.Candido',
+      author = 'A.Candido, S.Carrazza, F. Hekhorn',
       author_email='stefano.carrazza@cern.ch',
       url='https://github.com/N3PDF/dis',
       package_dir={'': 'src'},
@@ -19,7 +19,11 @@ setup(name='dis',
       ],
       install_requires=[
           'numpy',
+          'scipy',
           'numba',
+          'sphinx_rtd_theme',
+          'recommonmark',
+          'sphinxcontrib-bibtex'
       ],
       python_requires='>=3.6'
 )
