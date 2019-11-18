@@ -6,7 +6,7 @@ This file contains the main loop for the DIS calculations.
 from yadism.structure_functions import f2
 
 
-def run_dis(setup: dict):
+def run_dis(setup: dict) -> dict:
     """Wrapper to compute a process
 
     Parameters
