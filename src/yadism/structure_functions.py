@@ -5,11 +5,19 @@ This file contains the implementation of the DIS structure functions up to LO.
 The 3-loop reference is :cite:`Vermaseren:2005qc` which includes also the lower order results.
 """
 
-import t_float from yadism
+from yadism import t_float
+from yadism.interpolation import (
+    evaluate_Lagrange_basis_function_x,
+    evaluate_Lagrange_basis_function_log_x,
+)
 
 
-def f2(x: t_float, Q2: t_float) -> t_float:
-    """Computes the F2 structure function.
+def f2_LO(
+    x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
+) -> t_float:
+    """Computes the leading order F2 structure function.
+
+    Implements equation 4.2 of :cite:`Vermaseren:2005qc`.
 
     Parameters
     ----------
@@ -17,6 +25,10 @@ def f2(x: t_float, Q2: t_float) -> t_float:
         Bjorken x
     Q2 : t_float
         squared(!) momentum transfer
+    polynom_coeff : dict
+        interpolation polynomial configuration
+    is_log_interpolation : bool
+        is logarithmic interpolation
 
     Returns
     -------
@@ -24,7 +36,12 @@ def f2(x: t_float, Q2: t_float) -> t_float:
         F2(x,Q^2)
 
     """
-    # TODO implement
-    result = 0
+    if is_log_interpolation:
+        eval_fnc = evaluate_Lagrange_basis_function_x
+    else:
+        eval_fnc = evaluate_Lagrange_basis_function_log_x
+
+    # leading order is just a delta function
+    result = eval_fnc(x)
 
     return result

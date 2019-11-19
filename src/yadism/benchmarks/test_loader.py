@@ -53,11 +53,6 @@ def test_loader():
         'Q2': 90
     }
 
-    if csv doesn t exist:
-        from apfel_import import load_apfel
-        load_apfel(theory)
-        # call the data
-
     test_dict = {**theory, **process}
 
     # esecute DIS

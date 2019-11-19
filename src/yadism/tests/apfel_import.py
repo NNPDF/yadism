@@ -1,72 +1,73 @@
 import apfel
 
+
 def load_apfel(par: dict) -> None:
 
     # Cleanup APFEL common blocks
     apfel.CleanUp()
 
     # Theory, perturbative order of evolution
-    if not par.get('QED'):
-        apfel.SetTheory('QCD')
+    if not par.get("QED"):
+        apfel.SetTheory("QCD")
     else:
-        apfel.SetTheory('QUniD')
+        apfel.SetTheory("QUniD")
         apfel.EnableNLOQEDCorrections(True)
-    apfel.SetPerturbativeOrder(par.get('PTO'))
+    apfel.SetPerturbativeOrder(par.get("PTO"))
 
-    if par.get('kModEv') == 'EXA':
-        apfel.SetPDFEvolution('expandalpha')
-        apfel.SetAlphaEvolution('expanded')
+    if par.get("kModEv") == "EXA":
+        apfel.SetPDFEvolution("expandalpha")
+        apfel.SetAlphaEvolution("expanded")
     else:
-        raise RuntimeError(" ERROR: Unrecognised MODEV:", par.get('ModEv'))
+        raise RuntimeError(" ERROR: Unrecognised MODEV:", par.get("ModEv"))
 
     # Coupling
-    apfel.SetAlphaQCDRef(par.get('alphas'))
-    if par.get('QED'):
-        apfel.SetAlphaQEDRef(par.get('alphaqed'), par.get('Qedref'))
+    apfel.SetAlphaQCDRef(par.get("alphas"))
+    if par.get("QED"):
+        apfel.SetAlphaQEDRef(par.get("alphaqed"), par.get("Qedref"))
 
     # EW
-    apfel.SetWMass(par.get('MW'))
-    apfel.SetZMass(par.get('MZ'))
-    apfel.SetGFermi(par.get('GF'))
+    apfel.SetWMass(par.get("MW"))
+    apfel.SetZMass(par.get("MZ"))
+    apfel.SetGFermi(par.get("GF"))
 
-    apfel.SetCKM(*[float(x) for x in par.get('CKM').split()])
+    apfel.SetCKM(*[float(x) for x in par.get("CKM").split()])
 
     # TMCs
-    apfel.SetProtonMass(par.get('MP'))
-    if par.get('TMC'):
+    apfel.SetProtonMass(par.get("MP"))
+    if par.get("TMC"):
         apfel.EnableTargetMassCorrections(True)
 
     # Heavy Quark Masses
-    if par.get('HQ') == "POLE":
-        apfel.SetPoleMasses(par.get('mc'), par.get('mb'), par.get('mt'))
-    elif par.get('HQ') == 'MSBAR':
-        apfel.SetMSbarMasses(par.get('mc'), par.get('mb'), par.get('mt'))
-        apfel.SetMassScaleReference(par.get('Qmc'), par.get('Qmb'), par.get('Qmt'))
+    if par.get("HQ") == "POLE":
+        apfel.SetPoleMasses(par.get("mc"), par.get("mb"), par.get("mt"))
+    elif par.get("HQ") == "MSBAR":
+        apfel.SetMSbarMasses(par.get("mc"), par.get("mb"), par.get("mt"))
+        apfel.SetMassScaleReference(par.get("Qmc"), par.get("Qmb"), par.get("Qmt"))
     else:
         raise RuntimeError("Error: Unrecognised HQMASS")
 
     # Heavy Quark schemes
-    apfel.SetMassScheme(par.get('FNS'))
-    apfel.EnableDampingFONLL(par.get('DAMP'))
-    if par.get('FNS') == 'FFNS':
-        apfel.SetFFNS(par.get('NfFF'))
+    apfel.SetMassScheme(par.get("FNS"))
+    apfel.EnableDampingFONLL(par.get("DAMP"))
+    if par.get("FNS") == "FFNS":
+        apfel.SetFFNS(par.get("NfFF"))
     else:
         apfel.SetVFNS()
 
-    apfel.SetMaxFlavourAlpha(par.get('MaxNfAs'))
-    apfel.SetMaxFlavourPDFs(par.get('MaxNfPdf'))
+    apfel.SetMaxFlavourAlpha(par.get("MaxNfAs"))
+    apfel.SetMaxFlavourPDFs(par.get("MaxNfPdf"))
 
     # Scale ratios
-    apfel.SetRenFacRatio(par.get('XIR') / par.get('XIF'))
-    apfel.SetRenQRatio(par.get('XIR'))
-    apfel.SetFacQRatio(par.get('XIF'))
+    apfel.SetRenFacRatio(par.get("XIR") / par.get("XIF"))
+    apfel.SetRenQRatio(par.get("XIR"))
+    apfel.SetFacQRatio(par.get("XIF"))
 
     # Small-x resummation
-    apfel.SetSmallxResummation(par.get('SxRes'), par.get('SxOrd'))
-    apfel.SetMassMatchingScales(par.get('kcThr'), par.get('kbThr'), par.get('ktThr'))
+    apfel.SetSmallxResummation(par.get("SxRes"), par.get("SxOrd"))
+    apfel.SetMassMatchingScales(par.get("kcThr"), par.get("kbThr"), par.get("ktThr"))
 
     # Intrinsic charm
-    apfel.EnableIntrinsicCharm(par.get('IC'))
+    apfel.EnableIntrinsicCharm(par.get("IC"))
 
     # Not included in the map
     #
