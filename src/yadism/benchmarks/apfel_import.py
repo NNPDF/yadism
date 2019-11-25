@@ -1,3 +1,7 @@
+import sys
+
+sys.path += ["/home/alessandro/.local/lib/python3.7/site-packages"]
+
 import apfel
 
 
@@ -14,14 +18,14 @@ def load_apfel(par: dict) -> None:
         apfel.EnableNLOQEDCorrections(True)
     apfel.SetPerturbativeOrder(par.get("PTO"))
 
-    if par.get("kModEv") == "EXA":
+    if par.get("ModEv") == "EXA":
         apfel.SetPDFEvolution("expandalpha")
         apfel.SetAlphaEvolution("expanded")
     else:
         raise RuntimeError(" ERROR: Unrecognised MODEV:", par.get("ModEv"))
 
     # Coupling
-    apfel.SetAlphaQCDRef(par.get("alphas"))
+    apfel.SetAlphaQCDRef(par.get("alphas"), par.get("Qref"))
     if par.get("QED"):
         apfel.SetAlphaQEDRef(par.get("alphaqed"), par.get("Qedref"))
 
@@ -86,4 +90,4 @@ def load_apfel(par: dict) -> None:
     # apfel initialization for DIS
     apfel.InitializeAPFEL_DIS()
 
-    return
+    return apfel

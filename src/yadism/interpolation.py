@@ -9,7 +9,6 @@ Lagrange interpolation polynomials
 import numpy as np
 import numba as nb
 from numpy.polynomial import Polynomial as P
-from eko import t_float
 
 
 def get_Lagrange_basis_functions(xgrid_in, polynom_rank: int):
@@ -143,6 +142,7 @@ def evaluate_Lagrange_basis_function_x(x, conf):
         return res
     # no match
     return 0.0
+
 
 def get_Lagrange_basis_functions_log(xgrid_in, polynom_rank: int):
     """Setup all basis function for logarithmic interpolation

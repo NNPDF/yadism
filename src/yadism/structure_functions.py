@@ -42,6 +42,6 @@ def f2_LO(
         eval_fnc = evaluate_Lagrange_basis_function_log_x
 
     # leading order is just a delta function
-    result = eval_fnc(x)
+    result = eval_fnc(x, polynom_coeff)
 
     return result
