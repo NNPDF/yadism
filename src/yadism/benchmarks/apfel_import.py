@@ -1,7 +1,3 @@
-import sys
-
-sys.path += ["/home/alessandro/.local/lib/python3.7/site-packages"]
-
 import apfel
 
 

@@ -1,10 +1,5 @@
 # Testing the loading functions
 import numpy as np
-
-import sys
-
-sys.path += ["/home/alessandro/.local/lib/python3.7/site-packages"]
-
 import lhapdf
 
 from yadism.runner import run_dis
