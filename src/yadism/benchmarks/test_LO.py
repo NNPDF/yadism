@@ -88,7 +88,7 @@ def test_loader():
         "MW": 80.398,
         "GF": 1.1663787e-05,
         "SIN2TW": 0.23126,
-        "TMC": 1,
+        "TMC": 0,
         "MP": 0.938,
         "Comments": "LO baseline for small-x res",
         "global_nx": 0,
@@ -98,46 +98,87 @@ def test_loader():
     process = {
         "process": "F2",
         "x": 0.1,
-        "Q2": 90,
-        "xgrid": np.logspace(-2, 0, 20),
+        "Q2": 100,
+        "xgrid": np.logspace(-3, 0, 25),
         "is_log_interpolation": True,
         "polynom_rank": 4,
     }
 
     test_dict = {**theory, **process}
 
-    # esecute DIS
-    result = run_dis(test_dict)
     n31lo = lhapdf.mkPDF("NNPDF31_lo_as_0118", 0)
-    singlet = np.array(
-        [
+
+    def get_singlet(x, Q2, Nf):
+        singlet = (
             np.sum(
                 [
-                    n31lo.xfxQ2(k, process["x"], process["Q2"])
-                    + n31lo.xfxQ2(-k, process["x"], process["Q2"])
-                    for k in range(1, theory["NfFF"] + 1)
+                    n31lo.xfxQ2(k, x, Q2) + n31lo.xfxQ2(-k, x, Q2)
+                    for k in range(1, Nf + 1)
                 ]
             )
-            for x in result["xgrid"]
-        ]
-    )
-    f2_lo = np.dot(singlet, result["F2"])
+            / x
+        )
 
-    # execute APFEL (if needed)
-    if False:
-        pass
-    else:
-        apfel = load_apfel(theory)
-        apfel.SetPDFSet("NNPDF31_lo_as_0118")
-        apfel.ComputeStructureFunctionsAPFEL(theory["Q0"], np.sqrt(process["Q2"]))
-        ref = apfel.F2light(process["x"])
-        print(ref)
+        return singlet
 
-    # assert result["F2"] == 0
-    print(result)
+    def ciao(x, Q2):
+        process["x"] = x
+        process["Q2"] = Q2
+        test_dict = {**theory, **process}
 
-    print("\n----\n")
-    print(f2_lo)
+        # execute DIS
+        result = run_dis(test_dict)
+
+        singlet_vec = np.array(
+            [get_singlet(x, process["Q2"], theory["NfFF"]) for x in result["xgrid"]]
+        )
+        f2_lo = np.dot(singlet_vec, result["F2"])
+
+        # execute APFEL (if needed)
+        if False:
+            pass
+        else:
+            apfel = load_apfel(theory)
+            apfel.SetPDFSet("NNPDF31_lo_as_0118")
+            # apfel.ComputeStructureFunctionsAPFEL(theory["Q0"], np.sqrt(process["Q2"]))
+            apfel.ComputeStructureFunctionsAPFEL(
+                np.sqrt(process["Q2"]), np.sqrt(process["Q2"])
+            )
+            apfel.SetProcessDIS("NC")
+            ref = apfel.F2light(process["x"])
+            print(ref)
+
+        # assert result["F2"] == 0
+        print(result)
+
+        print("\n----\nWE\n")
+        # print("xgrid = ", "\t".join(["%.3e" % x for x in result["xgrid"]]))
+        # print("input = ", "\t".join(["%.3e" % x for x in singlet_vec]))
+        # print("proce = ", "\t".join(["%.3e" % x for x in result["F2"]]))
+        # print(
+        #     "exact res = ",
+        #     process["x"]
+        #     * 11
+        #     / 45
+        #     * get_singlet(process["x"], process["Q2"], theory["NfFF"]),
+        # )
+
+        print(f2_lo)
+
+        return [ref, f2_lo, ref / f2_lo]
+
+    res_tab = []
+    for x in [0.001, 0.01, 0.1, 0.12, 0.14, 0.2, 0.4]:
+        res_tab.append([x, 90] + ciao(x, 90))
+    for Q2 in [90, 100, 200, 1000, 2000, 4000]:
+        res_tab.append([0.1, Q2] + ciao(0.1, Q2))
+
+    print("\n------\n")
+    for x in res_tab:
+        for y in x:
+            print(y, end="\t")
+        print()
+    print("\n------\n")
 
 
 if __name__ == "__main__":

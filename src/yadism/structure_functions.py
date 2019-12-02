@@ -12,7 +12,7 @@ from yadism.interpolation import (
 )
 
 
-def f2_LO(
+def f2_light_LO(
     x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
 ) -> t_float:
     """Computes the leading order F2 structure function.
@@ -37,9 +37,9 @@ def f2_LO(
 
     """
     if is_log_interpolation:
-        eval_fnc = evaluate_Lagrange_basis_function_x
-    else:
         eval_fnc = evaluate_Lagrange_basis_function_log_x
+    else:
+        eval_fnc = evaluate_Lagrange_basis_function_x
 
     # leading order is just a delta function
     result = eval_fnc(x, polynom_coeff)
