@@ -1,4 +1,6 @@
 # Testing the loading functions
+from pprint import pprint
+
 import numpy as np
 import lhapdf
 
@@ -95,16 +97,12 @@ def test_loader():
         "EScaleVar": 1,
     }
 
-    process = {
-        "process": "F2",
-        "x": 0.1,
-        "Q2": 100,
+    dis_observables = {
+        "F2": [{"x": 0.1, "Q2": 100}],
         "xgrid": np.logspace(-3, 0, 25),
         "is_log_interpolation": True,
         "polynom_rank": 4,
     }
-
-    test_dict = {**theory, **process}
 
     n31lo = lhapdf.mkPDF("NNPDF31_lo_as_0118", 0)
 
@@ -122,17 +120,21 @@ def test_loader():
         return singlet
 
     def ciao(x, Q2):
-        process["x"] = x
-        process["Q2"] = Q2
-        test_dict = {**theory, **process}
+        dis_observables["F2"][0]["x"] = x
+        dis_observables["F2"][0]["Q2"] = Q2
+        test_dict = dict(**theory, dis_observables=dis_observables)
 
         # execute DIS
         result = run_dis(test_dict)
 
+        # pprint(result)
+        # print("\n\n")
+        # quit()
+
         singlet_vec = np.array(
-            [get_singlet(x, process["Q2"], theory["NfFF"]) for x in result["xgrid"]]
+            [get_singlet(x, Q2, theory["NfFF"]) for x in result["xgrid"]]
         )
-        f2_lo = np.dot(singlet_vec, result["F2"])
+        f2_lo = np.dot(singlet_vec, result["F2"][0]["S"])
 
         # execute APFEL (if needed)
         if False:
@@ -141,17 +143,15 @@ def test_loader():
             apfel = load_apfel(theory)
             apfel.SetPDFSet("NNPDF31_lo_as_0118")
             # apfel.ComputeStructureFunctionsAPFEL(theory["Q0"], np.sqrt(process["Q2"]))
-            apfel.ComputeStructureFunctionsAPFEL(
-                np.sqrt(process["Q2"]), np.sqrt(process["Q2"])
-            )
+            apfel.ComputeStructureFunctionsAPFEL(theory["Q0"], np.sqrt(Q2))
             apfel.SetProcessDIS("NC")
-            ref = apfel.F2light(process["x"])
-            print(ref)
+            ref = apfel.F2light(x)
+            # print(ref)
 
         # assert result["F2"] == 0
-        print(result)
+        # print(result)
 
-        print("\n----\nWE\n")
+        # print("\n----\nWE\n")
         # print("xgrid = ", "\t".join(["%.3e" % x for x in result["xgrid"]]))
         # print("input = ", "\t".join(["%.3e" % x for x in singlet_vec]))
         # print("proce = ", "\t".join(["%.3e" % x for x in result["F2"]]))
@@ -163,15 +163,16 @@ def test_loader():
         #     * get_singlet(process["x"], process["Q2"], theory["NfFF"]),
         # )
 
-        print(f2_lo)
+        # print(f2_lo)
 
         return [ref, f2_lo, ref / f2_lo]
 
     res_tab = []
-    for x in [0.001, 0.01, 0.1, 0.12, 0.14, 0.2, 0.4]:
+    # for x in [0.001, 0.01, 0.1, 0.12, 0.14, 0.2, 0.4]:
+    for x in [0.2, 0.4]:
         res_tab.append([x, 90] + ciao(x, 90))
-    for Q2 in [90, 100, 200, 1000, 2000, 4000]:
-        res_tab.append([0.1, Q2] + ciao(0.1, Q2))
+    # for Q2 in [90, 100, 200, 1000, 2000, 4000]:
+    #     res_tab.append([0.1, Q2] + ciao(0.1, Q2))
 
     print("\n------\n")
     for x in res_tab:
