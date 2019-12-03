@@ -29,8 +29,9 @@ def run_dis(setup: dict) -> dict:
     # GLOBAL
 
     # reading theory parameters
-    # TODO sanity check (2 <= nf <= 6)
     n_f = setup["NfFF"]
+    if 6 <= n_f <= 2:
+        raise ValueError("Number of flavors 'NfFF' must be in the range [2,6].")
 
     # compute charge factors
     charges = np.array([-1 / 3, 2 / 3] * 3)
@@ -49,7 +50,6 @@ def run_dis(setup: dict) -> dict:
     xgrid = dis_observables["xgrid"]
     coeffs = get_fnc(xgrid, dis_observables["polynom_rank"])
 
-    # TODO sanity check (0 < x < 1, Q2 > 0)
     # setup parameters
 
     # prepare the output
@@ -58,13 +58,13 @@ def run_dis(setup: dict) -> dict:
     output_vectors = dict(S=empty.copy(), NS=empty.copy(), g=empty.copy())
     for obs in ["F2", "FL"]:
         if obs in dis_observables:
-            output = {
-                **output,
-                obs: [
-                    {**kinematics, **output_vectors}
-                    for kinematics in dis_observables[obs]
-                ],
-            }
+            output = {**output, obs: []}
+            for kinematics in dis_observables[obs]:
+                if 1 < kinematics["x"] < 0:
+                    raise ValueError("Kinematics 'x' must be in the range (0,1)")
+                if kinematics["Q2"] < 0:
+                    raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
+                output[obs].append({**kinematics, **output_vectors})
 
     # iterate all polynomials
     for c, coeff in enumerate(coeffs):
