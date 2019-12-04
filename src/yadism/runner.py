@@ -2,6 +2,8 @@
 """
 This file contains the main loop for the DIS calculations.
 """
+import copy
+
 import numpy as np
 
 from yadism.structure_functions.LO import f2_light_LO
@@ -64,7 +66,7 @@ def run_dis(setup: dict) -> dict:
                     raise ValueError("Kinematics 'x' must be in the range (0,1)")
                 if kinematics["Q2"] < 0:
                     raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
-                output[obs].append({**kinematics, **output_vectors})
+                output[obs].append({**kinematics, **copy.deepcopy(output_vectors)})
 
     # iterate all polynomials
     for c, coeff in enumerate(coeffs):
@@ -74,6 +76,7 @@ def run_dis(setup: dict) -> dict:
             output["F2"][k]["S"][c] = pref_f2_singlet * f2_light_LO(
                 kinematics["x"], kinematics["Q2"], coeff, is_log_interpolation
             )
+            print(output["F2"][k]["S"][c])
 
     # TODO implement all other processes: FL, sigma, ?
     return output
