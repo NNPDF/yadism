@@ -6,11 +6,34 @@ import copy
 
 import numpy as np
 
-from yadism.structure_functions.LO import f2_light_LO
+from yadism import t_float
+from yadism.structure_functions.LO import f2_light_LO_singlet
 from yadism.interpolation import (
     get_Lagrange_basis_functions,
     get_Lagrange_basis_functions_log,
 )
+
+
+def get_configurations(observable, sq_charge_av):
+    def singlet(
+        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
+    ) -> t_float:
+        pref_f2_singlet = x * sq_charge_av
+        return pref_f2_singlet * f2_light_LO_singlet(
+            x, Q2, polynom_coeff, is_log_interpolation
+        )
+
+    def gluon(
+        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
+    ) -> t_float:
+        return None
+
+    def nonsinglet(
+        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
+    ) -> t_float:
+        return None
+
+    return [("S", singlet), ("g", None), ("NS", None)]
 
 
 def run_dis(setup: dict) -> dict:
@@ -72,11 +95,14 @@ def run_dis(setup: dict) -> dict:
     for c, coeff in enumerate(coeffs):
         # iterate F2 configurations
         for k, kinematics in enumerate(dis_observables.get("F2", [])):
-            pref_f2_singlet = kinematics["x"] * sq_charge_av
-            output["F2"][k]["S"][c] = pref_f2_singlet * f2_light_LO(
-                kinematics["x"], kinematics["Q2"], coeff, is_log_interpolation
-            )
-            print(output["F2"][k]["S"][c])
+            # iterate contributions
+            for key, f in get_configurations("F2", sq_charge_av):
+                # skip zeros
+                if None == f:
+                    continue
+                output["F2"][k][key][c] = f(
+                    kinematics["x"], kinematics["Q2"], coeff, is_log_interpolation
+                )
 
     # TODO implement all other processes: FL, sigma, ?
     return output
