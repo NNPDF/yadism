@@ -1,0 +1,41 @@
+package:
+    name: dis
+    version: "{{ GIT_DESCRIBE_TAG }}.{{ GIT_DESCRIBE_NUMBER }}+{{ GIT_DESCRIBE_HASH }}"
+
+source:
+    git_url: ../
+
+requirements:
+    host:
+        - numpy
+        - python
+        - numba
+        - scipy
+    run:
+        - numpy
+        - python
+        - numba
+        - sphinx # documentation
+        - recommonmark
+        - sphinx_rtd_theme
+        - scipy
+
+test:
+    requires:
+        - pytest
+        - coverage
+
+    source_files:
+        - "*"
+
+build:
+    number: 0
+    detect_binary_files_with_prefix: True
+    # import CONDA_BUILD_SYSROOT from env variable for osx
+    script_env:
+      - CONDA_BUILD_SYSROOT # [osx]
+
+about:
+    home: https://github.com/N3PDF/dis
+    license: GPLv3
+    summary: "Yet Another Deep Inelastic Scattering Module"

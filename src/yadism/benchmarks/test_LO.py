@@ -152,7 +152,7 @@ def test_loader():
         if False:
             pass
         else:
-            apfel.ComputeStructureFunctionsAPFEL(test_dict["Q0"], np.sqrt(Q2))
+            apfel.ComputeStructureFunctionsAPFEL(np.sqrt(Q2), np.sqrt(Q2))
             # apfel.ComputeStructureFunctionsAPFEL(test_dict["Q0"], np.sqrt(process["Q2"]))
             ref = apfel.F2light(x)
 
