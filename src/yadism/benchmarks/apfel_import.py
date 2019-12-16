@@ -83,6 +83,13 @@ def load_apfel(par: dict) -> None:
     #   APFEL::SetTimeLikeEvolution(true);
     # }
 
+    # Set APFEL interpolation grid
+    #
+    # apfel.SetNumberOfGrids(3)
+    # apfel.SetGridParameters(1, 50, 3, 1e-5)
+    # apfel.SetGridParameters(2, 50, 3, 2e-1)
+    # apfel.SetGridParameters(3, 50, 3, 8e-1)
+
     # apfel initialization for DIS
     apfel.InitializeAPFEL_DIS()
 

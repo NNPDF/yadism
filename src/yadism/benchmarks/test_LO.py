@@ -124,6 +124,7 @@ def test_loader():
                     n31lo.xfxQ2(k, x, Q2) + n31lo.xfxQ2(-k, x, Q2)
                     for k in range(1, Nf + 1)
                 ]
+                + [n31lo.xfxQ2(0, x, Q2)]
             )
             / x
         )
@@ -153,7 +154,6 @@ def test_loader():
             pass
         else:
             apfel.ComputeStructureFunctionsAPFEL(np.sqrt(Q2), np.sqrt(Q2))
-            # apfel.ComputeStructureFunctionsAPFEL(test_dict["Q0"], np.sqrt(process["Q2"]))
             ref = apfel.F2light(x)
 
         res_tab.append([x, Q2, ref, f2_lo, ref / f2_lo])
