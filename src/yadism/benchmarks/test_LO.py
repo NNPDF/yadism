@@ -5,6 +5,7 @@ import yaml
 import numpy as np
 import lhapdf
 
+import yadism.benchmarks.toyLH as toyLH
 from yadism.runner import run_dis
 from yadism.benchmarks.apfel_import import load_apfel
 
@@ -20,7 +21,7 @@ def test_loader():
     result = run_dis(test_dict)
 
     # setup LHAPDF
-    n31lo = lhapdf.mkPDF("NNPDF31_lo_as_0118", 0)
+    n31lo = toyLH.mkPDF("ToyLH", 0)
 
     def get_singlet(x, Q2, Nf):
         singlet = (
@@ -37,7 +38,7 @@ def test_loader():
 
     # setup APFEL
     apfel = load_apfel(test_dict)
-    apfel.SetPDFSet("NNPDF31_lo_as_0118")
+    apfel.SetPDFSet("ToyLH")
     apfel.SetProcessDIS("NC")
 
     # loop kinematics
@@ -67,7 +68,7 @@ def test_loader():
     print("\n------\n")
     for x in res_tab:
         for y in x:
-            print(y, end="\t")
+            print(y, "" if len(str(y)) > 7 else "\t", sep="", end="\t")
         print()
     print("\n------\n")
 
