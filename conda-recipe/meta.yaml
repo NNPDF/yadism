@@ -19,7 +19,7 @@ requirements:
         - recommonmark
         - sphinx_rtd_theme
         - scipy
-        - yaml
+        - pyyaml
 
 test:
     requires:

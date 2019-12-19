@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # Testing the loading functions
 from pprint import pprint
 import yaml
@@ -6,6 +8,7 @@ import numpy as np
 import lhapdf
 
 import yadism.benchmarks.toyLH as toyLH
+import yadism.basis_rotation as rot
 from yadism.runner import run_dis
 from yadism.benchmarks.apfel_import import load_apfel
 
@@ -23,36 +26,18 @@ def test_loader():
     # setup LHAPDF
     n31lo = toyLH.mkPDF("ToyLH", 0)
 
-    def get_singlet(x, Q2, Nf):
-        singlet = (
-            (
-                0.223197728
-                * np.sum(
-                    [
-                        n31lo.xfxQ2(k, x, Q2) + n31lo.xfxQ2(-k, x, Q2)
-                        for k in range(1, Nf + 1)
-                    ]
-                )
-                + 1
-                / 6  # 0.166651741
-                * (
-                    (n31lo.xfxQ2(2, x, Q2) + n31lo.xfxQ2(-2, x, Q2))
-                    - (n31lo.xfxQ2(1, x, Q2) + n31lo.xfxQ2(-1, x, Q2))
-                )
-                + 1
-                / 18  # 5.55505827e-02
-                * (
-                    n31lo.xfxQ2(2, x, Q2)
-                    + n31lo.xfxQ2(-2, x, Q2)
-                    + (n31lo.xfxQ2(1, x, Q2) + n31lo.xfxQ2(-1, x, Q2))
-                    - 2 * (n31lo.xfxQ2(3, x, Q2) + n31lo.xfxQ2(-3, x, Q2))
-                )
-            )
-            * 4.5
-            / x
-        )
+    def get_useful(x, Q2, Nf):
+        """Short summary.
 
-        return singlet
+        d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
+        =
+        (S + 3*T3/4 + T8/4) * sq_charge_av
+        """
+        ph2pid = lambda k: k - 7
+        ph = [0] + [n31lo.xfxQ2(ph2pid(k), x, Q2) for k in range(1, 14)]
+        useful = (rot.QCDsinglet(ph) + rot.QCDT3(ph) * 3 / 4 + rot.QCDT8(ph) / 4) / x
+
+        return useful
 
     # setup APFEL
     apfel = load_apfel(test_dict)
@@ -68,7 +53,7 @@ def test_loader():
 
         # compute F2
         singlet_vec = np.array(
-            [get_singlet(x, Q2, test_dict["NfFF"]) for x in result["xgrid"]]
+            [get_useful(x, Q2, test_dict["NfFF"]) for x in result["xgrid"]]
         )
         f2_lo = np.dot(singlet_vec, kinematics["S"])
 
