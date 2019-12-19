@@ -34,8 +34,6 @@ def toyLHPDFs(id, x):
     # Initialize PDFs to zero
 
     xpdf = {i: 0 for i in range(-6, 7)}
-    for ipdf in range(-6, 6):
-        xpdf[ipdf] = 0e0
 
     if x > 1e0:
         return

@@ -25,12 +25,30 @@ def test_loader():
 
     def get_singlet(x, Q2, Nf):
         singlet = (
-            np.sum(
-                [
-                    n31lo.xfxQ2(k, x, Q2) + n31lo.xfxQ2(-k, x, Q2)
-                    for k in range(1, Nf + 1)
-                ]
+            (
+                0.223197728
+                * np.sum(
+                    [
+                        n31lo.xfxQ2(k, x, Q2) + n31lo.xfxQ2(-k, x, Q2)
+                        for k in range(1, Nf + 1)
+                    ]
+                )
+                + 1
+                / 6  # 0.166651741
+                * (
+                    (n31lo.xfxQ2(2, x, Q2) + n31lo.xfxQ2(-2, x, Q2))
+                    - (n31lo.xfxQ2(1, x, Q2) + n31lo.xfxQ2(-1, x, Q2))
+                )
+                + 1
+                / 18  # 5.55505827e-02
+                * (
+                    n31lo.xfxQ2(2, x, Q2)
+                    + n31lo.xfxQ2(-2, x, Q2)
+                    + (n31lo.xfxQ2(1, x, Q2) + n31lo.xfxQ2(-1, x, Q2))
+                    - 2 * (n31lo.xfxQ2(3, x, Q2) + n31lo.xfxQ2(-3, x, Q2))
+                )
             )
+            * 4.5
             / x
         )
 
