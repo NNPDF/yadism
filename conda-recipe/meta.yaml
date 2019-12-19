@@ -19,6 +19,7 @@ requirements:
         - recommonmark
         - sphinx_rtd_theme
         - scipy
+        - yaml
 
 test:
     requires:
