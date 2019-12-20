@@ -6,10 +6,11 @@ set -o pipefail
 set -u
 set -v
 
+echo "Current folder"
+ls
 
 # Let us assume at this point we are already inside conda
 # not sure about this, let Travis test
-git clone git@github.com:N3PDF/eko.git
 cd eko
 pip install .
 cd ..
