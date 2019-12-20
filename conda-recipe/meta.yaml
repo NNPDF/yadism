@@ -20,6 +20,8 @@ requirements:
         - sphinx_rtd_theme
         - scipy
         - pyyaml
+        - lhapdf
+        - apfel
 
 test:
     requires:
