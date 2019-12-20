@@ -24,7 +24,11 @@ def test_loader():
     result = run_dis(test_dict)
 
     # setup LHAPDF
-    n31lo = toyLH.mkPDF("ToyLH", 0)
+    pdfset = test_dict.get("PDFSet", "ToyLH")
+    if pdfset == "ToyLH":
+        pdfs = toyLH.mkPDF("ToyLH", 0)
+    else:
+        pdfs = lhapdf.mkPDF(pdfset, 0)
 
     def get_useful(x, Q2, Nf):
         """Short summary.
@@ -34,15 +38,13 @@ def test_loader():
         (S + 3*T3/4 + T8/4) * sq_charge_av
         """
         ph2pid = lambda k: k - 7
-        ph = [0] + [n31lo.xfxQ2(ph2pid(k), x, Q2) for k in range(1, 14)]
+        ph = [0] + [pdfs.xfxQ2(ph2pid(k), x, Q2) for k in range(1, 14)]
         useful = (rot.QCDsinglet(ph) + rot.QCDT3(ph) * 3 / 4 + rot.QCDT8(ph) / 4) / x
 
         return useful
 
     # setup APFEL
     apfel = load_apfel(test_dict)
-    apfel.SetPDFSet("ToyLH")
-    apfel.SetProcessDIS("NC")
 
     # loop kinematics
     res_tab = []

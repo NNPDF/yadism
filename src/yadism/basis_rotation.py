@@ -89,8 +89,6 @@ def QCDsinglet(ph):
 
     """
 
-    print(ph, len(ph))
-
     return TevQCD4ph[1] @ np.array(ph)
 
 

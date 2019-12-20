@@ -40,6 +40,11 @@ Comments: "LO baseline for small-x res"
 global_nx: 0
 EScaleVar: 1
 
+# ToBeFilled
+
+PDFSet: ToyLH
+prDIS: NC 
+
 # DIS
 
 dis_observables:

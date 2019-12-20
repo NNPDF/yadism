@@ -90,6 +90,9 @@ def load_apfel(par: dict) -> None:
     # apfel.SetGridParameters(2, 50, 3, 2e-1)
     # apfel.SetGridParameters(3, 50, 3, 8e-1)
 
+    apfel.SetPDFSet(par.get("PDFSet", "ToyLH"))
+    apfel.SetProcessDIS(par.get("prDIS", "EM"))
+
     # apfel initialization for DIS
     apfel.InitializeAPFEL_DIS()
 
