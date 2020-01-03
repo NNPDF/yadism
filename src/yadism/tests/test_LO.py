@@ -7,10 +7,10 @@ import yaml
 import numpy as np
 import lhapdf
 
-import yadism.benchmarks.toyLH as toyLH
+import yadism.tests.toyLH as toyLH
 import yadism.basis_rotation as rot
 from yadism.runner import run_dis
-from yadism.benchmarks.apfel_import import load_apfel
+from yadism.tests.apfel_import import load_apfel
 
 
 def test_loader():
