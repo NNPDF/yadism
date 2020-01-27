@@ -49,5 +49,5 @@ jobs:
         pip install .
     - name: Test yadism
       run: |
-        conda install pytest
+        pip install pytest
         pytest
