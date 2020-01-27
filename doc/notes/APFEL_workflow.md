@@ -16,7 +16,9 @@ Done by `apfel_import.py`.
     - erase all the `In*` variables with `xxxx`, they will be subsequently
       replaced with `done` to indicate that the corresponding variables are set
 - **SetX**
-    - set all the parameters taken from the theory given to the load function
-      (`load_apfel`)
+    - set all the parameters taken from the theory (`test_dict`) given to the
+      load function (`load_apfel`)
 - **InitializeAPFEL**
-    - 
+    - call 'initParametersDIS' to set defaults for those parameters not already
+      set
+    -
