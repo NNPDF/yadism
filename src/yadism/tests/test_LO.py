@@ -7,24 +7,26 @@ import yaml
 import numpy as np
 import lhapdf
 
-import yadism.benchmarks.toyLH as toyLH
+import yadism.tests.toyLH as toyLH
 import yadism.basis_rotation as rot
 from yadism.runner import run_dis
-from yadism.benchmarks.apfel_import import load_apfel
+from yadism.tests.apfel_import import load_apfel
 
 
 def test_loader():
     """Test the loading mechanism"""
 
     # read file
-    with open("test_LO.yaml", "r") as file:
-        test_dict = yaml.safe_load(file)
+    with open("theory.yaml", "r") as file:
+        theory = yaml.safe_load(file)
+    with open("dis_observables.yaml", "r") as file:
+        dis_observables = yaml.safe_load(file)
 
     # execute DIS
-    result = run_dis(test_dict)
+    result = run_dis(theory, dis_observables)
 
     # setup LHAPDF
-    pdfset = test_dict.get("PDFSet", "ToyLH")
+    pdfset = theory.get("PDFSet", "ToyLH")
     if pdfset == "ToyLH":
         pdfs = toyLH.mkPDF("ToyLH", 0)
     else:
@@ -44,7 +46,7 @@ def test_loader():
         return useful
 
     # setup APFEL
-    apfel = load_apfel(test_dict)
+    apfel = load_apfel(theory)
 
     # loop kinematics
     res_tab = []
@@ -55,7 +57,7 @@ def test_loader():
 
         # compute F2
         singlet_vec = np.array(
-            [get_useful(x, Q2, test_dict["NfFF"]) for x in result["xgrid"]]
+            [get_useful(x, Q2, theory["NfFF"]) for x in result["xgrid"]]
         )
         f2_lo = np.dot(singlet_vec, kinematics["S"])
 

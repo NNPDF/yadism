@@ -36,13 +36,15 @@ def get_configurations(observable, sq_charge_av):
     return [("S", singlet), ("g", None), ("NS", None)]
 
 
-def run_dis(setup: dict) -> dict:
+def run_dis(theory: dict, dis_observables: dict) -> dict:
     """Wrapper to compute a process
 
     Parameters
     ----------
-    setup : dict
-        a dictionary with the theory parameters for the evolution
+    theory : dict
+        Dictionary with the theory parameters for the evolution.
+    dis_observables : dict
+        Description of parameter `dis_observables`.
 
     Returns
     -------
@@ -54,7 +56,7 @@ def run_dis(setup: dict) -> dict:
     # GLOBAL
 
     # reading theory parameters
-    n_f = setup["NfFF"]
+    n_f = theory["NfFF"]
     if 6 <= n_f <= 2:
         raise ValueError("Number of flavors 'NfFF' must be in the range [2,6].")
 
@@ -63,8 +65,6 @@ def run_dis(setup: dict) -> dict:
     sq_charge_av = np.average(charges[:n_f] ** 2)
 
     # OBSERVABLES
-
-    dis_observables = setup["dis_observables"]
 
     # compute input grid
     is_log_interpolation = dis_observables.get("is_log_interpolation", True)
