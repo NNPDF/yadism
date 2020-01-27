@@ -5,6 +5,7 @@ language: generic
 
 git:
     depth: 1000
+    submodules: true
 
 os:
   - linux
