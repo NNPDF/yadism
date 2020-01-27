@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 #
 # Testing the loading functions
+import os
 from pprint import pprint
-import yaml
 
+import yaml
 import numpy as np
 import lhapdf
 
@@ -16,10 +17,14 @@ from yadism.tests.apfel_import import load_apfel
 def test_loader():
     """Test the loading mechanism"""
 
-    # read file
-    with open("theory.yaml", "r") as file:
+    test_dir = os.path.dirname(__file__)
+
+    # read files
+    theory_file = os.path.join(test_dir, "theory.yaml")
+    with open(theory_file, "r") as file:
         theory = yaml.safe_load(file)
-    with open("dis_observables.yaml", "r") as file:
+    observables_file = os.path.join(test_dir, "dis_observables.yaml")
+    with open(observables_file, "r") as file:
         dis_observables = yaml.safe_load(file)
 
     # execute DIS
