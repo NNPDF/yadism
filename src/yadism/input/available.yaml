@@ -1,0 +1,57 @@
+# TODO:
+#  -
+
+
+MassScheme:
+  - ZM-VFNS
+  - FFNS      # (default NF=3)
+  - FFNS3
+  - FFNS4
+  - FFNS5
+  - FFNS6
+  - FFN0      # (default NF=3)
+  - FFN03
+  - FFN04
+  - FFN05
+  - FFN06
+  - FONLL-A
+  - FONLL-B
+  - FONLL-C
+
+ProcessDIS:
+  - EM
+  - NC
+  - CC
+
+
+PolarizationDIS:
+  _interval_:
+    - -1
+    - 1
+
+ProjectileDIS:
+  - electron
+  - positron
+  - neutrino
+  - antineutrino
+
+TargetDIS:
+  - proton
+  - neutron
+  - isoscalar
+  - iron
+  - lead
+
+SelectedCharge:
+  - down
+  - up
+  - strange
+  - charm
+  - bottom
+  - top
+  - all
+
+ScVarProc:
+  _interval_:
+    - 0
+    - 1

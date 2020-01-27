@@ -94,6 +94,9 @@ venv.bak/
 .spyderproject
 .spyproject
 
+# VS Code
+.vscode
+
 # Rope project settings
 .ropeproject
 
@@ -102,3 +105,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# myfiles
+.venv_this
