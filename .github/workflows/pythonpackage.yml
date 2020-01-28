@@ -16,8 +16,9 @@ jobs:
         python-version: [3.7]
         include:
           - python-version: 3.7
-            CONDA_PY: 37
-            CIAO: "come stai?"
+            conda_py: 37
+        env:
+          CONDA_PY: ${{ matrix.conda_py }}
 
     steps:
     # checkout the repo on the github runner
