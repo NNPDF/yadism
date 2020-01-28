@@ -1,5 +1,6 @@
 package:
     name: dis
+    version: "0.0+00000000"
     # version: "{{ GIT_DESCRIBE_TAG }}.{{ GIT_DESCRIBE_NUMBER }}+{{ GIT_DESCRIBE_HASH }}"
 
 source:
