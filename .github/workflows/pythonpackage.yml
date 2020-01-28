@@ -40,6 +40,10 @@ jobs:
     #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
     #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
     #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: heck python
+      run: |
+        python -c 'print("hello")'
+        python --version
     - name: Install apfel and lhapdf with conda
       run: |
         conda config --add channels https://packages.nnpdf.science/conda
@@ -48,8 +52,14 @@ jobs:
     - name: Check apfel and lhapdf installation
       run: |
         conda list
-        pip show apfel
-        pip show lhapdf
+        python -c 'import apfel'
+        python -c 'import lhapdf'
+        # pip show apfel
+        # pip show lhapdf
+    - name: Check pip
+        which pip
+        conda install -y pip
+        which pip
     - name: Install yadism
       run: |
         pip install .
