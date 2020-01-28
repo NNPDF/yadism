@@ -28,7 +28,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: N3PDF/eko
-        token: ${{ secrets.EKO_TOKEN }}
+        token: ${{ secrets.ALE_DIS_PAT }}
         path: eko
     # fetch all tags & stuffs
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
