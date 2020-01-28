@@ -22,12 +22,19 @@ jobs:
     steps:
     # checkout the repo on the github runner
     - uses: actions/checkout@v2
-    # fetch all tags
-    # - name: Fetch tags
-    #   run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-    - name: Stupid pull
+    # fetch all tags & stuffs
+    - name: Fetch tags
+      run: git fetch --unshallow
+    - name: Stupid ls
       run: |
-        git pull
+        ls -a
+    - name: Stupid git
+      run: |
+        git log --graph --decorate --pretty=oneline --abbrev-commit --all
+    - name: Check git describe vars
+      run: |
+        git describe --always
+        git describe --tags
     # setup latest version of miniconda
     - uses: goanpeca/setup-miniconda@v1
       with:
@@ -50,15 +57,6 @@ jobs:
     #     conda config --add channels https://packages.nnpdf.science/conda
     #     conda install -y lhapdf
     #     conda install -y apfel
-    - name: Stupid ls
-      run: |
-        ls -a
-    - name: Stupid git
-      run: |
-        git log --graph --decorate --pretty=oneline --abbrev-commit --all
-    - name: Check git describe vars
-      run: |
-        git describe --tags
     # run conda recipe, it is responsible of:
     # - installing dependencies
     #   - both python packages
