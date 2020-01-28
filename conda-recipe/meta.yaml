@@ -15,7 +15,7 @@ requirements:
         - numpy
         - python
         - numba
-        - sphinx # documentation
+        - sphinx
         - recommonmark
         - sphinx_rtd_theme
         - scipy

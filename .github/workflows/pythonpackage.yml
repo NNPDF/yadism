@@ -41,12 +41,14 @@ jobs:
     # - deploying
     - name: Run conda recipe
       shell: bash -l {0}
-      # env:
-      #   CONDA_PY: 37
       run: |
         conda activate yadism
         conda install -y conda-build
         .ciscripts/build-deploy-linux.sh
+
+    # ALTERNATIVE
+    # it is also possible to do the whole job without the conda-recipe
+    # still installing 'apfel' and 'lhapdf' with conda
 
     # - name: Install apfel and lhapdf with conda
     #   shell: bash -l {0}
