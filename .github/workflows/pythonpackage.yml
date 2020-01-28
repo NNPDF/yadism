@@ -46,12 +46,13 @@ jobs:
       shell: bash -l {0}
       run: |
         conda activate yadism
+        echo $CONDA_PY
         .ciscripts/build-deploy-linux.sh
-    - name: Install yadism
-      shell: bash -l {0}
-      run: |
-        conda activate yadism
-        pip install .
+    # - name: Install yadism
+    #   shell: bash -l {0}
+    #   run: |
+    #     conda activate yadism
+    #     pip install .
     - name: Test yadism
       shell: bash -l {0}
       run: |
