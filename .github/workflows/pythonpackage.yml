@@ -16,9 +16,8 @@ jobs:
         python-version: [3.7]
         include:
           - python-version: 3.7
-            env:
-              CONDA_PY: 37
-              CIAO: "come stai?"
+            CONDA_PY: 37
+            CIAO: "come stai?"
 
     steps:
     # checkout the repo on the github runner
@@ -51,7 +50,7 @@ jobs:
         conda activate yadism
         conda install -y conda-build
         .ciscripts/build-deploy-linux.sh
-        
+
     # - name: Install apfel and lhapdf with conda
     #   shell: bash -l {0}
     #   run: |
