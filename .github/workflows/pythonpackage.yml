@@ -26,10 +26,10 @@ jobs:
     # checkout submodules
     - name: Checkout submodules
       uses: actions/checkout@v2
-        with:
-          repository: N3PDF/eko
-          token: ${{ secrets.EKO_TOKEN }}
-          path: eko
+      with:
+        repository: N3PDF/eko
+        token: ${{ secrets.EKO_TOKEN }}
+        path: eko
     # fetch all tags & stuffs
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
     - name: Fetch tags
