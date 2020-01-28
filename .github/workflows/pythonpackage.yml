@@ -52,12 +52,14 @@ jobs:
         python -c 'print("hello")'
         python --version
     - name: Install apfel and lhapdf with conda
+      shell: bash -l {0}
       run: |
         conda activate yadism
         conda config --add channels https://packages.nnpdf.science/conda
         conda install -y lhapdf
         conda install -y apfel
     - name: Check apfel and lhapdf installation
+      shell: bash -l {0}
       run: |
         conda activate yadism
         conda list
@@ -66,16 +68,19 @@ jobs:
         # pip show apfel
         # pip show lhapdf
     - name: Check pip
+      shell: bash -l {0}
       run: |
         conda activate yadism
         which pip
         conda install -y pip
         which pip
     - name: Install yadism
+      shell: bash -l {0}
       run: |
         conda activate yadism
         pip install .
     - name: Test yadism
+      shell: bash -l {0}
       run: |
         conda activate yadism
         pip install pytest
