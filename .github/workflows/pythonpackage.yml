@@ -53,9 +53,9 @@ jobs:
         python --version
     - name: Do it twice
       run: |
-        conda activate -n yadism
         python -c 'print("hello")'
         python --version
+        conda env list
     - name: Install apfel and lhapdf with conda
       run: |
         conda config --add channels https://packages.nnpdf.science/conda
