@@ -23,22 +23,17 @@ jobs:
     steps:
     # checkout the repo on the github runner
     - uses: actions/checkout@v2
-      with:
-        token: ${{ secrets.ACCESS_TOKEN }}
-        submodules: true
+    # checkout submodules
+    - name: Checkout submodules
+      uses: actions/checkout@v2
+        with:
+          repository: N3PDF/eko
+          token: ${{ secrets.EKO_TOKEN }}
+          path: eko
     # fetch all tags & stuffs
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
     - name: Fetch tags
       run: git fetch --unshallow
-    - name: Checkout submodules
-      shell: bash -l {0}
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-        git submodule sync --recursive
-        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-    # setup latest version of miniconda
     - uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
