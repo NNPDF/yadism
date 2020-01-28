@@ -7,7 +7,7 @@ set -u
 set -v
 
 #Build package
-CONDA_PY=$CONDA_PY conda build -q conda-recipe -c https://packages.nnpdf.science/conda --bootstrap yadism
+CONDA_PY=$CONDA_PY conda build -q conda-recipe -c https://packages.nnpdf.science/conda
 if [ $? != 0 ]; then
 	echo failed to build
 	exit 1
