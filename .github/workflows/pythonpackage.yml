@@ -42,6 +42,9 @@ jobs:
     #     conda config --add channels https://packages.nnpdf.science/conda
     #     conda install -y lhapdf
     #     conda install -y apfel
+    - name: Stupid ls
+      run: |
+        ls -a
     - name: Check git describe vars
       run: |
         git describe --tags
