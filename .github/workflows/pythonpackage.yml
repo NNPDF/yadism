@@ -42,13 +42,16 @@ jobs:
     #     conda config --add channels https://packages.nnpdf.science/conda
     #     conda install -y lhapdf
     #     conda install -y apfel
+    - name: Check git describe vars
+      run: |
+        git describe --tags
     - name: Run conda recipe
       shell: bash -l {0}
       env:
         CONDA_PY: 37
       run: |
         conda activate yadism
-        conda install conda-build
+        conda install -y conda-build
         echo $CONDA_PY
         .ciscripts/build-deploy-linux.sh
     # - name: Install yadism
