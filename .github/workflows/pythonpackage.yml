@@ -44,7 +44,8 @@ jobs:
     #     conda install -y apfel
     - name: Run conda recipe
       shell: bash -l {0}
-      env: CONDA_PY: 37
+      env:
+        CONDA_PY: 37
       run: |
         conda activate yadism
         echo $CONDA_PY
