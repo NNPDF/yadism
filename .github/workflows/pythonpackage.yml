@@ -51,18 +51,15 @@ jobs:
         conda activate yadism
         python -c 'print("hello")'
         python --version
-    - name: Do it twice
-      run: |
-        python -c 'print("hello")'
-        python --version
-        conda env list
     - name: Install apfel and lhapdf with conda
       run: |
+        conda activate yadism
         conda config --add channels https://packages.nnpdf.science/conda
         conda install -y lhapdf
         conda install -y apfel
     - name: Check apfel and lhapdf installation
       run: |
+        conda activate yadism
         conda list
         python -c 'import apfel'
         python -c 'import lhapdf'
@@ -70,13 +67,16 @@ jobs:
         # pip show lhapdf
     - name: Check pip
       run: |
+        conda activate yadism
         which pip
         conda install -y pip
         which pip
     - name: Install yadism
       run: |
+        conda activate yadism
         pip install .
     - name: Test yadism
       run: |
+        conda activate yadism
         pip install pytest
         pytest
