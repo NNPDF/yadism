@@ -3,7 +3,7 @@ package:
     version: "{{ GIT_DESCRIBE_TAG }}.{{ GIT_DESCRIBE_NUMBER }}+{{ GIT_DESCRIBE_HASH }}"
 
 source:
-    git_url: ../
+    git_url: ../src
 
 requirements:
     host:
