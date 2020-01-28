@@ -17,8 +17,8 @@ jobs:
         include:
           - python-version: 3.7
             conda_py: 37
-        env:
-          CONDA_PY: ${{ matrix.conda_py }}
+    env:
+      CONDA_PY: ${{ matrix.conda_py }}
 
     steps:
     # checkout the repo on the github runner
