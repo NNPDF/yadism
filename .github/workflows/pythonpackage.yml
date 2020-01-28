@@ -44,6 +44,11 @@ jobs:
       run: |
         python -c 'print("hello")'
         python --version
+    - name: Is there also python3?
+      run: |
+        python3 -c 'print("hello")'
+        python3 --version
+        pip3 --version
     - name: Install apfel and lhapdf with conda
       run: |
         conda config --add channels https://packages.nnpdf.science/conda
