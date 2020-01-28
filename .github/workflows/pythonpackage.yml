@@ -18,6 +18,7 @@ jobs:
           - python-version: 3.7
             env:
               CONDA_PY: 37
+              CIAO: "come stai?"
 
     steps:
     # checkout the repo on the github runner
@@ -26,6 +27,10 @@ jobs:
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
     - name: Fetch tags
       run: git fetch --unshallow
+
+    - name: Check env
+      run: |
+        echo $CIAO
     # setup latest version of miniconda
     - uses: goanpeca/setup-miniconda@v1
       with:
@@ -60,7 +65,9 @@ jobs:
         conda activate yadism
         conda install -y numpy
         conda list numpy
-        
+        conda install -y numba
+        conda list numba
+
         conda install -y pylint
         # Search for actual errors
         pylint src/*/*.py -E
