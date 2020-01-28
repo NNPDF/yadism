@@ -20,7 +20,11 @@ jobs:
               CONDA_PY: 37
 
     steps:
+    # checkout the repo on the github runner
     - uses: actions/checkout@v2
+    # fetch all tags
+    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+    # setup latest version of miniconda
     - uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
@@ -51,6 +55,11 @@ jobs:
     - name: Check git describe vars
       run: |
         git describe --tags
+    # run conda recipe, it is responsible of:
+    # - installing dependencies
+    #   - both python packages
+    #   - and non-python (lhapdf, apfel
+    # - deploying
     - name: Run conda recipe
       shell: bash -l {0}
       env:
