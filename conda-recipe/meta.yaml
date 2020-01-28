@@ -1,6 +1,6 @@
 package:
     name: dis
-    version: "{{ GIT_DESCRIBE_TAG }}.{{ GIT_DESCRIBE_NUMBER }}+{{ GIT_DESCRIBE_HASH }}"
+    # version: "{{ GIT_DESCRIBE_TAG }}.{{ GIT_DESCRIBE_NUMBER }}+{{ GIT_DESCRIBE_HASH }}"
 
 source:
     path: ../src
