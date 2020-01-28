@@ -6,7 +6,7 @@ env:
     UPLOAD_NON_MASTER: false
 
 jobs:
-  # build is th <job_id>
+  # build is the <job_id>
   build:
 
     runs-on: ubuntu-latest
@@ -16,9 +16,9 @@ jobs:
         python-version: [3.7]
         include:
           - python-version: 3.7
-            conda_py: 37
+            conda-py: 37
     env:
-      CONDA_PY: ${{ matrix.conda_py }}
+      CONDA_PY: ${{ matrix.conda-py }}
 
     steps:
     # checkout the repo on the github runner
@@ -27,10 +27,6 @@ jobs:
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
     - name: Fetch tags
       run: git fetch --unshallow
-
-    - name: Check env
-      run: |
-        echo $CIAO
     # setup latest version of miniconda
     - uses: goanpeca/setup-miniconda@v1
       with:
