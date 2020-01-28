@@ -59,28 +59,24 @@ jobs:
     #     conda install -y lhapdf
     #     conda install -y apfel
     # Pass with the linter
-    - name: Lint with pylint
-      shell: bash -l {0}
-      run: |
-        conda activate yadism
-        conda install -y numpy
-        conda list numpy
-        conda install -y numba
-        conda list numba
-
-        conda install -y pylint
-        # Search for actual errors
-        pylint src/*/*.py -E
-        # For warnings instead return always zero
-        pylint src/*/*.py --exit-zero
+    # - name: Lint with pylint
+    #   shell: bash -l {0}
+    #   run: |
+    #     conda activate yadism
+    #
+    #     conda install -y pylint
+    #     # Search for actual errors
+    #     pylint src/*/*.py -E
+    #     # For warnings instead return always zero
+    #     pylint src/*/*.py --exit-zero
     # - name: Install yadism
     #   shell: bash -l {0}
     #   run: |
     #     conda activate yadism
     #     pip install .
-    - name: Test yadism
-      shell: bash -l {0}
-      run: |
-        conda activate yadism
-        pip install pytest
-        pytest
+    # - name: Test yadism
+    #   shell: bash -l {0}
+    #   run: |
+    #     conda activate yadism
+    #     pip install pytest
+    #     pytest
