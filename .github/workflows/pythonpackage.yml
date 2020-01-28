@@ -46,8 +46,11 @@ jobs:
       run: |
         conda init
         . $HOME/.bashrc
+        cat $HOME/.bashrc
     - name: Check python inside conda
+      shell: bash
       run: |
+        . $HOME/.bashrc
         conda activate -n yadism
         python -c 'print("hello")'
         python --version
