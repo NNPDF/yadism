@@ -34,6 +34,8 @@ jobs:
       run: |
         cd eko
         git log --graph --decorate --pretty=oneline --abbrev-commit --all
+        git fetch --unshallow
+        git describe --tags
         cd ..
     # fetch all tags & stuffs
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
