@@ -45,6 +45,7 @@ jobs:
     - name: Init conda
       run:
         conda init
+        . $HOME/.bashrc
     - name: Check python inside conda
       run: |
         conda activate -n yadism
