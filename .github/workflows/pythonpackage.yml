@@ -44,8 +44,8 @@ jobs:
     # - deploying
     - name: Run conda recipe
       shell: bash -l {0}
-      env:
-        CONDA_PY: 37
+      # env:
+      #   CONDA_PY: 37
       run: |
         conda activate yadism
         conda install -y conda-build
