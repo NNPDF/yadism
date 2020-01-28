@@ -38,11 +38,12 @@ jobs:
         git log --graph --decorate --pretty=oneline --abbrev-commit --all
         git describe --tags
         cd ..
-        git describe --tags
     # fetch all tags & stuffs
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
     - name: Fetch tags
       run: git fetch --unshallow
+    - name: Describe dis
+      run: git describe --tags
     - uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
