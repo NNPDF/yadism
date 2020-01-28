@@ -28,12 +28,14 @@ jobs:
     - name: Fetch tags
       run: git fetch --unshallow
     - name: Checkout submodules
-      shell: bash
+      shell: bash -l {0}
+      with:
+        repo-token: ${{ secrets.EKO_TOKEN }}
       run: |
         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-    # setup latest version of miniconda
+    setup latest version of miniconda
     - uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
