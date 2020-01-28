@@ -58,7 +58,10 @@ jobs:
       shell: bash -l {0}
       run: |
         conda activate yadism
-        conda install pylint
+        conda install -y numpy
+        conda list numpy
+        
+        conda install -y pylint
         # Search for actual errors
         pylint src/*/*.py -E
         # For warnings instead return always zero
