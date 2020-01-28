@@ -51,6 +51,7 @@ jobs:
         conda activate yadism
         conda install -y conda-build
         .ciscripts/build-deploy-linux.sh
+        
     # - name: Install apfel and lhapdf with conda
     #   shell: bash -l {0}
     #   run: |

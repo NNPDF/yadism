@@ -7,4 +7,4 @@ set -e
 pytest --pyargs yadism
 
 #Print linkage data
-conda inspect linkages -p $PREFIX $PKG_NAME
+# conda inspect linkages -p $PREFIX $PKG_NAME
