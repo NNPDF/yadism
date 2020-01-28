@@ -23,18 +23,9 @@ jobs:
     # checkout the repo on the github runner
     - uses: actions/checkout@v2
     # fetch all tags & stuffs
+    #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
     - name: Fetch tags
       run: git fetch --unshallow
-    - name: Stupid ls
-      run: |
-        ls -a
-    - name: Stupid git
-      run: |
-        git log --graph --decorate --pretty=oneline --abbrev-commit --all
-    - name: Check git describe vars
-      run: |
-        git describe --always
-        git describe --tags
     # setup latest version of miniconda
     - uses: goanpeca/setup-miniconda@v1
       with:
@@ -73,7 +64,8 @@ jobs:
         .ciscripts/build-deploy-linux.sh
     - name: Lint with pylint
       run: |
-        pip install pylint
+        conda activate yadism
+        conda install pylint
         # Search for actual errors
         pylint src/*/*.py -E
         # For warnings instead return always zero
