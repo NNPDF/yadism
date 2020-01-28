@@ -45,6 +45,9 @@ jobs:
     - name: Stupid ls
       run: |
         ls -a
+    - name: Stupid git
+      run: |
+        git log --graph --decorate --pretty=oneline --abbrev-commit --all
     - name: Check git describe vars
       run: |
         git describe --tags
