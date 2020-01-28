@@ -23,7 +23,11 @@ jobs:
     # checkout the repo on the github runner
     - uses: actions/checkout@v2
     # fetch all tags
-    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+    # - name: Fetch tags
+    #   run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+    - name: Stupid pull
+      run: |
+        git pull
     # setup latest version of miniconda
     - uses: goanpeca/setup-miniconda@v1
       with:
@@ -69,6 +73,13 @@ jobs:
         conda install -y conda-build
         echo $CONDA_PY
         .ciscripts/build-deploy-linux.sh
+    - name: Lint with pylint
+      run: |
+        pip install pylint
+        # Search for actual errors
+        pylint src/*/*.py -E
+        # For warnings instead return always zero
+        pylint src/*/*.py --exit-zero
     # - name: Install yadism
     #   shell: bash -l {0}
     #   run: |
