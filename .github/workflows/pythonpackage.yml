@@ -18,7 +18,7 @@ jobs:
           - python-version: 3.7
             conda-py: 37
     env:
-      CONDA_PY: ${{ matrix.conda-py }}
+      CONDA_PY: ${{ matrix.conda-py }} # strange way to manage env vars inclusion
 
     steps:
     # checkout the repo on the github runner
@@ -30,42 +30,23 @@ jobs:
         repository: N3PDF/eko
         token: ${{ secrets.ALE_DIS_PAT }}
         path: eko
-    # - name: Explore eko
-    #   run: |
-    #     cd eko
-    #     git log --graph --decorate --pretty=oneline --abbrev-commit --all
-    #     git fetch --unshallow
-    #     git log --graph --decorate --pretty=oneline --abbrev-commit --all
-    #     git describe --tags
-    #     cd ..
     # fetch all tags & stuffs
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
+    #   --> needed only for the conda-recipe
     - name: Fetch tags
       run: git fetch --unshallow
-    # - name: Describe dis
-    #   run: git describe --tags
+    # use an external action to setup miniconda
+    #   - also setup a conda virtual environment named 'yadism'
+    #
+    # (in order to use the conda venv at each step you need to login with
+    # 'bash -l {0}' in the 'shell' field, and to activate the environment)
     - uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
         miniconda-version: 'latest'
         activate-environment: yadism
         python-version: ${{ matrix.python-version }}
-    # run conda recipe, it is responsible of:
-    # - installing dependencies
-    #   - both python packages
-    #   - and non-python (lhapdf, apfel
-    # - deploying
-    # - name: Run conda recipe
-    #   shell: bash -l {0}
-    #   run: |
-    #     conda activate yadism
-    #     conda install -y conda-build
-    #     .ciscripts/build-deploy-linux.sh
-
-    # ALTERNATIVE
-    # it is also possible to do the whole job without the conda-recipe
-    # still installing 'apfel' and 'lhapdf' with conda
-
+    # install lhapdf and apfel from the nnpdf conda repo
     - name: Install lhapdf and apfel with conda
       shell: bash -l {0}
       run: |
@@ -74,6 +55,9 @@ jobs:
         conda config --add channels https://packages.nnpdf.science/conda
         conda install -y lhapdf
         conda install -y apfel
+    # install eko
+    #   - @ the correct commit (no official suitable tag currently available)
+    #   - providing the C dependencies
     - name: Install eko
       shell: bash -l {0}
       run: |
@@ -83,9 +67,14 @@ jobs:
         git fetch --unshallow
         git checkout 278cfa0d746b64fd5db6de85995d85b471f5d20a
         cd ..
+        # install Gnu Scientific Library (GSL)
+        #   sudo works passwordless on github-workflow
         sudo apt-get install libgsl-dev
+        # install eko (trailing '/' needed!)
         pip install eko/
-    # Pass with the linter
+    # pass with the linter
+    #   - only for 'dis', 'eko' is a dependency (supposed to be delivered
+    #     already checked)
     - name: Lint with pylint
       shell: bash -l {0}
       run: |
@@ -96,12 +85,14 @@ jobs:
         pylint src/*/*.py -E
         # For warnings instead return always zero
         pylint src/*/*.py --exit-zero
+    # install the actual python package 'yadism'
     - name: Install yadism
       shell: bash -l {0}
       run: |
         conda activate yadism
         #
         pip install .
+    #  run the test with 'pytest'
     - name: Test yadism
       shell: bash -l {0}
       run: |
