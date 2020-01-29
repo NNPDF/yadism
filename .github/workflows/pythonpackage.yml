@@ -80,6 +80,8 @@ jobs:
         conda activate yadism
         #
         cd eko
+        ls -a
+        git log --graph --decorate --pretty=oneline --abbrev-commit --all
         git checkout 278cfa0d746b64fd5db6de85995d85b471f5d20a
         cd ..
         pip install eko/
