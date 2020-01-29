@@ -74,6 +74,15 @@ jobs:
         conda config --add channels https://packages.nnpdf.science/conda
         conda install -y lhapdf
         conda install -y apfel
+    - name: Install eko
+      shell: bash -l {0}
+      run: |
+        conda activate yadism
+        #
+        cd eko
+        git checkout 278cfa0d746b64fd5db6de85995d85b471f5d20a
+        cd ..
+        pip install eko/
     # Pass with the linter
     - name: Lint with pylint
       shell: bash -l {0}
@@ -85,15 +94,6 @@ jobs:
         pylint src/*/*.py -E
         # For warnings instead return always zero
         pylint src/*/*.py --exit-zero
-    - name: Install eko
-      shell: bash -l {0}
-      run: |
-        conda activate yadism
-        #
-        cd eko
-        git checkout 278cfa0d746b64fd5db6de85995d85b471f5d20a
-        cd ..
-        pip install eko/
     - name: Install yadism
       shell: bash -l {0}
       run: |
