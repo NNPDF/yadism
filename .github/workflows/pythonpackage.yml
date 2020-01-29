@@ -30,20 +30,20 @@ jobs:
         repository: N3PDF/eko
         token: ${{ secrets.ALE_DIS_PAT }}
         path: eko
-    - name: Explore eko
-      run: |
-        cd eko
-        git log --graph --decorate --pretty=oneline --abbrev-commit --all
-        git fetch --unshallow
-        git log --graph --decorate --pretty=oneline --abbrev-commit --all
-        git describe --tags
-        cd ..
+    # - name: Explore eko
+    #   run: |
+    #     cd eko
+    #     git log --graph --decorate --pretty=oneline --abbrev-commit --all
+    #     git fetch --unshallow
+    #     git log --graph --decorate --pretty=oneline --abbrev-commit --all
+    #     git describe --tags
+    #     cd ..
     # fetch all tags & stuffs
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
     - name: Fetch tags
       run: git fetch --unshallow
-    - name: Describe dis
-      run: git describe --tags
+    # - name: Describe dis
+    #   run: git describe --tags
     - uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
@@ -55,43 +55,55 @@ jobs:
     #   - both python packages
     #   - and non-python (lhapdf, apfel
     # - deploying
-    - name: Run conda recipe
-      shell: bash -l {0}
-      run: |
-        conda activate yadism
-        conda install -y conda-build
-        .ciscripts/build-deploy-linux.sh
+    # - name: Run conda recipe
+    #   shell: bash -l {0}
+    #   run: |
+    #     conda activate yadism
+    #     conda install -y conda-build
+    #     .ciscripts/build-deploy-linux.sh
 
     # ALTERNATIVE
     # it is also possible to do the whole job without the conda-recipe
     # still installing 'apfel' and 'lhapdf' with conda
 
-    # - name: Install apfel and lhapdf with conda
-    #   shell: bash -l {0}
-    #   run: |
-    #     conda activate yadism
-    #     conda config --add channels https://packages.nnpdf.science/conda
-    #     conda install -y lhapdf
-    #     conda install -y apfel
+    - name: Install apfel and lhapdf with conda
+      shell: bash -l {0}
+      run: |
+        conda activate yadism
+        #
+        conda config --add channels https://packages.nnpdf.science/conda
+        conda install -y lhapdf
+        conda install -y apfel
     # Pass with the linter
-    # - name: Lint with pylint
-    #   shell: bash -l {0}
-    #   run: |
-    #     conda activate yadism
-    #
-    #     conda install -y pylint
-    #     # Search for actual errors
-    #     pylint src/*/*.py -E
-    #     # For warnings instead return always zero
-    #     pylint src/*/*.py --exit-zero
-    # - name: Install yadism
-    #   shell: bash -l {0}
-    #   run: |
-    #     conda activate yadism
-    #     pip install .
-    # - name: Test yadism
-    #   shell: bash -l {0}
-    #   run: |
-    #     conda activate yadism
-    #     pip install pytest
-    #     pytest
+    - name: Lint with pylint
+      shell: bash -l {0}
+      run: |
+        conda activate yadism
+        #
+        conda install -y pylint
+        # Search for actual errors
+        pylint src/*/*.py -E
+        # For warnings instead return always zero
+        pylint src/*/*.py --exit-zero
+    - name: Install eko
+      shell: bash -l {0}
+      run: |
+        conda activate yadism
+        #
+        cd eko
+        git checkout 278cfa0d746b64fd5db6de85995d85b471f5d20a
+        cd ..
+        pip install eko/
+    - name: Install yadism
+      shell: bash -l {0}
+      run: |
+        conda activate yadism
+        #
+        pip install .
+    - name: Test yadism
+      shell: bash -l {0}
+      run: |
+        conda activate yadism
+        #
+        pip install pytest
+        pytest
