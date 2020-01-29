@@ -106,4 +106,4 @@ jobs:
         conda activate yadism
         #
         pip install pytest
-        pytest
+        pytest --pyargs yadism
