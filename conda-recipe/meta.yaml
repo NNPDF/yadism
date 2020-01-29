@@ -35,9 +35,7 @@ test:
 build:
     number: 0
     detect_binary_files_with_prefix: True
-    # import CONDA_BUILD_SYSROOT from env variable for osx
-    script_env:
-      - CONDA_BUILD_SYSROOT # [osx]
+    script: "{{ PYTHON }} -m pip install . -vv"
 
 about:
     home: https://github.com/N3PDF/dis
