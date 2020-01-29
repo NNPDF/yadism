@@ -66,7 +66,7 @@ jobs:
     # it is also possible to do the whole job without the conda-recipe
     # still installing 'apfel' and 'lhapdf' with conda
 
-    - name: Install apfel and lhapdf with conda
+    - name: Install lhapdf and apfel with conda
       shell: bash -l {0}
       run: |
         conda activate yadism
@@ -83,6 +83,7 @@ jobs:
         git fetch --unshallow
         git checkout 278cfa0d746b64fd5db6de85995d85b471f5d20a
         cd ..
+        sudo apt-get install libgsl-dev
         pip install eko/
     # Pass with the linter
     - name: Lint with pylint
