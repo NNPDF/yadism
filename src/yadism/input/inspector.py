@@ -34,7 +34,7 @@ class DomainError(ValueError):
         The set of rules used to provide .
     """
 
-    def __init__(self, *, name, description, domain=None):
+    def __init__(self, *, name, description, known_as, domain=None, **kwargs):
         """Generates the error message to be included in the Traceback.
 
         It formats the provided fields in a single string, and stores it as
@@ -43,8 +43,8 @@ class DomainError(ValueError):
         .. todo::
             define the actual format
         """
-        self.name = name
-        self.args = (name + description,)
+        self.name = known_as
+        self.args = (name + known_as + description,)
 
 
 class Argument(abc.ABC):
@@ -61,7 +61,7 @@ class Argument(abc.ABC):
             setattr(self, k, v)
 
     @abc.abstractmethod
-    def check_value(*, value):
+    def check_value(self, *, value):
         """Perform the actual check .
 
         Parameters
@@ -72,7 +72,7 @@ class Argument(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def __raise_error():
+    def _raise_error(self):
         """Raise the error, preprocessing the message."""
         pass
 
@@ -80,25 +80,27 @@ class Argument(abc.ABC):
 class EnumArgument(Argument):
     """Short summary."""
 
-    def check_value(*, value):
+    def check_value(self, *, value):
         if value not in self.domain:
-            raise DomainError()
+            self._raise_error()
 
-    def __raise_error():
-        pass
+    def _raise_error(self):
+        raise DomainError(**self.__dict__)
 
 
 class RealArgument(Argument):
     """Short summary."""
 
-    def check_value(*, value):
+    def check_value(self, *, value):
+        print("ciao")
         pass
 
-    def __raise_error():
+    def _raise_error(self):
+        print("ciao")
         pass
 
 
-type_class_map = dict(enum=EnumArgument, real=RealArgument)
+type_class_map = {"enum": EnumArgument, "real": RealArgument}
 
 # ┌───────────────────────────┐
 # │ Cross Constraints Classes │
@@ -150,7 +152,7 @@ class Inspector:
         self.input_dir = os.path.dirname(os.path.realpath(__file__))
         self.user_inputs = user_inputs
 
-    def check_domains():
+    def check_domains(self):
         """Short summary.
 
         Returns
@@ -160,20 +162,20 @@ class Inspector:
 
         """
 
-        domain_file = os.path.join(self.input_dir, "domain.yaml")
+        domain_file = os.path.join(self.input_dir, "domains.yaml")
         with open(domain_file, "r") as file:
             domains = yaml.load(file)
 
         for dom_def in domains:
             # load checker with domain definition
-            checker = type_class_map[dom_def.type](dom_def)
+            checker = type_class_map[dom_def["type"]](**dom_def)
             # check value provided by user
-            try:  # @todo to be removed
-                checker.check_value(self.user_inputs[dom_def.name])
+            try:  # @todo `try` to be removed
+                checker.check_value(value=self.user_inputs[dom_def["known_as"]])
             except KeyError:
                 pass
 
-    def check_cross_constraints():
+    def check_cross_constraints(self):
         """Short summary.
 
         Returns

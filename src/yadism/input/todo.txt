@@ -20,3 +20,6 @@ make use of the values stored in available.yaml and default.yaml
 - add descriptions to all
 - add a field for the actual name as used in the theory and dis_observables
   (`internal_repr` or something like that)
+  - ATTENTION: the `internal_repr` is actually the one provided by the user, while
+    the `name` is the one used inside apfel
+    -> move to `known_as` (I still need something better)

@@ -24,7 +24,7 @@ setup(
         "numpy",
         "scipy",
         "numba",
-        "pyyaml",
+        "pyyaml>=5.1",
         "sphinx_rtd_theme",
         "recommonmark",
         "sphinxcontrib-bibtex",

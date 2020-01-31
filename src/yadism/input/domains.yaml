@@ -33,6 +33,7 @@
 - name: MassScheme
   description: |
     MassScheme
+  known_as: FNS
   type: enum
   domain:
     - ZM-VFNS
@@ -53,6 +54,7 @@
 - name: ProcessDIS
   description: >
     ProcessDIS
+  known_as: prDIS
   type: enum
   domain:
     - EM
@@ -62,13 +64,17 @@
 - name: PolarizationDIS
   description: |
     PolarizationDIS
+  known_as:
   type: real
   metavar: pol
   domain:
     - -1 <= pol <= 1
 
 - name: ProjectileDIS
+  description: |
+    ProjectileDIS
   type: enum
+  known_as:
   domain:
     - electron
     - positron
@@ -78,6 +84,7 @@
 - name: TargetDIS
   description: |
     TargetDIS
+  known_as:
   type: enum
   domain:
     - proton
@@ -89,6 +96,7 @@
 - name: SelectedCharge
   description: |
     SelectedCharge
+  known_as:
   type: enum
   domain:
     - down
@@ -102,6 +110,7 @@
 - name: ScVarProc
   description: |
     TargetDIS
+  known_as:
   type: real
   metavar: scvar
   domain:

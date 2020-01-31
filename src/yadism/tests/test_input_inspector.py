@@ -3,11 +3,30 @@
 Testing the input inspector, and the constraints
 """
 import inspect
+import os
 
-from yadism.input import Inspector, DomainError
+import yaml
+
+from yadism.input.inspector import Inspector, DomainError
 
 
-def test_inspector(theory, observables):
+def file_loader():
+    test_dir = os.path.dirname(__file__)
+
+    # read files
+    theory_file = os.path.join(test_dir, "data/theory1.yaml")
+    with open(theory_file, "r") as file:
+        theory = yaml.safe_load(file)
+    observables_file = os.path.join(test_dir, "data/dis_observables.yaml")
+    with open(observables_file, "r") as file:
+        dis_observables = yaml.safe_load(file)
+
+    return theory, dis_observables
+
+
+def test_inspector():
+    theory, observables = file_loader()
+
     insp = Inspector(theory)
     try:
         insp.check_domains()
@@ -19,7 +38,7 @@ def test_inspector(theory, observables):
         )
         assert False, msg
     except DomainError as de:
-        known_errors_names = [""]
+        known_errors_names = ["FNS"]
         assert de.name in known_errors_names
 
 
@@ -28,14 +47,4 @@ def test_():
 
 
 if __name__ == "__main__":
-    test_dir = os.path.dirname(__file__)
-
-    # read files
-    theory_file = os.path.join(test_dir, "data/theory1.yaml")
-    with open(theory_file, "r") as file:
-        theory = yaml.safe_load(file)
-    observables_file = os.path.join(test_dir, "data/dis_observables.yaml")
-    with open(observables_file, "r") as file:
-        dis_observables = yaml.safe_load(file)
-
     test_inspector(theory_file, observables_file)
