@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/N3PDF/dis/actions?query=workflow%3A%22yadism%20-%20Python%20package%22"><img alt="Tests" src="https://github.com/N3PDF/dis/workflows/yadism%20-%20Python%20package/badge.svg"></a>
+  <a href="https://github.com/N3PDF/dis/actions?query=workflow%3A%22yadism%22"><img alt="Tests" src="https://github.com/N3PDF/dis/workflows/yadism/badge.svg"></a>
 </p>
 
 # DIS
