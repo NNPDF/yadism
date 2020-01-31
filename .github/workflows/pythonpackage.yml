@@ -34,7 +34,7 @@ jobs:
     #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
     #   --> needed only for the conda-recipe
     - name: Fetch tags
-      run: git fetch --unshallow
+      run: git fetch --unshallow --no-recurse-submodules 
     # use an external action to setup miniconda
     #   - also setup a conda virtual environment named 'yadism'
     #
