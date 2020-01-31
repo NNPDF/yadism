@@ -1,0 +1,108 @@
+# Domain restrictions
+# -------------------
+#
+# In this file are stored the restrictions on the variables domain (i.e. the
+# actual domains are defined here).
+#
+# Syntax
+# ------
+# the following is a list of objects (dicts) each one containing the following
+# fields
+#
+# - name: is the name associate to the variable
+# - description: description of the variable and its domain
+# - type:
+#     define variable type, and its default domain (where applicable), available
+#     values are:
+#       - enum:
+#       - real:
+# - domain:
+#     list of conditions applied on the domain, the exact semantics depends on
+#     the type of the variable
+#       - enum: list of available values
+#       - real: list of conditions, implicit OR, while AND should be explicit
+# - metavar: (optional)
+#     the name is used to represent the variable in the rules specified in the
+#     'domain' field
+#
+#
+# TODO:
+#  - extend to further APFEL restrictions
+
+
+- name: MassScheme
+  description: |
+    MassScheme
+  type: enum
+  domain:
+    - ZM-VFNS
+    - FFNS      # (default NF=3)
+    - FFNS3
+    - FFNS4
+    - FFNS5
+    - FFNS6
+    - FFN0      # (default NF=3)
+    - FFN03
+    - FFN04
+    - FFN05
+    - FFN06
+    - FONLL-A
+    - FONLL-B
+    - FONLL-C
+
+- name: ProcessDIS
+  description: >
+    ProcessDIS
+  type: enum
+  domain:
+    - EM
+    - NC
+    - CC
+
+- name: PolarizationDIS
+  description: |
+    PolarizationDIS
+  type: real
+  metavar: pol
+  domain:
+    - -1 <= pol <= 1
+
+- name: ProjectileDIS
+  type: enum
+  domain:
+    - electron
+    - positron
+    - neutrino
+    - antineutrino
+
+- name: TargetDIS
+  description: |
+    TargetDIS
+  type: enum
+  domain:
+    - proton
+    - neutron
+    - isoscalar
+    - iron
+    - lead
+
+- name: SelectedCharge
+  description: |
+    SelectedCharge
+  type: enum
+  domain:
+    - down
+    - up
+    - strange
+    - charm
+    - bottom
+    - top
+    - all
+
+- name: ScVarProc
+  description: |
+    TargetDIS
+  type: real
+  metavar: scvar
+  domain:
+    - 0 <= scvar <= 1

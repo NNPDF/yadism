@@ -8,3 +8,15 @@
 #           avoiding reporting input (they are exactly the one put in by the user)
 #
 # make use of the values stored in available.yaml and default.yaml
+
+
+class Argument:
+    pass
+
+
+class EnumArgument(Argument):
+    pass
+
+
+class RealArgument(Argument):
+    pass
