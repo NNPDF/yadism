@@ -22,18 +22,18 @@ import yaml
 class DomainError(ValueError):
     """Error raised while checking inputs (single argument violation).
 
+    .. todo::
+        format domain properly according the type, this should be done by
+        error Argument subclasses before raising.
+
     Parameters
     ----------
     name : str
         Name of the input variable.
     description : str
         Domain description provided.
-    domain : :obj:`list`, optional
+    domain : list, optional
         The set of rules used to provide .
-
-    .. todo::
-        format domain properly according the type, this should be done by
-        error Argument subclasses before raising.
     """
 
     def __init__(self, *, name, description, domain=None):
@@ -42,7 +42,7 @@ class DomainError(ValueError):
         It formats the provided fields in a single string, and stores it as
         first element of ``args`` attribute.
 
-        ..todo::
+        .. todo::
             define the actual format
         """
         self.args = (name + description,)
@@ -96,6 +96,8 @@ class RealArgument(Argument):
         pass
 
 
+type_class_map = dict(enum=EnumArgument, real=RealArgument)
+
 # ┌───────────────────────────┐
 # │ Cross Constraints Classes │
 # └───────────────────────────┘
@@ -105,11 +107,19 @@ class CrossConstraintError(ValueError):
     """Error raised while checking inputs (more arguments involved)."""
 
     def __init__(self):
-        """Generate the error message to be included in the Traceback."""
+        """Generate the error message to be included in the Traceback.
+
+        It formats the provided fields in a single string, and stores it as
+        first element of ``args`` attribute.
+
+        ..todo::
+            * define the arguments involved
+            * define the actual format
+        """
         pass
 
 
-class CrossConstraint:
+class CrossConstraint(abc.ABC):
     pass
 
 
@@ -119,11 +129,14 @@ class CrossConstraint:
 
 
 class Inspector:
-    """Short summary.
+    """Instantiate the runner that goes through all constraints.
 
+    Use :func:`check_domains` and :func:`check_cross_constraints` to run the
+    check defined respectively in ``domains.yaml`` and
+    ``cross_constraints.yaml``.
     """
 
-    def __init__():
+    def __init__(self, user_inputs):
         """Short summary.
 
         Returns
@@ -133,7 +146,7 @@ class Inspector:
 
         """
         self.input_dir = os.path.dirname(os.path.realpath(__file__))
-        pass
+        self.user_inputs = user_inputs
 
     def check_domains():
         """Short summary.
@@ -148,6 +161,12 @@ class Inspector:
         domain_file = os.path.join(self.input_dir, "domain.yaml")
         with open(domain_file, "r") as file:
             domains = yaml.load(file)
+
+        for dom_def in domains:
+            # load checker with domain definition
+            checker = type_class_map[dom_def.type](dom_def)
+            # check value provided by user
+            checker.check_value(self.user_inputs[dom_def.name])
 
     def check_cross_constraints():
         """Short summary.
