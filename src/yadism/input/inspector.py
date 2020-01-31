@@ -1,13 +1,11 @@
-# The plan is:
-#     - restrict domains of input fields
-#     - implement further restrictions (cross-fields)
-#     - apply default
-#     - suggest fallbacks
-#         - probably is better not to directly implement fallbacks as in APFEL and
-#           raise an error consistently if something is not allowed, completely
-#           avoiding reporting input (they are exactly the one put in by the user)
-#
-# make use of the values stored in available.yaml and default.yaml
+# -*- coding: utf-8 -*-
+"""
+The purpose of this module is to provide a runner that implements the semantics
+for the input restrictions defined in the following files:
+    * ``domains.yaml``: in which all the domains restrictions are defined
+    * ``cross_constraints.yaml``: in which further restrictions are defined,
+        each one involving more than one input field
+"""
 
 import abc
 import os
@@ -45,6 +43,7 @@ class DomainError(ValueError):
         .. todo::
             define the actual format
         """
+        self.name = name
         self.args = (name + description,)
 
 
@@ -83,7 +82,7 @@ class EnumArgument(Argument):
 
     def check_value(*, value):
         if value not in self.domain:
-            raise ArgumentError()
+            raise DomainError()
 
     def __raise_error():
         pass
@@ -93,6 +92,9 @@ class RealArgument(Argument):
     """Short summary."""
 
     def check_value(*, value):
+        pass
+
+    def __raise_error():
         pass
 
 
@@ -166,7 +168,10 @@ class Inspector:
             # load checker with domain definition
             checker = type_class_map[dom_def.type](dom_def)
             # check value provided by user
-            checker.check_value(self.user_inputs[dom_def.name])
+            try:  # @todo to be removed
+                checker.check_value(self.user_inputs[dom_def.name])
+            except KeyError:
+                pass
 
     def check_cross_constraints():
         """Short summary.
@@ -177,3 +182,4 @@ class Inspector:
             Description of returned object.
 
         """
+        pass

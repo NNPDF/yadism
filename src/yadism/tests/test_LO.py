@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-#
-# Testing the loading functions
+"""
+Testing the loading of LO functions and compare the results with those from
+APFEL DIS module.
+"""
+
 import os
 from pprint import pprint
 
@@ -8,10 +11,10 @@ import yaml
 import numpy as np
 import lhapdf
 
-import yadism.tests.toyLH as toyLH
+import yadism.tests.aux.toyLH as toyLH
 import yadism.basis_rotation as rot
 from yadism.runner import run_dis
-from yadism.tests.apfel_import import load_apfel
+from yadism.tests.aux.apfel_import import load_apfel
 
 
 def test_loader():
@@ -20,10 +23,10 @@ def test_loader():
     test_dir = os.path.dirname(__file__)
 
     # read files
-    theory_file = os.path.join(test_dir, "theory.yaml")
+    theory_file = os.path.join(test_dir, "data/theory.yaml")
     with open(theory_file, "r") as file:
         theory = yaml.safe_load(file)
-    observables_file = os.path.join(test_dir, "dis_observables.yaml")
+    observables_file = os.path.join(test_dir, "data/dis_observables.yaml")
     with open(observables_file, "r") as file:
         dis_observables = yaml.safe_load(file)
 

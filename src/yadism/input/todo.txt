@@ -1,0 +1,22 @@
+# inspector.py
+
+The plan is:
+   - restrict domains of input fields
+   - implement further restrictions (cross-fields)
+   - apply default
+   - suggest fallbacks
+       - probably is better not to directly implement fallbacks as in APFEL and
+         raise an error consistently if something is not allowed, completely
+         avoiding reporting input (they are exactly the one put in by the user)
+make use of the values stored in available.yaml and default.yaml
+
+- during exceptions propagate the `internal_repr` instead of the name
+- raise an exception if there is a restriction and the corresponding argument
+  is missing in the user input (after implementing internal_repr, otherwise
+  it will be plenty of errors)
+
+# domains.yaml
+
+- add descriptions to all
+- add a field for the actual name as used in the theory and dis_observables
+  (`internal_repr` or something like that)
