@@ -1,7 +1,17 @@
-# inspector.py
+# Input subpackage
+
+## inspector.py
+
+### todo
+
+- document RealArgument
+- format RealArgument domain in _raise_error
+- implement CrossConstraint
+  - see cross_constraints.yaml
+
+### plan
 
 The plan is:
-   - restrict domains of input fields
    - implement further restrictions (cross-fields)
    - apply default
    - suggest fallbacks
@@ -10,16 +20,20 @@ The plan is:
          avoiding reporting input (they are exactly the one put in by the user)
 make use of the values stored in available.yaml and default.yaml
 
-- during exceptions propagate the `internal_repr` instead of the name
+### lower priority
+
 - raise an exception if there is a restriction and the corresponding argument
   is missing in the user input (after implementing internal_repr, otherwise
   it will be plenty of errors)
 
-# domains.yaml
+
+## cross_constraints.yaml
+
+### domains.yaml
 
 - add descriptions to all
 - add a field for the actual name as used in the theory and dis_observables
   (`internal_repr` or something like that)
   - ATTENTION: the `internal_repr` is actually the one provided by the user, while
     the `name` is the one used inside apfel
-    -> move to `known_as` (I still need something better)
+    -> moved to `known_as` (I still need something better)
