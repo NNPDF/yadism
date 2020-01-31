@@ -31,7 +31,7 @@
 
 
 - name: MassScheme
-  description: |
+  description: >
     MassScheme
   known_as: FNS
   type: enum
@@ -62,7 +62,7 @@
     - CC
 
 - name: PolarizationDIS
-  description: |
+  description: >
     PolarizationDIS
   known_as:
   type: real
@@ -71,7 +71,7 @@
     - -1 <= pol <= 1
 
 - name: ProjectileDIS
-  description: |
+  description: >
     ProjectileDIS
   type: enum
   known_as:
@@ -82,7 +82,7 @@
     - antineutrino
 
 - name: TargetDIS
-  description: |
+  description: >
     TargetDIS
   known_as:
   type: enum
@@ -94,7 +94,7 @@
     - lead
 
 - name: SelectedCharge
-  description: |
+  description: >
     SelectedCharge
   known_as:
   type: enum
@@ -108,7 +108,7 @@
     - all
 
 - name: ScVarProc
-  description: |
+  description: >
     TargetDIS
   known_as:
   type: real

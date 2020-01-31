@@ -92,12 +92,13 @@ class RealArgument(Argument):
     """Short summary."""
 
     def check_value(self, *, value):
-        print("ciao")
-        pass
+        exec(f"{self.metavar} = {value}")
+        for rule in self.domain:
+            if not eval(rule):
+                self._raise_error()
 
     def _raise_error(self):
-        print("ciao")
-        pass
+        raise DomainError(**self.__dict__)
 
 
 type_class_map = {"enum": EnumArgument, "real": RealArgument}
@@ -164,15 +165,17 @@ class Inspector:
 
         domain_file = os.path.join(self.input_dir, "domains.yaml")
         with open(domain_file, "r") as file:
-            domains = yaml.load(file)
+            domains = yaml.safe_load(file)
 
         for dom_def in domains:
             # load checker with domain definition
             checker = type_class_map[dom_def["type"]](**dom_def)
             # check value provided by user
-            try:  # @todo `try` to be removed
+            try:
                 checker.check_value(value=self.user_inputs[dom_def["known_as"]])
             except KeyError:
+                # @todo `try` to be replaced by an actual error: all the
+                # arguments must by supplied
                 pass
 
     def check_cross_constraints(self):
