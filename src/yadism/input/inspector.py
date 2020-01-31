@@ -9,6 +9,7 @@
 #
 # make use of the values stored in available.yaml and default.yaml
 
+import abc
 import os
 
 import yaml
@@ -18,27 +19,94 @@ import yaml
 # └───────────────────┘
 
 
-class Argument:
-    """Short summary."""
+class DomainError(ValueError):
+    """Error raised while checking inputs (single argument violation).
 
-    pass
+    Parameters
+    ----------
+    name : str
+        Name of the input variable.
+    description : str
+        Domain description provided.
+    domain : :obj:`list`, optional
+        The set of rules used to provide .
+
+    .. todo::
+        format domain properly according the type, this should be done by
+        error Argument subclasses before raising.
+    """
+
+    def __init__(self, *, name, description, domain=None):
+        """Generates the error message to be included in the Traceback.
+
+        It formats the provided fields in a single string, and stores it as
+        first element of ``args`` attribute.
+
+        ..todo::
+            define the actual format
+        """
+        self.args = (name + description,)
+
+
+class Argument(abc.ABC):
+    """Base Class for input variables' domains semantics definition.
+
+    Parameters
+    ----------
+    **kwargs
+        Domain specification, with the syntax defined in ``domains.yaml``."""
+
+    def __init__(self, **kwargs):
+        """Load ``kwargs`` as object attributes."""
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    @abc.abstractmethod
+    def check_value(*, value):
+        """Perform the actual check .
+
+        Parameters
+        ----------
+        value : type
+            Description of parameter `value`.
+        """
+        pass
+
+    @abc.abstractmethod
+    def __raise_error():
+        """Raise the error, preprocessing the message."""
+        pass
 
 
 class EnumArgument(Argument):
     """Short summary."""
 
-    pass
+    def check_value(*, value):
+        if value not in self.domain:
+            raise ArgumentError()
+
+    def __raise_error():
+        pass
 
 
 class RealArgument(Argument):
     """Short summary."""
 
-    pass
+    def check_value(*, value):
+        pass
 
 
 # ┌───────────────────────────┐
 # │ Cross Constraints Classes │
 # └───────────────────────────┘
+
+
+class CrossConstraintError(ValueError):
+    """Error raised while checking inputs (more arguments involved)."""
+
+    def __init__(self):
+        """Generate the error message to be included in the Traceback."""
+        pass
 
 
 class CrossConstraint:
