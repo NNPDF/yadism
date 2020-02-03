@@ -15,7 +15,7 @@ requirements:
         - numpy
         - python
         - numba
-        - sphinx # documentation
+        - sphinx
         - recommonmark
         - sphinx_rtd_theme
         - scipy
@@ -26,7 +26,7 @@ requirements:
 test:
     requires:
         - pytest
-        - coverage
+        - conda-build
 
     source_files:
         - "*"
