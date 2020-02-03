@@ -6,12 +6,12 @@ import copy
 
 import numpy as np
 
-from yadism import t_float
-from yadism.structure_functions.LO import f2_light_LO_singlet
-from yadism.interpolation import (
+from eko import t_float
+from eko.interpolation import (
     get_Lagrange_basis_functions,
     get_Lagrange_basis_functions_log,
 )
+from yadism.structure_functions.LO import f2_light_LO_singlet
 
 
 def get_configurations(observable, sq_charge_av):

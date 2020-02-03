@@ -10,10 +10,7 @@ setup(
     url="https://github.com/N3PDF/dis",
     package_dir={"": "src"},
     packages=find_packages("src"),
-    package_data = {
-        '' : ['*.yaml'],
-        'tests' : ['*'],
-        },
+    package_data={"": ["*.yaml"], "tests": ["*"],},
     zip_safe=False,
     classifiers=[
         "Operating System :: Unix",
@@ -23,6 +20,7 @@ setup(
         "Topic :: Scientific/Engineering :: Physics",
     ],
     install_requires=[
+        "eko",
         "numpy",
         "scipy",
         "numba",
