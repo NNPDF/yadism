@@ -6,6 +6,7 @@
 
 - implement CrossConstraint
   - see cross_constraints.yaml
+- implement Defaults
 
 ### plan
 
@@ -27,6 +28,9 @@ make use of the values stored in available.yaml and default.yaml
 
 ## cross_constraints.yaml
 
+- MassScheme is not a cross constraint, so it should be implemented in another
+  way (also because otherwise it would fail without any reason)
+
 ## domains.yaml
 
 - add all the parameters' (inputs) domains here
@@ -38,3 +42,13 @@ make use of the values stored in available.yaml and default.yaml
 ### lower priority
 
 - add descriptions to all
+
+## default.yaml
+
+- define syntax
+  - plain defaults (if we want to use them)
+  - conditional defaults
+    - useful for internals and some relations among inputs, but if they try
+      define a default for something that it is already defined differently it
+      should raise an error (in this way they become more similar to cross
+      constraints than actual defaults)

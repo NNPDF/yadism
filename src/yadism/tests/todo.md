@@ -5,3 +5,4 @@
 ### test_inspector
 
 - test for cross_constraints
+- test IntegerArgument

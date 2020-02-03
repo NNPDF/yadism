@@ -36,7 +36,9 @@ class DomainError(ValueError):
         The set of rules used to provide .
     """
 
-    def __init__(self, *, name, description, known_as, value, domain=None, **kwargs):
+    def __init__(
+        self, *, name, description, type, known_as, value, domain=None, **kwargs
+    ):
         """Generates the error message to be included in the Traceback.
 
         It formats the provided fields in a single string, and stores it as
@@ -47,6 +49,7 @@ class DomainError(ValueError):
                name: {known_as}
                description:
                DESCRIPTION
+               type: {type}
                domain:
                DOMAIN
                value provided: {value}
@@ -170,7 +173,26 @@ class RealArgument(Argument):
         raise DomainError(value=value, **self.__dict__)
 
 
-type_class_map = {"enum": EnumArgument, "real": RealArgument}
+class IntegerArgument(RealArgument):
+    """Short summary."""
+
+    def check_value(self, *, value):
+        value_or = value
+        value = int(value)
+        if (value_or - value) > 1e-3:
+            self._raise_error(value_or)
+        super(IntegerArgument, self).check_value(value=value)
+
+    def _raise_error(self, value):
+        self.domain.insert(0, "INTEGER")
+        super(IntegerArgument, self)._raise_error(value=value)
+
+
+type_class_map = {
+    "enum": EnumArgument,
+    "real": RealArgument,
+    "integer": IntegerArgument,
+}
 
 # ┌───────────────────────────┐
 # │ Cross Constraints Classes │
