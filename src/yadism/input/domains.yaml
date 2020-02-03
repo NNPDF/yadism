@@ -112,3 +112,24 @@
   metavar: scvar
   domain:
     - 0 <= scvar <= 1
+
+- name: Nf_FF
+  description: >
+    number of active flavours
+  known_as:
+  type: integer
+  metavar: nf
+  domain:
+    - 3 <= nf <= 6
+
+# should also be positive?
+- name: DeltaR
+  description: >
+    propagator correction
+
+    WARNING: The propagator correction cannot be equal to one
+    --> SetPropagatorCorrection(0d0)
+  known_as:
+  type: real
+  domain:
+    - DeltaR != 1.

@@ -11,7 +11,7 @@ from yadism.input.inspector import Inspector, DomainError
 from yadism.tests.aux.file_loader import FileLoader
 
 
-def test_inspector():
+def test_inspector_domains():
     fl = FileLoader()
 
     observables = fl.load_yaml("dis_observables.yaml")
@@ -41,4 +41,4 @@ def test_():
 
 
 if __name__ == "__main__":
-    test_inspector()
+    test_inspector_domains()

@@ -62,20 +62,88 @@
     - MassScheme
     - TMC
     - ProjectileDIS
-  description: >
-    WARNING: Computation of the SIA structure functions available only in the
-    ZM-VFNS.
-
-    WARNING: Computation of the SIA structure functions with target mass
-    corrections unavailable.
-
-    WARNING: Computation of the SIA structure functions possible only using
-    electrons projectiles.
+    - PolarizationDIS
+    - TargetDIS
+    - ProcessDIS
+  description:
+    - >
+      WARNING: Computation of the SIA structure functions available only in the
+      ZM-VFNS.
+    - >
+      WARNING: Computation of the SIA structure functions with target mass
+      corrections unavailable.
+    - >
+      WARNING: Computation of the SIA structure functions possible only using
+      electrons projectiles.
+    - >
+      WARNING: Computation of the SIA structure functions possible only for
+      unpolarized beams
+    - >
+      WARNING: Computation of the SIA structure functions possible only using
+      protons targets
+    - >
+      WARNING: Computation of the SIA structure functions not available for CC
+      processes
   rules:
-    - TimeLike and MassScheme != 'ZM-VNFS'
-    - TimeLike and TMC
-    - TimeLike and ProjectileDIS != 'electron'
+    - TimeLike and MassScheme == 'ZM-VNFS'
+    - TimeLike and not TMC
+    - TimeLike and ProjectileDIS == 'electron'
+    - TimeLike and PolarizationDIS == 0
+    - TimeLike and TargetDIS == 'proton'
+    - TimeLike and ProcessDIS != 'CC'
   hints:
-    - SetMassScheme("ZM-VFNS")
-    - EnableTargetMassCorrections(.false.)
-    - SetProjectileDIS("electron")
+    - ... setting ZM-VFNS - SetMassScheme("ZM-VFNS")
+    - ... switching off TMCs - EnableTargetMassCorrections(.false.)
+    - ... setting 'electron' projectile - SetProjectileDIS("electron")
+    - ... setting polarization to zero - SetPolarizationDIS(0d0)
+    - ... setting 'proton' targets - SetTargetDIS("proton")
+    - ... setting EM process - SetProcessDIS("EM")
+
+# Polarized
+
+- name: Polarized restrictions
+  involve:
+    - Polarized
+    - MassScheme
+    - TMC
+    - ipt
+  description:
+    - >
+      WARNING: Computation of polarized structure functions available only in
+      the ZM-VFNS
+    - >
+      WARNING: Computation of polarized structure functions with target mass
+      corrections unavailable
+    - >
+      WARNING: Computation of polarized structure functions not available at
+      NNLO accuracy
+  rules:
+    - Polarized and MassScheme == 'ZM-VNFS'
+    - Polarized and not TMC
+    - Polarized and ipt < 2
+  hints:
+    - ... setting ZM-VFNS - SetMassScheme("ZM-VFNS")
+    - ... switching off TMCs - EnableTargetMassCorrections(.false.)
+    - ... setting NLO accuracy - SetPerturbativeOrder(1)
+
+# IntrinsicCharm
+
+- name: Intrinsic Charm
+  involve:
+    - IntrinsicCharm
+    - Nf_FF
+  description: >
+    WARNING: Intrinsic charm enabled ... the number of light flavours in the
+    massive sector will be forced to be equal to three
+  rules:
+    - IntrinsicCharm and Nf_FF == 3
+  hints:
+    - ... setting Nf_FF - Nf_FF == 3
+
+# c         if(DampingFONLL)then
+# c            write(6,*) achar(27)//"[33m"//
+# c     1           "WARNING: If the intrinsic charm is enabled no FONLL",
+# c     2           " damping will be applied to the charm componet"
+# c            write(6,*) "         "
+# c     1              //achar(27)//"[0m"
+# c         endif

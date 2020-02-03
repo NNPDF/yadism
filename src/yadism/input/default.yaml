@@ -1,2 +1,108 @@
-# TODO
-#   - analyze APFEL defaults
+# default found in the cross constraints section:
+#
+# in some sense the defaults found in the cross constraints section are cross
+# defaults, so rules that set a value if another one is given as input, but
+# they don't conflict with any other input (either because they apply only if
+# not explicitly defined, or because it sets internal parameters)
+
+
+# Polarized - perturbative order
+- name: Polarized - perturbative order
+  involve:
+    - Polarized
+    - ipt
+  descriptio:
+  rules:
+  hints:
+    - Polarized and not ipt --> ipt = 1
+
+# MassScheme
+
+- name: Mass Scheme - FFN
+  involve:
+    - MassScheme
+    - Nf_FF
+  description:
+    # "WARNING: ",MassScheme(1:4)," is a FFN scheme"
+    - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '3'
+    - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '4'
+    - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '5'
+    - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '6'
+    - >
+      MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] not in ['3', '4',
+      '5', '6']
+  rules:
+  hints:
+    - ... setting NF = 3 FFNS PDF evolution --> Nf_FF = 3
+    - ... setting NF = 4 FFNS PDF evolution --> Nf_FF = 4
+    - ... setting NF = 5 FFNS PDF evolution --> Nf_FF = 5
+    - ... setting NF = 6 FFNS PDF evolution --> Nf_FF = 6
+    - ... setting NF = 3 FFNS PDF evolution --> Nf_FF = 3
+
+- name: Mass Scheme - VFN
+  involve:
+    - MassScheme
+    - Nf_FF
+    - ipt
+  description:
+    - "WARNING: ",MassScheme," is a VFN scheme"
+    - Nf_FF < 3 or Nf_FF > 6
+    - MassScheme = 'FONLL-A' - "WARNING FONLL-A is NLO scheme"
+    - MassScheme = 'FONLL-B' - "WARNING FONLL-B is NLO scheme"
+    - MassScheme = 'FONLL-C' - "WARNING FONLL-C is NNLO scheme"
+  rules:
+  hints:
+    - ... setting VFNS PDF evolution --> SetVFNS
+    - Nf_FF = 3
+    - ... setting NLO perturbative order --> SetPerturbativeOrder(1)
+    - ... setting NLO perturbative order --> SetPerturbativeOrder(1)
+    - ... setting NNLO perturbative order --> SetPerturbativeOrder(2)
+
+# DynScVar
+
+- name: DynScVar
+  involve:
+    - DynScVar
+    - krenQ
+    - kfacQ
+  description: >
+    WARNING: Dynamical scale variation enabled ... the initialization will be
+    done with factorization and renormalization scales set equal to Q (mu_R =
+    mu_F = Q)
+  rules:
+  hints:
+    - SetRenQRatio(1d0)
+    - SetFacQRatio(1d0)
+
+#       if(InWelcome.ne."done")        call EnableWelcomeMessage(.true.)
+#       if(InMassScheme.ne."done")     call SetMassScheme("ZM-VFNS")
+#       if(InProcessDIS.ne."done")     call SetProcessDIS("EM")
+#       if(InPolarizationDIS.ne."done")call SetPolarizationDIS(0d0)
+#       if(InProjectileDIS.ne."done")  call SetProjectileDIS("electron")
+#       if(InTargetDIS.ne."done")      call SetTargetDIS("proton")
+#       if(InSelectedCharge.ne."done") call SelectCharge("all")
+#       if(InKrenQ.ne."done")          call SetRenQRatio(1d0)
+#       if(InKfacQ.ne."done")          call SetFacQRatio(1d0)
+#       if(InDynScVar.ne."done")       call EnableDynamicalScaleVariations
+#      1                                    (.false.)
+#       if(InDampingFONLL.ne."done")   call EnableDampingFONLL(.true.)
+#       if(InDampPowerFONLL.ne."done") call SetDampingPowerFONLL(2,2,2)
+#       if(InTMC.ne."done")            call EnableTargetMassCorrections
+#      1                                                         (.false.)
+#       if(InIntrinsicCharm.ne."done") call EnableIntrinsicCharm(.false.)
+# *
+#       if(InMZ.ne."done")             call SetZMass(91.1876d0)
+#       if(InMW.ne."done")             call SetWMass(80.385d0)
+#       if(InMProton.ne."done")        call SetProtonMass(0.938272046d0)
+#       if(InSin2ThetaW.ne."done")     call SetSin2ThetaW(0.23126d0)
+#       if(InGFermi.ne."done")         call SetGFermi(1.1663787d-5)
+#       if(InCKM.ne."done")            call SetCKM(
+#      1                               0.97427d0, 0.22536d0, 0.00355d0,
+#      2                               0.22522d0, 0.97343d0, 0.04140d0,
+#      3                               0.00886d0, 0.04050d0, 0.99914d0)
+#       if(InDeltaR.ne."done")         call SetPropagatorCorrection(0d0)
+#       if(InEWCouplings.ne."done")    call SetEWCouplings(0d0,0d0,
+#      1                                                   0d0,0d0)
+#       if(InSFNLOQED.ne."done")       call EnableSFNLOQEDCorrections
+#      1                                                          (.true.)
+#       if(InScVarProc.ne."done")      call SetScaleVariationProcedure(0)
