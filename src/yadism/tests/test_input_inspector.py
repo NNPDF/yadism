@@ -16,7 +16,9 @@ def test_inspector():
 
     observables = fl.load_yaml("dis_observables.yaml")
 
-    theories = {"FNS": "theory1.yaml"}
+    # FNS -> example of `enum` type argument
+    # polDIS -> example of 'real' type argument
+    theories = {"FNS": "theory_input_fns.yaml", "polDIS": "theory_input_poldis.yaml"}
 
     for known_error_name, theory_file in theories.items():
         theory = fl.load_yaml(theory_file)
@@ -39,4 +41,4 @@ def test_():
 
 
 if __name__ == "__main__":
-    test_inspector(theory_file, observables_file)
+    test_inspector()

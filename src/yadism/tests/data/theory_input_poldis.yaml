@@ -5,7 +5,7 @@
 
 ID: 22
 PTO: 0
-FNS: "FFNS2"
+FNS: "FFNS"
 DAMP: 0
 IC: 0
 ModEv: "EXA"
@@ -47,3 +47,4 @@ EScaleVar: 1
 
 PDFSet: ToyLH
 prDIS: NC
+polDIS: 1.25

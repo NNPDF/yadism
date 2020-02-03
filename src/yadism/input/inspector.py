@@ -118,7 +118,10 @@ class EnumArgument(Argument):
             self._raise_error(value)
 
     def _raise_error(self, value):
-        """Wrapper for DomainError, pretty print `domain`."""
+        """Wrapper for DomainError, pretty print `domain`.
+
+        The domain is formatted as a dashed list.
+        """
         dom = list(map(str, self.domain))
         self.domain = "- " + "\n- ".join(dom)
         raise DomainError(value=value, **self.__dict__)
@@ -134,8 +137,7 @@ class RealArgument(Argument):
     def check_value(self, *, value):
         """Checks if `value` belongs to the domain.
 
-        It checks if `value` is in the list of the enumerated values available
-        for the ``type``.
+        It checks if `value` belongs to any interval available for the domain.
 
         Raises
         ------
@@ -159,7 +161,10 @@ class RealArgument(Argument):
             self._raise_error(value)
 
     def _raise_error(self, value):
-        """Wrapper for DomainError, pretty print `domain`."""
+        """Wrapper for DomainError, pretty print `domain`.
+
+        The domain is formatted as a dashed list of rules.
+        """
         dom = list(map(str, self.domain))
         self.domain = "- " + "\n- ".join(dom)
         raise DomainError(value=value, **self.__dict__)

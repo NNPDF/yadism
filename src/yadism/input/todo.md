@@ -4,8 +4,6 @@
 
 ### todo
 
-- document RealArgument
-- format RealArgument domain in _raise_error
 - implement CrossConstraint
   - see cross_constraints.yaml
 
@@ -29,11 +27,14 @@ make use of the values stored in available.yaml and default.yaml
 
 ## cross_constraints.yaml
 
-### domains.yaml
+## domains.yaml
+
+- add all the parameters' (inputs) domains here
+  - included the ones not present in the "theory"
+    - should be almost all (theory is mostly responsibility of 'eko')
+  - included arguments not present in APFEL
+    - or present in another way in APFEL
+
+### lower priority
 
 - add descriptions to all
-- add a field for the actual name as used in the theory and dis_observables
-  (`internal_repr` or something like that)
-  - ATTENTION: the `internal_repr` is actually the one provided by the user, while
-    the `name` is the one used inside apfel
-    -> moved to `known_as` (I still need something better)

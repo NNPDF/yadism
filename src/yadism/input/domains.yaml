@@ -25,9 +25,6 @@
 #     the name is used to represent the variable in the rules specified in the
 #     'domain' field
 #
-#
-# TODO:
-#  - extend to further APFEL restrictions
 
 
 - name: MassScheme
@@ -64,7 +61,7 @@
 - name: PolarizationDIS
   description: >
     PolarizationDIS
-  known_as:
+  known_as: polDIS
   type: real
   metavar: pol
   domain:
