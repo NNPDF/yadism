@@ -17,6 +17,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           persist-credentials: false
+      - name: Checkout submodules
+        uses: actions/checkout@v2
+        with:
+          repository: N3PDF/eko
+          token: ${{ secrets.ALE_DIS_PAT }}
+          path: eko
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
         with:
