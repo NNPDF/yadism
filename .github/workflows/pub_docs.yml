@@ -10,13 +10,13 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-      	uses: actions/checkout@v2
-      	with:
-      		persist-credentials: false
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - name: Build 🔨
-      	uses: ammaraskar/sphinx-action@master
-      	with:
-      		docs-folder: "docs/sphinx"
+        uses: ammaraskar/sphinx-action@master
+        with:
+          docs-folder: "docs/sphinx"
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
