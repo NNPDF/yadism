@@ -1,0 +1,21 @@
+name: Publish Sphinx docs to gh-pages
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 2
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ammaraskar/sphinx-action@master
+      with:
+        docs-folder: "docs/sphinx"
+    - uses: ad-m/github-push-action@master
+      with:
+        branch: gh-pages
+        directory: "docs/sphinx/build/html"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
