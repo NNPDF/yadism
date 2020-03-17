@@ -9,13 +9,18 @@ jobs:
       max-parallel: 2
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: ammaraskar/sphinx-action@master
-      with:
-        docs-folder: "docs/sphinx"
-    - uses: ad-m/github-push-action@master
-      with:
-        branch: gh-pages
-        directory: "docs/sphinx/build/html"
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout 🛎️
+      	uses: actions/checkout@v2
+      	with:
+      		persist-credentials: false
+      - name: Build 🔨
+      	uses: ammaraskar/sphinx-action@master
+      	with:
+      		docs-folder: "docs/sphinx"
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ALE_DIS_PAT }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: "docs/sphinx/build/html" # The folder the action should deploy.
 
