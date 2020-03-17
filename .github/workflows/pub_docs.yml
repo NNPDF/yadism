@@ -30,6 +30,7 @@ jobs:
       - name: Install package and build docs 📦
         run: |
           python -m pip install --upgrade pip
+          sudo apt-get install libgsl-dev
           cd eko
           pip install .
           cd ..
