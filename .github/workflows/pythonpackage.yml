@@ -99,4 +99,4 @@ jobs:
         conda activate yadism
         #
         pip install pytest
-        pytest --pyargs yadism
+        pytest --ignore eko
