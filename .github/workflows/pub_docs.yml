@@ -1,6 +1,9 @@
 name: Publish Sphinx docs to gh-pages
 
-on: push
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   deploy-ghpages:
