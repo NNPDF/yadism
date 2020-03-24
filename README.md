@@ -1,5 +1,6 @@
 <p align="center">
   <a href="https://github.com/N3PDF/dis/actions?query=workflow%3A%22yadism%22"><img alt="Tests" src="https://github.com/N3PDF/dis/workflows/yadism/badge.svg"></a>
+  <a href="https://github.com/N3PDF/dis/actions?query=workflow%3A%22docs%22"><img alt="Tests" src="https://github.com/N3PDF/dis/workflows/docs/badge.svg"></a>
 </p>
 
 # DIS
