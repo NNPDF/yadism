@@ -6,6 +6,9 @@
 # DIS
 Yet another DIS module.
 
+## Scope of the project
+Provide all necessary tools to compute the DIS structure functions and related object. This project is linked closely to [EKO](https://github.com/N3PDF/eko).
+
 ## Installation
 ```
 python setup.py install
@@ -16,5 +19,8 @@ The documentation style of this code follows closely the [numpy documentation gu
 
 Docs available at: https://n3pdf.github.io/dis/
 
-## Scope of the project
-Provide all necessary tools to compute the DIS structure functions and related object. This project is linked closely to [EKO](https://github.com/N3PDF/eko).
+## Tests
+To run test install the package and `pytest`.
+
+Then run `pytest` in the root directory (configurations are in `setup.cfg`).
+
