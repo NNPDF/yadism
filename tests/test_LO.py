@@ -28,8 +28,12 @@ def test_loader():
     observables_file = os.path.join(test_dir, "data/dis_observables.yaml")
     with open(observables_file, "r") as file:
         dis_observables = yaml.safe_load(file)
+
+    # =====================
     # execute DIS
     result = run_dis(theory, dis_observables)
+    # =====================
+
     # setup LHAPDF
     pdfset = theory.get("PDFSet", "ToyLH")
     if pdfset == "ToyLH":
@@ -48,9 +52,7 @@ def test_loader():
         )
         ph2pid = lambda k: k - 7
         ph = [0] + [pdfs.xfxQ2(ph2pid(k), x, Q2) for k in range(1, 14)]
-        useful = (
-            rot.QCDsinglet(ph) + rot.QCDT3(ph) * 3 / 4 + rot.QCDT8(ph) / 4 / x
-        )
+        useful = rot.QCDsinglet(ph) + rot.QCDT3(ph) * 3 / 4 + rot.QCDT8(ph) / 4 / x
 
         return useful
 
@@ -63,9 +65,9 @@ def test_loader():
         Q2 = kinematics["Q2"]
         x = kinematics["x"]
         # compute F2
-        singlet_vec = np.array([
-            get_useful(x, Q2, theory["NfFF"]) for x in result["xgrid"]
-        ])
+        singlet_vec = np.array(
+            [get_useful(x, Q2, theory["NfFF"]) for x in result["xgrid"]]
+        )
         f2_lo = np.dot(singlet_vec, kinematics["S"])
         # execute APFEL (if needed)
         if False:
