@@ -12,7 +12,7 @@ from yadism.structure_functions.LO import f2_light_LO_quark
 
 def get_configurations(observable, sq_charge_av):
     def singlet(x: float, Q2: float, polynom_f) -> float:
-        pref_f2_singlet = x * sq_charge_av
+        pref_f2_singlet = x
         return pref_f2_singlet * f2_light_LO_quark(x, Q2, polynom_f)
 
     def gluon(x: float, Q2: float, polynom_coeff: dict) -> float:
