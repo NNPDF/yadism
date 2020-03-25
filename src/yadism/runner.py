@@ -11,26 +11,20 @@ from eko.interpolation import (
     get_Lagrange_basis_functions,
     get_Lagrange_basis_functions_log,
 )
-from yadism.structure_functions.LO import f2_light_LO_singlet
+from yadism.structure_functions.LO import f2_light_LO_quark
 
 
 def get_configurations(observable, sq_charge_av):
-    def singlet(
-        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
-    ) -> t_float:
+    def singlet(x: t_float, Q2: t_float, polynom_coeff: dict) -> t_float:
         pref_f2_singlet = x * sq_charge_av
-        return pref_f2_singlet * f2_light_LO_singlet(
+        return pref_f2_singlet * f2_light_LO_quark(
             x, Q2, polynom_coeff, is_log_interpolation
         )
 
-    def gluon(
-        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
-    ) -> t_float:
+    def gluon(x: t_float, Q2: t_float, polynom_coeff: dict) -> t_float:
         return None
 
-    def nonsinglet(
-        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
-    ) -> t_float:
+    def nonsinglet(x: t_float, Q2: t_float, polynom_coeff: dict) -> t_float:
         return None
 
     return [("S", singlet), ("g", None), ("NS", None)]
@@ -57,8 +51,8 @@ def run_dis(theory: dict, dis_observables: dict) -> dict:
 
     # reading theory parameters
     n_f = theory["NfFF"]
-    if 6 <= n_f <= 2:
-        raise ValueError("Number of flavors 'NfFF' must be in the range [2,6].")
+    if 6 < n_f <= 2:
+        raise ValueError("Number of flavors 'NfFF' must be in the range [3,6].")
 
     # compute charge factors
     charges = np.array([-1 / 3, 2 / 3] * 3)
@@ -74,6 +68,8 @@ def run_dis(theory: dict, dis_observables: dict) -> dict:
         get_fnc = get_Lagrange_basis_functions
     xgrid = dis_observables["xgrid"]
     coeffs = get_fnc(xgrid, dis_observables["polynom_rank"])
+    print("==========")
+    print(coeffs)
 
     # setup parameters
 
