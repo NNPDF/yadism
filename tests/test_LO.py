@@ -54,7 +54,7 @@ def test_loader():
         # useful = rot.QCDsinglet(ph) + rot.QCDT3(ph) * 3 / 4 + rot.QCDT8(ph) / 4 / x
 
         # return useful
-        pdf_fl = lambda k: pdfs.xfxQ2(k, x, Q2) / x
+        pdf_fl = lambda k: pdfs.xfxQ2(k, x, Q2)  # / x
         return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
             pdf_fl(2) + pdf_fl(-2)
         ) * 4 / 9
@@ -71,7 +71,7 @@ def test_loader():
         singlet_vec = np.array(
             [get_useful(x, Q2, theory["NfFF"]) for x in result["xgrid"]]
         )
-        f2_lo = np.dot(singlet_vec, kinematics["S"])
+        f2_lo = np.dot(singlet_vec, kinematics["q"])
         # execute APFEL (if needed)
         if False:
             pass
