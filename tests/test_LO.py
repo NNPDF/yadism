@@ -3,15 +3,15 @@
 # Testing the loading functions
 import sys
 import os
-from pprint import pprint
+
+# from pprint import pprint
 
 import yaml
 import numpy as np
 import lhapdf
 import pytest
 
-import yadism.basis_rotation as rot
-from yadism.runner import run_dis
+from yadism.runner import Runner
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "aux"))
 import toyLH as toyLH
@@ -23,7 +23,7 @@ def test_loader():
 
     test_dir = os.path.dirname(__file__)
     # read files
-    theory_file = os.path.join(test_dir, "data/theory.yaml")
+    theory_file = os.path.join(test_dir, "data/theory_LO.yaml")
     with open(theory_file, "r") as file:
         theory = yaml.safe_load(file)
     observables_file = os.path.join(test_dir, "data/dis_observables.yaml")
@@ -32,7 +32,7 @@ def test_loader():
 
     # =====================
     # execute DIS
-    result = run_dis(theory, dis_observables)
+    runner = Runner(theory, dis_observables)
     # =====================
 
     # setup LHAPDF
@@ -42,22 +42,7 @@ def test_loader():
     else:
         pdfs = lhapdf.mkPDF(pdfset, 0)
 
-    def get_useful(x, Q2, Nf):
-        """Short summary.
-
-        d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
-        =
-        (S + 3*T3/4 + T8/4) * sq_charge_av
-        """
-        # ph2pid = lambda k: k - 7
-        # ph = [0] + [pdfs.xfxQ2(ph2pid(k), x, Q2) for k in range(1, 14)]
-        # useful = rot.QCDsinglet(ph) + rot.QCDT3(ph) * 3 / 4 + rot.QCDT8(ph) / 4 / x
-
-        # return useful
-        pdf_fl = lambda k: pdfs.xfxQ2(k, x, Q2)  # / x
-        return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
-            pdf_fl(2) + pdf_fl(-2)
-        ) * 4 / 9
+    result = runner.apply(pdfs)
 
     # setup APFEL
     apfel = load_apfel(theory)
@@ -68,10 +53,7 @@ def test_loader():
         Q2 = kinematics["Q2"]
         x = kinematics["x"]
         # compute F2
-        singlet_vec = np.array(
-            [get_useful(x, Q2, theory["NfFF"]) for x in result["xgrid"]]
-        )
-        f2_lo = np.dot(singlet_vec, kinematics["q"])
+        f2_lo = kinematics["result"]
         # execute APFEL (if needed)
         if False:
             pass
@@ -80,17 +62,17 @@ def test_loader():
             ref = apfel.F2light(x)
 
         assert pytest.approx(ref, rel=0.1) == f2_lo
-        res_tab.append([x, Q2, ref, f2_lo, ref / f2_lo])
+        # res_tab.append([x, Q2, ref, f2_lo, ref / f2_lo])
 
-    # print results
+    # # print results
 
-    print("\n------\n")
-    print("x", "Q2", "APFEL", "yadism", "ratio", sep="\t")
-    for x in res_tab:
-        for y in x:
-            print(y, "" if len(str(y)) > 7 else "\t", sep="", end="\t")
-        print()
-    print("\n------\n")
+    # print("\n------\n")
+    # print("x", "Q2", "APFEL", "yadism", "ratio", sep="\t")
+    # for x in res_tab:
+    # for y in x:
+    # print(y, "" if len(str(y)) > 7 else "\t", sep="", end="\t")
+    # print()
+    # print("\n------\n")
 
 
 if __name__ == "__main__":

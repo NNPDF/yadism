@@ -9,8 +9,10 @@ from . import EvaluatedStructureFunction
 from .F2 import ESF_F2
 from .FL import ESF_FL
 
+import abc
 
-class StructureFunction:
+
+class StructureFunction(abc.ABC):
     def __init__(self, name, ESF, interpolator):
         self._name = name
         self._interpolator = interpolator
@@ -23,22 +25,12 @@ class StructureFunction:
         for kinematics in kinematic_configs:
             self._ESFS.append(self._ESF(self._interpolator, kinematics))
 
-    def compute(self):
-        for esf in self._ESFS:
-            esf.compute()
-
     def get_output(self):
         output = []
         for esf in self._ESFS:
             output.append(esf.get_output())
 
         return output
-
-    # compute charge factors
-    # charges = np.array([-1 / 3, 2 / 3] * 3)
-    # sq_charge_av = np.average(charges[:n_f] ** 2)
-
-    # pref_f2_singlet = x
 
 
 class F2(StructureFunction):

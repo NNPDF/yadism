@@ -19,12 +19,19 @@ class EvaluatedStructureFunction(abc.ABC):
         self._cqv = []
         self._cgv = []
 
-    def compute(self):
+    def _compute(self):
+        # something to do?
+        if self._cqv:
+            # nothing to do
+            return
+
         # iterate all polynomials
         for polynomial_f in self._interpolator:
             self._cqv.append(self.light_LO_quark(polynomial_f))
 
     def get_output(self):
+        self._compute()
+
         output = {}
         output["x"] = self._x
         output["Q2"] = self._Q2
