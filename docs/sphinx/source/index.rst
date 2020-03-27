@@ -12,6 +12,12 @@ DIS documentation
     :members:
     :noindex:
 
+.. toctree::
+  :maxdepth: 4
+  :caption: Dev:
+
+  todo.rst
+
 
 Indices and tables
 ==================
