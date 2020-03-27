@@ -80,12 +80,14 @@ class Runner:
         self.f2 = F2(
             interpolator=self._interpolator,
             constants=self._constants,
+            threshold=self._threshold,
             alpha_s=self._alpha_s,
             pto=self._pto,
         )
         self.fL = FL(
             interpolator=self._interpolator,
             constants=self._constants,
+            threshold=self._threshold,
             alpha_s=self._alpha_s,
             pto=self._pto,
         )
@@ -136,11 +138,13 @@ class Runner:
         for kin in output["F2"]:
             # collect pdfs
             fq = []
+            fg = []
             for z in self._interpolator.xgrid:
                 fq.append(get_charged_sum(z, kin["Q2"]))
+                fg.append(pdfs.xfxQ2(21, z, kin["Q2"]))
 
             # contract with coefficient functions
-            result = np.dot(fq, kin["q"])
+            result = np.dot(fq, kin["q"]) + np.dot(fg, kin["g"])
             ret["F2"].append(dict(x=kin["x"], Q2=kin["Q2"], result=result))
 
         return ret

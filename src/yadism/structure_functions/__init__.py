@@ -21,10 +21,11 @@ class StructureFunction(abc.ABC):
         docs
     """
 
-    def __init__(self, name, ESF, *, interpolator, constants, alpha_s, pto):
+    def __init__(self, name, ESF, *, interpolator, constants, threshold, alpha_s, pto):
         self._name = name
         self._interpolator = interpolator
         self._constants = constants
+        self._threshold = threshold
         self._alpha_s = alpha_s
         self._pto = pto
         self._ESF = ESF

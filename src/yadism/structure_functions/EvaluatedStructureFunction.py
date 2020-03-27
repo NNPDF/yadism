@@ -25,6 +25,8 @@ class EvaluatedStructureFunction(abc.ABC):
         self._Q2 = kinematics["Q2"]
         self._cqv = []
         self._cgv = []
+        self._a_s = self._SF._alpha_s.a_s(self._Q2)
+        self._n_f = self._SF._threshold.get_areas(self._Q2)[-1]
 
     def _compute(self):
         """
@@ -37,12 +39,19 @@ class EvaluatedStructureFunction(abc.ABC):
             self._cqv = self._compute_component(
                 self.light_LO_quark, self.light_NLO_quark
             )
+        if not self._cgv:
+            # yes
+            self._cgv = self._compute_component(
+                self.light_LO_gluon, self.light_NLO_gluon
+            )
 
     def _compute_component(self, f_LO, f_NLO):
         ls = []
         # iterate all polynomials
         for polynomial_f in self._SF._interpolator:
             cv = f_LO(polynomial_f)
+            if self._SF._pto > 0:
+                cv += self._a_s * f_NLO(polynomial_f)
             ls.append(cv)
 
         return ls
