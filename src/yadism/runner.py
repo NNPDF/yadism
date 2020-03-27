@@ -10,6 +10,9 @@ from typing import Any
 import numpy as np
 
 from eko.interpolation import InterpolatorDispatcher
+from eko.constants import Constants
+from eko.thresholds import Threshold
+from eko.alpha_s import StrongCoupling
 
 from .output import Output
 from .structure_functions import F2, FL
@@ -42,8 +45,50 @@ class Runner:
             mode_N=False,
         )
 
-        self.f2 = F2(self._interpolator)
-        self.fL = FL(self._interpolator)
+        # ==========================
+        # create physics environment
+        # ==========================
+        self._constants = Constants()
+
+        FNS = theory["FNS"]
+        q2_ref = pow(theory["Q0"], 2)
+        if FNS != "FFNS":
+            qmc = theory["Qmc"]
+            qmb = theory["Qmb"]
+            qmt = theory["Qmt"]
+            threshold_list = pow(np.array([qmc, qmb, qmt]), 2)
+            nf = None
+        else:
+            nf = theory["NfFF"]
+            threshold_list = None
+        self._threshold = Threshold(
+            q2_ref=q2_ref, scheme=FNS, threshold_list=threshold_list, nf=nf
+        )
+
+        # Now generate the operator alpha_s class
+        alpha_ref = theory["alphas"]
+        q2_alpha = pow(theory["Qref"], 2)
+        self._alpha_s = StrongCoupling(
+            self._constants, alpha_ref, q2_alpha, self._threshold
+        )
+
+        self._pto = theory["PTO"]
+
+        # ==============================
+        # initialize structure functions
+        # ==============================
+        self.f2 = F2(
+            interpolator=self._interpolator,
+            constants=self._constants,
+            alpha_s=self._alpha_s,
+            pto=self._pto,
+        )
+        self.fL = FL(
+            interpolator=self._interpolator,
+            constants=self._constants,
+            alpha_s=self._alpha_s,
+            pto=self._pto,
+        )
 
         self._output = Output()
         self._output["xgrid"] = self._interpolator.xgrid

@@ -13,8 +13,8 @@ class ESF_FL(ESF):
         docs
     """
 
-    def __init__(self, interpolator, kinematics):
-        super(ESF_FL, self).__init__(interpolator=interpolator, kinematics=kinematics)
+    def __init__(self, SF, kinematics):
+        super(ESF_FL, self).__init__(SF, kinematics)
 
     def light_LO_quark(self, polynomial_f) -> float:
         """

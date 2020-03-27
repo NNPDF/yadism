@@ -14,13 +14,13 @@ class EvaluatedStructureFunction(abc.ABC):
         docs
     """
 
-    def __init__(self, interpolator, kinematics):
+    def __init__(self, SF, kinematics):
         if 1 < kinematics["x"] < 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1)")
         if kinematics["Q2"] < 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
 
-        self._interpolator = interpolator
+        self._SF = SF
         self._x = kinematics["x"]
         self._Q2 = kinematics["Q2"]
         self._cqv = []
@@ -32,13 +32,20 @@ class EvaluatedStructureFunction(abc.ABC):
             docs
         """
         # something to do?
-        if self._cqv:
-            # nothing to do
-            return
+        if not self._cqv:
+            # yes
+            self._cqv = self._compute_component(
+                self.light_LO_quark, self.light_NLO_quark
+            )
 
+    def _compute_component(self, f_LO, f_NLO):
+        ls = []
         # iterate all polynomials
-        for polynomial_f in self._interpolator:
-            self._cqv.append(self.light_LO_quark(polynomial_f))
+        for polynomial_f in self._SF._interpolator:
+            cv = f_LO(polynomial_f)
+            ls.append(cv)
+
+        return ls
 
     def get_output(self):
         """
@@ -56,6 +63,14 @@ class EvaluatedStructureFunction(abc.ABC):
 
     @abc.abstractclassmethod
     def light_LO_quark(self, polynomial_f):
+        """
+        .. todo::
+            docs
+        """
+        pass
+
+    @abc.abstractclassmethod
+    def light_LO_gluon(self, polynomial_f):
         """
         .. todo::
             docs
