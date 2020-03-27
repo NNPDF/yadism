@@ -99,7 +99,14 @@ class ESF_F2(ESF):
         TR = self._SF._constants.TF
 
         def cg(z):
-            return 2 * self._n_f * (split.pqg(z) * (np.log((1 - z) / z) - 4) + 3 * TR)
+            return (
+                2
+                * self._n_f
+                * (
+                    split.pqg(z, self._SF._constants) * (np.log((1 - z) / z) - 4)
+                    + 3 * TR
+                )
+            )
 
         cg_dvec = conv.DistributionVec(cg)
         return conv.convnd(self._x, cg_dvec, polynomial_f)[0]

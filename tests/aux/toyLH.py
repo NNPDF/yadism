@@ -41,7 +41,7 @@ def toyLHPDFs(id, x):
     xpdf[3] = xs
     xpdf[2] = xuv + xubar
     xpdf[1] = xdv + xdbar
-    xpdf[0] = xg
+    xpdf[21] = xpdf[0] = xg
     xpdf[-1] = xdbar
     xpdf[-2] = xubar
     xpdf[-3] = xsbar

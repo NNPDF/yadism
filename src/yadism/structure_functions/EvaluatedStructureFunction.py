@@ -26,7 +26,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._cqv = []
         self._cgv = []
         self._a_s = self._SF._alpha_s.a_s(self._Q2)
-        self._n_f = self._SF._threshold.get_areas(self._Q2)[-1]
+        self._n_f = self._SF._threshold.get_areas(self._Q2)[-1].nf
 
     def _compute(self):
         """
