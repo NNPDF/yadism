@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
 """
 This file contains the implementation of the DIS structure functions at LO.
+
+.. todo::
+    docs
 """
 
 from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
 
 
 class ESF_F2(ESF):
+    """
+    .. todo::
+        docs
+    """
+
     def __init__(self, interpolator, kinematics):
         super(ESF_F2, self).__init__(interpolator=interpolator, kinematics=kinematics)
 
@@ -29,6 +37,8 @@ class ESF_F2(ESF):
         float
             F2(x,Q^2)
 
+        .. todo::
+            docs
         """
 
         # leading order is just a delta function

@@ -21,6 +21,9 @@ replacing the format::
     ${basis1}2${basis2}  --> ${basis2}4${basis1}
 
 because in this way the matrix algebra is more clear.
+
+.. todo::
+    docs
 """
 
 import numpy as np
@@ -85,6 +88,8 @@ def QCDsinglet(ph):
     type
         Description of returned object.
 
+    .. todo::
+        docs
     """
 
     return TevQCD4ph[1] @ np.array(ph)
@@ -103,6 +108,8 @@ def QCDT3(ph):
     type
         Description of returned object.
 
+    .. todo::
+        docs
     """
 
     return TevQCD4ph[9] @ np.array(ph)
@@ -121,6 +128,8 @@ def QCDT8(ph):
     type
         Description of returned object.
 
+    .. todo::
+        docs
     """
 
     return TevQCD4ph[10] @ np.array(ph)
@@ -139,6 +148,8 @@ def QCDV3(ph):
     type
         Description of returned object.
 
+    .. todo::
+        docs
     """
 
     return TevQCD4ph[4] @ np.array(ph)

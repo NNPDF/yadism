@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+.. todo::
+    docs
 """
 import abc
 
@@ -7,6 +9,11 @@ import numpy as np
 
 
 class EvaluatedStructureFunction(abc.ABC):
+    """
+    .. todo::
+        docs
+    """
+
     def __init__(self, interpolator, kinematics):
         if 1 < kinematics["x"] < 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1)")
@@ -20,6 +27,10 @@ class EvaluatedStructureFunction(abc.ABC):
         self._cgv = []
 
     def _compute(self):
+        """
+        .. todo::
+            docs
+        """
         # something to do?
         if self._cqv:
             # nothing to do
@@ -30,6 +41,10 @@ class EvaluatedStructureFunction(abc.ABC):
             self._cqv.append(self.light_LO_quark(polynomial_f))
 
     def get_output(self):
+        """
+        .. todo::
+            docs
+        """
         self._compute()
 
         output = {}
@@ -41,4 +56,8 @@ class EvaluatedStructureFunction(abc.ABC):
 
     @abc.abstractclassmethod
     def light_LO_quark(self, polynomial_f):
+        """
+        .. todo::
+            docs
+        """
         pass

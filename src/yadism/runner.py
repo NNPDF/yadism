@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 This file contains the main loop for the DIS calculations.
+
+.. todo::
+    docs
 """
 
 import numpy as np
@@ -20,6 +23,9 @@ class Runner:
         Dictionary with the theory parameters for the evolution.
     dis_observables : dict
         Description of parameter `dis_observables`.
+
+    .. todo::
+        docs
     """
 
     def __init__(self, theory, dis_observables):
@@ -45,6 +51,10 @@ class Runner:
         self.fL.load(self._dis_observables.get("FL", []))
 
     def get_output(self):
+        """
+        .. todo::
+            docs
+        """
         self._output["F2"] = self.f2.get_output()
         self._output["FL"] = self.fL.get_output()
 
@@ -57,6 +67,8 @@ class Runner:
         dict
             dictionary with all computed processes
 
+        .. todo::
+            docs
         """
 
         output = self.get_output()
@@ -65,6 +77,9 @@ class Runner:
             """Short summary.
 
             d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
+
+            .. todo::
+                docs
             """
             pdf_fl = lambda k: pdfs.xfxQ2(k, z, Q2)  # / x
             return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
@@ -85,17 +100,40 @@ class Runner:
         return ret
 
     def apply(self, pdfs):
+        """
+        .. todo::
+            - implement
+            - docs
+        """
         return self(pdfs)
 
     def clear(self):
-        "Or 'restart' or whatever"
+        """
+        Or 'restart' or whatever
+
+        .. todo::
+            - implement
+            - docs
+        """
         pass
 
     def dump(self):
-        "If any output available ('computed') dump the current output on file"
+        """
+        If any output available ('computed') dump the current output on file
+
+        .. todo::
+            - implement
+            - docs
+        """
         pass
 
 
 def run_dis(theory: dict, dis_observables: dict) -> dict:
+    """
+    .. todo::
+        - decide the purpose
+        - implement
+        - docs
+    """
     runner = Runner(theory, dis_observables)
     return runner

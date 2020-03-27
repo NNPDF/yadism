@@ -3,6 +3,9 @@
 This subpackage contains the implementation of the DIS structure functions.
 
 The 3-loop reference is :cite:`Vermaseren:2005qc` which includes also the lower order results.
+
+.. todo::
+    docs
 """
 
 from . import EvaluatedStructureFunction
@@ -13,6 +16,11 @@ import abc
 
 
 class StructureFunction(abc.ABC):
+    """
+    .. todo::
+        docs
+    """
+
     def __init__(self, name, ESF, interpolator):
         self._name = name
         self._interpolator = interpolator
@@ -20,12 +28,20 @@ class StructureFunction(abc.ABC):
         self._ESFS = []
 
     def load(self, kinematic_configs):
+        """
+        .. todo::
+            docs
+        """
         self._ESFS = []
         # iterate F* configurations
         for kinematics in kinematic_configs:
             self._ESFS.append(self._ESF(self._interpolator, kinematics))
 
     def get_output(self):
+        """
+        .. todo::
+            docs
+        """
         output = []
         for esf in self._ESFS:
             output.append(esf.get_output())
@@ -34,10 +50,20 @@ class StructureFunction(abc.ABC):
 
 
 class F2(StructureFunction):
+    """
+    .. todo::
+        docs
+    """
+
     def __init__(self, interpolator):
         super(F2, self).__init__("F2", ESF_F2, interpolator)
 
 
 class FL(StructureFunction):
+    """
+    .. todo::
+        docs
+    """
+
     def __init__(self, interpolator):
         super(FL, self).__init__("FL", ESF_FL, interpolator)
