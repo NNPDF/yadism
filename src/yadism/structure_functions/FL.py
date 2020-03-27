@@ -22,3 +22,17 @@ class ESF_FL(ESF):
             docs
         """
         return 0
+
+    def light_NLO_quark(self, polynomial_f):
+        """
+        .. todo::
+            docs
+        """
+        pass
+
+    def light_NLO_gluon(self, polynomial_f):
+        """
+        .. todo::
+            docs
+        """
+        pass

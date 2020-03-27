@@ -43,3 +43,17 @@ class ESF_F2(ESF):
 
         # leading order is just a delta function
         return polynomial_f(self._x)
+
+    def light_NLO_quark(self, polynomial_f):
+        """
+        .. todo::
+            docs
+        """
+        pass
+
+    def light_NLO_gluon(self, polynomial_f):
+        """
+        .. todo::
+            docs
+        """
+        pass

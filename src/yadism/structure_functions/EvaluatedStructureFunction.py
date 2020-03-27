@@ -61,3 +61,19 @@ class EvaluatedStructureFunction(abc.ABC):
             docs
         """
         pass
+
+    @abc.abstractclassmethod
+    def light_NLO_quark(self, polynomial_f):
+        """
+        .. todo::
+            docs
+        """
+        pass
+
+    @abc.abstractclassmethod
+    def light_NLO_gluon(self, polynomial_f):
+        """
+        .. todo::
+            docs
+        """
+        pass
