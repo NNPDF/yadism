@@ -19,14 +19,14 @@ import toyLH as toyLH
 from apfel_import import load_apfel
 
 
-def test_LO():
-    theory, dis_observables = load_runcards("theory_LO.yaml", "dis_observables.yaml")
-    run_against_apfel(theory, dis_observables)
-
-
-# def test_NLO():
-# theory, dis_observables = load_runcards("theory_NLO.yaml", "dis_observables.yaml")
+# def test_LO():
+# theory, dis_observables = load_runcards("theory_LO.yaml", "dis_observables.yaml")
 # run_against_apfel(theory, dis_observables)
+
+
+def test_NLO():
+    theory, dis_observables = load_runcards("theory_NLO.yaml", "dis_observables.yaml")
+    run_against_apfel(theory, dis_observables)
 
 
 def load_runcards(theory_filename, observables_filename):
@@ -70,7 +70,7 @@ def run_against_apfel(theory, dis_observables):
         Q2 = kinematics["Q2"]
         x = kinematics["x"]
         # compute F2
-        f2_lo = kinematics["result"]
+        f2 = kinematics["result"]
         # execute APFEL (if needed)
         if False:
             pass
@@ -79,20 +79,25 @@ def run_against_apfel(theory, dis_observables):
             ref = apfel.F2light(x)
 
         # assert pytest.approx(ref, rel=0.1) == f2_lo
-        res_tab.append([x, Q2, ref, f2_lo, ref / f2_lo])
+        res_tab.append([x, Q2, ref, f2, (ref / f2 - 1.0) * 100])
 
     print_comparison_table(res_tab)
 
 
 def print_comparison_table(res_tab):
+    import pandas as pd
+
+    res_tab = pd.DataFrame(res_tab)
+    res_tab.columns = ["x", "Q2", "APFEL", "yadism", "rel_err[%]"]
     # print results
 
     print("\n------\n")
-    print("x", "Q2", "APFEL", "yadism", "ratio", sep="\t")
-    for x in res_tab:
-        for y in x:
-            print(y, "" if len(str(y)) > 7 else "\t", sep="", end="\t")
-        print()
+    # print("x", "Q2", "APFEL", "yadism", "rel_err[%]", sep="\t")
+    # for x in res_tab:
+    # for y in x:
+    # print(y, "" if len(str(y)) > 7 else "\t", sep="", end="\t")
+    # print()
+    print(res_tab)
     print("\n------\n")
 
 

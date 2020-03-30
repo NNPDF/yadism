@@ -144,7 +144,7 @@ class Runner:
                 fg.append(pdfs.xfxQ2(21, z, kin["Q2"]))
 
             # contract with coefficient functions
-            result = np.dot(fq, kin["q"]) + np.dot(fg, kin["g"])
+            result = np.dot(fq, kin["q"]) + 2 / 9 * np.dot(fg, kin["g"])
             ret["F2"].append(dict(x=kin["x"], Q2=kin["Q2"], result=result))
 
         return ret
