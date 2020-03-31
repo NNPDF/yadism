@@ -9,7 +9,7 @@ This file contains the implementation of the DIS structure functions at LO.
 import numpy as np
 
 from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
-from . import splitting_functions as split, convolution as conv
+from . import splitting_functions as split
 
 
 class ESF_F2(ESF):
@@ -21,7 +21,7 @@ class ESF_F2(ESF):
     def __init__(self, SF, kinematics):
         super(ESF_F2, self).__init__(SF, kinematics)
 
-    def light_LO_quark(self, polynomial_f) -> float:
+    def light_LO_quark(self) -> float:
         """Computes the singlet part of the leading order F2 structure function.
 
         Implements equation 4.2 of :cite:`Vermaseren:2005qc`.
@@ -32,8 +32,6 @@ class ESF_F2(ESF):
             Bjorken x
         Q2 : float
             squared(!) momentum transfer
-        polynom_f : func
-            interpolation polynomial
 
         Returns
         -------
@@ -45,16 +43,16 @@ class ESF_F2(ESF):
         """
 
         # leading order is just a delta function
-        return polynomial_f(self._x)
+        return lambda z: 0, lambda z: 1
 
-    def light_LO_gluon(self, polynomial_f) -> float:
+    def light_LO_gluon(self) -> float:
         """
         .. todo::
             docs
         """
         return 0
 
-    def light_NLO_quark(self, polynomial_f):
+    def light_NLO_quark(self):
         """
         regular
         delta
@@ -85,10 +83,9 @@ class ESF_F2(ESF):
         def cq_logomx(z):
             return 4 * CF
 
-        cq_dvec = conv.DistributionVec(cq_reg, cq_delta, cq_omx, cq_logomx)
-        return conv.convnd(self._x, cq_dvec, polynomial_f)[0]
+        return cq_reg, cq_delta, cq_omx, cq_logomx
 
-    def light_NLO_gluon(self, polynomial_f):
+    def light_NLO_gluon(self):
         """
         vogt page 21
 
@@ -108,5 +105,4 @@ class ESF_F2(ESF):
                 )
             )
 
-        cg_dvec = conv.DistributionVec(cg)
-        return conv.convnd(self._x, cg_dvec, polynomial_f)[0]
+        return cg

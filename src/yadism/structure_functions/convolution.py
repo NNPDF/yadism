@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Define DistributionVec and its API.
+
 .. todo::
     docs
 """
@@ -17,11 +18,30 @@ class DistributionVec:
         - (log(1-x)/(1-x))_+
     """
 
+    __names = ["regular", "delta", "omx", "logomx"]
+
     def __init__(self, regular, delta=None, omx=None, logomx=None):
-        self._regular = regular
-        self._delta = delta if delta else lambda x: 0
-        self._omx = omx if omx else lambda x: 0
-        self._logomx = logomx if logomx else lambda x: 0
+        try:
+            comp_list = [x for x in regular]
+            for i in range(len(self.__names) - len(regular)):
+                comp_list.append(None)
+        except TypeError:
+            comp_list = [regular, delta, omx, logomx]
+
+        components = zip(self.__names, comp_list)
+
+        for name, component in components:
+            if callable(component):
+                component_func = component
+            elif component is None:
+                component_func = lambda x: 0
+            else:
+                # if component is None:
+                # __import__("pdb").set_trace()
+                f = float(component)
+                component_func = lambda x: f
+
+            setattr(self, f"_{name}", component_func)
 
     def __getitem__(self, key):
         if key == 0:
@@ -38,55 +58,54 @@ class DistributionVec:
     def __iter__(self):
         return NotImplemented
 
+    def convnd(self, x, pdf_func):
+        """TODO: Docstring for convnd.
 
-def convnd(x, coeff_dvec, pdf_func):
-    """TODO: Docstring for convnd.
+        Parameters
+        ----------
+        self : TODO
+        x : TODO
+        pdf : TODO
 
-    Parameters
-    ----------
-    x : TODO
-    coeff_dvec : TODO
-    pdf : TODO
+        Returns
+        -------
+        TODO
 
-    Returns
-    -------
-    TODO
+        """
 
-    """
+        # providing integrands functions and addends
+        # ------------------------------------------
 
-    # providing integrands functions and addends
-    # ------------------------------------------
+        # plus distribution test function
+        __pd_tf = lambda z, n: self[n](z) * pdf_func(x / z) / z
 
-    # plus distribution test function
-    __pd_tf = lambda z, n: coeff_dvec[n](z) * pdf_func(x / z) / z
+        integrands = [
+            lambda z: self[0](z) * pdf_func(x / z) / z,
+            0.0,
+            lambda z: (__pd_tf(z, 2) - __pd_tf(1, 2)) / (1 - z),
+            lambda z: (__pd_tf(z, 3) - __pd_tf(1, 3)) * np.log(1 - z) / (1 - z),
+        ]
 
-    integrands = [
-        lambda z: coeff_dvec[0](z) * pdf_func(x / z) / z,
-        0.0,
-        lambda z: (__pd_tf(z, 2) - __pd_tf(1, 2)) / (1 - z),
-        lambda z: (__pd_tf(z, 3) - __pd_tf(1, 3)) * np.log(1 - z) / (1 - z),
-    ]
+        addends = [
+            0.0,
+            self[1](1) * pdf_func(x),
+            self[2](1) * pdf_func(x) * np.log(1 - x),
+            self[3](1) * pdf_func(x) * np.log(1 - x) ** 2 / 2,
+        ]
 
-    addends = [
-        0.0,
-        coeff_dvec[1](1) * pdf_func(x),
-        coeff_dvec[2](1) * pdf_func(x) * np.log(1 - x),
-        coeff_dvec[3](1) * pdf_func(x) * np.log(1 - x) ** 2 / 2,
-    ]
+        # actual convolution
+        # ------------------
 
-    # actual convolution
-    # ------------------
+        res = 0.0
+        err = 0.0
 
-    res = 0.0
-    err = 0.0
+        for i, a in zip(integrands, addends):
+            if callable(i):
+                r, e = scipy.integrate.quad(
+                    i, x, 1.0, points=[x, 1.0]
+                )  # TODO: take care of both limits
+                res += r
+                err += e ** 2
+            res += a
 
-    for i, a in zip(integrands, addends):
-        if callable(i):
-            r, e = scipy.integrate.quad(
-                i, x, 1.0, points=[x, 1.0]
-            )  # TODO: take care of both limits
-            res += r
-            err += e ** 2
-        res += a
-
-    return res, np.sqrt(err)
+        return res, np.sqrt(err)
