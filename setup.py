@@ -23,6 +23,7 @@ setup(
         "eko",
         "numpy",
         "scipy",
+        "pandas",
         "numba",
         "pyyaml",
         "sphinx_rtd_theme",
@@ -30,4 +31,5 @@ setup(
         "sphinxcontrib-bibtex",
     ],
     python_requires=">=3.7",
+    # entry_points={"console_scripts": ["run-dis=yadism.runner:run_dis"],},
 )
