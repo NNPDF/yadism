@@ -23,6 +23,7 @@ setup(
         "eko",
         "numpy",
         "scipy",
+        "pandas",
         "numba",
         "pyyaml",
         "sphinx_rtd_theme",
