@@ -69,7 +69,7 @@ class ESF_F2(ESF):
 
         def cq_reg(z):
             # fmt: off
-            return z * (
+            return CF*(
                 - 2 * (1 + z) * np.log((1 - z) / z)
                 - 4 * np.log(z) / (1 - z)
                 + 6 + 4 * z
@@ -77,13 +77,13 @@ class ESF_F2(ESF):
             # fmt: on
 
         def cq_delta(z):
-            return -z * (9 + 4 * zeta_2)
+            return -CF * (9 + 4 * zeta_2)
 
         def cq_omx(z):
-            return -z * 3 * CF
+            return -3 * CF
 
         def cq_logomx(z):
-            return z * 4 * CF
+            return 4 * CF
 
         cq_dvec = conv.DistributionVec(cq_reg, cq_delta, cq_omx, cq_logomx)
         return conv.convnd(self._x, cq_dvec, polynomial_f)[0]
@@ -99,7 +99,7 @@ class ESF_F2(ESF):
         TR = self._SF._constants.TF
 
         def cg(z):
-            return z * (
+            return (
                 2
                 * self._n_f
                 * (

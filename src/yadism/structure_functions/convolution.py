@@ -81,7 +81,9 @@ def convnd(x, coeff_dvec, pdf_func):
 
     for i, a in zip(integrands, addends):
         if callable(i):
-            r, e = scipy.integrate.quad(i, x, 1)
+            r, e = scipy.integrate.quad(
+                i, x, 1.0, points=[x, 1.0]
+            )  # TODO: take care of both limits
             res += r
             err += e ** 2
         res += a

@@ -30,4 +30,5 @@ setup(
         "sphinxcontrib-bibtex",
     ],
     python_requires=">=3.7",
+    # entry_points={"console_scripts": ["run-dis=yadism.runner:run_dis"],},
 )

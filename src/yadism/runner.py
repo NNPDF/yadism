@@ -129,23 +129,26 @@ class Runner:
             .. todo::
                 docs
             """
-            pdf_fl = lambda k: pdfs.xfxQ2(k, z, Q2)  # / x
+            pdf_fl = lambda k: pdfs.xfxQ2(k, z, Q2)
             return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
                 pdf_fl(2) + pdf_fl(-2)
             ) * 4 / 9
 
-        ret: dict = {"F2": []}
-        for kin in output["F2"]:
-            # collect pdfs
-            fq = []
-            fg = []
-            for z in self._interpolator.xgrid:
-                fq.append(get_charged_sum(z, kin["Q2"]))
-                fg.append(pdfs.xfxQ2(21, z, kin["Q2"]))
+        ret: dict = {"F2": [], "FL": []}
+        for sf in ["F2", "FL"]:
+            for kin in output[sf]:
+                # collect pdfs
+                fq = []
+                fg = []
+                for z in self._interpolator.xgrid_raw:
+                    fq.append(get_charged_sum(z, kin["Q2"]) / z)
+                    fg.append(pdfs.xfxQ2(21, z, kin["Q2"]) / z)
 
-            # contract with coefficient functions
-            result = np.dot(fq, kin["q"]) + 2 / 9 * np.dot(fg, kin["g"])
-            ret["F2"].append(dict(x=kin["x"], Q2=kin["Q2"], result=result))
+                # contract with coefficient functions
+                result = kin["x"] * (
+                    np.dot(fq, kin["q"]) + 2 / 9 * np.dot(fg, kin["g"])
+                )
+                ret[sf].append(dict(x=kin["x"], Q2=kin["Q2"], result=result))
 
         return ret
 
