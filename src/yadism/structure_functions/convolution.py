@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+Define DistributionVec and its API.
 .. todo::
     docs
 """
