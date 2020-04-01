@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 import pytest
 
@@ -47,7 +49,7 @@ class TestInit:
     def test_init_different(self):
         """
         Keep this separate from the previous one because it
-        is more involved, since we are not comparing with a 
+        is more involved, since we are not comparing with a
         fixed target.
         """
         vecs = [
@@ -137,10 +139,40 @@ class TestSpecial:
             vec = vec0.copy()
             vec[0] += c
             ref_d_vec = conv.DistributionVec(*vec)
-            sum_d_vec = c + d_vec0
+            sum_d_vec = d_vec0 + c
+            rsum_d_vec = d_vec0 + c
+            isum_d_vec = copy.deepcopy(d_vec0)
+            isum_d_vec += c
 
-            for ref_c, sum_c in zip(ref_d_vec, sum_d_vec):
+            for ref_c, sum_c, rsum_c, isum_c in zip(
+                ref_d_vec, sum_d_vec, rsum_d_vec, isum_d_vec
+            ):
                 assert ref_c(x) == sum_c(x)
+                assert ref_c(x) == rsum_c(x)
+                assert ref_c(x) == isum_c(x)
+
+    def test_mul_const(self):
+        cs = [1328, -435.421]
+
+        vec0 = np.array([4.45, 2483, 7.452, 293.03], dtype=float)
+        d_vec0 = conv.DistributionVec(*vec0)
+
+        x = 0.5
+        for c in cs:
+            vec = vec0.copy()
+            vec *= c
+            ref_d_vec = conv.DistributionVec(*vec)
+            mul_d_vec = c * d_vec0
+            rmul_d_vec = d_vec0 * c
+            imul_d_vec = copy.deepcopy(d_vec0)
+            imul_d_vec *= c
+
+            for ref_c, mul_c, rmul_c, imul_c in zip(
+                ref_d_vec, mul_d_vec, rmul_d_vec, imul_d_vec
+            ):
+                assert ref_c(x) == mul_c(x)
+                assert ref_c(x) == rmul_c(x)
+                assert ref_c(x) == imul_c(x)
 
 
 # @pytest.mark.skip
@@ -150,14 +182,14 @@ class TestConvnd:
         for x, y in zip(xs, res):
             assert (
                 pytest.approx(y, 1 / 1000.0)
-                == conv.DistributionVec(coeff).convnd(x, f)[0]
+                == conv.DistributionVec(coeff).convolution(x, f)[0]
             )
 
     @staticmethod
     def against_known(x, f, coeff, res):
         assert (
             pytest.approx(res(x), 1 / 1000.0)
-            == conv.DistributionVec(*coeff).convnd(x, f)[0]
+            == conv.DistributionVec(*coeff).convolution(x, f)[0]
         )
 
     def test_regular(self):
@@ -234,6 +266,6 @@ class TestConvnd:
 
         results = []
         for f, kma in zip(fs, kmas):
-            results.append(conv.DistributionVec(kma).convnd(x, f)[0])
+            results.append(conv.DistributionVec(kma).convolution(x, f)[0])
 
         assert pytest.approx(results[0], 1 / 1000.0) == results[1]

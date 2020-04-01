@@ -51,7 +51,7 @@ class EvaluatedStructureFunction(abc.ABC):
         ls = []
 
         def fac(f_XO_):
-            return lambda poly_f: f_XO_.convnd(self._x, poly_f)[0]
+            return lambda poly_f: f_XO_.convolution(self._x, poly_f)[0]
 
         c_LO = conv.DistributionVec(f_LO())
         c_NLO = conv.DistributionVec(f_NLO())

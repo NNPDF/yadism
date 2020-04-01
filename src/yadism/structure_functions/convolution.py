@@ -95,9 +95,34 @@ class DistributionVec:
         return self.__add__(other)
 
     def __iadd__(self, other):
-        self = self.__add__(other)
+        return self.__add__(other)
 
-    def convnd(self, x, pdf_func):
+    def __mul__(self, other):
+        """
+        Supported:
+        * ``+ num``
+
+        .. note::
+            Currently multiplication by a function is not supported, because a
+            Distribution can only be multiplied by a test function (and the TestFunction
+            API is not going to be implemented).
+
+        .. todo::
+            docs
+        """
+        result = DistributionVec(0)
+        for i, el in enumerate(self):
+            result[i] = lambda x, el=el, other=other: el(x) * float(other)
+
+        return result
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __imul__(self, other):
+        return self.__mul__(other)
+
+    def convolution(self, x, pdf_func):
         """TODO: Docstring for convnd.
 
         Parameters
@@ -109,6 +134,9 @@ class DistributionVec:
         Returns
         -------
         TODO
+
+        .. note::
+            real name of this method: ``convnd``
 
         """
 
