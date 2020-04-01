@@ -5,6 +5,8 @@ Define DistributionVec and its API.
 .. todo::
     docs
 """
+import copy
+
 import numpy as np
 import scipy.integrate
 
@@ -38,25 +40,62 @@ class DistributionVec:
             else:
                 # if component is None:
                 # __import__("pdb").set_trace()
-                f = float(component)
-                component_func = lambda x: f
+                component_func = lambda x, component=component: float(component)
 
             setattr(self, f"_{name}", component_func)
 
     def __getitem__(self, key):
-        if key == 0:
-            return self._regular
-        elif key == 1:
-            return self._delta
-        elif key == 2:
-            return self._omx
-        elif key == 3:
-            return self._logomx
+        if 0 <= key < len(self.__names):
+            name = self.__names[key]
+            return getattr(self, f"_{name}")
         else:
-            raise ValueError("todo")
+            raise IndexError("todo")
+
+    def __setitem__(self, key, value):
+        if 0 <= key < len(self.__names):
+            name = self.__names[key]
+            return setattr(self, f"_{name}", value)
+        else:
+            raise IndexError("todo")
 
     def __iter__(self):
-        return NotImplemented
+        for n in self.__names:
+            yield getattr(self, f"_{n}")
+
+    def __add__(self, other):
+        """
+        Do not support ``DistributionVec + iterable``, if needed use:
+        .. code-block::
+            d_vec + DistributionVec(*iterable)
+
+        Supported:
+        * ``+ num``
+        * ``+ function``
+        * ``+ DistributionVec``
+
+        .. todo::
+            docs
+        """
+        if isinstance(other, DistributionVec):
+            result = DistributionVec(0)
+            for i, (c1, c2) in enumerate(zip(self, other)):
+                result[i] = lambda x, c1=c1, c2=c2: c1(x) + c2(x)
+        elif callable(other):
+            result = copy.deepcopy(self)
+            old = result[0]
+            result[0] = lambda x, old=old, other=other: old(x) + other(x)
+        else:
+            result = copy.deepcopy(self)
+            old = result[0]
+            result[0] = lambda x, old=old, other=other: old(x) + float(other)
+
+        return result
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __iadd__(self, other):
+        self = self.__add__(other)
 
     def convnd(self, x, pdf_func):
         """TODO: Docstring for convnd.
