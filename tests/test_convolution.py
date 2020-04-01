@@ -20,12 +20,8 @@ class TestInit:
 
         for d_vec in d_vecs:
             for x in [0.1, 0.3, 0.5, 0.9]:
-                assert d_vec[0](x) == 0
-                assert d_vec[1](x) == 0
-                assert d_vec[2](x) == 0
-                assert d_vec[3](x) == 0
-            # for c in d_vec:
-            # assert c[0](x) == 0
+                for c in d_vec:
+                    assert c(x) == 0
 
     def test_init_const(self):
         vecs = [
@@ -40,11 +36,9 @@ class TestInit:
 
         for vec in vecs:
             d_vec = conv.DistributionVec(*vec)
-            for i in range(len(vec)):
+            for c in d_vec:
                 for x in [0.1, 0.3, 0.5, 0.9]:
-                    assert d_vec[i](x) == 1
-            # for c in d_vec:
-            # assert c[0](x) == 0
+                    assert c(x) == 1
 
     def test_init_different(self):
         """
@@ -68,16 +62,15 @@ class TestInit:
             if isinstance(vec[0], list):
                 vec = vec[0]
 
-            for i in range(len(vec)):
-                vtmp = vec[i]
-                if callable(vtmp):
-                    vi = vtmp(x)
-                elif vtmp is None:
+            for v, c in zip(vec, d_vec):
+                if callable(v):
+                    vi = v(x)
+                elif v is None:
                     vi = 0
                 else:
-                    vi = float(vtmp)
+                    vi = float(v)
 
-                assert d_vec[i](x) == vi
+                assert c(x) == vi
 
 
 class TestSpecial:
@@ -109,8 +102,7 @@ class TestSpecial:
             ref_d_vec = conv.DistributionVec(*(np.array(vec) + vec0))
             sum_d_vec = conv.DistributionVec(*vec) + d_vec0
 
-            for ref_c, sum_c in zip(ref_d_vec, sum_d_vec):
-                assert ref_c(x) == sum_c(x)
+            assert ref_d_vec.compare(sum_d_vec, x)
 
     def test_add_func(self):
         fs = [lambda x: 18, lambda x: (1 - x)]
@@ -125,8 +117,7 @@ class TestSpecial:
             ref_d_vec = conv.DistributionVec(*vec)
             sum_d_vec = f + d_vec0
 
-            for ref_c, sum_c in zip(ref_d_vec, sum_d_vec):
-                assert ref_c(x) == sum_c(x)
+            assert ref_d_vec.compare(sum_d_vec, x)
 
     def test_add_const(self):
         cs = [1328, -435.421]
@@ -144,12 +135,8 @@ class TestSpecial:
             isum_d_vec = copy.deepcopy(d_vec0)
             isum_d_vec += c
 
-            for ref_c, sum_c, rsum_c, isum_c in zip(
-                ref_d_vec, sum_d_vec, rsum_d_vec, isum_d_vec
-            ):
-                assert ref_c(x) == sum_c(x)
-                assert ref_c(x) == rsum_c(x)
-                assert ref_c(x) == isum_c(x)
+            for d_other in [sum_d_vec, rsum_d_vec, isum_d_vec]:
+                assert ref_d_vec.compare(d_other, x)
 
     def test_mul_const(self):
         cs = [1328, -435.421]
@@ -167,12 +154,22 @@ class TestSpecial:
             imul_d_vec = copy.deepcopy(d_vec0)
             imul_d_vec *= c
 
-            for ref_c, mul_c, rmul_c, imul_c in zip(
-                ref_d_vec, mul_d_vec, rmul_d_vec, imul_d_vec
-            ):
-                assert ref_c(x) == mul_c(x)
-                assert ref_c(x) == rmul_c(x)
-                assert ref_c(x) == imul_c(x)
+            for d_other in [mul_d_vec, rmul_d_vec, imul_d_vec]:
+                assert ref_d_vec.compare(d_other, x)
+
+    def test_compare(self):
+        d_vec0 = conv.DistributionVec(4.45, 2483, 7.452, 293.03)
+        d_vec1 = conv.DistributionVec(4.45, 2483, 7.452, 29.03)
+        d_vec2 = conv.DistributionVec(4.45, 2483, 21.322, 29.03)
+        d_vec3 = conv.DistributionVec(4.45, 1233, 21.322, 29.03)
+        d_vec4 = conv.DistributionVec(2.756, 1233, 21.322, 29.03)
+
+        for x in [0.2, 0.7]:
+            assert d_vec0.compare(d_vec0, x) == True
+            assert d_vec0.compare(copy.deepcopy(d_vec0), x) == True
+
+            for d_other in [d_vec1, d_vec2, d_vec3, d_vec4]:
+                assert d_vec0.compare(d_other, x) == False
 
 
 # @pytest.mark.skip

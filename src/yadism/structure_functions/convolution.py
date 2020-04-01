@@ -122,6 +122,16 @@ class DistributionVec:
     def __imul__(self, other):
         return self.__mul__(other)
 
+    def compare(self, other, x):
+        "Compare two DistributionVec @ x"
+        if isinstance(other, DistributionVec):
+            for c1, c2 in zip(self, other):
+                if c1(x) != c2(x):
+                    return False
+            return True
+        else:
+            raise ValueError("Comparison only available with other DistributionVec")
+
     def convolution(self, x, pdf_func):
         """TODO: Docstring for convnd.
 
