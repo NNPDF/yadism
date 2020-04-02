@@ -7,6 +7,8 @@ import abc
 
 import numpy as np
 
+from . import convolution as conv
+
 
 class EvaluatedStructureFunction(abc.ABC):
     """
@@ -47,11 +49,20 @@ class EvaluatedStructureFunction(abc.ABC):
 
     def _compute_component(self, f_LO, f_NLO):
         ls = []
+
+        def fac(f_XO_):
+            return lambda poly_f: f_XO_.convolution(self._x, poly_f)[0]
+
+        c_LO = conv.DistributionVec(f_LO())
+        c_NLO = conv.DistributionVec(f_NLO())
+        f_LO_ = fac(c_LO)
+        f_NLO_ = fac(c_NLO)
+
         # iterate all polynomials
         for polynomial_f in self._SF._interpolator:
-            cv = f_LO(polynomial_f)
+            cv = f_LO_(polynomial_f)
             if self._SF._pto > 0:
-                cv += self._a_s * f_NLO(polynomial_f)
+                cv += self._a_s * f_NLO_(polynomial_f)
             ls.append(cv)
 
         return ls
@@ -71,7 +82,7 @@ class EvaluatedStructureFunction(abc.ABC):
         return output
 
     @abc.abstractclassmethod
-    def light_LO_quark(self, polynomial_f):
+    def light_LO_quark(self):
         """
         .. todo::
             docs
@@ -79,7 +90,7 @@ class EvaluatedStructureFunction(abc.ABC):
         pass
 
     @abc.abstractclassmethod
-    def light_LO_gluon(self, polynomial_f):
+    def light_LO_gluon(self):
         """
         .. todo::
             docs
@@ -87,7 +98,7 @@ class EvaluatedStructureFunction(abc.ABC):
         pass
 
     @abc.abstractclassmethod
-    def light_NLO_quark(self, polynomial_f):
+    def light_NLO_quark(self):
         """
         .. todo::
             docs
@@ -95,7 +106,7 @@ class EvaluatedStructureFunction(abc.ABC):
         pass
 
     @abc.abstractclassmethod
-    def light_NLO_gluon(self, polynomial_f):
+    def light_NLO_gluon(self):
         """
         .. todo::
             docs

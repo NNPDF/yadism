@@ -9,7 +9,7 @@ This file contains the implementation of the DIS structure functions at LO.
 import numpy as np
 
 from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
-from . import splitting_functions as split, convolution as conv
+from . import splitting_functions as split
 
 
 class ESF_FL(ESF):
@@ -21,7 +21,7 @@ class ESF_FL(ESF):
     def __init__(self, SF, kinematics):
         super(ESF_FL, self).__init__(SF, kinematics)
 
-    def light_LO_quark(self, polynomial_f) -> float:
+    def light_LO_quark(self) -> float:
         """
         .. todo::
             docs
@@ -30,14 +30,14 @@ class ESF_FL(ESF):
         # leading order is just a delta function
         return 0
 
-    def light_LO_gluon(self, polynomial_f) -> float:
+    def light_LO_gluon(self) -> float:
         """
         .. todo::
             docs
         """
         return 0
 
-    def light_NLO_quark(self, polynomial_f):
+    def light_NLO_quark(self):
         """
         regular
         delta
@@ -53,10 +53,9 @@ class ESF_FL(ESF):
         def cq_reg(z):
             return CF * 4 * z
 
-        cq_dvec = conv.DistributionVec(cq_reg)
-        return conv.convnd(self._x, cq_dvec, polynomial_f)[0]
+        return cq_reg
 
-    def light_NLO_gluon(self, polynomial_f):
+    def light_NLO_gluon(self):
         """
         vogt page 117
 
@@ -67,5 +66,4 @@ class ESF_FL(ESF):
         def cg(z):
             return self._n_f * (8 * z * (1 - z))
 
-        cg_dvec = conv.DistributionVec(cg)
-        return conv.convnd(self._x, cg_dvec, polynomial_f)[0]
+        return cg
