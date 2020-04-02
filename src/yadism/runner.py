@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-This file contains the main loop for the DIS calculations.
+This module contains the main loop for the DIS calculations.
+
+There are two ways of using ``yadism``:
+* ``Runner``: this class provides a Runner that get the *theory* and
+  *observables* descriptions as input and manage the whole observables'
+  calculation process
+
 
 .. todo::
     docs
@@ -33,6 +39,15 @@ class Runner:
     """
 
     def __init__(self, theory: dict, dis_observables: dict):
+        """__init__.
+
+        Parameters
+        ----------
+        theory : dict
+            theory
+        dis_observables : dict
+            dis_observables
+        """
         self._theory = theory
         self._dis_observables = dis_observables
         self._n_f: int = theory["NfFF"]
@@ -183,10 +198,23 @@ class Runner:
 
 def run_dis(theory: dict, dis_observables: dict) -> Runner:
     """
-    .. todo::
-        - decide the purpose
-        - implement
-        - docs
+        run_dis.
+
+        Parameters
+        ----------
+        theory : dict
+            theory
+        dis_observables : dict
+            dis_observables
+
+        Returns
+        -------
+        Runner
+
+        .. todo::
+            - decide the purpose
+            - implement
+            - docs
     """
     runner = Runner(theory, dis_observables)
     return runner
