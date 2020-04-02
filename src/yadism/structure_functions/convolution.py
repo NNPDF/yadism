@@ -10,6 +10,8 @@ import copy
 import numpy as np
 import scipy.integrate
 
+from eko.interpolation import BasisFunction
+
 
 class DistributionVec:
     """
@@ -21,6 +23,7 @@ class DistributionVec:
     """
 
     __names = ["regular", "delta", "omx", "logomx"]
+    eps_integration_border = 1e-10
 
     def __init__(self, regular, delta=None, omx=None, logomx=None):
         try:
@@ -149,10 +152,19 @@ class DistributionVec:
             real name of this method: ``convnd``
 
         """
-        # support below x --> trivially 0
-        if pdf_func.is_below_x(np.log(x)):
-            # __import__("pdb").set_trace()
-            return 0.0, 0.0
+        breakpoints = [x, 1.0]
+
+        # eko environment?
+        if isinstance(pdf_func, BasisFunction):
+            if pdf_func.is_below_x(np.log(x)):
+                # support below x --> trivially 0
+                return 0.0, 0.0
+            else:
+                # set breakpoints as relevant points of the integrand
+                # computed from interpolation areas of `pdf_func`
+                for area in pdf_func.areas:
+                    breakpoints.extend([area.xmin, area.xmax])
+                breakpoints = x / np.exp(np.unique(breakpoints))
 
         # providing integrands functions and addends
         # ------------------------------------------
@@ -183,27 +195,14 @@ class DistributionVec:
         res = 0.0
         err = 0.0
 
-        breakpoints = [x, 1.0]
-        for area in pdf_func.areas:
-            breakpoints.extend([area.xmin, area.xmax])
-        breakpoints = x / np.exp(np.unique(breakpoints))
-
-        eps = 1e-5
-        # fo_l = []
         for i, a in zip(integrands, addends):
             if callable(i):
-                # r, e, fo
-                t = scipy.integrate.quad(
-                    i, x * (1 + eps), 1.0 * (1 - eps), points=breakpoints, full_output=1
-                )  # TODO: take care of both limits
-                if len(t) == 3:
-                    r, e, fo = t
-                elif len(t) == 4:
-                    r, e, fo, m = t
-                    # fo_l.append(fo)
-                    __import__("pdb").set_trace()
-                else:
-                    raise Exception("BAD")
+                r, e = scipy.integrate.quad(
+                    i,
+                    x * (1 + self.eps_integration_border),
+                    1.0 * (1 - self.eps_integration_border),
+                    points=breakpoints,
+                )
 
                 res += r
                 err += e ** 2
