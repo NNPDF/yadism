@@ -149,6 +149,10 @@ class DistributionVec:
             real name of this method: ``convnd``
 
         """
+        # support below x --> trivially 0
+        if pdf_func.is_below_x(np.log(x)):
+            # __import__("pdb").set_trace()
+            return 0.0, 0.0
 
         # providing integrands functions and addends
         # ------------------------------------------
@@ -158,9 +162,12 @@ class DistributionVec:
 
         integrands = [
             lambda z: self[0](z) * pdf_func(x / z) / z,
+            # 0.0,
             0.0,
             lambda z: (__pd_tf(z, 2) - __pd_tf(1, 2)) / (1 - z),
+            # 0.0,
             lambda z: (__pd_tf(z, 3) - __pd_tf(1, 3)) * np.log(1 - z) / (1 - z),
+            # 0.0,
         ]
 
         addends = [
@@ -176,11 +183,28 @@ class DistributionVec:
         res = 0.0
         err = 0.0
 
+        breakpoints = [x, 1.0]
+        for area in pdf_func.areas:
+            breakpoints.extend([area.xmin, area.xmax])
+        breakpoints = x / np.exp(np.unique(breakpoints))
+
+        eps = 1e-5
+        # fo_l = []
         for i, a in zip(integrands, addends):
             if callable(i):
-                r, e = scipy.integrate.quad(
-                    i, x, 1.0, points=[x, 1.0]
+                # r, e, fo
+                t = scipy.integrate.quad(
+                    i, x * (1 + eps), 1.0 * (1 - eps), points=breakpoints, full_output=1
                 )  # TODO: take care of both limits
+                if len(t) == 3:
+                    r, e, fo = t
+                elif len(t) == 4:
+                    r, e, fo, m = t
+                    # fo_l.append(fo)
+                    __import__("pdb").set_trace()
+                else:
+                    raise Exception("BAD")
+
                 res += r
                 err += e ** 2
             res += a
