@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-#
-# Testing the loading functions
+"""
+Test the results with those taken from APFEL.
+"""
 import sys
 import os
 import pathlib
