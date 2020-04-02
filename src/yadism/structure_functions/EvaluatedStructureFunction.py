@@ -26,7 +26,9 @@ class EvaluatedStructureFunction(abc.ABC):
         self._x = kinematics["x"]
         self._Q2 = kinematics["Q2"]
         self._cqv = []
+        self._e_cqv = []
         self._cgv = []
+        self._e_cgv = []
         self._a_s = self._SF._alpha_s.a_s(self._Q2)
         self._n_f = self._SF._threshold.get_areas(self._Q2)[-1].nf
 
@@ -38,34 +40,39 @@ class EvaluatedStructureFunction(abc.ABC):
         # something to do?
         if not self._cqv:
             # yes
-            self._cqv = self._compute_component(
+            self._cqv, self._e_cqv = self._compute_component(
                 self.light_LO_quark, self.light_NLO_quark
             )
         if not self._cgv:
             # yes
-            self._cgv = self._compute_component(
+            self._cgv, self._e_cgv = self._compute_component(
                 self.light_LO_gluon, self.light_NLO_gluon
             )
 
     def _compute_component(self, f_LO, f_NLO):
         ls = []
+        els = []
 
-        def fac(f_XO_):
-            return lambda poly_f: f_XO_.convolution(self._x, poly_f)[0]
+        # def fac(f_XO_):
+        # return lambda poly_f: f_XO_.convolution(self._x, poly_f)
 
-        c_LO = conv.DistributionVec(f_LO())
-        c_NLO = conv.DistributionVec(f_NLO())
-        f_LO_ = fac(c_LO)
-        f_NLO_ = fac(c_NLO)
+        # c_LO = conv.DistributionVec(f_LO())
+        # c_NLO = conv.DistributionVec(f_NLO())
+        # f_LO_ = fac(c_LO)
+        # f_NLO_ = fac(c_NLO)
+
+        # combine orders
+        d_vec = conv.DistributionVec(f_LO())
+        if self._SF._pto > 0:
+            d_vec += self._a_s * conv.DistributionVec(f_NLO())
 
         # iterate all polynomials
         for polynomial_f in self._SF._interpolator:
-            cv = f_LO_(polynomial_f)
-            if self._SF._pto > 0:
-                cv += self._a_s * f_NLO_(polynomial_f)
+            cv, ecv = d_vec.convolution(self._x, polynomial_f)
             ls.append(cv)
+            els.append(ecv)
 
-        return ls
+        return ls, els
 
     def get_output(self):
         """
@@ -78,7 +85,9 @@ class EvaluatedStructureFunction(abc.ABC):
         output["x"] = self._x
         output["Q2"] = self._Q2
         output["q"] = self._cqv
+        output["q_error"] = self._e_cqv
         output["g"] = self._cgv
+        output["g_error"] = self._e_cgv
         return output
 
     @abc.abstractclassmethod

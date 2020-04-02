@@ -148,7 +148,12 @@ class Runner:
                 result = kin["x"] * (
                     np.dot(fq, kin["q"]) + 2 / 9 * np.dot(fg, kin["g"])
                 )
-                ret[sf].append(dict(x=kin["x"], Q2=kin["Q2"], result=result))
+                error = kin["x"] * (
+                    np.dot(fq, kin["q_error"]) + 2 / 9 * np.dot(fg, kin["g_error"])
+                )
+                ret[sf].append(
+                    dict(x=kin["x"], Q2=kin["Q2"], result=result, error=error)
+                )
 
         return ret
 
