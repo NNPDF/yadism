@@ -122,14 +122,25 @@ class Runner:
 
     def get_output(self) -> Output:
         """
-            get_output.
+            Compute coefficient functions grid for requested kinematic points.
+
+
+            .. admonition:: Implementation Note
+
+                get_output pipeline
 
             Returns
             -------
             Output
+                output object, it will store the coefficient functions grid
+                (flavour, interpolation-index) for each requested kinematic
+                point (x, Q2)
+
 
             .. todo::
-                docs
+
+                * docs
+                * get_output pipeline
         """
         self._output["F2"] = self.f2.get_output()
         self._output["FL"] = self.fL.get_output()
