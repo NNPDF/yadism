@@ -136,27 +136,27 @@ class DistributionVec:
             raise ValueError("Comparison only available with other DistributionVec")
 
     def convolution(self, x, pdf_func):
-        """TODO: Docstring for convnd.
+        """
+            convolution.
 
-        Parameters
-        ----------
-        self : TODO
-        x : TODO
-        pdf : TODO
+            Parameters
+            ----------
+            x :
+                x
+            pdf_func :
+                pdf_func
 
-        Returns
-        -------
-        TODO
+            .. note::
+                real name of this method: ``convnd``
 
-        .. note::
-            real name of this method: ``convnd``
-
+            .. todo::
+                docs
         """
         breakpoints = [x, 1.0]
 
         # eko environment?
         if isinstance(pdf_func, BasisFunction):
-            if pdf_func.is_below_x(np.log(x)):
+            if pdf_func.is_below_x(np.log(x)):  # TODO: in eko update remove np.log
                 # support below x --> trivially 0
                 return 0.0, 0.0
             else:
@@ -205,7 +205,7 @@ class DistributionVec:
                 )
 
                 res += r
-                err += e ** 2
+                err += e
             res += a
 
-        return res, np.sqrt(err)
+        return res, err

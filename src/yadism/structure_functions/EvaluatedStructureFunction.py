@@ -40,26 +40,14 @@ class EvaluatedStructureFunction(abc.ABC):
         # something to do?
         if not self._cqv:
             # yes
-            self._cqv, self._e_cqv = self._compute_component(
-                self.light_LO_quark, self.light_NLO_quark
-            )
+            self._cqv, self._e_cqv = self._compute_component(self.quark_0, self.quark_1)
         if not self._cgv:
             # yes
-            self._cgv, self._e_cgv = self._compute_component(
-                self.light_LO_gluon, self.light_NLO_gluon
-            )
+            self._cgv, self._e_cgv = self._compute_component(self.gluon_0, self.gluon_1)
 
     def _compute_component(self, f_LO, f_NLO):
         ls = []
         els = []
-
-        # def fac(f_XO_):
-        # return lambda poly_f: f_XO_.convolution(self._x, poly_f)
-
-        # c_LO = conv.DistributionVec(f_LO())
-        # c_NLO = conv.DistributionVec(f_NLO())
-        # f_LO_ = fac(c_LO)
-        # f_NLO_ = fac(c_NLO)
 
         # combine orders
         d_vec = conv.DistributionVec(f_LO())
@@ -91,7 +79,7 @@ class EvaluatedStructureFunction(abc.ABC):
         return output
 
     @abc.abstractclassmethod
-    def light_LO_quark(self):
+    def quark_0(self):
         """
         .. todo::
             docs
@@ -99,7 +87,7 @@ class EvaluatedStructureFunction(abc.ABC):
         pass
 
     @abc.abstractclassmethod
-    def light_LO_gluon(self):
+    def gluon_0(self):
         """
         .. todo::
             docs
@@ -107,7 +95,7 @@ class EvaluatedStructureFunction(abc.ABC):
         pass
 
     @abc.abstractclassmethod
-    def light_NLO_quark(self):
+    def quark_1(self):
         """
         .. todo::
             docs
@@ -115,7 +103,7 @@ class EvaluatedStructureFunction(abc.ABC):
         pass
 
     @abc.abstractclassmethod
-    def light_NLO_gluon(self):
+    def gluon_1(self):
         """
         .. todo::
             docs

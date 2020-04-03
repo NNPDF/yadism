@@ -9,8 +9,8 @@ The 3-loop reference is :cite:`Vermaseren:2005qc` which includes also the lower 
 """
 
 from . import EvaluatedStructureFunction
-from .F2 import ESF_F2
-from .FL import ESF_FL
+from .F2light import ESF_F2light
+from .FLlight import ESF_FLlight
 
 import abc
 
@@ -22,7 +22,7 @@ class StructureFunction(abc.ABC):
     """
 
     def __init__(self, name, ESF, *, interpolator, constants, threshold, alpha_s, pto):
-        self._name = name
+        self.name = name
         self._interpolator = interpolator
         self._constants = constants
         self._threshold = threshold
@@ -53,21 +53,21 @@ class StructureFunction(abc.ABC):
         return output
 
 
-class F2(StructureFunction):
+class F2_light(StructureFunction):
     """
     .. todo::
         docs
     """
 
     def __init__(self, **kwargs):
-        super(F2, self).__init__("F2", ESF_F2, **kwargs)
+        super(F2_light, self).__init__("F2light", ESF_F2light, **kwargs)
 
 
-class FL(StructureFunction):
+class FL_light(StructureFunction):
     """
     .. todo::
         docs
     """
 
     def __init__(self, **kwargs):
-        super(FL, self).__init__("FL", ESF_FL, **kwargs)
+        super(FL_light, self).__init__("FLlight", ESF_FLlight, **kwargs)

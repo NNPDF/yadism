@@ -15,7 +15,7 @@ from eko.thresholds import Threshold
 from eko.alpha_s import StrongCoupling
 
 from .output import Output
-from .structure_functions import F2, FL
+from .structure_functions import F2_light, FL_light
 
 
 class Runner:
@@ -77,34 +77,36 @@ class Runner:
         # ==============================
         # initialize structure functions
         # ==============================
-        self.f2 = F2(
-            interpolator=self._interpolator,
-            constants=self._constants,
-            threshold=self._threshold,
-            alpha_s=self._alpha_s,
-            pto=self._pto,
-        )
-        self.fL = FL(
-            interpolator=self._interpolator,
-            constants=self._constants,
-            threshold=self._threshold,
-            alpha_s=self._alpha_s,
-            pto=self._pto,
-        )
+        self._observables = [
+            F2_light(
+                interpolator=self._interpolator,
+                constants=self._constants,
+                threshold=self._threshold,
+                alpha_s=self._alpha_s,
+                pto=self._pto,
+            ),
+            FL_light(
+                interpolator=self._interpolator,
+                constants=self._constants,
+                threshold=self._threshold,
+                alpha_s=self._alpha_s,
+                pto=self._pto,
+            ),
+        ]
 
         self._output = Output()
         self._output["xgrid"] = self._interpolator.xgrid
 
-        self.f2.load(self._dis_observables.get("F2", []))
-        self.fL.load(self._dis_observables.get("FL", []))
+        for obs in self._observables:
+            obs.load(self._dis_observables.get(obs.name, []))
 
     def get_output(self) -> Output:
         """
         .. todo::
             docs
         """
-        self._output["F2"] = self.f2.get_output()
-        self._output["FL"] = self.fL.get_output()
+        for obs in self._observables:
+            self._output[obs.name] = obs.get_output()
 
         return self._output
 
@@ -134,9 +136,10 @@ class Runner:
                 pdf_fl(2) + pdf_fl(-2)
             ) * 4 / 9
 
-        ret: dict = {"F2": [], "FL": []}
-        for sf in ["F2", "FL"]:
-            for kin in output[sf]:
+        ret: dict = {}
+        for obs in self._observables:
+            ret[obs.name] = []
+            for kin in output[obs.name]:
                 # collect pdfs
                 fq = []
                 fg = []
@@ -151,7 +154,7 @@ class Runner:
                 error = kin["x"] * (
                     np.dot(fq, kin["q_error"]) + 2 / 9 * np.dot(fg, kin["g_error"])
                 )
-                ret[sf].append(
+                ret[obs.name].append(
                     dict(x=kin["x"], Q2=kin["Q2"], result=result, error=error)
                 )
 

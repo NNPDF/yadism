@@ -12,16 +12,16 @@ from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
 from . import splitting_functions as split
 
 
-class ESF_F2(ESF):
+class ESF_F2light(ESF):
     """
     .. todo::
         docs
     """
 
     def __init__(self, SF, kinematics):
-        super(ESF_F2, self).__init__(SF, kinematics)
+        super(ESF_F2light, self).__init__(SF, kinematics)
 
-    def light_LO_quark(self) -> float:
+    def quark_0(self) -> float:
         """Computes the singlet part of the leading order F2 structure function.
 
         Implements equation 4.2 of :cite:`Vermaseren:2005qc`.
@@ -45,14 +45,14 @@ class ESF_F2(ESF):
         # leading order is just a delta function
         return lambda z: 0, lambda z: 1
 
-    def light_LO_gluon(self) -> float:
+    def gluon_0(self) -> float:
         """
         .. todo::
             docs
         """
         return 0
 
-    def light_NLO_quark(self):
+    def quark_1(self):
         """
         regular
         delta
@@ -85,7 +85,7 @@ class ESF_F2(ESF):
 
         return cq_reg, cq_delta, cq_omx, cq_logomx
 
-    def light_NLO_gluon(self):
+    def gluon_1(self):
         """
         vogt page 21
 
