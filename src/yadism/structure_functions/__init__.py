@@ -11,6 +11,7 @@ The 3-loop reference is :cite:`Vermaseren:2005qc` which includes also the lower 
 from . import EvaluatedStructureFunction
 from .F2light import ESF_F2light
 from .FLlight import ESF_FLlight
+from .FLheavy import ESF_FLcharm
 
 import abc
 
@@ -21,8 +22,11 @@ class StructureFunction(abc.ABC):
         docs
     """
 
-    def __init__(self, name, ESF, *, interpolator, constants, threshold, alpha_s, pto):
+    def __init__(
+        self, name, ESF, M2=None, *, interpolator, constants, threshold, alpha_s, pto
+    ):
         self.name = name
+        self._M2 = M2
         self._interpolator = interpolator
         self._constants = constants
         self._threshold = threshold
@@ -71,3 +75,13 @@ class FL_light(StructureFunction):
 
     def __init__(self, **kwargs):
         super(FL_light, self).__init__("FLlight", ESF_FLlight, **kwargs)
+
+
+# class F2_charm(StructureFunction):
+# def __init__(self, **kwargs):
+# super(F2_charm, self).__init__("F2charm", ESF_F2charm, **kwargs)
+
+
+class FL_charm(StructureFunction):
+    def __init__(self, **kwargs):
+        super(FL_charm, self).__init__("FLcharm", ESF_FLcharm, **kwargs)

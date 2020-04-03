@@ -15,7 +15,7 @@ from eko.thresholds import Threshold
 from eko.alpha_s import StrongCoupling
 
 from .output import Output
-from .structure_functions import F2_light, FL_light
+from .structure_functions import F2_light, FL_light, FL_charm
 
 
 class Runner:
@@ -78,6 +78,7 @@ class Runner:
         # initialize structure functions
         # ==============================
         self._observables = [
+            # TODO: factorize common argument in a factory or smth else
             F2_light(
                 interpolator=self._interpolator,
                 constants=self._constants,
@@ -91,6 +92,14 @@ class Runner:
                 threshold=self._threshold,
                 alpha_s=self._alpha_s,
                 pto=self._pto,
+            ),
+            FL_charm(
+                interpolator=self._interpolator,
+                constants=self._constants,
+                threshold=self._threshold,
+                alpha_s=self._alpha_s,
+                pto=self._pto,
+                M2=theory["mc"] ** 2,
             ),
         ]
 

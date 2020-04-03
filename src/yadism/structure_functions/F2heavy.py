@@ -19,7 +19,7 @@ class ESF_F2heavy(ESF):
     """
 
     def __init__(self, SF, kinematics):
-        super(ESF_F2light, self).__init__(SF, kinematics)
+        super(ESF_F2heavy, self).__init__(SF, kinematics)
 
     def quark_0(self) -> float:
         return 0
@@ -41,7 +41,6 @@ class ESF_F2heavy(ESF):
 
     def gluon_1(self):
         """
-        vogt page 21
 
         .. todo::
             docs

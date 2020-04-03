@@ -78,7 +78,7 @@ class EvaluatedStructureFunction(abc.ABC):
         output["g_error"] = self._e_cgv
         return output
 
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def quark_0(self):
         """
         .. todo::
@@ -86,7 +86,7 @@ class EvaluatedStructureFunction(abc.ABC):
         """
         pass
 
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def gluon_0(self):
         """
         .. todo::
@@ -94,7 +94,7 @@ class EvaluatedStructureFunction(abc.ABC):
         """
         pass
 
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def quark_1(self):
         """
         .. todo::
@@ -102,10 +102,49 @@ class EvaluatedStructureFunction(abc.ABC):
         """
         pass
 
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def gluon_1(self):
         """
         .. todo::
             docs
         """
         pass
+
+
+class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
+    def __init__(self, SF, kinematics):
+        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
+
+        # common variables
+        self._s = self._Q2 * (1 - self._x) / self._x
+        self._shat = lambda z: self._Q2 * (1 - z) / z
+
+        self._rho_q = -4 * self._SF._M2 / self._Q2
+        self._rho = lambda z: self._rho_q * z / (z - 1)
+        self._rho_p = lambda z: -self._rho_q * z
+
+        self._beta = lambda z: np.sqrt(1 - self._rho(z))
+
+        self._chi = lambda z: (1 - self._beta(z)) / (1 + self._beta(z))
+
+    def is_below_threshold(self, z):
+        return self._shat(z) <= 4 * self._SF._M2
+
+    def quark_0(self) -> float:
+        return 0
+
+    def gluon_0(self) -> float:
+        return 0
+
+    def quark_1(self):
+        return 0
+
+    @abc.abstractmethod
+    def _gluon_1(self):
+        pass
+
+    def gluon_1(self):
+        if self._s <= 4 * self._SF._M2:
+            return 0
+        else:
+            return self._gluon_1()
