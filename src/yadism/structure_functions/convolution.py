@@ -195,17 +195,24 @@ class DistributionVec:
         res = 0.0
         err = 0.0
 
-        for i, a in zip(integrands, addends):
-            if callable(i):
-                r, e = scipy.integrate.quad(
-                    i,
-                    x * (1 + self.eps_integration_border),
-                    1.0 * (1 - self.eps_integration_border),
-                    points=breakpoints,
-                )
+        def integrand(z):
+            ret = 0.0
+            for i in integrands:
+                if callable(i):
+                    ret += i(z)
+            for a in addends:
+                ret += a / (1 - x)  # addend / domain_measure
 
-                res += r
-                err += e ** 2
-            res += a
+            return ret
 
-        return res, np.sqrt(err)
+        res, err = scipy.integrate.quad(
+            integrand,
+            x * (1 + self.eps_integration_border),
+            1.0 * (1 - self.eps_integration_border),
+            points=breakpoints,
+        )
+
+        # for a in addends:
+        # res += a
+
+        return res, err
