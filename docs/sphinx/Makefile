@@ -14,8 +14,9 @@ help:
 .PHONY: help html view clean cleanall
 
 html:
-	sphinx-apidoc -o ./source/modules/yadism ../../src/yadism/
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	sphinx-apidoc -o ./source/modules --module-first ../../src/yadism/
+	@rm -f ./source/modules/modules.rst ./source/modules/*/modules.rst}
+	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 view: html
 	$(BROWSER) $(BUILDDIR)/html/index.html

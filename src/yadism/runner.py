@@ -3,13 +3,15 @@
 This module contains the main loop for the DIS calculations.
 
 There are two ways of using ``yadism``:
-* ``Runner``: this class provides a Runner that get the *theory* and
+
+* ``Runner``: this class provides a runner that get the *theory* and
   *observables* descriptions as input and manage the whole observables'
   calculation process
-
+* ``run_dis``: a function that wraps the construction of a ``Runner`` object
+  and calls the proper method to get the requested output
 
 .. todo::
-    docs
+    decide about ``run_dis`` and document it properly in module header
 """
 from typing import Any
 
@@ -32,26 +34,25 @@ class Runner:
     theory : dict
         Dictionary with the theory parameters for the evolution.
     dis_observables : dict
-        Description of parameter `dis_observables`.
+        DIS parameters: process description, kinematic specification for the
+        requested output.
 
     .. todo::
-        docs
+        * reference on theory template
+        * detailed description of dis_observables entries
     """
 
     def __init__(self, theory: dict, dis_observables: dict):
-        """__init__.
-
-        Parameters
-        ----------
-        theory : dict
-            theory
-        dis_observables : dict
-            dis_observables
-        """
+        # ============
+        # Store inputs
+        # ============
         self._theory = theory
         self._dis_observables = dis_observables
         self._n_f: int = theory["NfFF"]
 
+        # ===========================
+        # Setup interpolator from eko
+        # ===========================
         polynomial_degree: int = dis_observables["polynomial_degree"]
         self._interpolator = InterpolatorDispatcher(
             dis_observables["xgrid"],
@@ -61,7 +62,7 @@ class Runner:
         )
 
         # ==========================
-        # create physics environment
+        # Create physics environment
         # ==========================
         self._constants = Constants()
 
@@ -90,7 +91,7 @@ class Runner:
         self._pto = theory["PTO"]
 
         # ==============================
-        # initialize structure functions
+        # Initialize structure functions
         # ==============================
         self.f2 = F2(
             interpolator=self._interpolator,
@@ -107,16 +108,28 @@ class Runner:
             pto=self._pto,
         )
 
+        # =================
+        # Initialize output
+        # =================
         self._output = Output()
         self._output["xgrid"] = self._interpolator.xgrid
 
+        # ===============================================
+        # Load process description in structure functions
+        # ===============================================
         self.f2.load(self._dis_observables.get("F2", []))
         self.fL.load(self._dis_observables.get("FL", []))
 
     def get_output(self) -> Output:
         """
-        .. todo::
-            docs
+            get_output.
+
+            Returns
+            -------
+            Output
+
+            .. todo::
+                docs
         """
         self._output["F2"] = self.f2.get_output()
         self._output["FL"] = self.fL.get_output()
@@ -125,33 +138,46 @@ class Runner:
 
     def __call__(self, pdfs: Any) -> dict:
         """
-        Returns
-        -------
-        dict
-            dictionary with all computed processes
+            __call__.
 
-        .. todo::
-            docs
-        """
+            Parameters
+            ----------
+            pdfs : Any
+                pdfs
 
-        output = self.get_output()
-
-        def get_charged_sum(z: float, Q2: float) -> float:
-            """Short summary.
-
-            d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
+            Returns
+            -------
+            dict
 
             .. todo::
                 docs
+        """
+        # init output
+        output = self.get_output()
+
+        def get_charged_sum(z: float, Q2: float) -> float:
             """
+                Compute charged sum of PDF at :math:`(x, Q^2)`.
+
+                For 3 flavors:
+                .. math::
+                    d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
+                For n flavors (missing):
+                .. math::
+                    \sum_f Q_f^2 (q_f(x, Q^2) + \\bar(q)_f(x, Q^2))
+            """
+            # preload (z, Q2)
             pdf_fl = lambda k: pdfs.xfxQ2(k, z, Q2)
+            # compute and return the sum
             return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
                 pdf_fl(2) + pdf_fl(-2)
             ) * 4 / 9
 
+        # init return dict
         ret: dict = {"F2": [], "FL": []}
-        for sf in ["F2", "FL"]:
-            for kin in output[sf]:
+
+        for sf in ["F2", "FL"]:  # loop over structure functions
+            for kin in output[sf]:  # loop over kinematic points (x, Q2)
                 # collect pdfs
                 fq = []
                 fg = []
@@ -163,12 +189,15 @@ class Runner:
                 result = kin["x"] * (
                     np.dot(fq, kin["q"]) + 2 / 9 * np.dot(fg, kin["g"])
                 )
+                # store the result
                 ret[sf].append(dict(x=kin["x"], Q2=kin["Q2"], result=result))
 
         return ret
 
     def apply(self, pdfs: Any) -> dict:
         """
+        Alias for the `__call__` method.
+
         .. todo::
             - implement
             - docs

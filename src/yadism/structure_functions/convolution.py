@@ -65,10 +65,13 @@ class DistributionVec:
     def __add__(self, other):
         """
         Do not support ``DistributionVec + iterable``, if needed use:
+
         .. code-block::
+
             d_vec + DistributionVec(*iterable)
 
         Supported:
+
         * ``+ num``
         * ``+ function``
         * ``+ DistributionVec``
