@@ -87,8 +87,14 @@ def run_against_apfel(theory, dis_observables):
                 apfel.ComputeStructureFunctionsAPFEL(np.sqrt(Q2), np.sqrt(Q2))
                 ref = apfel_FX(x)
 
+            # TODO: find a solution that works down to more than 1e-6
+            assert pytest.approx(ref, rel=0.01, abs=max(err, 1e-6)) == fx
             # assert pytest.approx(ref, rel=0.01, abs=err) == fx
-            res_tab[FX].append([x, Q2, ref, fx, err, (fx / ref - 1.0) * 100])
+            if ref == 0.0:
+                comparison = np.nan
+            else:
+                comparison = (fx / ref - 1.0) * 100
+            res_tab[FX].append([x, Q2, ref, fx, err, comparison])
 
     print_comparison_table(res_tab)
 
