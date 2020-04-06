@@ -24,6 +24,7 @@ class DistributionVec:
 
     __names = ["regular", "delta", "omx", "logomx"]
     eps_integration_border = 1e-10
+    eps_integration_abs = 1e-13
 
     def __init__(self, regular, delta=None, omx=None, logomx=None):
         try:
@@ -201,6 +202,7 @@ class DistributionVec:
                     i,
                     x * (1 + self.eps_integration_border),
                     1.0 * (1 - self.eps_integration_border),
+                    epsabs=self.eps_integration_abs,
                     points=breakpoints,
                 )
 
