@@ -112,15 +112,31 @@ class EvaluatedStructureFunction(abc.ABC):
 
 
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
-    def __init__(self, SF, kinematics):
+    def __init__(self, SF, kinematics, charge_em):
         super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
+
+        # FH - Vogt comparison prefactor
+        # TODO: document prefactor
+        # FH page 61 (6.1), 65 (7.2) - Vogt page 21 (4.1)
+        # a_s expansion factor already included (simplify with alpha_s / 4 pi)
+        # pay attention to Vogt 1/x in (4.1)
+        # in FH appendix are written the expressions for c's (6.1), convolution
+        # defined in (7.2)
+        # also the charge average 9 / 2 is coming from Vogt (4.1) definition in the
+        # gluon
+        # TODO: remember that is only for the gluon and quark singlet, so it should
+        # be removed from the non-singlet prefactor
+        # TODO: why is it not the pdf but xpdf used? check why Laenen is using xpdf
+        # in the first place
+        self._charge_em = charge_em
+        self._FHprefactor = self._Q2 / (np.pi * self._SF._M2) * 9 / 2  # / self._x
 
         # common variables
         self._s = self._Q2 * (1 - self._x) / self._x
         self._shat = lambda z: self._Q2 * (1 - z) / z
 
         self._rho_q = -4 * self._SF._M2 / self._Q2
-        self._rho = lambda z: self._rho_q * z / (z - 1)
+        self._rho = lambda z: -self._rho_q * z / (1 - z)
         self._rho_p = lambda z: -self._rho_q * z
 
         self._beta = lambda z: np.sqrt(1 - self._rho(z))
@@ -128,6 +144,10 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         self._chi = lambda z: (1 - self._beta(z)) / (1 + self._beta(z))
 
     def is_below_threshold(self, z):
+        """
+        .. todo::
+            use threshold on shat or using FH's zmax?
+        """
         return self._shat(z) <= 4 * self._SF._M2
 
     def quark_0(self) -> float:

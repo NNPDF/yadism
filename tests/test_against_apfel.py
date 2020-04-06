@@ -70,6 +70,7 @@ def run_against_apfel(theory, dis_observables):
         "F2light": apfel.F2light,
         "FLlight": apfel.FLlight,
         "FLcharm": apfel.FLcharm,
+        "FLbottom": apfel.FLbottom,
     }
     for FX, apfel_FX in apfel_methods.items():
         res_tab[FX] = []

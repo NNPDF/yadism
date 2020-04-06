@@ -15,7 +15,7 @@ from eko.thresholds import Threshold
 from eko.alpha_s import StrongCoupling
 
 from .output import Output
-from .structure_functions import F2_light, FL_light, FL_charm
+from .structure_functions import F2_light, FL_light, FL_charm, FL_bottom
 
 
 class Runner:
@@ -100,6 +100,14 @@ class Runner:
                 alpha_s=self._alpha_s,
                 pto=self._pto,
                 M2=theory["mc"] ** 2,
+            ),
+            FL_bottom(
+                interpolator=self._interpolator,
+                constants=self._constants,
+                threshold=self._threshold,
+                alpha_s=self._alpha_s,
+                pto=self._pto,
+                M2=theory["mb"] ** 2,
             ),
         ]
 
