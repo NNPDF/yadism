@@ -9,8 +9,10 @@ The 3-loop reference is :cite:`Vermaseren:2005qc` which includes also the lower 
 """
 
 from . import EvaluatedStructureFunction
-from .F2 import ESF_F2
-from .FL import ESF_FL
+from .F2light import ESF_F2light
+from .FLlight import ESF_FLlight
+from .F2heavy import ESF_F2charm, ESF_F2bottom, ESF_F2top
+from .FLheavy import ESF_FLcharm, ESF_FLbottom, ESF_FLtop
 
 import abc
 
@@ -21,8 +23,11 @@ class StructureFunction(abc.ABC):
         docs
     """
 
-    def __init__(self, name, ESF, *, interpolator, constants, threshold, alpha_s, pto):
-        self._name = name
+    def __init__(
+        self, name, ESF, M2=None, *, interpolator, constants, threshold, alpha_s, pto
+    ):
+        self.name = name
+        self._M2 = M2
         self._interpolator = interpolator
         self._constants = constants
         self._threshold = threshold
@@ -53,21 +58,51 @@ class StructureFunction(abc.ABC):
         return output
 
 
-class F2(StructureFunction):
+class F2_light(StructureFunction):
     """
     .. todo::
         docs
     """
 
     def __init__(self, **kwargs):
-        super(F2, self).__init__("F2", ESF_F2, **kwargs)
+        super(F2_light, self).__init__("F2light", ESF_F2light, **kwargs)
 
 
-class FL(StructureFunction):
+class FL_light(StructureFunction):
     """
     .. todo::
         docs
     """
 
     def __init__(self, **kwargs):
-        super(FL, self).__init__("FL", ESF_FL, **kwargs)
+        super(FL_light, self).__init__("FLlight", ESF_FLlight, **kwargs)
+
+
+class F2_charm(StructureFunction):
+    def __init__(self, **kwargs):
+        super(F2_charm, self).__init__("F2charm", ESF_F2charm, **kwargs)
+
+
+class F2_bottom(StructureFunction):
+    def __init__(self, **kwargs):
+        super(F2_bottom, self).__init__("F2bottom", ESF_F2bottom, **kwargs)
+
+
+class F2_top(StructureFunction):
+    def __init__(self, **kwargs):
+        super(F2_top, self).__init__("F2top", ESF_F2top, **kwargs)
+
+
+class FL_charm(StructureFunction):
+    def __init__(self, **kwargs):
+        super(FL_charm, self).__init__("FLcharm", ESF_FLcharm, **kwargs)
+
+
+class FL_bottom(StructureFunction):
+    def __init__(self, **kwargs):
+        super(FL_bottom, self).__init__("FLbottom", ESF_FLbottom, **kwargs)
+
+
+class FL_top(StructureFunction):
+    def __init__(self, **kwargs):
+        super(FL_top, self).__init__("FLtop", ESF_FLtop, **kwargs)

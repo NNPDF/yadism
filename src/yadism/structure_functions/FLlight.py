@@ -12,32 +12,31 @@ from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
 from . import splitting_functions as split
 
 
-class ESF_FL(ESF):
+class ESF_FLlight(ESF):
     """
     .. todo::
         docs
     """
 
     def __init__(self, SF, kinematics):
-        super(ESF_FL, self).__init__(SF, kinematics)
+        super(ESF_FLlight, self).__init__(SF, kinematics)
 
-    def light_LO_quark(self) -> float:
+    def quark_0(self) -> float:
         """
         .. todo::
             docs
         """
 
-        # leading order is just a delta function
         return 0
 
-    def light_LO_gluon(self) -> float:
+    def gluon_0(self) -> float:
         """
         .. todo::
             docs
         """
         return 0
 
-    def light_NLO_quark(self):
+    def quark_1(self):
         """
         regular
         delta
@@ -55,7 +54,7 @@ class ESF_FL(ESF):
 
         return cq_reg
 
-    def light_NLO_gluon(self):
+    def gluon_1(self):
         """
         vogt page 117
 

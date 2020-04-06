@@ -40,26 +40,14 @@ class EvaluatedStructureFunction(abc.ABC):
         # something to do?
         if not self._cqv:
             # yes
-            self._cqv, self._e_cqv = self._compute_component(
-                self.light_LO_quark, self.light_NLO_quark
-            )
+            self._cqv, self._e_cqv = self._compute_component(self.quark_0, self.quark_1)
         if not self._cgv:
             # yes
-            self._cgv, self._e_cgv = self._compute_component(
-                self.light_LO_gluon, self.light_NLO_gluon
-            )
+            self._cgv, self._e_cgv = self._compute_component(self.gluon_0, self.gluon_1)
 
     def _compute_component(self, f_LO, f_NLO):
         ls = []
         els = []
-
-        # def fac(f_XO_):
-        # return lambda poly_f: f_XO_.convolution(self._x, poly_f)
-
-        # c_LO = conv.DistributionVec(f_LO())
-        # c_NLO = conv.DistributionVec(f_NLO())
-        # f_LO_ = fac(c_LO)
-        # f_NLO_ = fac(c_NLO)
 
         # combine orders
         d_vec = conv.DistributionVec(f_LO())
@@ -90,34 +78,93 @@ class EvaluatedStructureFunction(abc.ABC):
         output["g_error"] = self._e_cgv
         return output
 
-    @abc.abstractclassmethod
-    def light_LO_quark(self):
+    @abc.abstractmethod
+    def quark_0(self):
         """
         .. todo::
             docs
         """
         pass
 
-    @abc.abstractclassmethod
-    def light_LO_gluon(self):
+    @abc.abstractmethod
+    def gluon_0(self):
         """
         .. todo::
             docs
         """
         pass
 
-    @abc.abstractclassmethod
-    def light_NLO_quark(self):
+    @abc.abstractmethod
+    def quark_1(self):
         """
         .. todo::
             docs
         """
         pass
 
-    @abc.abstractclassmethod
-    def light_NLO_gluon(self):
+    @abc.abstractmethod
+    def gluon_1(self):
         """
         .. todo::
             docs
         """
         pass
+
+
+class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
+    def __init__(self, SF, kinematics, charge_em):
+        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
+
+        # FH - Vogt comparison prefactor
+        # TODO: document prefactor
+        # FH page 61 (6.1), 65 (7.2) - Vogt page 21 (4.1)
+        # a_s expansion factor already included (simplify with alpha_s / 4 pi)
+        # pay attention to Vogt 1/x in (4.1)
+        # in FH appendix are written the expressions for c's (6.1), convolution
+        # defined in (7.2)
+        # also the charge average 9 / 2 is coming from Vogt (4.1) definition in the
+        # gluon
+        # TODO: remember that is only for the gluon and quark singlet, so it should
+        # be removed from the non-singlet prefactor
+        # TODO: why is it not the pdf but xpdf used? check why Laenen is using xpdf
+        # in the first place
+        self._charge_em = charge_em
+        self._FHprefactor = self._Q2 / (np.pi * self._SF._M2) * 9 / 2  # / self._x
+
+        # common variables
+        self._s = self._Q2 * (1 - self._x) / self._x
+        self._shat = lambda z: self._Q2 * (1 - z) / z
+
+        self._rho_q = -4 * self._SF._M2 / self._Q2
+        self._rho = lambda z: -self._rho_q * z / (1 - z)
+        self._rho_p = lambda z: -self._rho_q * z
+
+        self._beta = lambda z: np.sqrt(1 - self._rho(z))
+
+        self._chi = lambda z: (1 - self._beta(z)) / (1 + self._beta(z))
+
+    def is_below_threshold(self, z):
+        """
+        .. todo::
+            use threshold on shat or using FH's zmax?
+        """
+        return self._shat(z) <= 4 * self._SF._M2
+
+    def quark_0(self) -> float:
+        return 0
+
+    def gluon_0(self) -> float:
+        return 0
+
+    def quark_1(self):
+        return 0
+
+    @abc.abstractmethod
+    def _gluon_1(self):
+        pass
+
+    def gluon_1(self):
+        if self._s <= 4 * self._SF._M2:
+            return 0
+        else:
+            return self._gluon_1()
