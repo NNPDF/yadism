@@ -11,7 +11,8 @@ The 3-loop reference is :cite:`Vermaseren:2005qc` which includes also the lower 
 from . import EvaluatedStructureFunction
 from .F2light import ESF_F2light
 from .FLlight import ESF_FLlight
-from .FLheavy import ESF_FLcharm, ESF_FLbottom
+from .F2heavy import ESF_F2charm, ESF_F2bottom, ESF_F2top
+from .FLheavy import ESF_FLcharm, ESF_FLbottom, ESF_FLtop
 
 import abc
 
@@ -77,9 +78,19 @@ class FL_light(StructureFunction):
         super(FL_light, self).__init__("FLlight", ESF_FLlight, **kwargs)
 
 
-# class F2_charm(StructureFunction):
-# def __init__(self, **kwargs):
-# super(F2_charm, self).__init__("F2charm", ESF_F2charm, **kwargs)
+class F2_charm(StructureFunction):
+    def __init__(self, **kwargs):
+        super(F2_charm, self).__init__("F2charm", ESF_F2charm, **kwargs)
+
+
+class F2_bottom(StructureFunction):
+    def __init__(self, **kwargs):
+        super(F2_bottom, self).__init__("F2bottom", ESF_F2bottom, **kwargs)
+
+
+class F2_top(StructureFunction):
+    def __init__(self, **kwargs):
+        super(F2_top, self).__init__("F2top", ESF_F2top, **kwargs)
 
 
 class FL_charm(StructureFunction):
@@ -90,3 +101,8 @@ class FL_charm(StructureFunction):
 class FL_bottom(StructureFunction):
     def __init__(self, **kwargs):
         super(FL_bottom, self).__init__("FLbottom", ESF_FLbottom, **kwargs)
+
+
+class FL_top(StructureFunction):
+    def __init__(self, **kwargs):
+        super(FL_top, self).__init__("FLtop", ESF_FLtop, **kwargs)

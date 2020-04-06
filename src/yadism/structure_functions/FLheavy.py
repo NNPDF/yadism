@@ -51,3 +51,8 @@ class ESF_FLcharm(ESF_FLheavy):
 class ESF_FLbottom(ESF_FLheavy):
     def __init__(self, SF, kinematics):
         super(ESF_FLbottom, self).__init__(SF, kinematics, charge_em=1 / 3)
+
+
+class ESF_FLtop(ESF_FLheavy):
+    def __init__(self, SF, kinematics):
+        super(ESF_FLtop, self).__init__(SF, kinematics, charge_em=2 / 3)

@@ -8,54 +8,62 @@ This file contains the implementation of the DIS structure functions at LO.
 
 import numpy as np
 
-from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
+from .EvaluatedStructureFunction import EvaluatedStructureFunctionHeavy as ESFH
 from . import splitting_functions as split
 
 
-class ESF_F2heavy(ESF):
+class ESF_F2heavy(ESFH):
     """
     .. todo::
         docs
     """
 
-    def __init__(self, SF, kinematics):
-        super(ESF_F2heavy, self).__init__(SF, kinematics)
+    def __init__(self, SF, kinematics, charge_em):
+        super(ESF_F2heavy, self).__init__(SF, kinematics, charge_em)
 
-    def quark_0(self) -> float:
-        return 0
-
-    def gluon_0(self) -> float:
-        return 0
-
-    def quark_1(self):
-        """
-        regular
-        delta
-        1/(1-x)_+
-        log(x)/(1-x)_+
-
-        .. todo::
-            docs
-        """
-        return 0
-
-    def gluon_1(self):
+    def _gluon_1(self):
         """
 
         .. todo::
             docs
         """
-
-        TR = self._SF._constants.TF
+        CF = self._SF._constants.CF
 
         def cg(z):
-            return (
-                2
-                * self._n_f
+            if self.is_below_threshold(z):
+                return 0
+            # fmt: off
+            return self._FHprefactor * self._charge_em ** 2 * (
+                3 * CF / 4
+                * (-np.pi * self._rho_p(z) ** 3)
+                / (4 * self._rho(z) ** 2 * self._rho_q ** 2)
                 * (
-                    split.pqg(z, self._SF._constants) * (np.log((1 - z) / z) - 4)
-                    + 3 * TR
-                )
-            )
+                    2 * self._beta(z) * (
+                        self._rho(z) ** 2
+                        + self._rho_q ** 2
+                        + self._rho(z) * self._rho_q * (6 + self._rho_q)
+                    )
+                    +
+                    np.log(self._chi(z)) * (
+                        2 * self._rho_q ** 2 * (1 + self._rho(z))
+                        + self._rho(z) ** 2 * (2 - (self._rho_q - 4) * self._rho_q)
+                    )
+                )) / z
+            # fmt: on
 
         return cg
+
+
+class ESF_F2charm(ESF_F2heavy):
+    def __init__(self, SF, kinematics):
+        super(ESF_F2charm, self).__init__(SF, kinematics, charge_em=2 / 3)
+
+
+class ESF_F2bottom(ESF_F2heavy):
+    def __init__(self, SF, kinematics):
+        super(ESF_F2bottom, self).__init__(SF, kinematics, charge_em=1 / 3)
+
+
+class ESF_F2top(ESF_F2heavy):
+    def __init__(self, SF, kinematics):
+        super(ESF_F2top, self).__init__(SF, kinematics, charge_em=2 / 3)
