@@ -136,6 +136,11 @@ def get_apfel_data(theory, dis_observables, cache_path="", arbitrary_location=Fa
 
         res_tab = {}
         for FX, apfel_FX in apfel_methods.items():
+            if FX not in dis_observables:
+                # if not in the runcard just skip
+                continue
+
+            # iterate over input kinematics
             res_tab[FX] = []
             for kinematics in dis_observables.get(FX, []):
                 Q2 = kinematics["Q2"]
@@ -147,5 +152,5 @@ def get_apfel_data(theory, dis_observables, cache_path="", arbitrary_location=Fa
                 res_tab[FX].append(dict(x=x, Q2=Q2, value=value))
 
         with open(cache_path, "w") as file:
-            yaml.safe_dump(res_tab, file)  # load from cache
+            yaml.safe_dump(res_tab, file)  # store the cache
     return res_tab
