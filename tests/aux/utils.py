@@ -33,3 +33,8 @@ def print_comparison_table(res_tab):
         print(f"\n---{FX}---\n")
         print(print_tab)
         print("\n--------\n")
+
+        with open(test_data_dir / "structure_functions.log", "a") as f:
+            f.write(f"\n---{FX}---\n")
+            f.write(str(print_tab))
+            f.write("\n--------\n")

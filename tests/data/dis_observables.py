@@ -21,9 +21,9 @@ is_log_interpolation = True
 kinematics = []
 # fixed Q
 kinematics.extend([dict(x=x, Q2=90.0) for x in np.logspace(-3, -1, 6).tolist()])
-kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.1, 0.9, 6).tolist()])
+kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.15, 0.9, 6).tolist()])
 # fixed x
-kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.logspace(1.5, 3, 6).tolist()])
+kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.logspace(1.5, 2.5, 6).tolist()])
 
 for sf in observables:
     content = dict(

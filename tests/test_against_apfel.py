@@ -17,16 +17,30 @@ import toyLH as toyLH
 from apfel_utils import get_apfel_data
 from utils import test_data_dir, load_runcards, print_comparison_table
 
+observables = [
+    "F2light",
+    "F2charm",
+    "F2bottom",
+    # "F2top",
+    "FLlight",
+    "FLcharm",
+    "FLbottom",
+    # "FLtop",
+]
 
-# def test_LO():
-# theory, dis_observables = load_runcards("theory_LO.yaml", "dis_observables.yaml")
-# run_against_apfel(theory, dis_observables)
+
+def test_LO():
+    theory_f = test_data_dir / "theory_LO.yaml"
+    for obs in observables[:1]:
+        dis_observables_f = test_data_dir / f"{obs}.yaml"
+        run_against_apfel(theory_f, dis_observables_f)
 
 
 def test_NLO():
     theory_f = test_data_dir / "theory_NLO.yaml"
-    dis_observables_f = test_data_dir / "F2light.yaml"
-    run_against_apfel(theory_f, dis_observables_f)
+    for obs in observables:
+        dis_observables_f = test_data_dir / f"{obs}.yaml"
+        run_against_apfel(theory_f, dis_observables_f)
 
 
 def run_against_apfel(theory_f, dis_observables_f):
@@ -68,8 +82,10 @@ def run_against_apfel(theory_f, dis_observables_f):
                 comparison = (fx / ref - 1.0) * 100
             kin["rel_err[%]"] = comparison
             kinematics.append(kin)
+
     print_comparison_table(res_tab)
 
 
 if __name__ == "__main__":
+    test_LO()
     test_NLO()
