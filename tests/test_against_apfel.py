@@ -15,7 +15,7 @@ from yadism.runner import Runner
 sys.path.append(os.path.join(os.path.dirname(__file__), "aux"))
 import toyLH as toyLH
 from apfel_utils import get_apfel_data
-from utils import test_data_dir, load_runcards, print_comparison_table
+from utils import test_data_dir, logs_dir, load_runcards, print_comparison_table
 
 observables = [
     "F2light",
@@ -83,7 +83,10 @@ def run_against_apfel(theory_f, dis_observables_f):
             kin["rel_err[%]"] = comparison
             kinematics.append(kin)
 
-    print_comparison_table(res_tab)
+    logs_path_template = (
+        logs_dir / f"{theory_f.stem}-{dis_observables_f.stem}-{{obs}}.csv"
+    )
+    print_comparison_table(res_tab, logs_path_template)
 
 
 if __name__ == "__main__":

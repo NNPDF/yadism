@@ -109,6 +109,7 @@ def load_apfel(par: dict) -> None:
 
 
 cache_location = test_data_dir / "apfel_cache"
+cache_location.mkdir(parents=True, exist_ok=True)
 
 
 def get_apfel_data(theory_path, dis_observables_path):

@@ -21,20 +21,23 @@ def load_runcards(theory_file, observables_file):
     return theory, dis_observables
 
 
-def print_comparison_table(res_tab):
+logs_dir = test_data_dir / "logs"
+logs_dir.mkdir(parents=True, exist_ok=True)
+
+
+def print_comparison_table(res_tab, log_path_template=None):
 
     for FX, tab in res_tab.items():
         if len(tab) == 0:
             continue
         print_tab = pd.DataFrame(tab)
-        # print_tab.columns = ["x", "Q2", "APFEL", "yadism", "yadism_error", "rel_err[%]"]
 
         # print results
         print(f"\n---{FX}---\n")
         print(print_tab)
         print("\n--------\n")
 
-        with open(test_data_dir / "structure_functions.log", "a") as f:
-            f.write(f"\n---{FX}---\n")
-            f.write(str(print_tab))
-            f.write("\n--------\n")
+        if log_path_template is not None:
+            log_path = log_path_template.parent / log_path_template.name.format(obs=FX)
+            with open(log_path, "w") as f:
+                print_tab.to_csv(f)
