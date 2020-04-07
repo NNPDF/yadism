@@ -25,6 +25,7 @@ kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.15, 0.9, 6).tolist(
 # fixed x
 kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.logspace(1.5, 2.5, 6).tolist()])
 
+# iterate over observables (one dict for each)
 for sf in observables:
     content = dict(
         xgrid=xgrid.tolist(),
@@ -33,6 +34,7 @@ for sf in observables:
     )
     content[sf] = kinematics
 
+    # dump to file
     fn = pathlib.Path(__file__).absolute().parent / f"{sf}.yaml"
     with open(fn, "w") as f:
         yaml.safe_dump(content, f)

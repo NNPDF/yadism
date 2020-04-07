@@ -11,7 +11,20 @@ sys.path.append(os.path.dirname(__file__))
 from utils import load_runcards, test_data_dir
 
 
-def load_apfel(par: dict) -> None:
+def load_apfel(par):
+    """
+        Set APFEL parameter from ``par`` dictionary.
+
+        Parameters
+        ----------
+        par : dict
+            theory and process parameters
+
+        Returns
+        -------
+        module
+            loaded apfel wrapper
+    """
     # Cleanup APFEL common blocks
     apfel.CleanUp()
 
@@ -108,29 +121,45 @@ def load_apfel(par: dict) -> None:
     return apfel
 
 
+# Define cache path to store computed observables
 cache_location = test_data_dir / "apfel_cache"
 cache_location.mkdir(parents=True, exist_ok=True)
 
 
 def get_apfel_data(theory_path, dis_observables_path):
+    """
+        Run APFEL to compute observables or simply use cached values.
+
+        Parameters
+        ----------
+        theory_path :
+            path for the theory runcard
+        dis_observables_path :
+            path for the observables runcard
+    """
     theory_p = test_data_dir / theory_path
     obs_p = test_data_dir / dis_observables_path
 
+    # check that paths match existing files
     if not all([theory_p.is_file(), obs_p.is_file()]):
         raise FileNotFoundError("Missing runcards.")
 
+    # get last edit for runcards
     input_mtime = max(theory_p.stat().st_mtime, obs_p.stat().st_mtime)
 
     cache_path = cache_location / f"{theory_p.stem}-{obs_p.stem}.yaml"
 
+    # check if cache existing and updated
     if cache_path.is_file() and cache_path.stat().st_mtime > input_mtime:
-        with open(cache_path) as file:
-            res_tab = yaml.safe_load(file)  # load from cache
+        # load from cache
+        with open(cache_path) as f:
+            res_tab = yaml.safe_load(f)
     else:
-        theory, dis_observables = load_runcards(theory_p, obs_p)
         # setup APFEL
+        theory, dis_observables = load_runcards(theory_p, obs_p)
         apfel = load_apfel(theory)
 
+        # mapping observables names to APFEL methods
         apfel_methods = {
             "F2light": apfel.F2light,
             "FLlight": apfel.FLlight,
@@ -142,6 +171,7 @@ def get_apfel_data(theory_path, dis_observables_path):
             "FLtop": apfel.FLtop,
         }
 
+        # compute observables with APFEL
         res_tab = {}
         for FX, apfel_FX in apfel_methods.items():
             if FX not in dis_observables:
@@ -159,6 +189,7 @@ def get_apfel_data(theory_path, dis_observables_path):
 
                 res_tab[FX].append(dict(x=x, Q2=Q2, value=value))
 
-        with open(cache_path, "w") as file:
-            yaml.safe_dump(res_tab, file)  # store the cache
+        # store the cache
+        with open(cache_path, "w") as f:
+            yaml.safe_dump(res_tab, f)
     return res_tab

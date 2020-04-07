@@ -17,6 +17,7 @@ import toyLH as toyLH
 from apfel_utils import get_apfel_data
 from utils import test_data_dir, logs_dir, load_runcards, print_comparison_table
 
+# available observables
 observables = [
     "F2light",
     "F2charm",
@@ -30,36 +31,71 @@ observables = [
 
 
 def test_LO():
+    """
+    Test the full LO order against APFEL's.
+    """
     theory_f = test_data_dir / "theory_LO.yaml"
+    # iterate over observables - only F2light at LO
     for obs in observables[:1]:
         dis_observables_f = test_data_dir / f"{obs}.yaml"
         run_against_apfel(theory_f, dis_observables_f)
 
 
 def test_NLO():
+    """
+    Test the full NLO order against APFEL's.
+    """
     theory_f = test_data_dir / "theory_NLO.yaml"
+    # iterate over observables
     for obs in observables:
         dis_observables_f = test_data_dir / f"{obs}.yaml"
         run_against_apfel(theory_f, dis_observables_f)
 
 
 def run_against_apfel(theory_f, dis_observables_f):
+    """
+        Run APFEL comparison on the given runcards.
+
+        Steps:
+        - load runcards
+            - using ``load_runcards``
+        - instantiate and call yadism's Runner
+            - using ``yadism.Runner``
+        - retrieve APFEL data to compare with
+            - using ``get_apfel_data``
+        - check and collect comparison results
+            - using ``assert``
+            - using ``print_comparison_table``
+
+        Parameters
+        ----------
+        theory_f :
+            file path for the theory runcard
+        dis_observables_f :
+            file path for the observables runcard
+    """
     theory, dis_observables = load_runcards(theory_f, dis_observables_f)
 
-    # =====================
-    # execute DIS
-    runner = Runner(theory, dis_observables)
-    # =====================
-
-    # setup LHAPDF
+    # ============
+    # setup PDFset
+    # ============
     pdfset = theory.get("PDFSet", "ToyLH")
     if pdfset == "ToyLH":
         pdfs = toyLH.mkPDF("ToyLH", 0)
     else:
         pdfs = lhapdf.mkPDF(pdfset, 0)
 
+    # ======================
+    # get observables values
+    # ======================
+    runner = Runner(theory, dis_observables)
+
     yad_tab = runner.apply(pdfs)
     apf_tab = get_apfel_data(theory_f, dis_observables_f)
+
+    # =========================
+    # collect and check results
+    # =========================
 
     res_tab = {}
     # loop kinematics
@@ -83,6 +119,9 @@ def run_against_apfel(theory_f, dis_observables_f):
             kin["rel_err[%]"] = comparison
             kinematics.append(kin)
 
+    # =============
+    # print and log
+    # =============
     logs_path_template = (
         logs_dir / f"{theory_f.stem}-{dis_observables_f.stem}-{{obs}}.csv"
     )
