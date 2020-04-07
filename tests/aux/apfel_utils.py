@@ -1,8 +1,12 @@
+import pathlib
+
+import yaml
+import numpy as np
+
 import apfel
 
 
 def load_apfel(par: dict) -> None:
-
     # Cleanup APFEL common blocks
     apfel.CleanUp()
 
@@ -97,3 +101,51 @@ def load_apfel(par: dict) -> None:
     apfel.InitializeAPFEL_DIS()
 
     return apfel
+
+
+cache_location = pathlib.Path(__file__).absolute().parents[1] / "data/apfel_cache"
+
+
+def get_apfel_data(theory, dis_observables, cache_path="", arbitrary_location=False):
+    # check for existing cache
+    if cache_path:
+        if arbitrary_location:
+            cache_path = pathlib.Path(cache_path).absolute()
+        else:
+            cache_path = cache_location / cache_path
+    else:
+        cache_path = cache_location / f"{theory['ID']}.yaml"
+
+    if cache_path.is_file():
+        with open(cache_path) as file:
+            res_tab = yaml.safe_load(file)  # load from cache
+    else:
+        # setup APFEL
+        apfel = load_apfel(theory)
+
+        apfel_methods = {
+            "F2light": apfel.F2light,
+            "FLlight": apfel.FLlight,
+            "F2charm": apfel.F2charm,
+            "F2bottom": apfel.F2bottom,
+            "F2top": apfel.F2top,
+            "FLcharm": apfel.FLcharm,
+            "FLbottom": apfel.FLbottom,
+            "FLtop": apfel.FLtop,
+        }
+
+        res_tab = {}
+        for FX, apfel_FX in apfel_methods.items():
+            res_tab[FX] = []
+            for kinematics in dis_observables.get(FX, []):
+                Q2 = kinematics["Q2"]
+                x = kinematics["x"]
+
+                apfel.ComputeStructureFunctionsAPFEL(np.sqrt(Q2), np.sqrt(Q2))
+                value = apfel_FX(x)
+
+                res_tab[FX].append(dict(x=x, Q2=Q2, value=value))
+
+        with open(cache_path, "w") as file:
+            yaml.safe_dump(res_tab, file)  # load from cache
+    return res_tab
