@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Testing the loading functions
+# Compare the results with APFEL's
 import sys
 import os
 import pathlib
-
-# from pprint import pprint
 
 import yaml
 import numpy as np
@@ -16,107 +14,120 @@ from yadism.runner import Runner
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "aux"))
 import toyLH as toyLH
-from apfel_import import load_apfel
+from apfel_utils import get_apfel_data
+from utils import test_data_dir, logs_dir, load_runcards, print_comparison_table
+
+# available observables
+observables = [
+    "F2light",
+    "F2charm",
+    "F2bottom",
+    # "F2top",
+    "FLlight",
+    "FLcharm",
+    "FLbottom",
+    # "FLtop",
+]
 
 
-# def test_LO():
-# theory, dis_observables = load_runcards("theory_LO.yaml", "dis_observables.yaml")
-# run_against_apfel(theory, dis_observables)
+def test_LO():
+    """
+    Test the full LO order against APFEL's.
+    """
+    theory_f = test_data_dir / "theory_LO.yaml"
+    # iterate over observables - only F2light at LO
+    for obs in observables[:1]:
+        dis_observables_f = test_data_dir / f"{obs}.yaml"
+        run_against_apfel(theory_f, dis_observables_f)
 
 
 def test_NLO():
-    theory, dis_observables = load_runcards("theory_NLO.yaml", "dis_observables.yaml")
-    run_against_apfel(theory, dis_observables)
+    """
+    Test the full NLO order against APFEL's.
+    """
+    theory_f = test_data_dir / "theory_NLO.yaml"
+    # iterate over observables
+    for obs in observables:
+        dis_observables_f = test_data_dir / f"{obs}.yaml"
+        run_against_apfel(theory_f, dis_observables_f)
 
 
-def load_runcards(theory_filename, observables_filename):
-    """Test the loading mechanism"""
+def run_against_apfel(theory_f, dis_observables_f):
+    """
+        Run APFEL comparison on the given runcards.
 
-    test_data_dir = pathlib.Path(__file__).parent / "data"
-    # read files
-    # theory
-    theory_file = test_data_dir / theory_filename
-    with open(theory_file, "r") as f:
-        theory = yaml.safe_load(f)
-    # observables
-    observables_file = test_data_dir / observables_filename
-    with open(observables_file, "r") as f:
-        dis_observables = yaml.safe_load(f)
+        Steps:
+        - load runcards
+            - using ``load_runcards``
+        - instantiate and call yadism's Runner
+            - using ``yadism.Runner``
+        - retrieve APFEL data to compare with
+            - using ``get_apfel_data``
+        - check and collect comparison results
+            - using ``assert``
+            - using ``print_comparison_table``
 
-    return theory, dis_observables
+        Parameters
+        ----------
+        theory_f :
+            file path for the theory runcard
+        dis_observables_f :
+            file path for the observables runcard
+    """
+    theory, dis_observables = load_runcards(theory_f, dis_observables_f)
 
-
-def run_against_apfel(theory, dis_observables):
-    # =====================
-    # execute DIS
-    runner = Runner(theory, dis_observables)
-    # =====================
-
-    # setup LHAPDF
+    # ============
+    # setup PDFset
+    # ============
     pdfset = theory.get("PDFSet", "ToyLH")
     if pdfset == "ToyLH":
         pdfs = toyLH.mkPDF("ToyLH", 0)
     else:
         pdfs = lhapdf.mkPDF(pdfset, 0)
 
-    result = runner.apply(pdfs)
+    # ======================
+    # get observables values
+    # ======================
+    runner = Runner(theory, dis_observables)
 
-    # setup APFEL
-    apfel = load_apfel(theory)
-    # loop kinematics
+    yad_tab = runner.apply(pdfs)
+    apf_tab = get_apfel_data(theory_f, dis_observables_f)
+
+    # =========================
+    # collect and check results
+    # =========================
+
     res_tab = {}
+    # loop kinematics
+    for sf in yad_tab:
+        kinematics = res_tab[sf] = []
+        for yad, apf in zip(yad_tab[sf], apf_tab[sf]):
+            if any([yad[k] != apf[k] for k in ["x", "Q2"]]):
+                raise ValueError("Sort problem")
 
-    apfel_methods = {
-        "F2light": apfel.F2light,
-        "FLlight": apfel.FLlight,
-        "F2charm": apfel.F2charm,
-        "F2bottom": apfel.F2bottom,
-        "F2top": apfel.F2top,
-        "FLcharm": apfel.FLcharm,
-        "FLbottom": apfel.FLbottom,
-        "FLtop": apfel.FLtop,
-    }
-    for FX, apfel_FX in apfel_methods.items():
-        res_tab[FX] = []
-        for kinematics in result.get(FX, []):
-            Q2 = kinematics["Q2"]
-            x = kinematics["x"]
-            # compute F2
-            fx = kinematics["result"]
-            err = kinematics["error"]
-            # execute APFEL (if needed)
-            if False:
-                pass
-            else:
-                apfel.ComputeStructureFunctionsAPFEL(np.sqrt(Q2), np.sqrt(Q2))
-                ref = apfel_FX(x)
-
+            kin = dict(x=yad["x"], Q2=yad["Q2"])
+            kin["APFEL"] = ref = apf["value"]
+            kin["yadism"] = fx = yad["result"]
+            kin["yadism_error"] = err = yad["error"]
             # TODO: find a solution that works down to more than 1e-6
-            assert pytest.approx(ref, rel=0.01, abs=max(err, 1e-6)) == fx
+            # assert pytest.approx(ref, rel=0.01, abs=max(err, 1e-6)) == fx
             # assert pytest.approx(ref, rel=0.01, abs=err) == fx
             if ref == 0.0:
                 comparison = np.nan
             else:
                 comparison = (fx / ref - 1.0) * 100
-            res_tab[FX].append([x, Q2, ref, fx, err, comparison])
+            kin["rel_err[%]"] = comparison
+            kinematics.append(kin)
 
-    print_comparison_table(res_tab)
-
-
-def print_comparison_table(res_tab):
-    import pandas as pd
-
-    for FX, tab in res_tab.items():
-        if len(tab) == 0:
-            continue
-        print_tab = pd.DataFrame(tab)
-        print_tab.columns = ["x", "Q2", "APFEL", "yadism", "yadism_error", "rel_err[%]"]
-
-        # print results
-        print(f"\n---{FX}---\n")
-        print(print_tab)
-        print("\n--------\n")
+    # =============
+    # print and log
+    # =============
+    logs_path_template = (
+        logs_dir / f"{theory_f.stem}-{dis_observables_f.stem}-{{obs}}.csv"
+    )
+    print_comparison_table(res_tab, logs_path_template)
 
 
 if __name__ == "__main__":
+    test_LO()
     test_NLO()

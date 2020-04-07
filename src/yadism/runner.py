@@ -41,6 +41,17 @@ class Runner:
         docs
     """
 
+    __obs_templates = {
+        "F2light": (F2_light,),
+        "F2charm": (F2_charm, "mc"),
+        "F2bottom": (F2_bottom, "mb"),
+        "F2top": (F2_top, "mt"),
+        "FLlight": (FL_light,),
+        "FLcharm": (FL_charm, "mc"),
+        "FLbottom": (FL_bottom, "mb"),
+        "FLtop": (FL_top, "mt"),
+    }
+
     def __init__(self, theory: dict, dis_observables: dict):
         self._theory = theory
         self._dis_observables = dis_observables
@@ -93,22 +104,28 @@ class Runner:
             alpha_s=self._alpha_s,
             pto=self._pto,
         )
-        self._observables = [
-            F2_light(**default_args),
-            FL_light(**default_args),
-            F2_charm(**default_args, M2=theory["mc"] ** 2,),
-            F2_bottom(**default_args, M2=theory["mb"] ** 2,),
-            F2_top(**default_args, M2=theory["mt"] ** 2,),
-            FL_charm(**default_args, M2=theory["mc"] ** 2,),
-            FL_bottom(**default_args, M2=theory["mb"] ** 2,),
-            FL_top(**default_args, M2=theory["mt"] ** 2,),
-        ]
+        self._observables = []
+        for sf, obs_t in self.__obs_templates.items():
+            # if not in the input skip
+            if sf not in self._dis_observables:
+                continue
 
+            # first element is the class [required]
+            if len(obs_t) == 1:
+                obj = obs_t[0](**default_args)
+            # if second element specified is the key for the mass
+            elif len(obs_t) == 2:
+                obj = obs_t[0](**default_args, M2=theory[obs_t[1]] ** 2,)
+            else:
+                raise RuntimeError("Invalid obs template")
+
+            # read kinematics
+            obj.load(self._dis_observables.get(obj.name, []))
+            self._observables.append(obj)
+
+        # prepare output
         self._output = Output()
         self._output["xgrid"] = self._interpolator.xgrid
-
-        for obs in self._observables:
-            obs.load(self._dis_observables.get(obs.name, []))
 
     def get_output(self) -> Output:
         """
