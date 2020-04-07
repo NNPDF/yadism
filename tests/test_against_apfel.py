@@ -15,7 +15,7 @@ from yadism.runner import Runner
 sys.path.append(os.path.join(os.path.dirname(__file__), "aux"))
 import toyLH as toyLH
 from apfel_utils import get_apfel_data
-from comparison import print_comparison_table
+from utils import test_data_dir, load_runcards, print_comparison_table
 
 
 # def test_LO():
@@ -24,28 +24,14 @@ from comparison import print_comparison_table
 
 
 def test_NLO():
-    theory, dis_observables = load_runcards("theory_NLO.yaml", "F2light.yaml")
-    run_against_apfel(theory, dis_observables)
+    theory_f = test_data_dir / "theory_NLO.yaml"
+    dis_observables_f = test_data_dir / "F2light.yaml"
+    run_against_apfel(theory_f, dis_observables_f)
 
 
-def load_runcards(theory_filename, observables_filename):
-    """Test the loading mechanism"""
+def run_against_apfel(theory_f, dis_observables_f):
+    theory, dis_observables = load_runcards(theory_f, dis_observables_f)
 
-    test_data_dir = pathlib.Path(__file__).parent / "data"
-    # read files
-    # theory
-    theory_file = test_data_dir / theory_filename
-    with open(theory_file, "r") as f:
-        theory = yaml.safe_load(f)
-    # observables
-    observables_file = test_data_dir / observables_filename
-    with open(observables_file, "r") as f:
-        dis_observables = yaml.safe_load(f)
-
-    return theory, dis_observables
-
-
-def run_against_apfel(theory, dis_observables):
     # =====================
     # execute DIS
     runner = Runner(theory, dis_observables)
@@ -59,7 +45,7 @@ def run_against_apfel(theory, dis_observables):
         pdfs = lhapdf.mkPDF(pdfset, 0)
 
     yad_tab = runner.apply(pdfs)
-    apf_tab = get_apfel_data(theory, dis_observables)
+    apf_tab = get_apfel_data(theory_f, dis_observables_f)
 
     res_tab = {}
     # loop kinematics
