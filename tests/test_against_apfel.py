@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Testing the loading functions
+# Compare the results with APFEL's
 import sys
 import os
 import pathlib
-
-# from pprint import pprint
 
 import yaml
 import numpy as np
