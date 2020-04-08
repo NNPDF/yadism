@@ -97,7 +97,8 @@ class ESF_F2light(ESF):
 
         def cg(z):
             return (
-                2
+                2  # TODO: to be understood
+                * 2
                 * self._n_f
                 * (
                     split.pqg(z, self._SF._constants) * (np.log((1 - z) / z) - 4)

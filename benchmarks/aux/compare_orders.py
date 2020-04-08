@@ -47,6 +47,7 @@ def subtract_tables(file1, file2, output_f):
     # dump results' table
     with open(output_f, "w") as f:
         table2.to_csv(f)
+    print(table2)
 
 
 if __name__ == "__main__":
