@@ -179,27 +179,32 @@ class DistributionVec:
         # cache values
         self_at_x = [e(x) for e in self]
         pdf_at_x = pdf_func(x)
+
         def ker(z):
             # cache again
             self_at_z = [e(z) for e in self]
-            pdf_at_x_ov_z_div_z = pdf_func(x/z) / z
+            pdf_at_x_ov_z_div_z = pdf_func(x / z) / z
             # compute
-            res = self_at_z[0] * pdf_at_x_ov_z_div_z # regular
+            res = self_at_z[0] * pdf_at_x_ov_z_div_z  # regular
             # keep delta bit in addendum (for now)
             # iterate plus distributions
-            for j, (pd_at_z, pd_at_x) in enumerate(zip(self_at_z,self_at_x),-2):
+            for j, (pd_at_z, pd_at_x) in enumerate(zip(self_at_z, self_at_x), -2):
                 # skip
                 if j < 0:
                     continue
-                res += (pd_at_z * pdf_at_x_ov_z_div_z - pd_at_x * pdf_at_x) / (1.0 - z) * np.log(1-z)**(j)
+                res += (
+                    (pd_at_z * pdf_at_x_ov_z_div_z - pd_at_x * pdf_at_x)
+                    / (1.0 - z)
+                    * np.log(1 - z) ** (j)
+                )
             return res
 
         # addends
         addends = [
             0.0,
-            self[1](1) * pdf_func(x),
-            self[2](1) * pdf_func(x) * np.log(1 - x),
-            self[3](1) * pdf_func(x) * np.log(1 - x) ** 2 / 2,
+            self[1](1) * pdf_at_x,
+            self[2](1) * pdf_at_x * np.log(1 - x),
+            self[3](1) * pdf_at_x * np.log(1 - x) ** 2 / 2,
         ]
 
         # actual convolution
@@ -213,7 +218,7 @@ class DistributionVec:
             points=breakpoints,
         )
 
-        for a in zip(addends):
+        for a in addends:
             res += a
 
         return res, err
