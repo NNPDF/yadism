@@ -157,7 +157,7 @@ class DistributionVec:
 
         # eko environment?
         if isinstance(pdf_func, BasisFunction):
-            if pdf_func.is_below_x(np.log(x)):  # TODO: in eko update remove np.log
+            if pdf_func.is_below_x(x):  # TODO: in eko update remove np.log
                 # support below x --> trivially 0
                 return 0.0, 0.0
             else:
@@ -170,17 +170,20 @@ class DistributionVec:
         # providing integrands functions and addends
         # ------------------------------------------
 
+        # - replace pd_tf, manually inlining
+        # - replace 'integrands' list with a single function
+        # - generate the further plus distributions from 1/(1-x)_+
+        # - iterating with log(1-x)^k, k = {0, 1, ...}
+        # - addends in the same way
+
         # plus distribution test function
         __pd_tf = lambda z, n: self[n](z) * pdf_func(x / z) / z
 
         integrands = [
             lambda z: self[0](z) * pdf_func(x / z) / z,
-            # 0.0,
             0.0,
             lambda z: (__pd_tf(z, 2) - __pd_tf(1, 2)) / (1 - z),
-            # 0.0,
             lambda z: (__pd_tf(z, 3) - __pd_tf(1, 3)) * np.log(1 - z) / (1 - z),
-            # 0.0,
         ]
 
         addends = [
