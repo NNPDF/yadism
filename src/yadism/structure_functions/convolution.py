@@ -171,7 +171,7 @@ class DistributionVec:
         # ------------------------------------------
 
         # cache values
-        self_at_1 = [e(1) for e in self]
+        self_at_1 = [e(1 - self.eps_integration_border) for e in self]
         pdf_at_x = pdf_func(x)
 
         def ker(z):
