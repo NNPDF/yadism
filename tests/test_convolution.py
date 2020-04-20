@@ -192,7 +192,7 @@ class TestConvnd:
     def test_regular(self):
         # format: 3-lists
         # - f: pdf function
-        # - kmat: transformation matrix element
+        # - coeff: coefficient function (regular bit only, assume the others are 0)
         # - res: results from Mathematica
         known_tests = [[lambda x: x, lambda x: 1, lambda y: 1 - y]]
 
@@ -206,13 +206,14 @@ class TestConvnd:
     def test_delta(self):
         # format: 3-lists
         # - f: pdf function
-        # - kmat: transformation matrix element
+        # - coeff: coefficient function (delta bit only, assume the others are 0)
         # - res: results from Mathematica
         known_tests = [[lambda x: x, lambda x: 1, lambda y: y]]
 
         xs = [0.2, 0.4, 0.6, 0.8]
 
         for test in known_tests:
+            # insert missing 0s in coeff func
             test[1] = [lambda x: 0, test[1]]
             for x in xs:
                 self.against_known(x, *test)
@@ -220,13 +221,17 @@ class TestConvnd:
     def test_pd(self):
         # format: 3-lists
         # - f: pdf function
-        # - kmat: transformation matrix element
+        # - coeff: coefficient function (pd bit only, assume the others are 0)
         # - res: results from Mathematica
-        known_tests = [[lambda x: 1, lambda x: 1, lambda y: np.log((1 - y) / y)]]
+        known_tests = [
+            [lambda x: 1, lambda x: 1, lambda y: np.log((1 - y) / y)],
+            [lambda x: 1, lambda x: x, lambda y: np.log(1 - y)],
+        ]
 
         xs = [0.2, 0.4, 0.6, 0.8]
 
         for test in known_tests:
+            # insert missing 0s in coeff func
             test[1] = [lambda x: 0, lambda x: 0, test[1]]
             for x in xs:
                 self.against_known(x, *test)
@@ -234,7 +239,7 @@ class TestConvnd:
     def test_log_pd(self):
         # format: 3-lists
         # - f: pdf function
-        # - kmat: transformation matrix element
+        # - coeff: coefficient function (log_pd bit only, assume the others are 0)
         # - res: results from Mathematica
         known_tests = [
             [
@@ -247,6 +252,7 @@ class TestConvnd:
         xs = [0.2, 0.4, 0.6, 0.8]
 
         for test in known_tests:
+            # insert missing 0s in coeff func
             test[1] = [lambda x: 0, lambda x: 0, lambda x: 0, test[1]]
             self.against_known_grid(xs, *test)
 
