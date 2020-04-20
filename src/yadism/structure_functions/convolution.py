@@ -176,6 +176,88 @@ class DistributionVec:
         # - iterating with log(1-x)^k, k = {0, 1, ...}
         # - addends in the same way
 
+        # cache values
+        self_at_x = [e(x) for e in self]
+        pdf_at_x = pdf_func(x)
+        def ker(z):
+            # cache again
+            self_at_z = [e(z) for e in self]
+            pdf_at_x_ov_z_div_z = pdf_func(x/z) / z
+            # compute
+            res = self_at_z[0] * pdf_at_x_ov_z_div_z # regular
+            # keep delta bit in addendum (for now)
+            # iterate plus distributions
+            for j, (pd_at_z, pd_at_x) in enumerate(zip(self_at_z,self_at_x),-2):
+                # skip
+                if j < 0:
+                    continue
+                res += (pd_at_z * pdf_at_x_ov_z_div_z - pd_at_x * pdf_at_x) / (1.0 - z) * np.log(1-z)**(j)
+            return res
+
+        # addends
+        addends = [
+            0.0,
+            self[1](1) * pdf_func(x),
+            self[2](1) * pdf_func(x) * np.log(1 - x),
+            self[3](1) * pdf_func(x) * np.log(1 - x) ** 2 / 2,
+        ]
+
+        # actual convolution
+        # ------------------
+
+        res, err = scipy.integrate.quad(
+            ker,
+            x * (1 + self.eps_integration_border),
+            1.0 * (1 - self.eps_integration_border),
+            epsabs=self.eps_integration_abs,
+            points=breakpoints,
+        )
+
+        for a in zip(addends):
+            res += a
+
+        return res, err
+
+    def old_convolution(self, x, pdf_func):
+        """
+            convolution.
+
+            Parameters
+            ----------
+            x :
+                x
+            pdf_func :
+                pdf_func
+
+            .. note::
+                real name of this method: ``convnd``
+
+            .. todo::
+                docs
+        """
+        breakpoints = [x, 1.0]
+
+        # eko environment?
+        if isinstance(pdf_func, BasisFunction):
+            if pdf_func.is_below_x(x):  # TODO: in eko update remove np.log
+                # support below x --> trivially 0
+                return 0.0, 0.0
+            else:
+                # set breakpoints as relevant points of the integrand
+                # computed from interpolation areas of `pdf_func`
+                for area in pdf_func.areas:
+                    breakpoints.extend([area.xmin, area.xmax])
+                breakpoints = x / np.exp(np.unique(breakpoints))
+
+        # providing integrands functions and addends
+        # ------------------------------------------
+
+        # - replace pd_tf, manually inlining
+        # - replace 'integrands' list with a single function
+        # - generate the further plus distributions from 1/(1-x)_+
+        # - iterating with log(1-x)^k, k = {0, 1, ...}
+        # - addends in the same way
+
         # plus distribution test function
         __pd_tf = lambda z, n: self[n](z) * pdf_func(x / z) / z
 
