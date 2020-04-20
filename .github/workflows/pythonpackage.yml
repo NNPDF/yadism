@@ -63,8 +63,8 @@ jobs:
           conda activate yadism
           #
           cd eko
-          git fetch --unshallow
-          git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d 
+          # git fetch --unshallow
+          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d 
           cd ..
           # install Gnu Scientific Library (GSL)
           #   sudo works passwordless on github-workflow
