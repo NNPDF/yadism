@@ -157,7 +157,7 @@ class DistributionVec:
 
         # eko environment?
         if isinstance(pdf_func, BasisFunction):
-            if pdf_func.is_below_x(np.log(x)):  # TODO: in eko update remove np.log
+            if pdf_func.is_below_x(x):  # TODO: in eko update remove np.log
                 # support below x --> trivially 0
                 return 0.0, 0.0
             else:
@@ -170,44 +170,49 @@ class DistributionVec:
         # providing integrands functions and addends
         # ------------------------------------------
 
-        # plus distribution test function
-        __pd_tf = lambda z, n: self[n](z) * pdf_func(x / z) / z
+        # cache values
+        self_at_1 = [e(1 - self.eps_integration_border) for e in self]
+        pdf_at_x = pdf_func(x)
 
-        integrands = [
-            lambda z: self[0](z) * pdf_func(x / z) / z,
-            # 0.0,
-            0.0,
-            lambda z: (__pd_tf(z, 2) - __pd_tf(1, 2)) / (1 - z),
-            # 0.0,
-            lambda z: (__pd_tf(z, 3) - __pd_tf(1, 3)) * np.log(1 - z) / (1 - z),
-            # 0.0,
-        ]
+        def ker(z):
+            # cache again
+            self_at_z = [e(z) for e in self]
+            pdf_at_x_ov_z_div_z = pdf_func(x / z) / z
+            # compute
+            res = self_at_z[0] * pdf_at_x_ov_z_div_z  # regular
+            # keep delta bit in addendum (for now)
+            # iterate plus distributions
+            for j, (pd_at_z, pd_at_1) in enumerate(zip(self_at_z, self_at_1), -2):
+                # skip
+                if j < 0:
+                    continue
+                res += (
+                    (pd_at_z * pdf_at_x_ov_z_div_z - pd_at_1 * pdf_at_x)
+                    / (1.0 - z)
+                    * np.log(1 - z) ** (j)
+                )
+            return res
 
+        # addends
         addends = [
             0.0,
-            self[1](1) * pdf_func(x),
-            self[2](1) * pdf_func(x) * np.log(1 - x),
-            self[3](1) * pdf_func(x) * np.log(1 - x) ** 2 / 2,
+            self_at_1[1] * pdf_at_x,
+            self_at_1[2] * pdf_at_x * np.log(1 - x),
+            self_at_1[3] * pdf_at_x * np.log(1 - x) ** 2 / 2,
         ]
 
         # actual convolution
         # ------------------
 
-        res = 0.0
-        err = 0.0
+        res, err = scipy.integrate.quad(
+            ker,
+            x * (1 + self.eps_integration_border),
+            1.0 * (1 - self.eps_integration_border),
+            epsabs=self.eps_integration_abs,
+            points=breakpoints,
+        )
 
-        for i, a in zip(integrands, addends):
-            if callable(i):
-                r, e = scipy.integrate.quad(
-                    i,
-                    x * (1 + self.eps_integration_border),
-                    1.0 * (1 - self.eps_integration_border),
-                    epsabs=self.eps_integration_abs,
-                    points=breakpoints,
-                )
-
-                res += r
-                err += e
+        for a in addends:
             res += a
 
         return res, err
