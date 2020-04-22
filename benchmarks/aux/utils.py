@@ -11,7 +11,7 @@ logs_dir.mkdir(parents=True, exist_ok=True)
 
 def load_runcards(theory_file, observables_file):
     """
-       Load runcards from ``yaml`` files. 
+       Load runcards from ``yaml`` files.
 
         Parameters
         ----------
@@ -43,7 +43,7 @@ def load_runcards(theory_file, observables_file):
 def print_comparison_table(res_tab, log_path_template=None):
     """
         Print and dump comparison table.
-        
+
         Parameters
         ----------
         res_tab :
@@ -69,3 +69,14 @@ def print_comparison_table(res_tab, log_path_template=None):
             log_path = log_path_template.parent / log_path_template.name.format(obs=FX)
             with open(log_path, "w") as f:
                 print_tab.to_csv(f)
+
+
+def get_package_modules(package_path):
+    modules = pathlib.Path(package_path).glob("**/*.py")
+    return modules
+
+
+def get_most_recent_timestamp(paths):
+    most_recent = max([p.stat().st_mtime for p in paths])
+
+    return most_recent

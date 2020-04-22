@@ -49,7 +49,7 @@ class TestPlain:
         """
         Test the full NLO order against APFEL's.
         """
-        theory_test("theory_NLO.yaml")
+        theory_test("theory_NLO.yaml", 1)
 
 
 class TestScaleVariations:
@@ -57,7 +57,7 @@ class TestScaleVariations:
         theory_test("theory_SV_LO.yaml", 1)
 
     def test_NLO(self):
-        theory_test("theory_SV_NLO.yaml")
+        theory_test("theory_SV_NLO.yaml", 1)
 
 
 def run_against_apfel(theory_f, dis_observables_f):
@@ -138,9 +138,9 @@ def run_against_apfel(theory_f, dis_observables_f):
 
 if __name__ == "__main__":
     plain = TestPlain()
-    plain.test_LO()
-    # plain.test_NLO()
+    # plain.test_LO()
+    plain.test_NLO()
 
     sv = TestScaleVariations()
-    sv.test_LO()
-    # sv.test_NLO()
+    # sv.test_LO()
+    sv.test_NLO()

@@ -29,7 +29,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._e_cqv = []
         self._cgv = []
         self._e_cgv = []
-        self._a_s = self._SF._alpha_s.a_s(self._Q2)
+        self._a_s = self._SF._alpha_s.a_s(self._Q2 * self._SF._xiR ** 2)
         self._n_f = self._SF._threshold.get_areas(self._Q2)[-1].nf
 
     def _compute(self):
@@ -58,7 +58,7 @@ class EvaluatedStructureFunction(abc.ABC):
         if self._SF._pto > 0:
             d_vec += self._a_s * (
                 conv.DistributionVec(f_NLO())
-                + np.log(self._SF._xiF ** 2) * conv.DistributionVec(f_NLO_fact())
+                + (-np.log(self._SF._xiF ** 2)) * conv.DistributionVec(f_NLO_fact())
             )
 
         # iterate all polynomials
@@ -117,7 +117,11 @@ class EvaluatedStructureFunction(abc.ABC):
     def quark_1_fact(self):
         """
         .. todo::
-            docs
+            - docs
+            - consistent naming convention: use hep-ph/0006154 convention
+              of c_a^(l,m), e.g. quark_1_fact -> quark_1_1
+              also take care of muR, since in reference eq.2.16 they are
+              setting muR = muF, so maybe quark_1_fact -> quark_1_1_0
         """
         pass
 
