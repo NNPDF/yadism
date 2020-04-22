@@ -40,19 +40,26 @@ class EvaluatedStructureFunction(abc.ABC):
         # something to do?
         if not self._cqv:
             # yes
-            self._cqv, self._e_cqv = self._compute_component(self.quark_0, self.quark_1)
+            self._cqv, self._e_cqv = self._compute_component(
+                self.quark_0, self.quark_1, self.quark_1_fact
+            )
         if not self._cgv:
             # yes
-            self._cgv, self._e_cgv = self._compute_component(self.gluon_0, self.gluon_1)
+            self._cgv, self._e_cgv = self._compute_component(
+                self.gluon_0, self.gluon_1, self.gluon_1_fact
+            )
 
-    def _compute_component(self, f_LO, f_NLO):
+    def _compute_component(self, f_LO, f_NLO, f_NLO_fact):
         ls = []
         els = []
 
         # combine orders
         d_vec = conv.DistributionVec(f_LO())
         if self._SF._pto > 0:
-            d_vec += self._a_s * conv.DistributionVec(f_NLO())
+            d_vec += self._a_s * (
+                conv.DistributionVec(f_NLO())
+                + np.log(self._SF._xiF ** 2) * conv.DistributionVec(f_NLO_fact())
+            )
 
         # iterate all polynomials
         for polynomial_f in self._SF._interpolator:
@@ -86,16 +93,28 @@ class EvaluatedStructureFunction(abc.ABC):
         """
         pass
 
-    @abc.abstractmethod
     def gluon_0(self):
         """
+        .. todo::
+            docs
+        """
+        return 0
+
+    @abc.abstractmethod
+    def quark_1(self):
+        """
+        regular
+        delta
+        1/(1-x)_+
+        log(x)/(1-x)_+
+
         .. todo::
             docs
         """
         pass
 
     @abc.abstractmethod
-    def quark_1(self):
+    def quark_1_fact(self):
         """
         .. todo::
             docs
@@ -109,6 +128,13 @@ class EvaluatedStructureFunction(abc.ABC):
             docs
         """
         pass
+
+    def gluon_1_fact(self):
+        """
+        .. todo::
+            docs
+        """
+        return 0
 
 
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
@@ -153,10 +179,14 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     def quark_0(self) -> float:
         return 0
 
-    def gluon_0(self) -> float:
+    def quark_1(self):
         return 0
 
-    def quark_1(self):
+    def quark_1_fact(self):
+        """
+        .. todo::
+            docs
+        """
         return 0
 
     @abc.abstractmethod

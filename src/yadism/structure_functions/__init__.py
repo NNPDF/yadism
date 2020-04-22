@@ -24,7 +24,18 @@ class StructureFunction(abc.ABC):
     """
 
     def __init__(
-        self, name, ESF, M2=None, *, interpolator, constants, threshold, alpha_s, pto
+        self,
+        name,
+        ESF,
+        M2=None,
+        *,
+        interpolator,
+        constants,
+        threshold,
+        alpha_s,
+        pto,
+        xiR,
+        xiF
     ):
         self.name = name
         self._M2 = M2
@@ -33,6 +44,8 @@ class StructureFunction(abc.ABC):
         self._threshold = threshold
         self._alpha_s = alpha_s
         self._pto = pto
+        self._xiR = xiR
+        self._xiF = xiF
         self._ESF = ESF
         self.__ESFS = []
 

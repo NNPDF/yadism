@@ -184,7 +184,10 @@ def get_apfel_data(theory_path, dis_observables_path):
                 Q2 = kinematics["Q2"]
                 x = kinematics["x"]
 
-                apfel.ComputeStructureFunctionsAPFEL(np.sqrt(Q2), np.sqrt(Q2))
+                # disable APFEL evolution: we are interested in the pure DIS part
+                apfel.ComputeStructureFunctionsAPFEL(
+                    np.sqrt(Q2), np.sqrt(Q2) / theory["XIF"]
+                )
                 value = apfel_FX(x)
 
                 res_tab[FX].append(dict(x=x, Q2=Q2, value=value))

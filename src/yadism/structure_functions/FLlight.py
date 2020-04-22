@@ -29,20 +29,8 @@ class ESF_FLlight(ESF):
 
         return 0
 
-    def gluon_0(self) -> float:
-        """
-        .. todo::
-            docs
-        """
-        return 0
-
     def quark_1(self):
         """
-        regular
-        delta
-        1/(1-x)_+
-        log(x)/(1-x)_+
-
         .. todo::
             docs
         """
@@ -53,6 +41,13 @@ class ESF_FLlight(ESF):
             return CF * 4 * z
 
         return cq_reg
+
+    def quark_1_fact(self):
+        """
+        .. todo::
+            docs
+        """
+        return 0
 
     def gluon_1(self):
         """

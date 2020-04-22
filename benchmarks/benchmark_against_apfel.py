@@ -30,26 +30,34 @@ observables = [
 ]
 
 
-def test_LO():
-    """
-    Test the full LO order against APFEL's.
-    """
-    theory_f = test_data_dir / "theory_LO.yaml"
+def theory_test(theory_filename, obs_filter=None):
+    theory_f = test_data_dir / theory_filename
     # iterate over observables - only F2light at LO
-    for obs in observables[:1]:
+    for obs in observables[:obs_filter]:
         dis_observables_f = test_data_dir / f"{obs}.yaml"
         run_against_apfel(theory_f, dis_observables_f)
 
 
-def test_NLO():
-    """
-    Test the full NLO order against APFEL's.
-    """
-    theory_f = test_data_dir / "theory_NLO.yaml"
-    # iterate over observables
-    for obs in observables:
-        dis_observables_f = test_data_dir / f"{obs}.yaml"
-        run_against_apfel(theory_f, dis_observables_f)
+class TestPlain:
+    def test_LO(self):
+        """
+        Test the full LO order against APFEL's.
+        """
+        theory_test("theory_LO.yaml", 1)
+
+    def test_NLO(self):
+        """
+        Test the full NLO order against APFEL's.
+        """
+        theory_test("theory_NLO.yaml")
+
+
+class TestScaleVariations:
+    def test_LO(self):
+        theory_test("theory_SV_LO.yaml", 1)
+
+    def test_NLO(self):
+        theory_test("theory_SV_NLO.yaml")
 
 
 def run_against_apfel(theory_f, dis_observables_f):
@@ -129,5 +137,10 @@ def run_against_apfel(theory_f, dis_observables_f):
 
 
 if __name__ == "__main__":
-    test_LO()
-    test_NLO()
+    plain = TestPlain()
+    plain.test_LO()
+    # plain.test_NLO()
+
+    sv = TestScaleVariations()
+    sv.test_LO()
+    # sv.test_NLO()
