@@ -42,6 +42,7 @@ EScaleVar: 1
 
 # ToBeFilled
 
-PDFSet: ToyLH
+#PDFSet: ToyLH
+PDFSet: CT14llo_NF3
 #PDFSet: gonly
 prDIS: NC
