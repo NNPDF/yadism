@@ -52,9 +52,16 @@ def subtract_tables(file1, file2, output_f):
 
 if __name__ == "__main__":
     # hard coded paths
-    F2light_LO = logs_dir / "theory_LO-F2light-F2light.csv"
-    F2light_NLO = logs_dir / "theory_NLO-F2light-F2light.csv"
-    output_f = logs_dir / "theory_pNLO-F2light-F2light.csv"
+    # F2light_LO = logs_dir / "theory_LO-F2light-F2light.csv"
+    # F2light_NLO = logs_dir / "theory_NLO-F2light-F2light.csv"
+    # output_f = logs_dir / "theory_pNLO-F2light-F2light.csv"
 
     # run subtraction
-    subtract_tables(F2light_NLO, F2light_LO, output_f)
+    # subtract_tables(F2light_NLO, F2light_LO, output_f)
+
+    F2light_NLO = logs_dir / "theory_NLO-F2light-F2light.csv"
+    F2light_NLO_SV = logs_dir / "theory_SV_NLO-F2light-F2light.csv"
+    output_f = logs_dir / "theory_pSV_NLO-F2light-F2light.csv"
+
+    # run subtraction
+    subtract_tables(F2light_NLO_SV, F2light_NLO, output_f)

@@ -45,13 +45,6 @@ class ESF_F2light(ESF):
         # leading order is just a delta function
         return lambda z: 0, lambda z: 1
 
-    def gluon_0(self) -> float:
-        """
-        .. todo::
-            docs
-        """
-        return 0
-
     def quark_1(self):
         """
         regular
@@ -85,12 +78,33 @@ class ESF_F2light(ESF):
 
         return cq_reg, cq_delta, cq_omx, cq_logomx
 
+    def quark_1_fact(self):
+        """
+        .. todo::
+            docs
+        """
+
+        def cq_reg(z):
+            return split.pqq_reg(z, self._SF._constants)
+
+        def cq_delta(z):
+            return split.pqq_delta(z, self._SF._constants)
+
+        def cq_pd(z):
+            return split.pqq_pd(z, self._SF._constants)
+
+        return cq_reg, cq_delta, cq_pd
+
     def gluon_1(self):
         """
         vogt page 21
 
         .. todo::
-            docs
+            - docs
+            - 2 * n_f here and in gluon_1_fact is coming from momentum sum rule
+            q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} \forall i}, so the 2*n_f
+            is needed to compensate for all the number of flavours + antiflavours
+            in which the gluon can go
         """
 
         TR = self._SF._constants.TF
@@ -105,5 +119,16 @@ class ESF_F2light(ESF):
                     + 3 * TR
                 )
             )
+
+        return cg
+
+    def gluon_1_fact(self):
+        """
+        .. todo::
+            docs
+        """
+
+        def cg(z):
+            return 2 * self._n_f * split.pqg(z, self._SF._constants)
 
         return cg

@@ -1,13 +1,13 @@
 # Theory
 
-ID: _2 # 22
+ID: _1 # 22
 PTO: 1
 FNS: "FFNS"
 DAMP: 0
 IC: 0
 ModEv: "EXA"
-XIR: 1.0
-XIF: 1.0
+XIR: 1.7
+XIF: 0.5
 NfFF: 3
 MaxNfAs: 3
 MaxNfPdf: 3
@@ -42,7 +42,5 @@ EScaleVar: 1
 
 # ToBeFilled
 
-#PDFSet: ToyLH
-PDFSet: CT14llo_NF3
-#PDFSet: gonly
+PDFSet: CT14lo
 prDIS: NC

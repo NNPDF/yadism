@@ -83,6 +83,10 @@ def load_apfel(par):
     apfel.SetRenFacRatio(par.get("XIR") / par.get("XIF"))
     apfel.SetRenQRatio(par.get("XIR"))
     apfel.SetFacQRatio(par.get("XIF"))
+    # Scale Variations
+    # consistent with Evolution (0) or DIS only (1)
+    # look at SetScaleVariationProcedure.f
+    apfel.SetScaleVariationProcedure(par.get("EScaleVar"))
 
     # Small-x resummation
     apfel.SetSmallxResummation(par.get("SxRes"), par.get("SxOrd"))
@@ -145,7 +149,8 @@ def get_apfel_data(theory_path, dis_observables_path):
         raise FileNotFoundError("Missing runcards.")
 
     # get last edit for runcards
-    input_mtime = max(theory_p.stat().st_mtime, obs_p.stat().st_mtime)
+    dependencies = [theory_p, obs_p, pathlib.Path(__file__)]
+    input_mtime = max([p.stat().st_mtime for p in dependencies])
 
     cache_path = cache_location / f"{theory_p.stem}-{obs_p.stem}.yaml"
 
@@ -184,7 +189,15 @@ def get_apfel_data(theory_path, dis_observables_path):
                 Q2 = kinematics["Q2"]
                 x = kinematics["x"]
 
-                apfel.ComputeStructureFunctionsAPFEL(np.sqrt(Q2), np.sqrt(Q2))
+                # disable APFEL evolution: we are interested in the pure DIS part
+                #
+                # setting initial scale to muF (sqrt(Q2)*xiF) APFEL is going to:
+                # - take the PDF at the scale of muF (exactly as we are doing)
+                # - evolve from muF to muF because the final scale is the second
+                # argument times xiF (internally), so actually it's not evolving
+                apfel.ComputeStructureFunctionsAPFEL(
+                    np.sqrt(Q2) * theory["XIF"], np.sqrt(Q2)
+                )
                 value = apfel_FX(x)
 
                 res_tab[FX].append(dict(x=x, Q2=Q2, value=value))

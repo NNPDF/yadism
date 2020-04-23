@@ -93,7 +93,7 @@ class Runner:
             self._constants, alpha_ref, q2_alpha, self._threshold
         )
 
-        self._pto = theory["PTO"]
+        self._xiF = theory["XIF"]
 
         # ==============================
         # initialize structure functions
@@ -103,7 +103,9 @@ class Runner:
             constants=self._constants,
             threshold=self._threshold,
             alpha_s=self._alpha_s,
-            pto=self._pto,
+            pto=theory["PTO"],
+            xiR=theory["XIR"],
+            xiF=self._xiF,
         )
         self._observables = []
         for sf, obs_t in self.__obs_templates.items():
@@ -172,8 +174,8 @@ class Runner:
                 fq = []
                 fg = []
                 for z in self._interpolator.xgrid_raw:
-                    fq.append(get_charged_sum(z, kin["Q2"]) / z)
-                    fg.append(pdfs.xfxQ2(21, z, kin["Q2"]) / z)
+                    fq.append(get_charged_sum(z, kin["Q2"] * self._xiF ** 2) / z)
+                    fg.append(pdfs.xfxQ2(21, z, kin["Q2"] * self._xiF ** 2) / z)
 
                 # contract with coefficient functions
                 result = kin["x"] * (

@@ -6,8 +6,8 @@ FNS: "FFNS"
 DAMP: 0
 IC: 0
 ModEv: "EXA"
-XIR: 1.0
-XIF: 1.0
+XIR: 0.5
+XIF: 2.7
 NfFF: 3
 MaxNfAs: 3
 MaxNfPdf: 3
