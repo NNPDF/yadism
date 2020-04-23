@@ -4,15 +4,17 @@
 import sys
 import os
 import pathlib
+import abc
 
-import yaml
 import numpy as np
 import lhapdf
 import pytest
+import tinydb
 
 from yadism.runner import Runner
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "aux"))
+here = pathlib.Path(__file__).parent.absolute()
+sys.path.append(here / "aux")
 import toyLH as toyLH
 from apfel_utils import get_apfel_data
 from utils import test_data_dir, logs_dir, load_runcards, print_comparison_table
@@ -38,12 +40,44 @@ def theory_test(theory_filename, obs_filter=None):
         run_against_apfel(theory_f, dis_observables_f)
 
 
+class ParentTest(abc.ABC):
+    def __init__(self):
+        self.__inputdb = tinydb.TinyDB(here / "data/input.json")
+
+    def run_all_tests(self, theory_query, obs_query):
+        theoryQuery = tinydb.Query()
+        # [ins] In [18]: len(t_t.search((getattr(plain_LO, "PTO") == 0) & (plain_LO.PDFSet == 'gonly')))
+        # Out[18]: 9
+
+        # [ins] In [19]: type(getattr(plain_LO, "PTO"))
+        # Out[19]: tinydb.queries.Query
+
+        # [ins] In [20]: type(getattr(plain_LO, "PTO") == 0)
+        # Out[20]: tinydb.queries.QueryImpl
+
+        # [ins] In [21]: c = (getattr(plain_LO, "PTO") == 0)
+
+        # [ins] In [22]: c &= (getattr(plain_LO, "PDFSet") == 'gonly')
+
+        # [ins] In [23]: c
+        # Out[23]: QueryImpl('and', frozenset({('==', ('PTO',), 0), ('==', ('PDFSet',), 'gonly')}))
+        theories = self.__inputdb.table("theories").search()
+
+        obsQuery = tinydb.Query()
+        observables = self.__inputdb.table("dis_observables").search()
+        for test in data:
+            # run against apfel (test)
+            pass
+
+
 class TestPlain:
     def test_LO(self):
         """
         Test the full LO order against APFEL's.
         """
         theory_test("theory_LO.yaml", 1)
+        query = None  # something
+        self.run_all_tests(query)
 
     def test_NLO(self):
         """
@@ -58,6 +92,10 @@ class TestScaleVariations:
 
     def test_NLO(self):
         theory_test("theory_SV_NLO.yaml")
+
+
+class TestFull:
+    pass
 
 
 def run_against_apfel(theory_f, dis_observables_f):
