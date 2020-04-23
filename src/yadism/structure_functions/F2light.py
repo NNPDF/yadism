@@ -100,7 +100,11 @@ class ESF_F2light(ESF):
         vogt page 21
 
         .. todo::
-            docs
+            - docs
+            - 2 * n_f here and in gluon_1_fact is coming from momentum sum rule
+            q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} \forall i}, so the 2*n_f
+            is needed to compensate for all the number of flavours + antiflavours
+            in which the gluon can go
         """
 
         TR = self._SF._constants.TF
@@ -115,5 +119,16 @@ class ESF_F2light(ESF):
                     + 3 * TR
                 )
             )
+
+        return cg
+
+    def gluon_1_fact(self):
+        """
+        .. todo::
+            docs
+        """
+
+        def cg(z):
+            return 2 * self._n_f * split.pqg(z, self._SF._constants)
 
         return cg

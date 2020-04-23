@@ -42,5 +42,6 @@ EScaleVar: 1
 
 # ToBeFilled
 
-PDFSet: ToyLH #uonly
+PDFSet: ToyLH
+#PDFSet: gonly
 prDIS: NC

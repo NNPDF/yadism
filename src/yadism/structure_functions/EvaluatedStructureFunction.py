@@ -58,7 +58,9 @@ class EvaluatedStructureFunction(abc.ABC):
         if self._SF._pto > 0:
             d_vec += self._a_s * (
                 conv.DistributionVec(f_NLO())
-                + (-np.log(self._SF._xiF ** 2)) * conv.DistributionVec(f_NLO_fact())
+                + 2  # TODO: to be understood
+                * (-np.log(self._SF._xiF ** 2))
+                * conv.DistributionVec(f_NLO_fact())
             )
 
         # iterate all polynomials
@@ -133,12 +135,13 @@ class EvaluatedStructureFunction(abc.ABC):
         """
         pass
 
+    @abc.abstractmethod
     def gluon_1_fact(self):
         """
         .. todo::
             docs
         """
-        return 0
+        pass
 
 
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
@@ -202,3 +205,10 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             return 0
         else:
             return self._gluon_1()
+
+    def gluon_1_fact(self):
+        """
+        .. todo::
+            docs
+        """
+        return 0

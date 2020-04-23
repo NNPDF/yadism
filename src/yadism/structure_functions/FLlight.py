@@ -61,3 +61,10 @@ class ESF_FLlight(ESF):
             return self._n_f * (8 * z * (1 - z))
 
         return cg
+
+    def gluon_1_fact(self):
+        """
+        .. todo::
+            docs
+        """
+        return 0

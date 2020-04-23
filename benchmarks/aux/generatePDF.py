@@ -78,12 +78,33 @@ def uonly():
     u = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
     pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
     # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf("uonly", xgrid, Q2grid, pids, pdf_table)
+    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
 
     # make PDF.info
     description = "'up quark only PDFset, for debug purpose'"
-    dump_info("uonly", description, pids)
+    dump_info(name, description, pids)
+
+
+def gonly():
+    name = "gonly"
+    (here / "PDFs" / name).mkdir(exist_ok=True)
+
+    # make PDF.dat
+
+    xgrid = np.logspace(-9, 0, 100)
+    Q2grid = np.logspace(0.3, 5, 20)
+    pids = [-3, -2, -1, 1, 2, 3, 21]
+    antis = antiu = antid = d = u = s = [0.0 for x in xgrid for Q2 in Q2grid]
+    g = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
+    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
+    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
+    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
+
+    # make PDF.info
+    description = "'gluon only PDFset, for debug purpose'"
+    dump_info(name, description, pids)
 
 
 if __name__ == "__main__":
-    uonly()
+    # uonly()
+    gonly()
