@@ -2,5 +2,14 @@
 
 {% block extrafooter %}
   <!-- your html code here -->
-  <p style="text-align: center;">Made with ❤  and ⏲  by N3PDF team.<p>
+  <p style="text-align: center;">Made with ❤  and ⏲  by N3PDF team.</p>
+
+  {%- if hasdoc('copyright') %}
+    {% set path = pathto('copyright') %}
+    {% set copyright = copyright|e %}
+    <p style="text-align: center; font-size: 7pt;">&copy; <a href="{{ path }}">{% trans %}Copyright{% endtrans %}</a> {{ copyright }}</p>
+  {%- else %}
+    {% set copyright = copyright|e %}
+    <p style="text-align: center; font-size: 7pt;">&copy; {% trans %}Copyright{% endtrans %} {{ copyright }}</p>
+  {%- endif %}
 {% endblock %}
