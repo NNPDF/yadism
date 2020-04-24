@@ -53,8 +53,8 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "recommonmark",
     "sphinx.ext.napoleon",
-    "sphinxcontrib.bibtex",
     "sphinx.ext.graphviz",
+    "sphinxcontrib.bibtex",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -105,7 +105,29 @@ html_theme = "sphinx_rtd_theme"
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    # "canonical_url": "",
+    # "analytics_id": "UA-XXXXXXX-1",  #  Provided by Google in your dashboard
+    # "logo_only": False,
+    "display_version": True,
+    # "prev_next_buttons_location": "bottom",
+    # "style_external_links": False,
+    # "vcs_pageview_mode": "",
+    # "style_nav_header_background": "white",
+    # # Toc options
+    # "collapse_navigation": True,
+    # "sticky_navigation": True,
+    # "navigation_depth": 4,
+    # "includehidden": True,
+    # "titles_only": False,
+}
+
+# set variables for template system
+html_context = {
+    # # footer:
+    "show_copyright": False,
+    "show_sphinx": False,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -229,6 +251,11 @@ intersphinx_mapping = {"https://docs.python.org/": None}
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# -- Options for edit on github extension ------------------------------------
+# https://gist.github.com/mgedmin/6052926
+# edit_on_github_project = 'username/reponame'
+# edit_on_github_branch = 'master'
 
 # Adapted this from
 # https://github.com/readthedocs/recommonmark/blob/ddd56e7717e9745f11300059e4268e204138a6b1/docs/conf.py
