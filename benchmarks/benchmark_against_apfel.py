@@ -5,6 +5,7 @@ import sys
 import os
 import pathlib
 import abc
+import itertools
 
 import numpy as np
 import lhapdf
@@ -14,97 +15,64 @@ import tinydb
 from yadism.runner import Runner
 
 here = pathlib.Path(__file__).parent.absolute()
-sys.path.append(here / "aux")
+sys.path.append(str(here / "aux"))
 import toyLH as toyLH
 from apfel_utils import get_apfel_data
-from utils import test_data_dir, logs_dir, load_runcards, print_comparison_table
-
-# available observables
-observables = [
-    "F2light",
-    "F2charm",
-    "F2bottom",
-    # "F2top",
-    "FLlight",
-    "FLcharm",
-    "FLbottom",
-    # "FLtop",
-]
-
-
-def theory_test(theory_filename, obs_filter=None):
-    theory_f = test_data_dir / theory_filename
-    # iterate over observables - only F2light at LO
-    for obs in observables[:obs_filter]:
-        dis_observables_f = test_data_dir / f"{obs}.yaml"
-        run_against_apfel(theory_f, dis_observables_f)
+from utils import benchmark_data_dir, logs_dir, load_runcards, print_comparison_table
 
 
 class ParentTest(abc.ABC):
     def __init__(self):
-        self.__inputdb = tinydb.TinyDB(here / "data/input.json")
+        self.__inputdb = tinydb.TinyDB(benchmark_data_dir / "input.json")
+        self._theory_query = tinydb.Query()
+        self._obs_query = tinydb.Query()
 
     def run_all_tests(self, theory_query, obs_query):
-        theoryQuery = tinydb.Query()
-        # [ins] In [18]: len(t_t.search((getattr(plain_LO, "PTO") == 0) & (plain_LO.PDFSet == 'gonly')))
-        # Out[18]: 9
+        theories = self.__inputdb.table("theories").search(theory_query)
+        observables = self.__inputdb.table("dis_observables").search(obs_query)
 
-        # [ins] In [19]: type(getattr(plain_LO, "PTO"))
-        # Out[19]: tinydb.queries.Query
-
-        # [ins] In [20]: type(getattr(plain_LO, "PTO") == 0)
-        # Out[20]: tinydb.queries.QueryImpl
-
-        # [ins] In [21]: c = (getattr(plain_LO, "PTO") == 0)
-
-        # [ins] In [22]: c &= (getattr(plain_LO, "PDFSet") == 'gonly')
-
-        # [ins] In [23]: c
-        # Out[23]: QueryImpl('and', frozenset({('==', ('PTO',), 0), ('==', ('PDFSet',), 'gonly')}))
-        theories = self.__inputdb.table("theories").search()
-
-        obsQuery = tinydb.Query()
-        observables = self.__inputdb.table("dis_observables").search()
-        for test in data:
+        for theory, obs in itertools.product(theories, observables):
             # run against apfel (test)
-            pass
+            run_against_apfel(theory, obs)
 
 
-class TestPlain:
+class TestPlain(ParentTest):
     def test_LO(self):
         """
         Test the full LO order against APFEL's.
         """
-        theory_test("theory_LO.yaml", 1)
-        query = None  # something
-        self.run_all_tests(query)
+        t_query = self._theory_query.PTO == 0
+        t_query &= self._theory_query.XIR == 1.0
+        t_query &= self._theory_query.XIF == 1.0
 
-    def test_NLO(self):
-        """
-        Test the full NLO order against APFEL's.
-        """
-        theory_test("theory_NLO.yaml")
+        o_query = self._obs_query.F2light.exists()
 
+        self.run_all_tests(t_query, o_query)
 
-class TestScaleVariations:
-    def test_LO(self):
-        theory_test("theory_SV_LO.yaml", 1)
-
-    def test_NLO(self):
-        theory_test("theory_SV_NLO.yaml")
+    # def test_NLO(self):
+    # """
+    # Test the full NLO order against APFEL's.
+    # """
+    # theory_test("theory_NLO.yaml")
 
 
-class TestFull:
-    pass
+# class TestScaleVariations:
+# def test_LO(self):
+# theory_test("theory_SV_LO.yaml", 1)
+
+# def test_NLO(self):
+# theory_test("theory_SV_NLO.yaml")
 
 
-def run_against_apfel(theory_f, dis_observables_f):
+# class TestFull:
+# pass
+
+
+def run_against_apfel(theory, dis_observables):
     """
         Run APFEL comparison on the given runcards.
 
         Steps:
-        - load runcards
-            - using ``load_runcards``
         - instantiate and call yadism's Runner
             - using ``yadism.Runner``
         - retrieve APFEL data to compare with
@@ -120,7 +88,6 @@ def run_against_apfel(theory_f, dis_observables_f):
         dis_observables_f :
             file path for the observables runcard
     """
-    theory, dis_observables = load_runcards(theory_f, dis_observables_f)
 
     # ============
     # setup PDFset
@@ -137,7 +104,7 @@ def run_against_apfel(theory_f, dis_observables_f):
     runner = Runner(theory, dis_observables)
 
     yad_tab = runner.apply(pdfs)
-    apf_tab = get_apfel_data(theory_f, dis_observables_f)
+    apf_tab = get_apfel_data(theory, dis_observables)
 
     # =========================
     # collect and check results
@@ -169,16 +136,16 @@ def run_against_apfel(theory_f, dis_observables_f):
     # print and log
     # =============
     logs_path_template = (
-        logs_dir / f"{theory_f.stem}-{dis_observables_f.stem}-{{obs}}.csv"
+        logs_dir / f"{theory.doc_id}-{dis_observables.doc_id}-{{obs}}.csv"
     )
     print_comparison_table(res_tab, logs_path_template)
 
 
 if __name__ == "__main__":
     plain = TestPlain()
-    # plain.test_LO()
-    plain.test_NLO()
+    plain.test_LO()
+    # plain.test_NLO()
 
-    sv = TestScaleVariations()
+    # sv = TestScaleVariations()
     # sv.test_LO()
-    sv.test_NLO()
+    # sv.test_NLO()

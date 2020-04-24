@@ -4,11 +4,12 @@ import pathlib
 
 import yaml
 import numpy as np
+import tinydb
 
 import apfel
 
 sys.path.append(os.path.dirname(__file__))
-from utils import load_runcards, test_data_dir
+from utils import load_runcards, benchmark_data_dir
 
 
 def load_apfel(par):
@@ -125,12 +126,7 @@ def load_apfel(par):
     return apfel
 
 
-# Define cache path to store computed observables
-cache_location = test_data_dir / "apfel_cache"
-cache_location.mkdir(parents=True, exist_ok=True)
-
-
-def get_apfel_data(theory_path, dis_observables_path):
+def get_apfel_data(theory, dis_observables):
     """
         Run APFEL to compute observables or simply use cached values.
 
@@ -141,27 +137,27 @@ def get_apfel_data(theory_path, dis_observables_path):
         dis_observables_path :
             path for the observables runcard
     """
-    theory_p = test_data_dir / theory_path
-    obs_p = test_data_dir / dis_observables_path
 
-    # check that paths match existing files
-    if not all([theory_p.is_file(), obs_p.is_file()]):
-        raise FileNotFoundError("Missing runcards.")
+    def sort_dict(d):
+        return {k: d[k] for k in sorted(d, key=str)}
 
     # get last edit for runcards
-    dependencies = [theory_p, obs_p, pathlib.Path(__file__)]
-    input_mtime = max([p.stat().st_mtime for p in dependencies])
+    input_hash = hash(str([sort_dict(theory), sort_dict(dis_observables)]))
+    with open(benchmark_data_dir / "debug_hashing.txt", "a") as f:
+        f.write(str(input_hash) + "\n")
 
-    cache_path = cache_location / f"{theory_p.stem}-{obs_p.stem}.yaml"
+        apfel_cache = tinydb.TinyDB(benchmark_data_dir / "output.json").table(
+            "apfel_cache"
+        )
+        h_query = tinydb.Query()
+        query_res = apfel_cache.search(h_query.input_hash == input_hash)
+        f.write(str(query_res) + "\n\n")
 
     # check if cache existing and updated
-    if cache_path.is_file() and cache_path.stat().st_mtime > input_mtime:
-        # load from cache
-        with open(cache_path) as f:
-            res_tab = yaml.safe_load(f)
-    else:
+    if len(query_res) == 1:
+        res_tab = query_res[0]
+    elif len(query_res) == 0:
         # setup APFEL
-        theory, dis_observables = load_runcards(theory_p, obs_p)
         apfel = load_apfel(theory)
 
         # mapping observables names to APFEL methods
@@ -203,6 +199,9 @@ def get_apfel_data(theory_path, dis_observables_path):
                 res_tab[FX].append(dict(x=x, Q2=Q2, value=value))
 
         # store the cache
-        with open(cache_path, "w") as f:
-            yaml.safe_dump(res_tab, f)
+        res_tab["input_hash"] = input_hash
+        apfel_cache.insert(res_tab)
+    else:
+        raise ValueError("Cache hash matched more than once.")
+
     return res_tab

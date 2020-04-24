@@ -4,8 +4,8 @@ import yaml
 import pandas as pd
 
 # define data and logs dirs used by tests
-test_data_dir = pathlib.Path(__file__).absolute().parents[1] / "data"
-logs_dir = test_data_dir / "logs"
+benchmark_data_dir = pathlib.Path(__file__).absolute().parents[1] / "data"
+logs_dir = benchmark_data_dir / "logs"
 logs_dir.mkdir(parents=True, exist_ok=True)
 
 
