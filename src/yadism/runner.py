@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-This file contains the main loop for the DIS calculations.
+This module contains the main loop for the DIS calculations.
+
+There are two ways of using ``yadism``:
+
+* ``Runner``: this class provides a runner that get the *theory* and
+  *observables* descriptions as input and manage the whole observables'
+  calculation process
+* ``run_dis``: a function that wraps the construction of a ``Runner`` object
+  and calls the proper method to get the requested output
 
 .. todo::
-    docs
+    decide about ``run_dis`` and document it properly in module header
 """
 from typing import Any
 
@@ -35,10 +43,12 @@ class Runner:
     theory : dict
         Dictionary with the theory parameters for the evolution.
     dis_observables : dict
-        Description of parameter `dis_observables`.
+        DIS parameters: process description, kinematic specification for the
+        requested output.
 
     .. todo::
-        docs
+        * reference on theory template
+        * detailed description of dis_observables entries
     """
 
     __obs_templates = {
@@ -53,10 +63,16 @@ class Runner:
     }
 
     def __init__(self, theory: dict, dis_observables: dict):
+        # ============
+        # Store inputs
+        # ============
         self._theory = theory
         self._dis_observables = dis_observables
         self._n_f: int = theory["NfFF"]
 
+        # ===========================
+        # Setup interpolator from eko
+        # ===========================
         polynomial_degree: int = dis_observables["polynomial_degree"]
         self._interpolator = InterpolatorDispatcher(
             dis_observables["xgrid"],
@@ -67,7 +83,7 @@ class Runner:
         )
 
         # ==========================
-        # create physics environment
+        # Create physics environment
         # ==========================
         self._constants = Constants()
 
@@ -96,7 +112,7 @@ class Runner:
         self._xiF = theory["XIF"]
 
         # ==============================
-        # initialize structure functions
+        # Initialize structure functions
         # ==============================
         default_args = dict(
             interpolator=self._interpolator,
@@ -107,6 +123,7 @@ class Runner:
             xiR=theory["XIR"],
             xiF=self._xiF,
         )
+
         self._observables = []
         for sf, obs_t in self.__obs_templates.items():
             # if not in the input skip
@@ -126,14 +143,33 @@ class Runner:
             obj.load(self._dis_observables.get(obj.name, []))
             self._observables.append(obj)
 
-        # prepare output
+        # =================
+        # Initialize output
+        # =================
         self._output = Output()
         self._output["xgrid"] = self._interpolator.xgrid
 
     def get_output(self) -> Output:
         """
-        .. todo::
-            docs
+            Compute coefficient functions grid for requested kinematic points.
+
+
+            .. admonition:: Implementation Note
+
+                get_output pipeline
+
+            Returns
+            -------
+            Output
+                output object, it will store the coefficient functions grid
+                (flavour, interpolation-index) for each requested kinematic
+                point (x, Q2)
+
+
+            .. todo::
+
+                * docs
+                * get_output pipeline
         """
         for obs in self._observables:
             self._output[obs.name] = obs.get_output()
@@ -142,34 +178,46 @@ class Runner:
 
     def __call__(self, pdfs: Any) -> dict:
         """
-        Returns
-        -------
-        dict
-            dictionary with all computed processes
+            __call__.
 
-        .. todo::
-            docs
-        """
+            Parameters
+            ----------
+            pdfs : Any
+                pdfs
 
-        output = self.get_output()
-
-        def get_charged_sum(z: float, Q2: float) -> float:
-            """Short summary.
-
-            d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
+            Returns
+            -------
+            dict
 
             .. todo::
                 docs
+        """
+        # init output
+        output = self.get_output()
+
+        def get_charged_sum(z: float, Q2: float) -> float:
             """
+                Compute charged sum of PDF at :math:`(x, Q^2)`.
+
+                For 3 flavors:
+                .. math::
+                    d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
+                For n flavors (missing):
+                .. math::
+                    \sum_f Q_f^2 (q_f(x, Q^2) + \\bar(q)_f(x, Q^2))
+            """
+            # preload (z, Q2)
             pdf_fl = lambda k: pdfs.xfxQ2(k, z, Q2)
+            # compute and return the sum
             return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
                 pdf_fl(2) + pdf_fl(-2)
             ) * 4 / 9
 
+        # init return dict
         ret: dict = {}
-        for obs in self._observables:
+        for obs in self._observables:  # loop over structure functions
             ret[obs.name] = []
-            for kin in output[obs.name]:
+            for kin in output[obs.name]:  # loop over kinematic points (x, Q2)
                 # collect pdfs
                 fq = []
                 fg = []
@@ -184,6 +232,8 @@ class Runner:
                 error = kin["x"] * (
                     np.dot(fq, kin["q_error"]) + 2 / 9 * np.dot(fg, kin["g_error"])
                 )
+
+                # store the result
                 ret[obs.name].append(
                     dict(x=kin["x"], Q2=kin["Q2"], result=result, error=error)
                 )
@@ -192,6 +242,8 @@ class Runner:
 
     def apply(self, pdfs: Any) -> dict:
         """
+        Alias for the `__call__` method.
+
         .. todo::
             - implement
             - docs
@@ -221,10 +273,23 @@ class Runner:
 
 def run_dis(theory: dict, dis_observables: dict) -> Runner:
     """
-    .. todo::
-        - decide the purpose
-        - implement
-        - docs
+        run_dis.
+
+        Parameters
+        ----------
+        theory : dict
+            theory
+        dis_observables : dict
+            dis_observables
+
+        Returns
+        -------
+        Runner
+
+        .. todo::
+            - decide the purpose
+            - implement
+            - docs
     """
     runner = Runner(theory, dis_observables)
     return runner
