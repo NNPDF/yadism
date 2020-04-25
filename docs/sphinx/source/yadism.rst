@@ -73,9 +73,16 @@ Some blabla about the yadism package: purpose, usage, trivia and so on.
       l2 [label=l]; c2 [label=c]; b2 [label=b]; t2 [label=t];
       lL [label=l]; cL [label=c]; bL [label=b]; tL [label=t];
 
-      run -> {f2 fL sf} [style=invis weight=0]
-      run -> sf [weight=10000]
-      sf -> esf [weight=10000]
+      // aux nodes
+      node [style=invis]
+      il1
+
+      {rank=same il1 f2 fL}
+
+      run -> sf [arrowhead=odot style=dotted]
+      sf -> il1 -> esf [style=invis]
+      sf -> esf [arrowhead=odot style=dotted]
+      sf -> {f2 fL}
       esf -> {esf2 esfL}
       esf -> dvec [arrowhead=onormal style=dashed]
       esf2 -> {l2 c2 b2 t2}
