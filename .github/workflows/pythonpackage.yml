@@ -96,6 +96,7 @@ jobs:
         run: |
           conda activate yadism
           # install needed lhapdf PDFSets
+          lhapdf update
           lhapdf get CT14llo_NF3
           # generate input db
           cd benchmarks/data
