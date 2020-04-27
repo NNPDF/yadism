@@ -136,43 +136,81 @@ class ParentTest(abc.ABC):
         self.__outputdb.table("logs").insert(res_tab)
 
 
-class TestPlain(ParentTest):
+@pytest.mark.skip
+class TestPlain:
     def test_LO(self):
         """
         Test the full LO order against APFEL's.
         """
-        t_query = self._theory_query.PTO == 0
-        t_query &= self._theory_query.XIR == 1.0
-        t_query &= self._theory_query.XIF == 1.0
+        p = ParentTest()
+        t_query = p._theory_query.PTO == 0
+        t_query &= p._theory_query.XIR == 1.0
+        t_query &= p._theory_query.XIF == 1.0
+        t_query &= p._theory_query.PDFSet == "ToyLH"
 
-        o_query = self._obs_query.F2light.exists()
+        o_query = p._obs_query.F2light.exists()
 
-        self.run_all_tests(t_query, o_query)
+        p.run_all_tests(t_query, o_query)
 
-    # def test_NLO(self):
-    # """
-    # Test the full NLO order against APFEL's.
-    # """
-    # theory_test("theory_NLO.yaml")
+    def test_NLO(self):
+        """
+        Test the full NLO order against APFEL's.
+        """
+        p = ParentTest()
+        t_query = p._theory_query.PTO == 1
+        t_query &= p._theory_query.XIR == 1.0
+        t_query &= p._theory_query.XIF == 1.0
+        t_query &= p._theory_query.PDFSet == "ToyLH"
+
+        o_query = p._obs_query
+
+        p.run_all_tests(t_query, o_query)
 
 
-# class TestScaleVariations:
-# def test_LO(self):
-# theory_test("theory_SV_LO.yaml", 1)
+@pytest.mark.skip
+class TestScaleVariations:
+    def test_LO(self):
+        p = ParentTest()
+        t_query = p._theory_query.PTO == 0
+        t_query &= p._theory_query.PDFSet == "CT14llo_NF3"
 
-# def test_NLO(self):
-# theory_test("theory_SV_NLO.yaml")
+        o_query = p._obs_query.F2light.exists()
+
+        p.run_all_tests(t_query, o_query)
+
+    def test_NLO(self):
+        p = ParentTest()
+        t_query = p._theory_query.PTO == 1
+        t_query &= p._theory_query.PDFSet == "CT14llo_NF3"
+
+        o_query = p._obs_query.F2light.exists()
+
+        p.run_all_tests(t_query, o_query)
 
 
-# class TestFull:
-# pass
+class TestFull:
+    def test_LO(self):
+        p = ParentTest()
+        t_query = p._theory_query.PTO == 0
+
+        o_query = p._obs_query
+
+        p.run_all_tests(t_query, o_query)
+
+    def test_NLO(self):
+        p = ParentTest()
+        t_query = p._theory_query.PTO == 1
+
+        o_query = p._obs_query
+
+        p.run_all_tests(t_query, o_query)
 
 
 if __name__ == "__main__":
     plain = TestPlain()
-    plain.test_LO()
+    # plain.test_LO()
     # plain.test_NLO()
 
-    # sv = TestScaleVariations()
+    sv = TestScaleVariations()
     # sv.test_LO()
-    # sv.test_NLO()
+    sv.test_NLO()
