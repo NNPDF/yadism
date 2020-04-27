@@ -102,5 +102,11 @@ jobs:
           python dis_observables.py
           cd ../..
           # run tests
-          pip install pytest
-          pytest
+          pip install pytest pytest-cov
+          pytest -m quick_check --cov=src --cov-report html
+          tar -czf htmlcov.tar.gz -C htmlcov .
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: htmlcov.tar.gz
+          path: htmlcov.tar.gz
