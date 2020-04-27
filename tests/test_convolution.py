@@ -6,6 +6,7 @@ import pytest
 import yadism.structure_functions.convolution as conv
 
 
+@pytest.mark.quick_check
 class TestInit:
     def test_init_zero(self):
         d_vecs = [
@@ -73,6 +74,7 @@ class TestInit:
                 assert c(x) == vi
 
 
+@pytest.mark.quick_check
 class TestSpecial:
     def test_iter(self):
         vecs = [
@@ -172,7 +174,7 @@ class TestSpecial:
                 assert d_vec0.compare(d_other, x) == False
 
 
-# @pytest.mark.skip
+@pytest.mark.quick_check
 class TestConvnd:
     @staticmethod
     def against_known_grid(xs, f, coeff, res):

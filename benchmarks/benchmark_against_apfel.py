@@ -136,7 +136,7 @@ class ParentTest(abc.ABC):
         self.__outputdb.table("logs").insert(res_tab)
 
 
-@pytest.mark.skip
+@pytest.mark.quick_check
 class TestPlain:
     def test_LO(self):
         """
@@ -167,7 +167,7 @@ class TestPlain:
         p.run_all_tests(t_query, o_query)
 
 
-@pytest.mark.skip
+@pytest.mark.commit_check
 class TestScaleVariations:
     def test_LO(self):
         p = ParentTest()
@@ -188,6 +188,7 @@ class TestScaleVariations:
         p.run_all_tests(t_query, o_query)
 
 
+@pytest.mark.full
 class TestFull:
     def test_LO(self):
         p = ParentTest()

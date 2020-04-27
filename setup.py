@@ -30,6 +30,8 @@ setup(
         "sphinx_rtd_theme",
         "recommonmark",
         "sphinxcontrib-bibtex",
+        "pytest",
+        "pytest-cov",
     ],
     python_requires=">=3.7",
     # entry_points={"console_scripts": ["run-dis=yadism.runner:run_dis"],},
