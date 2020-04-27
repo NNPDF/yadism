@@ -1,15 +1,13 @@
 import sys
 import os
 import pathlib
+import hashlib
 
 import yaml
 import numpy as np
 import tinydb
 
 import apfel
-
-sys.path.append(os.path.dirname(__file__))
-from utils import load_runcards, benchmark_data_dir
 
 
 def load_apfel(par):
@@ -126,7 +124,7 @@ def load_apfel(par):
     return apfel
 
 
-def get_apfel_data(theory, dis_observables):
+def get_apfel_data(theory, dis_observables, apfel_cache):
     """
         Run APFEL to compute observables or simply use cached values.
 
@@ -141,17 +139,14 @@ def get_apfel_data(theory, dis_observables):
     def sort_dict(d):
         return {k: d[k] for k in sorted(d, key=str)}
 
-    # get last edit for runcards
-    input_hash = hash(str([sort_dict(theory), sort_dict(dis_observables)]))
-    with open(benchmark_data_dir / "debug_hashing.txt", "a") as f:
-        f.write(str(input_hash) + "\n")
+    # compute input's hash
+    # (don't use naive `hash`, it will salt content with random seed)
+    h_str = str([sort_dict(theory), sort_dict(dis_observables)])
+    input_hash = hashlib.sha1(h_str.encode()).hexdigest()
 
-        apfel_cache = tinydb.TinyDB(benchmark_data_dir / "output.json").table(
-            "apfel_cache"
-        )
-        h_query = tinydb.Query()
-        query_res = apfel_cache.search(h_query.input_hash == input_hash)
-        f.write(str(query_res) + "\n\n")
+    # search for hash in the cache
+    h_query = tinydb.Query()
+    query_res = apfel_cache.search(h_query.input_hash == input_hash)
 
     # check if cache existing and updated
     if len(query_res) == 1:
