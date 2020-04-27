@@ -91,16 +91,22 @@ jobs:
           conda activate yadism
           #
           pip install .
-      #  run the test with 'pytest'
-      - name: Test yadism
+      - name: Prepare Test environment
         shell: bash -l {0}
         run: |
           conda activate yadism
+          # install needed lhapdf PDFSets
+          lhapdf get CT14llo_NF3
           # generate input db
           cd benchmarks/data
           python theory.py
           python dis_observables.py
           cd ../..
-          # run tests
           pip install pytest
+      #  run the test with 'pytest'
+      - name: Test yadism
+        shell: bash -l {0}
+        run: |
+          conda activate yadism
+          # run tests
           pytest

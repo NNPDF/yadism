@@ -192,6 +192,7 @@ class TestFull:
     def test_LO(self):
         p = ParentTest()
         t_query = p._theory_query.PTO == 0
+        t_query &= p._theory_query.PDFSet.any(["ToyLH", "CT14llo_NF3"])
 
         o_query = p._obs_query
 
@@ -200,6 +201,7 @@ class TestFull:
     def test_NLO(self):
         p = ParentTest()
         t_query = p._theory_query.PTO == 1
+        t_query &= p._theory_query.PDFSet.any(["ToyLH", "CT14llo_NF3"])
 
         o_query = p._obs_query
 
