@@ -91,6 +91,18 @@ jobs:
           conda activate yadism
           #
           pip install .
+      - name: tree
+        shell: bash -l {0}
+        run: |
+          conda activate yadism
+          #
+          apt install tree
+          tree > dir_tree.txt
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: dir_tree
+          path: dir_tree.txt
       #  run the test with 'pytest'
       - name: Test yadism
         shell: bash -l {0}
@@ -104,9 +116,8 @@ jobs:
           # run tests
           pip install pytest pytest-cov
           pytest -m quick_check --cov=src --cov-report html
-          tar -czf htmlcov.tar.gz -C htmlcov .
       - name: Archive code coverage results
         uses: actions/upload-artifact@v1
         with:
-          name: htmlcov.tar.gz
-          path: htmlcov.tar.gz
+          name: htmlcov
+          path: htmlcov
