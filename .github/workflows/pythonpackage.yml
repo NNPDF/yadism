@@ -64,7 +64,7 @@ jobs:
           #
           cd eko
           # git fetch --unshallow
-          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d 
+          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
           cd ..
           # install Gnu Scientific Library (GSL)
           #   sudo works passwordless on github-workflow
@@ -96,6 +96,11 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate yadism
-          #
+          # generate input db
+          cd benchmarks/data
+          python theory.py
+          python dis_observables.py
+          cd ../..
+          # run tests
           pip install pytest
           pytest
