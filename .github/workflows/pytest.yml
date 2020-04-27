@@ -96,7 +96,7 @@ jobs:
         run: |
           conda activate yadism
           #
-          apt install tree
+          sudo apt install tree
           tree > dir_tree.txt
       - name: Archive code coverage results
         uses: actions/upload-artifact@v1
