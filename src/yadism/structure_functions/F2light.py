@@ -22,9 +22,9 @@ class ESF_F2light(ESF):
         super(ESF_F2light, self).__init__(SF, kinematics)
 
     def quark_0(self) -> float:
-        """Computes the singlet part of the leading order F2 structure function.
+        """Computes the quark singlet part of the leading order F2 structure function.
 
-        Implements equation 4.2 of :cite:`Vermaseren:2005qc`.
+        **Reference**: implements Eq. (4.2), :cite:`vogt`.
 
         Parameters
         ----------
