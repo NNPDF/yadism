@@ -26,6 +26,13 @@
 .. |N3LO| replace::
    :abbr:`N3LO (Next to Next to Next to Leading Order)`
 
+.. ----------------
+   cross references
+   ----------------
+
+.. |ref| replace::
+   **Reference:**
+
 .. -------------------
    external references
    -------------------

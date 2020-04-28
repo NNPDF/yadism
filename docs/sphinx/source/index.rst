@@ -1,7 +1,5 @@
 .. DIS documentation master file.
 
-.. include:: shared/abbreviations.rst
-.. include:: shared/roles.rst
 
 #################
 DIS documentation

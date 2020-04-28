@@ -14,6 +14,8 @@ from . import splitting_functions as split
 
 class ESF_F2light(ESF):
     """
+
+
     .. todo::
         docs
     """
@@ -22,24 +24,15 @@ class ESF_F2light(ESF):
         super(ESF_F2light, self).__init__(SF, kinematics)
 
     def quark_0(self) -> float:
-        """Computes the quark singlet part of the leading order F2 structure function.
+        """
+            Computes the quark singlet part of the leading order F2 structure function.
 
-        **Reference**: implements Eq. (4.2), :cite:`vogt`.
+            |ref| implements :eqref:`4.2`, :cite:`vogt`.
 
-        Parameters
-        ----------
-        x : float
-            Bjorken x
-        Q2 : float
-            squared(!) momentum transfer
-
-        Returns
-        -------
-        float
-            F2(x,Q^2)
-
-        .. todo::
-            docs
+            Returns
+            -------
+            sequence of callables
+               coefficient functions, as two arguments functions: :py:`(x, Q2)`
         """
 
         # leading order is just a delta function
@@ -47,13 +40,15 @@ class ESF_F2light(ESF):
 
     def quark_1(self):
         """
-        regular
-        delta
-        1/(1-x)_+
-        log(x)/(1-x)_+
+            Computes the quark singlet part of the next to leading order F2
+            structure function.
 
-        .. todo::
-            docs
+            |ref| implements :eqref:`4.3`, :cite:`vogt`.
+
+            Returns
+            -------
+            sequence of callables
+               coefficient functions, as two arguments functions: :py:`(x, Q2)`
         """
         CF = self._SF._constants.CF
         zeta_2 = np.pi ** 2 / 6
@@ -80,8 +75,20 @@ class ESF_F2light(ESF):
 
     def quark_1_fact(self):
         """
-        .. todo::
-            docs
+            Computes the quark singlet contribution to the next to leading
+            order F2 structure function coming from the factorization scheme.
+
+            |ref| implements :eqref:`??`, :cite:`vogt`.
+
+            Returns
+            -------
+            sequence of callables
+               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
+            Notes
+            -----
+            Check the theory reference for details on
+            :doc:`../theory/scale-variations`
         """
 
         def cq_reg(z):
@@ -97,14 +104,22 @@ class ESF_F2light(ESF):
 
     def gluon_1(self):
         """
-        vogt page 21
+            Computes the gluon part of the next to leading order F2 structure
+            function.
 
-        .. todo::
-            - docs
-            - 2 * n_f here and in gluon_1_fact is coming from momentum sum rule
-            q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} \forall i}, so the 2*n_f
-            is needed to compensate for all the number of flavours + antiflavours
-            in which the gluon can go
+            |ref| implements :eqref:`4.4`, :cite:`vogt`.
+
+            Returns
+            -------
+            sequence of callables
+                coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
+            .. todo::
+                - docs
+                - 2 * n_f here and in gluon_1_fact is coming from momentum sum
+                  rule q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} forall i}, so
+                  the 2 * n_f is needed to compensate for all the number of flavours
+                  plus antiflavours in which the gluon can go.
         """
 
         TR = self._SF._constants.TF
@@ -124,8 +139,18 @@ class ESF_F2light(ESF):
 
     def gluon_1_fact(self):
         """
-        .. todo::
-            docs
+            Computes the gluon contribution to the next to leading order F2
+            structure function coming from the factorization scheme.
+
+            |ref| implements :eqref:`??`, :cite:`vogt`.
+
+            Returns
+            -------
+            sequence of callables
+               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
+            .. todo::
+                docs
         """
 
         def cg(z):

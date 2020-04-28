@@ -8,6 +8,8 @@ In this section is documented the structure of the package and it's API.
 If you were looking for informations about other interesting facts (like
 processes description and other physics) check the appropriate section, e.g.
 
+The :eqref:`2.3`. |DIS|
+
 .. :doc:`physics`.
 
 .. toctree::

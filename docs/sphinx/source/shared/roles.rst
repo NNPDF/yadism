@@ -51,3 +51,18 @@
 
 .. role:: eqref
    :class: eqref
+
+
+.. raw:: html
+
+   <style type="text/css">
+     span.eqref:before {
+       content: "Eq. (";
+     }
+     span.eqref:after {
+       content: ")";
+     }
+   </style>
+
+.. role:: eqref
+   :class: eqref
