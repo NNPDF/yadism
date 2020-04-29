@@ -4,7 +4,7 @@
 
 import pytest
 
-from conftest import ParentTest
+from conftest import DBInterface
 
 
 @pytest.mark.quick_check
@@ -13,7 +13,7 @@ class TestPlain:
         """
         Test the full LO order against APFEL's.
         """
-        p = ParentTest()
+        p = DBInterface()
         t_query = p._theory_query.PTO == 0
         t_query &= p._theory_query.XIR == 1.0
         t_query &= p._theory_query.XIF == 1.0
@@ -27,7 +27,7 @@ class TestPlain:
         """
         Test the full NLO order against APFEL's.
         """
-        p = ParentTest()
+        p = DBInterface()
         t_query = p._theory_query.PTO == 1
         t_query &= p._theory_query.XIR == 1.0
         t_query &= p._theory_query.XIF == 1.0
@@ -41,7 +41,7 @@ class TestPlain:
 @pytest.mark.commit_check
 class TestScaleVariations:
     def test_LO(self):
-        p = ParentTest()
+        p = DBInterface()
         t_query = p._theory_query.PTO == 0
         t_query &= p._theory_query.PDFSet == "CT14llo_NF3"
 
@@ -50,7 +50,7 @@ class TestScaleVariations:
         p.run_all_tests(t_query, o_query)
 
     def test_NLO(self):
-        p = ParentTest()
+        p = DBInterface()
         t_query = p._theory_query.PTO == 1
         t_query &= p._theory_query.PDFSet == "CT14llo_NF3"
 
@@ -62,7 +62,7 @@ class TestScaleVariations:
 @pytest.mark.full
 class TestFull:
     def test_LO(self):
-        p = ParentTest()
+        p = DBInterface()
         t_query = p._theory_query.PTO == 0
         t_query &= p._theory_query.PDFSet.one_of(["ToyLH", "CT14llo_NF3"])
 
@@ -71,7 +71,7 @@ class TestFull:
         p.run_all_tests(t_query, o_query)
 
     def test_NLO(self):
-        p = ParentTest()
+        p = DBInterface()
         t_query = p._theory_query.PTO == 1
         t_query &= p._theory_query.PDFSet.one_of(["ToyLH", "CT14llo_NF3"])
 
