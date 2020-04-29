@@ -41,10 +41,16 @@ class Runner:
     Parameters
     ----------
     theory : dict
-        Dictionary with the theory parameters for the evolution.
+        Dictionary with the theory parameters for the evolution (currently
+        including PDFSet and DIS process indication).
     dis_observables : dict
         DIS parameters: process description, kinematic specification for the
         requested output.
+
+    Notes
+    -----
+    For a full description of the content of `theory` and `dis_observables`
+    dictionaries read ??.
 
     .. todo::
         * reference on theory template
@@ -160,7 +166,7 @@ class Runner:
 
             Returns
             -------
-            Output
+            :obj:`Output`
                 output object, it will store the coefficient functions grid
                 (flavour, interpolation-index) for each requested kinematic
                 point (x, Q2)
