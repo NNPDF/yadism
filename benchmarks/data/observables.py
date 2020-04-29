@@ -1,7 +1,13 @@
 import pathlib
 
 import yaml
+import tinydb
 import numpy as np
+
+db = tinydb.TinyDB("input.json")
+obs_table = db.table("observables")
+# for the time being the table is freshly generated at each run of this script
+obs_table.purge()
 
 observables = [
     "F2light",
@@ -31,10 +37,12 @@ for sf in observables:
         xgrid=xgrid.tolist(),
         polynomial_degree=polynomial_degree,
         is_log_interpolation=is_log_interpolation,
+        comments="",
     )
     content[sf] = kinematics
 
+    obs_table.insert(content)
     # dump to file
-    fn = pathlib.Path(__file__).absolute().parent / f"{sf}.yaml"
-    with open(fn, "w") as f:
-        yaml.safe_dump(content, f)
+    # fn = pathlib.Path(__file__).absolute().parent / f"{sf}.yaml"
+    # with open(fn, "w") as f:
+    # yaml.safe_dump(content, f)

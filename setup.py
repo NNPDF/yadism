@@ -26,6 +26,7 @@ setup(
         "pandas",
         "numba",
         "pyyaml",
+        "tinydb",
         "sphinx_rtd_theme",
         "recommonmark",
         "sphinxcontrib-bibtex",

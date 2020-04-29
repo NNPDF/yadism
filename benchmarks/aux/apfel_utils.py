@@ -4,11 +4,9 @@ import pathlib
 
 import yaml
 import numpy as np
+import tinydb
 
 import apfel
-
-sys.path.append(os.path.dirname(__file__))
-from utils import load_runcards, test_data_dir
 
 
 def load_apfel(par):
@@ -125,12 +123,7 @@ def load_apfel(par):
     return apfel
 
 
-# Define cache path to store computed observables
-cache_location = test_data_dir / "apfel_cache"
-cache_location.mkdir(parents=True, exist_ok=True)
-
-
-def get_apfel_data(theory_path, dis_observables_path):
+def get_apfel_data(theory, observables, apfel_cache):
     """
         Run APFEL to compute observables or simply use cached values.
 
@@ -138,30 +131,24 @@ def get_apfel_data(theory_path, dis_observables_path):
         ----------
         theory_path :
             path for the theory runcard
-        dis_observables_path :
+        observables_path :
             path for the observables runcard
     """
-    theory_p = test_data_dir / theory_path
-    obs_p = test_data_dir / dis_observables_path
 
-    # check that paths match existing files
-    if not all([theory_p.is_file(), obs_p.is_file()]):
-        raise FileNotFoundError("Missing runcards.")
+    def sort_dict(d):
+        return {k: d[k] for k in sorted(d, key=str)}
 
-    # get last edit for runcards
-    dependencies = [theory_p, obs_p, pathlib.Path(__file__)]
-    input_mtime = max([p.stat().st_mtime for p in dependencies])
-
-    cache_path = cache_location / f"{theory_p.stem}-{obs_p.stem}.yaml"
+    # search for document in the cache
+    cache_query = tinydb.Query()
+    c_query = cache_query._theory_doc_id == theory.doc_id
+    c_query &= cache_query._observables_doc_id == observables.doc_id
+    query_res = apfel_cache.search(c_query)
 
     # check if cache existing and updated
-    if cache_path.is_file() and cache_path.stat().st_mtime > input_mtime:
-        # load from cache
-        with open(cache_path) as f:
-            res_tab = yaml.safe_load(f)
-    else:
+    if len(query_res) == 1:
+        apf_tab = query_res[0]
+    elif len(query_res) == 0:
         # setup APFEL
-        theory, dis_observables = load_runcards(theory_p, obs_p)
         apfel = load_apfel(theory)
 
         # mapping observables names to APFEL methods
@@ -177,15 +164,15 @@ def get_apfel_data(theory_path, dis_observables_path):
         }
 
         # compute observables with APFEL
-        res_tab = {}
+        apf_tab = {}
         for FX, apfel_FX in apfel_methods.items():
-            if FX not in dis_observables:
+            if FX not in observables:
                 # if not in the runcard just skip
                 continue
 
             # iterate over input kinematics
-            res_tab[FX] = []
-            for kinematics in dis_observables.get(FX, []):
+            apf_tab[FX] = []
+            for kinematics in observables.get(FX, []):
                 Q2 = kinematics["Q2"]
                 x = kinematics["x"]
 
@@ -200,9 +187,13 @@ def get_apfel_data(theory_path, dis_observables_path):
                 )
                 value = apfel_FX(x)
 
-                res_tab[FX].append(dict(x=x, Q2=Q2, value=value))
+                apf_tab[FX].append(dict(x=x, Q2=Q2, value=value))
 
         # store the cache
-        with open(cache_path, "w") as f:
-            yaml.safe_dump(res_tab, f)
-    return res_tab
+        apf_tab["_theory_doc_id"] = theory.doc_id
+        apf_tab["_observables_doc_id"] = observables.doc_id
+        apfel_cache.insert(apf_tab)
+    else:
+        raise ValueError("Cache query matched more than once.")
+
+    return apf_tab

@@ -64,7 +64,7 @@ jobs:
           #
           cd eko
           # git fetch --unshallow
-          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d 
+          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
           cd ..
           # install Gnu Scientific Library (GSL)
           #   sudo works passwordless on github-workflow
@@ -91,11 +91,23 @@ jobs:
           conda activate yadism
           #
           pip install .
+      - name: Prepare Test environment
+        shell: bash -l {0}
+        run: |
+          conda activate yadism
+          # install needed lhapdf PDFSets
+          lhapdf update
+          lhapdf get CT14llo_NF3
+          # generate input db
+          cd benchmarks/data
+          python theory.py
+          python observables.py
+          cd ../..
+          pip install pytest
       #  run the test with 'pytest'
       - name: Test yadism
         shell: bash -l {0}
         run: |
           conda activate yadism
-          #
-          pip install pytest
+          # run tests
           pytest
