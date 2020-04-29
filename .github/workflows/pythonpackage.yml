@@ -101,7 +101,7 @@ jobs:
           # generate input db
           cd benchmarks/data
           python theory.py
-          python dis_observables.py
+          python observables.py
           cd ../..
           pip install pytest
       #  run the test with 'pytest'

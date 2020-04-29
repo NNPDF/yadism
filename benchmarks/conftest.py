@@ -1,6 +1,7 @@
 import sys
 import pathlib
 import itertools
+import datetime
 
 import numpy as np
 import pandas as pd
@@ -25,13 +26,13 @@ class ParentTest:
 
     def run_all_tests(self, theory_query, obs_query):
         theories = self.__inputdb.table("theories").search(theory_query)
-        observables = self.__inputdb.table("dis_observables").search(obs_query)
+        observables = self.__inputdb.table("observables").search(obs_query)
 
         for theory, obs in itertools.product(theories, observables):
             # run against apfel (test)
             self.run_against_apfel(theory, obs)
 
-    def run_against_apfel(self, theory, dis_observables):
+    def run_against_apfel(self, theory, observables):
         """
             Run APFEL comparison on the given runcards.
 
@@ -48,7 +49,7 @@ class ParentTest:
             ----------
             theory_f :
                 file path for the theory runcard
-            dis_observables_f :
+            observables_f :
                 file path for the observables runcard
         """
 
@@ -64,21 +65,21 @@ class ParentTest:
         # ======================
         # get observables values
         # ======================
-        runner = Runner(theory, dis_observables)
+        runner = Runner(theory, observables)
 
         yad_tab = runner.apply(pdfs)
         apf_tab = get_apfel_data(
-            theory, dis_observables, self.__outputdb.table("apfel_cache")
+            theory, observables, self.__outputdb.table("apfel_cache")
         )
 
         # =========================
         # collect and check results
         # =========================
 
-        res_tab = {}
+        log_tab = {}
         # loop kinematics
         for sf in yad_tab:
-            kinematics = res_tab[sf] = []
+            kinematics = log_tab[sf] = []
             for yad, apf in zip(yad_tab[sf], apf_tab[sf]):
                 if any([yad[k] != apf[k] for k in ["x", "Q2"]]):
                     raise ValueError("Sort problem")
@@ -100,15 +101,22 @@ class ParentTest:
         # =============
         # print and log
         # =============
-        res_tab["input_hash"] = apf_tab["input_hash"]
-        self._print_res(res_tab)
-        self._log(res_tab)
+        # add metadata to log record
+        log_tab["_creation_time"] = str(datetime.datetime.now())
+        log_tab["_theory_doc_id"] = theory.doc_id
+        log_tab["_observables_doc_id"] = observables.doc_id
+        # print immediately
+        self._print_res(log_tab)
+        # store the log
+        self._log(log_tab)
 
-    def _print_res(self, res_tab):
+    def _print_res(self, log_tab):
         # for each observable:
-        for FX, tab in res_tab.items():
-            if len(tab) == 0 or FX == "input_hash":
+        for FX, tab in log_tab.items():
+            # skip metadata
+            if FX[0] == "_":
                 continue
+
             print_tab = pd.DataFrame(tab)
 
             # print results
@@ -116,19 +124,19 @@ class ParentTest:
             print(print_tab)
             print("\n--------\n")
 
-    def _log(self, res_tab):
+    def _log(self, log_tab):
         """
             Dump comparison table.
 
             Parameters
             ----------
-            res_tab :
+            log_tab :
                 dict of lists of dicts, to be printed and saved in multiple csv
                 files
         """
 
         # store the log of results
-        self.__outputdb.table("logs").insert(res_tab)
+        self.__outputdb.table("logs").insert(log_tab)
 
     def subtract_tables(self, id1, id2):
         """
@@ -159,7 +167,7 @@ class ParentTest:
             raise ValueError(f"Log id:{id2} not found")
 
         for obs in log1.keys():
-            if obs == "input_hash":
+            if obs[0] == "_":
                 continue
             elif obs not in log2:
                 print(f"{obs}: not matching in log2")
@@ -193,7 +201,10 @@ class ParentTest:
             print(obs, "-" * len(obs), sep="\n")
             print(table2)
 
+    def empty_cache(self):
+        self.__inputdb.table("apfel_cache").purge()
+
 
 if __name__ == "__main__":
     p = ParentTest()
-    p.subtract_tables(1, 4)
+    p.subtract_tables(1, 2)

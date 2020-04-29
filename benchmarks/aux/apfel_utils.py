@@ -1,7 +1,6 @@
 import sys
 import os
 import pathlib
-import hashlib
 
 import yaml
 import numpy as np
@@ -124,7 +123,7 @@ def load_apfel(par):
     return apfel
 
 
-def get_apfel_data(theory, dis_observables, apfel_cache):
+def get_apfel_data(theory, observables, apfel_cache):
     """
         Run APFEL to compute observables or simply use cached values.
 
@@ -132,25 +131,22 @@ def get_apfel_data(theory, dis_observables, apfel_cache):
         ----------
         theory_path :
             path for the theory runcard
-        dis_observables_path :
+        observables_path :
             path for the observables runcard
     """
 
     def sort_dict(d):
         return {k: d[k] for k in sorted(d, key=str)}
 
-    # compute input's hash
-    # (don't use naive `hash`, it will salt content with random seed)
-    h_str = str([sort_dict(theory), sort_dict(dis_observables)])
-    input_hash = hashlib.sha1(h_str.encode()).hexdigest()
-
-    # search for hash in the cache
-    h_query = tinydb.Query()
-    query_res = apfel_cache.search(h_query.input_hash == input_hash)
+    # search for document in the cache
+    cache_query = tinydb.Query()
+    c_query = cache_query._theory_doc_id == theory.doc_id
+    c_query &= cache_query._observables_doc_id == observables.doc_id
+    query_res = apfel_cache.search(c_query)
 
     # check if cache existing and updated
     if len(query_res) == 1:
-        res_tab = query_res[0]
+        apf_tab = query_res[0]
     elif len(query_res) == 0:
         # setup APFEL
         apfel = load_apfel(theory)
@@ -168,15 +164,15 @@ def get_apfel_data(theory, dis_observables, apfel_cache):
         }
 
         # compute observables with APFEL
-        res_tab = {}
+        apf_tab = {}
         for FX, apfel_FX in apfel_methods.items():
-            if FX not in dis_observables:
+            if FX not in observables:
                 # if not in the runcard just skip
                 continue
 
             # iterate over input kinematics
-            res_tab[FX] = []
-            for kinematics in dis_observables.get(FX, []):
+            apf_tab[FX] = []
+            for kinematics in observables.get(FX, []):
                 Q2 = kinematics["Q2"]
                 x = kinematics["x"]
 
@@ -191,12 +187,13 @@ def get_apfel_data(theory, dis_observables, apfel_cache):
                 )
                 value = apfel_FX(x)
 
-                res_tab[FX].append(dict(x=x, Q2=Q2, value=value))
+                apf_tab[FX].append(dict(x=x, Q2=Q2, value=value))
 
         # store the cache
-        res_tab["input_hash"] = input_hash
-        apfel_cache.insert(res_tab)
+        apf_tab["_theory_doc_id"] = theory.doc_id
+        apf_tab["_observables_doc_id"] = observables.doc_id
+        apfel_cache.insert(apf_tab)
     else:
-        raise ValueError("Cache hash matched more than once.")
+        raise ValueError("Cache query matched more than once.")
 
-    return res_tab
+    return apf_tab
