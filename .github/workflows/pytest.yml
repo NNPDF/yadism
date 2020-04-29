@@ -91,31 +91,40 @@ jobs:
           conda activate yadism
           #
           pip install .
-      - name: tree
+      - name: debug - Explore file system
         shell: bash -l {0}
         run: |
           conda activate yadism
           #
           sudo apt install tree
           tree > dir_tree.txt
-      - name: Archive code coverage results
+      - name: debug - Report file system exploration
         uses: actions/upload-artifact@v1
         with:
           name: dir_tree
           path: dir_tree.txt
+      - name: Prepare Test environment
+        shell: bash -l {0}
+        run: |
+          conda activate yadism
+          # install needed lhapdf PDFSets
+          lhapdf update
+          lhapdf get CT14llo_NF3
+          # generate input db
+          cd benchmarks/data
+          python theory.py
+          python observables.py
+          cd ../..
+          # install pytest and extensions
+          pip install pytest pytest-cov
       #  run the test with 'pytest'
       - name: Test yadism
         shell: bash -l {0}
         run: |
           conda activate yadism
-          # generate input db
-          cd benchmarks/data
-          python theory.py
-          python dis_observables.py
-          cd ../..
           # run tests
-          pip install pytest pytest-cov
-          pytest -m quick_check --cov=src --cov-report html
+          # pytest -m quick_check --cov=src --cov-report html
+          pytest
       - name: Archive code coverage results
         uses: actions/upload-artifact@v1
         with:

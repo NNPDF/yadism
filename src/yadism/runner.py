@@ -34,8 +34,8 @@ class Runner:
     ----------
     theory : dict
         Dictionary with the theory parameters for the evolution.
-    dis_observables : dict
-        Description of parameter `dis_observables`.
+    observables : dict
+        Description of parameter `observables`.
 
     .. todo::
         docs
@@ -52,16 +52,16 @@ class Runner:
         "FLtop": (FL_top, "mt"),
     }
 
-    def __init__(self, theory: dict, dis_observables: dict):
+    def __init__(self, theory: dict, observables: dict):
         self._theory = theory
-        self._dis_observables = dis_observables
+        self._observables = observables
         self._n_f: int = theory["NfFF"]
 
-        polynomial_degree: int = dis_observables["polynomial_degree"]
+        polynomial_degree: int = observables["polynomial_degree"]
         self._interpolator = InterpolatorDispatcher(
-            dis_observables["xgrid"],
+            observables["xgrid"],
             polynomial_degree,
-            log=dis_observables.get("is_log_interpolation", True),
+            log=observables.get("is_log_interpolation", True),
             mode_N=False,
             numba_it=False,  # TODO: make it available for the user to choose
         )
@@ -110,7 +110,7 @@ class Runner:
         self._observables = []
         for sf, obs_t in self.__obs_templates.items():
             # if not in the input skip
-            if sf not in self._dis_observables:
+            if sf not in self._observables:
                 continue
 
             # first element is the class [required]
@@ -123,7 +123,7 @@ class Runner:
                 raise RuntimeError("Invalid obs template")
 
             # read kinematics
-            obj.load(self._dis_observables.get(obj.name, []))
+            obj.load(self._observables.get(obj.name, []))
             self._observables.append(obj)
 
         # prepare output
@@ -219,12 +219,12 @@ class Runner:
         pass
 
 
-def run_dis(theory: dict, dis_observables: dict) -> Runner:
+def run_dis(theory: dict, observables: dict) -> Runner:
     """
     .. todo::
         - decide the purpose
         - implement
         - docs
     """
-    runner = Runner(theory, dis_observables)
+    runner = Runner(theory, observables)
     return runner

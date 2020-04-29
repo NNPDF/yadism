@@ -5,9 +5,9 @@ import tinydb
 import numpy as np
 
 db = tinydb.TinyDB("input.json")
-dis_obs_table = db.table("dis_observables")
+obs_table = db.table("observables")
 # for the time being the table is freshly generated at each run of this script
-dis_obs_table.purge()
+obs_table.purge()
 
 observables = [
     "F2light",
@@ -37,10 +37,11 @@ for sf in observables:
         xgrid=xgrid.tolist(),
         polynomial_degree=polynomial_degree,
         is_log_interpolation=is_log_interpolation,
+        comments="",
     )
     content[sf] = kinematics
 
-    dis_obs_table.insert(content)
+    obs_table.insert(content)
     # dump to file
     # fn = pathlib.Path(__file__).absolute().parent / f"{sf}.yaml"
     # with open(fn, "w") as f:
