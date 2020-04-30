@@ -1,7 +1,15 @@
+from datetime import datetime
+
 import numpy as np
 import tinydb
 
 import apfel
+
+def str_datetime(dt):
+    return str(dt)
+
+def unstr_datetime(s):
+    return datetime.strptime(s,"%Y-%m-%d %H:%M:%S.%f")
 
 def load_apfel(theory, observables, pdf = "ToyLH"):
     """
@@ -131,15 +139,30 @@ def get_apfel_data(theory, observables, pdf_name, apfel_cache):
 
     # search for document in the cache
     cache_query = tinydb.Query()
-    c_query = cache_query._theory_doc_id == theory.doc_id
-    c_query &= cache_query._observables_doc_id == observables.doc_id
-    c_query &= cache_query._pdf == pdf_name
+    c_query = cache_query._theory_doc_id == theory.doc_id #pylint:disable=protected-access
+    c_query &= cache_query._observables_doc_id == observables.doc_id #pylint:disable=protected-access
+    c_query &= cache_query._pdf == pdf_name #pylint:disable=protected-access
     query_res = apfel_cache.search(c_query)
 
-    # check if cache existing and updated
+    apf_tab = None
+    # check if cache existing
     if len(query_res) == 1:
         apf_tab = query_res[0]
-    elif len(query_res) == 0:
+    elif len(query_res) > 1:
+        raise ValueError("Cache query matched more than once.")
+    # check is updated
+    if apf_tab is not None:
+        theory_changed = unstr_datetime(theory["_modify_time"]) #pylint:disable=protected-access
+        obs_changed = unstr_datetime(observables["_modify_time"]) #pylint:disable=protected-access
+        tab_changed = unstr_datetime(apf_tab["_creation_time"]) #pylint:disable=protected-access
+        if (theory_changed - tab_changed).total_seconds() > 0 or (obs_changed - tab_changed).total_seconds() > 0:
+            # delete old one
+            apfel_cache.remove(doc_ids=[apf_tab.doc_id])
+            apf_tab = None
+    # cached or recompute
+    if apf_tab is not None:
+        return apf_tab
+    else:
         # setup APFEL
         apfel = load_apfel(theory, observables, pdf_name)
 
@@ -185,8 +208,7 @@ def get_apfel_data(theory, observables, pdf_name, apfel_cache):
         apf_tab["_theory_doc_id"] = theory.doc_id
         apf_tab["_observables_doc_id"] = observables.doc_id
         apf_tab["_pdf"] = pdf_name
+        apf_tab["_creation_time"] = str_datetime(datetime.now())
         apfel_cache.insert(apf_tab)
-    else:
-        raise ValueError("Cache query matched more than once.")
 
     return apf_tab

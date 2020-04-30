@@ -76,7 +76,7 @@ class TestFull:
 
 if __name__ == "__main__":
     plain = TestPlain()
-    #plain.test_LO()
+    plain.test_LO()
     #plain.test_NLO()
 
     sv = TestScaleVariations()
@@ -84,4 +84,4 @@ if __name__ == "__main__":
     # sv.test_NLO()
 
     f = TestFull()
-    f.test_LO()
+    #f.test_LO()

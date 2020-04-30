@@ -2,10 +2,15 @@
 from pprint import pprint
 import pathlib
 from datetime import datetime
+import sys
 
 import numpy as np
 import pandas as pd
 from tinydb import TinyDB, Query
+
+here = pathlib.Path(__file__).parent.absolute()
+sys.path.append(str(here/ "aux"))
+from apfel_utils import unstr_datetime #pylint:disable=import-error
 
 # database access
 here = pathlib.Path(__file__).parent.absolute()
@@ -27,8 +32,10 @@ def list_all_theories():
     data = []
     for t in theories:
         obj = {"doc_id": t.doc_id}
-        for f in ["PTO","XIF","XIR","PDFSet"]:
+        for f in ["PTO","XIF","XIR"]:
             obj[f] = t[f]
+        dt = unstr_datetime(t["_modify_time"])
+        obj["modified"] = pretty_date(dt)
         data.append(obj)
     # output
     df = pd.DataFrame(data)
@@ -89,6 +96,8 @@ def list_all_observables():
         obj["xgrid"] = "[{}, ..., {}] ({}) ".format(min(xgrid),max(xgrid),len(xgrid))
         obj["log"] = o["is_log_interpolation"]
         obj["degree"] = o["polynomial_degree"]
+        dt = unstr_datetime(o["_modify_time"])
+        obj["modified"] = pretty_date(dt)
         sfs = []
         esfs = 0
         for sf in o:
@@ -208,7 +217,7 @@ def list_all_logs():
         obj["structure_functions"] = " ".join(sfs) + f" at {esfs} points"
         for f in ["_theory_doc_id", "_observables_doc_id", "_creation_time","_pdf"]:
             obj[f.split("_")[1]] = l[f]
-        dt = datetime.strptime(obj["creation"],"%Y-%m-%d %H:%M:%S.%f")
+        dt = unstr_datetime(obj["creation"])
         obj["creation"] = pretty_date(dt)
         data.append(obj)
     # output
@@ -363,6 +372,8 @@ def g(table, doc_id = None):
         else:
             print(f"Unkown table: {table}")
     return r
+
+get = g
 
 def subtract_tables(id1, id2):
     """

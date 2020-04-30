@@ -133,10 +133,10 @@ jobs:
         run: |
           conda activate yadism
           # run tests
-          # pytest -m quick_check --cov=src --cov-report html
+          #pytest -m quick_check --cov=src --cov-report html
           pytest
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v1
-        with:
-          name: htmlcov
-          path: htmlcov
+      #- name: Archive code coverage results
+      #  uses: actions/upload-artifact@v1
+      #  with:
+      #    name: htmlcov
+      #    path: htmlcov

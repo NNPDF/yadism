@@ -1,9 +1,13 @@
 import pathlib
+import sys
+from datetime import datetime
 
 import tinydb
 import numpy as np
 
 here = pathlib.Path(__file__).parent.absolute()
+sys.path.append(str(here / ".." / "aux"))
+from apfel_utils import str_datetime #pylint:disable=import-error
 
 db = tinydb.TinyDB(here / "input.json")
 obs_table = db.table("observables")
@@ -40,6 +44,7 @@ for sf in observables:
         is_log_interpolation=is_log_interpolation,
         prDIS="NC",
         comments="",
+        _modify_time = str_datetime(datetime.now())
     )
     content[sf] = kinematics
 

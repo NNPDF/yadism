@@ -6,7 +6,6 @@ import datetime
 import numpy as np
 import pandas as pd
 import tinydb
-import pytest
 
 import lhapdf
 
@@ -14,8 +13,8 @@ from yadism.runner import Runner
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
-import toyLH as toyLH
-from apfel_utils import get_apfel_data
+import toyLH #pylint:disable=import-error
+from apfel_utils import get_apfel_data, str_datetime #pylint:disable=import-error
 
 
 class DBInterface:
@@ -103,7 +102,7 @@ class DBInterface:
             # print and log
             # =============
             # add metadata to log record
-            log_tab["_creation_time"] = str(datetime.datetime.now())
+            log_tab["_creation_time"] = str_datetime(datetime.datetime.now())
             log_tab["_theory_doc_id"] = theory.doc_id
             log_tab["_observables_doc_id"] = observables.doc_id
             log_tab["_pdf"] = pdf_name
