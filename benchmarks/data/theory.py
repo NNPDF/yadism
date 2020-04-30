@@ -5,8 +5,9 @@ import yaml
 import tinydb
 
 # import numpy as np
+here = pathlib.Path(__file__).parent.absolute()
 
-db = tinydb.TinyDB("input.json")
+db = tinydb.TinyDB(here / "input.json")
 theories_table = db.table("theories")
 # for the time being the table is freshly generated at each run of this script
 theories_table.purge()
@@ -28,7 +29,6 @@ def my_product(inp):
     ]
 
 
-here = pathlib.Path(__file__).parent.absolute()
 with open(here / "theory_template.yaml") as f:
     template = yaml.safe_load(f)
 

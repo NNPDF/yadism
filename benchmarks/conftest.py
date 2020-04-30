@@ -6,8 +6,9 @@ import datetime
 import numpy as np
 import pandas as pd
 import tinydb
-import lhapdf
 import pytest
+
+import lhapdf
 
 from yadism.runner import Runner
 
@@ -17,16 +18,16 @@ import toyLH as toyLH
 from apfel_utils import get_apfel_data
 
 
-class ParentTest:
+class DBInterface:
     def __init__(self):
-        self.__inputdb = tinydb.TinyDB(here / "data" / "input.json")
-        self.__outputdb = tinydb.TinyDB(here / "data" / "output.json")
+        self._inputdb = tinydb.TinyDB(here / "data" / "input.json")
+        self._outputdb = tinydb.TinyDB(here / "data" / "output.json")
         self._theory_query = tinydb.Query()
         self._obs_query = tinydb.Query()
 
     def run_all_tests(self, theory_query, obs_query):
-        theories = self.__inputdb.table("theories").search(theory_query)
-        observables = self.__inputdb.table("observables").search(obs_query)
+        theories = self._inputdb.table("theories").search(theory_query)
+        observables = self._inputdb.table("observables").search(obs_query)
 
         for theory, obs in itertools.product(theories, observables):
             # run against apfel (test)
@@ -69,7 +70,7 @@ class ParentTest:
 
         yad_tab = runner.apply(pdfs)
         apf_tab = get_apfel_data(
-            theory, observables, self.__outputdb.table("apfel_cache")
+            theory, observables, self._outputdb.table("apfel_cache")
         )
 
         # =========================
@@ -136,7 +137,7 @@ class ParentTest:
         """
 
         # store the log of results
-        self.__outputdb.table("logs").insert(log_tab)
+        self._outputdb.table("logs").insert(log_tab)
 
     def subtract_tables(self, id1, id2):
         """
@@ -159,8 +160,8 @@ class ParentTest:
         print()
 
         # load json documents
-        log1 = self.__outputdb.table("logs").get(doc_id=id1)
-        log2 = self.__outputdb.table("logs").get(doc_id=id2)
+        log1 = self._outputdb.table("logs").get(doc_id=id1)
+        log2 = self._outputdb.table("logs").get(doc_id=id2)
         if log1 is None:
             raise ValueError(f"Log id:{id1} not found")
         elif log2 is None:
@@ -202,9 +203,9 @@ class ParentTest:
             print(table2)
 
     def empty_cache(self):
-        self.__inputdb.table("apfel_cache").purge()
+        self._inputdb.table("apfel_cache").purge()
 
 
 if __name__ == "__main__":
-    p = ParentTest()
+    p = DBInterface()
     p.subtract_tables(1, 2)
