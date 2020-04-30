@@ -30,7 +30,7 @@ class Output(dict):
             return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
                 pdf_fl(2) + pdf_fl(-2)
             ) * 4 / 9
-
+        # iterate
         ret: dict = {}
         for obs in self:
             if obs[0] != "F":
@@ -58,3 +58,6 @@ class Output(dict):
                 )
 
         return ret
+
+    def dump(self):
+        pass

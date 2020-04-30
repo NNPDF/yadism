@@ -180,4 +180,4 @@ class Runner:
             - implement
             - docs
         """
-        pass
+        return self.get_output().dump()

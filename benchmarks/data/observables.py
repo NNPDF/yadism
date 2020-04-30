@@ -38,6 +38,7 @@ for sf in observables:
         xgrid=xgrid.tolist(),
         polynomial_degree=polynomial_degree,
         is_log_interpolation=is_log_interpolation,
+        prDIS="NC",
         comments="",
     )
     content[sf] = kinematics

@@ -44,6 +44,13 @@ def pprint_theory(doc_id):
     t = get_theory(doc_id)
     pprint(t,sort_dicts=False)
 
+def purge_theories():
+    ask = input("Purge theories table? [y/n]")
+    if ask == "y":
+        idb.table("theories").purge()
+    else:
+        print("nothing done.")
+
 # Observables -------------------
 # all
 def get_all_observables():
@@ -85,6 +92,13 @@ def get_observable(doc_id):
 def pprint_observable(doc_id):
     t = get_observable(doc_id)
     pprint(t,sort_dicts=False)
+
+def purge_observables():
+    ask = input("Purge observables table? [y/n]")
+    if ask == "y":
+        idb.table("observables").purge()
+    else:
+        print("nothing done.")
 
 # Logs -------------------
 # all
@@ -150,7 +164,7 @@ def list_all_logs():
             sfs.append(sf)
             esfs += len(l[sf])
         obj["structure_functions"] = " ".join(sfs) + f" at {esfs} points"
-        for f in ["_theory_doc_id", "_observables_doc_id", "_creation_time"]:
+        for f in ["_theory_doc_id", "_observables_doc_id", "_creation_time","_pdf"]:
             obj[f.split("_")[1]] = l[f]
         dt = datetime.strptime(obj["creation"],"%Y-%m-%d %H:%M:%S.%f")
         obj["creation"] = pretty_date(dt)
