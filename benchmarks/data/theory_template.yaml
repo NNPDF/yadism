@@ -1,6 +1,5 @@
 # Theory
-
-ID: _1 # 22
+ID: 22
 PTO: 0
 FNS: "FFNS"
 DAMP: 0
@@ -39,8 +38,3 @@ MP: 0.938
 Comments: "LO baseline for small-x res"
 global_nx: 0
 EScaleVar: 1
-
-# ToBeFilled
-
-PDFSet: ToyLH
-prDIS: NC

@@ -107,7 +107,7 @@ class Runner:
             xiR=theory["XIR"],
             xiF=self._xiF,
         )
-        self._observables = []
+        self._observable_instances = []
         for sf, obs_t in self.__obs_templates.items():
             # if not in the input skip
             if sf not in self._observables:
@@ -124,18 +124,19 @@ class Runner:
 
             # read kinematics
             obj.load(self._observables.get(obj.name, []))
-            self._observables.append(obj)
+            self._observable_instances.append(obj)
 
         # prepare output
         self._output = Output()
-        self._output["xgrid"] = self._interpolator.xgrid
+        self._output["xgrid"] = self._interpolator.xgrid_raw
+        self._output["xiF"] = self._xiF
 
     def get_output(self) -> Output:
         """
         .. todo::
             docs
         """
-        for obs in self._observables:
+        for obs in self._observable_instances:
             self._output[obs.name] = obs.get_output()
 
         return self._output
@@ -151,44 +152,7 @@ class Runner:
             docs
         """
 
-        output = self.get_output()
-
-        def get_charged_sum(z: float, Q2: float) -> float:
-            """Short summary.
-
-            d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
-
-            .. todo::
-                docs
-            """
-            pdf_fl = lambda k: pdfs.xfxQ2(k, z, Q2)
-            return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
-                pdf_fl(2) + pdf_fl(-2)
-            ) * 4 / 9
-
-        ret: dict = {}
-        for obs in self._observables:
-            ret[obs.name] = []
-            for kin in output[obs.name]:
-                # collect pdfs
-                fq = []
-                fg = []
-                for z in self._interpolator.xgrid_raw:
-                    fq.append(get_charged_sum(z, kin["Q2"] * self._xiF ** 2) / z)
-                    fg.append(pdfs.xfxQ2(21, z, kin["Q2"] * self._xiF ** 2) / z)
-
-                # contract with coefficient functions
-                result = kin["x"] * (
-                    np.dot(fq, kin["q"]) + 2 / 9 * np.dot(fg, kin["g"])
-                )
-                error = kin["x"] * (
-                    np.dot(fq, kin["q_error"]) + 2 / 9 * np.dot(fg, kin["g_error"])
-                )
-                ret[obs.name].append(
-                    dict(x=kin["x"], Q2=kin["Q2"], result=result, error=error)
-                )
-
-        return ret
+        return self.get_output().apply_PDF(pdfs)
 
     def apply(self, pdfs: Any) -> dict:
         """
@@ -216,15 +180,4 @@ class Runner:
             - implement
             - docs
         """
-        pass
-
-
-def run_dis(theory: dict, observables: dict) -> Runner:
-    """
-    .. todo::
-        - decide the purpose
-        - implement
-        - docs
-    """
-    runner = Runner(theory, observables)
-    return runner
+        return self.get_output().dump()
