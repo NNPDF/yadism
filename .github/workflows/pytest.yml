@@ -1,6 +1,13 @@
 name: yadism
 
-on: push
+on:
+  push:
+    branches:
+      - 'benchmarks/*'
+      - 'tests/*'
+  pull_request:
+    branches:
+      - master
 
 env:
   UPLOAD_NON_MASTER: false
