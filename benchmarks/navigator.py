@@ -16,10 +16,12 @@ odb = TinyDB(here / "data" / "output.json")
 # all theories
 
 def get_all_theories():
+    """Retrieve all theories from db."""
     # collect
     return idb.table("theories").all()
 
 def list_all_theories():
+    """Collect important information of all theories."""
     # collect
     theories = get_all_theories()
     data = []
@@ -33,18 +35,36 @@ def list_all_theories():
     return df
 
 def print_all_theories():
+    """Print overview of theories."""
     l = list_all_theories()
     print(l)
 
 # one theory
 def get_theory(doc_id):
+    """
+        Retrieve an theory.
+
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
+    """
     return idb.table("theories").get(doc_id=doc_id)
 
 def pprint_theory(doc_id):
+    """
+        Pretty print a theory.
+
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
+    """
     t = get_theory(doc_id)
     pprint(t,sort_dicts=False)
 
 def purge_theories():
+    """Purge theories table."""
     ask = input("Purge theories table? [y/n]")
     if ask == "y":
         idb.table("theories").purge()
@@ -54,10 +74,12 @@ def purge_theories():
 # Observables -------------------
 # all
 def get_all_observables():
+    """Retrieve all observables from db."""
     # collect
     return idb.table("observables").all()
 
 def list_all_observables():
+    """Collect important information of all observables."""
     # collect
     obs = get_all_observables()
     data = []
@@ -82,18 +104,36 @@ def list_all_observables():
     return df
 
 def print_all_observables():
+    """Print overview of observables."""
     l = list_all_observables()
     print(l)
 
 # one observable
 def get_observable(doc_id):
+    """
+        Retrieve an observable.
+
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
+    """
     return idb.table("observables").get(doc_id=doc_id)
 
 def pprint_observable(doc_id):
+    """
+        Pretty print an observable.
+
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
+    """
     t = get_observable(doc_id)
     pprint(t,sort_dicts=False)
 
 def purge_observables():
+    """Purge observables table."""
     ask = input("Purge observables table? [y/n]")
     if ask == "y":
         idb.table("observables").purge()
@@ -103,10 +143,11 @@ def purge_observables():
 # Logs -------------------
 # all
 def get_all_logs():
+    """Retrieve all logs from db."""
     # collect
     return odb.table("logs").all()
 
-
+# TODO replace with Alessandro's version
 def pretty_date(time=False):
     """
     Get a datetime object or a int() Epoch timestamp and return a
@@ -150,6 +191,7 @@ def pretty_date(time=False):
     return str(day_diff // 365) + " years ago"
 
 def list_all_logs():
+    """Collect important information of all logs."""
     # collect
     logs = get_all_logs()
     data = []
@@ -174,18 +216,36 @@ def list_all_logs():
     return df
 
 def print_all_logs():
+    """Print overview of log."""
     l = list_all_logs()
     print(l)
 
 # one observable
 def get_log(doc_id):
+    """
+        Retrieve a log.
+
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
+    """
     return odb.table("logs").get(doc_id=doc_id)
 
 def pprint_log(doc_id):
+    """
+        Pretty print a log.
+
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
+    """
     t = get_log(doc_id)
     pprint(t,sort_dicts=False)
 
 def purge_logs():
+    """Purge logs table."""
     ask = input("Purge logs table? [y/n]")
     if ask == "y":
         odb.table("logs").purge()
@@ -195,6 +255,7 @@ def purge_logs():
 # detectors
 t = "t"
 def _is_theory(table, plural=True):
+    """wrapper to activate theory"""
     if table == t:
         return True
     if plural:
@@ -203,6 +264,7 @@ def _is_theory(table, plural=True):
 
 o = "o"
 def _is_obs(table, plural=True):
+    """wrapper to activate observables"""
     if table == o:
         return True
     if plural:
@@ -211,6 +273,7 @@ def _is_obs(table, plural=True):
 
 l = "l"
 def _is_log(table, plural=True):
+    """wrapper to activate logs"""
     if table == l:
         return True
     if plural:
@@ -219,6 +282,14 @@ def _is_log(table, plural=True):
 
 # common
 def ls(table):
+    """
+        List wrapper.
+
+        Parameters
+        ----------
+            table : str
+                table name to query: short cut or plural
+    """
     if _is_theory(table):
         return list_all_theories()
     elif _is_obs(table):
@@ -230,48 +301,68 @@ def ls(table):
         return []
 
 def p(table, doc_id = None):
+    """
+        Print wrapper.
+
+        Parameters
+        ----------
+            table : str
+                table name to query: short cut or singular for one document or plural for list
+            doc_id :
+                if given, print single document
+    """
     # list all
     if doc_id is None:
         if _is_theory(table):
-            return print_all_theories()
+            print_all_theories()
         elif _is_obs(table):
-            return print_all_observables()
+            print_all_observables()
         elif _is_log(table):
-            return print_all_logs()
+            print_all_logs()
         else:
             print(f"Unkown table: {table}")
     else: # list one
         if _is_theory(table,False):
-            return pprint_theory(doc_id)
+            pprint_theory(doc_id)
         elif _is_obs(table,False):
-            return pprint_observable(doc_id)
+            pprint_observable(doc_id)
         elif _is_log(table,False):
-            return pprint_log(doc_id)
+            pprint_log(doc_id)
         else:
             print(f"Unkown table: {table}")
-    return None
 
 def g(table, doc_id = None):
+    """
+        Getter wrapper.
+
+        Parameters
+        ----------
+            table : str
+                table name to query: short cut or singular for one document or plural for all
+            doc_id :
+                if given, retrieve single document
+    """
+    r = None
     # list all
     if doc_id is None:
         if _is_theory(table):
-            return get_all_theories()
+            r = get_all_theories()
         elif _is_obs(table):
-            return get_all_observables()
+            r = get_all_observables()
         elif _is_log(table):
-            return get_all_logs()
+            r = get_all_logs()
         else:
             print(f"Unkown table: {table}")
     else: # list one
         if _is_theory(table,False):
-            return get_theory(doc_id)
+            r = get_theory(doc_id)
         elif _is_obs(table,False):
-            return get_observable(doc_id)
+            r = get_observable(doc_id)
         elif _is_log(table,False):
-            return get_log(doc_id)
+            r = get_log(doc_id)
         else:
             print(f"Unkown table: {table}")
-    return None
+    return r
 
 def subtract_tables(id1, id2):
     """
@@ -289,6 +380,7 @@ def subtract_tables(id1, id2):
             path for csv file to store the result
     """
 
+    # print head
     msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
     print(msg, "=" * len(msg), sep="\n")
     print()
@@ -298,13 +390,14 @@ def subtract_tables(id1, id2):
     log2 = get_log(id2)
     if log1 is None:
         raise ValueError(f"Log id:{id1} not found")
-    elif log2 is None:
+    if log2 is None:
         raise ValueError(f"Log id:{id2} not found")
 
+    # iterate observables
     for obs in log1.keys():
         if obs[0] == "_":
             continue
-        elif obs not in log2:
+        if obs not in log2:
             print(f"{obs}: not matching in log2")
             continue
 
@@ -339,8 +432,22 @@ def subtract_tables(id1, id2):
 diff = subtract_tables
 
 def yelp(*args):
-    if len(args) == 1:
+    """
+        Help function (renamed to avoid clash of names) - short cut: h.
+    """
+    if len(args) == 0:
+        print(f"""Welcome to yadism benchmark skript!
+Available short cuts (variables):
+    t = "{t}" -> "theor[y|ies]"
+    o = "{o}" -> "observable[s]"
+    l = "{l}" -> "log[s]"
+Available functions (selected list):
+    g - getter
+    ls - listing (reduced information)
+    p - printing (using ls)
+    diff - subtractig logs""")
+    elif len(args) == 1:
         return help(*args)
-    pass
+    return None
 
 h = yelp
