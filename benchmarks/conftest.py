@@ -67,7 +67,6 @@ class DBInterface:
         # get observables values
         # ======================
         runner = Runner(theory, observables)
-
         yad_tab = runner.apply(pdfs)
         apf_tab = get_apfel_data(
             theory, observables, self._outputdb.table("apfel_cache")
@@ -80,7 +79,7 @@ class DBInterface:
         log_tab = {}
         # loop kinematics
         for sf in yad_tab:
-            kinematics = log_tab[sf] = []
+            kinematics = []
             for yad, apf in zip(yad_tab[sf], apf_tab[sf]):
                 if any([yad[k] != apf[k] for k in ["x", "Q2"]]):
                     raise ValueError("Sort problem")
@@ -98,6 +97,8 @@ class DBInterface:
                     comparison = (fx / ref - 1.0) * 100
                 kin["rel_err[%]"] = comparison
                 kinematics.append(kin)
+            log_tab[sf] = kinematics
+
 
         # =============
         # print and log
@@ -139,73 +140,5 @@ class DBInterface:
         # store the log of results
         self._outputdb.table("logs").insert(log_tab)
 
-    def subtract_tables(self, id1, id2):
-        """
-            Subtract yadism and APFEL result in the second table from the first one,
-            properly propagate the integration error and recompute the relative
-            error on the subtracted results.
-
-            Parameters
-            ----------
-            file1 :
-                path for csv file with the table to subtract from
-            file2 :
-                path for csv file with the table to be subtracted
-            output_f :
-                path for csv file to store the result
-        """
-
-        msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
-        print(msg, "=" * len(msg), sep="\n")
-        print()
-
-        # load json documents
-        log1 = self._outputdb.table("logs").get(doc_id=id1)
-        log2 = self._outputdb.table("logs").get(doc_id=id2)
-        if log1 is None:
-            raise ValueError(f"Log id:{id1} not found")
-        elif log2 is None:
-            raise ValueError(f"Log id:{id2} not found")
-
-        for obs in log1.keys():
-            if obs[0] == "_":
-                continue
-            elif obs not in log2:
-                print(f"{obs}: not matching in log2")
-                continue
-
-            # load observable tables
-            table1 = pd.DataFrame(log1[obs])
-            table2 = pd.DataFrame(log2[obs])
-
-            # check for compatible kinematics
-            if any([any(table1[y] != table2[y]) for y in ["x", "Q2"]]):
-                raise ValueError("Cannot compare tables with different (x, Q2)")
-
-            # subtract and propagate
-            table2["APFEL"] -= table1["APFEL"]
-            table2["yadism"] -= table1["yadism"]
-            table2["yadism_error"] += table1["yadism_error"]
-
-            # compute relative error
-            def rel_err(row):
-                if row["APFEL"] == 0.0:
-                    return np.nan
-                else:
-                    return (row["yadism"] / row["APFEL"] - 1.0) * 100
-
-            table2["rel_err[%]"] = table2.apply(rel_err, axis=1)
-
-            # dump results' table
-            # with open(output_f, "w") as f:
-            # table2.to_csv(f)
-            print(obs, "-" * len(obs), sep="\n")
-            print(table2)
-
     def empty_cache(self):
         self._inputdb.table("apfel_cache").purge()
-
-
-if __name__ == "__main__":
-    p = DBInterface()
-    p.subtract_tables(1, 2)

@@ -107,7 +107,7 @@ class Runner:
             xiR=theory["XIR"],
             xiF=self._xiF,
         )
-        self._observables = []
+        self._observable_instances = []
         for sf, obs_t in self.__obs_templates.items():
             # if not in the input skip
             if sf not in self._observables:
@@ -124,7 +124,7 @@ class Runner:
 
             # read kinematics
             obj.load(self._observables.get(obj.name, []))
-            self._observables.append(obj)
+            self._observable_instances.append(obj)
 
         # prepare output
         self._output = Output()
@@ -135,7 +135,7 @@ class Runner:
         .. todo::
             docs
         """
-        for obs in self._observables:
+        for obs in self._observable_instances:
             self._output[obs.name] = obs.get_output()
 
         return self._output
@@ -167,7 +167,7 @@ class Runner:
             ) * 4 / 9
 
         ret: dict = {}
-        for obs in self._observables:
+        for obs in self._observable_instances:
             ret[obs.name] = []
             for kin in output[obs.name]:
                 # collect pdfs

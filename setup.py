@@ -5,7 +5,7 @@ setup(
     name="yadism",
     version="0.0.1",
     description="Deep Inelastic Scattering",
-    author="F. Hekhorn, S.Carrazza, A.Candido",
+    author="A.Candido, S.Carrazza, F. Hekhorn",
     author_email="stefano.carrazza@cern.ch",
     url="https://github.com/N3PDF/dis",
     package_dir={"": "src"},
@@ -20,6 +20,7 @@ setup(
         "Topic :: Scientific/Engineering :: Physics",
     ],
     install_requires=[
+        # resort true install dependencies and test/benchmark ones
         "eko",
         "numpy",
         "scipy",
