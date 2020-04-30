@@ -6,6 +6,9 @@ on:
       - 'benchmarks/*'
       - 'tests/*'
   pull_request:
+    # TODO: https://github.community/t5/GitHub-Actions/Triggering-workflow-on-merge/td-p/40930
+    types:
+      - closed
     branches:
       - master
 
