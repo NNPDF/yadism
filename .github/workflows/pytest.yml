@@ -89,7 +89,7 @@ jobs:
         run: |
           conda activate yadism
           #
-          conda install -y pylint
+          conda install -y pylint toml
           # Search for actual errors
           pylint src/*/*.py -E
           # For warnings instead return always zero
