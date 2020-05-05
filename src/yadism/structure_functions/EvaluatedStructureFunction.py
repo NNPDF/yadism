@@ -162,13 +162,13 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         # TODO: why is it not the pdf but xpdf used? check why Laenen is using xpdf
         # in the first place
         self._charge_em = charge_em
-        self._FHprefactor = self._Q2 / (np.pi * self._SF._M2) * 9 / 2  # / self._x
+        self._FHprefactor = self._Q2 / (np.pi * self._SF._M2hq) * 9 / 2  # / self._x
 
         # common variables
         self._s = self._Q2 * (1 - self._x) / self._x
         self._shat = lambda z: self._Q2 * (1 - z) / z
 
-        self._rho_q = -4 * self._SF._M2 / self._Q2
+        self._rho_q = -4 * self._SF._M2hq / self._Q2
         self._rho = lambda z: -self._rho_q * z / (1 - z)
         self._rho_p = lambda z: -self._rho_q * z
 
@@ -181,7 +181,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         .. todo::
             use threshold on shat or using FH's zmax?
         """
-        return self._shat(z) <= 4 * self._SF._M2
+        return self._shat(z) <= 4 * self._SF._M2hq
 
     def quark_0(self) -> float:
         return 0
@@ -201,7 +201,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         pass
 
     def gluon_1(self):
-        if self._s <= 4 * self._SF._M2:
+        if self._s <= 4 * self._SF._M2hq:
             return 0
         else:
             return self._gluon_1()
