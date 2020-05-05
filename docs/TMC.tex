@@ -18,15 +18,15 @@
 %\usepackage[status=final]{fixme}
 
 \usepackage[utf8]{inputenc}
-%\usepackage[ngerman]{babel} % Sprache 
-\usepackage[ngerman,english,main=english]{babel} % Sprache 
+%\usepackage[ngerman]{babel} % Sprache
+\usepackage[ngerman,english,main=english]{babel} % Sprache
 \selectlanguage{english}
 \usepackage{amsmath, amssymb}
 
 %\usepackage{graphicx} % Grafiken einbinden
 % The following is needed in order to make the code compatible
 % with both latex/dvips and pdflatex.
-\ifx\pdftexversion\undefined
+\ifx\pdftexversion\undefined{}
 \usepackage[dvips]{graphicx}
 \else
 \usepackage[pdftex]{graphicx}
@@ -100,5 +100,15 @@ h_2(\xi) &= \sum_{j,k} \int\limits_{\xi}^1 \frac{du}{u} g'(u) p_j(u) \int\limits
 h_2(\xi) &= \sum_{k} \left(\sum_j \int\limits_{\xi}^1 \frac{du}{u} g'(u) p_j(u) \left( \int\limits_{x_j}^1 \frac{dz}{z} c(z) p_k(z) \right)\right) \cdot g(x_k)
 \end{align}
 
+\section{References}
+\begin{itemize}
+  \item goharipour2020.pdf
+  \item apfel: DIS.pdf
+  \item  I. Schienbein et al., “A Review of Target Mass Corrections,” J. Phys. G 35, 053101 (2008).
+  \item https://arxiv.org/pdf/0808.1231.pdf
+  \item https://www.wiki.ed.ac.uk/display/nnpdfwiki/Theory+documentation
+\end{itemize}
+
+Furthermore Maria is the person who originally implemented TMC in NNPDF code, as a part of her PhD thesis.
 
 \end{document}
