@@ -15,16 +15,9 @@ from eko.thresholds import Threshold
 from eko.alpha_s import StrongCoupling
 
 from .output import Output
-from .structure_functions import (
-    F2_light,
-    FL_light,
-    F2_charm,
-    F2_bottom,
-    F2_top,
-    FL_charm,
-    FL_bottom,
-    FL_top,
-)
+from .StructureFunction import StructureFunction as SF
+from .structure_functions import ESFmap
+from . import utils
 
 
 class Runner:
@@ -40,17 +33,6 @@ class Runner:
     .. todo::
         docs
     """
-
-    __obs_templates = {
-        "F2light": (F2_light,),
-        "F2charm": (F2_charm, "mc"),
-        "F2bottom": (F2_bottom, "mb"),
-        "F2top": (F2_top, "mt"),
-        "FLlight": (FL_light,),
-        "FLcharm": (FL_charm, "mc"),
-        "FLbottom": (FL_bottom, "mb"),
-        "FLtop": (FL_top, "mt"),
-    }
 
     def __init__(self, theory: dict, observables: dict):
         self._theory = theory
@@ -98,33 +80,36 @@ class Runner:
         # ==============================
         # initialize structure functions
         # ==============================
-        default_args = dict(
+        eko_components = dict(
             interpolator=self._interpolator,
             constants=self._constants,
             threshold=self._threshold,
             alpha_s=self._alpha_s,
+        )
+        theory_stuffs = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
             xiF=self._xiF,
+            M2hq=None,
+            M2target=theory["MP"],
         )
-        self._observable_instances = []
-        for sf, obs_t in self.__obs_templates.items():
-            # if not in the input skip
-            if sf not in self._observables:
-                continue
+        self._observable_instances = {}
+        for name in ESFmap.keys():
+            lab = utils.get_mass_label(name)
+            if lab is not None:
+                theory_stuffs["M2hq"] = theory[lab] ** 2
 
-            # first element is the class [required]
-            if len(obs_t) == 1:
-                obj = obs_t[0](**default_args)
-            # if second element specified is the key for the mass
-            elif len(obs_t) == 2:
-                obj = obs_t[0](**default_args, M2=theory[obs_t[1]] ** 2,)
-            else:
-                raise RuntimeError("Invalid obs template")
+            # initialize an SF instance for each possible structure function
+            obj = SF(
+                name,
+                runner=self,
+                eko_components=eko_components,
+                theory_stuffs=theory_stuffs,
+            )
 
             # read kinematics
-            obj.load(self._observables.get(obj.name, []))
-            self._observable_instances.append(obj)
+            obj.load(self._observables.get(name, []))
+            self._observable_instances[name] = obj
 
         # prepare output
         self._output = Output()
@@ -136,8 +121,9 @@ class Runner:
         .. todo::
             docs
         """
-        for obs in self._observable_instances:
-            self._output[obs.name] = obs.get_output()
+        for name, obs in self._observable_instances.items():
+            if name in self._observables.keys():
+                self._output[name] = obs.get_output()
 
         return self._output
 

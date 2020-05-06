@@ -76,12 +76,12 @@ class TestFull:
 
 if __name__ == "__main__":
     plain = TestPlain()
-    plain.test_LO()
-    #plain.test_NLO()
+    # plain.test_LO()
+    plain.test_NLO()
 
-    sv = TestScaleVariations()
+    # sv = TestScaleVariations()
     # sv.test_LO()
     # sv.test_NLO()
 
-    f = TestFull()
-    #f.test_LO()
+    # f = TestFull()
+    # f.test_LO()
