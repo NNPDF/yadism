@@ -69,7 +69,7 @@ class EvaluatedStructureFunction(abc.ABC):
             ls.append(cv)
             els.append(ecv)
 
-        return ls, els
+        return np.array(ls), np.array(els)
 
     def get_output(self):
         """

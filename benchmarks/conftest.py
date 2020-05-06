@@ -13,8 +13,8 @@ from yadism.runner import Runner
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
-import toyLH #pylint:disable=import-error
-from apfel_utils import get_apfel_data, str_datetime #pylint:disable=import-error
+import toyLH  # pylint:disable=import-error
+from apfel_utils import get_apfel_data, str_datetime  # pylint:disable=import-error
 
 
 class DBInterface:
@@ -80,7 +80,7 @@ class DBInterface:
                 kinematics = []
                 for yad, apf in zip(yad_tab[sf], apf_tab[sf]):
                     if any([yad[k] != apf[k] for k in ["x", "Q2"]]):
-                        raise ValueError("Sort problem")
+                        raise ValueError("Sort problem: x and/or Q2 do not match.")
 
                     kin = dict(x=yad["x"], Q2=yad["Q2"])
                     kin["APFEL"] = ref = apf["value"]
@@ -96,7 +96,6 @@ class DBInterface:
                     kin["rel_err[%]"] = comparison
                     kinematics.append(kin)
                 log_tab[sf] = kinematics
-
 
             # =============
             # print and log

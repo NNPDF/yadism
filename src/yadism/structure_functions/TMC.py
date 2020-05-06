@@ -61,13 +61,15 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         self._shifted_kinematics = {"x": self._xi, "Q2": self._Q2}
 
-    @abc.abstractmethod()
+        self._out = kinematics
+
+    @abc.abstractmethod
     def get_output(self):
         pass
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
-    def get_ouput(self):
+    def get_output(self):
         # fmt: off
         approx_prefactor = (
             self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
@@ -76,14 +78,18 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         )
         # fmt: on
 
-        return (
-            approx_prefactor
-            * self._SF.get_ESF("F2" + flavour, self._shifted_kinematics).get_ouput()
-        )
+        F2out = self._SF.get_ESF(
+            "F2" + self._flavour, self._shifted_kinematics
+        ).get_output()
+
+        for f in ["q", "g", "q_error", "g_error"]:
+            self._out[f] = approx_prefactor * F2out[f]
+
+        return self._out
 
 
 class ESFTMC_FL(EvaluatedStructureFunctionTMC):
-    def get_ouput(self):
+    def get_output(self):
         approx_prefactor_FL = self._x ** 2 / (self._xi ** 2 * self._rho)
 
         # fmt: off
@@ -94,12 +100,19 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         )
         # fmt: on
 
-        return (
-            approx_prefactor_FL
-            * self._SF.get_ESF("FL" + flavour, self._shifted_kinematics).get_ouput()
-            + approx_prefactor_F2
-            * self._SF.get_ESF("F2" + flavour, self._shifted_kinematics).get_ouput()
-        )
+        FLout = self._SF.get_ESF(
+            "FL" + self._flavour, self._shifted_kinematics
+        ).get_output()
+        F2out = self._SF.get_ESF(
+            "F2" + self._flavour, self._shifted_kinematics
+        ).get_output()
+
+        for f in ["q", "g", "q_error", "g_error"]:
+            self._out[f] = (
+                approx_prefactor_FL * FLout[f] + approx_prefactor_F2 * F2out[f]
+            )
+
+        return self._out
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL}
