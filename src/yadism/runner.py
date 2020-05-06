@@ -91,6 +91,7 @@ class Runner:
             xiR=theory["XIR"],
             xiF=self._xiF,
             M2hq=None,
+            TMC=theory["TMC"],
             M2target=theory["MP"],
         )
         self._observable_instances = {}

@@ -51,20 +51,55 @@ import numpy as np
 class EvaluatedStructureFunctionTMC(abc.ABC):
     def __init__(self, SF, kinematics):
         self._SF = SF
+        self._flavour = SF._name[2:]
         self._x = kinematics["x"]
         self._Q2 = kinematics["Q2"]
 
-        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._SF._M2target / self._Q2)
+        self._mu = self._SF._M2target / self._Q2
+        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._mu)
         self._xi = 2 * self._x / (1 + self._rho)
+
+        self._shifted_kinematics = {"x": self._xi, "Q2": self._Q2}
+
+    @abc.abstractmethod()
+    def get_output(self):
+        pass
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
-    def __init__(self, SF, kinematics, ESF):
-        super(ESFTMC_F2, self).__init__(SF, kinematics)
-        self._ESF = ESF
+    def get_ouput(self):
+        # fmt: off
+        approx_prefactor = (
+            self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
+            * (1 + (6 * self._mu * self._x * self._xi)
+                    / self._rho * (1 - self._xi) ** 2)
+        )
+        # fmt: on
+
+        return (
+            approx_prefactor
+            * self._SF.get_ESF("F2" + flavour, self._shifted_kinematics).get_ouput()
+        )
 
 
 class ESFTMC_FL(EvaluatedStructureFunctionTMC):
-    def __init__(self, SF, kinematics, ESF):
-        super(ESFTMC_FL, self).__init__(SF, kinematics)
-        self._ESF = ESF
+    def get_ouput(self):
+        approx_prefactor_FL = self._x ** 2 / (self._xi ** 2 * self._rho)
+
+        # fmt: off
+        approx_prefactor_F2 = approx_prefactor_FL * (
+            (4 * self._mu * self._x * self._xi) / self._rho * (1 - self._xi)
+            + 8 * (self._mu * self._x * self._xi / self._rho) ** 2
+                * (-np.log(self._xi) - 1 + self._xi)
+        )
+        # fmt: on
+
+        return (
+            approx_prefactor_FL
+            * self._SF.get_ESF("FL" + flavour, self._shifted_kinematics).get_ouput()
+            + approx_prefactor_F2
+            * self._SF.get_ESF("F2" + flavour, self._shifted_kinematics).get_ouput()
+        )
+
+
+ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL}
