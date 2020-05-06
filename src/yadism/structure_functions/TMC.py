@@ -40,6 +40,16 @@ following layout:
       compute a point it will ask its parent SF with `SF.get_ESF()` method, in
       this way passing through the cache
 
+Note 3 (physics)
+----------------
+There 3 schemes in the reference:
+    - **exact**: is the full and involves integration
+    - **approximate**: is stemming from the exact, but the strcture functions in
+      the integrand are evaluated at the bottom end
+    - **APFEL**: the one used in APFEL, similar to the exact but with one of the
+      integral of the review (schienbein, functions h_2 and f_2) set to 0, Felix
+      knows which
+
 .. todo::
     docs
 """

@@ -423,24 +423,43 @@ def subtract_tables(id1, id2):
         output_f :
             path for csv file to store the result
 
-        TODO:
+    """
+
+    class DiffOut(list):
+        """
+        TODO: translate in docs:
             output the table: since there are many table produced by this
             function output instead a suitable object
             the object should be iterable so you can explore all the values,
             but it has a __str__ (or __repr__?) method that will automatically
             loop and print if its dropped directly in the interpreter
-    """
+        """
 
-    class DiffOut(list):
+        def __init__(self):
+            self.msgs = []
+
+        def print(self, *msgs, sep=" ", end="\n"):
+            if len(msgs) > 0:
+                self.msgs.append(msgs[0])
+
+                for msg in msgs[1:]:
+                    self.msgs.append(sep)
+                    self.msgs.append(msg)
+            self.msgs.append(end)
+
+        def register(self, table):
+            self.print(table)
+            self.append(table)
+
         def __repr__(self):
-            for i in self:
-                print(i)
-            return None
+            return "".join([str(x) for x in self.msgs])
+
+    diffout = DiffOut()
 
     # print head
     msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
-    print(msg, "=" * len(msg), sep="\n")
-    print()
+    diffout.print(msg, "=" * len(msg), sep="\n")
+    diffout.print()
 
     # load json documents
     log1 = get_log(id1)
@@ -483,11 +502,31 @@ def subtract_tables(id1, id2):
         # dump results' table
         # with open(output_f, "w") as f:
         # table2.to_csv(f)
-        print(obs, "-" * len(obs), sep="\n")
-        print(table2)
+        diffout.print(obs, "-" * len(obs), sep="\n")
+        diffout.register(table2)
+
+        return diffout
 
 
 diff = subtract_tables
+
+
+def compare_dicts(d1, d2):
+    """
+        Check which entries of the two dictionaries are different, and output
+        the values.
+    """
+    kw = 20  # keys print width
+    fw = 30  # values print width0
+    print("┌", "─" * (kw + 2), "┬", "─" * (fw * 2 + 1 + 2), "┐", sep="")
+    for k in d1.keys() | d2.keys():
+        if k not in d1:
+            print(f"│ {k:<{kw}} │ {None:>{fw}} {d2[k]:>{fw}} │")
+        elif k not in d2:
+            print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {None:>{fw}} │")
+        elif d1[k] != d2[k]:
+            print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {d2[k]:>{fw}} │")
+    print("└", "─" * (kw + 2), "┴", "─" * (fw * 2 + 1 + 2), "┘", sep="")
 
 
 def yelp(*args):
@@ -513,10 +552,3 @@ Available functions (selected list):
 
 
 h = yelp
-
-
-# TODO: to be adjusted
-def compare_dicts(d1, d2):
-    for x, y in zip(d1.items(), d2.items()):
-        if x[1] != y[1]:
-            print(x[0], y[0])
