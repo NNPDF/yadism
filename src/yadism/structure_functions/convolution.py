@@ -2,6 +2,11 @@
 """
 Define DistributionVec and its API.
 
+regular
+delta
+1/(1-x)_+
+log(x)/(1-x)_+
+
 .. todo::
     docs
 """

@@ -1,7 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-.. todo::
-    docs
+This module provides the base classes that define the interface for Structure
+Function calculation on a given kinematic point (x, Q2) (that is why they are
+called *Evaluated*).
+They are:
+
+:py:class:`EvaluatedStructureFunction` :
+    this is a pure abstract class, that define the interface (defining the way
+    in which coefficient functions are actually encoded) and implement some
+    shared methods (like initializer and :py:meth:`get_output`, responsible also
+    for :ref:`local caching<local-caching>`.
+
+:py:class:`EvaluatedStructureFunctionHeavy` :
+    this class is inheriting from the former, factorizing some common procedure
+    needed for heavy quark calculation, like auxiliary variable definition,
+    threshold passing calculation or directly setting to 0 some coefficient
+    functions.
 """
 import abc
 
@@ -12,12 +26,87 @@ from . import convolution as conv
 
 class EvaluatedStructureFunction(abc.ABC):
     """
-    .. todo::
-        docs
+        The actual Structure Function implementation.
+
+        This class is the abstract class that implements the structure for all
+        the coefficient functions' providers, for a single kinematic point (x,
+        Q2), but all the flavours (singlet, nonsinglet, gluon).
+
+        Since the coefficient functions in general are distributions they are
+        provided with an internal representation, that respects the interface
+        defined by the class :py:class:`conv.DistributionVec`, and the same
+        class is used to perform the convolution with the basis functions (see
+        :py:class:`eko.InterpolatorDispatcher`), so the final result will
+        consist of an array of dimension 2: one dimension corresponding to the
+        interpolation grid, the other to the flavour.
+
+        Its subclasses are organized by:
+
+        - kind: `F2`, `FL`
+        - flavour: `light`, `charm`, `bottom`, `top`
+
+        and they all implement a :py:meth:`get_output` method that performs the
+        calculation (convolution included), if needed.
+
+        .. _local-caching:
+
+        Caching
+        ~~~~~~~
+
+        A part of the overall caching system is implemented at this level.
+
+        The one implemented here is only a **local, isolated** caching, i.e.:
+
+        - the first time the instance is asked for computing the result, through
+          the :py:meth:`get_ouput` method, it registers the result;
+        - any following call to the :py:meth:`get_output` method will make use
+          of the cached result, and will never recompute it.
+
+        If another instance with the same attributes is asked for the result it
+        will recompute it from scratch, because any instance is isolated and
+        doesn't keep any reference to the others.
+
+        Parameters
+        ----------
+        SF : StructureFunction
+            the parent :py:class:`StructureFunction` instance, provides an
+            interface, holds references to global objects (like managers coming
+            from :py:mod:`eko`, e.g. :py:class:``) and implements the global caching
+        kinematics : dict
+            the specific kinematic point as a dict with two elements ('x', 'Q2')
+
+        Methods
+        -------
+        get_output()
+            compute the coefficient functions
     """
 
-    def __init__(self, SF, kinematics):
+    def __init__(self, SF, kinematics: dict):
+        """
+            Internal Attributes
+            -------------------
+
+            _SF :
+                parent :py:class:`StructureFunction` reference
+            _x :
+                momentum fraction
+            _Q2 :
+                process energy
+            _cqv :
+                singlet quark coefficient function (implements the cache)
+            _e_cqv :
+                error on :py:attr:`_cqv`
+            _cgv :
+                gluon coefficient function (implements the cache)
+            _e_cgv :
+                error on :py:attr:`_cgv`
+            _a_s :
+                value of $ \alpha_s / 4 \pi $ at the scale :py:attr:`_Q2`
+            _n_f :
+                number of flavours at the scale :py:attr:`_Q2`
+        """
         if 1 < kinematics["x"] < 0:
+
             raise ValueError("Kinematics 'x' must be in the range (0,1)")
         if kinematics["Q2"] < 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
@@ -34,8 +123,12 @@ class EvaluatedStructureFunction(abc.ABC):
 
     def _compute(self):
         """
-        .. todo::
-            docs
+            Here is where the local caching is actually implemented: if the
+            coefficient functions are already computed don't do nothing,
+            otherwise call :py:meth:`_compute_component` (checks are per flavour).
+
+            In any case no output is provided, but the result is stored in
+            instance's attributes (this method is for internal use).
         """
         # something to do?
         if not self._cqv:
@@ -50,6 +143,24 @@ class EvaluatedStructureFunction(abc.ABC):
             )
 
     def _compute_component(self, f_LO, f_NLO, f_NLO_fact):
+        """
+            Perform coefficient function calculation for a single flavour,
+            combining orders, compute the convolution through
+            :py:meth:`DistributionVec.convolution` iterating over *basis
+            functions* and take care of scale variations.
+
+            Parameters
+            ----------
+            f_LO : :py:class:`conv.DistributionVec`
+                implements LO coefficient function
+            f_NLO : :py:class:`conv.DistributionVec`
+                implements NLO coefficient function
+            f_NLO_fact : :py:class:`conv.DistributionVec`
+                implements NLO factorization scheme contribution
+
+            .. todo::
+                reference needed for factorization scheme
+        """
         ls = []
         els = []
 
@@ -90,56 +201,54 @@ class EvaluatedStructureFunction(abc.ABC):
     @abc.abstractmethod
     def quark_0(self):
         """
-        .. todo::
-            docs
+            quark coefficient function at order 0 in :math`a_s`
         """
         pass
 
     def gluon_0(self):
         """
-        .. todo::
-            docs
+            gluon coefficient function at order 0 in :math`a_s`
+
+            Set to 0 for all kind of observables and flavours, since there is no
+            gluon contribution at order 0.
         """
         return 0
 
     @abc.abstractmethod
     def quark_1(self):
         """
-        regular
-        delta
-        1/(1-x)_+
-        log(x)/(1-x)_+
-
-        .. todo::
-            docs
+            quark coefficient function at order 1 in :math`a_s`
         """
         pass
 
     @abc.abstractmethod
     def quark_1_fact(self):
         """
-        .. todo::
-            - docs
-            - consistent naming convention: use hep-ph/0006154 convention
-              of c_a^(l,m), e.g. quark_1_fact -> quark_1_1
-              also take care of muR, since in reference eq.2.16 they are
-              setting muR = muF, so maybe quark_1_fact -> quark_1_1_0
+            quark factorization scheme contribution, at order 1 in :math`a_s`
+
+            .. todo::
+                - docs
+                - consistent naming convention: use hep-ph/0006154 convention
+                  of c_a^(l,m), e.g. quark_1_fact -> quark_1_1
+                  also take care of muR, since in reference eq.2.16 they are
+                  setting muR = muF, so maybe quark_1_fact -> quark_1_1_0
         """
         pass
 
     @abc.abstractmethod
     def gluon_1(self):
         """
-        .. todo::
-            docs
+            gluon coefficient function at order 1 in :math`a_s`
         """
         pass
 
     @abc.abstractmethod
     def gluon_1_fact(self):
         """
-        .. todo::
-            docs
+            gluon factorization scheme contribution, at order 1 in :math`a_s`
+
+            .. todo::
+                docs
         """
         pass
 
