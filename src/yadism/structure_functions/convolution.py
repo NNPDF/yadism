@@ -1,14 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Define DistributionVec and its API.
-
-regular
-delta
-1/(1-x)_+
-log(x)/(1-x)_+
-
-.. todo::
-    docs
+Define :py:class:`DistributionVec` and its API, that are used to represent
+distributions object in the coefficient function definition and calculation.
 """
 import copy
 
@@ -20,11 +13,36 @@ from eko.interpolation import BasisFunction
 
 class DistributionVec:
     """
-    Representing a distribution giving coefficients on a distribution basis:
-        - 1
-        - delta(1-x)
-        - 1/(1-x)_+
-        - (log(1-x)/(1-x))_+
+        :py:class:`DistributionVec` is an object that encodes the structure of a
+        distribution, as opposed to a regular function. It consists of an array of
+        functions, considered as coefficients of the following distributions basis: 
+
+        - *regular*: the regular part is the coefficient of 1, so it is the pure
+          function component
+        - *delta*: it is the coefficient of the Dirac delta function :math:`\delta(1-x)`
+        - *omx*: it is the coefficient of the distribution :log:`1/(1-x)_+`
+        - *logomx*: it is the coefficient of the distribution :math:`(\log(x)/(1-x))_+`
+
+        Note
+        ----
+        Unstable: it is going to change, maybe in more directions:
+
+        - collecting all the plus distributions in a single one, so limiting the vector
+          size to be 3
+        - (potential) from an array of functions to an array of numbers, using a
+          canonical representation (it is always possible to swap all the functional
+          part in the regular)
+
+        Parameters
+        ----------
+        regular : number or callable
+            regular
+        delta : number or callable
+            delta (default: None)
+        omx : number or callable
+            omx (default: None)
+        logomx : number or callable
+            logomx (default: None)
     """
 
     __names = ["regular", "delta", "omx", "logomx"]

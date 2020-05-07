@@ -1,7 +1,21 @@
 # -*- coding: utf-8 -*-
 """
+Provides splitting functions definition for coefficient functions calculation.
+
+The coefficient functions are defined in ???, and they are organized in:
+
+- qq
+- qg
+- gq
+- gg
+
+according to the partons (entering the hard process - coming from the proton).
+
+Furthermore they are organized according to their distribution structure, for
+which see :py:mod:`convolution`.
+
 .. todo::
-    docs
+    - Reference: pink book
 """
 
 
