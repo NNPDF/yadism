@@ -151,11 +151,11 @@ class EvaluatedStructureFunction(abc.ABC):
 
             Parameters
             ----------
-            f_LO : :py:class:`conv.DistributionVec`
+            f_LO : callable, or sequence of callables
                 implements LO coefficient function
-            f_NLO : :py:class:`conv.DistributionVec`
+            f_NLO : callable, or sequence of callables
                 implements NLO coefficient function
-            f_NLO_fact : :py:class:`conv.DistributionVec`
+            f_NLO_fact : callable, or sequence of callables
                 implements NLO factorization scheme contribution
 
             .. todo::
@@ -182,10 +182,33 @@ class EvaluatedStructureFunction(abc.ABC):
 
         return ls, els
 
-    def get_output(self):
+    def get_output(self) -> dict:
         """
-        .. todo::
-            docs
+           Returns the output for this instance.
+
+           In particular it returns the convolution of the coefficient function
+           for the selected observable and the array of basis functions, so the
+           result will be an array itself, running over the interpolation grid.
+
+           Caching is provided as explained in the class description (see
+           :py:class:`EvaluatedStructureFunction`).
+
+            Returns
+            -------
+            dict
+                a collection of the output arrays with the following structure:
+
+                - `x`: the input momentum fraction
+                - `Q2`: the input process scale
+                - `q`: a :py:meth:`numpy.array` for the quark coefficient
+                  functions
+                - `q_error`: a :py:meth:`numpy.array` with the integration
+                  errors for `q` calculation
+                - `g`: a :py:meth:`numpy.array` for the gluon coefficient
+                  functions
+                - `g_error`: a :py:meth:`numpy.array` with the integration
+                  errors for `g` calculation
+            
         """
         self._compute()
 
@@ -227,7 +250,6 @@ class EvaluatedStructureFunction(abc.ABC):
             quark factorization scheme contribution, at order 1 in :math`a_s`
 
             .. todo::
-                - docs
                 - consistent naming convention: use hep-ph/0006154 convention
                   of c_a^(l,m), e.g. quark_1_fact -> quark_1_1
                   also take care of muR, since in reference eq.2.16 they are
@@ -246,31 +268,65 @@ class EvaluatedStructureFunction(abc.ABC):
     def gluon_1_fact(self):
         """
             gluon factorization scheme contribution, at order 1 in :math`a_s`
-
-            .. todo::
-                docs
         """
         pass
 
 
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
-    def __init__(self, SF, kinematics, charge_em):
+    """
+        Specialize EvaluatedStructureFunction for heavy flavours.
+        
+        This class factorizes some common tasks needed for heavy flavours
+        (namely: charm, bottom and top quarks), in particular:
+        
+        - compute some auxiliary derived variables at initialization time
+        - check if the available energy for heavy quark production is above the
+          mass threshold of the quark itself (returning immediately 0 otherwise)
+        - set :py:meth:`quark_0` and :py:meth:`quark_1` (and the factorization
+          scheme contributions corresponding to both gluon and quark, since the
+          LO is completely null) to 0
+
+        Parameters
+        ----------
+        SF : StructureFunction
+            the parent :py:class:`StructureFunction` instance, provides an
+            interface, holds references to global objects (like managers coming
+            from :py:mod:`eko`, e.g. :py:class:``) and implements the global caching
+        kinematics : dict
+            the specific kinematic point as a dict with two elements ('x', 'Q2')
+        charge_em : float
+
+        Methods
+        -------
+        get_output()
+            compute the coefficient functions (see :py:class:`EvaluatedStructureFunction`)
+
+        .. todo::
+            - charge_em
+    """
+
+    def __init__(self, SF, kinematics: dict, charge_em: float):
+        """
+            collect electric charge (relevant for heavy flavours coefficient
+            functions) and compute common derived variables
+
+            .. todo::
+                - document prefactor: FH page 61 (6.1), 65 (7.2) - Vogt page 21 (4.1)
+                - a_s expansion factor already included (simplify with alpha_s/4pi)
+                  pay attention to Vogt 1/x in (4.1) in FH appendix are written
+                  the expressions for c's (6.1), convolution defined in (7.2)
+                  also the charge average 9 / 2 is coming from Vogt (4.1)
+                  definition in the gluon
+                - remember that is only for the gluon and quark singlet, so it
+                  should be removed from the non-singlet prefactor
+                - why is it not the pdf but xpdf used? check why Laenen is using
+                  xpdf in the first place
+                - docs
+        """
         super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
 
-        # FH - Vogt comparison prefactor
-        # TODO: document prefactor
-        # FH page 61 (6.1), 65 (7.2) - Vogt page 21 (4.1)
-        # a_s expansion factor already included (simplify with alpha_s / 4 pi)
-        # pay attention to Vogt 1/x in (4.1)
-        # in FH appendix are written the expressions for c's (6.1), convolution
-        # defined in (7.2)
-        # also the charge average 9 / 2 is coming from Vogt (4.1) definition in the
-        # gluon
-        # TODO: remember that is only for the gluon and quark singlet, so it should
-        # be removed from the non-singlet prefactor
-        # TODO: why is it not the pdf but xpdf used? check why Laenen is using xpdf
-        # in the first place
         self._charge_em = charge_em
+        # FH - Vogt comparison prefactor
         self._FHprefactor = self._Q2 / (np.pi * self._SF._M2) * 9 / 2  # / self._x
 
         # common variables
@@ -287,8 +343,10 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
 
     def is_below_threshold(self, z):
         """
-        .. todo::
-            use threshold on shat or using FH's zmax?
+            check if available energy is below production threshold or not
+
+            .. todo::
+                use threshold on shat or using FH's zmax?
         """
         return self._shat(z) <= 4 * self._SF._M2
 
@@ -300,8 +358,8 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
 
     def quark_1_fact(self):
         """
-        .. todo::
-            docs
+            .. todo::
+                docs
         """
         return 0
 
@@ -310,6 +368,11 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         pass
 
     def gluon_1(self):
+        """
+            returns gluon coefficient function at order 1 in :math:`alpha_s`
+            (delegated to internal :py:meth:`_gluon_1`) checking before for
+            production threshold
+        """
         if self._s <= 4 * self._SF._M2:
             return 0
         else:
@@ -317,7 +380,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
 
     def gluon_1_fact(self):
         """
-        .. todo::
-            docs
+            .. todo::
+                docs
         """
         return 0
