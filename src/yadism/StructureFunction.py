@@ -69,8 +69,11 @@ class StructureFunction:
             .. todo::
                 docs
         """
+        # is it us or do we need to delegate?
         if name == self._name:
-            key = kinematics.values()
+            # convert to tuple
+            key = tuple(kinematics.values())
+            # search
             try:
                 return self.__ESFcache[key]
             except KeyError:
@@ -78,6 +81,7 @@ class StructureFunction:
                 self.__ESFcache[key] = obj
                 return obj
         else:
+            # ask our parent (as always)
             return self.__runner._observable_instances[name].get_ESF(name, kinematics)
 
     def get_output(self):

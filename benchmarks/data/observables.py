@@ -25,7 +25,7 @@ observables = [
     "FLtop",
 ]
 
-xgrid = np.unique(np.concatenate([np.logspace(-4, -1, 40), np.linspace(0.1, 0.99, 20)]))
+xgrid = np.unique(np.concatenate([np.logspace(-3, -1, 20), np.linspace(0.1, 0.99, 10)]))
 polynomial_degree = 4
 is_log_interpolation = True
 

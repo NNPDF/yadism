@@ -92,7 +92,7 @@ class Runner:
             xiF=self._xiF,
             M2hq=None,
             TMC=theory["TMC"],
-            M2target=theory["MP"],
+            M2target=theory["MP"]**2,
         )
         self._observable_instances = {}
         for name in ESFmap.keys():

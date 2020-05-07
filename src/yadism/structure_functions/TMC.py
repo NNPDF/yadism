@@ -54,11 +54,20 @@ There 3 schemes in the reference:
     docs
 """
 import abc
+import warnings
 
 import numpy as np
+from scipy.integrate import quad
+
+from .convolution import DistributionVec
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
+    """
+        .. todo:
+            docs
+    """
+
     def __init__(self, SF, kinematics):
         self._SF = SF
         self._flavour = SF._name[2:]
@@ -74,12 +83,94 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         self._out = kinematics
 
     @abc.abstractmethod
+    def _get_output_APFEL(self):
+        """
+            .. todo:
+                docs
+        """
+
+    @abc.abstractmethod
+    def _get_output_approx(self):
+        """
+            .. todo:
+                docs
+        """
+
+    @abc.abstractmethod
+    def _get_output_exact(self):
+        """
+            .. todo:
+                docs
+        """
+
     def get_output(self):
-        pass
+        """
+            .. todo:
+                docs
+        """
+        if self._SF._TMC == 0:  # no TMC
+            raise RuntimeError(
+                "EvaluatedStructureFunctionTMC shouldn't have been created as TMC is disabled."
+            )
+        if self._SF._TMC == 1:  # APFEL
+            return self._get_output_APFEL()
+        if self._SF._TMC == 2:  # approx
+            return self._get_output_approx()
+        if self._SF._TMC == 3:  # exact
+            return self._get_output_exact()
+        if self._SF._TMC == 4:  # approx_APFEL
+            warnings.warn("meant only for internal use")
+            raise NotImplementedError("approx. APFEL not implemented yet")
+        raise ValueError(f"Unkown TMC value {self._SF._TMC}")
+
+    def _integrate_F2(self,ker):
+        # compute F2 matrix (j,k) (where k is wrapped inside get_output)
+        F2list = []
+        skip = 0
+        for xj in self._SF._interpolator.xgrid_raw:
+            # in domain
+            #if xj <= self._xi:
+            #    skip += 1
+            #    continue
+            # collect support points
+            F2list.append(self._SF.get_ESF(
+                "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
+            ).get_output())
+        # compute interpolated h2 integral (j)
+        h2list = []
+        j = 0
+        for bf in self._SF._interpolator:
+            #if j < skip:
+            #    j += 1
+            #    continue
+            d = DistributionVec(ker)
+            h2list.append(d.convolution(self._xi,bf))
+        # init result (k)
+        res = {}
+        for f in ["q", "g", "q_error", "g_error"]:
+            res[f] = np.zeros(len(self._SF._interpolator.xgrid_raw))
+        # multiply along j
+        j = 0
+        for h2, f2elem in zip(h2list,F2list):
+            #if j < skip:
+            #    j += 1
+            #    continue
+            for f in ["q", "g"]:
+                res[f] += h2[0] * f2elem[f]
+                res[f+"_error"] += np.abs(h2[1]* f2elem[f]) + np.abs(h2[0]* f2elem[f+"_error"])
+        return res
+
+    def _h2(self):
+        """
+            Compute integral over F2.
+
+
+        """
+        return self._integrate_F2(lambda z,xi=self._xi: 1/xi * z)
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
-    def get_output(self):
+    def _get_output_approx(self):
         # fmt: off
         approx_prefactor = (
             self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
@@ -97,9 +188,25 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
 
         return self._out
 
+    def _get_output_APFEL(self):
+        factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
+        factor_h2 = 6.0 * self._x ** 3 * self._mu / (self._rho ** 4)
+
+        F2out = self._SF.get_ESF(
+            "F2" + self._flavour, self._shifted_kinematics
+        ).get_output()
+
+        h2out = self._h2()
+        for f in ["q", "g", "q_error", "g_error"]:
+            self._out[f] = factor_shifted * F2out[f] + factor_h2 * h2out[f]
+        return self._out
+
+    def _get_output_exact(self):
+        raise NotImplementedError("TODO")
+
 
 class ESFTMC_FL(EvaluatedStructureFunctionTMC):
-    def get_output(self):
+    def _get_output_approx(self):
         approx_prefactor_FL = self._x ** 2 / (self._xi ** 2 * self._rho)
 
         # fmt: off
@@ -123,6 +230,12 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
             )
 
         return self._out
+
+    def _get_output_APFEL(self):
+        raise NotImplementedError("TODO")
+
+    def _get_output_exact(self):
+        raise NotImplementedError("TODO")
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL}

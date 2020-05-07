@@ -153,19 +153,32 @@ class DistributionVec:
             .. todo::
                 docs
         """
-        breakpoints = [x, 1.0]
-
+        # empty domain?
+        if x >= (1 - self.eps_integration_border):
+            return 0.0, 0.0
         # eko environment?
         if isinstance(pdf_func, BasisFunction):
-            if pdf_func.is_below_x(x):  # TODO: in eko update remove np.log
+            if pdf_func.is_below_x(x):
                 # support below x --> trivially 0
                 return 0.0, 0.0
             else:
                 # set breakpoints as relevant points of the integrand
                 # computed from interpolation areas of `pdf_func`
+                # and also restrict integration domain
+                area_borders = []
                 for area in pdf_func.areas:
-                    breakpoints.extend([area.xmin, area.xmax])
-                breakpoints = x / np.exp(np.unique(breakpoints))
+                    area_borders.extend([area.xmin, area.xmax])
+                area_borders = np.unique(area_borders)
+                if pdf_func._mode_log:
+                    area_borders = np.exp(area_borders)
+                breakpoints = x / area_borders
+                z_min = x
+                z_max = min(max(breakpoints),1)
+        else: # provide default parameters
+            breakpoints = []
+            z_min = x
+            z_max = 1
+
 
         # providing integrands functions and addends
         # ------------------------------------------
@@ -206,12 +219,11 @@ class DistributionVec:
 
         res, err = scipy.integrate.quad(
             ker,
-            x * (1 + self.eps_integration_border),
-            1.0 * (1 - self.eps_integration_border),
+            z_min * (1 + self.eps_integration_border),
+            z_max * (1 - self.eps_integration_border),
             epsabs=self.eps_integration_abs,
             points=breakpoints,
         )
-
         for a in addends:
             res += a
 

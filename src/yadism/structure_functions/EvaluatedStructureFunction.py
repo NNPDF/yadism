@@ -38,12 +38,12 @@ class EvaluatedStructureFunction(abc.ABC):
             docs
         """
         # something to do?
-        if not self._cqv:
+        if len(self._cqv) == 0:
             # yes
             self._cqv, self._e_cqv = self._compute_component(
                 self.quark_0, self.quark_1, self.quark_1_fact
             )
-        if not self._cgv:
+        if len(self._cgv) == 0:
             # yes
             self._cgv, self._e_cgv = self._compute_component(
                 self.gluon_0, self.gluon_1, self.gluon_1_fact
