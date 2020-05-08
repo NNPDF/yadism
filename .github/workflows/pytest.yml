@@ -32,91 +32,18 @@ jobs:
     steps:
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
-      # checkout submodules
-      - name: Checkout submodules
-        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
         with:
-          repository: N3PDF/eko
-          token: ${{ secrets.ALE_DIS_PAT }}
-          path: eko
-      # fetch all tags & stuffs
-      #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
-      #   --> needed only for the conda-recipe
-      - name: Fetch tags
-        run: git fetch --unshallow --no-recurse-submodules
-      # use an external action to setup miniconda
-      #   - also setup a conda virtual environment named 'yadism'
-      #
-      # (in order to use the conda venv at each step you need to login with
-      # 'bash -l {0}' in the 'shell' field, and to activate the environment)
-      - uses: goanpeca/setup-miniconda@v1
-        with:
-          auto-update-conda: true
-          miniconda-version: "latest"
-          activate-environment: yadism
           python-version: ${{ matrix.python-version }}
-      # install lhapdf and apfel from the nnpdf conda repo
-      - name: Install lhapdf and apfel with conda
-        shell: bash -l {0}
+      - name: Install dependencies
         run: |
-          conda activate yadism
-          #
-          conda config --add channels https://packages.nnpdf.science/conda
-          conda install -y lhapdf
-          conda install -y apfel
-      # install eko
-      #   - @ the correct commit (no official suitable tag currently available)
-      #   - providing the C dependencies
-      - name: Install eko
-        shell: bash -l {0}
-        run: |
-          conda activate yadism
-          #
-          cd eko
-          # git fetch --unshallow
-          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
-          cd ..
-          # install Gnu Scientific Library (GSL)
-          #   sudo works passwordless on github-workflow
-          sudo apt-get install libgsl-dev
-          # install eko (trailing '/' needed!)
-          pip install eko/
-      # pass with the linter
-      #   - only for 'dis', 'eko' is a dependency (supposed to be delivered
-      #     already checked)
-      - name: Lint with pylint
-        shell: bash -l {0}
-        run: |
-          conda activate yadism
-          #
-          conda install -y pylint toml
-          # Search for actual errors
-          pylint src/*/*.py -E
-          # For warnings instead return always zero
-          pylint src/*/*.py --exit-zero
-      # install the actual python package 'yadism'
-      - name: Install yadism
-        shell: bash -l {0}
-        run: |
-          conda activate yadism
-          #
-          pip install .
-      - name: debug - Explore file system
-        shell: bash -l {0}
-        run: |
-          conda activate yadism
-          #
-          sudo apt install tree
-          tree > dir_tree.txt
-      - name: debug - Report file system exploration
-        uses: actions/upload-artifact@v1
-        with:
-          name: dir_tree
-          path: dir_tree.txt
+          python -m pip install --upgrade pip
+          python -m pip install tinydb pyyaml
       - name: Prepare Test environment
         shell: bash -l {0}
         run: |
-          conda activate yadism
+          #conda activate yadism
           # install needed lhapdf PDFSets
           #lhapdf update
           #lhapdf get CT14llo_NF3
@@ -126,17 +53,116 @@ jobs:
           python observables.py
           cd ../..
           # install pytest and extensions
-          pip install pytest pytest-cov
-      #  run the test with 'pytest'
-      - name: Test yadism
-        shell: bash -l {0}
-        run: |
-          conda activate yadism
-          # run tests
-          pytest -m quick_check tests
-          #pytest
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v1
-        with:
-          name: htmlcov
-          path: htmlcov
+          #pip install pytest pytest-cov
+
+    #steps:
+      ## checkout the repo on the github runner
+      #- uses: actions/checkout@v2
+      ## checkout submodules
+      #- name: Checkout submodules
+        #uses: actions/checkout@v2
+        #with:
+          #repository: N3PDF/eko
+          #token: ${{ secrets.ALE_DIS_PAT }}
+          #path: eko
+      ## fetch all tags & stuffs
+      ##   in order to make GIT_DESCRIBE_* available (from git describe --tags)
+      ##   --> needed only for the conda-recipe
+      #- name: Fetch tags
+        #run: git fetch --unshallow --no-recurse-submodules
+      ## use an external action to setup miniconda
+      ##   - also setup a conda virtual environment named 'yadism'
+      ##
+      ## (in order to use the conda venv at each step you need to login with
+      ## 'bash -l {0}' in the 'shell' field, and to activate the environment)
+      #- uses: goanpeca/setup-miniconda@v1
+        #with:
+          #auto-update-conda: true
+          #miniconda-version: "latest"
+          #activate-environment: yadism
+          #python-version: ${{ matrix.python-version }}
+      ## install lhapdf and apfel from the nnpdf conda repo
+      #- name: Install lhapdf and apfel with conda
+        #shell: bash -l {0}
+        #run: |
+          #conda activate yadism
+          ##
+          #conda config --add channels https://packages.nnpdf.science/conda
+          #conda install -y lhapdf
+          #conda install -y apfel
+      ## install eko
+      ##   - @ the correct commit (no official suitable tag currently available)
+      ##   - providing the C dependencies
+      #- name: Install eko
+        #shell: bash -l {0}
+        #run: |
+          #conda activate yadism
+          ##
+          #cd eko
+          ## git fetch --unshallow
+          ## git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
+          #cd ..
+          ## install Gnu Scientific Library (GSL)
+          ##   sudo works passwordless on github-workflow
+          #sudo apt-get install libgsl-dev
+          ## install eko (trailing '/' needed!)
+          #pip install eko/
+      ## pass with the linter
+      ##   - only for 'dis', 'eko' is a dependency (supposed to be delivered
+      ##     already checked)
+      #- name: Lint with pylint
+        #shell: bash -l {0}
+        #run: |
+          #conda activate yadism
+          ##
+          #conda install -y pylint toml
+          ## Search for actual errors
+          #pylint src/*/*.py -E
+          ## For warnings instead return always zero
+          #pylint src/*/*.py --exit-zero
+      ## install the actual python package 'yadism'
+      #- name: Install yadism
+        #shell: bash -l {0}
+        #run: |
+          #conda activate yadism
+          ##
+          #pip install .
+      #- name: debug - Explore file system
+        #shell: bash -l {0}
+        #run: |
+          #conda activate yadism
+          ##
+          #sudo apt install tree
+          #tree > dir_tree.txt
+      #- name: debug - Report file system exploration
+        #uses: actions/upload-artifact@v1
+        #with:
+          #name: dir_tree
+          #path: dir_tree.txt
+      #- name: Prepare Test environment
+        #shell: bash -l {0}
+        #run: |
+          #conda activate yadism
+          ## install needed lhapdf PDFSets
+          ##lhapdf update
+          ##lhapdf get CT14llo_NF3
+          ## generate input db
+          #cd benchmarks/data
+          #python theory.py
+          #python observables.py
+          #cd ../..
+          ## install pytest and extensions
+          #pip install pytest pytest-cov
+      ##  run the test with 'pytest'
+      #- name: Test yadism
+        #shell: bash -l {0}
+        #run: |
+          #conda activate yadism
+          ## run tests
+          #pytest -m quick_check tests
+          ##pytest
+      #- name: Archive code coverage results
+        #uses: actions/upload-artifact@v1
+        #with:
+          #name: htmlcov
+          #path: htmlcov
