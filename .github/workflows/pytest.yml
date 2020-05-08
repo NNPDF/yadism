@@ -118,8 +118,8 @@ jobs:
         run: |
           conda activate yadism
           # install needed lhapdf PDFSets
-          lhapdf update
-          lhapdf get CT14llo_NF3
+          #lhapdf update
+          #lhapdf get CT14llo_NF3
           # generate input db
           cd benchmarks/data
           python theory.py
@@ -133,7 +133,7 @@ jobs:
         run: |
           conda activate yadism
           # run tests
-          pytest -m quick_check
+          pytest -m quick_check tests
           #pytest
       - name: Archive code coverage results
         uses: actions/upload-artifact@v1
