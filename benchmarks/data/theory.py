@@ -14,7 +14,7 @@ from apfel_utils import str_datetime  # pylint:disable=import-error
 db = tinydb.TinyDB(here / "input.json")
 theories_table = db.table("theories")
 # for the time being the table is freshly generated at each run of this script
-theories_table.purge()
+theories_table.truncate()
 
 matrix = {
     "PTO": [0, 1],
