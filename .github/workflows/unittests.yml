@@ -3,6 +3,10 @@ name: yadism - unit tests
 on:
   - push
 
+defaults:
+  run:
+    shell: bash -l {0}
+
 env:
   UPLOAD_NON_MASTER: false
 
@@ -48,7 +52,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
       # install lhapdf and apfel from the nnpdf conda repo
       - name: Install lhapdf and apfel with conda
-        shell: bash -l {0}
         run: |
           conda activate yadism
           #
@@ -59,7 +62,6 @@ jobs:
       #   - @ the correct commit (no official suitable tag currently available)
       #   - providing the C dependencies
       - name: Install eko
-        shell: bash -l {0}
         run: |
           conda activate yadism
           #
@@ -76,7 +78,6 @@ jobs:
       #   - only for 'dis', 'eko' is a dependency (supposed to be delivered
       #     already checked)
       - name: Lint with pylint
-        shell: bash -l {0}
         run: |
           conda activate yadism
           #
@@ -87,13 +88,11 @@ jobs:
           pylint src/*/*.py --exit-zero
       # install the actual python package 'yadism'
       - name: Install yadism
-        shell: bash -l {0}
         run: |
           conda activate yadism
           #
           pip install .
       - name: debug - Explore file system
-        shell: bash -l {0}
         run: |
           conda activate yadism
           #
@@ -105,7 +104,6 @@ jobs:
           name: dir_tree
           path: dir_tree.txt
       - name: Prepare Test environment
-        shell: bash -l {0}
         run: |
           conda activate yadism
           # install needed lhapdf PDFSets
@@ -120,7 +118,6 @@ jobs:
           pip install pytest pytest-cov
       #  run the test with 'pytest'
       - name: Test yadism
-        shell: bash -l {0}
         run: |
           conda activate yadism
           # run tests
