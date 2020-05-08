@@ -46,9 +46,8 @@ There 3 schemes in the reference:
     - **exact**: is the full and involves integration
     - **approximate**: is stemming from the exact, but the strcture functions in
       the integrand are evaluated at the bottom end
-    - **APFEL**: the one used in APFEL, similar to the exact but with one of the
-      integral of the review (schienbein, functions h_2 and f_2) set to 0, Felix
-      knows which
+    - **APFEL**: the one used in APFEL, similar to the exact but with g2 in
+      the review (Schienbein et al.) set to 0
 
 .. todo::
     docs
@@ -57,7 +56,6 @@ import abc
 import warnings
 
 import numpy as np
-from scipy.integrate import quad
 
 from .convolution import DistributionVec
 
@@ -123,38 +121,34 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             raise NotImplementedError("approx. APFEL not implemented yet")
         raise ValueError(f"Unkown TMC value {self._SF._TMC}")
 
-    def _integrate_F2(self,ker):
+    def _convolute_F2(self,ker):
+        """
+            Convolute F2 and ker.
+
+        """
+        # check domain
+        if self._xi < min(self._SF._interpolator.xgrid_raw):
+            raise ValueError(f"xi outside xgrid - cannot convolute starting from xi={self._xi}")
         # compute F2 matrix (j,k) (where k is wrapped inside get_output)
         F2list = []
-        skip = 0
         for xj in self._SF._interpolator.xgrid_raw:
-            # in domain
-            #if xj <= self._xi:
-            #    skip += 1
-            #    continue
             # collect support points
             F2list.append(self._SF.get_ESF(
                 "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
             ).get_output())
+
         # compute interpolated h2 integral (j)
         h2list = []
-        j = 0
         for bf in self._SF._interpolator:
-            #if j < skip:
-            #    j += 1
-            #    continue
             d = DistributionVec(ker)
             h2list.append(d.convolution(self._xi,bf))
+
         # init result (k)
         res = {}
         for f in ["q", "g", "q_error", "g_error"]:
             res[f] = np.zeros(len(self._SF._interpolator.xgrid_raw))
         # multiply along j
-        j = 0
         for h2, f2elem in zip(h2list,F2list):
-            #if j < skip:
-            #    j += 1
-            #    continue
             for f in ["q", "g"]:
                 res[f] += h2[0] * f2elem[f]
                 res[f+"_error"] += np.abs(h2[1]* f2elem[f]) + np.abs(h2[0]* f2elem[f+"_error"])
@@ -166,7 +160,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
 
         """
-        return self._integrate_F2(lambda z,xi=self._xi: 1/xi * z)
+        return self._convolute_F2(lambda z,xi=self._xi: 1/xi * z)
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
