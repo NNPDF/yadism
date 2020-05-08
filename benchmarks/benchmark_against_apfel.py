@@ -9,6 +9,7 @@ from conftest import DBInterface
 
 @pytest.mark.quick_check
 class TestPlain:
+    # def test_LO(self, DBInterface):
     def test_LO(self):
         """
         Test the full LO order against APFEL's.
@@ -77,11 +78,11 @@ class TestFull:
 if __name__ == "__main__":
     plain = TestPlain()
     plain.test_LO()
-    #plain.test_NLO()
+    # plain.test_NLO()
 
     sv = TestScaleVariations()
     # sv.test_LO()
     # sv.test_NLO()
 
     f = TestFull()
-    #f.test_LO()
+    # f.test_LO()
