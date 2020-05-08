@@ -23,8 +23,8 @@ class DBInterface:
     def __init__(self):
         self._inputdb = tinydb.TinyDB(here / "data" / "input.json")
         self._outputdb = tinydb.TinyDB(here / "data" / "output.json")
-        self._theory_query = tinydb.Query().PTO.exists()
-        self._obs_query = tinydb.Query().prDIS.exists()
+        self._theory_query = tinydb.Query()
+        self._obs_query = tinydb.Query()
 
     def run_all_tests(self, theory_query, obs_query, pdfs):
         theories = self._inputdb.table("theories").search(theory_query)

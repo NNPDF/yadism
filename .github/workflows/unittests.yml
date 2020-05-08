@@ -1,8 +1,7 @@
-name: yadism
+name: yadism - unit tests
 
 on:
   - push
-  - pull_request
 
 env:
   UPLOAD_NON_MASTER: false
