@@ -106,5 +106,5 @@ def gonly():
 
 
 if __name__ == "__main__":
-    # uonly()
+    uonly()
     gonly()
