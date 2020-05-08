@@ -133,7 +133,7 @@ jobs:
         run: |
           conda activate yadism
           # run tests
-          pytest -m quick_check tests
+          pytest -m quick_check
           #pytest
       - name: Archive code coverage results
         uses: actions/upload-artifact@v1
