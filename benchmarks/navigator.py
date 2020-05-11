@@ -7,10 +7,11 @@ import sys
 import numpy as np
 import pandas as pd
 from tinydb import TinyDB, Query
+from human_dates import human_dates
 
 here = pathlib.Path(__file__).parent.absolute()
-sys.path.append(str(here/ "aux"))
-from apfel_utils import unstr_datetime #pylint:disable=import-error
+sys.path.append(str(here / "aux"))
+from apfel_utils import unstr_datetime  # pylint:disable=import-error
 
 # database access
 here = pathlib.Path(__file__).parent.absolute()
@@ -20,10 +21,12 @@ odb = TinyDB(here / "data" / "output.json")
 # Theory ------------------
 # all theories
 
+
 def get_all_theories():
     """Retrieve all theories from db."""
     # collect
     return idb.table("theories").all()
+
 
 def list_all_theories():
     """Collect important information of all theories."""
@@ -32,19 +35,21 @@ def list_all_theories():
     data = []
     for t in theories:
         obj = {"doc_id": t.doc_id}
-        for f in ["PTO","XIF","XIR"]:
+        for f in ["PTO", "XIF", "XIR"]:
             obj[f] = t[f]
         dt = unstr_datetime(t["_modify_time"])
-        obj["modified"] = pretty_date(dt)
+        obj["modified"] = human_dates(dt)
         data.append(obj)
     # output
     df = pd.DataFrame(data)
     return df
 
+
 def print_all_theories():
     """Print overview of theories."""
     l = list_all_theories()
     print(l)
+
 
 # one theory
 def get_theory(doc_id):
@@ -58,6 +63,7 @@ def get_theory(doc_id):
     """
     return idb.table("theories").get(doc_id=doc_id)
 
+
 def pprint_theory(doc_id):
     """
         Pretty print a theory.
@@ -68,7 +74,8 @@ def pprint_theory(doc_id):
                 document identifier
     """
     t = get_theory(doc_id)
-    pprint(t,sort_dicts=False)
+    pprint(t, sort_dicts=False)
+
 
 def purge_theories():
     """Purge theories table."""
@@ -78,12 +85,14 @@ def purge_theories():
     else:
         print("nothing done.")
 
+
 # Observables -------------------
 # all
 def get_all_observables():
     """Retrieve all observables from db."""
     # collect
     return idb.table("observables").all()
+
 
 def list_all_observables():
     """Collect important information of all observables."""
@@ -93,11 +102,11 @@ def list_all_observables():
     for o in obs:
         obj = {"doc_id": o.doc_id}
         xgrid = o["xgrid"]
-        obj["xgrid"] = "[{}, ..., {}] ({}) ".format(min(xgrid),max(xgrid),len(xgrid))
+        obj["xgrid"] = "[{}, ..., {}] ({}) ".format(min(xgrid), max(xgrid), len(xgrid))
         obj["log"] = o["is_log_interpolation"]
         obj["degree"] = o["polynomial_degree"]
         dt = unstr_datetime(o["_modify_time"])
-        obj["modified"] = pretty_date(dt)
+        obj["modified"] = human_dates(dt)
         sfs = []
         esfs = 0
         for sf in o:
@@ -112,10 +121,12 @@ def list_all_observables():
     df = pd.DataFrame(data)
     return df
 
+
 def print_all_observables():
     """Print overview of observables."""
     l = list_all_observables()
     print(l)
+
 
 # one observable
 def get_observable(doc_id):
@@ -129,6 +140,7 @@ def get_observable(doc_id):
     """
     return idb.table("observables").get(doc_id=doc_id)
 
+
 def pprint_observable(doc_id):
     """
         Pretty print an observable.
@@ -139,7 +151,8 @@ def pprint_observable(doc_id):
                 document identifier
     """
     t = get_observable(doc_id)
-    pprint(t,sort_dicts=False)
+    pprint(t, sort_dicts=False)
+
 
 def purge_observables():
     """Purge observables table."""
@@ -149,6 +162,7 @@ def purge_observables():
     else:
         print("nothing done.")
 
+
 # Logs -------------------
 # all
 def get_all_logs():
@@ -156,48 +170,6 @@ def get_all_logs():
     # collect
     return odb.table("logs").all()
 
-# TODO replace with Alessandro's version
-def pretty_date(time=False):
-    """
-    Get a datetime object or a int() Epoch timestamp and return a
-    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
-    'just now', etc
-    """
-    now = datetime.now()
-    if type(time) is int:
-        diff = now - datetime.fromtimestamp(time)
-    elif isinstance(time,datetime):
-        diff = now - time
-    elif not time:
-        diff = now - now
-    second_diff = diff.seconds
-    day_diff = diff.days
-
-    if day_diff < 0:
-        return ''
-
-    if day_diff == 0:
-        if second_diff < 10:
-            return "just now"
-        if second_diff < 60:
-            return str(second_diff) + " seconds ago"
-        if second_diff < 120:
-            return "a minute ago"
-        if second_diff < 3600:
-            return str(second_diff // 60) + " minutes ago"
-        if second_diff < 7200:
-            return "an hour ago"
-        if second_diff < 86400:
-            return str(second_diff // 3600) + " hours ago"
-    if day_diff == 1:
-        return "Yesterday"
-    if day_diff < 7:
-        return str(day_diff) + " days ago"
-    if day_diff < 31:
-        return str(day_diff // 7) + " weeks ago"
-    if day_diff < 365:
-        return str(day_diff // 30) + " months ago"
-    return str(day_diff // 365) + " years ago"
 
 def list_all_logs():
     """Collect important information of all logs."""
@@ -215,19 +187,21 @@ def list_all_logs():
             sfs.append(sf)
             esfs += len(l[sf])
         obj["structure_functions"] = " ".join(sfs) + f" at {esfs} points"
-        for f in ["_theory_doc_id", "_observables_doc_id", "_creation_time","_pdf"]:
+        for f in ["_theory_doc_id", "_observables_doc_id", "_creation_time", "_pdf"]:
             obj[f.split("_")[1]] = l[f]
         dt = unstr_datetime(obj["creation"])
-        obj["creation"] = pretty_date(dt)
+        obj["creation"] = human_dates(dt)
         data.append(obj)
     # output
     df = pd.DataFrame(data)
     return df
 
+
 def print_all_logs():
     """Print overview of log."""
     l = list_all_logs()
     print(l)
+
 
 # one observable
 def get_log(doc_id):
@@ -241,6 +215,7 @@ def get_log(doc_id):
     """
     return odb.table("logs").get(doc_id=doc_id)
 
+
 def pprint_log(doc_id):
     """
         Pretty print a log.
@@ -251,7 +226,8 @@ def pprint_log(doc_id):
                 document identifier
     """
     t = get_log(doc_id)
-    pprint(t,sort_dicts=False)
+    pprint(t, sort_dicts=False)
+
 
 def purge_logs():
     """Purge logs table."""
@@ -261,8 +237,11 @@ def purge_logs():
     else:
         print("nothing done.")
 
+
 # detectors
 t = "t"
+
+
 def _is_theory(table, plural=True):
     """wrapper to activate theory"""
     if table == t:
@@ -271,7 +250,10 @@ def _is_theory(table, plural=True):
         return table == "theories"
     return table == "theory"
 
+
 o = "o"
+
+
 def _is_obs(table, plural=True):
     """wrapper to activate observables"""
     if table == o:
@@ -280,7 +262,10 @@ def _is_obs(table, plural=True):
         return table == "observables"
     return table == "observable"
 
+
 l = "l"
+
+
 def _is_log(table, plural=True):
     """wrapper to activate logs"""
     if table == l:
@@ -288,6 +273,7 @@ def _is_log(table, plural=True):
     if plural:
         return table == "logs"
     return table == "log"
+
 
 # common
 def ls(table):
@@ -309,7 +295,8 @@ def ls(table):
         print(f"Unkown table: {table}")
         return []
 
-def p(table, doc_id = None):
+
+def p(table, doc_id=None):
     """
         Print wrapper.
 
@@ -330,17 +317,18 @@ def p(table, doc_id = None):
             print_all_logs()
         else:
             print(f"Unkown table: {table}")
-    else: # list one
-        if _is_theory(table,False):
+    else:  # list one
+        if _is_theory(table, False):
             pprint_theory(doc_id)
-        elif _is_obs(table,False):
+        elif _is_obs(table, False):
             pprint_observable(doc_id)
-        elif _is_log(table,False):
+        elif _is_log(table, False):
             pprint_log(doc_id)
         else:
             print(f"Unkown table: {table}")
 
-def g(table, doc_id = None):
+
+def g(table, doc_id=None):
     """
         Getter wrapper.
 
@@ -362,18 +350,20 @@ def g(table, doc_id = None):
             r = get_all_logs()
         else:
             print(f"Unkown table: {table}")
-    else: # list one
-        if _is_theory(table,False):
+    else:  # list one
+        if _is_theory(table, False):
             r = get_theory(doc_id)
-        elif _is_obs(table,False):
+        elif _is_obs(table, False):
             r = get_observable(doc_id)
-        elif _is_log(table,False):
+        elif _is_log(table, False):
             r = get_log(doc_id)
         else:
             print(f"Unkown table: {table}")
     return r
 
+
 get = g
+
 
 def subtract_tables(id1, id2):
     """
@@ -440,14 +430,17 @@ def subtract_tables(id1, id2):
         print(obs, "-" * len(obs), sep="\n")
         print(table2)
 
+
 diff = subtract_tables
+
 
 def yelp(*args):
     """
         Help function (renamed to avoid clash of names) - short cut: h.
     """
     if len(args) == 0:
-        print(f"""Welcome to yadism benchmark skript!
+        print(
+            f"""Welcome to yadism benchmark skript!
 Available short cuts (variables):
     t = "{t}" -> "theor[y|ies]"
     o = "{o}" -> "observable[s]"
@@ -456,9 +449,11 @@ Available functions (selected list):
     g - getter
     ls - listing (reduced information)
     p - printing (using ls)
-    diff - subtractig logs""")
+    diff - subtractig logs"""
+        )
     elif len(args) == 1:
         return help(*args)
     return None
+
 
 h = yelp

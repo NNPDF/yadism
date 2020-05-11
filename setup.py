@@ -28,6 +28,8 @@ setup(
         "numba",
         "pyyaml",
         "tinydb~=4.1",
+        "human-dates2",
+        "sphinx",
         "sphinx_rtd_theme",
         "recommonmark",
         "sphinxcontrib-bibtex",
