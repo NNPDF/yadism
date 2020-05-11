@@ -205,7 +205,7 @@ argument-naming-style=snake_case
 attr-name-hint=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
 
 # Naming style matching correct argument names.
-argument-naming-style=snake_case
+attr-naming-style=snake_case
 
 # Regular expression matching correct attribute names
 #attr-rgx=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
