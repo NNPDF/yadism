@@ -7,12 +7,14 @@ import numpy as np
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / ".." / "aux"))
-from apfel_utils import str_datetime #pylint:disable=import-error,wrong-import-position
+from apfel_utils import (
+    str_datetime,
+)  # pylint:disable=import-error,wrong-import-position
 
 db = tinydb.TinyDB(here / "input.json")
 obs_table = db.table("observables")
 # for the time being the table is freshly generated at each run of this script
-obs_table.purge()
+obs_table.truncate()
 
 observables = [
     "F2light",
@@ -45,7 +47,7 @@ for sf in observables:
         is_log_interpolation=is_log_interpolation,
         prDIS="NC",
         comments="",
-        _modify_time = str_datetime(datetime.now())
+        _modify_time=str_datetime(datetime.now()),
     )
     content[sf] = kinematics
 

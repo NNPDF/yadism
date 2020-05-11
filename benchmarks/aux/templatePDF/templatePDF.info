@@ -1,12 +1,12 @@
-SetDesc: {{ description }} 
-SetIndex: 13206 
+SetDesc: {{ description }}
+SetIndex: 13206
 Authors: F. Hekhorn, A. Candido
 Reference:
 Format: lhagrid1
 DataVersion: 1
 NumMembers: 1
 Particle: 2212
-Flavors: {{ pids }} 
+Flavors: {{ pids }}
 ForcePositive: 1
 OrderQCD: 0
 FlavorScheme: variable

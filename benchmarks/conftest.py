@@ -6,6 +6,7 @@ import datetime
 import numpy as np
 import pandas as pd
 import tinydb
+import pytest
 
 import lhapdf
 
@@ -17,6 +18,7 @@ import toyLH  # pylint:disable=import-error
 from apfel_utils import get_apfel_data, str_datetime  # pylint:disable=import-error
 
 
+# @pytest.fixture()
 class DBInterface:
     def __init__(self):
         self._inputdb = tinydb.TinyDB(here / "data" / "input.json")

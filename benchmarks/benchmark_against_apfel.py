@@ -9,6 +9,7 @@ from conftest import DBInterface
 
 @pytest.mark.quick_check
 class TestPlain:
+    # def test_LO(self, DBInterface):
     def test_LO(self):
         """
         Test the full LO order against APFEL's.
@@ -21,7 +22,7 @@ class TestPlain:
 
         o_query = p._obs_query.F2light.exists()
 
-        #p.run_all_tests(t_query, o_query, ["ToyLH"])
+        # p.run_all_tests(t_query, o_query, ["ToyLH"])
         p.run_all_tests(t_query, o_query, ["uonly"])
 
     def test_NLO(self):
@@ -34,7 +35,7 @@ class TestPlain:
         t_query &= p._theory_query.XIF == 1.0
         t_query &= p._theory_query.TMC == 0
 
-        o_query = p._obs_query
+        o_query = p._obs_query.prDIS.exists()
 
         p.run_all_tests(t_query, o_query, ["ToyLH"])
 
@@ -71,7 +72,7 @@ class TestTMC:
 
         o_query = p._obs_query.F2light.exists()
 
-        #p.run_all_tests(t_query, o_query, ["ToyLH"])
+        # p.run_all_tests(t_query, o_query, ["ToyLH"])
         p.run_all_tests(t_query, o_query, ["uonly"])
 
     def test_NLO(self):
@@ -92,7 +93,7 @@ class TestFull:
         p = DBInterface()
         t_query = p._theory_query.PTO == 0
 
-        o_query = p._obs_query
+        o_query = p._obs_query.prDIS.exists()
 
         p.run_all_tests(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
 
@@ -100,7 +101,7 @@ class TestFull:
         p = DBInterface()
         t_query = p._theory_query.PTO == 1
 
-        o_query = p._obs_query
+        o_query = p._obs_query.prDIS.exists()
 
         p.run_all_tests(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
 
@@ -108,7 +109,7 @@ class TestFull:
 if __name__ == "__main__":
     plain = TestPlain()
     plain.test_LO()
-    #plain.test_NLO()
+    # plain.test_NLO()
 
     # sv = TestScaleVariations()
     # sv.test_LO()

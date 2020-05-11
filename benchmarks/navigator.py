@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import pandas as pd
 from tinydb import TinyDB, Query
+from human_dates import human_dates
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
@@ -37,7 +38,7 @@ def list_all_theories():
         for f in ["PTO", "XIF", "XIR", "TMC"]:
             obj[f] = t[f]
         dt = unstr_datetime(t["_modify_time"])
-        obj["modified"] = pretty_date(dt)
+        obj["modified"] = human_dates(dt)
         data.append(obj)
     # output
     df = pd.DataFrame(data)
@@ -105,7 +106,7 @@ def list_all_observables():
         obj["log"] = o["is_log_interpolation"]
         obj["degree"] = o["polynomial_degree"]
         dt = unstr_datetime(o["_modify_time"])
-        obj["modified"] = pretty_date(dt)
+        obj["modified"] = human_dates(dt)
         sfs = []
         esfs = 0
         for sf in o:
@@ -170,50 +171,6 @@ def get_all_logs():
     return odb.table("logs").all()
 
 
-# TODO replace with Alessandro's version
-def pretty_date(time=False):
-    """
-    Get a datetime object or a int() Epoch timestamp and return a
-    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
-    'just now', etc
-    """
-    now = datetime.now()
-    if type(time) is int:
-        diff = now - datetime.fromtimestamp(time)
-    elif isinstance(time, datetime):
-        diff = now - time
-    elif not time:
-        diff = now - now
-    second_diff = diff.seconds
-    day_diff = diff.days
-
-    if day_diff < 0:
-        return ""
-
-    if day_diff == 0:
-        if second_diff < 10:
-            return "just now"
-        if second_diff < 60:
-            return str(second_diff) + " seconds ago"
-        if second_diff < 120:
-            return "a minute ago"
-        if second_diff < 3600:
-            return str(second_diff // 60) + " minutes ago"
-        if second_diff < 7200:
-            return "an hour ago"
-        if second_diff < 86400:
-            return str(second_diff // 3600) + " hours ago"
-    if day_diff == 1:
-        return "Yesterday"
-    if day_diff < 7:
-        return str(day_diff) + " days ago"
-    if day_diff < 31:
-        return str(day_diff // 7) + " weeks ago"
-    if day_diff < 365:
-        return str(day_diff // 30) + " months ago"
-    return str(day_diff // 365) + " years ago"
-
-
 def list_all_logs():
     """Collect important information of all logs."""
     # collect
@@ -233,7 +190,7 @@ def list_all_logs():
         for f in ["_theory_doc_id", "_observables_doc_id", "_creation_time", "_pdf"]:
             obj[f.split("_")[1]] = l[f]
         dt = unstr_datetime(obj["creation"])
-        obj["creation"] = pretty_date(dt)
+        obj["creation"] = human_dates(dt)
         data.append(obj)
     # output
     df = pd.DataFrame(data)
