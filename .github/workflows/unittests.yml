@@ -74,18 +74,6 @@ jobs:
           sudo apt-get install libgsl-dev
           # install eko (trailing '/' needed!)
           pip install eko/
-      # pass with the linter
-      #   - only for 'dis', 'eko' is a dependency (supposed to be delivered
-      #     already checked)
-      - name: Lint with pylint
-        run: |
-          conda activate yadism
-          #
-          conda install -y pylint toml
-          # Search for actual errors
-          pylint src/*/*.py -E
-          # For warnings instead return always zero
-          pylint src/*/*.py --exit-zero
       # install the actual python package 'yadism'
       - name: Install yadism
         run: |
