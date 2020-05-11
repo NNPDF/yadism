@@ -3,6 +3,7 @@ name: yadism
 on:
   push:
     branches:
+      - master
       - 'benchmarks/*'
       - 'tests/*'
   pull_request:
