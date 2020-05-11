@@ -58,6 +58,7 @@ import warnings
 import numpy as np
 
 from .convolution import DistributionVec
+from .EvaluatedStructureFunction import ESFResult
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
@@ -73,12 +74,12 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         self._Q2 = kinematics["Q2"]
         # compute variables
         self._mu = self._SF._M2target / self._Q2
-        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._mu) # = r
+        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._mu)  # = r
         self._xi = 2 * self._x / (1 + self._rho)
         # TMC are mostly determined by shifted kinematics
         self._shifted_kinematics = {"x": self._xi, "Q2": self._Q2}
-        # prepare output dict
-        self._out = kinematics
+        # prepare output object
+        self._out = None
 
     @abc.abstractmethod
     def _get_output_APFEL(self):
@@ -111,47 +112,54 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 "EvaluatedStructureFunctionTMC shouldn't have been created as TMC is disabled."
             )
         if self._SF._TMC == 1:  # APFEL
-            return self._get_output_APFEL()
-        if self._SF._TMC == 2:  # approx
-            return self._get_output_approx()
-        if self._SF._TMC == 3:  # exact
-            return self._get_output_exact()
-        if self._SF._TMC == 4:  # approx_APFEL
+            out = self._get_output_APFEL()
+        elif self._SF._TMC == 2:  # approx
+            out = self._get_output_approx()
+        elif self._SF._TMC == 3:  # exact
+            out = self._get_output_exact()
+        elif self._SF._TMC == 4:  # approx_APFEL
             warnings.warn("meant only for internal use")
             raise NotImplementedError("approx. APFEL not implemented yet")
-        raise ValueError(f"Unkown TMC value {self._SF._TMC}")
+        else:
+            raise ValueError(f"Unkown TMC value {self._SF._TMC}")
 
-    def _convolute_F2(self,ker):
+        # ensure the correct kinematics is used after the calculations
+        out.x = self._x
+
+        return out
+
+    def _convolute_F2(self, ker):
         """
             Convolute F2 and ker.
 
         """
         # check domain
         if self._xi < min(self._SF._interpolator.xgrid_raw):
-            raise ValueError(f"xi outside xgrid - cannot convolute starting from xi={self._xi}")
+            raise ValueError(
+                f"xi outside xgrid - cannot convolute starting from xi={self._xi}"
+            )
         # compute F2 matrix (j,k) (where k is wrapped inside get_output)
         F2list = []
         for xj in self._SF._interpolator.xgrid_raw:
             # collect support points
-            F2list.append(self._SF.get_ESF(
-                "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
-            ).get_output())
+            F2list.append(
+                self._SF.get_ESF(
+                    "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
+                ).get_output()
+            )
 
         # compute interpolated h2 integral (j)
         h2list = []
         for bf in self._SF._interpolator:
             d = DistributionVec(ker)
-            h2list.append(d.convolution(self._xi,bf))
+            h2list.append(d.convolution(self._xi, bf))
 
         # init result (k)
-        res = {}
-        for f in ["q", "g", "q_error", "g_error"]:
-            res[f] = np.zeros(len(self._SF._interpolator.xgrid_raw))
+        res = ESFResult(len(self._SF._interpolator.xgrid_raw), self._xi, self._Q2)
         # multiply along j
-        for h2, f2elem in zip(h2list,F2list):
-            for f in ["q", "g"]:
-                res[f] += h2[0] * f2elem[f]
-                res[f+"_error"] += np.abs(h2[1]* f2elem[f]) + np.abs(h2[0]* f2elem[f+"_error"])
+        for h2, f2elem in zip(h2list, F2list):
+            res += h2 * f2elem
+
         return res
 
     def _h2(self):
@@ -172,7 +180,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total 1/z^2 we need to convolute with z/xi
         # as we get a 1/z by the measure and and an evaluation of 1/xi*xi/z
-        return self._convolute_F2(lambda z,xi=self._xi: 1/xi * z)
+        return self._convolute_F2(lambda z, xi=self._xi: 1 / xi * z)
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
@@ -180,8 +188,9 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         .. todo::
             docs
     """
+
     def __init__(self, SF, kinematics):
-        super(ESFTMC_F2,self).__init__(SF,kinematics)
+        super(ESFTMC_F2, self).__init__(SF, kinematics)
         # shifted prefactor is common
         self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
 
@@ -198,14 +207,11 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             "F2" + self._flavour, self._shifted_kinematics
         ).get_output()
         # join
-        for f in ["q", "g", "q_error", "g_error"]:
-            self._out[f] = approx_prefactor * F2out[f]
-
-        return self._out
+        return approx_prefactor * F2out
 
     def _get_output_APFEL(self):
         # h2 comes with a seperate factor
-        factor_h2 = 6.0 * self._mu * self._x ** 3  / (self._rho ** 4)
+        factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
 
         # collect F2
         F2out = self._SF.get_ESF(
@@ -214,9 +220,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         h2out = self._h2()
 
         # join
-        for f in ["q", "g", "q_error", "g_error"]:
-            self._out[f] = self._factor_shifted * F2out[f] + factor_h2 * h2out[f]
-        return self._out
+        return self._factor_shifted * F2out + factor_h2 * h2out
 
     def _get_output_exact(self):
         raise NotImplementedError("TODO")
@@ -243,12 +247,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         ).get_output()
 
         # join
-        for f in ["q", "g", "q_error", "g_error"]:
-            self._out[f] = (
-                approx_prefactor_FL * FLout[f] + approx_prefactor_F2 * F2out[f]
-            )
-
-        return self._out
+        return approx_prefactor_FL * FLout + approx_prefactor_F2 * F2out
 
     def _get_output_APFEL(self):
         raise NotImplementedError("TODO")
