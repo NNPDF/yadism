@@ -6,6 +6,7 @@ import datetime
 import numpy as np
 import pandas as pd
 import tinydb
+import pytest
 
 import lhapdf
 
@@ -13,10 +14,11 @@ from yadism.runner import Runner
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
-import toyLH #pylint:disable=import-error
-from apfel_utils import get_apfel_data, str_datetime #pylint:disable=import-error
+import toyLH  # pylint:disable=import-error
+from apfel_utils import get_apfel_data, str_datetime  # pylint:disable=import-error
 
 
+# @pytest.fixture()
 class DBInterface:
     def __init__(self):
         self._inputdb = tinydb.TinyDB(here / "data" / "input.json")
@@ -96,7 +98,6 @@ class DBInterface:
                     kin["rel_err[%]"] = comparison
                     kinematics.append(kin)
                 log_tab[sf] = kinematics
-
 
             # =============
             # print and log
