@@ -38,6 +38,7 @@ class MockDict:
         return None
 
 
+@pytest.mark.quick_check
 class TestStructureFunction:
     def test_get_ESF_same_name(self):
         # setup env
@@ -61,7 +62,6 @@ class TestStructureFunction:
             # check caching
             obj2 = sf.get_ESF(name, {"x": 0.5, "Q2": 1})
             assert len(sf._StructureFunction__ESFcache) == 1
-
 
     def test_get_ESF_outside_grid(self):
         r = MockRunner()

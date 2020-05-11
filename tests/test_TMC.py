@@ -36,8 +36,8 @@ class MockTMC(TMC.EvaluatedStructureFunctionTMC):
         pass
 
 
+@pytest.mark.quick_check
 class TestTMC:
-
     @pytest.mark.eko
     def test_convolute_F2_empty(self):
         xg = np.array([0.2, 0.6, 1.0])
@@ -103,33 +103,39 @@ class TestTMC:
         # res_h2 = int_xi^1 du/u 1/xi*(xi/u) F2(u)  = int_xi^1 du/u 1/u F2(u)
         res_h2 = obj._h2()
 
-        def isdelta(pdf): # assert F2 = pdf
-            for x,pdf_val in zip(xg,pdf):
-                ESF_F2 = objSF.get_ESF("",{"x":x,"Q2":1})
-                F2 = np.matmul(ESF_F2.get_output()["q"],pdf)
+        def isdelta(pdf):  # assert F2 = pdf
+            for x, pdf_val in zip(xg, pdf):
+                ESF_F2 = objSF.get_ESF("", {"x": x, "Q2": 1})
+                F2 = np.matmul(ESF_F2.get_output()["q"], pdf)
                 assert pytest.approx(F2) == pdf_val
 
         # use F2 = pdf = c
         for c in [0.1, 1.0]:
-            pdf_const = c*np.array([1,1,1])
+            pdf_const = c * np.array([1, 1, 1])
             isdelta(pdf_const)
             # int_const = int_xi^1 du/u = -ln(xi)
-            integral_with_pdf = np.matmul(res_const["q"],pdf_const)
-            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c*(-np.log(obj._xi))
+            integral_with_pdf = np.matmul(res_const["q"], pdf_const)
+            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
+                -np.log(obj._xi)
+            )
             # int_h2 = int_xi^1 du/u^2 = -1 + 1/xi
-            integral_with_pdf = np.matmul(res_h2["q"],pdf_const)
-            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c*(-1.0 + 1.0/obj._xi)
+            integral_with_pdf = np.matmul(res_h2["q"], pdf_const)
+            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
+                -1.0 + 1.0 / obj._xi
+            )
 
         # use F2 = pdf = c*x
         for c in [0.5, 1.0]:
-            pdf_lin = c*xg
+            pdf_lin = c * xg
             isdelta(pdf_lin)
             # int_const = int_xi^1 du = 1-xi
-            integral_with_pdf = np.matmul(res_const["q"],pdf_lin)
-            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c*(1. - obj._xi)
+            integral_with_pdf = np.matmul(res_const["q"], pdf_lin)
+            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (1.0 - obj._xi)
             # int_h2 = int_xi^1 du/u = -ln(xi)
-            integral_with_pdf = np.matmul(res_h2["q"],pdf_lin)
-            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c*(-np.log(obj._xi))
+            integral_with_pdf = np.matmul(res_h2["q"], pdf_lin)
+            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
+                -np.log(obj._xi)
+            )
 
     @pytest.mark.eko
     def test_convolute_F2_xi_of_domain(self):
