@@ -9,7 +9,7 @@ import tinydb
 # import numpy as np
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / ".." / "aux"))
-from apfel_utils import str_datetime  # pylint:disable=import-error
+from apfel_utils import str_datetime  # pylint:disable=import-error,wrong-import-position
 
 db = tinydb.TinyDB(here / "input.json")
 theories_table = db.table("theories")

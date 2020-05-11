@@ -71,13 +71,13 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         self._flavour = SF._name[2:]
         self._x = kinematics["x"]
         self._Q2 = kinematics["Q2"]
-
+        # compute variables
         self._mu = self._SF._M2target / self._Q2
-        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._mu)
+        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._mu) # = r
         self._xi = 2 * self._x / (1 + self._rho)
-
+        # TMC are mostly determined by shifted kinematics
         self._shifted_kinematics = {"x": self._xi, "Q2": self._Q2}
-
+        # prepare output dict
         self._out = kinematics
 
     @abc.abstractmethod
@@ -155,44 +155,67 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         return res
 
     def _h2(self):
-        """
+        r"""
             Compute integral over F2.
 
+            .. math::
+                h_2(\xi,Q^2) &= \int_\xi^1 du \frac{F_2^(u,Q^2)}{u^2}
+                             &= \int_\xi^1 \frac{du}{u} \frac{1}{\xi} \frac{\xi}{u} F_2^(u,Q^2)
+                             &= (z \otimes F_2(z))(\xi)
+
+            Returns
+            -------
+                h2 : dict
+                    ESF output for the integral
 
         """
+        # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
+        # so to achieve a total 1/z^2 we need to convolute with z/xi
+        # as we get a 1/z by the measure and and an evaluation of 1/xi*xi/z
         return self._convolute_F2(lambda z,xi=self._xi: 1/xi * z)
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
+    """
+        .. todo::
+            docs
+    """
+    def __init__(self, SF, kinematics):
+        super(ESFTMC_F2,self).__init__(SF,kinematics)
+        # shifted prefactor is common
+        self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
+
     def _get_output_approx(self):
         # fmt: off
-        approx_prefactor = (
-            self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
-            * (1 + (6 * self._mu * self._x * self._xi)
-                    / self._rho * (1 - self._xi) ** 2)
+        approx_prefactor = self._factor_shifted * (
+              1 + (6 * self._mu * self._x * self._xi)
+                     / self._rho * (1 - self._xi) ** 2
         )
         # fmt: on
 
+        # collect F2
         F2out = self._SF.get_ESF(
             "F2" + self._flavour, self._shifted_kinematics
         ).get_output()
-
+        # join
         for f in ["q", "g", "q_error", "g_error"]:
             self._out[f] = approx_prefactor * F2out[f]
 
         return self._out
 
     def _get_output_APFEL(self):
-        factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
-        factor_h2 = 6.0 * self._x ** 3 * self._mu / (self._rho ** 4)
+        # h2 comes with a seperate factor
+        factor_h2 = 6.0 * self._mu * self._x ** 3  / (self._rho ** 4)
 
+        # collect F2
         F2out = self._SF.get_ESF(
             "F2" + self._flavour, self._shifted_kinematics
         ).get_output()
-
         h2out = self._h2()
+
+        # join
         for f in ["q", "g", "q_error", "g_error"]:
-            self._out[f] = factor_shifted * F2out[f] + factor_h2 * h2out[f]
+            self._out[f] = self._factor_shifted * F2out[f] + factor_h2 * h2out[f]
         return self._out
 
     def _get_output_exact(self):
@@ -211,6 +234,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         )
         # fmt: on
 
+        # collect structure functions at shifted kinematics
         FLout = self._SF.get_ESF(
             "FL" + self._flavour, self._shifted_kinematics
         ).get_output()
@@ -218,6 +242,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
             "F2" + self._flavour, self._shifted_kinematics
         ).get_output()
 
+        # join
         for f in ["q", "g", "q_error", "g_error"]:
             self._out[f] = (
                 approx_prefactor_FL * FLout[f] + approx_prefactor_F2 * F2out[f]

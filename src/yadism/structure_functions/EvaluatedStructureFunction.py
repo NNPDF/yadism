@@ -17,13 +17,17 @@ class EvaluatedStructureFunction(abc.ABC):
     """
 
     def __init__(self, SF, kinematics):
-        if 1 < kinematics["x"] < 0:
-            raise ValueError("Kinematics 'x' must be in the range (0,1)")
-        if kinematics["Q2"] < 0:
+        x = kinematics["x"]
+        if 1 < x <= 0:
+            raise ValueError("Kinematics 'x' must be in the range (0,1]")
+        if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
-
+        # check domain
+        if x < min(SF._interpolator.xgrid_raw):
+            raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
+        
         self._SF = SF
-        self._x = kinematics["x"]
+        self._x = x
         self._Q2 = kinematics["Q2"]
         self._cqv = []
         self._e_cqv = []
