@@ -82,27 +82,27 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         self._out = None
 
     @abc.abstractmethod
-    def _get_output_APFEL(self):
+    def _get_result_APFEL(self):
         """
             .. todo:
                 docs
         """
 
     @abc.abstractmethod
-    def _get_output_approx(self):
+    def _get_result_approx(self):
         """
             .. todo:
                 docs
         """
 
     @abc.abstractmethod
-    def _get_output_exact(self):
+    def _get_result_exact(self):
         """
             .. todo:
                 docs
         """
 
-    def get_output(self):
+    def get_result(self):
         """
             .. todo:
                 docs
@@ -112,11 +112,11 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 "EvaluatedStructureFunctionTMC shouldn't have been created as TMC is disabled."
             )
         if self._SF._TMC == 1:  # APFEL
-            out = self._get_output_APFEL()
+            out = self._get_result_APFEL()
         elif self._SF._TMC == 2:  # approx
-            out = self._get_output_approx()
+            out = self._get_result_approx()
         elif self._SF._TMC == 3:  # exact
-            out = self._get_output_exact()
+            out = self._get_result_exact()
         elif self._SF._TMC == 4:  # approx_APFEL
             warnings.warn("meant only for internal use")
             raise NotImplementedError("approx. APFEL not implemented yet")
@@ -127,6 +127,9 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         out.x = self._x
 
         return out
+
+    def get_output(self):
+        return self.get_result().get_raw()
 
     def _convolute_F2(self, ker):
         """
@@ -145,7 +148,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             F2list.append(
                 self._SF.get_ESF(
                     "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
-                ).get_output()
+                ).get_result()
             )
 
         # compute interpolated h2 integral (j)
@@ -194,7 +197,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         # shifted prefactor is common
         self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
 
-    def _get_output_approx(self):
+    def _get_result_approx(self):
         # fmt: off
         approx_prefactor = self._factor_shifted * (
               1 + (6 * self._mu * self._x * self._xi)
@@ -205,11 +208,11 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         # collect F2
         F2out = self._SF.get_ESF(
             "F2" + self._flavour, self._shifted_kinematics
-        ).get_output()
+        ).get_result()
         # join
         return approx_prefactor * F2out
 
-    def _get_output_APFEL(self):
+    def _get_result_APFEL(self):
         # h2 comes with a seperate factor
         factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
 
@@ -222,12 +225,12 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         # join
         return self._factor_shifted * F2out + factor_h2 * h2out
 
-    def _get_output_exact(self):
+    def _get_result_exact(self):
         raise NotImplementedError("TODO")
 
 
 class ESFTMC_FL(EvaluatedStructureFunctionTMC):
-    def _get_output_approx(self):
+    def _get_result_approx(self):
         approx_prefactor_FL = self._x ** 2 / (self._xi ** 2 * self._rho)
 
         # fmt: off
@@ -241,18 +244,18 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         # collect structure functions at shifted kinematics
         FLout = self._SF.get_ESF(
             "FL" + self._flavour, self._shifted_kinematics
-        ).get_output()
+        ).get_result()
         F2out = self._SF.get_ESF(
             "F2" + self._flavour, self._shifted_kinematics
-        ).get_output()
+        ).get_result()
 
         # join
         return approx_prefactor_FL * FLout + approx_prefactor_F2 * F2out
 
-    def _get_output_APFEL(self):
+    def _get_result_APFEL(self):
         raise NotImplementedError("TODO")
 
-    def _get_output_exact(self):
+    def _get_result_exact(self):
         raise NotImplementedError("TODO")
 
 

@@ -22,12 +22,13 @@ class ESFResult:
         self.g_error = np.zeros(length)
 
     @classmethod
-    def from_dict(cls, input_dict):
-        new_output = cls(len(input_dict["q"]), x, Q2)
-        new_output.q = input_dict["q"]
-        new_output.q_error = input_dict["q_error"]
-        new_output.g = input_dict["g"]
-        new_output.g_error = input_dict["g_error"]
+    def from_dict(cls, input_dict, dtype=np.float):
+        new_output = cls(len(input_dict["q"]), input_dict["x"], input_dict["Q2"])
+        new_output.q = np.array(input_dict["q"], dtype=dtype)
+        new_output.q_error = np.array(input_dict["q_error"], dtype=dtype)
+        new_output.g = np.array(input_dict["g"], dtype=dtype)
+        new_output.g_error = np.array(input_dict["g_error"], dtype=dtype)
+        return new_output
 
     def __add__(self, other):
         res = copy.deepcopy(self)
@@ -94,6 +95,11 @@ class ESFResult:
         return self.__imul__(1.0 / other)
 
     def apply_PDF(self, xgrid, xiF, pdfs):
+        """
+            .. todo::
+                docs
+        """
+
         def get_charged_sum(z: float, Q2: float) -> float:
             """
                 d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
@@ -118,6 +124,20 @@ class ESFResult:
         error = self.x * (np.dot(fq, self.q_error) + 2 / 9 * np.dot(fg, self.g_error))
 
         return dict(x=self.x, Q2=self.Q2, result=result, error=error)
+
+    def get_raw(self):
+        """
+            .. todo::
+                docs
+        """
+        return dict(
+            x=self.x,
+            Q2=self.Q2,
+            q=self.q,
+            q_error=self.q_error,
+            g=self.g,
+            g_error=self.g_error,
+        )
 
 
 class EvaluatedStructureFunction(abc.ABC):
@@ -185,11 +205,7 @@ class EvaluatedStructureFunction(abc.ABC):
 
         return np.array(ls), np.array(els)
 
-    def get_output(self):
-        """
-        .. todo::
-            docs
-        """
+    def get_result(self):
         self._compute()
 
         output = ESFResult(len(self._cqv))
@@ -202,13 +218,19 @@ class EvaluatedStructureFunction(abc.ABC):
 
         return output
 
+    def get_output(self):
+        """
+        .. todo::
+            docs
+        """
+        return self.get_result().get_raw()
+
     @abc.abstractmethod
     def quark_0(self):
         """
         .. todo::
             docs
         """
-        pass
 
     def gluon_0(self):
         """
@@ -228,7 +250,6 @@ class EvaluatedStructureFunction(abc.ABC):
         .. todo::
             docs
         """
-        pass
 
     @abc.abstractmethod
     def quark_1_fact(self):
@@ -240,7 +261,6 @@ class EvaluatedStructureFunction(abc.ABC):
               also take care of muR, since in reference eq.2.16 they are
               setting muR = muF, so maybe quark_1_fact -> quark_1_1_0
         """
-        pass
 
     @abc.abstractmethod
     def gluon_1(self):
@@ -248,7 +268,6 @@ class EvaluatedStructureFunction(abc.ABC):
         .. todo::
             docs
         """
-        pass
 
     @abc.abstractmethod
     def gluon_1_fact(self):
@@ -256,7 +275,6 @@ class EvaluatedStructureFunction(abc.ABC):
         .. todo::
             docs
         """
-        pass
 
 
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):

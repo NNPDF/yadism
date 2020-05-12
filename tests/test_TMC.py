@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 
 import yadism.structure_functions.TMC as TMC
+from yadism.structure_functions.EvaluatedStructureFunction import ESFResult
 
 from eko.interpolation import InterpolatorDispatcher
 
@@ -15,24 +16,26 @@ class MockESF:  # return init arguments
         self._q = q
         self._g = g
 
-    def get_output(self):
-        return {
+    def get_result(self):
+        return ESFResult.from_dict({
+            "x": 0,
+            "Q2": 0,
             "q": np.array(self._q),
             "g": np.array(self._g),
             "q_error": np.zeros(len(self._q)),
             "g_error": np.zeros(len(self._g)),
-        }
+        })
 
 
 class MockTMC(TMC.EvaluatedStructureFunctionTMC):
     # fake abstract methods
-    def _get_output_APFEL(self):
+    def _get_result_APFEL(self):
         pass
 
-    def _get_output_approx(self):
+    def _get_result_approx(self):
         pass
 
-    def _get_output_exact(self):
+    def _get_result_exact(self):
         pass
 
 
@@ -50,14 +53,14 @@ class TestTMC:
             def get_ESF(self, _name, kinematics):
                 # this means F2(x>.6) = 0
                 if kinematics["x"] >= 0.6:
-                    return MockESF([0, 0, 0])
+                    return MockESF([0., 0., 0.])
                 return MockESF([1e1, 1e2, 1e3])
 
         def is0(res):
-            assert pytest.approx(res["q"], 0, 0) == [0] * 3
-            assert pytest.approx(res["g"], 0, 0) == [0] * 3
-            assert pytest.approx(res["q_error"], 0, 0) == [0] * 3
-            assert pytest.approx(res["g_error"], 0, 0) == [0] * 3
+            assert pytest.approx(res.q, 0, 0) == [0] * 3
+            assert pytest.approx(res.g, 0, 0) == [0] * 3
+            assert pytest.approx(res.q_error, 0, 0) == [0] * 3
+            assert pytest.approx(res.g_error, 0, 0) == [0] * 3
 
         # build objects
         objSF = MockSF()
@@ -106,7 +109,7 @@ class TestTMC:
         def isdelta(pdf):  # assert F2 = pdf
             for x, pdf_val in zip(xg, pdf):
                 ESF_F2 = objSF.get_ESF("", {"x": x, "Q2": 1})
-                F2 = np.matmul(ESF_F2.get_output()["q"], pdf)
+                F2 = np.matmul(ESF_F2.get_result().q, pdf)
                 assert pytest.approx(F2) == pdf_val
 
         # use F2 = pdf = c
@@ -114,12 +117,12 @@ class TestTMC:
             pdf_const = c * np.array([1, 1, 1])
             isdelta(pdf_const)
             # int_const = int_xi^1 du/u = -ln(xi)
-            integral_with_pdf = np.matmul(res_const["q"], pdf_const)
+            integral_with_pdf = np.matmul(res_const.q, pdf_const)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
                 -np.log(obj._xi)
             )
             # int_h2 = int_xi^1 du/u^2 = -1 + 1/xi
-            integral_with_pdf = np.matmul(res_h2["q"], pdf_const)
+            integral_with_pdf = np.matmul(res_h2.q, pdf_const)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
                 -1.0 + 1.0 / obj._xi
             )
@@ -129,10 +132,10 @@ class TestTMC:
             pdf_lin = c * xg
             isdelta(pdf_lin)
             # int_const = int_xi^1 du = 1-xi
-            integral_with_pdf = np.matmul(res_const["q"], pdf_lin)
+            integral_with_pdf = np.matmul(res_const.q, pdf_lin)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (1.0 - obj._xi)
             # int_h2 = int_xi^1 du/u = -ln(xi)
-            integral_with_pdf = np.matmul(res_h2["q"], pdf_lin)
+            integral_with_pdf = np.matmul(res_h2.q, pdf_lin)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
                 -np.log(obj._xi)
             )
