@@ -13,6 +13,11 @@ from . import convolution as conv
 
 
 class ESFResult:
+    """
+        .. todo::
+            docs
+    """
+
     def __init__(self, length, x=None, Q2=None):
         self.x = x
         self.Q2 = Q2
@@ -23,7 +28,12 @@ class ESFResult:
 
     @classmethod
     def from_dict(cls, input_dict, dtype=np.float):
+        """
+            .. todo::
+                docs
+        """
         new_output = cls(len(input_dict["q"]), input_dict["x"], input_dict["Q2"])
+        # explicitly cast arrays
         new_output.q = np.array(input_dict["q"], dtype=dtype)
         new_output.q_error = np.array(input_dict["q_error"], dtype=dtype)
         new_output.g = np.array(input_dict["g"], dtype=dtype)
@@ -49,8 +59,8 @@ class ESFResult:
 
     def __neg__(self):
         res = copy.deepcopy(self)
-        res.q = -self.q
-        res.g = -self.g
+        res.q = -self.q  # pylint:disable=invalid-unary-operand-type
+        res.g = -self.g  # pylint:disable=invalid-unary-operand-type
 
         return res
 
@@ -184,6 +194,10 @@ class EvaluatedStructureFunction(abc.ABC):
             )
 
     def _compute_component(self, f_LO, f_NLO, f_NLO_fact):
+        """
+            .. todo::
+                docs
+        """
         ls = []
         els = []
 
@@ -206,6 +220,10 @@ class EvaluatedStructureFunction(abc.ABC):
         return np.array(ls), np.array(els)
 
     def get_result(self):
+        """
+            .. todo::
+                docs
+        """
         self._compute()
 
         output = ESFResult(len(self._cqv))
