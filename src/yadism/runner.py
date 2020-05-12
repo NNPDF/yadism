@@ -1,108 +1,170 @@
 # -*- coding: utf-8 -*-
 """
 This file contains the main loop for the DIS calculations.
+
+.. todo::
+    docs
 """
-import copy
+from typing import Any
 
 import numpy as np
 
-from eko import t_float
-from eko.interpolation import (
-    get_Lagrange_basis_functions,
-    get_Lagrange_basis_functions_log,
-)
-from yadism.structure_functions.LO import f2_light_LO_singlet
+from eko.interpolation import InterpolatorDispatcher
+from eko.constants import Constants
+from eko.thresholds import Threshold
+from eko.alpha_s import StrongCoupling
+
+from .output import Output
+from .StructureFunction import StructureFunction as SF
+from .structure_functions import ESFmap
+from . import utils
 
 
-def get_configurations(observable, sq_charge_av):
-    def singlet(
-        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
-    ) -> t_float:
-        pref_f2_singlet = x * sq_charge_av
-        return pref_f2_singlet * f2_light_LO_singlet(
-            x, Q2, polynom_coeff, is_log_interpolation
-        )
-
-    def gluon(
-        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
-    ) -> t_float:
-        return None
-
-    def nonsinglet(
-        x: t_float, Q2: t_float, polynom_coeff: dict, is_log_interpolation: bool
-    ) -> t_float:
-        return None
-
-    return [("S", singlet), ("g", None), ("NS", None)]
-
-
-def run_dis(theory: dict, dis_observables: dict) -> dict:
+class Runner:
     """Wrapper to compute a process
 
     Parameters
     ----------
     theory : dict
         Dictionary with the theory parameters for the evolution.
-    dis_observables : dict
-        Description of parameter `dis_observables`.
+    observables : dict
+        Description of parameter `observables`.
 
-    Returns
-    -------
-    dict
-        dictionary with all computed processes
-
+    .. todo::
+        docs
     """
 
-    # GLOBAL
+    def __init__(self, theory: dict, observables: dict):
+        self._theory = theory
+        self._observables = observables
+        self._n_f: int = theory["NfFF"]
 
-    # reading theory parameters
-    n_f = theory["NfFF"]
-    if 6 <= n_f <= 2:
-        raise ValueError("Number of flavors 'NfFF' must be in the range [2,6].")
+        polynomial_degree: int = observables["polynomial_degree"]
+        self._interpolator = InterpolatorDispatcher(
+            observables["xgrid"],
+            polynomial_degree,
+            log=observables.get("is_log_interpolation", True),
+            mode_N=False,
+            numba_it=False,  # TODO: make it available for the user to choose
+        )
 
-    # compute charge factors
-    charges = np.array([-1 / 3, 2 / 3] * 3)
-    sq_charge_av = np.average(charges[:n_f] ** 2)
+        # ==========================
+        # create physics environment
+        # ==========================
+        self._constants = Constants()
 
-    # OBSERVABLES
+        FNS = theory["FNS"]
+        q2_ref = pow(theory["Q0"], 2)
+        if FNS != "FFNS":
+            qmc = theory["Qmc"]
+            qmb = theory["Qmb"]
+            qmt = theory["Qmt"]
+            threshold_list = pow(np.array([qmc, qmb, qmt]), 2)
+            nf = None
+        else:
+            nf = theory["NfFF"]
+            threshold_list = None
+        self._threshold = Threshold(
+            q2_ref=q2_ref, scheme=FNS, threshold_list=threshold_list, nf=nf
+        )
 
-    # compute input grid
-    is_log_interpolation = dis_observables.get("is_log_interpolation", True)
-    if is_log_interpolation:
-        get_fnc = get_Lagrange_basis_functions_log
-    else:
-        get_fnc = get_Lagrange_basis_functions
-    xgrid = dis_observables["xgrid"]
-    coeffs = get_fnc(xgrid, dis_observables["polynom_rank"])
+        # Now generate the operator alpha_s class
+        alpha_ref = theory["alphas"]
+        q2_alpha = pow(theory["Qref"], 2)
+        self._alpha_s = StrongCoupling(
+            self._constants, alpha_ref, q2_alpha, self._threshold
+        )
 
-    # setup parameters
+        self._xiF = theory["XIF"]
 
-    # prepare the output
-    output = {"xgrid": xgrid}
-    empty = np.zeros(len(coeffs))
-    output_vectors = dict(S=empty.copy(), NS=empty.copy(), g=empty.copy())
-    for obs in ["F2", "FL"]:
-        if obs in dis_observables:
-            output = {**output, obs: []}
-            for kinematics in dis_observables[obs]:
-                if 1 < kinematics["x"] < 0:
-                    raise ValueError("Kinematics 'x' must be in the range (0,1)")
-                if kinematics["Q2"] < 0:
-                    raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
-                output[obs].append({**kinematics, **copy.deepcopy(output_vectors)})
+        # ==============================
+        # initialize structure functions
+        # ==============================
+        eko_components = dict(
+            interpolator=self._interpolator,
+            constants=self._constants,
+            threshold=self._threshold,
+            alpha_s=self._alpha_s,
+        )
+        theory_stuffs = dict(
+            pto=theory["PTO"],
+            xiR=theory["XIR"],
+            xiF=self._xiF,
+            M2hq=None,
+            TMC=theory["TMC"],
+            M2target=theory["MP"]**2,
+        )
+        self._observable_instances = {}
+        for name in ESFmap.keys():
+            lab = utils.get_mass_label(name)
+            if lab is not None:
+                theory_stuffs["M2hq"] = theory[lab] ** 2
 
-    # iterate all polynomials
-    for c, coeff in enumerate(coeffs):
-        # iterate F2 configurations
-        for k, kinematics in enumerate(dis_observables.get("F2", [])):
-            # iterate contributions
-            for key, f in get_configurations("F2", sq_charge_av):
-                # skip zeros
-                if None == f:
-                    continue
-                output["F2"][k][key][c] = f(
-                    kinematics["x"], kinematics["Q2"], coeff, is_log_interpolation
-                )
+            # initialize an SF instance for each possible structure function
+            obj = SF(
+                name,
+                runner=self,
+                eko_components=eko_components,
+                theory_stuffs=theory_stuffs,
+            )
 
-    # TODO implement all other processes: FL, sigma, ?
-    return output
+            # read kinematics
+            obj.load(self._observables.get(name, []))
+            self._observable_instances[name] = obj
+
+        # prepare output
+        self._output = Output()
+        self._output["xgrid"] = self._interpolator.xgrid_raw
+        self._output["xiF"] = self._xiF
+
+    def get_output(self) -> Output:
+        """
+        .. todo::
+            docs
+        """
+        for name, obs in self._observable_instances.items():
+            if name in self._observables.keys():
+                self._output[name] = obs.get_output()
+
+        return self._output
+
+    def __call__(self, pdfs: Any) -> dict:
+        """
+        Returns
+        -------
+        dict
+            dictionary with all computed processes
+
+        .. todo::
+            docs
+        """
+
+        return self.get_output().apply_PDF(pdfs)
+
+    def apply(self, pdfs: Any) -> dict:
+        """
+        .. todo::
+            - implement
+            - docs
+        """
+        return self(pdfs)
+
+    def clear(self) -> None:
+        """
+        Or 'restart' or whatever
+
+        .. todo::
+            - implement
+            - docs
+        """
+        pass
+
+    def dump(self) -> None:
+        """
+        If any output available ('computed') dump the current output on file
+
+        .. todo::
+            - implement
+            - docs
+        """
+        return self.get_output().dump()

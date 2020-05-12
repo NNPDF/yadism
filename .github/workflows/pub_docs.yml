@@ -1,0 +1,55 @@
+name: docs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-ghpages:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: [3.7]
+      fail-fast: false
+
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Checkout submodules
+        uses: actions/checkout@v2
+        with:
+          repository: N3PDF/eko
+          token: ${{ secrets.ALE_DIS_PAT }}
+          path: eko
+      - name: Set up Python ${{ matrix.python-version }} 🐍
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package and build docs 📦
+        run: |
+          # install pip
+          python -m pip install --upgrade pip
+          # install eko
+          sudo apt-get install libgsl-dev # eko dependency
+          cd eko
+          pip install .
+          cd ..
+          # install yadism
+          pip install .
+      - name: Build 🔨
+        run: |
+          pip install -r doc_requirements.txt
+          cd docs/sphinx/
+          make html
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ALE_DIS_PAT }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: "docs/sphinx/build/html" # The folder the action should deploy.
+
