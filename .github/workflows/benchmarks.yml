@@ -126,7 +126,8 @@ jobs:
           python observables.py
           cd ../..
           # install pytest and extensions
-          pip install pytest pytest-cov
+          pip install -r test_requirements.txt
+          #pip install pytest pytest-cov
       #  run the test with 'pytest'
       - name: Test yadism
         shell: bash -l {0}
