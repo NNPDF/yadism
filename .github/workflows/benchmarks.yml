@@ -117,17 +117,17 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate yadism
-          # install needed lhapdf PDFSets
+          # download required data:
+          # - install needed lhapdf PDFSets
           #lhapdf update
           #lhapdf get CT14llo_NF3
+          # install packages needed for testing
+          pip install -r test_requirements.txt
           # generate input db
           cd benchmarks/data
           python theory.py
           python observables.py
           cd ../..
-          # install pytest and extensions
-          pip install -r test_requirements.txt
-          #pip install pytest pytest-cov
       #  run the test with 'pytest'
       - name: Test yadism
         shell: bash -l {0}
