@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 import yadism.structure_functions.TMC as TMC
-from yadism.structure_functions.EvaluatedStructureFunction import ESFResult
+from yadism.structure_functions.ESFResult import ESFResult
 
 from eko.interpolation import InterpolatorDispatcher
 
@@ -17,14 +17,16 @@ class MockESF:  # return init arguments
         self._g = g
 
     def get_result(self):
-        return ESFResult.from_dict({
-            "x": 0,
-            "Q2": 0,
-            "q": np.array(self._q),
-            "g": np.array(self._g),
-            "q_error": np.zeros(len(self._q)),
-            "g_error": np.zeros(len(self._g)),
-        })
+        return ESFResult.from_dict(
+            {
+                "x": 0,
+                "Q2": 0,
+                "q": np.array(self._q),
+                "g": np.array(self._g),
+                "q_error": np.zeros(len(self._q)),
+                "g_error": np.zeros(len(self._g)),
+            }
+        )
 
 
 class MockTMC(TMC.EvaluatedStructureFunctionTMC):
@@ -53,7 +55,7 @@ class TestTMC:
             def get_ESF(self, _name, kinematics):
                 # this means F2(x>.6) = 0
                 if kinematics["x"] >= 0.6:
-                    return MockESF([0., 0., 0.])
+                    return MockESF([0.0, 0.0, 0.0])
                 return MockESF([1e1, 1e2, 1e3])
 
         def is0(res):

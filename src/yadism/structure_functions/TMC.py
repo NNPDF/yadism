@@ -78,8 +78,6 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         self._xi = 2 * self._x / (1 + self._rho)
         # TMC are mostly determined by shifted kinematics
         self._shifted_kinematics = {"x": self._xi, "Q2": self._Q2}
-        # prepare output object
-        self._out = None
 
     @abc.abstractmethod
     def _get_result_APFEL(self):
@@ -129,19 +127,25 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         return out
 
     def get_output(self):
+        """
+            .. todo::
+                docs
+        """
         return self.get_result().get_raw()
 
     def _convolute_F2(self, ker):
         """
             Convolute F2 and ker.
 
+            .. todo::
+                docs
         """
         # check domain
         if self._xi < min(self._SF._interpolator.xgrid_raw):
             raise ValueError(
                 f"xi outside xgrid - cannot convolute starting from xi={self._xi}"
             )
-        # compute F2 matrix (j,k) (where k is wrapped inside get_output)
+        # compute F2 matrix (j,k) (where k is wrapped inside get_result)
         F2list = []
         for xj in self._SF._interpolator.xgrid_raw:
             # collect support points
@@ -219,7 +223,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         # collect F2
         F2out = self._SF.get_ESF(
             "F2" + self._flavour, self._shifted_kinematics
-        ).get_output()
+        ).get_result()
         h2out = self._h2()
 
         # join

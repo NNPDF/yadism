@@ -28,7 +28,7 @@ observables = [
 ]
 
 # keep in mind, that in TMC xi < x
-xgrid = np.unique(np.concatenate([np.logspace(-4, -1, 20), np.linspace(0.1, 0.99, 10)]))
+xgrid = np.unique(np.concatenate([np.logspace(-4, -1, 20), np.linspace(0.1, 1.0, 10)]))
 polynomial_degree = 4
 is_log_interpolation = True
 

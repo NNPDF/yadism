@@ -118,6 +118,7 @@ def load_apfel(theory, observables, pdf = "ToyLH"):
 
     apfel.SetPDFSet(pdf)
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
+    # set Target
 
     # apfel initialization for DIS
     apfel.InitializeAPFEL_DIS()
@@ -196,7 +197,7 @@ def get_apfel_data(theory, observables, pdf_name, apfel_cache):
                 # setting initial scale to muF (sqrt(Q2)*xiF) APFEL is going to:
                 # - take the PDF at the scale of muF (exactly as we are doing)
                 # - evolve from muF to muF because the final scale is the second
-                # argument times xiF (internally), so actually it's not evolving
+                #   argument times xiF (internally), so actually it's not evolving
                 apfel.ComputeStructureFunctionsAPFEL(
                     np.sqrt(Q2) * theory["XIF"], np.sqrt(Q2)
                 )

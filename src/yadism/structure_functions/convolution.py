@@ -173,12 +173,11 @@ class DistributionVec:
                     area_borders = np.exp(area_borders)
                 breakpoints = x / area_borders
                 z_min = x
-                z_max = min(max(breakpoints),1)
-        else: # provide default parameters
+                z_max = min(max(breakpoints), 1)
+        else:  # provide default parameters
             breakpoints = []
             z_min = x
             z_max = 1
-
 
         # providing integrands functions and addends
         # ------------------------------------------

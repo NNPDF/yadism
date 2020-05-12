@@ -81,7 +81,7 @@ def purge_theories():
     """Purge theories table."""
     ask = input("Purge theories table? [y/n]")
     if ask == "y":
-        idb.table("theories").purge()
+        idb.table("theories").truncate()
     else:
         print("nothing done.")
 
@@ -158,7 +158,7 @@ def purge_observables():
     """Purge observables table."""
     ask = input("Purge observables table? [y/n]")
     if ask == "y":
-        idb.table("observables").purge()
+        idb.table("observables").truncate()
     else:
         print("nothing done.")
 
@@ -233,7 +233,7 @@ def purge_logs():
     """Purge logs table."""
     ask = input("Purge logs table? [y/n]")
     if ask == "y":
-        odb.table("logs").purge()
+        odb.table("logs").truncate()
     else:
         print("nothing done.")
 

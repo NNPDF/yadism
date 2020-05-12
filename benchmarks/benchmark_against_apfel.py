@@ -23,7 +23,7 @@ class TestPlain:
         o_query = p._obs_query.F2light.exists()
 
         # p.run_all_tests(t_query, o_query, ["ToyLH"])
-        p.run_all_tests(t_query, o_query, ["uonly"])
+        p.run_all_tests(t_query, o_query, ["uonly", "ToyLH"])
 
     def test_NLO(self):
         """
@@ -73,7 +73,7 @@ class TestTMC:
         o_query = p._obs_query.F2light.exists()
 
         # p.run_all_tests(t_query, o_query, ["ToyLH"])
-        p.run_all_tests(t_query, o_query, ["uonly"])
+        p.run_all_tests(t_query, o_query, ["uonly", "ToyLH"])
 
     def test_NLO(self):
         p = DBInterface()

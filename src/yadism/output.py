@@ -7,8 +7,7 @@ Output
     docs
 """
 
-import numpy as np
-
+from .structure_functions.EvaluatedStructureFunction import ESFResult
 
 class Output(dict):
     """
@@ -29,7 +28,7 @@ class Output(dict):
                 continue
             ret[obs] = []
             for kin in self[obs]:
-                ret[obs].append(kin.apply_PDF(self["xgrid"], self["xiF"], pdfs))
+                ret[obs].append(ESFResult.from_dict(kin).apply_PDF(self["xgrid"], self["xiF"], pdfs))
         return ret
 
     def dump(self):
