@@ -43,7 +43,6 @@ class DistributionVec:
                 component_func = lambda x: 0
             else:
                 # if component is None:
-                # __import__("pdb").set_trace()
                 component_func = lambda x, component=component: float(component)
 
             setattr(self, f"_{name}", component_func)

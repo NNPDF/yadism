@@ -23,7 +23,7 @@ class TestPlain:
         o_query = p._obs_query.F2light.exists()
 
         # p.run_all_tests(t_query, o_query, ["ToyLH"])
-        p.run_all_tests(t_query, o_query, ["uonly", "ToyLH"])
+        p.run_all_tests(t_query, o_query, ["uonly-dense"])
 
     def test_NLO(self):
         """
@@ -68,19 +68,21 @@ class TestTMC:
         t_query = p._theory_query.PTO == 0
         t_query &= p._theory_query.XIR == 1.0
         t_query &= p._theory_query.XIF == 1.0
-        t_query &= p._theory_query.TMC != 0
+        #t_query &= p._theory_query.TMC != 0
+        t_query &= p._theory_query.TMC == 1
 
         o_query = p._obs_query.F2light.exists()
 
         # p.run_all_tests(t_query, o_query, ["ToyLH"])
-        p.run_all_tests(t_query, o_query, ["uonly", "ToyLH"])
+        p.run_all_tests(t_query, o_query, ["uonly-dense"])
 
     def test_NLO(self):
         p = DBInterface()
         t_query = p._theory_query.PTO == 1
         t_query &= p._theory_query.XIR == 1.0
         t_query &= p._theory_query.XIF == 1.0
-        t_query &= p._theory_query.TMC != 0
+        #t_query &= p._theory_query.TMC != 0
+        t_query &= p._theory_query.TMC == 1
 
         o_query = p._obs_query
 

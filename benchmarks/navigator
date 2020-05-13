@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-ipython --InteractiveShellApp.exec_lines="['from navigator import *', 'print(\"\",\"Welcome to yadism benchmark skript!\",\"call yelp() or h() for a brief overview.\",sep=\"\\\n\")']"
+ipython --InteractiveShellApp.exec_lines="['from navigator import *', 'print(\"\",\"Welcome to yadism benchmark skript!\",\"call yelp() or h() for a brief overview.\",sep=\"\\\n\")']"  --pylab

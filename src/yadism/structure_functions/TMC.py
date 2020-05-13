@@ -217,6 +217,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         return approx_prefactor * F2out
 
     def _get_result_APFEL(self):
+        #self._xi = self._xi + 1e-3*self._x
         # h2 comes with a seperate factor
         factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
 

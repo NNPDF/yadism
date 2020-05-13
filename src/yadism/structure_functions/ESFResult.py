@@ -127,6 +127,7 @@ class ESFResult:
         for z in xgrid:
             fq.append(get_charged_sum(z, self.Q2 * xiF ** 2) / z)
             fg.append(pdfs.xfxQ2(21, z, self.Q2 * xiF ** 2) / z)
+        #__import__("pdb").set_trace()
 
         # contract with coefficient functions
         result = self.x * (np.dot(fq, self.q) + 2 / 9 * np.dot(fg, self.g))
