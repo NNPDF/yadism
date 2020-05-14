@@ -18,6 +18,7 @@ corresponding one inside |APFEL|.
 
    yadism.rst
    dev.rst
+   interpolation.rst
 
    zzz-refs.rst
 
