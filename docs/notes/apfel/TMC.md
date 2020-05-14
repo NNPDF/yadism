@@ -51,3 +51,16 @@ polynomials:
 - `x` is the argument of the polynomial function
 
 For integrating `J_TMC` polynomials of degree 1 are used.
+
+#### About integration routine
+Note that `J_TMC` is computed through `dgauss` function of `cernlib` (see
+http://hep.fi.infn.it/cernlib.pdf pp.94-95), which signature is
+`dgauss(integrand,a,b,eps)`
+- `integrand` is the integrand
+- `a` and `b` are extremes of integration
+- `eps` is the required precision (relative is the integration `|I|>1`, otherwise
+    absolute)
+Since the integrand in APFEL are interpolants of degree 1 they are always
+smaller than 1, and with a domain smaller than `[0,1]`, so we have for sure
+`|I|<1`. Since APFEL is also requiring an `eps = 1e-5` the *absolute*
+integration error of APFEL it's probably of that order of magnitude.
