@@ -22,8 +22,8 @@ class TestPlain:
 
         o_query = p._obs_query.F2light.exists()
 
-        # p.run_all_tests(t_query, o_query, ["ToyLH"])
-        p.run_all_tests(t_query, o_query, ["uonly-dense"])
+        p.run_all_tests(t_query, o_query, ["ToyLH"])
+        # p.run_all_tests(t_query, o_query, ["uonly-dense"])
 
     def test_NLO(self):
         """
@@ -56,7 +56,7 @@ class TestScaleVariations:
         t_query = p._theory_query.PTO == 1
         t_query &= p._theory_query.TMC == 0
 
-        o_query = p._obs_query.F2light.exists()
+        o_query = p._obs_query.prDIS.exists()
 
         p.run_all_tests(t_query, o_query, ["CT14llo_NF3"])
 
@@ -68,23 +68,23 @@ class TestTMC:
         t_query = p._theory_query.PTO == 0
         t_query &= p._theory_query.XIR == 1.0
         t_query &= p._theory_query.XIF == 1.0
-        #t_query &= p._theory_query.TMC != 0
-        t_query &= p._theory_query.TMC == 1
+        t_query &= p._theory_query.TMC != 0
+        # t_query &= p._theory_query.TMC == 1
 
         o_query = p._obs_query.F2light.exists()
 
-        # p.run_all_tests(t_query, o_query, ["ToyLH"])
-        p.run_all_tests(t_query, o_query, ["uonly-dense"])
+        p.run_all_tests(t_query, o_query, ["ToyLH"])
+        # p.run_all_tests(t_query, o_query, ["uonly-dense"])
 
     def test_NLO(self):
         p = DBInterface()
         t_query = p._theory_query.PTO == 1
         t_query &= p._theory_query.XIR == 1.0
         t_query &= p._theory_query.XIF == 1.0
-        #t_query &= p._theory_query.TMC != 0
-        t_query &= p._theory_query.TMC == 1
+        t_query &= p._theory_query.TMC != 0
+        # t_query &= p._theory_query.TMC == 1
 
-        o_query = p._obs_query
+        o_query = p._obs_query.prDIS.exists()
 
         p.run_all_tests(t_query, o_query, ["ToyLH"])
 
@@ -108,9 +108,25 @@ class TestFull:
         p.run_all_tests(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
 
 
+class TestFL:
+    def test_NLO(self):
+        """
+        Test the full NLO order against APFEL's.
+        """
+        p = DBInterface()
+        t_query = p._theory_query.PTO == 1
+        t_query &= p._theory_query.XIR == 1.0
+        t_query &= p._theory_query.XIF == 1.0
+        t_query &= p._theory_query.TMC == 0
+
+        o_query = p._obs_query.FLlight.exists()
+
+        p.run_all_tests(t_query, o_query, ["uonly"])
+
+
 if __name__ == "__main__":
     plain = TestPlain()
-    plain.test_LO()
+    # plain.test_LO()
     # plain.test_NLO()
 
     # sv = TestScaleVariations()
@@ -119,7 +135,7 @@ if __name__ == "__main__":
 
     tmc = TestTMC()
     tmc.test_LO()
-    # tmc.test_NLO()
+    tmc.test_NLO()
 
     # f = TestFull()
     # f.test_LO()

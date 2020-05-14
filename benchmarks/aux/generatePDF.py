@@ -85,12 +85,15 @@ def uonly():
     description = "'up quark only PDFset, for debug purpose'"
     dump_info(name, description, pids)
 
+
 def uonly_dense():
     name = "uonly-dense"
     (here / "PDFs" / name).mkdir(exist_ok=True)
 
     # make PDF.dat
-    xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100),np.linspace(.8, 1.0, 100)]))
+    xgrid = np.unique(
+        np.concatenate([np.logspace(-9, 0, 100), np.linspace(0.8, 1.0, 100)])
+    )
     Q2grid = np.logspace(0.3, 5, 20)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = d = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
@@ -123,24 +126,25 @@ def gonly():
     description = "'gluon only PDFset, for debug purpose'"
     dump_info(name, description, pids)
 
-def check(pdfset,pid):
-    pdf = lhapdf.mkPDF(pdfset,0)
-    f = lambda x: x*(1.0-x)
-    xs = np.logspace(-8, -.2, 100)*(1. + .5*np.random.rand(100))
-    #xs = np.array([.1,.5,.8])
+
+def check(pdfset, pid):
+    pdf = lhapdf.mkPDF(pdfset, 0)
+    f = lambda x: x * (1.0 - x)
+    xs = np.logspace(-8, -0.2, 100) * (1.0 + 0.5 * np.random.rand(100))
+    # xs = np.array([.1,.5,.8])
     xs = np.unique(xs)
-    other = [pdf.xfxQ2(pid,x,10.0) for x in xs]
+    other = [pdf.xfxQ2(pid, x, 10.0) for x in xs]
     ref = f(xs)
-    #print(xs)
-    #print(other/ref)
+    # print(xs)
+    # print(other/ref)
     plt.title(pdfset)
-    plt.plot(xs, (other-ref)/ref)
+    plt.plot(xs, (other - ref) / ref)
     plt.show()
 
 
 if __name__ == "__main__":
-    #uonly_dense()
-    #gonly()
-    check("uonly",2)
-    check("uonly-dense",2)
-    check("gonly",21)
+    # uonly_dense()
+    # gonly()
+    check("uonly", 2)
+    check("uonly-dense", 2)
+    check("gonly", 21)

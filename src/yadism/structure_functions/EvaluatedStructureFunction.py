@@ -31,12 +31,11 @@ class EvaluatedStructureFunction(abc.ABC):
         self._SF = SF
         self._x = x
         self._Q2 = kinematics["Q2"]
-        self._cqv = []
-        self._e_cqv = []
-        self._cgv = []
-        self._e_cgv = []
-        self._a_s = self._SF._alpha_s.a_s(self._Q2 * self._SF._xiR ** 2)
+        self._res = ESFResult(len(self._SF._interpolator.xgrid),x=self._x,Q2=self._Q2)
+        # localize external parameters
+        self._a_s = 1.05*self._SF._alpha_s.a_s(self._Q2 * self._SF._xiR ** 2)
         self._n_f = self._SF._threshold.get_areas(self._Q2)[-1].nf
+        self._computed = False
 
     def _compute(self):
         """
@@ -44,16 +43,15 @@ class EvaluatedStructureFunction(abc.ABC):
                 docs
         """
         # something to do?
-        if len(self._cqv) == 0:
-            # yes
-            self._cqv, self._e_cqv = self._compute_component(
-                self.quark_0, self.quark_1, self.quark_1_fact
-            )
-        if len(self._cgv) == 0:
-            # yes
-            self._cgv, self._e_cgv = self._compute_component(
-                self.gluon_0, self.gluon_1, self.gluon_1_fact
-            )
+        if self._computed:
+            return
+        # run
+        self._res.q, self._res.q_error = self._compute_component(
+            self.quark_0, self.quark_1, self.quark_1_fact
+        )
+        self._res.g, self._res.g_error = self._compute_component(
+            self.gluon_0, self.gluon_1, self.gluon_1_fact
+        )
 
     def _compute_component(self, f_LO, f_NLO, f_NLO_fact):
         """
@@ -88,15 +86,7 @@ class EvaluatedStructureFunction(abc.ABC):
         """
         self._compute()
 
-        output = ESFResult(len(self._cqv))
-        output.x = self._x
-        output.Q2 = self._Q2
-        output.q = self._cqv
-        output.q_error = self._e_cqv
-        output.g = self._cgv
-        output.g_error = self._e_cgv
-
-        return output
+        return self._res
 
     def get_output(self):
         """
@@ -122,11 +112,6 @@ class EvaluatedStructureFunction(abc.ABC):
     @abc.abstractmethod
     def quark_1(self):
         """
-        regular
-        delta
-        1/(1-x)_+
-        log(x)/(1-x)_+
-
         .. todo::
             docs
         """

@@ -57,9 +57,10 @@ import warnings
 
 import numpy as np
 
+from eko.interpolation import InterpolatorDispatcher
+
 from .convolution import DistributionVec
 from .EvaluatedStructureFunction import ESFResult
-
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
     """
@@ -123,6 +124,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         # ensure the correct kinematics is used after the calculations
         out.x = self._x
+        out.Q2 = self._Q2
 
         return out
 
@@ -171,12 +173,12 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
     def _h2(self):
         r"""
-            Compute integral over F2.
+            Compute raw integral over F2.
 
             .. math::
                 h_2(\xi,Q^2) &= \int_\xi^1 du \frac{F_2^(u,Q^2)}{u^2}
                              &= \int_\xi^1 \frac{du}{u} \frac{1}{\xi} \frac{\xi}{u} F_2^(u,Q^2)
-                             &= (z \otimes F_2(z))(\xi)
+                             &= ((z\to z/\xi) \otimes F_2(z))(\xi)
 
             Returns
             -------
@@ -186,8 +188,29 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         """
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total 1/z^2 we need to convolute with z/xi
-        # as we get a 1/z by the measure and and an evaluation of 1/xi*xi/z
+        # as we get a 1/z by the measure and an evaluation of 1/xi*xi/z
         return self._convolute_F2(lambda z, xi=self._xi: 1 / xi * z)
+
+    def _g2(self):
+        r"""
+            Compute nested integral over F2.
+
+            .. math::
+                g_2(\xi,Q^2) &= \int_\xi^1 du (u-\xi) \frac{F_2^(u,Q^2)}{u^2}
+                             &= \int_\xi^1 \frac{du}{u} \left(1 - \frac{\xi}{u}\right) F_2^(u,Q^2)
+                             &= ((z\to 1-z) \otimes F_2(z))(\xi)
+
+            Returns
+            -------
+                g2 : dict
+                    ESF output for the integral
+
+        """
+        # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
+        # so to achieve a total (z-xi)/z^2 we need to convolute with 1-z
+        # as we get a 1/z by the measure and an evaluation of 1-xi/z
+        return self._convolute_F2(lambda z: 1 - z)
+
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
@@ -200,6 +223,8 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         super(ESFTMC_F2, self).__init__(SF, kinematics)
         # shifted prefactor is common
         self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
+        # h2 comes with a seperate factor
+        self._factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
 
     def _get_result_approx(self):
         # fmt: off
@@ -217,29 +242,111 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         return approx_prefactor * F2out
 
     def _get_result_APFEL(self):
-        #self._xi = self._xi + 1e-3*self._x
-        # h2 comes with a seperate factor
-        factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
-
         # collect F2
         F2out = self._SF.get_ESF(
             "F2" + self._flavour, self._shifted_kinematics
         ).get_result()
+        # compute integral
         h2out = self._h2()
 
         # join
-        return self._factor_shifted * F2out + factor_h2 * h2out
+        return self._factor_shifted * F2out + self._factor_h2 * h2out
 
     def _get_result_exact(self):
-        raise NotImplementedError("TODO")
+        factor_g2 = 12.0 * self._mu**2 * self._x**4 / self._rho**5
+        # collect F2
+        F2out = self._SF.get_ESF(
+            "F2" + self._flavour, self._shifted_kinematics
+        ).get_result()
+        # compute raw integral
+        h2out = self._h2()
+        # compute nested integral
+        g2out = self._g2()
+
+        # join
+        return self._factor_shifted * F2out + self._factor_h2 * h2out + factor_g2 * g2out
+
+    ### ----- APFEL crap
+    def _h2_APFEL(self):
+        # check domain
+        if self._xi < min(self._SF._interpolator.xgrid_raw):
+            raise ValueError(
+                f"xi outside xgrid - cannot convolute starting from xi={self._xi}"
+            )
+        # compute F2 matrix (j,k) (where k is wrapped inside get_result)
+        F2list = []
+        for xj in self._SF._interpolator.xgrid_raw:
+            # collect support points
+            F2list.append(
+                self._SF.get_ESF(
+                    "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
+                ).get_result() / xj**2
+            )
+
+        # compute interpolated h2 integral (j)
+        h2list = []
+        for bf in self._SF._interpolator:
+            d = DistributionVec(lambda x: 1)
+            h2list.append(d.convolution(self._xi, bf))
+
+        # init result (k)
+        res = ESFResult(len(self._SF._interpolator.xgrid_raw), self._xi, self._Q2)
+        # multiply along j
+        for h2, f2elem in zip(h2list, F2list):
+            res += h2 * f2elem
+
+        return res
+
+    def _get_result_APFEL_strict(self):
+        # h2 comes with a seperate factor
+        factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
+
+        # collect F2
+        #F2out = self._SF.get_ESF(
+        #    "F2" + self._flavour, self._shifted_kinematics
+        #).get_result()
+
+        # interpolate F2(xi)
+        F2list = []
+        for xj in self._SF._interpolator.xgrid_raw:
+            # collect support points
+            F2list.append(
+                self._SF.get_ESF(
+                    "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
+                ).get_result()
+            )
+
+        # compute integral
+        smallInterp = InterpolatorDispatcher(self._SF._interpolator.xgrid_raw,1,True,False,False)
+        h2list = []
+        for xj in self._SF._interpolator.xgrid_raw:
+            h2elem = ESFResult(len(F2list))
+            for bk,F2k in zip(smallInterp,F2list):
+                xk = self._SF._interpolator.xgrid_raw[bk.poly_number]
+                d = DistributionVec(lambda z,xj=xj: xj/z)
+                d.eps_integration_abs = 1e-5
+                h2elem += d.convolution(xj, bk) * F2k / xk**2
+            h2list.append(h2elem)
+
+        res = ESFResult(len(F2list))
+        for bj, F2out, h2out in zip(self._SF._interpolator,F2list,h2list):
+            res += bj(self._xi)*(self._factor_shifted * F2out + factor_h2 * h2out)
+        # join
+        return res
+    ### ----- /APFEL crap
 
 
 class ESFTMC_FL(EvaluatedStructureFunctionTMC):
-    def _get_result_approx(self):
-        approx_prefactor_FL = self._x ** 2 / (self._xi ** 2 * self._rho)
+    def __init__(self, SF, kinematics):
+        super(ESFTMC_FL, self).__init__(SF, kinematics)
+        # shifted prefactor is common
+        self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho)
+        # h2 comes with a seperate factor
+        self._factor_h2 = 4.0 * self._mu * self._x ** 3 / (self._rho ** 2)
 
+    def _get_result_approx(self):
         # fmt: off
-        approx_prefactor_F2 = approx_prefactor_FL * (
+        approx_prefactor_F2 = self._factor_shifted * (
             (4 * self._mu * self._x * self._xi) / self._rho * (1 - self._xi)
             + 8 * (self._mu * self._x * self._xi / self._rho) ** 2
                 * (-np.log(self._xi) - 1 + self._xi)
@@ -255,13 +362,32 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         ).get_result()
 
         # join
-        return approx_prefactor_FL * FLout + approx_prefactor_F2 * F2out
+        return self._factor_shifted * FLout + approx_prefactor_F2 * F2out
 
     def _get_result_APFEL(self):
-        raise NotImplementedError("TODO")
+        # collect F2
+        FLout = self._SF.get_ESF(
+            "FL" + self._flavour, self._shifted_kinematics
+        ).get_result()
+        # compute integral
+        h2out = self._h2()
+
+        # join
+        return self._factor_shifted * FLout + self._factor_h2 * h2out
 
     def _get_result_exact(self):
-        raise NotImplementedError("TODO")
+        factor_g2 = 8.0 * self._mu**2 * self._x**4 / self._rho**3
+        # collect F2
+        FLout = self._SF.get_ESF(
+            "FL" + self._flavour, self._shifted_kinematics
+        ).get_result()
+        # compute raw integral
+        h2out = self._h2()
+        # compute nested integral
+        g2out = self._g2()
+
+        # join
+        return self._factor_shifted * FLout + self._factor_h2 * h2out + factor_g2 * g2out
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL}

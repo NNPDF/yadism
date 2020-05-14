@@ -6,7 +6,7 @@ import datetime
 import numpy as np
 import pandas as pd
 import tinydb
-import pytest
+#import pytest
 
 import lhapdf
 
@@ -14,8 +14,11 @@ from yadism.runner import Runner
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
-import toyLH  # pylint:disable=import-error
-from apfel_utils import get_apfel_data, str_datetime  # pylint:disable=import-error
+import toyLH  # pylint:disable=import-error,wrong-import-position
+from apfel_utils import ( # pylint:disable=import-error,wrong-import-position
+    get_apfel_data,
+    str_datetime,
+)
 
 
 # @pytest.fixture()
@@ -92,7 +95,10 @@ class DBInterface:
                     # assert pytest.approx(ref, rel=0.01, abs=max(err, 1e-6)) == fx
                     # assert pytest.approx(ref, rel=0.01, abs=err) == fx
                     if ref == 0.0:
-                        comparison = np.nan
+                        if fx == 0.0:
+                            comparison = 0.0
+                        else:
+                            comparison = np.nan
                     else:
                         comparison = (fx / ref - 1.0) * 100
                     kin["rel_err[%]"] = comparison

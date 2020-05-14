@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from pprint import pprint
 import pathlib
-from datetime import datetime
 import sys
 
 import numpy as np
@@ -212,8 +211,70 @@ def get_log(doc_id):
         ----------
             doc_id : int
                 document identifier
+        
+        Returns
+        -------
+            log : dict
+                document
     """
     return odb.table("logs").get(doc_id=doc_id)
+
+
+class DFlist(list):
+    """
+    TODO: translate in docs:
+        output the table: since there are many table produced by this
+        function output instead a suitable object
+        the object should be iterable so you can explore all the values,
+        but it has a __str__ (or __repr__?) method that will automatically
+        loop and print if its dropped directly in the interpreter
+    """
+
+    def __init__(self):
+        self.msgs = []
+
+    def print(self, *msgs, sep=" ", end="\n"):
+        if len(msgs) > 0:
+            self.msgs.append(msgs[0])
+
+            for msg in msgs[1:]:
+                self.msgs.append(sep)
+                self.msgs.append(msg)
+        self.msgs.append(end)
+
+    def register(self, table):
+        self.print(table)
+        self.append(table)
+
+    def __repr__(self):
+        return "".join([str(x) for x in self.msgs])
+
+
+def get_log_DataFrames(doc_id):
+    """
+        Load all structure functions in log as DataFrame
+
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
+
+        Returns
+        -------
+            log : list(pd.DataFrame)
+                DataFrames
+    """
+    l = get_log(doc_id)
+    dfs = DFlist()
+    for k in l:
+        if k[0] != "F":
+            continue
+        dfs.print(f"{k} with theory={l['_theory_doc_id']} using {l['_pdf']}")
+        dfs.register(pd.DataFrame(l[k]))
+    return dfs
+
+
+dfl = get_log_DataFrames
 
 
 def pprint_log(doc_id):
@@ -328,6 +389,9 @@ def p(table, doc_id=None):
             print(f"Unkown table: {table}")
 
 
+pp = p
+
+
 def g(table, doc_id=None):
     """
         Getter wrapper.
@@ -382,36 +446,7 @@ def subtract_tables(id1, id2):
 
     """
 
-    class DiffOut(list):
-        """
-        TODO: translate in docs:
-            output the table: since there are many table produced by this
-            function output instead a suitable object
-            the object should be iterable so you can explore all the values,
-            but it has a __str__ (or __repr__?) method that will automatically
-            loop and print if its dropped directly in the interpreter
-        """
-
-        def __init__(self):
-            self.msgs = []
-
-        def print(self, *msgs, sep=" ", end="\n"):
-            if len(msgs) > 0:
-                self.msgs.append(msgs[0])
-
-                for msg in msgs[1:]:
-                    self.msgs.append(sep)
-                    self.msgs.append(msg)
-            self.msgs.append(end)
-
-        def register(self, table):
-            self.print(table)
-            self.append(table)
-
-        def __repr__(self):
-            return "".join([str(x) for x in self.msgs])
-
-    diffout = DiffOut()
+    diffout = DFlist()
 
     # print head
     msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
@@ -450,6 +485,8 @@ def subtract_tables(id1, id2):
         # compute relative error
         def rel_err(row):
             if row["APFEL"] == 0.0:
+                if row["yadism"] == 0.0:
+                    return 0.0
                 return np.nan
             else:
                 return (row["yadism"] / row["APFEL"] - 1.0) * 100
@@ -462,7 +499,7 @@ def subtract_tables(id1, id2):
         diffout.print(obs, "-" * len(obs), sep="\n")
         diffout.register(table2)
 
-        return diffout
+    return diffout
 
 
 diff = subtract_tables

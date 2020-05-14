@@ -18,9 +18,6 @@ class ESF_F2light(ESF):
         docs
     """
 
-    def __init__(self, SF, kinematics):
-        super(ESF_F2light, self).__init__(SF, kinematics)
-
     def quark_0(self) -> float:
         """Computes the singlet part of the leading order F2 structure function.
 
@@ -67,13 +64,13 @@ class ESF_F2light(ESF):
             )
             # fmt: on
 
-        def cq_delta(z):
+        def cq_delta(_z):
             return -CF * (9 + 4 * zeta_2)
 
-        def cq_omx(z):
+        def cq_omx(_z):
             return -3 * CF
 
-        def cq_logomx(z):
+        def cq_logomx(_z):
             return 4 * CF
 
         return cq_reg, cq_delta, cq_omx, cq_logomx
