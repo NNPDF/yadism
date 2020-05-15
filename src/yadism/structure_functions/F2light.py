@@ -52,7 +52,7 @@ class ESF_F2light(ESF):
         .. todo::
             docs
         """
-        CF = self._SF._constants.CF
+        CF = self._SF.constants.CF
         zeta_2 = np.pi ** 2 / 6
 
         def cq_reg(z):
@@ -82,13 +82,13 @@ class ESF_F2light(ESF):
         """
 
         def cq_reg(z):
-            return split.pqq_reg(z, self._SF._constants)
+            return split.pqq_reg(z, self._SF.constants)
 
         def cq_delta(z):
-            return split.pqq_delta(z, self._SF._constants)
+            return split.pqq_delta(z, self._SF.constants)
 
         def cq_pd(z):
-            return split.pqq_pd(z, self._SF._constants)
+            return split.pqq_pd(z, self._SF.constants)
 
         return cq_reg, cq_delta, cq_pd
 
@@ -104,7 +104,7 @@ class ESF_F2light(ESF):
             in which the gluon can go
         """
 
-        TR = self._SF._constants.TF
+        TR = self._SF.constants.TF
 
         def cg(z):
             return (
@@ -112,7 +112,7 @@ class ESF_F2light(ESF):
                 * 2
                 * self._n_f
                 * (
-                    split.pqg(z, self._SF._constants) * (np.log((1 - z) / z) - 4)
+                    split.pqg(z, self._SF.constants) * (np.log((1 - z) / z) - 4)
                     + 3 * TR
                 )
             )
@@ -126,6 +126,6 @@ class ESF_F2light(ESF):
         """
 
         def cg(z):
-            return 2 * self._n_f * split.pqg(z, self._SF._constants)
+            return 2 * self._n_f * split.pqg(z, self._SF.constants)
 
         return cg

@@ -27,7 +27,7 @@ class ESF_F2heavy(ESFH):
         .. todo::
             docs
         """
-        CF = self._SF._constants.CF
+        CF = self._SF.constants.CF
 
         def cg(z):
             if self.is_below_threshold(z):

@@ -25,16 +25,16 @@ class EvaluatedStructureFunction(abc.ABC):
         if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
         # check domain
-        if x < min(SF._interpolator.xgrid_raw):
+        if x < min(SF.interpolator.xgrid_raw):
             raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
 
         self._SF = SF
         self._x = x
         self._Q2 = kinematics["Q2"]
-        self._res = ESFResult(len(self._SF._interpolator.xgrid_raw),x=self._x,Q2=self._Q2)
+        self._res = ESFResult(len(self._SF.interpolator.xgrid_raw),x=self._x,Q2=self._Q2)
         # localize external parameters
-        self._a_s = 1.05*self._SF._alpha_s.a_s(self._Q2 * self._SF._xiR ** 2)
-        self._n_f = self._SF._threshold.get_areas(self._Q2)[-1].nf
+        self._a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
+        self._n_f = self._SF.threshold.get_areas(self._Q2)[-1].nf
         self._computed = False
 
     def _compute(self):
@@ -63,16 +63,16 @@ class EvaluatedStructureFunction(abc.ABC):
 
         # combine orders
         d_vec = conv.DistributionVec(f_LO())
-        if self._SF._pto > 0:
+        if self._SF.pto > 0:
             d_vec += self._a_s * (
                 conv.DistributionVec(f_NLO())
                 + 2  # TODO: to be understood
-                * (-np.log(self._SF._xiF ** 2))
+                * (-np.log(self._SF.xiF ** 2))
                 * conv.DistributionVec(f_NLO_fact())
             )
 
         # iterate all polynomials
-        for polynomial_f in self._SF._interpolator:
+        for polynomial_f in self._SF.interpolator:
             cv, ecv = d_vec.convolution(self._x, polynomial_f)
             ls.append(cv)
             els.append(ecv)
@@ -160,13 +160,13 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         # TODO: why is it not the pdf but xpdf used? check why Laenen is using xpdf
         # in the first place
         self._charge_em = charge_em
-        self._FHprefactor = self._Q2 / (np.pi * self._SF._M2hq) * 9 / 2  # / self._x
+        self._FHprefactor = self._Q2 / (np.pi * self._SF.M2hq) * 9 / 2  # / self._x
 
         # common variables
         self._s = self._Q2 * (1 - self._x) / self._x
         self._shat = lambda z: self._Q2 * (1 - z) / z
 
-        self._rho_q = -4 * self._SF._M2hq / self._Q2
+        self._rho_q = -4 * self._SF.M2hq / self._Q2
         self._rho = lambda z: -self._rho_q * z / (1 - z)
         self._rho_p = lambda z: -self._rho_q * z
 
@@ -179,7 +179,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         .. todo::
             use threshold on shat or using FH's zmax?
         """
-        return self._shat(z) <= 4 * self._SF._M2hq
+        return self._shat(z) <= 4 * self._SF.M2hq
 
     def quark_0(self) -> float:
         return 0
@@ -199,7 +199,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         pass
 
     def gluon_1(self):
-        if self._s <= 4 * self._SF._M2hq:
+        if self._s <= 4 * self._SF.M2hq:
             return 0
         else:
             return self._gluon_1()

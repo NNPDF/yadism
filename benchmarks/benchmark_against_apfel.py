@@ -126,16 +126,16 @@ class TestFL:
 
 if __name__ == "__main__":
     plain = TestPlain()
-    # plain.test_LO()
-    # plain.test_NLO()
+    plain.test_LO()
+    plain.test_NLO()
 
     # sv = TestScaleVariations()
     # sv.test_LO()
     # sv.test_NLO()
 
     tmc = TestTMC()
-    tmc.test_LO()
-    tmc.test_NLO()
+    #tmc.test_LO()
+    #tmc.test_NLO()
 
     # f = TestFull()
     # f.test_LO()

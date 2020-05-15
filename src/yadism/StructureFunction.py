@@ -33,17 +33,17 @@ class StructureFunction:
         self.__ESFs = []
         self.__ESFcache = {}
         # external managers
-        self._interpolator = eko_components["interpolator"]
-        self._constants = eko_components["constants"]
-        self._threshold = eko_components["threshold"]
-        self._alpha_s = eko_components["alpha_s"]
+        self.interpolator = eko_components["interpolator"]
+        self.constants = eko_components["constants"]
+        self.threshold = eko_components["threshold"]
+        self.strong_coupling = eko_components["alpha_s"]
         # parameters
-        self._pto = theory_stuffs["pto"]
-        self._xiR = theory_stuffs["xiR"]
-        self._xiF = theory_stuffs["xiF"]
-        self._M2hq = theory_stuffs["M2hq"]
-        self._TMC = theory_stuffs["TMC"]
-        self._M2target = theory_stuffs["M2target"]
+        self.pto = theory_stuffs["pto"]
+        self.xiR = theory_stuffs["xiR"]
+        self.xiF = theory_stuffs["xiF"]
+        self.M2hq = theory_stuffs["M2hq"]
+        self.TMC = theory_stuffs["TMC"]
+        self.M2target = theory_stuffs["M2target"]
 
     def load(self, kinematic_configs):
         """
