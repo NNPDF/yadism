@@ -49,8 +49,8 @@ class TestTMC:
 
         class MockSF:
             _name = "F2light"
-            _M2target = 1.0
-            _interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            M2target = 1.0
+            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
             def get_ESF(self, _name, kinematics):
                 # this means F2(x>.6) = 0
@@ -86,8 +86,8 @@ class TestTMC:
 
         class MockSF:
             _name = "F2light"
-            _M2target = 1.0
-            _interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            M2target = 1.0
+            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
             def get_ESF(self, _name, kinematics):
                 # this means F2 = pdf
@@ -148,8 +148,8 @@ class TestTMC:
 
         class MockSF:
             _name = "F2light"
-            _M2target = 1.0
-            _interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            M2target = 1.0
+            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
             def get_ESF(self, _name, kinematics):
                 pass

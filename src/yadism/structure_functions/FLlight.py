@@ -28,7 +28,7 @@ class ESF_FLlight(ESF):
         .. todo::
             docs
         """
-        CF = self._SF._constants.CF
+        CF = self._SF.constants.CF
 
         def cq_reg(z):
             return CF * 4.0 * z

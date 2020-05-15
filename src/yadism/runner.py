@@ -40,7 +40,7 @@ class Runner:
         self._n_f: int = theory["NfFF"]
 
         polynomial_degree: int = observables["polynomial_degree"]
-        self._interpolator = InterpolatorDispatcher(
+        self.interpolator = InterpolatorDispatcher(
             observables["xgrid"],
             polynomial_degree,
             log=observables.get("is_log_interpolation", True),
@@ -51,7 +51,7 @@ class Runner:
         # ==========================
         # create physics environment
         # ==========================
-        self._constants = Constants()
+        self.constants = Constants()
 
         FNS = theory["FNS"]
         q2_ref = pow(theory["Q0"], 2)
@@ -64,32 +64,32 @@ class Runner:
         else:
             nf = theory["NfFF"]
             threshold_list = None
-        self._threshold = Threshold(
+        self.threshold = Threshold(
             q2_ref=q2_ref, scheme=FNS, threshold_list=threshold_list, nf=nf
         )
 
         # Now generate the operator alpha_s class
         alpha_ref = theory["alphas"]
         q2_alpha = pow(theory["Qref"], 2)
-        self._alpha_s = StrongCoupling(
-            self._constants, alpha_ref, q2_alpha, self._threshold
+        self.strong_coupling = StrongCoupling(
+            self.constants, alpha_ref, q2_alpha, self.threshold
         )
 
-        self._xiF = theory["XIF"]
+        self.xiF = theory["XIF"]
 
         # ==============================
         # initialize structure functions
         # ==============================
         eko_components = dict(
-            interpolator=self._interpolator,
-            constants=self._constants,
-            threshold=self._threshold,
-            alpha_s=self._alpha_s,
+            interpolator=self.interpolator,
+            constants=self.constants,
+            threshold=self.threshold,
+            alpha_s=self.strong_coupling,
         )
         theory_stuffs = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
-            xiF=self._xiF,
+            xiF=self.xiF,
             M2hq=None,
             TMC=theory["TMC"],
             M2target=theory["MP"]**2,
@@ -114,8 +114,8 @@ class Runner:
 
         # prepare output
         self._output = Output()
-        self._output["xgrid"] = self._interpolator.xgrid_raw
-        self._output["xiF"] = self._xiF
+        self._output["xgrid"] = self.interpolator.xgrid_raw
+        self._output["xiF"] = self.xiF
 
     def get_output(self) -> Output:
         """
