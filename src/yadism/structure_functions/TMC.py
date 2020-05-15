@@ -120,7 +120,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             warnings.warn("meant only for internal use")
             raise NotImplementedError("approx. APFEL not implemented yet")
         else:
-            raise ValueError(f"Unkown TMC value {self._SF._TMC}")
+            raise ValueError(f"Unkown TMC value {self._SF.TMC}")
 
         # ensure the correct kinematics is used after the calculations
         out.x = self._x
