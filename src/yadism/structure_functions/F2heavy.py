@@ -9,7 +9,6 @@ This file contains the implementation of the DIS structure functions at LO.
 import numpy as np
 
 from .EvaluatedStructureFunction import EvaluatedStructureFunctionHeavy as ESFH
-from . import splitting_functions as split
 
 
 class ESF_F2heavy(ESFH):
@@ -17,9 +16,6 @@ class ESF_F2heavy(ESFH):
     .. todo::
         docs
     """
-
-    def __init__(self, SF, kinematics, charge_em):
-        super(ESF_F2heavy, self).__init__(SF, kinematics, charge_em)
 
     def _gluon_1(self):
         """

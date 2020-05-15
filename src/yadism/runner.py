@@ -94,7 +94,7 @@ class Runner:
             TMC=theory["TMC"],
             M2target=theory["MP"]**2,
         )
-        self._observable_instances = {}
+        self.observable_instances = {}
         for name in ESFmap.keys():
             lab = utils.get_mass_label(name)
             if lab is not None:
@@ -110,7 +110,7 @@ class Runner:
 
             # read kinematics
             obj.load(self._observables.get(name, []))
-            self._observable_instances[name] = obj
+            self.observable_instances[name] = obj
 
         # prepare output
         self._output = Output()
@@ -122,7 +122,7 @@ class Runner:
         .. todo::
             docs
         """
-        for name, obs in self._observable_instances.items():
+        for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
                 self._output[name] = obs.get_output()
 
@@ -157,7 +157,6 @@ class Runner:
             - implement
             - docs
         """
-        pass
 
     def dump(self) -> None:
         """

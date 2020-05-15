@@ -28,8 +28,8 @@ class DistributionVec:
 
     def __init__(self, regular, delta=None, omx=None, logomx=None):
         try:
-            comp_list = [x for x in regular]
-            for i in range(len(self.__names) - len(regular)):
+            comp_list = [x for x in regular] # pylint: disable=unnecessary-comprehension
+            for _i in range(len(self.__names) - len(regular)):
                 comp_list.append(None)
         except TypeError:
             comp_list = [regular, delta, omx, logomx]
