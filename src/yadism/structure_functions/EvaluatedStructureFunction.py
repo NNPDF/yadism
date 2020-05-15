@@ -31,7 +31,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._SF = SF
         self._x = x
         self._Q2 = kinematics["Q2"]
-        self._res = ESFResult(len(self._SF._interpolator.xgrid),x=self._x,Q2=self._Q2)
+        self._res = ESFResult(len(self._SF._interpolator.xgrid_raw),x=self._x,Q2=self._Q2)
         # localize external parameters
         self._a_s = 1.05*self._SF._alpha_s.a_s(self._Q2 * self._SF._xiR ** 2)
         self._n_f = self._SF._threshold.get_areas(self._Q2)[-1].nf
