@@ -147,28 +147,19 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             raise ValueError(
                 f"xi outside xgrid - cannot convolute starting from xi={self._xi}"
             )
-        F2list = []
-        h2list = []
+        # iterate grid
+        res = ESFResult(len(self._SF._interpolator.xgrid_raw), self._xi, self._Q2)
         for xj, pj in  zip(self._SF._interpolator.xgrid_raw, self._SF._interpolator):
             # basis function does not contribute?
             if pj.is_below_x(self._xi):
                 continue
             # compute F2 matrix (j,k) (where k is wrapped inside get_result)
-            # collect support points
-            F2list.append(
-                self._SF.get_ESF(
-                    "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
-                ).get_result()
-            )
+            F2j = self._SF.get_ESF("F2" + self._flavour, {"Q2": self._Q2, "x": xj}).get_result()
             # compute interpolated h2 integral (j)
             d = DistributionVec(ker)
-            h2list.append(d.convolution(self._xi, pj))
-
-        # init result (k)
-        res = ESFResult(len(self._SF._interpolator.xgrid_raw), self._xi, self._Q2)
-        # multiply along j
-        for h2, f2elem in zip(h2list, F2list):
-            res += h2 * f2elem
+            h2j = d.convolution(self._xi, pj)
+            # sum along j
+            res += h2j * F2j
 
         return res
 
