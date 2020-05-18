@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 import yadism.structure_functions.convolution as conv
+from eko.interpolation import InterpolatorDispatcher
 
 
 @pytest.mark.quick_check
@@ -167,11 +168,11 @@ class TestSpecial:
         d_vec4 = conv.DistributionVec(2.756, 1233, 21.322, 29.03)
 
         for x in [0.2, 0.7]:
-            assert d_vec0.compare(d_vec0, x) == True
-            assert d_vec0.compare(copy.deepcopy(d_vec0), x) == True
+            assert d_vec0.compare(d_vec0, x)
+            assert d_vec0.compare(copy.deepcopy(d_vec0), x)
 
             for d_other in [d_vec1, d_vec2, d_vec3, d_vec4]:
-                assert d_vec0.compare(d_other, x) == False
+                assert not d_vec0.compare(d_other, x)
 
 
 @pytest.mark.quick_check
@@ -260,8 +261,6 @@ class TestConvnd:
 
     def test_symmetric_conv(self):
         x = 0.4
-        xg = np.arange(0.0, 1.0, 0.0001)
-        xx = xg[np.searchsorted(xg, x)]
 
         kmas = [
             [lambda x: 1, lambda x: 0, lambda x: 0, lambda x: 0],
@@ -274,3 +273,63 @@ class TestConvnd:
             results.append(conv.DistributionVec(kma).convolution(x, f)[0])
 
         assert pytest.approx(results[0], 1 / 1000.0) == results[1]
+
+    @pytest.mark.eko
+    def test_basis_function_void(self):
+        xg = np.linspace(0.2, 1.0, 5)  # 0.2, 0.4, 0.6, 0.8, 1.0
+        i = InterpolatorDispatcher(xg, 1, False, False, False)
+        bf1 = i[0]  # ranges from 0.2 to 0.4
+        # they should give the same result
+        for x in [0.4, 0.5, 0.6]:  # quad should never trigger
+            d = conv.DistributionVec(lambda z: z)
+            res = d.convolution(x, bf1)
+            assert res[0] == 0.0
+            assert res[1] == 0.0
+
+    @pytest.mark.eko
+    def test_basis_function_shrink_domain_lin(self):
+        xg = np.linspace(0.2, 1.0, 5)  # 0.2, 0.4, 0.6, 0.8, 1.0
+        i = InterpolatorDispatcher(xg, 1, False, False, False)
+        # fake eko and test it does the job
+        def bf1(x):
+            if x > 0.4:
+                return 0.0
+            return (0.4 - x) / 0.2
+
+        true_bf1 = i[0]
+        for y in np.linspace(0.2, 0.5, 100):
+            assert pytest.approx(bf1(y), 1 / 1000.0) == true_bf1(y)
+        # they should give the same result
+        for x in [0.2, 0.3, 0.4, 0.5]:
+            for d in [
+                conv.DistributionVec(lambda z: z),
+                conv.DistributionVec(0, 1),
+                conv.DistributionVec(0, 0, 1),
+            ]:
+                res = d.convolution(x, bf1)
+                true_res = d.convolution(x, true_bf1)
+                assert pytest.approx(res[0], 1 / 1000.0) == true_res[0]
+
+    @pytest.mark.eko
+    def test_basis_function_shrink_domain_log(self):
+        xg = np.array([np.exp(-2), np.exp(-1), 1.0])
+        i = InterpolatorDispatcher(xg, 1, True, False, False)
+        # fake eko and test it does the job
+        def bf1(x):
+            if np.log(x) > -1:
+                return 0.0
+            return -1 - np.log(x)
+
+        true_bf1 = i[0]
+        for y in np.linspace(np.exp(-2), 1.0, 100):
+            assert pytest.approx(bf1(y), 1 / 1000.0) == true_bf1(y)
+        # they should give the same result
+        for x in np.exp([-2.0, -1.5, -1.0, -0.5, 0.0]):
+            for d in [
+                conv.DistributionVec(lambda z: z),
+                conv.DistributionVec(0, 1),
+                conv.DistributionVec(0, 0, 1),
+            ]:
+                res = d.convolution(x, bf1)
+                true_res = d.convolution(x, true_bf1)
+                assert pytest.approx(res[0], 1 / 1000.0) == true_res[0]

@@ -1,8 +1,10 @@
 import pathlib
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from jinja2 import Environment, FileSystemLoader
+import lhapdf
 
 # ==========
 # globals
@@ -70,8 +72,7 @@ def uonly():
     (here / "PDFs" / name).mkdir(exist_ok=True)
 
     # make PDF.dat
-
-    xgrid = np.logspace(-9, 0, 100)
+    xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
     Q2grid = np.logspace(0.3, 5, 20)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = d = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
@@ -82,6 +83,27 @@ def uonly():
 
     # make PDF.info
     description = "'up quark only PDFset, for debug purpose'"
+    dump_info(name, description, pids)
+
+
+def uonly_dense():
+    name = "uonly-dense"
+    (here / "PDFs" / name).mkdir(exist_ok=True)
+
+    # make PDF.dat
+    xgrid = np.unique(
+        np.concatenate([np.logspace(-9, 0, 100), np.linspace(0.8, 1.0, 100)])
+    )
+    Q2grid = np.logspace(0.3, 5, 20)
+    pids = [-3, -2, -1, 1, 2, 3, 21]
+    antis = antiu = antid = d = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
+    u = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
+    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
+    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
+    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
+
+    # make PDF.info
+    description = "'up quark only PDFset, for debug purpose, denser in high x'"
     dump_info(name, description, pids)
 
 
@@ -105,6 +127,24 @@ def gonly():
     dump_info(name, description, pids)
 
 
+def check(pdfset, pid):
+    pdf = lhapdf.mkPDF(pdfset, 0)
+    f = lambda x: x * (1.0 - x)
+    xs = np.logspace(-8, -0.2, 100) * (1.0 + 0.5 * np.random.rand(100))
+    # xs = np.array([.1,.5,.8])
+    xs = np.unique(xs)
+    other = [pdf.xfxQ2(pid, x, 10.0) for x in xs]
+    ref = f(xs)
+    # print(xs)
+    # print(other/ref)
+    plt.title(pdfset)
+    plt.plot(xs, (other - ref) / ref)
+    plt.show()
+
+
 if __name__ == "__main__":
-    # uonly()
-    gonly()
+    # uonly_dense()
+    # gonly()
+    check("uonly", 2)
+    check("uonly-dense", 2)
+    check("gonly", 21)

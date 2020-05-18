@@ -18,9 +18,6 @@ class ESF_F2light(ESF):
         docs
     """
 
-    def __init__(self, SF, kinematics):
-        super(ESF_F2light, self).__init__(SF, kinematics)
-
     def quark_0(self) -> float:
         """Computes the singlet part of the leading order F2 structure function.
 
@@ -55,7 +52,7 @@ class ESF_F2light(ESF):
         .. todo::
             docs
         """
-        CF = self._SF._constants.CF
+        CF = self._SF.constants.CF
         zeta_2 = np.pi ** 2 / 6
 
         def cq_reg(z):
@@ -67,13 +64,13 @@ class ESF_F2light(ESF):
             )
             # fmt: on
 
-        def cq_delta(z):
+        def cq_delta(_z):
             return -CF * (9 + 4 * zeta_2)
 
-        def cq_omx(z):
+        def cq_omx(_z):
             return -3 * CF
 
-        def cq_logomx(z):
+        def cq_logomx(_z):
             return 4 * CF
 
         return cq_reg, cq_delta, cq_omx, cq_logomx
@@ -85,13 +82,13 @@ class ESF_F2light(ESF):
         """
 
         def cq_reg(z):
-            return split.pqq_reg(z, self._SF._constants)
+            return split.pqq_reg(z, self._SF.constants)
 
         def cq_delta(z):
-            return split.pqq_delta(z, self._SF._constants)
+            return split.pqq_delta(z, self._SF.constants)
 
         def cq_pd(z):
-            return split.pqq_pd(z, self._SF._constants)
+            return split.pqq_pd(z, self._SF.constants)
 
         return cq_reg, cq_delta, cq_pd
 
@@ -107,7 +104,7 @@ class ESF_F2light(ESF):
             in which the gluon can go
         """
 
-        TR = self._SF._constants.TF
+        TR = self._SF.constants.TF
 
         def cg(z):
             return (
@@ -115,7 +112,7 @@ class ESF_F2light(ESF):
                 * 2
                 * self._n_f
                 * (
-                    split.pqg(z, self._SF._constants) * (np.log((1 - z) / z) - 4)
+                    split.pqg(z, self._SF.constants) * (np.log((1 - z) / z) - 4)
                     + 3 * TR
                 )
             )
@@ -129,6 +126,6 @@ class ESF_F2light(ESF):
         """
 
         def cg(z):
-            return 2 * self._n_f * split.pqg(z, self._SF._constants)
+            return 2 * self._n_f * split.pqg(z, self._SF.constants)
 
         return cg

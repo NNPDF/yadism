@@ -15,16 +15,9 @@ from eko.thresholds import Threshold
 from eko.alpha_s import StrongCoupling
 
 from .output import Output
-from .structure_functions import (
-    F2_light,
-    FL_light,
-    F2_charm,
-    F2_bottom,
-    F2_top,
-    FL_charm,
-    FL_bottom,
-    FL_top,
-)
+from .StructureFunction import StructureFunction as SF
+from .structure_functions import ESFmap
+from . import utils
 
 
 class Runner:
@@ -41,24 +34,13 @@ class Runner:
         docs
     """
 
-    __obs_templates = {
-        "F2light": (F2_light,),
-        "F2charm": (F2_charm, "mc"),
-        "F2bottom": (F2_bottom, "mb"),
-        "F2top": (F2_top, "mt"),
-        "FLlight": (FL_light,),
-        "FLcharm": (FL_charm, "mc"),
-        "FLbottom": (FL_bottom, "mb"),
-        "FLtop": (FL_top, "mt"),
-    }
-
     def __init__(self, theory: dict, observables: dict):
         self._theory = theory
         self._observables = observables
         self._n_f: int = theory["NfFF"]
 
         polynomial_degree: int = observables["polynomial_degree"]
-        self._interpolator = InterpolatorDispatcher(
+        self.interpolator = InterpolatorDispatcher(
             observables["xgrid"],
             polynomial_degree,
             log=observables.get("is_log_interpolation", True),
@@ -69,7 +51,7 @@ class Runner:
         # ==========================
         # create physics environment
         # ==========================
-        self._constants = Constants()
+        self.constants = Constants()
 
         FNS = theory["FNS"]
         q2_ref = pow(theory["Q0"], 2)
@@ -82,62 +64,67 @@ class Runner:
         else:
             nf = theory["NfFF"]
             threshold_list = None
-        self._threshold = Threshold(
+        self.threshold = Threshold(
             q2_ref=q2_ref, scheme=FNS, threshold_list=threshold_list, nf=nf
         )
 
         # Now generate the operator alpha_s class
         alpha_ref = theory["alphas"]
         q2_alpha = pow(theory["Qref"], 2)
-        self._alpha_s = StrongCoupling(
-            self._constants, alpha_ref, q2_alpha, self._threshold
+        self.strong_coupling = StrongCoupling(
+            self.constants, alpha_ref, q2_alpha, self.threshold
         )
 
-        self._xiF = theory["XIF"]
+        self.xiF = theory["XIF"]
 
         # ==============================
         # initialize structure functions
         # ==============================
-        default_args = dict(
-            interpolator=self._interpolator,
-            constants=self._constants,
-            threshold=self._threshold,
-            alpha_s=self._alpha_s,
+        eko_components = dict(
+            interpolator=self.interpolator,
+            constants=self.constants,
+            threshold=self.threshold,
+            alpha_s=self.strong_coupling,
+        )
+        theory_stuffs = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
-            xiF=self._xiF,
+            xiF=self.xiF,
+            M2hq=None,
+            TMC=theory["TMC"],
+            M2target=theory["MP"]**2,
         )
-        self._observable_instances = []
-        for sf, obs_t in self.__obs_templates.items():
-            # if not in the input skip
-            if sf not in self._observables:
-                continue
+        self.observable_instances = {}
+        for name in ESFmap.keys():
+            lab = utils.get_mass_label(name)
+            if lab is not None:
+                theory_stuffs["M2hq"] = theory[lab] ** 2
 
-            # first element is the class [required]
-            if len(obs_t) == 1:
-                obj = obs_t[0](**default_args)
-            # if second element specified is the key for the mass
-            elif len(obs_t) == 2:
-                obj = obs_t[0](**default_args, M2=theory[obs_t[1]] ** 2,)
-            else:
-                raise RuntimeError("Invalid obs template")
+            # initialize an SF instance for each possible structure function
+            obj = SF(
+                name,
+                runner=self,
+                eko_components=eko_components,
+                theory_stuffs=theory_stuffs,
+            )
 
             # read kinematics
-            obj.load(self._observables.get(obj.name, []))
-            self._observable_instances.append(obj)
+            obj.load(self._observables.get(name, []))
+            self.observable_instances[name] = obj
 
         # prepare output
         self._output = Output()
-        self._output["xgrid"] = self._interpolator.xgrid_raw
-        self._output["xiF"] = self._xiF
+        self._output["xgrid"] = self.interpolator.xgrid_raw
+        self._output["xiF"] = self.xiF
 
     def get_output(self) -> Output:
         """
         .. todo::
             docs
         """
-        for obs in self._observable_instances:
-            self._output[obs.name] = obs.get_output()
+        for name, obs in self.observable_instances.items():
+            if name in self._observables.keys():
+                self._output[name] = obs.get_output()
 
         return self._output
 
@@ -170,7 +157,6 @@ class Runner:
             - implement
             - docs
         """
-        pass
 
     def dump(self) -> None:
         """

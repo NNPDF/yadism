@@ -5,13 +5,16 @@ import tinydb
 
 import apfel
 
+
 def str_datetime(dt):
     return str(dt)
 
-def unstr_datetime(s):
-    return datetime.strptime(s,"%Y-%m-%d %H:%M:%S.%f")
 
-def load_apfel(theory, observables, pdf = "ToyLH"):
+def unstr_datetime(s):
+    return datetime.strptime(s, "%Y-%m-%d %H:%M:%S.%f")
+
+
+def load_apfel(theory, observables, pdf="ToyLH"):
     """
         Set APFEL parameter from ``theory`` dictionary.
 
@@ -64,7 +67,9 @@ def load_apfel(theory, observables, pdf = "ToyLH"):
         apfel.SetPoleMasses(theory.get("mc"), theory.get("mb"), theory.get("mt"))
     elif theory.get("HQ") == "MSBAR":
         apfel.SetMSbarMasses(theory.get("mc"), theory.get("mb"), theory.get("mt"))
-        apfel.SetMassScaleReference(theory.get("Qmc"), theory.get("Qmb"), theory.get("Qmt"))
+        apfel.SetMassScaleReference(
+            theory.get("Qmc"), theory.get("Qmb"), theory.get("Qmt")
+        )
     else:
         raise RuntimeError("Error: Unrecognised HQMASS")
 
@@ -90,7 +95,9 @@ def load_apfel(theory, observables, pdf = "ToyLH"):
 
     # Small-x resummation
     apfel.SetSmallxResummation(theory.get("SxRes"), theory.get("SxOrd"))
-    apfel.SetMassMatchingScales(theory.get("kcThr"), theory.get("kbThr"), theory.get("ktThr"))
+    apfel.SetMassMatchingScales(
+        theory.get("kcThr"), theory.get("kbThr"), theory.get("ktThr")
+    )
 
     # Intrinsic charm
     apfel.EnableIntrinsicCharm(theory.get("IC"))
@@ -118,6 +125,7 @@ def load_apfel(theory, observables, pdf = "ToyLH"):
 
     apfel.SetPDFSet(pdf)
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
+    # set Target
 
     # apfel initialization for DIS
     apfel.InitializeAPFEL_DIS()
@@ -139,9 +147,13 @@ def get_apfel_data(theory, observables, pdf_name, apfel_cache):
 
     # search for document in the cache
     cache_query = tinydb.Query()
-    c_query = cache_query._theory_doc_id == theory.doc_id #pylint:disable=protected-access
-    c_query &= cache_query._observables_doc_id == observables.doc_id #pylint:disable=protected-access
-    c_query &= cache_query._pdf == pdf_name #pylint:disable=protected-access
+    c_query = (
+        cache_query._theory_doc_id == theory.doc_id
+    )  # pylint:disable=protected-access
+    c_query &= (
+        cache_query._observables_doc_id == observables.doc_id
+    )  # pylint:disable=protected-access
+    c_query &= cache_query._pdf == pdf_name  # pylint:disable=protected-access
     query_res = apfel_cache.search(c_query)
 
     apf_tab = None
@@ -152,10 +164,18 @@ def get_apfel_data(theory, observables, pdf_name, apfel_cache):
         raise ValueError("Cache query matched more than once.")
     # check is updated
     if apf_tab is not None:
-        theory_changed = unstr_datetime(theory["_modify_time"]) #pylint:disable=protected-access
-        obs_changed = unstr_datetime(observables["_modify_time"]) #pylint:disable=protected-access
-        tab_changed = unstr_datetime(apf_tab["_creation_time"]) #pylint:disable=protected-access
-        if (theory_changed - tab_changed).total_seconds() > 0 or (obs_changed - tab_changed).total_seconds() > 0:
+        theory_changed = unstr_datetime(
+            theory["_modify_time"]
+        )  # pylint:disable=protected-access
+        obs_changed = unstr_datetime(
+            observables["_modify_time"]
+        )  # pylint:disable=protected-access
+        tab_changed = unstr_datetime(
+            apf_tab["_creation_time"]
+        )  # pylint:disable=protected-access
+        if (theory_changed - tab_changed).total_seconds() > 0 or (
+            obs_changed - tab_changed
+        ).total_seconds() > 0:
             # delete old one
             apfel_cache.remove(doc_ids=[apf_tab.doc_id])
             apf_tab = None
@@ -196,7 +216,7 @@ def get_apfel_data(theory, observables, pdf_name, apfel_cache):
                 # setting initial scale to muF (sqrt(Q2)*xiF) APFEL is going to:
                 # - take the PDF at the scale of muF (exactly as we are doing)
                 # - evolve from muF to muF because the final scale is the second
-                # argument times xiF (internally), so actually it's not evolving
+                #   argument times xiF (internally), so actually it's not evolving
                 apfel.ComputeStructureFunctionsAPFEL(
                     np.sqrt(Q2) * theory["XIF"], np.sqrt(Q2)
                 )

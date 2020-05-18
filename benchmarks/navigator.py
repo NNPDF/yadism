@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from pprint import pprint
 import pathlib
-from datetime import datetime
 import sys
 
 import numpy as np
@@ -35,7 +34,7 @@ def list_all_theories():
     data = []
     for t in theories:
         obj = {"doc_id": t.doc_id}
-        for f in ["PTO", "XIF", "XIR"]:
+        for f in ["PTO", "XIF", "XIR", "TMC"]:
             obj[f] = t[f]
         dt = unstr_datetime(t["_modify_time"])
         obj["modified"] = human_dates(dt)
@@ -81,7 +80,7 @@ def purge_theories():
     """Purge theories table."""
     ask = input("Purge theories table? [y/n]")
     if ask == "y":
-        idb.table("theories").purge()
+        idb.table("theories").truncate()
     else:
         print("nothing done.")
 
@@ -158,7 +157,7 @@ def purge_observables():
     """Purge observables table."""
     ask = input("Purge observables table? [y/n]")
     if ask == "y":
-        idb.table("observables").purge()
+        idb.table("observables").truncate()
     else:
         print("nothing done.")
 
@@ -212,8 +211,70 @@ def get_log(doc_id):
         ----------
             doc_id : int
                 document identifier
+        
+        Returns
+        -------
+            log : dict
+                document
     """
     return odb.table("logs").get(doc_id=doc_id)
+
+
+class DFlist(list):
+    """
+    TODO: translate in docs:
+        output the table: since there are many table produced by this
+        function output instead a suitable object
+        the object should be iterable so you can explore all the values,
+        but it has a __str__ (or __repr__?) method that will automatically
+        loop and print if its dropped directly in the interpreter
+    """
+
+    def __init__(self):
+        self.msgs = []
+
+    def print(self, *msgs, sep=" ", end="\n"):
+        if len(msgs) > 0:
+            self.msgs.append(msgs[0])
+
+            for msg in msgs[1:]:
+                self.msgs.append(sep)
+                self.msgs.append(msg)
+        self.msgs.append(end)
+
+    def register(self, table):
+        self.print(table)
+        self.append(table)
+
+    def __repr__(self):
+        return "".join([str(x) for x in self.msgs])
+
+
+def get_log_DataFrames(doc_id):
+    """
+        Load all structure functions in log as DataFrame
+
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
+
+        Returns
+        -------
+            log : list(pd.DataFrame)
+                DataFrames
+    """
+    l = get_log(doc_id)
+    dfs = DFlist()
+    for k in l:
+        if k[0] != "F":
+            continue
+        dfs.print(f"{k} with theory={l['_theory_doc_id']} using {l['_pdf']}")
+        dfs.register(pd.DataFrame(l[k]))
+    return dfs
+
+
+dfl = get_log_DataFrames
 
 
 def pprint_log(doc_id):
@@ -233,7 +294,7 @@ def purge_logs():
     """Purge logs table."""
     ask = input("Purge logs table? [y/n]")
     if ask == "y":
-        odb.table("logs").purge()
+        odb.table("logs").truncate()
     else:
         print("nothing done.")
 
@@ -328,6 +389,9 @@ def p(table, doc_id=None):
             print(f"Unkown table: {table}")
 
 
+pp = p
+
+
 def g(table, doc_id=None):
     """
         Getter wrapper.
@@ -379,12 +443,15 @@ def subtract_tables(id1, id2):
             path for csv file with the table to be subtracted
         output_f :
             path for csv file to store the result
+
     """
+
+    diffout = DFlist()
 
     # print head
     msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
-    print(msg, "=" * len(msg), sep="\n")
-    print()
+    diffout.print(msg, "=" * len(msg), sep="\n")
+    diffout.print()
 
     # load json documents
     log1 = get_log(id1)
@@ -418,6 +485,8 @@ def subtract_tables(id1, id2):
         # compute relative error
         def rel_err(row):
             if row["APFEL"] == 0.0:
+                if row["yadism"] == 0.0:
+                    return 0.0
                 return np.nan
             else:
                 return (row["yadism"] / row["APFEL"] - 1.0) * 100
@@ -427,11 +496,34 @@ def subtract_tables(id1, id2):
         # dump results' table
         # with open(output_f, "w") as f:
         # table2.to_csv(f)
-        print(obs, "-" * len(obs), sep="\n")
-        print(table2)
+        diffout.print(obs, "-" * len(obs), sep="\n")
+        diffout.register(table2)
+
+    return diffout
 
 
 diff = subtract_tables
+
+
+def compare_dicts(d1, d2, exclude_underscored=False):
+    """
+        Check which entries of the two dictionaries are different, and output
+        the values.
+    """
+    kw = 20  # keys print width
+    fw = 30  # values print width0
+    print("┌", "─" * (kw + 2), "┬", "─" * (fw * 2 + 1 + 2), "┐", sep="")
+    for k in d1.keys() | d2.keys():
+        if exclude_underscored and k[0] == "_":
+            continue
+
+        if k not in d1:
+            print(f"│ {k:<{kw}} │ {None:>{fw}} {d2[k]:>{fw}} │")
+        elif k not in d2:
+            print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {None:>{fw}} │")
+        elif d1[k] != d2[k]:
+            print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {d2[k]:>{fw}} │")
+    print("└", "─" * (kw + 2), "┴", "─" * (fw * 2 + 1 + 2), "┘", sep="")
 
 
 def yelp(*args):
