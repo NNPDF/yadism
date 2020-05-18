@@ -30,23 +30,26 @@ observables = [
 
 # keep in mind, that in TMC xi < x
 # np.linspace(0.1, 1.0, 20),
-xgrid = np.unique(
-    np.concatenate([np.logspace(-4, np.log10(0.15), 20), np.linspace(0.15, 1.0, 12)])
-)
-# with open("apfel_xg.yaml") as o:
-#    xgrid = yaml.safe_load(o)
-# xgrid = np.array(xgrid)
+#xgrid = np.unique(
+#    np.concatenate([np.logspace(-4, np.log10(0.15), 20), np.linspace(0.15, 1.0, 12)])
+#)
+with open("apfel_xg.yaml") as o:
+    xgrid = yaml.safe_load(o)
+xgrid = xgrid.split()
+xgrid = [float(x[1:]) for x in xgrid]
+#xgrid = xgrid[-6:]
+xgrid = np.array(xgrid)
 
 polynomial_degree = 4
 is_log_interpolation = True
 
 kinematics = []
-# fixed Q
-# kinematics.extend([dict(x=x, Q2=90.0) for x in xgrid[-10:].tolist()])
-kinematics.extend([dict(x=x, Q2=90.0) for x in np.logspace(-3, -1, 12).tolist()])
-kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.15, 0.9, 12).tolist()])
+# fixed Q2
+kinematics.extend([dict(x=x, Q2=90.0) for x in xgrid[-5:].tolist()])
+#kinematics.extend([dict(x=x, Q2=90.0) for x in np.logspace(-3, -1, 12).tolist()])
+#kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.15, 0.9, 12).tolist()])
 # fixed x
-kinematics.extend([dict(x=0.8, Q2=Q2) for Q2 in np.logspace(1.5, 2.5, 6).tolist()])
+#kinematics.extend([dict(x=0.8, Q2=Q2) for Q2 in np.logspace(1.5, 2.5, 6).tolist()])
 
 # iterate over observables (one dict for each)
 for sf in observables:

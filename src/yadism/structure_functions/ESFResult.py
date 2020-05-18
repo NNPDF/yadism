@@ -108,6 +108,10 @@ class ESFResult:
             .. todo::
                 docs
         """
+        if not isinstance(self.x,numbers.Number):
+            raise ValueError("x is not set!")
+        if not isinstance(self.Q2,numbers.Number):
+            raise ValueError("Q2 is not set!")
 
         def get_charged_sum(z: float, Q2: float) -> float:
             """

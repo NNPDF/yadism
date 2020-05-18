@@ -62,6 +62,13 @@ from eko.interpolation import InterpolatorDispatcher
 from .distribution_vec import DistributionVec
 from .EvaluatedStructureFunction import ESFResult
 
+import pathlib
+import sys
+here = pathlib.Path(__file__).absolute().parents[3]
+print(str(here / "benchmarks"/ "aux"))
+sys.path.append(str(here / "benchmarks"/ "aux"))
+import toyLH
+
 class EvaluatedStructureFunctionTMC(abc.ABC):
     """
         .. todo:
@@ -75,7 +82,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         self._Q2 = kinematics["Q2"]
         # compute variables
         self._mu = self._SF.M2target / self._Q2
-        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._mu)  # = r
+        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._mu)  # = r = sqrt(tau)
         self._xi = 2 * self._x / (1 + self._rho)
         # TMC are mostly determined by shifted kinematics
         self._shifted_kinematics = {"x": self._xi, "Q2": self._Q2}
@@ -233,7 +240,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         # join
         return approx_prefactor * F2out
 
-    def _get_result_APFEL(self):
+    def __get_result_APFEL(self):
         # collect F2
         F2out = self._SF.get_ESF(
             "F2" + self._flavour, self._shifted_kinematics
@@ -289,9 +296,10 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
 
         return res
 
-    def _get_result_APFEL_strict(self):
-        # h2 comes with a seperate factor
-        factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
+    def _get_result_APFEL(self):
+        print(self._x,self._Q2)
+        print("shifted=",self._factor_shifted)
+        print("h2=",self._factor_h2)
 
         # collect F2
         #F2out = self._SF.get_ESF(
@@ -320,9 +328,16 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
                 h2elem += d.convolution(xj, bk) * F2k / xk**2
             h2list.append(h2elem)
 
-        res = ESFResult(len(F2list))
-        for bj, F2out, h2out in zip(self._SF.interpolator,F2list,h2list):
-            res += bj(self._xi)*(self._factor_shifted * F2out + factor_h2 * h2out)
+        res = ESFResult(len(F2list),Q2=self._Q2)
+        pdf = toyLH.mkPDF("ToyLH", 0)
+        for j,bj, F2out, h2out in zip(range(len(F2list)),self._SF.interpolator,F2list,h2list):
+            if j == 0:
+                F2out.x = self._xi
+                h2out.x = self._xi
+                F2out.Q2 = self._Q2
+                h2out.Q2 = self._Q2
+                print("pj",bj(self._xi),"F2",F2out.apply_PDF(self._SF.interpolator.xgrid_raw,1,pdf),"I2",h2out.apply_PDF(self._SF.interpolator.xgrid_raw,1,pdf))
+            res += bj(self._xi)*(self._factor_shifted * F2out + self._factor_h2 * h2out)
         # join
         return res
     ### ----- /APFEL crap
