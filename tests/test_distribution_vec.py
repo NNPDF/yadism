@@ -3,7 +3,7 @@ import copy
 import numpy as np
 import pytest
 
-import yadism.structure_functions.convolution as conv
+import yadism.structure_functions.distribution_vec as conv
 from eko.interpolation import InterpolatorDispatcher
 
 

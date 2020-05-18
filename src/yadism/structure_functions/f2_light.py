@@ -12,7 +12,7 @@ from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
 from . import splitting_functions as split
 
 
-class ESF_F2light(ESF):
+class EvaluatedStructureFunctionF2light(ESF):
     """
     .. todo::
         docs

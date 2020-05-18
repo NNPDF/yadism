@@ -5,7 +5,7 @@
 """
 
 from .structure_functions import ESFmap
-from .structure_functions.TMC import ESFTMCmap
+from .structure_functions.tmc import ESFTMCmap
 
 
 class StructureFunction:

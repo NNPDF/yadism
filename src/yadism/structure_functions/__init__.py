@@ -8,18 +8,26 @@ The 3-loop reference is :cite:`Vermaseren:2005qc` which includes also the lower 
     docs
 """
 
-from .F2light import ESF_F2light
-from .FLlight import ESF_FLlight
-from .F2heavy import ESF_F2charm, ESF_F2bottom, ESF_F2top
-from .FLheavy import ESF_FLcharm, ESF_FLbottom, ESF_FLtop
+from .f2_light import EvaluatedStructureFunctionF2light
+from .fl_light import EvaluatedStructureFunctionFLlight
+from .f2_heavy import (
+    EvaluatedStructureFunctionF2charm,
+    EvaluatedStructureFunctionF2bottom,
+    EvaluatedStructureFunctionF2top,
+)
+from .fl_heavy import (
+    EvaluatedStructureFunctionFLcharm,
+    EvaluatedStructureFunctionFLbottom,
+    EvaluatedStructureFunctionFLtop,
+)
 
 ESFmap = {
-    "F2light": ESF_F2light,
-    "F2charm": ESF_F2charm,
-    "F2bottom": ESF_F2bottom,
-    "F2top": ESF_F2top,
-    "FLlight": ESF_FLlight,
-    "FLcharm": ESF_FLcharm,
-    "FLbottom": ESF_FLbottom,
-    "FLtop": ESF_FLtop,
+    "F2light": EvaluatedStructureFunctionF2light,
+    "F2charm": EvaluatedStructureFunctionF2charm,
+    "F2bottom": EvaluatedStructureFunctionF2bottom,
+    "F2top": EvaluatedStructureFunctionF2top,
+    "FLlight": EvaluatedStructureFunctionFLlight,
+    "FLcharm": EvaluatedStructureFunctionFLcharm,
+    "FLbottom": EvaluatedStructureFunctionFLbottom,
+    "FLtop": EvaluatedStructureFunctionFLtop,
 }

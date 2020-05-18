@@ -9,7 +9,7 @@ This file contains the implementation of the DIS structure functions at LO.
 from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
 
 
-class ESF_FLlight(ESF):
+class EvaluatedStructureFunctionFLlight(ESF):
     """
     .. todo::
         docs

@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-import yadism.structure_functions.TMC as TMC
+import yadism.structure_functions.tmc as TMC
 from yadism.structure_functions.ESFResult import ESFResult
 
 from eko.interpolation import InterpolatorDispatcher

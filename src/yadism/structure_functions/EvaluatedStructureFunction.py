@@ -8,7 +8,7 @@ import abc
 
 import numpy as np
 
-from . import convolution as conv
+from . import distribution_vec as conv
 from .ESFResult import ESFResult
 
 

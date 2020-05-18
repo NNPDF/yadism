@@ -11,7 +11,7 @@ import numpy as np
 from .EvaluatedStructureFunction import EvaluatedStructureFunctionHeavy as ESFH
 
 
-class ESF_F2heavy(ESFH):
+class EvaluatedStructureFunctionF2heavy(ESFH):
     """
     .. todo::
         docs
@@ -50,16 +50,16 @@ class ESF_F2heavy(ESFH):
         return cg
 
 
-class ESF_F2charm(ESF_F2heavy):
+class EvaluatedStructureFunctionF2charm(EvaluatedStructureFunctionF2heavy):
     def __init__(self, SF, kinematics):
-        super(ESF_F2charm, self).__init__(SF, kinematics, charge_em=2 / 3)
+        super(EvaluatedStructureFunctionF2charm, self).__init__(SF, kinematics, charge_em=2 / 3)
 
 
-class ESF_F2bottom(ESF_F2heavy):
+class EvaluatedStructureFunctionF2bottom(EvaluatedStructureFunctionF2heavy):
     def __init__(self, SF, kinematics):
-        super(ESF_F2bottom, self).__init__(SF, kinematics, charge_em=1 / 3)
+        super(EvaluatedStructureFunctionF2bottom, self).__init__(SF, kinematics, charge_em=1 / 3)
 
 
-class ESF_F2top(ESF_F2heavy):
+class EvaluatedStructureFunctionF2top(EvaluatedStructureFunctionF2heavy):
     def __init__(self, SF, kinematics):
-        super(ESF_F2top, self).__init__(SF, kinematics, charge_em=2 / 3)
+        super(EvaluatedStructureFunctionF2top, self).__init__(SF, kinematics, charge_em=2 / 3)
