@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 This module contains the implementation of the DIS F2 coefficient functions, for
-light quark flavours (namely *up*, *bottom*, *strange*).
+light quark flavours (namely *up*, *down*, *strange*).
 
 The only element present is the :py:class:`ESF_F2light`, that inherits the
 :py:class:`EvaluatedStructureFunction` machinery, but it is used just to store

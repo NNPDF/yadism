@@ -28,26 +28,28 @@ Note 2 (caching)
 ----------------
 Since the responsibility of caching is of SF as written above we decided the
 following layout:
-    - SF instantiate ESF or ESFTMC according to TMC flag in theory dictionary,
-      and append it to `self.__ESFs` at load time, i.e. in `self.load()` (these
-      are the observables to be computed)
-    - when asked for output if noTMC a ESF is called and the instance is
-      registered
-        - `self.get_ouput()` is used for getting the result passing through:
-        - `self.get_ESF()` is used for getting the instance and register to the
-          cache
-    - if TMC a ESFTMC is called, and whenever he needs an ESF instance to
-      compute a point it will ask its parent SF with `SF.get_ESF()` method, in
-      this way passing through the cache
+
+- SF instantiate ESF or ESFTMC according to TMC flag in theory dictionary,
+  and append it to `self.__ESFs` at load time, i.e. in `self.load()` (these
+  are the observables to be computed)
+- when asked for output if noTMC a ESF is called and the instance is
+  registered
+    - `self.get_ouput()` is used for getting the result passing through:
+    - `self.get_ESF()` is used for getting the instance and register to the
+      cache
+- if TMC a ESFTMC is called, and whenever he needs an ESF instance to
+  compute a point it will ask its parent SF with `SF.get_ESF()` method, in
+  this way passing through the cache
 
 Note 3 (physics)
 ----------------
 There 3 schemes in the reference:
-    - **exact**: is the full and involves integration
-    - **approximate**: is stemming from the exact, but the strcture functions in
-      the integrand are evaluated at the bottom end
-    - **APFEL**: the one used in APFEL, similar to the exact but with g2 in
-      the review (Schienbein et al.) set to 0
+
+- **exact**: is the full and involves integration
+- **approximate**: is stemming from the exact, but the strcture functions in
+  the integrand are evaluated at the bottom end
+- **APFEL**: the one used in APFEL, similar to the exact but with g2 in
+  the review (Schienbein et al.) set to 0
 
 .. todo::
     docs
@@ -61,6 +63,7 @@ from eko.interpolation import InterpolatorDispatcher
 
 from .convolution import DistributionVec
 from .EvaluatedStructureFunction import ESFResult
+
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
     """
@@ -149,12 +152,14 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             )
         # iterate grid
         res = ESFResult(len(self._SF.interpolator.xgrid_raw), self._xi, self._Q2)
-        for xj, pj in  zip(self._SF.interpolator.xgrid_raw, self._SF.interpolator):
+        for xj, pj in zip(self._SF.interpolator.xgrid_raw, self._SF.interpolator):
             # basis function does not contribute?
             if pj.is_below_x(self._xi):
                 continue
             # compute F2 matrix (j,k) (where k is wrapped inside get_result)
-            F2j = self._SF.get_ESF("F2" + self._flavour, {"Q2": self._Q2, "x": xj}).get_result()
+            F2j = self._SF.get_ESF(
+                "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
+            ).get_result()
             # compute interpolated h2 integral (j)
             d = DistributionVec(ker)
             h2j = d.convolution(self._xi, pj)
@@ -204,7 +209,6 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         return self._convolute_F2(lambda z: 1 - z)
 
 
-
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     """
         .. todo::
@@ -245,7 +249,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         return self._factor_shifted * F2out + self._factor_h2 * h2out
 
     def _get_result_exact(self):
-        factor_g2 = 12.0 * self._mu**2 * self._x**4 / self._rho**5
+        factor_g2 = 12.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 5
         # collect F2
         F2out = self._SF.get_ESF(
             "F2" + self._flavour, self._shifted_kinematics
@@ -256,7 +260,9 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         g2out = self._g2()
 
         # join
-        return self._factor_shifted * F2out + self._factor_h2 * h2out + factor_g2 * g2out
+        return (
+            self._factor_shifted * F2out + self._factor_h2 * h2out + factor_g2 * g2out
+        )
 
     ### ----- APFEL crap
     def _h2_APFEL(self):
@@ -272,7 +278,8 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             F2list.append(
                 self._SF.get_ESF(
                     "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
-                ).get_result() / xj**2
+                ).get_result()
+                / xj ** 2
             )
 
         # compute interpolated h2 integral (j)
@@ -294,9 +301,9 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
 
         # collect F2
-        #F2out = self._SF.get_ESF(
+        # F2out = self._SF.get_ESF(
         #    "F2" + self._flavour, self._shifted_kinematics
-        #).get_result()
+        # ).get_result()
 
         # interpolate F2(xi)
         F2list = []
@@ -309,22 +316,25 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             )
 
         # compute integral
-        smallInterp = InterpolatorDispatcher(self._SF.interpolator.xgrid_raw,1,True,False,False)
+        smallInterp = InterpolatorDispatcher(
+            self._SF.interpolator.xgrid_raw, 1, True, False, False
+        )
         h2list = []
         for xj in self._SF.interpolator.xgrid_raw:
             h2elem = ESFResult(len(F2list))
-            for bk,F2k in zip(smallInterp,F2list):
+            for bk, F2k in zip(smallInterp, F2list):
                 xk = self._SF.interpolator.xgrid_raw[bk.poly_number]
-                d = DistributionVec(lambda z,xj=xj: xj/z)
+                d = DistributionVec(lambda z, xj=xj: xj / z)
                 d.eps_integration_abs = 1e-5
-                h2elem += d.convolution(xj, bk) * F2k / xk**2
+                h2elem += d.convolution(xj, bk) * F2k / xk ** 2
             h2list.append(h2elem)
 
         res = ESFResult(len(F2list))
-        for bj, F2out, h2out in zip(self._SF.interpolator,F2list,h2list):
-            res += bj(self._xi)*(self._factor_shifted * F2out + factor_h2 * h2out)
+        for bj, F2out, h2out in zip(self._SF.interpolator, F2list, h2list):
+            res += bj(self._xi) * (self._factor_shifted * F2out + factor_h2 * h2out)
         # join
         return res
+
     ### ----- /APFEL crap
 
 
@@ -368,7 +378,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         return self._factor_shifted * FLout + self._factor_h2 * h2out
 
     def _get_result_exact(self):
-        factor_g2 = 8.0 * self._mu**2 * self._x**4 / self._rho**3
+        factor_g2 = 8.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 3
         # collect F2
         FLout = self._SF.get_ESF(
             "FL" + self._flavour, self._shifted_kinematics
@@ -379,7 +389,9 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         g2out = self._g2()
 
         # join
-        return self._factor_shifted * FLout + self._factor_h2 * h2out + factor_g2 * g2out
+        return (
+            self._factor_shifted * FLout + self._factor_h2 * h2out + factor_g2 * g2out
+        )
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL}
