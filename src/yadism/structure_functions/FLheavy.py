@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-This file contains the implementation of the DIS structure functions at LO.
+This module contains the implementation of the DIS FL coefficient functions, for
+light quark flavours (namely *up*, *bottom*, *strange*).
 
-.. todo::
-    docs
+The only element present is the :py:class:`ESF_FLlight`, that inherits the
+:py:class:`EvaluatedStructureFunction` machinery, but it is used just to store
+the definitions of the related coefficient functions formula.
+
+The main reference used is: :cite:`vogt`.
+
+.. todo:
+    - light -> heavy
+    - reference is thesis, not vogt
+
 """
 
 import numpy as np
