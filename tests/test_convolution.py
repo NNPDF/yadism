@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Test the DistributionVec class and its methods.
+"""
 import copy
 
 import numpy as np

@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-This file contains the main loop for the DIS calculations.
+This module contains the main loop for the DIS calculations.
+
+There are two ways of using ``yadism``:
+
+* ``Runner``: this class provides a runner that get the *theory* and
+  *observables* descriptions as input and manage the whole observables'
+  calculation process
+* ``run_dis``: a function that wraps the construction of a ``Runner`` object
+  and calls the proper method to get the requested output
 
 .. todo::
-    docs
+    decide about ``run_dis`` and document it properly in module header
 """
 from typing import Any
 
@@ -21,24 +29,40 @@ from . import utils
 
 
 class Runner:
-    """Wrapper to compute a process
+    """
+        Wrapper to compute a process
 
-    Parameters
-    ----------
-    theory : dict
-        Dictionary with the theory parameters for the evolution.
-    observables : dict
-        Description of parameter `observables`.
+        Parameters
+        ----------
+        theory : dict
+            Dictionary with the theory parameters for the evolution (currently
+            including PDFSet and DIS process indication).
+        observables : dict
+            DIS parameters: process description, kinematic specification for the
+            requested output.
 
-    .. todo::
-        docs
+        Notes
+        -----
+        For a full description of the content of `theory` and `dis_observables`
+        dictionaries read ??.
+
+        .. todo::
+            * reference on theory template
+            * detailed description of dis_observables entries
+
     """
 
     def __init__(self, theory: dict, observables: dict):
+        # ============
+        # Store inputs
+        # ============
         self._theory = theory
         self._observables = observables
         self._n_f: int = theory["NfFF"]
 
+        # ===========================
+        # Setup interpolator from eko
+        # ===========================
         polynomial_degree: int = observables["polynomial_degree"]
         self.interpolator = InterpolatorDispatcher(
             observables["xgrid"],
@@ -49,7 +73,7 @@ class Runner:
         )
 
         # ==========================
-        # create physics environment
+        # Create physics environment
         # ==========================
         self.constants = Constants()
 
@@ -78,7 +102,7 @@ class Runner:
         self.xiF = theory["XIF"]
 
         # ==============================
-        # initialize structure functions
+        # Initialize structure functions
         # ==============================
         eko_components = dict(
             interpolator=self.interpolator,
@@ -92,8 +116,9 @@ class Runner:
             xiF=self.xiF,
             M2hq=None,
             TMC=theory["TMC"],
-            M2target=theory["MP"]**2,
+            M2target=theory["MP"] ** 2,
         )
+
         self.observable_instances = {}
         for name in ESFmap.keys():
             lab = utils.get_mass_label(name)
@@ -112,15 +137,34 @@ class Runner:
             obj.load(self._observables.get(name, []))
             self.observable_instances[name] = obj
 
-        # prepare output
+        # =================
+        # Initialize output
+        # =================
         self._output = Output()
         self._output["xgrid"] = self.interpolator.xgrid_raw
         self._output["xiF"] = self.xiF
 
     def get_output(self) -> Output:
         """
-        .. todo::
-            docs
+            Compute coefficient functions grid for requested kinematic points.
+
+
+            .. admonition:: Implementation Note
+
+                get_output pipeline
+
+            Returns
+            -------
+            :obj:`Output`
+                output object, it will store the coefficient functions grid
+                (flavour, interpolation-index) for each requested kinematic
+                point (x, Q2)
+
+
+            .. todo::
+
+                * docs
+                * get_output pipeline
         """
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
@@ -143,6 +187,8 @@ class Runner:
 
     def apply(self, pdfs: Any) -> dict:
         """
+        Alias for the `__call__` method.
+
         .. todo::
             - implement
             - docs

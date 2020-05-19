@@ -1,7 +1,9 @@
 name: yadism - unit tests
 
 on:
-  - push
+  push:
+    branches-ignore:
+      - '*docs*'
 
 defaults:
   run:
