@@ -15,7 +15,7 @@ class DistributionVec:
     """
         :py:class:`DistributionVec` is an object that encodes the structure of a
         distribution, as opposed to a regular function. It consists of an array of
-        functions, considered as coefficients of the following distributions basis: 
+        functions, considered as coefficients of the following distributions basis:
 
         - *regular*: the regular part is the coefficient of 1, so it is the pure
           function component
@@ -46,19 +46,53 @@ class DistributionVec:
     """
 
     __names = ["regular", "delta", "omx", "logomx"]
+    "Set the names for available distribution kinds"
+
     eps_integration_border = 1e-10
+    """Set the integration domain restriction, see 
+    :ref:`Integration Note<integration-note>`"""
+
     eps_integration_abs = 1e-13
+    """Set the integration target absolute error, see 
+    :ref:`Integration Note<integration-note>`"""
 
     def __init__(self, regular, delta=None, omx=None, logomx=None):
+        """
+            A variety of argument is accepted, in order to make the constructor
+            really flexible:
+
+            - *single object per argument*: in this case each argument will
+              represent a function, taken as a coefficient of the correspondent
+              distribution, the following objects are available to represent the
+              requested function:
+
+              - a *callable* object, used directly as a function
+              - `None`, used to silence that bit (so it represents a 0
+                coefficient) (default)
+              - a *number*, used as a constant coefficient (must be a number
+                format for which a float representation is available)
+            - *single sequence-like argument*: it's provided just for
+              convenience, it is in no way different from the above, and it
+              behaves like the list has been splatted (i.e. each item of the
+              sequence will be assigned to an argument);
+              any length in the range (0, *max*) is available, where *max* it's
+              the total number of distributions available; if the length is less
+              than *max* missing argument are set to `None`
+        """
         try:
+            # check if regular is iterable
             comp_list = [x for x in regular]
+            # if a sequence provided fill the missing slots with `None`
             for i in range(len(self.__names) - len(regular)):
                 comp_list.append(None)
         except TypeError:
+            # if single arguments are chosen build up a list with their values
             comp_list = [regular, delta, omx, logomx]
 
+        # zip names with values
         components = zip(self.__names, comp_list)
 
+        # check the type of each value and recast to a suitable callable
         for name, component in components:
             if callable(component):
                 component_func = component
@@ -72,6 +106,10 @@ class DistributionVec:
             setattr(self, f"_{name}", component_func)
 
     def __getitem__(self, key):
+        """
+            Implements dictionary semantics for :py:class:`DistributionVec`.
+
+        """
         if 0 <= key < len(self.__names):
             name = self.__names[key]
             return getattr(self, f"_{name}")
@@ -79,6 +117,10 @@ class DistributionVec:
             raise IndexError("todo")
 
     def __setitem__(self, key, value):
+        """
+            Implements dictionary semantics for :py:class:`DistributionVec`.
+
+        """
         if 0 <= key < len(self.__names):
             name = self.__names[key]
             return setattr(self, f"_{name}", value)
@@ -86,25 +128,35 @@ class DistributionVec:
             raise IndexError("todo")
 
     def __iter__(self):
+        """
+            Implements iterable semantics for :py:class:`DistributionVec`.
+
+        """
         for n in self.__names:
             yield getattr(self, f"_{n}")
 
     def __add__(self, other):
         """
-        Do not support ``DistributionVec + iterable``, if needed use:
+            Implements addition semantics for :py:class:`DistributionVec`.
 
-        .. code-block::
+            Supported further addends:
 
-            d_vec + DistributionVec(*iterable)
+                - `+ num`: if a number is provided is considered as a constant
+                  regular function, to be summed to the regular bit
+                - `+ function`: if a callable is provided is considered as a
+                  regular function to be summed to the regular bit
+                - `+ DistributionVec`: if a :py:class:`DistributionVec` is
+                  provided the coefficients of that one and the current one are
+                  summed element-wise
 
-        Supported:
+            Note
+            ----
+            Do not support ``DistributionVec + iterable``, if needed use:
 
-        * ``+ num``
-        * ``+ function``
-        * ``+ DistributionVec``
+            .. code-block::
 
-        .. todo::
-            docs
+                d_vec + DistributionVec(*iterable)
+
         """
         if isinstance(other, DistributionVec):
             result = DistributionVec(0)
@@ -122,23 +174,36 @@ class DistributionVec:
         return result
 
     def __radd__(self, other):
+        """
+            Implements addition semantics for :py:class:`DistributionVec`, makes
+            use of :py:meth:`__add__`.
+
+        """
         return self.__add__(other)
 
     def __iadd__(self, other):
+        """
+            Implements addition semantics for :py:class:`DistributionVec`, makes
+            use of :py:meth:`__add__`.
+
+        """
         return self.__add__(other)
 
     def __mul__(self, other):
         """
-        Supported:
-        * ``+ num``
+            Implements addition semantics for :py:class:`DistributionVec`.
 
-        .. note::
-            Currently multiplication by a function is not supported, because a
-            Distribution can only be multiplied by a test function (and the TestFunction
-            API is not going to be implemented).
+            The only supported type for the further factor is a scalar, and it
+            is considered in a vector sense: multiplying by a scalar yields
+            multiplying each coefficient by a scalar.
 
-        .. todo::
-            docs
+            Note
+            ----
+            Currently multiplication by a function (a callable in the code) is
+            not supported, because a Distribution can only be multiplied by a
+            test function (and the TestFunction API is not going to be
+            implemented).
+
         """
         result = DistributionVec(0)
         for i, el in enumerate(self):
@@ -147,13 +212,43 @@ class DistributionVec:
         return result
 
     def __rmul__(self, other):
+        """
+            Implements addition semantics for :py:class:`DistributionVec`, makes
+            use of :py:meth:`__mul__`.
+
+        """
         return self.__mul__(other)
 
     def __imul__(self, other):
+        """
+            Implements addition semantics for :py:class:`DistributionVec`, makes
+            use of :py:meth:`__mul__`.
+
+        """
         return self.__mul__(other)
 
     def compare(self, other, x):
-        "Compare two DistributionVec @ x"
+        """
+            Compare two :py:class:`DistributionVec` at a given value of `x`,
+            checking if all the coefficients compare equal when evaluated at
+            `x`.
+
+            Parameters
+            ----------
+            other :
+                the other :py:class:`DistributionVec` to be compareed with the
+                current one
+            x :
+                the kinematics point at which the comparison should be performed
+
+            Raises
+            ------
+            ValueError
+                The only kind of comparison available is between two
+                :py:class:`DistributionVec`, so if the first argument provided
+                does not match the type an error is raised.
+
+        """
         if isinstance(other, DistributionVec):
             for c1, c2 in zip(self, other):
                 if c1(x) != c2(x):
@@ -163,21 +258,50 @@ class DistributionVec:
             raise ValueError("Comparison only available with other DistributionVec")
 
     def convolution(self, x, pdf_func):
-        """
-            convolution.
+        r"""
+            Convolute the current :py:class:`DistributionVec` with a function
+            ``pdf_func``.
+
+            The definition of the convolution performed is:
+
+            .. math::
+                \int_x^{1} \frac{\text{d}z}{z} dvec(z) f\left(\frac{x}{z}\right)
+
+            (notice that is symmetryc in :math:`dvec \leftrightarrow f`).
+
+            .. _integration-note:
+
+            Note
+            ----
+            The class level attributes :py:attr:`eps_integration_abs` and
+            :py:attr:`eps_integration_border` regulate the integration process,
+            setting respectively the absolute error and restricting the
+            integration domain in order to avoid singularities.
 
             Parameters
             ----------
-            x :
-                x
-            pdf_func :
-                pdf_func
+            x : scalar
+                the kinematics point at which the convoution is evaluated
+            pdf_func : callable
+                the function to be convoluted with the current
+                :py:class:`DistributionVec` (usually a PDF, or a PDF
+                interpolator)
 
-            .. note::
-                real name of this method: ``convnd``
+            Returns
+            -------
+            float
+                the result of the convolution
+            float
+                the integration error
+
+            Note
+            ----
+            The real name of this method is ``convnd``.
 
             .. todo::
-                docs
+                document how the convolution is performed (that is how it's
+                replaced by an integration and some pre-integrated addends)
+
         """
         breakpoints = [x, 1.0]
 
@@ -230,6 +354,7 @@ class DistributionVec:
         # actual convolution
         # ------------------
 
+        # integrate the kernel
         res, err = scipy.integrate.quad(
             ker,
             x * (1 + self.eps_integration_border),
@@ -238,6 +363,7 @@ class DistributionVec:
             points=breakpoints,
         )
 
+        # sum the addends
         for a in addends:
             res += a
 
