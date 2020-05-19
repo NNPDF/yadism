@@ -12,7 +12,7 @@ from eko.interpolation import BasisFunction
 
 
 class DistributionVec:
-    """
+    r"""
         :py:class:`DistributionVec` is an object that encodes the structure of a
         distribution, as opposed to a regular function. It consists of an array of
         functions, considered as coefficients of the following distributions basis:
@@ -82,8 +82,8 @@ class DistributionVec:
         try:
             # check if regular is iterable
             comp_list = [
-                x for x in regular
-            ]  # pylint: disable=unnecessary-comprehension
+                x for x in regular  # pylint: disable=unnecessary-comprehension
+            ]
             # if a sequence provided fill the missing slots with `None`
             for _i in range(len(self.__names) - len(regular)):
                 comp_list.append(None)

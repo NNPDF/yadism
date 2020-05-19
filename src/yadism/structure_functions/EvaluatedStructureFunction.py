@@ -84,7 +84,7 @@ class EvaluatedStructureFunction(abc.ABC):
     """
 
     def __init__(self, SF, kinematics: dict):
-        """
+        r"""
             Internal Attributes
             -------------------
 
