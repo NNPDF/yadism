@@ -46,6 +46,7 @@ class ESF_F2light(ESF):
             -------
             sequence of callables
                coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
         """
 
         # leading order is just a delta function
@@ -62,6 +63,7 @@ class ESF_F2light(ESF):
             -------
             sequence of callables
                coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
         """
         CF = self._SF.constants.CF
         zeta_2 = np.pi ** 2 / 6
@@ -127,6 +129,7 @@ class ESF_F2light(ESF):
             -------
             sequence of callables
                 coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
 
             .. todo::
                 - 2 * n_f here and in gluon_1_fact is coming from momentum sum

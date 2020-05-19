@@ -44,6 +44,7 @@ jobs:
       - name: Build 🔨
         run: |
           pip install -r doc_requirements.txt
+          sudo apt-get install graphviz
           cd docs/sphinx/
           make html
       - name: Deploy 🚀
