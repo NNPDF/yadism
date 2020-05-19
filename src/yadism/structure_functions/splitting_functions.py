@@ -43,7 +43,7 @@ def pqq_reg(x, constants):
 
 
 def pqq_delta(_x, constants):
-    """
+    r"""
         The coefficient of the Dirac-:math:`\delta(1-x)` part of :math:`P_{qq}`
         splitting function.
 
