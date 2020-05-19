@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 """
 This module contains the implementation of the DIS FL coefficient functions, for
-light quark flavours (namely *up*, *bottom*, *strange*).
+heavy quark flavours (namely *charm*, *bottom*, *top*).
 
-The only element present is the :py:class:`ESF_FLlight`, that inherits the
-:py:class:`EvaluatedStructureFunction` machinery, but it is used just to store
-the definitions of the related coefficient functions formula.
+Differently from the :py:mod:`FLlight` here more classes are provided, since
+its flavour can be individually selected. Nevertheless a common class is also
+defined, :py:class:`ESF_FLheavy`, to factorize all the common structure related
+to heavy flavours; the common class is a further intermediate node in the
+hierarchy, since it is a direct child of :py:class:`ESFH` (it is actually the
+FL flavoured version of :py:class:`ESFH`) at it is the direct ancestor for the
+individual flavour ones.
 
-The main reference used is: :cite:`vogt`.
+Actually the coefficient functions formulas are encoded already at the level of
+:py:class:`ESF_FLheavy`, while the explicit leaf classes are used to handle the
+differences between flavours (e.g. electric charge).
 
-.. todo:
-    - light -> heavy
-    - reference is thesis, not vogt
+The main reference used is: :cite:`felix-thesis`.
 
 """
 
@@ -22,15 +26,38 @@ from .EvaluatedStructureFunction import EvaluatedStructureFunctionHeavy as ESFH
 
 class ESF_FLheavy(ESFH):
     """
-    .. todo::
-        docs
+        Compute FL structure functions for heavy quark flavours.
+
+        This class inherits from :py:class:`ESFH`, providing only the formulas
+        for coefficient functions, while all the machinery for dealing with
+        distributions, making convolution with PDFs, and packaging results is
+        completely defined in the parent (and, mainly, in its own parent).
+
+        Even if this is still an intermediate class it has already enough
+        information to be able to express coefficient functions, while children
+        are used just ot handle differences among flavours (e.g. electric
+        charge).
+
     """
 
     def _gluon_1(self):
         """
+            Computes the gluon part of the next to leading order FL structure
+            function.
 
-        .. todo::
-            docs
+            |ref| implements :eqref:`D.2`, :cite:`felix-thesis`.
+
+            Returns
+            -------
+            sequence of callables
+                coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
+            Note
+            ----
+            Immediately check if the available energy is below threshold for
+            flavour production (no other calculation is needed nor performed in
+            this case).
+
         """
         CF = self._SF.constants.CF
 
@@ -49,15 +76,45 @@ class ESF_FLheavy(ESFH):
 
 
 class ESF_FLcharm(ESF_FLheavy):
+    """
+        Compute FL structure functions for *charm* quark.
+
+        All the definitions and expression are already given at the level of
+        :py:class:`ESF_FLheavy`.
+        Currently this class sets only:
+
+        - electric charge
+    """
+
     def __init__(self, SF, kinematics):
         super(ESF_FLcharm, self).__init__(SF, kinematics, charge_em=2 / 3)
 
 
 class ESF_FLbottom(ESF_FLheavy):
+    """
+        Compute FL structure functions for *bottom* quark.
+
+        All the definitions and expression are already given at the level of
+        :py:class:`ESF_FLheavy`.
+        Currently this class sets only:
+
+        - electric charge
+    """
+
     def __init__(self, SF, kinematics):
         super(ESF_FLbottom, self).__init__(SF, kinematics, charge_em=1 / 3)
 
 
 class ESF_FLtop(ESF_FLheavy):
+    """
+        Compute FL structure functions for *top* quark.
+
+        All the definitions and expression are already given at the level of
+        :py:class:`ESF_FLheavy`.
+        Currently this class sets only:
+
+        - electric charge
+    """
+
     def __init__(self, SF, kinematics):
         super(ESF_FLtop, self).__init__(SF, kinematics, charge_em=2 / 3)
