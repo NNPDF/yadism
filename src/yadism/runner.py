@@ -23,67 +23,51 @@ from eko.thresholds import Threshold
 from eko.alpha_s import StrongCoupling
 
 from .output import Output
-from .structure_functions import (
-    F2_light,
-    FL_light,
-    F2_charm,
-    F2_bottom,
-    F2_top,
-    FL_charm,
-    FL_bottom,
-    FL_top,
-)
+from .StructureFunction import StructureFunction as SF
+from .structure_functions import ESFmap
+from . import utils
 
 
 class Runner:
-    """Wrapper to compute a process
+    """
+        Wrapper to compute a process
 
-    Parameters
-    ----------
-    theory : dict
-        Dictionary with the theory parameters for the evolution (currently
-        including PDFSet and DIS process indication).
-    dis_observables : dict
-        DIS parameters: process description, kinematic specification for the
-        requested output.
+        Parameters
+        ----------
+        theory : dict
+            Dictionary with the theory parameters for the evolution (currently
+            including PDFSet and DIS process indication).
+        observables : dict
+            DIS parameters: process description, kinematic specification for the
+            requested output.
 
-    Notes
-    -----
-    For a full description of the content of `theory` and `dis_observables`
-    dictionaries read ??.
+        Notes
+        -----
+        For a full description of the content of `theory` and `dis_observables`
+        dictionaries read ??.
 
-    .. todo::
-        * reference on theory template
-        * detailed description of dis_observables entries
+        .. todo::
+            * reference on theory template
+            * detailed description of dis_observables entries
+
     """
 
-    __obs_templates = {
-        "F2light": (F2_light,),
-        "F2charm": (F2_charm, "mc"),
-        "F2bottom": (F2_bottom, "mb"),
-        "F2top": (F2_top, "mt"),
-        "FLlight": (FL_light,),
-        "FLcharm": (FL_charm, "mc"),
-        "FLbottom": (FL_bottom, "mb"),
-        "FLtop": (FL_top, "mt"),
-    }
-
-    def __init__(self, theory: dict, dis_observables: dict):
+    def __init__(self, theory: dict, observables: dict):
         # ============
         # Store inputs
         # ============
         self._theory = theory
-        self._dis_observables = dis_observables
+        self._observables = observables
         self._n_f: int = theory["NfFF"]
 
         # ===========================
         # Setup interpolator from eko
         # ===========================
-        polynomial_degree: int = dis_observables["polynomial_degree"]
-        self._interpolator = InterpolatorDispatcher(
-            dis_observables["xgrid"],
+        polynomial_degree: int = observables["polynomial_degree"]
+        self.interpolator = InterpolatorDispatcher(
+            observables["xgrid"],
             polynomial_degree,
-            log=dis_observables.get("is_log_interpolation", True),
+            log=observables.get("is_log_interpolation", True),
             mode_N=False,
             numba_it=False,  # TODO: make it available for the user to choose
         )
@@ -91,7 +75,7 @@ class Runner:
         # ==========================
         # Create physics environment
         # ==========================
-        self._constants = Constants()
+        self.constants = Constants()
 
         FNS = theory["FNS"]
         q2_ref = pow(theory["Q0"], 2)
@@ -104,56 +88,61 @@ class Runner:
         else:
             nf = theory["NfFF"]
             threshold_list = None
-        self._threshold = Threshold(
+        self.threshold = Threshold(
             q2_ref=q2_ref, scheme=FNS, threshold_list=threshold_list, nf=nf
         )
 
         # Now generate the operator alpha_s class
         alpha_ref = theory["alphas"]
         q2_alpha = pow(theory["Qref"], 2)
-        self._alpha_s = StrongCoupling(
-            self._constants, alpha_ref, q2_alpha, self._threshold
+        self.strong_coupling = StrongCoupling(
+            self.constants, alpha_ref, q2_alpha, self.threshold
         )
 
-        self._xiF = theory["XIF"]
+        self.xiF = theory["XIF"]
 
         # ==============================
         # Initialize structure functions
         # ==============================
-        default_args = dict(
-            interpolator=self._interpolator,
-            constants=self._constants,
-            threshold=self._threshold,
-            alpha_s=self._alpha_s,
+        eko_components = dict(
+            interpolator=self.interpolator,
+            constants=self.constants,
+            threshold=self.threshold,
+            alpha_s=self.strong_coupling,
+        )
+        theory_stuffs = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
-            xiF=self._xiF,
+            xiF=self.xiF,
+            M2hq=None,
+            TMC=theory["TMC"],
+            M2target=theory["MP"] ** 2,
         )
 
-        self._observables = []
-        for sf, obs_t in self.__obs_templates.items():
-            # if not in the input skip
-            if sf not in self._dis_observables:
-                continue
+        self.observable_instances = {}
+        for name in ESFmap.keys():
+            lab = utils.get_mass_label(name)
+            if lab is not None:
+                theory_stuffs["M2hq"] = theory[lab] ** 2
 
-            # first element is the class [required]
-            if len(obs_t) == 1:
-                obj = obs_t[0](**default_args)
-            # if second element specified is the key for the mass
-            elif len(obs_t) == 2:
-                obj = obs_t[0](**default_args, M2=theory[obs_t[1]] ** 2,)
-            else:
-                raise RuntimeError("Invalid obs template")
+            # initialize an SF instance for each possible structure function
+            obj = SF(
+                name,
+                runner=self,
+                eko_components=eko_components,
+                theory_stuffs=theory_stuffs,
+            )
 
             # read kinematics
-            obj.load(self._dis_observables.get(obj.name, []))
-            self._observables.append(obj)
+            obj.load(self._observables.get(name, []))
+            self.observable_instances[name] = obj
 
         # =================
         # Initialize output
         # =================
         self._output = Output()
-        self._output["xgrid"] = self._interpolator.xgrid
+        self._output["xgrid"] = self.interpolator.xgrid_raw
+        self._output["xiF"] = self.xiF
 
     def get_output(self) -> Output:
         """
@@ -177,74 +166,24 @@ class Runner:
                 * docs
                 * get_output pipeline
         """
-        for obs in self._observables:
-            self._output[obs.name] = obs.get_output()
+        for name, obs in self.observable_instances.items():
+            if name in self._observables.keys():
+                self._output[name] = obs.get_output()
 
         return self._output
 
     def __call__(self, pdfs: Any) -> dict:
         """
-            __call__.
+        Returns
+        -------
+        dict
+            dictionary with all computed processes
 
-            Parameters
-            ----------
-            pdfs : Any
-                pdfs
-
-            Returns
-            -------
-            dict
-
-            .. todo::
-                docs
+        .. todo::
+            docs
         """
-        # init output
-        output = self.get_output()
 
-        def get_charged_sum(z: float, Q2: float) -> float:
-            """
-                Compute charged sum of PDF at :math:`(x, Q^2)`.
-
-                For 3 flavors:
-                .. math::
-                    d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
-                For n flavors (missing):
-                .. math::
-                    \sum_f Q_f^2 (q_f(x, Q^2) + \\bar(q)_f(x, Q^2))
-            """
-            # preload (z, Q2)
-            pdf_fl = lambda k: pdfs.xfxQ2(k, z, Q2)
-            # compute and return the sum
-            return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
-                pdf_fl(2) + pdf_fl(-2)
-            ) * 4 / 9
-
-        # init return dict
-        ret: dict = {}
-        for obs in self._observables:  # loop over structure functions
-            ret[obs.name] = []
-            for kin in output[obs.name]:  # loop over kinematic points (x, Q2)
-                # collect pdfs
-                fq = []
-                fg = []
-                for z in self._interpolator.xgrid_raw:
-                    fq.append(get_charged_sum(z, kin["Q2"] * self._xiF ** 2) / z)
-                    fg.append(pdfs.xfxQ2(21, z, kin["Q2"] * self._xiF ** 2) / z)
-
-                # contract with coefficient functions
-                result = kin["x"] * (
-                    np.dot(fq, kin["q"]) + 2 / 9 * np.dot(fg, kin["g"])
-                )
-                error = kin["x"] * (
-                    np.dot(fq, kin["q_error"]) + 2 / 9 * np.dot(fg, kin["g_error"])
-                )
-
-                # store the result
-                ret[obs.name].append(
-                    dict(x=kin["x"], Q2=kin["Q2"], result=result, error=error)
-                )
-
-        return ret
+        return self.get_output().apply_PDF(pdfs)
 
     def apply(self, pdfs: Any) -> dict:
         """
@@ -264,7 +203,6 @@ class Runner:
             - implement
             - docs
         """
-        pass
 
     def dump(self) -> None:
         """
@@ -274,28 +212,4 @@ class Runner:
             - implement
             - docs
         """
-        pass
-
-
-def run_dis(theory: dict, dis_observables: dict) -> Runner:
-    """
-        run_dis.
-
-        Parameters
-        ----------
-        theory : dict
-            theory
-        dis_observables : dict
-            dis_observables
-
-        Returns
-        -------
-        Runner
-
-        .. todo::
-            - decide the purpose
-            - implement
-            - docs
-    """
-    runner = Runner(theory, dis_observables)
-    return runner
+        return self.get_output().dump()

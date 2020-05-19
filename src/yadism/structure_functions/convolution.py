@@ -49,11 +49,11 @@ class DistributionVec:
     "Set the names for available distribution kinds"
 
     eps_integration_border = 1e-10
-    """Set the integration domain restriction, see 
+    """Set the integration domain restriction, see
     :ref:`Integration Note<integration-note>`"""
 
     eps_integration_abs = 1e-13
-    """Set the integration target absolute error, see 
+    """Set the integration target absolute error, see
     :ref:`Integration Note<integration-note>`"""
 
     def __init__(self, regular, delta=None, omx=None, logomx=None):
@@ -81,9 +81,11 @@ class DistributionVec:
         """
         try:
             # check if regular is iterable
-            comp_list = [x for x in regular]
+            comp_list = [
+                x for x in regular
+            ]  # pylint: disable=unnecessary-comprehension
             # if a sequence provided fill the missing slots with `None`
-            for i in range(len(self.__names) - len(regular)):
+            for _i in range(len(self.__names) - len(regular)):
                 comp_list.append(None)
         except TypeError:
             # if single arguments are chosen build up a list with their values
@@ -100,7 +102,6 @@ class DistributionVec:
                 component_func = lambda x: 0
             else:
                 # if component is None:
-                # __import__("pdb").set_trace()
                 component_func = lambda x, component=component: float(component)
 
             setattr(self, f"_{name}", component_func)
@@ -303,19 +304,31 @@ class DistributionVec:
                 replaced by an integration and some pre-integrated addends)
 
         """
-        breakpoints = [x, 1.0]
-
+        # empty domain?
+        if x >= (1 - self.eps_integration_border):
+            return 0.0, 0.0
         # eko environment?
         if isinstance(pdf_func, BasisFunction):
-            if pdf_func.is_below_x(x):  # TODO: in eko update remove np.log
+            if pdf_func.is_below_x(x):
                 # support below x --> trivially 0
                 return 0.0, 0.0
             else:
                 # set breakpoints as relevant points of the integrand
                 # computed from interpolation areas of `pdf_func`
+                # and also restrict integration domain
+                area_borders = []
                 for area in pdf_func.areas:
-                    breakpoints.extend([area.xmin, area.xmax])
-                breakpoints = x / np.exp(np.unique(breakpoints))
+                    area_borders.extend([area.xmin, area.xmax])
+                area_borders = np.unique(area_borders)
+                if pdf_func._mode_log:
+                    area_borders = np.exp(area_borders)
+                breakpoints = x / area_borders
+                z_min = x
+                z_max = min(max(breakpoints), 1)
+        else:  # provide default parameters
+            breakpoints = []
+            z_min = x
+            z_max = 1
 
         # providing integrands functions and addends
         # ------------------------------------------
@@ -357,8 +370,8 @@ class DistributionVec:
         # integrate the kernel
         res, err = scipy.integrate.quad(
             ker,
-            x * (1 + self.eps_integration_border),
-            1.0 * (1 - self.eps_integration_border),
+            z_min * (1 + self.eps_integration_border),
+            z_max * (1 - self.eps_integration_border),
             epsabs=self.eps_integration_abs,
             points=breakpoints,
         )

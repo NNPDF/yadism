@@ -1,0 +1,114 @@
+% @author: Felix Hekhorn
+\documentclass[
+  english,		% Sprache
+  a4paper,		% Papierformat
+  11pt,			% Schriftgröße (default 10pt)
+  DIV=12,		% Seiteneinteilung
+  titlepage,
+  toc=bibnumbered,
+  parskip=full,  	% Absätze (full,half,false -+*)
+  headings=normal,
+  BCOR=12mm,
+  numbers=noenddot
+]{scrartcl}
+%\documentclass[a4paper,10pt]{article}
+\usepackage{scrtime,scrlfile,scrpage2}
+
+\usepackage[status=draft]{fixme}
+%\usepackage[status=final]{fixme}
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel} % Sprache
+\usepackage[ngerman,english,main=english]{babel} % Sprache
+\selectlanguage{english}
+\usepackage{amsmath, amssymb}
+
+%\usepackage{graphicx} % Grafiken einbinden
+% The following is needed in order to make the code compatible
+% with both latex/dvips and pdflatex.
+\ifx\pdftexversion\undefined{}
+\usepackage[dvips]{graphicx}
+\else
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsRule{*}{mps}{*}{}
+\fi
+\usepackage{pdfpages}
+
+%\usepackage[left=2cm,right=2cm,top=2.5cm,bottom=3cm]{geometry}
+\usepackage{color}
+\usepackage{bbm}
+\usepackage{csquotes}
+
+\usepackage{pdflscape}
+\usepackage{ulem}
+\usepackage{url}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{placeins}
+
+\usepackage{siunitx} % SI Einheiten
+\usepackage[version=3]{mhchem}
+%\sisetup{
+%	exponent-product = \!\cdot\!,
+%	output-product = \cdot,
+%	list-final-separator =  { und } ,
+%	list-pair-separator = { und } ,
+%	range-phrase = { bis },
+%	output-decimal-marker = {,},
+%	separate-uncertainty = true,
+%	group-digits = false
+%}
+
+%\usepackage{simplewick}
+%\usepackage{feynmf}
+\usepackage{slashed}
+\usepackage{hepnames}
+
+%\usepackage{biblatex}
+\usepackage[numbers]{natbib}
+%\bibliographystyle{natdin}
+%\bibliographystyle{kp}
+\bibliographystyle{utphys}
+
+
+\begin{document}
+here $g = pdf$
+\begin{align}
+g(z) =  \sum\limits_k p_k(z) g(x_k)
+\end{align}
+
+\[ p_k(x_j) = \delta_{jk} \]
+\[   \]
+\begin{align}
+|f\rangle  &= \sum_k c_k | g_k \rangle\\
+c_k &= f(x_k)
+\end{align}
+
+\begin{align}
+F(x) &= \int\limits_{x}^1 \frac{dz}{z} c(z) g(z)\\
+F(x_j) &= \sum\limits_k \int\limits_{x_j}^1 \frac{dz}{z} c(z) p_k(z) g(x_k)
+\end{align}
+
+here $g' = arbitrary fnc$
+\begin{align}
+h_2(\xi) &= \int\limits_{\xi}^1 \frac{du}{u} g'(u) F(u)\\
+h_2(\xi) &= \sum_j \int\limits_{\xi}^1 \frac{du}{u} g'(u) p_j(u) F(x_j)\\
+h_2(\xi) &= \sum_{j,k} \int\limits_{\xi}^1 \frac{du}{u} g'(u) p_j(u) \int\limits_{x_j}^1 \frac{dz}{z} c(z) p_k(z) \cdot g(x_k)\\
+h_2(\xi) &= \sum_{k} \left(\sum_j \int\limits_{\xi}^1 \frac{du}{u} g'(u) p_j(u) \left( \int\limits_{x_j}^1 \frac{dz}{z} c(z) p_k(z) \right)\right) \cdot g(x_k)
+\end{align}
+
+\section{References}
+\begin{itemize}
+  \item goharipour2020.pdf
+  \item apfel: DIS.pdf
+  \item  I. Schienbein et al., “A Review of Target Mass Corrections,” J. Phys. G 35, 053101 (2008).
+  \item https://arxiv.org/pdf/0808.1231.pdf
+  \item https://www.wiki.ed.ac.uk/display/nnpdfwiki/Theory+documentation
+\end{itemize}
+
+Furthermore Maria is the person who originally implemented TMC in NNPDF code, as a part of her PhD thesis.
+
+\end{document}

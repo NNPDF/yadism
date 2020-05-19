@@ -1,23 +1,26 @@
-import sys
-import os
-import pathlib
+from datetime import datetime
 
-import yaml
 import numpy as np
+import tinydb
 
 import apfel
 
-sys.path.append(os.path.dirname(__file__))
-from utils import load_runcards, test_data_dir
+
+def str_datetime(dt):
+    return str(dt)
 
 
-def load_apfel(par):
+def unstr_datetime(s):
+    return datetime.strptime(s, "%Y-%m-%d %H:%M:%S.%f")
+
+
+def load_apfel(theory, observables, pdf="ToyLH"):
     """
-        Set APFEL parameter from ``par`` dictionary.
+        Set APFEL parameter from ``theory`` dictionary.
 
         Parameters
         ----------
-        par : dict
+        theory : dict
             theory and process parameters
 
         Returns
@@ -29,71 +32,75 @@ def load_apfel(par):
     apfel.CleanUp()
 
     # Theory, perturbative order of evolution
-    if not par.get("QED"):
+    if not theory.get("QED"):
         apfel.SetTheory("QCD")
     else:
         apfel.SetTheory("QUniD")
         apfel.EnableNLOQEDCorrections(True)
-    apfel.SetPerturbativeOrder(par.get("PTO"))
+    apfel.SetPerturbativeOrder(theory.get("PTO"))
 
-    if par.get("ModEv") == "EXA":
+    if theory.get("ModEv") == "EXA":
         apfel.SetPDFEvolution("expandalpha")
         apfel.SetAlphaEvolution("expanded")
     else:
-        raise RuntimeError(" ERROR: Unrecognised MODEV:", par.get("ModEv"))
+        raise RuntimeError(" ERROR: Unrecognised MODEV:", theory.get("ModEv"))
 
     # Coupling
-    apfel.SetAlphaQCDRef(par.get("alphas"), par.get("Qref"))
-    if par.get("QED"):
-        apfel.SetAlphaQEDRef(par.get("alphaqed"), par.get("Qedref"))
+    apfel.SetAlphaQCDRef(theory.get("alphas"), theory.get("Qref"))
+    if theory.get("QED"):
+        apfel.SetAlphaQEDRef(theory.get("alphaqed"), theory.get("Qedref"))
 
     # EW
-    apfel.SetWMass(par.get("MW"))
-    apfel.SetZMass(par.get("MZ"))
-    apfel.SetGFermi(par.get("GF"))
+    apfel.SetWMass(theory.get("MW"))
+    apfel.SetZMass(theory.get("MZ"))
+    apfel.SetGFermi(theory.get("GF"))
 
-    apfel.SetCKM(*[float(x) for x in par.get("CKM").split()])
+    apfel.SetCKM(*[float(x) for x in theory.get("CKM").split()])
 
     # TMCs
-    apfel.SetProtonMass(par.get("MP"))
-    if par.get("TMC"):
+    apfel.SetProtonMass(theory.get("MP"))
+    if theory.get("TMC"):
         apfel.EnableTargetMassCorrections(True)
 
     # Heavy Quark Masses
-    if par.get("HQ") == "POLE":
-        apfel.SetPoleMasses(par.get("mc"), par.get("mb"), par.get("mt"))
-    elif par.get("HQ") == "MSBAR":
-        apfel.SetMSbarMasses(par.get("mc"), par.get("mb"), par.get("mt"))
-        apfel.SetMassScaleReference(par.get("Qmc"), par.get("Qmb"), par.get("Qmt"))
+    if theory.get("HQ") == "POLE":
+        apfel.SetPoleMasses(theory.get("mc"), theory.get("mb"), theory.get("mt"))
+    elif theory.get("HQ") == "MSBAR":
+        apfel.SetMSbarMasses(theory.get("mc"), theory.get("mb"), theory.get("mt"))
+        apfel.SetMassScaleReference(
+            theory.get("Qmc"), theory.get("Qmb"), theory.get("Qmt")
+        )
     else:
         raise RuntimeError("Error: Unrecognised HQMASS")
 
     # Heavy Quark schemes
-    apfel.SetMassScheme(par.get("FNS"))
-    apfel.EnableDampingFONLL(par.get("DAMP"))
-    if par.get("FNS") == "FFNS":
-        apfel.SetFFNS(par.get("NfFF"))
+    apfel.SetMassScheme(theory.get("FNS"))
+    apfel.EnableDampingFONLL(theory.get("DAMP"))
+    if theory.get("FNS") == "FFNS":
+        apfel.SetFFNS(theory.get("NfFF"))
     else:
         apfel.SetVFNS()
 
-    apfel.SetMaxFlavourAlpha(par.get("MaxNfAs"))
-    apfel.SetMaxFlavourPDFs(par.get("MaxNfPdf"))
+    apfel.SetMaxFlavourAlpha(theory.get("MaxNfAs"))
+    apfel.SetMaxFlavourPDFs(theory.get("MaxNfPdf"))
 
     # Scale ratios
-    apfel.SetRenFacRatio(par.get("XIR") / par.get("XIF"))
-    apfel.SetRenQRatio(par.get("XIR"))
-    apfel.SetFacQRatio(par.get("XIF"))
+    apfel.SetRenFacRatio(theory.get("XIR") / theory.get("XIF"))
+    apfel.SetRenQRatio(theory.get("XIR"))
+    apfel.SetFacQRatio(theory.get("XIF"))
     # Scale Variations
     # consistent with Evolution (0) or DIS only (1)
     # look at SetScaleVariationProcedure.f
-    apfel.SetScaleVariationProcedure(par.get("EScaleVar"))
+    apfel.SetScaleVariationProcedure(theory.get("EScaleVar"))
 
     # Small-x resummation
-    apfel.SetSmallxResummation(par.get("SxRes"), par.get("SxOrd"))
-    apfel.SetMassMatchingScales(par.get("kcThr"), par.get("kbThr"), par.get("ktThr"))
+    apfel.SetSmallxResummation(theory.get("SxRes"), theory.get("SxOrd"))
+    apfel.SetMassMatchingScales(
+        theory.get("kcThr"), theory.get("kbThr"), theory.get("ktThr")
+    )
 
     # Intrinsic charm
-    apfel.EnableIntrinsicCharm(par.get("IC"))
+    apfel.EnableIntrinsicCharm(theory.get("IC"))
 
     # Not included in the map
     #
@@ -101,9 +108,9 @@ def load_apfel(par):
     # APFEL::SetEpsilonTruncation(1E-1);
     #
     # Set maximum scale
-    # APFEL::SetQLimits(par.Q0, par.QM );
+    # APFEL::SetQLimits(theory.Q0, theory.QM );
     #
-    # if (par.SIA)
+    # if (theory.SIA)
     # {
     #   APFEL::SetPDFSet("kretzer");
     #   APFEL::SetTimeLikeEvolution(true);
@@ -116,8 +123,9 @@ def load_apfel(par):
     # apfel.SetGridParameters(2, 50, 3, 2e-1)
     # apfel.SetGridParameters(3, 50, 3, 8e-1)
 
-    apfel.SetPDFSet(par.get("PDFSet", "ToyLH"))
-    apfel.SetProcessDIS(par.get("prDIS", "EM"))
+    apfel.SetPDFSet(pdf)
+    apfel.SetProcessDIS(observables.get("prDIS", "EM"))
+    # set Target
 
     # apfel initialization for DIS
     apfel.InitializeAPFEL_DIS()
@@ -125,12 +133,7 @@ def load_apfel(par):
     return apfel
 
 
-# Define cache path to store computed observables
-cache_location = test_data_dir / "apfel_cache"
-cache_location.mkdir(parents=True, exist_ok=True)
-
-
-def get_apfel_data(theory_path, dis_observables_path):
+def get_apfel_data(theory, observables, pdf_name, apfel_cache):
     """
         Run APFEL to compute observables or simply use cached values.
 
@@ -138,31 +141,50 @@ def get_apfel_data(theory_path, dis_observables_path):
         ----------
         theory_path :
             path for the theory runcard
-        dis_observables_path :
+        observables_path :
             path for the observables runcard
     """
-    theory_p = test_data_dir / theory_path
-    obs_p = test_data_dir / dis_observables_path
 
-    # check that paths match existing files
-    if not all([theory_p.is_file(), obs_p.is_file()]):
-        raise FileNotFoundError("Missing runcards.")
+    # search for document in the cache
+    cache_query = tinydb.Query()
+    c_query = (
+        cache_query._theory_doc_id == theory.doc_id
+    )  # pylint:disable=protected-access
+    c_query &= (
+        cache_query._observables_doc_id == observables.doc_id
+    )  # pylint:disable=protected-access
+    c_query &= cache_query._pdf == pdf_name  # pylint:disable=protected-access
+    query_res = apfel_cache.search(c_query)
 
-    # get last edit for runcards
-    dependencies = [theory_p, obs_p, pathlib.Path(__file__)]
-    input_mtime = max([p.stat().st_mtime for p in dependencies])
-
-    cache_path = cache_location / f"{theory_p.stem}-{obs_p.stem}.yaml"
-
-    # check if cache existing and updated
-    if cache_path.is_file() and cache_path.stat().st_mtime > input_mtime:
-        # load from cache
-        with open(cache_path) as f:
-            res_tab = yaml.safe_load(f)
+    apf_tab = None
+    # check if cache existing
+    if len(query_res) == 1:
+        apf_tab = query_res[0]
+    elif len(query_res) > 1:
+        raise ValueError("Cache query matched more than once.")
+    # check is updated
+    if apf_tab is not None:
+        theory_changed = unstr_datetime(
+            theory["_modify_time"]
+        )  # pylint:disable=protected-access
+        obs_changed = unstr_datetime(
+            observables["_modify_time"]
+        )  # pylint:disable=protected-access
+        tab_changed = unstr_datetime(
+            apf_tab["_creation_time"]
+        )  # pylint:disable=protected-access
+        if (theory_changed - tab_changed).total_seconds() > 0 or (
+            obs_changed - tab_changed
+        ).total_seconds() > 0:
+            # delete old one
+            apfel_cache.remove(doc_ids=[apf_tab.doc_id])
+            apf_tab = None
+    # cached or recompute
+    if apf_tab is not None:
+        return apf_tab
     else:
         # setup APFEL
-        theory, dis_observables = load_runcards(theory_p, obs_p)
-        apfel = load_apfel(theory)
+        apfel = load_apfel(theory, observables, pdf_name)
 
         # mapping observables names to APFEL methods
         apfel_methods = {
@@ -177,15 +199,15 @@ def get_apfel_data(theory_path, dis_observables_path):
         }
 
         # compute observables with APFEL
-        res_tab = {}
+        apf_tab = {}
         for FX, apfel_FX in apfel_methods.items():
-            if FX not in dis_observables:
+            if FX not in observables:
                 # if not in the runcard just skip
                 continue
 
             # iterate over input kinematics
-            res_tab[FX] = []
-            for kinematics in dis_observables.get(FX, []):
+            apf_tab[FX] = []
+            for kinematics in observables.get(FX, []):
                 Q2 = kinematics["Q2"]
                 x = kinematics["x"]
 
@@ -194,15 +216,19 @@ def get_apfel_data(theory_path, dis_observables_path):
                 # setting initial scale to muF (sqrt(Q2)*xiF) APFEL is going to:
                 # - take the PDF at the scale of muF (exactly as we are doing)
                 # - evolve from muF to muF because the final scale is the second
-                # argument times xiF (internally), so actually it's not evolving
+                #   argument times xiF (internally), so actually it's not evolving
                 apfel.ComputeStructureFunctionsAPFEL(
                     np.sqrt(Q2) * theory["XIF"], np.sqrt(Q2)
                 )
                 value = apfel_FX(x)
 
-                res_tab[FX].append(dict(x=x, Q2=Q2, value=value))
+                apf_tab[FX].append(dict(x=x, Q2=Q2, value=value))
 
         # store the cache
-        with open(cache_path, "w") as f:
-            yaml.safe_dump(res_tab, f)
-    return res_tab
+        apf_tab["_theory_doc_id"] = theory.doc_id
+        apf_tab["_observables_doc_id"] = observables.doc_id
+        apf_tab["_pdf"] = pdf_name
+        apf_tab["_creation_time"] = str_datetime(datetime.now())
+        apfel_cache.insert(apf_tab)
+
+    return apf_tab

@@ -2,8 +2,16 @@ name: yadism
 
 on:
   push:
-    branches-ignore:
-      - '*docs*'
+    branches:
+      - master
+      - 'benchmarks/*'
+      - 'tests/*'
+  pull_request:
+    # TODO: https://github.community/t5/GitHub-Actions/Triggering-workflow-on-merge/td-p/40930
+    types:
+      - closed
+    branches:
+      - master
 
 env:
   UPLOAD_NON_MASTER: false
@@ -15,10 +23,10 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
         include:
-          - python-version: 3.7
-            conda-py: 37
+          - python-version: 3.8
+            conda-py: 38
     env:
       CONDA_PY: ${{ matrix.conda-py }} # strange way to manage env vars inclusion
 
@@ -67,7 +75,7 @@ jobs:
           #
           cd eko
           # git fetch --unshallow
-          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d 
+          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
           cd ..
           # install Gnu Scientific Library (GSL)
           #   sudo works passwordless on github-workflow
@@ -82,7 +90,7 @@ jobs:
         run: |
           conda activate yadism
           #
-          conda install -y pylint
+          conda install -y pylint toml
           # Search for actual errors
           pylint src/*/*.py -E
           # For warnings instead return always zero
@@ -94,11 +102,51 @@ jobs:
           conda activate yadism
           #
           pip install .
+      - name: debug - Explore file system
+        shell: bash -l {0}
+        run: |
+          conda activate yadism
+          #
+          sudo apt install tree
+          tree > dir_tree.txt
+      - name: debug - Report file system exploration
+        uses: actions/upload-artifact@v1
+        with:
+          name: dir_tree
+          path: dir_tree.txt
+      - name: Prepare Test environment
+        shell: bash -l {0}
+        run: |
+          conda activate yadism
+          # download required data:
+          # - install needed lhapdf PDFSets
+          #lhapdf update
+          #lhapdf get CT14llo_NF3
+          # install packages needed for testing
+          pip install -r test_requirements.txt
+          # generate input db
+          cd benchmarks/data
+          python theory.py
+          python observables.py
+          cd ../..
       #  run the test with 'pytest'
       - name: Test yadism
         shell: bash -l {0}
         run: |
           conda activate yadism
-          #
-          pip install pytest
-          pytest
+          # run tests
+          pytest -m quick_check benchmarks
+          #pytest
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: htmlcov
+          path: htmlcov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: benchmarks
+          name: codecov-umbrella
+          fail_ci_if_error: true

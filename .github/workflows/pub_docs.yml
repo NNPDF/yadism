@@ -43,6 +43,7 @@ jobs:
           pip install .
       - name: Build 🔨
         run: |
+          pip install -r doc_requirements.txt
           cd docs/sphinx/
           make html
       - name: Deploy 🚀

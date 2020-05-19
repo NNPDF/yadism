@@ -9,7 +9,6 @@ This file contains the implementation of the DIS structure functions at LO.
 import numpy as np
 
 from .EvaluatedStructureFunction import EvaluatedStructureFunctionHeavy as ESFH
-from . import splitting_functions as split
 
 
 class ESF_FLheavy(ESFH):
@@ -18,16 +17,13 @@ class ESF_FLheavy(ESFH):
         docs
     """
 
-    def __init__(self, SF, kinematics, charge_em):
-        super(ESF_FLheavy, self).__init__(SF, kinematics, charge_em)
-
     def _gluon_1(self):
         """
 
         .. todo::
             docs
         """
-        CF = self._SF._constants.CF
+        CF = self._SF.constants.CF
 
         def cg(z):
             if self.is_below_threshold(z):

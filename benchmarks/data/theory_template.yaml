@@ -1,13 +1,12 @@
 # Theory
-
-ID: _1 # 22
+ID: 22
 PTO: 0
 FNS: "FFNS"
 DAMP: 0
 IC: 0
 ModEv: "EXA"
-XIR: 1.7
-XIF: 0.5
+XIR: 1.0
+XIF: 1.0
 NfFF: 3
 MaxNfAs: 3
 MaxNfPdf: 3
@@ -39,8 +38,3 @@ MP: 0.938
 Comments: "LO baseline for small-x res"
 global_nx: 0
 EScaleVar: 1
-
-# ToBeFilled
-
-PDFSet: CT14lo
-prDIS: NC

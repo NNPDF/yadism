@@ -23,11 +23,11 @@ def pqq_reg(x, constants):
     return -constants.CF * (1 + x)
 
 
-def pqq_delta(x, constants):
+def pqq_delta(_x, constants):
     return (3 / 2) * constants.CF
 
 
-def pqq_pd(x, constants):
+def pqq_pd(_x, constants):
     return 2 * constants.CF
 
 
