@@ -123,6 +123,20 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     # apfel.SetGridParameters(2, 50, 3, 2e-1)
     # apfel.SetGridParameters(3, 50, 3, 8e-1)
 
+    apfel.SetNumberOfGrids(1)
+    # create a 'double *' using swig wrapper
+    yad_xgrid = observables["xgrid"]
+    xgrid = apfel.new_doubles(len(yad_xgrid)) # 100 is the size
+
+    # fill the xgrid with
+    for j,x in enumerate(yad_xgrid):
+        apfel.doubles_setitem(xgrid, j, x)
+
+    # then you can do
+    yad_deg = observables["polynomial_degree"]
+    # 1 = gridnumber
+    apfel.SetExternalGrid(1, len(yad_xgrid)-1, yad_deg, xgrid)
+
     apfel.SetPDFSet(pdf)
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
     # set Target

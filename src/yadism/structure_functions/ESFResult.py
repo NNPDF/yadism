@@ -108,8 +108,6 @@ class ESFResult:
             .. todo::
                 docs
         """
-        if not isinstance(self.x,numbers.Number):
-            raise ValueError("x is not set!")
         if not isinstance(self.Q2,numbers.Number):
             raise ValueError("Q2 is not set!")
 
@@ -134,8 +132,8 @@ class ESFResult:
         #__import__("pdb").set_trace()
 
         # contract with coefficient functions
-        result = self.x * (np.dot(fq, self.q) + 2 / 9 * np.dot(fg, self.g))
-        error = self.x * (np.dot(fq, self.q_error) + 2 / 9 * np.dot(fg, self.g_error))
+        result = (np.dot(fq, self.q) + 2 / 9 * np.dot(fg, self.g))
+        error = (np.dot(fq, self.q_error) + 2 / 9 * np.dot(fg, self.g_error))
 
         return dict(x=self.x, Q2=self.Q2, result=result, error=error)
 
