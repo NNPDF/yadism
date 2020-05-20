@@ -6,7 +6,7 @@ import datetime
 import numpy as np
 import pandas as pd
 import tinydb
-#import pytest
+import pytest
 
 import lhapdf
 
@@ -20,22 +20,71 @@ from apfel_utils import ( # pylint:disable=import-error,wrong-import-position
     str_datetime,
 )
 
-
-# @pytest.fixture()
 class DBInterface:
-    def __init__(self):
+    """
+        Interface to access DB
+    """
+    def __init__(self, obs_table_name = "observables"):
         self._inputdb = tinydb.TinyDB(here / "data" / "input.json")
+        self._obs_table_name = obs_table_name
         self._outputdb = tinydb.TinyDB(here / "data" / "output.json")
-        self._theory_query = tinydb.Query()
-        self._obs_query = tinydb.Query()
+        self.theory_query = tinydb.Query()
+        self.obs_query = tinydb.Query()
 
-    def run_all_tests(self, theory_query, obs_query, pdfs):
+    def _load_input(self, theory_query, obs_query):
         theories = self._inputdb.table("theories").search(theory_query)
-        observables = self._inputdb.table("observables").search(obs_query)
+        observables = self._inputdb.table(self._obs_table_name).search(obs_query)
+        return theories, observables
 
+    def run_queries_regression(self, theory_query, obs_query):
+        theories, observables = self._load_input(theory_query,obs_query)
+        for theory, obs in itertools.product(theories, observables):
+            # run against apfel (test)
+            self.run_regression(theory, obs)
+
+    def run_regression(self, theory, obs):
+        pass
+
+    def run_all_against_apfel(self, theory_query, obs_query, pdfs):
+        theories, observables = self._load_input(theory_query,obs_query)
         for theory, obs in itertools.product(theories, observables):
             # run against apfel (test)
             self.run_against_apfel(theory, obs, pdfs)
+
+    def _get_output_comparison(self, theory, observables, yad_tab, apf_tab, other_name, do_assert=False):
+        log_tab = {}
+        # loop kinematics
+        for sf in yad_tab:
+            kinematics = []
+            for yad, apf in zip(yad_tab[sf], apf_tab[sf]):
+                # check kinematics
+                if any([yad[k] != apf[k] for k in ["x", "Q2"]]):
+                    raise ValueError("Sort problem: x and/or Q2 do not match.")
+                # extract values
+                kin = dict(x=yad["x"], Q2=yad["Q2"])
+
+                # refactor from here --->8---->8----
+                kin[other_name] = ref = apf["value"]
+                kin["yadism"] = fx = yad["result"]
+                kin["yadism_error"] = err = yad["error"]
+                # do hard test?
+                if do_assert:
+                    # TODO: find a solution that works down to more than 1e-6
+                    assert pytest.approx(ref, rel=0.01, abs=max(err, 1e-6)) == fx
+                # compare for log
+                with np.errstate(divide="ignore"):
+                    comparison = (fx / np.array(ref) - 1.0) * 100
+                kin["rel_err[%]"] = comparison
+                # to here --------->8---->8----->8--->8
+
+                kinematics.append(kin)
+            log_tab[sf] = kinematics
+
+        # add metadata to log record
+        log_tab["_creation_time"] = str_datetime(datetime.datetime.now())
+        log_tab["_theory_doc_id"] = theory.doc_id
+        log_tab["_observables_doc_id"] = observables.doc_id
+        return log_tab
 
     def run_against_apfel(self, theory, observables, pdfs):
         """
@@ -75,43 +124,12 @@ class DBInterface:
                 theory, observables, pdf_name, self._outputdb.table("apfel_cache")
             )
 
-            # =========================
             # collect and check results
-            # =========================
-
-            log_tab = {}
-            # loop kinematics
-            for sf in yad_tab:
-                kinematics = []
-                for yad, apf in zip(yad_tab[sf], apf_tab[sf]):
-                    if any([yad[k] != apf[k] for k in ["x", "Q2"]]):
-                        raise ValueError("Sort problem: x and/or Q2 do not match.")
-
-                    kin = dict(x=yad["x"], Q2=yad["Q2"])
-                    kin["APFEL"] = ref = apf["value"]
-                    kin["yadism"] = fx = yad["result"]
-                    kin["yadism_error"] = err = yad["error"]
-                    # TODO: find a solution that works down to more than 1e-6
-                    # assert pytest.approx(ref, rel=0.01, abs=max(err, 1e-6)) == fx
-                    # assert pytest.approx(ref, rel=0.01, abs=err) == fx
-                    if ref == 0.0:
-                        if fx == 0.0:
-                            comparison = 0.0
-                        else:
-                            comparison = np.nan
-                    else:
-                        comparison = (fx / ref - 1.0) * 100
-                    kin["rel_err[%]"] = comparison
-                    kinematics.append(kin)
-                log_tab[sf] = kinematics
+            log_tab = self._get_output_comparison(theory,observables,yad_tab,apf_tab,"APFEL")
 
             # =============
             # print and log
             # =============
-            # add metadata to log record
-            log_tab["_creation_time"] = str_datetime(datetime.datetime.now())
-            log_tab["_theory_doc_id"] = theory.doc_id
-            log_tab["_observables_doc_id"] = observables.doc_id
             log_tab["_pdf"] = pdf_name
             # print immediately
             self._print_res(log_tab)
