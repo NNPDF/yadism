@@ -3,7 +3,7 @@ import pytest
 
 # from eko.interpolation import InterpolatorDispatcher
 
-from yadism.StructureFunction import StructureFunction
+from yadism.sf import StructureFunction
 from yadism.structure_functions import ESFmap
 
 

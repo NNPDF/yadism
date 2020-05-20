@@ -3,6 +3,6 @@ from bowler import Query
 
 q = (
     Query("src/yadism/structure_functions")
-    .select_module("convolution")
-    .rename("distribution_vec")
+    .select_module("ESFResult")
+    .rename("esf_result")
 )

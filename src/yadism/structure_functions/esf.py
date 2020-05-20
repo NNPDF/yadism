@@ -23,7 +23,7 @@ import abc
 import numpy as np
 
 from . import distribution_vec as conv
-from .ESFResult import ESFResult
+from .esf_result import ESFResult
 
 
 class EvaluatedStructureFunction(abc.ABC):

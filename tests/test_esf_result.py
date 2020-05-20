@@ -4,7 +4,7 @@ import copy
 import numpy as np
 import pytest
 
-from yadism.structure_functions.ESFResult import ESFResult
+from yadism.structure_functions.esf_result import ESFResult
 
 
 @pytest.mark.quick_check
@@ -96,7 +96,7 @@ class TestESFResult:
         for k in a:
             assert pytest.approx(dra[k], 0, 0) == a[k]
 
-    def test_apply_PDF(self):
+    def test_apply_pdf(self):
         # gonly
         class MockPDF:
             def xfxQ2(self, pid, x, Q2):
@@ -109,13 +109,13 @@ class TestESFResult:
             a = dict(x=0.5, Q2=Q2, q=[0, 1], q_error=[1, 0], g=[-1, 0], g_error=[1, 0])
             # plain
             ra = ESFResult.from_dict(a)
-            pra = ra.apply_PDF([0.5, 1.0], 1.0, MockPDF())
+            pra = ra.apply_pdf([0.5, 1.0], 1.0, MockPDF())
             expexted_res = a["g"][0] * a["x"] * a["Q2"] * 2 / 9
             expected_err = np.abs(a["g"][0]) * a["x"] * a["Q2"] * 2 / 9
             assert pytest.approx(pra["result"], 0, 0) == expexted_res
             assert pytest.approx(pra["error"], 0, 0) == expected_err
             # test factorization scale variation
             for xiF in [0.5, 2.0]:
-                pra = ra.apply_PDF([0.5, 1.0], xiF, MockPDF())
+                pra = ra.apply_pdf([0.5, 1.0], xiF, MockPDF())
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2

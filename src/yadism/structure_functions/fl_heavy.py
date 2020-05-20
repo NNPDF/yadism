@@ -8,7 +8,7 @@ This file contains the implementation of the DIS structure functions at LO.
 
 import numpy as np
 
-from .EvaluatedStructureFunction import EvaluatedStructureFunctionHeavy as ESFH
+from .esf import EvaluatedStructureFunctionHeavy as ESFH
 
 
 class EvaluatedStructureFunctionFLheavy(ESFH):

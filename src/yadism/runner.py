@@ -23,7 +23,7 @@ from eko.thresholds import Threshold
 from eko.alpha_s import StrongCoupling
 
 from .output import Output
-from .StructureFunction import StructureFunction as SF
+from .sf import StructureFunction as SF
 from .structure_functions import ESFmap
 from . import utils
 
@@ -183,7 +183,7 @@ class Runner:
             docs
         """
 
-        return self.get_output().apply_PDF(pdfs)
+        return self.get_output().apply_pdf(pdfs)
 
     def apply(self, pdfs: Any) -> dict:
         """

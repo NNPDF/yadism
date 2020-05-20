@@ -103,7 +103,7 @@ class ESFResult:
     def __itruediv__(self, other):
         return self.__imul__(1.0 / other)
 
-    def apply_PDF(self, xgrid, xiF, pdfs):
+    def apply_pdf(self, xgrid, xiF, pdfs):
         """
             .. todo::
                 docs

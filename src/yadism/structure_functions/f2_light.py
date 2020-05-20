@@ -8,7 +8,7 @@ This file contains the implementation of the DIS structure functions at LO.
 
 import numpy as np
 
-from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
+from .esf import EvaluatedStructureFunction as ESF
 from . import splitting_functions as split
 
 

@@ -6,7 +6,7 @@ This file contains the implementation of the DIS structure functions at LO.
     docs
 """
 
-from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
+from .esf import EvaluatedStructureFunction as ESF
 
 
 class EvaluatedStructureFunctionFLlight(ESF):

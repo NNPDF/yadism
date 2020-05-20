@@ -60,7 +60,7 @@ import numpy as np
 from eko.interpolation import InterpolatorDispatcher
 
 from .distribution_vec import DistributionVec
-from .EvaluatedStructureFunction import ESFResult
+from .esf_result import ESFResult
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
     """
