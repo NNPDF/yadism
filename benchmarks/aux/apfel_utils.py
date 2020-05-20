@@ -1,4 +1,5 @@
 from datetime import datetime
+import platform
 
 import numpy as np
 import tinydb
@@ -123,20 +124,22 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     # apfel.SetGridParameters(2, 50, 3, 2e-1)
     # apfel.SetGridParameters(3, 50, 3, 8e-1)
 
-    apfel.SetNumberOfGrids(1)
-    # create a 'double *' using swig wrapper
-    yad_xgrid = observables["xgrid"]
-    xgrid = apfel.new_doubles(len(yad_xgrid)) # 100 is the size
+    # set APFEL grid to ours
+    if platform.node() == "FHe19b":
+        apfel.SetNumberOfGrids(1)
+        # create a 'double *' using swig wrapper
+        yad_xgrid = observables["xgrid"]
+        xgrid = apfel.new_doubles(len(yad_xgrid))
 
-    # fill the xgrid with
-    for j,x in enumerate(yad_xgrid):
-        apfel.doubles_setitem(xgrid, j, x)
+        # fill the xgrid with
+        for j,x in enumerate(yad_xgrid):
+            apfel.doubles_setitem(xgrid, j, x)
 
-    # then you can do
-    yad_deg = observables["polynomial_degree"]
-    # 1 = gridnumber
-    apfel.SetExternalGrid(1, len(yad_xgrid)-1, yad_deg, xgrid)
+        yad_deg = observables["polynomial_degree"]
+        # 1 = gridnumber
+        apfel.SetExternalGrid(1, len(yad_xgrid)-1, yad_deg, xgrid)
 
+    # set DIS params
     apfel.SetPDFSet(pdf)
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
     # set Target
