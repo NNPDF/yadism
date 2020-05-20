@@ -2,4 +2,3 @@ ToDo
 ====
 
 .. todolist::
-   

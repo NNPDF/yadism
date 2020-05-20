@@ -1,9 +1,3 @@
-
-Physics documentation
-=====================
-
-The 3-loop reference is :cite:`Vermaseren:2005qc` which includes also the lower order results.
-
 References
 ----------
 
@@ -13,3 +7,6 @@ References
     files potentially ...
 
 .. bibliography:: refs.bib
+    :all:
+
+.. see usage.html#known-issues-and-workarounds on official docs
