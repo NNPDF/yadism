@@ -68,8 +68,8 @@ class TestTMC:
         t_query = p._theory_query.PTO == 0
         t_query &= p._theory_query.XIR == 1.0
         t_query &= p._theory_query.XIF == 1.0
-        t_query &= p._theory_query.TMC != 0
-        # t_query &= p._theory_query.TMC == 1
+        #t_query &= p._theory_query.TMC != 0
+        t_query &= p._theory_query.TMC == 1
 
         o_query = p._obs_query.F2light.exists()
 
@@ -126,15 +126,15 @@ class TestFL:
 
 if __name__ == "__main__":
     plain = TestPlain()
-    plain.test_LO()
-    plain.test_NLO()
+    #plain.test_LO()
+    #plain.test_NLO()
 
     # sv = TestScaleVariations()
     # sv.test_LO()
     # sv.test_NLO()
 
     tmc = TestTMC()
-    #tmc.test_LO()
+    tmc.test_LO()
     #tmc.test_NLO()
 
     # f = TestFull()

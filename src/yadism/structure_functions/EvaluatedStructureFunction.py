@@ -22,7 +22,7 @@ import abc
 
 import numpy as np
 
-from . import convolution as conv
+from . import distribution_vec as conv
 from .ESFResult import ESFResult
 
 
@@ -147,6 +147,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._res.g, self._res.g_error = self._compute_component(
             self.gluon_0, self.gluon_1, self.gluon_1_fact
         )
+        self._res *= self._x
 
     def _compute_component(self, f_LO, f_NLO, f_NLO_fact):
         """
