@@ -1,4 +1,4 @@
 Heavy Flavors
 =============
 
-The heavy-quark reference is :cite:`fh-thesis`.
+The heavy-quark reference is :cite:`felix-thesis`.
