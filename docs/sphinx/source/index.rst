@@ -18,6 +18,7 @@ corresponding one inside |APFEL|.
 
    yadism.rst
    dev.rst
+   tutorials/index.rst
    interpolation.rst
 
    zzz-refs.rst
@@ -76,10 +77,8 @@ Current tools:
    dev-tools/tests.rst
    dev-tools/third-party.rst
 
-And here there is some *physics documentation*.
-
-Some of these are trivial and will be replaced, they are here just to create a
-structure.
+This tools have been developed alongside `yadism`, in order to automatize tests
+and improve the quality of code (less bugs, more readable... hopefully...).
 
 ---------
 
