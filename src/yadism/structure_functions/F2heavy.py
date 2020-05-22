@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 This module contains the implementation of the DIS F2 coefficient functions, for
-heavy quark flavours (namely *charm*, *bottom*, *top*).
+heavy quark flavours.
 
-Differently from the :py:mod:`F2light` here more classes are provided, since
+Differently from the :py:mod:`F2heavy` here more classes are provided, since
 its flavour can be individually selected. Nevertheless a common class is also
 defined, :py:class:`ESF_F2heavy`, to factorize all the common structure related
 to heavy flavours; the common class is a further intermediate node in the
@@ -94,7 +94,7 @@ class ESF_F2charm(ESF_F2heavy):
         :py:class:`ESF_F2heavy`.
         Currently this class sets only:
 
-        - electric charge
+        - electric charge = 2/3
     """
 
     def __init__(self, SF, kinematics):
@@ -109,7 +109,7 @@ class ESF_F2bottom(ESF_F2heavy):
         :py:class:`ESF_F2heavy`.
         Currently this class sets only:
 
-        - electric charge
+        - electric charge = 1/3
     """
 
     def __init__(self, SF, kinematics):
@@ -124,7 +124,7 @@ class ESF_F2top(ESF_F2heavy):
         :py:class:`ESF_F2heavy`.
         Currently this class sets only:
 
-        - electric charge
+        - electric charge = 2/3
     """
 
     def __init__(self, SF, kinematics):
