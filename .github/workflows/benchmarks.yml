@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-      - 'benchmarks/*'
-      - 'tests/*'
+      - "benchmarks/*"
+      - "tests/*"
   pull_request:
     # TODO: https://github.community/t5/GitHub-Actions/Triggering-workflow-on-merge/td-p/40930
     types:
@@ -33,13 +33,9 @@ jobs:
     steps:
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
-      # checkout submodules
-      - name: Checkout submodules
-        uses: actions/checkout@v2
         with:
-          repository: N3PDF/eko
           token: ${{ secrets.ALE_DIS_PAT }}
-          path: eko
+          submodules: "true"
       # fetch all tags & stuffs
       #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
       #   --> needed only for the conda-recipe
