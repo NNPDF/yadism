@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 This module contains the implementation of the DIS FL coefficient functions, for
-light quark flavours (namely *up*, *down*, *strange*).
+light quark flavours.
 
 The only element present is the :py:class:`ESF_FLlight`, that inherits the
 :py:class:`EvaluatedStructureFunction` machinery, but it is used just to store
