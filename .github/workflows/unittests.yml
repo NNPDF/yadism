@@ -3,7 +3,7 @@ name: yadism - unit tests
 on:
   push:
     branches-ignore:
-      - '*docs*'
+      - "*docs*"
 
 defaults:
   run:
@@ -29,13 +29,9 @@ jobs:
     steps:
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
-      # checkout submodules
-      - name: Checkout submodules
-        uses: actions/checkout@v2
         with:
-          repository: N3PDF/eko
           token: ${{ secrets.ALE_DIS_PAT }}
-          path: eko
+          submodules: "true"
       # fetch all tags & stuffs
       #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
       #   --> needed only for the conda-recipe

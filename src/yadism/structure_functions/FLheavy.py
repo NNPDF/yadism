@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 This module contains the implementation of the DIS FL coefficient functions, for
-heavy quark flavours (namely *charm*, *bottom*, *top*).
+heavy quark flavours.
 
-Differently from the :py:mod:`FLlight` here more classes are provided, since
+Differently from the :py:mod:`FLheavy` here more classes are provided, since
 its flavour can be individually selected. Nevertheless a common class is also
 defined, :py:class:`ESF_FLheavy`, to factorize all the common structure related
 to heavy flavours; the common class is a further intermediate node in the
@@ -83,7 +83,7 @@ class ESF_FLcharm(ESF_FLheavy):
         :py:class:`ESF_FLheavy`.
         Currently this class sets only:
 
-        - electric charge
+        - electric charge = 2/3
     """
 
     def __init__(self, SF, kinematics):
@@ -98,7 +98,7 @@ class ESF_FLbottom(ESF_FLheavy):
         :py:class:`ESF_FLheavy`.
         Currently this class sets only:
 
-        - electric charge
+        - electric charge = 1/3
     """
 
     def __init__(self, SF, kinematics):
@@ -113,7 +113,7 @@ class ESF_FLtop(ESF_FLheavy):
         :py:class:`ESF_FLheavy`.
         Currently this class sets only:
 
-        - electric charge
+        - electric charge = 2/3
     """
 
     def __init__(self, SF, kinematics):
