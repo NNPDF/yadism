@@ -60,7 +60,7 @@ class EvaluatedStructureFunction(abc.ABC):
         The one implemented here is only a **local, isolated** caching, i.e.:
 
         - the first time the instance is asked for computing the result, through
-          the :py:meth:`get_ouput` method, it registers the result;
+          the :py:meth:`get_output` method, it registers the result;
         - any following call to the :py:meth:`get_output` method will make use
           of the cached result, and will never recompute it.
 

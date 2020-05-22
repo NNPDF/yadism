@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-This file contains the implementation of the DIS structure functions at LO.
+This module contains the implementation of the DIS FL coefficient functions, for
+light quark flavours.
 
-.. todo::
-    docs
+The only element present is the :py:class:`ESF_FLlight`, that inherits the
+:py:class:`EvaluatedStructureFunction` machinery, but it is used just to store
+the definitions of the related coefficient functions formula.
+
+The coefficient functions definition is given in :eqref:`4.2`, :cite:`vogt` (the
+same of :eqref:`1` in :cite:`vogt-fl`).
+The main reference for their expression is :cite:`vogt-fl`.
+
+Scale varitions main reference is :cite:`vogt-sv`.
+
 """
 
 from .esf import EvaluatedStructureFunction as ESF
@@ -11,22 +20,42 @@ from .esf import EvaluatedStructureFunction as ESF
 
 class EvaluatedStructureFunctionFLlight(ESF):
     """
-    .. todo::
-        docs
+        Compute FL structure functions for light quark flavours.
+
+        This class inherits from :py:class:`ESF`, providing only the formulas
+        for coefficient functions, while all the machinery for dealing with
+        distributions, making convolution with PDFs, and packaging results is
+        completely defined in the parent.
+
     """
 
     def quark_0(self) -> float:
         """
-        .. todo::
-            docs
+            Computes the quark singlet part of the leading order FL structure function.
+
+            The LO is null because of Callan-Gross relation, cf. :cite:`vogt-fl`.
+
+            Returns
+            -------
+            sequence of callables
+               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
         """
 
         return 0
 
     def quark_1(self):
         """
-        .. todo::
-            docs
+            Computes the quark singlet part of the next to leading order FL
+            structure function.
+
+            |ref| implements :eqref:`3`, :cite:`vogt-fl`.
+
+            Returns
+            -------
+            sequence of callables
+               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
         """
         CF = self._SF.constants.CF
 
@@ -37,17 +66,43 @@ class EvaluatedStructureFunctionFLlight(ESF):
 
     def quark_1_fact(self):
         """
-        .. todo::
-            docs
+            Computes the quark singlet contribution to the next to leading
+            order FL structure function coming from the factorization scheme.
+
+            |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
+
+            Returns
+            -------
+            sequence of callables
+               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
+            Note
+            ----
+            Check the theory reference for details on
+            :doc:`../theory/scale-variations`
+
         """
         return 0
 
     def gluon_1(self):
         """
-        vogt page 117
+            Computes the gluon part of the next to leading order FL structure
+            function.
 
-        .. todo::
-            docs
+            |ref| implements :eqref:`3`, :cite:`vogt-fl`.
+
+            Returns
+            -------
+            sequence of callables
+                coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
+
+            .. todo::
+                - 2 * n_f here and in gluon_1_fact is coming from momentum sum
+                  rule q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} forall i}, so
+                  the 2 * n_f is needed to compensate for all the number of flavours
+                  plus antiflavours in which the gluon can go.
+
         """
 
         def cg(z):
@@ -57,7 +112,20 @@ class EvaluatedStructureFunctionFLlight(ESF):
 
     def gluon_1_fact(self):
         """
-        .. todo::
-            docs
+            Computes the gluon contribution to the next to leading order FL
+            structure function coming from the factorization scheme.
+
+            |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
+
+            Returns
+            -------
+            sequence of callables
+               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+
+            Note
+            ----
+            Check the theory reference for details on
+            :doc:`../theory/scale-variations`
+
         """
         return 0

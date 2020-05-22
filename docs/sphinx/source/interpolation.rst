@@ -2,6 +2,7 @@ Interpolation
 =============
 
 Interpolation kicks in the game in a lot of ways, namely 3:
+
 - there is an interpolation involved at the **pdf level**, that is really the only
   one `yadism` cares about, and is managed through `eko`: pdfs are delivered as
   an array of coefficient over an interpolation basis made of polynomials (of

@@ -14,18 +14,13 @@ jobs:
         python-version: [3.7]
       fail-fast: false
 
-
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
         with:
           persist-credentials: false
-      - name: Checkout submodules
-        uses: actions/checkout@v2
-        with:
-          repository: N3PDF/eko
           token: ${{ secrets.ALE_DIS_PAT }}
-          path: eko
+          submodules: "true"
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
         with:
@@ -44,6 +39,7 @@ jobs:
       - name: Build 🔨
         run: |
           pip install -r doc_requirements.txt
+          sudo apt-get install graphviz
           cd docs/sphinx/
           make html
       - name: Deploy 🚀
@@ -52,4 +48,3 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ALE_DIS_PAT }}
           BRANCH: gh-pages # The branch the action should deploy to.
           FOLDER: "docs/sphinx/build/html" # The folder the action should deploy.
-

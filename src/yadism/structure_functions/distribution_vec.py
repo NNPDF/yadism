@@ -20,7 +20,7 @@ class DistributionVec:
         - *regular*: the regular part is the coefficient of 1, so it is the pure
           function component
         - *delta*: it is the coefficient of the Dirac delta function :math:`\delta(1-x)`
-        - *omx*: it is the coefficient of the distribution :log:`1/(1-x)_+`
+        - *omx*: it is the coefficient of the distribution :math:`1/(1-x)_+`
         - *logomx*: it is the coefficient of the distribution :math:`(\log(x)/(1-x))_+`
 
         Note

@@ -28,26 +28,28 @@ Note 2 (caching)
 ----------------
 Since the responsibility of caching is of SF as written above we decided the
 following layout:
-    - SF instantiate ESF or ESFTMC according to TMC flag in theory dictionary,
-      and append it to `self.__ESFs` at load time, i.e. in `self.load()` (these
-      are the observables to be computed)
-    - when asked for output if noTMC a ESF is called and the instance is
-      registered
-        - `self.get_ouput()` is used for getting the result passing through:
-        - `self.get_ESF()` is used for getting the instance and register to the
-          cache
-    - if TMC a ESFTMC is called, and whenever he needs an ESF instance to
-      compute a point it will ask its parent SF with `SF.get_ESF()` method, in
-      this way passing through the cache
+
+- SF instantiate ESF or ESFTMC according to TMC flag in theory dictionary,
+  and append it to `self.__ESFs` at load time, i.e. in `self.load()` (these
+  are the observables to be computed)
+- when asked for output if noTMC a ESF is called and the instance is
+  registered
+    - `self.get_ouput()` is used for getting the result passing through:
+    - `self.get_ESF()` is used for getting the instance and register to the
+      cache
+- if TMC a ESFTMC is called, and whenever he needs an ESF instance to
+  compute a point it will ask its parent SF with `SF.get_ESF()` method, in
+  this way passing through the cache
 
 Note 3 (physics)
 ----------------
 There 3 schemes in the reference:
-    - **exact**: is the full and involves integration
-    - **approximate**: is stemming from the exact, but the strcture functions in
-      the integrand are evaluated at the bottom end
-    - **APFEL**: the one used in APFEL, similar to the exact but with g2 in
-      the review (Schienbein et al.) set to 0
+
+- **exact**: is the full and involves integration
+- **approximate**: is stemming from the exact, but the strcture functions in
+  the integrand are evaluated at the bottom end
+- **APFEL**: the one used in APFEL, similar to the exact but with g2 in
+  the review (Schienbein et al.) set to 0
 
 .. todo::
     docs
@@ -61,6 +63,7 @@ from eko.interpolation import InterpolatorDispatcher
 
 from .distribution_vec import DistributionVec
 from .esf_result import ESFResult
+
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
     """
@@ -294,6 +297,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             )
         # join
         return res
+
     ### ----- /APFEL crap
 
 
