@@ -103,11 +103,13 @@ class ESFResult:
     def __itruediv__(self, other):
         return self.__imul__(1.0 / other)
 
-    def apply_PDF(self, xgrid, xiF, pdfs):
+    def apply_pdf(self, xgrid, xiF, pdfs):
         """
             .. todo::
                 docs
         """
+        if not isinstance(self.Q2,numbers.Number):
+            raise ValueError("Q2 is not set!")
 
         def get_charged_sum(z: float, Q2: float) -> float:
             """
@@ -130,8 +132,8 @@ class ESFResult:
         #__import__("pdb").set_trace()
 
         # contract with coefficient functions
-        result = self.x * (np.dot(fq, self.q) + 2 / 9 * np.dot(fg, self.g))
-        error = self.x * (np.dot(fq, self.q_error) + 2 / 9 * np.dot(fg, self.g_error))
+        result = (np.dot(fq, self.q) + 2 / 9 * np.dot(fg, self.g))
+        error = (np.dot(fq, self.q_error) + 2 / 9 * np.dot(fg, self.g_error))
 
         return dict(x=self.x, Q2=self.Q2, result=result, error=error)
 
