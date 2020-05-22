@@ -1,60 +1,28 @@
 # -*- coding: utf-8 -*-
 """
-Runner: holds a list of structure functions instances, that will act as our
-"soft singletons"
-StructureFunction: holds a reference to his parent runner, in this way its also
-able to access its StructureFunctions siblings (like F2 from FL, in order to
-compute TMCs, e.g.)
+This module contain the implementation of target mass corrections (TMC). For an
+introduction about TMC and also implementation details see :ref:`tmc-page`.
 
-Caching: it is managed at the level of StructureFunction, while the values are
-kept at the level of ESF (so the StructureFunction is just routing the caller to
-the correct instance of ESF to ask for values)
+Three classes are here defined:
 
-Note 1
-------
-Here is the third time that we are proliferating the SF classes to all the
-flavours and kinds (SF/ESFTMC/ESF x 2/L x light/c/b/t), but at the bottom level
-they are needed (ESF implementation are actually different for every option, so
-it makes sense to have different classes).
-The classes one level above (SF/ESFTMC) are simply shadowing the ones below in
-order to route to the correct one. The same business can be done with a `switch`
-pattern (actually `if...elif...elif...` in python), but the only difference is
-how many lines of code you are saving.
-**Proposal** for a better layout in which we don't need to explicitly shadow
-from level to level (and we don't need to route with `if` as well) are liked and
-likeòy to be accepted.
+    - :py:class:`EvaluatedStructureFunctionTMC` is the abstract class defining
+      the machinery for TMC calculation
+    - :py:class:`ESFTMC_F2` and :py:class:`ESFTMC_FL` implements the previous
+      one, making use of its machinery as building blocks for the actual
+      expressions for TMC
 
-Note 2 (caching)
-----------------
-Since the responsibility of caching is of SF as written above we decided the
-following layout:
+The three structures presented play together the role of an intermediate block
+between the :py:class:`StructureFunction` interface (used to manage user request
+for DIS observables) the actual calculator
+:py:class:`EvaluatedStructureFunction`, or even better they can be seen as a
+replacement for the latter, that makes use of that one under the hood.
 
-- SF instantiate ESF or ESFTMC according to TMC flag in theory dictionary,
-  and append it to `self.__ESFs` at load time, i.e. in `self.load()` (these
-  are the observables to be computed)
-- when asked for output if noTMC a ESF is called and the instance is
-  registered
+Indeed TMC corrected structure functions are defined on top of the "bare" ones,
+and one of their main features is that their expression is a functione of the
+"bare" themselves, but evaluated to a shifted kinematics (w.r.t. to the one
+asked by the user, that is the physical kinematic point at which one would like
+to evaluate the physical structure function).
 
-    - `self.get_ouput()` is used for getting the result passing through:
-    - `self.get_ESF()` is used for getting the instance and register to the
-      cache
-
-- if TMC a ESFTMC is called, and whenever he needs an ESF instance to
-  compute a point it will ask its parent SF with `SF.get_ESF()` method, in
-  this way passing through the cache
-
-Note 3 (physics)
-----------------
-There 3 schemes in the reference:
-
-- **exact**: is the full and involves integration
-- **approximate**: is stemming from the exact, but the strcture functions in
-  the integrand are evaluated at the bottom end
-- **APFEL**: the one used in APFEL, similar to the exact but with g2 in
-  the review (Schienbein et al.) set to 0
-
-.. todo::
-    docs
 """
 import abc
 import warnings
@@ -68,12 +36,38 @@ from .EvaluatedStructureFunction import ESFResult
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
-    """
-        .. todo:
-            docs
+    r"""
+        This is an abstract class, made to serve the machinery to the inheriting
+        classes. In particular here are defined:
+
+            - shifted kinematics :math:`\xi` and other aux variables
+              (:math:`\mu` and :math:`\rho`, see :cite:`tmc-iranian`)
+            - integration layout and two common integrals of structure
+              functions, :math:`h_2` and :math:`g_2` (see :cite:`tmc-review`)
+            - an interface for picking up the chosen formulas between:
+
+                - *APFEL*
+                - *approximate*
+                - *exact*
+
+              (see :cite:`tmc-iranian`)
+
+        Parameters
+        ----------
+        SF : StructureFunction
+            the interface object representing the structure function kind he
+            belongs to
+        kinematics : dict
+            requested kinematic point
+
     """
 
     def __init__(self, SF, kinematics):
+        """
+            Just store the input and compute some auxiliary variables, no
+            integration performed here.
+
+        """
         self._SF = SF
         self._flavour = SF._name[2:]
         self._x = kinematics["x"]
