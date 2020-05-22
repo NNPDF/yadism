@@ -4,7 +4,7 @@
 
 import pytest
 
-from conftest import DBInterface
+from db_interface import DBInterface
 
 
 @pytest.mark.quick_check
@@ -22,8 +22,8 @@ class TestPlain:
 
         o_query = p.obs_query.F2light.exists()
 
-        p.run_all_against_apfel(t_query, o_query, ["ToyLH"])
-        # p.run_all_against_apfel(t_query, o_query, ["uonly-dense"])
+        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
+        # p.run_queries_apfel(t_query, o_query, ["uonly-dense"])
 
     def test_NLO(self):
         """
@@ -37,7 +37,7 @@ class TestPlain:
 
         o_query = p.obs_query.prDIS.exists()
 
-        p.run_all_against_apfel(t_query, o_query, ["ToyLH"])
+        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
 
 
 @pytest.mark.commit_check
@@ -49,7 +49,7 @@ class TestScaleVariations:
 
         o_query = p.obs_query.F2light.exists()
 
-        p.run_all_against_apfel(t_query, o_query, ["CT14llo_NF3"])
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF3"])
 
     def test_NLO(self):
         p = DBInterface()
@@ -58,7 +58,7 @@ class TestScaleVariations:
 
         o_query = p.obs_query.prDIS.exists()
 
-        p.run_all_against_apfel(t_query, o_query, ["CT14llo_NF3"])
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF3"])
 
 
 @pytest.mark.commit_check
@@ -68,13 +68,13 @@ class TestTMC:
         t_query = p.theory_query.PTO == 0
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
-        #t_query &= p.theory_query.TMC != 0
+        # t_query &= p.theory_query.TMC != 0
         t_query &= p.theory_query.TMC == 1
 
         o_query = p.obs_query.F2light.exists()
 
-        p.run_all_against_apfel(t_query, o_query, ["ToyLH"])
-        # p.run_all_against_apfel(t_query, o_query, ["uonly-dense"])
+        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
+        # p.run_queries_apfel(t_query, o_query, ["uonly-dense"])
 
     def test_NLO(self):
         p = DBInterface()
@@ -86,7 +86,7 @@ class TestTMC:
 
         o_query = p.obs_query.prDIS.exists()
 
-        p.run_all_against_apfel(t_query, o_query, ["ToyLH"])
+        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
 
 
 @pytest.mark.full
@@ -97,7 +97,7 @@ class TestFull:
 
         o_query = p.obs_query.prDIS.exists()
 
-        p.run_all_against_apfel(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
+        p.run_queries_apfel(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
 
     def test_NLO(self):
         p = DBInterface()
@@ -105,13 +105,13 @@ class TestFull:
 
         o_query = p.obs_query.prDIS.exists()
 
-        p.run_all_against_apfel(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
+        p.run_queries_apfel(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
 
 
 if __name__ == "__main__":
     plain = TestPlain()
-    #plain.test_LO()
-    #plain.test_NLO()
+    # plain.test_LO()
+    # plain.test_NLO()
 
     # sv = TestScaleVariations()
     # sv.test_LO()
@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     tmc = TestTMC()
     tmc.test_LO()
-    #tmc.test_NLO()
+    # tmc.test_NLO()
 
     # f = TestFull()
     # f.test_LO()

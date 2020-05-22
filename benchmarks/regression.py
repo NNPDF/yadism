@@ -2,24 +2,25 @@
 #
 # do regression test
 
-#import pytest
+# import pytest
 
-from conftest import DBInterface
+from db_interface import DBInterface
+
 
 class TestRegression:
     def test_one_hot(self):
-        p = DBInterface()
+        p = DBInterface("-regression")
 
         # test matrix
         features = {
             p.theory_query.XIR: [1.0, 2.0],
             p.theory_query.XIF: [1.0, 0.5],
-            p.theory_query.TMC: [0, 1, 2, 3]
+            p.theory_query.TMC: [0, 1, 2, 3],
         }
         # get the raw operator
         raw_query = p.theory_query.noop()
-        for f,f_vals in features.items():
-            raw_query &= (f == f_vals[0])
+        for f, f_vals in features.items():
+            raw_query &= f == f_vals[0]
         # activate one feature at a time
         for f,f_vals in features.items():
             # iterate the non-trivial values
@@ -34,6 +35,8 @@ class TestRegression:
                 raw_query |= lower_query
 
         o_query = p.obs_query.noop()
+        p.run_queries_regression(raw_query, o_query)
+
 
 if __name__ == "__main__":
     r = TestRegression()
