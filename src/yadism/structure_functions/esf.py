@@ -128,6 +128,21 @@ class EvaluatedStructureFunction(abc.ABC):
         self._n_f = self._SF.threshold.get_areas(self._Q2)[-1].nf
         self._computed = False
 
+    def _compute_weights(self):
+        """
+            Compute PDF weights for different channels.
+
+            Returns
+            -------
+                weights : dict
+                    dictionary with key refering to the channel and a dictionary with pid -> weight
+        """
+        weights = {
+            "g": {21: 2 / 9},  # charge average
+            "q": {1: 1 / 9, 2: 4 / 9, 3: 1 / 9,},
+        }
+        return weights
+
     def _compute(self):
         """
             Here is where the local caching is actually implemented: if the
@@ -148,6 +163,8 @@ class EvaluatedStructureFunction(abc.ABC):
             self.gluon_0, self.gluon_1, self.gluon_1_fact
         )
         self._res *= self._x
+        # setup weights
+        self._res.weights = self._compute_weights()
 
     def _compute_component(self, f_LO, f_NLO, f_NLO_fact):
         """

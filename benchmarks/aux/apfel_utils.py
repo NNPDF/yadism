@@ -4,6 +4,7 @@ import platform
 import numpy as np
 import tinydb
 
+
 def str_datetime(dt):
     return str(dt)
 
@@ -26,7 +27,8 @@ def load_apfel(theory, observables, pdf="ToyLH"):
         module
             loaded apfel wrapper
     """
-    import apfel # pylint:disable=import-outside-toplevel
+    import apfel  # pylint:disable=import-outside-toplevel
+
     # Cleanup APFEL common blocks
     apfel.CleanUp()
 
@@ -130,12 +132,12 @@ def load_apfel(theory, observables, pdf="ToyLH"):
         xgrid = apfel.new_doubles(len(yad_xgrid))
 
         # fill the xgrid with
-        for j,x in enumerate(yad_xgrid):
+        for j, x in enumerate(yad_xgrid):
             apfel.doubles_setitem(xgrid, j, x)
 
         yad_deg = observables["polynomial_degree"]
         # 1 = gridnumber
-        apfel.SetExternalGrid(1, len(yad_xgrid)-1, yad_deg, xgrid)
+        apfel.SetExternalGrid(1, len(yad_xgrid) - 1, yad_deg, xgrid)
 
     # set DIS params
     apfel.SetPDFSet(pdf)

@@ -6,6 +6,7 @@ import pytest
 
 from db_interface import DBInterface
 
+
 @pytest.mark.regression
 class TestRegression:
     def test_one_hot(self):
@@ -22,20 +23,20 @@ class TestRegression:
         for f, f_vals in features.items():
             raw_query &= f == f_vals[0]
         # activate one feature at a time
-        for f,f_vals in features.items():
+        for f, f_vals in features.items():
             # iterate the non-trivial values
             for v in f_vals[1:]:
-                lower_query = (f == v)
+                lower_query = f == v
                 # make the others trivial
-                for g,g_vals in features.items():
+                for g, g_vals in features.items():
                     # skip myself
                     if f is g:
                         continue
-                    lower_query &= (g == g_vals[0])
+                    lower_query &= g == g_vals[0]
                 raw_query |= lower_query
 
         o_query = p.obs_query.noop()
-        #p.run_generate_regression(raw_query, o_query)
+        # p.run_generate_regression(raw_query, o_query)
         p.run_queries_regression(raw_query, o_query)
 
 

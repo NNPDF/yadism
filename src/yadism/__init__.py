@@ -5,6 +5,7 @@
 """
 from .runner import Runner
 
+
 def run_yadism(theory: dict, observables: dict) -> Runner:
     """
     .. todo::

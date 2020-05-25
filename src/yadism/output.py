@@ -16,9 +16,6 @@ class Output(dict):
             docs
     """
 
-    # TODO shift function somewhere else?
-    # the other alternative is to shift this to an external module (and ouf of runner)
-    # and import from there, here and in yadism.__init__
     def apply_pdf(self, pdfs):
         # iterate
         ret: dict = {}

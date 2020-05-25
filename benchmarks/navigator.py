@@ -10,7 +10,9 @@ from human_dates import human_dates
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
-from apfel_utils import unstr_datetime  # pylint:disable=import-error,wrong-import-position
+from apfel_utils import (
+    unstr_datetime,
+)  # pylint:disable=import-error,wrong-import-position
 
 # database access
 here = pathlib.Path(__file__).parent.absolute()
@@ -19,15 +21,18 @@ db_regression = TinyDB(here / "data" / "regression.json")
 
 idb = None
 
+
 def check_apfel():
     global idb
     print("APFEL mode activated")
     idb = db_APFEL
 
+
 def check_regression():
     global idb
     print("regression mode activated")
     idb = db_regression
+
 
 # Theory ------------------
 # all theories

@@ -21,6 +21,7 @@ class MockESF:  # return init arguments
             {
                 "x": 0,
                 "Q2": 0,
+                "weights": {},
                 "q": np.array(self._q),
                 "g": np.array(self._g),
                 "q_error": np.zeros(len(self._q)),
