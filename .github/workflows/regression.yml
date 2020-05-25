@@ -27,6 +27,10 @@ jobs:
           repository: N3PDF/eko
           token: ${{ secrets.ALE_DIS_PAT }}
           path: eko
+      - name: Set up Python ${{ matrix.python-version }} 🐍
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
       # fetch all tags & stuffs
       #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
       #   --> needed only for the conda-recipe
