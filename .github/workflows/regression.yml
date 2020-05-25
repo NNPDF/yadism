@@ -1,17 +1,7 @@
-name: yadism
+name: yadism-regression
 
 on:
-  push:
-    branches:
-      - master
-      - "benchmarks/*"
-      - "tests/*"
-  pull_request:
-    # TODO: https://github.community/t5/GitHub-Actions/Triggering-workflow-on-merge/td-p/40930
-    types:
-      - closed
-    branches:
-      - master
+  - push
 
 env:
   UPLOAD_NON_MASTER: false
@@ -26,48 +16,31 @@ jobs:
         python-version: [3.8]
         include:
           - python-version: 3.8
-            conda-py: 38
-    env:
-      CONDA_PY: ${{ matrix.conda-py }} # strange way to manage env vars inclusion
 
     steps:
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
+      # checkout submodules
+      - name: Checkout submodules
+        uses: actions/checkout@v2
         with:
+          repository: N3PDF/eko
           token: ${{ secrets.ALE_DIS_PAT }}
-          submodules: "true"
+          path: eko
+      - name: Set up Python ${{ matrix.python-version }} 🐍
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
       # fetch all tags & stuffs
       #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
       #   --> needed only for the conda-recipe
       - name: Fetch tags
         run: git fetch --unshallow --no-recurse-submodules
-      # use an external action to setup miniconda
-      #   - also setup a conda virtual environment named 'yadism'
-      #
-      # (in order to use the conda venv at each step you need to login with
-      # 'bash -l {0}' in the 'shell' field, and to activate the environment)
-      - uses: goanpeca/setup-miniconda@v1
-        with:
-          auto-update-conda: true
-          miniconda-version: "latest"
-          activate-environment: yadism
-          python-version: ${{ matrix.python-version }}
-      # install lhapdf and apfel from the nnpdf conda repo
-      - name: Install lhapdf and apfel with conda
-        shell: bash -l {0}
-        run: |
-          conda activate yadism
-          #
-          conda config --add channels https://packages.nnpdf.science/conda
-          conda install -y lhapdf
-          conda install -y apfel
       # install eko
       #   - @ the correct commit (no official suitable tag currently available)
       #   - providing the C dependencies
       - name: Install eko
-        shell: bash -l {0}
         run: |
-          conda activate yadism
           #
           cd eko
           # git fetch --unshallow
@@ -80,33 +53,21 @@ jobs:
           pip install eko/
       # install the actual python package 'yadism'
       - name: Install yadism
-        shell: bash -l {0}
         run: |
-          conda activate yadism
           #
           pip install .
       - name: Prepare Test environment
-        shell: bash -l {0}
         run: |
-          conda activate yadism
-          # download required data:
-          # - install needed lhapdf PDFSets
-          #lhapdf update
-          #lhapdf get CT14llo_NF3
           # install packages needed for testing
           pip install -r test_requirements.txt
-          # generate input db
-          cd benchmarks/data
-          python theory.py
-          python observables.py
-          cd ../..
+          # download regression db
+          wget https://gist.githubusercontent.com/felixhekhorn/f89d04db0565e8f880f2547be281fbdf/raw/73c56ff8e038887d8487183d886009d44ffd208b/regression.json
+          mv regression.json benchmarks/data/
       #  run the test with 'pytest'
       - name: Test yadism
-        shell: bash -l {0}
         run: |
-          conda activate yadism
           # run tests
-          pytest -m quick_check benchmarks
+          pytest -m regression
           #pytest
       - name: Archive code coverage results
         uses: actions/upload-artifact@v1
@@ -118,6 +79,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
-          flags: benchmarks
+          flags: regression
           name: codecov-umbrella
           fail_ci_if_error: true

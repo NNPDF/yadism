@@ -10,12 +10,24 @@ from human_dates import human_dates
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
-from apfel_utils import unstr_datetime  # pylint:disable=import-error
+from apfel_utils import unstr_datetime  # pylint:disable=import-error,wrong-import-position
 
 # database access
 here = pathlib.Path(__file__).parent.absolute()
-idb = TinyDB(here / "data" / "input.json")
-odb = TinyDB(here / "data" / "output.json")
+db_APFEL = TinyDB(here / "data" / "input.json")
+db_regression = TinyDB(here / "data" / "regression.json")
+
+idb = None
+
+def check_apfel():
+    global idb
+    print("APFEL mode activated")
+    idb = db_APFEL
+
+def check_regression():
+    global idb
+    print("regression mode activated")
+    idb = db_regression
 
 # Theory ------------------
 # all theories
@@ -167,7 +179,7 @@ def purge_observables():
 def get_all_logs():
     """Retrieve all logs from db."""
     # collect
-    return odb.table("logs").all()
+    return idb.table("logs").all()
 
 
 def list_all_logs():
@@ -187,7 +199,8 @@ def list_all_logs():
             esfs += len(l[sf])
         obj["structure_functions"] = " ".join(sfs) + f" at {esfs} points"
         for f in ["_theory_doc_id", "_observables_doc_id", "_creation_time", "_pdf"]:
-            obj[f.split("_")[1]] = l[f]
+            if f in l.keys():
+                obj[f.split("_")[1]] = l[f]
         dt = unstr_datetime(obj["creation"])
         obj["creation"] = human_dates(dt)
         data.append(obj)
@@ -211,13 +224,13 @@ def get_log(doc_id):
         ----------
             doc_id : int
                 document identifier
-        
+
         Returns
         -------
             log : dict
                 document
     """
-    return odb.table("logs").get(doc_id=doc_id)
+    return idb.table("logs").get(doc_id=doc_id)
 
 
 class DFlist(list):
@@ -294,7 +307,7 @@ def purge_logs():
     """Purge logs table."""
     ask = input("Purge logs table? [y/n]")
     if ask == "y":
-        odb.table("logs").truncate()
+        idb.table("logs").truncate()
     else:
         print("nothing done.")
 

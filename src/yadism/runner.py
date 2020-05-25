@@ -141,7 +141,7 @@ class Runner:
         # Initialize output
         # =================
         self._output = Output()
-        self._output["xgrid"] = self.interpolator.xgrid_raw
+        self._output["xgrid"] = self.interpolator.xgrid_raw.tolist()
         self._output["xiF"] = self.xiF
 
     def get_output(self) -> Output:
