@@ -14,7 +14,7 @@ class TestPlain:
         """
         Test the full LO order against APFEL's.
         """
-        p = DBInterface()
+        p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 0
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
@@ -29,7 +29,7 @@ class TestPlain:
         """
         Test the full NLO order against APFEL's.
         """
-        p = DBInterface()
+        p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 1
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
@@ -43,7 +43,7 @@ class TestPlain:
 @pytest.mark.commit_check
 class TestScaleVariations:
     def test_LO(self):
-        p = DBInterface()
+        p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 0
         t_query &= p.theory_query.TMC == 0
 
@@ -52,7 +52,7 @@ class TestScaleVariations:
         p.run_queries_apfel(t_query, o_query, ["CT14llo_NF3"])
 
     def test_NLO(self):
-        p = DBInterface()
+        p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 1
         t_query &= p.theory_query.TMC == 0
 
@@ -64,7 +64,7 @@ class TestScaleVariations:
 @pytest.mark.commit_check
 class TestTMC:
     def test_LO(self):
-        p = DBInterface()
+        p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 0
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
@@ -77,7 +77,7 @@ class TestTMC:
         # p.run_queries_apfel(t_query, o_query, ["uonly-dense"])
 
     def test_NLO(self):
-        p = DBInterface()
+        p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 1
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
@@ -92,7 +92,7 @@ class TestTMC:
 @pytest.mark.full
 class TestFull:
     def test_LO(self):
-        p = DBInterface()
+        p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 0
 
         o_query = p.obs_query.prDIS.exists()
@@ -100,7 +100,7 @@ class TestFull:
         p.run_queries_apfel(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
 
     def test_NLO(self):
-        p = DBInterface()
+        p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 1
 
         o_query = p.obs_query.prDIS.exists()

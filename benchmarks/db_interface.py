@@ -26,16 +26,14 @@ class DBInterface:
         Interface to access DB
     """
 
-    def __init__(self, table_suffix=""):
-        self._inputdb = tinydb.TinyDB(here / "data" / "input.json")
-        self._table_suffix = table_suffix
-        self._outputdb = tinydb.TinyDB(here / "data" / "output.json")
+    def __init__(self, db_name):
+        self._db = tinydb.TinyDB(here / "data" / db_name)
         self.theory_query = tinydb.Query()
         self.obs_query = tinydb.Query()
 
     def _load_input(self, theory_query, obs_query):
-        theories = self._inputdb.table("theories").search(theory_query)
-        observables = self._inputdb.table("observables" + self._table_suffix).search(
+        theories = self._db.table("theories").search(theory_query)
+        observables = self._db.table("observables").search(
             obs_query
         )
         return theories, observables
@@ -87,7 +85,7 @@ class DBInterface:
             # run codes
             yad_tab = runner.apply(pdf)
             apf_tab = get_apfel_data(
-                theory, observables, pdf_name, self._outputdb.table("apfel_cache")
+                theory, observables, pdf_name, self._db.table("apfel_cache")
             )
 
             # collect and check results
@@ -105,6 +103,10 @@ class DBInterface:
             self._log(log_tab)
 
     def run_generate_regression(self, theory_query, obs_query):
+        ask = input("Regenerate regression data? [y/n]")
+        if ask != "y":
+            print("Nothing done.")
+            return
         theories, observables = self._load_input(theory_query, obs_query)
         for theory, obs in itertools.product(theories, observables):
             # run against apfel (test)
@@ -122,13 +124,13 @@ class DBInterface:
         query = (q._theory_doc_id == theory.doc_id) & (
             q._observables_doc_id == obs.doc_id
         )
-        regression_log = self._inputdb.table("regressions").search(query)
+        regression_log = self._db.table("regressions").search(query)
         if len(regression_log) != 0:
             raise RuntimeError(
                 f"there is already a document for t={theory.doc_id} and o={obs.doc_id}"
             )
         # insert
-        self._inputdb.table("regressions").insert(out)
+        self._db.table("regressions").insert(out)
 
     def run_regression(self, theory, obs):
         runner = Runner(theory, obs)
@@ -138,7 +140,7 @@ class DBInterface:
         query = (q._theory_doc_id == theory.doc_id) & (
             q._observables_doc_id == obs.doc_id
         )
-        regression_log = self._inputdb.table("regressions").search(query)
+        regression_log = self._db.table("regressions").search(query)
         if len(regression_log) == 0:
             raise RuntimeError(
                 "no regression data to compare to! you need to generate first ..."
@@ -164,7 +166,7 @@ class DBInterface:
         kin["yadism"] = fx = yad["result"]
         kin["yadism_error"] = yad["error"]
         # compare for log
-        with np.errstate(divide="ignore"):
+        with np.errstate(divide="ignore",invalid="ignore"):
             comparison = (fx / np.array(ref) - 1.0) * 100
         kin["rel_err[%]"] = comparison
         return kin
@@ -174,10 +176,10 @@ class DBInterface:
         kin = dict()
         # iterate flavours
         for fl in ["q", "g"]:
-            kin[f"reg {fl}"] = reg[fl].tolist()
-            kin[f"reg {fl}_error"] = reg[f"{fl}_error"].tolist()
-            kin[f"yad {fl}"] = yad[fl].tolist()
-            kin[f"yad {fl}_error"] = yad[f"{fl}_error"].tolist()
+            kin[f"reg {fl}"] = reg[fl]
+            kin[f"reg {fl}_error"] = reg[f"{fl}_error"]
+            kin[f"yad {fl}"] = yad[fl]
+            kin[f"yad {fl}_error"] = yad[f"{fl}_error"]
             # do hard test?
             for f, r, e1, e2 in zip(
                 yad[fl], reg[fl], yad[f"{fl}_error"], reg[f"{fl}_error"]
@@ -185,7 +187,7 @@ class DBInterface:
                 assert pytest.approx(r, rel=0.01, abs=max(e1 + e2, 1e-6)) == f
             # compare for log
             with np.errstate(divide="ignore"):
-                comparison = (yad[fl] / reg[fl] - 1.0) * 100
+                comparison = (np.array(yad[fl]) / np.array(reg[fl]) - 1.0) * 100
             kin[f"rel {fl}_err[%]"] = comparison.tolist()
         return kin
 
@@ -243,7 +245,7 @@ class DBInterface:
         """
 
         # store the log of results
-        self._outputdb.table("logs" + self._table_suffix).insert(log_tab)
+        self._db.table("logs").insert(log_tab)
 
     def empty_cache(self):
-        self._inputdb.table("apfel_cache").purge()
+        self._db.table("apfel_cache").purge()

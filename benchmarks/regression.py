@@ -2,14 +2,14 @@
 #
 # do regression test
 
-# import pytest
+import pytest
 
 from db_interface import DBInterface
 
-
+@pytest.mark.regression
 class TestRegression:
     def test_one_hot(self):
-        p = DBInterface("-regression")
+        p = DBInterface("regression.json")
 
         # test matrix
         features = {
@@ -35,6 +35,7 @@ class TestRegression:
                 raw_query |= lower_query
 
         o_query = p.obs_query.noop()
+        #p.run_generate_regression(raw_query, o_query)
         p.run_queries_regression(raw_query, o_query)
 
 

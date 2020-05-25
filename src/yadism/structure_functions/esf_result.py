@@ -145,8 +145,8 @@ class ESFResult:
         return dict(
             x=self.x,
             Q2=self.Q2,
-            q=self.q,
-            q_error=self.q_error,
-            g=self.g,
-            g_error=self.g_error,
+            q=self.q.tolist(),
+            q_error=self.q_error.tolist(),
+            g=self.g.tolist(),
+            g_error=self.g_error.tolist(),
         )

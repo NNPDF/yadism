@@ -116,11 +116,8 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             out = self._get_result_approx()
         elif self._SF.TMC == 3:  # exact
             out = self._get_result_exact()
-        elif self._SF.TMC == 4:  # approx_APFEL
-            warnings.warn("meant only for internal use")
-            raise NotImplementedError("approx. APFEL not implemented yet")
         else:
-            raise ValueError(f"Unkown TMC value {self._SF.TMC}")
+            raise ValueError(f"Unknown TMC value {self._SF.TMC}")
 
         # ensure the correct kinematics is used after the calculations
         out.x = self._x

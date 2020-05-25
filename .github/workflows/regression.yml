@@ -1,0 +1,80 @@
+name: yadism-regression
+
+on:
+  - push
+
+env:
+  UPLOAD_NON_MASTER: false
+
+jobs:
+  # build is the <job_id>
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: [3.8]
+        include:
+          - python-version: 3.8
+
+    steps:
+      # checkout the repo on the github runner
+      - uses: actions/checkout@v2
+      # checkout submodules
+      - name: Checkout submodules
+        uses: actions/checkout@v2
+        with:
+          repository: N3PDF/eko
+          token: ${{ secrets.ALE_DIS_PAT }}
+          path: eko
+      # fetch all tags & stuffs
+      #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
+      #   --> needed only for the conda-recipe
+      - name: Fetch tags
+        run: git fetch --unshallow --no-recurse-submodules
+      # install eko
+      #   - @ the correct commit (no official suitable tag currently available)
+      #   - providing the C dependencies
+      - name: Install eko
+        run: |
+          #
+          cd eko
+          # git fetch --unshallow
+          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
+          cd ..
+          # install Gnu Scientific Library (GSL)
+          #   sudo works passwordless on github-workflow
+          sudo apt-get install libgsl-dev
+          # install eko (trailing '/' needed!)
+          pip install eko/
+      # install the actual python package 'yadism'
+      - name: Install yadism
+        run: |
+          #
+          pip install .
+      - name: Prepare Test environment
+        run: |
+          # install packages needed for testing
+          pip install -r test_requirements.txt
+          # download regression db
+          wget https://gist.githubusercontent.com/felixhekhorn/f89d04db0565e8f880f2547be281fbdf/raw/73c56ff8e038887d8487183d886009d44ffd208b/regression.json
+          mv regression.json benchmarks/data/
+      #  run the test with 'pytest'
+      - name: Test yadism
+        run: |
+          # run tests
+          pytest -m regression
+          #pytest
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: htmlcov
+          path: htmlcov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: regression
+          name: codecov-umbrella
+          fail_ci_if_error: true

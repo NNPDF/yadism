@@ -12,8 +12,8 @@ from apfel_utils import (  # pylint:disable=import-error,wrong-import-position
     str_datetime,
 )
 
-db = tinydb.TinyDB(here / "input.json")
-obs_table = db.table("observables-regression")
+db = tinydb.TinyDB(here / "regression.json")
+obs_table = db.table("observables")
 # for the time being the table is freshly generated at each run of this script
 obs_table.truncate()
 
