@@ -120,7 +120,7 @@ class ESFResult:
         for z in xgrid:
             e = 0
             # collect all pdfs
-            for pid, w in self.weights["q"]:
+            for pid, w in self.weights["q"].items():
                 e += w * (pdfs.xfxQ2(pid, z, muF2) + pdfs.xfxQ2(-pid, z, muF2)) / z
             fq.append(e)
         # build gluon grid

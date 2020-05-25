@@ -210,11 +210,12 @@ class DBInterface:
                 # check kinematics
                 if any([yad[k] != oth[k] for k in ["x", "Q2"]]):
                     raise ValueError("Sort problem: x and/or Q2 do not match.")
-                # extract values
-                kin = process_log(yad, oth)
                 # add common values
+                kin = {}
                 kin["x"] = yad["x"]
                 kin["Q2"] = yad["Q2"]
+                # extract values
+                kin.update(process_log(yad, oth))
                 kinematics.append(kin)
             log_tab[sf] = kinematics
 

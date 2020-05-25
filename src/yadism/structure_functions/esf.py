@@ -137,10 +137,15 @@ class EvaluatedStructureFunction(abc.ABC):
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
-        weights = {
-            "g": {21: 2 / 9},  # charge average
-            "q": {1: 1 / 9, 2: 4 / 9, 3: 1 / 9,},
-        }
+        weights = {"q":{},"g":{}}
+        # quark couplings
+        tot_ch_sq = 0
+        for q in range(1,self._n_f + 1):
+            eq2 = self._SF.coupling_constants.electric_charge_sq[q]
+            weights["q"][q] = eq2
+            tot_ch_sq += eq2
+        # gluon coupling = charge average (omitting the *2/2)
+        weights["g"][21] = tot_ch_sq / self._n_f
         return weights
 
     def _compute(self):

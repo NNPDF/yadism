@@ -25,6 +25,7 @@ from eko.alpha_s import StrongCoupling
 from .output import Output
 from .sf import StructureFunction as SF
 from .structure_functions import ESFmap
+from .coupling_constants import CouplingConstants
 from . import utils
 
 
@@ -99,6 +100,8 @@ class Runner:
             self.constants, alpha_ref, q2_alpha, self.threshold
         )
 
+        # Non-eko theory
+        self.coupling_constants = CouplingConstants.from_theory(theory)
         self.xiF = theory["XIF"]
 
         # ==============================
@@ -109,6 +112,7 @@ class Runner:
             constants=self.constants,
             threshold=self.threshold,
             alpha_s=self.strong_coupling,
+            coupling_constants=self.coupling_constants,
         )
         theory_stuffs = dict(
             pto=theory["PTO"],

@@ -37,6 +37,7 @@ class StructureFunction:
         self.constants = eko_components["constants"]
         self.threshold = eko_components["threshold"]
         self.strong_coupling = eko_components["alpha_s"]
+        self.coupling_constants = eko_components["coupling_constants"]
         # parameters
         self.pto = theory_stuffs["pto"]
         self.xiR = theory_stuffs["xiR"]
