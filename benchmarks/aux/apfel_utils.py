@@ -4,9 +4,6 @@ import platform
 import numpy as np
 import tinydb
 
-import apfel
-
-
 def str_datetime(dt):
     return str(dt)
 
@@ -29,6 +26,7 @@ def load_apfel(theory, observables, pdf="ToyLH"):
         module
             loaded apfel wrapper
     """
+    import apfel # pylint:disable=import-outside-toplevel
     # Cleanup APFEL common blocks
     apfel.CleanUp()
 

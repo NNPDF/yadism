@@ -13,10 +13,7 @@ from yadism.runner import Runner
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
 import toyLH  # pylint:disable=import-error,wrong-import-position
-from apfel_utils import (  # pylint:disable=import-error,wrong-import-position
-    get_apfel_data,
-    str_datetime,
-)
+from apfel_utils import str_datetime  # pylint:disable=import-error,wrong-import-position
 
 
 class DBInterface:
@@ -68,6 +65,7 @@ class DBInterface:
             observables_f :
                 file path for the observables runcard
         """
+        from apfel_utils import get_apfel_data  # pylint:disable=import-error,import-outside-toplevel
 
         # ======================
         # get observables values
@@ -79,7 +77,7 @@ class DBInterface:
             if pdf_name == "ToyLH":
                 pdf = toyLH.mkPDF("ToyLH", 0)
             else:
-                import lhapdf
+                import lhapdf # pylint:disable=import-outside-toplevel
                 pdf = lhapdf.mkPDF(pdf_name, 0)
             # run codes
             yad_tab = runner.apply(pdf)
