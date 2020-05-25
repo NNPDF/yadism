@@ -8,8 +8,6 @@ import pandas as pd
 import tinydb
 import pytest
 
-import lhapdf
-
 from yadism.runner import Runner
 
 here = pathlib.Path(__file__).parent.absolute()
@@ -81,6 +79,7 @@ class DBInterface:
             if pdf_name == "ToyLH":
                 pdf = toyLH.mkPDF("ToyLH", 0)
             else:
+                import lhapdf
                 pdf = lhapdf.mkPDF(pdf_name, 0)
             # run codes
             yad_tab = runner.apply(pdf)
