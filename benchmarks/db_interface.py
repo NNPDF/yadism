@@ -19,6 +19,11 @@ from apfel_utils import str_datetime  # pylint:disable=import-error,wrong-import
 class DBInterface:
     """
         Interface to access DB
+
+        Parameters
+        ----------
+            db_name : str
+                database name (relative to data/ directory)
     """
 
     def __init__(self, db_name):
@@ -36,13 +41,13 @@ class DBInterface:
     def run_queries_regression(self, theory_query, obs_query):
         theories, observables = self._load_input(theory_query, obs_query)
         for theory, obs in itertools.product(theories, observables):
-            # run against apfel (test)
+            # run against regression data
             self.run_regression(theory, obs)
 
     def run_queries_apfel(self, theory_query, obs_query, pdfs):
         theories, observables = self._load_input(theory_query, obs_query)
         for theory, obs in itertools.product(theories, observables):
-            # run against apfel (test)
+            # run against APFEL
             self.run_apfel(theory, obs, pdfs)
 
     def run_apfel(self, theory, observables, pdfs):

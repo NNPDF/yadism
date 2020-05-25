@@ -53,7 +53,6 @@ There 3 schemes in the reference:
     docs
 """
 import abc
-import warnings
 
 import numpy as np
 

@@ -82,17 +82,6 @@ jobs:
           conda activate yadism
           #
           pip install .
-      - name: debug - Explore file system
-        run: |
-          conda activate yadism
-          #
-          sudo apt install tree
-          tree > dir_tree.txt
-      - name: debug - Report file system exploration
-        uses: actions/upload-artifact@v1
-        with:
-          name: dir_tree
-          path: dir_tree.txt
       - name: Prepare Test environment
         run: |
           conda activate yadism
@@ -107,6 +96,19 @@ jobs:
           python theory.py
           python observables.py
           cd ../..
+      # pass with the linter
+      #   - only for 'dis', 'eko' is a dependency (supposed to be delivered
+      #     already checked)
+      - name: Lint with pylint
+        shell: bash -l {0}
+        run: |
+          conda activate yadism
+          #
+          conda install -y pylint toml
+          # Search for actual errors
+          pylint src/*/*.py -E
+          # For warnings instead return always zero
+          pylint src/*/*.py --exit-zero
       #  run the test with 'pytest'
       - name: Test yadism
         run: |
