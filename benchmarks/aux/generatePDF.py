@@ -84,6 +84,24 @@ def uonly():
     # make PDF.info
     description = "'up quark only PDFset, for debug purpose'"
     dump_info(name, description, pids)
+    
+def conly():
+    name = "conly"
+    (here / "PDFs" / name).mkdir(exist_ok=True)
+
+    # make PDF.dat
+    xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
+    Q2grid = np.logspace(0.3, 5, 20)
+    pids = [-4, -3, -2, -1, 1, 2, 3, 4, 21]
+    antic = antis = antiu = antid = d = u = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
+    c = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
+    pdf_table = np.array([antic, antis, antiu, antid, d, u, s, c, g]).T
+    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
+    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
+
+    # make PDF.info
+    description = "'charm quark only PDFset, for debug purpose'"
+    dump_info(name, description, pids)
 
 
 def uonly_dense():
@@ -144,7 +162,7 @@ def check(pdfset, pid):
 
 if __name__ == "__main__":
     # uonly_dense()
-    # gonly()
-    check("uonly", 2)
-    check("uonly-dense", 2)
-    check("gonly", 21)
+    conly()
+    #check("uonly", 2)
+    #check("uonly-dense", 2)
+    #check("gonly", 21)
