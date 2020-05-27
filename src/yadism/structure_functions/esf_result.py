@@ -122,13 +122,6 @@ class ESFResult:
             # collect all pdfs
             for pid, w in self.weights["q"].items():
                 e += w * (pdfs.xfxQ2(pid, z, muF2) + pdfs.xfxQ2(-pid, z, muF2)) / z
-
-            #print("###")
-            #print("z=",z)
-            #print("w=",self.weights["q"])
-            #print("c+cb=",pdfs.xfxQ2(4, z, muF2)+pdfs.xfxQ2(-4, z, muF2))
-
-
             fq.append(e)
         # build gluon grid
         fg = []

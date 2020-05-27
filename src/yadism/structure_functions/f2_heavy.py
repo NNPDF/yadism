@@ -59,15 +59,13 @@ class EvaluatedStructureFunctionF2heavy(ESFH):
             this case).
 
         """
-        CF = self._SF.constants.CF
 
         def cg(z):
             if self.is_below_threshold(z):
                 return 0
             # fmt: off
             return self._FHprefactor * (
-                3 * CF / 4
-                * (-np.pi * self._rho_p(z) ** 3)
+                (-np.pi * self._rho_p(z) ** 3)
                 / (4 * self._rho(z) ** 2 * self._rho_q ** 2)
                 * (
                     2 * self._beta(z) * (

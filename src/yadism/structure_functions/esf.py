@@ -398,7 +398,19 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             .. todo::
                 docs
         """
-        self._compute_local()
+        if self._nhq >= self._n_f:
+            # use massless case
+            hqname = self._SF.name
+            esf_light = self._SF.get_esf(hqname[:2]+"light", {"x":self._x, "Q2": self._Q2})
+            self._res = esf_light.get_result()
+            # readjust the weights
+            ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+            self._res.weights = {
+                "g": {21: ehq},
+                "q": {self._nhq: ehq}
+            }
+        else: # use massive coeffs
+            self._compute_local()
 
         return self._res
 

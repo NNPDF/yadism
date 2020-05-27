@@ -24,7 +24,7 @@ class TestPlain:
         o_query = p.obs_query.F2light.exists()
 
         #p.run_queries_apfel(t_query, o_query, ["ToyLH"])
-        p.run_queries_apfel(t_query, o_query, ["gonly"])
+        p.run_queries_apfel(t_query, o_query, ["toy_gonly"])
 
     def test_NLO(self):
         """
@@ -40,7 +40,7 @@ class TestPlain:
         o_query = p.obs_query.prDIS.exists()
 
         #p.run_queries_apfel(t_query, o_query, ["ToyLH"])
-        p.run_queries_apfel(t_query, o_query, ["gonly"])
+        p.run_queries_apfel(t_query, o_query, ["toy_gonly"])
 
 
 @pytest.mark.commit_check
