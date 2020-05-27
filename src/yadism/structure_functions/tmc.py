@@ -72,7 +72,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
     def __init__(self, SF, kinematics):
         self._SF = SF
-        self._flavour = SF._name[2:]
+        self._flavour = SF.name[2:]
         self._x = kinematics["x"]
         self._Q2 = kinematics["Q2"]
         # compute variables

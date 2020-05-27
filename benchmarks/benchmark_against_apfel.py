@@ -19,6 +19,7 @@ class TestPlain:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.NfFF == 3
+        t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.F2light.exists()
@@ -35,6 +36,7 @@ class TestPlain:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.NfFF == 3
+        t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.prDIS.exists()
@@ -49,6 +51,7 @@ class TestScaleVariations:
         p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 0
         t_query &= p.theory_query.NfFF == 3
+        t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.F2light.exists()
@@ -59,6 +62,7 @@ class TestScaleVariations:
         p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 1
         t_query &= p.theory_query.NfFF == 3
+        t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.prDIS.exists()
@@ -74,6 +78,7 @@ class TestTMC:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.NfFF == 3
+        t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC != 0
 
         o_query = p.obs_query.F2light.exists()
@@ -87,6 +92,7 @@ class TestTMC:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.NfFF == 3
+        t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC != 0
         # t_query &= p.theory_query.TMC == 1
 
@@ -105,11 +111,11 @@ class TestFFNS:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
-        t_query &= p.theory_query.NfFF == 4
+        #t_query &= p.theory_query.NfFF == 4
 
-        o_query = p.obs_query.F2light.exists()
+        o_query = p.obs_query.F2bottom.exists()
 
-        p.run_queries_apfel(t_query, o_query, ["uonly"])
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
         #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
 
     def test_NLO(self):
@@ -122,7 +128,7 @@ class TestFFNS:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.prDIS.exists()
+        o_query = p.obs_query.F2charm.exists()
 
         p.run_queries_apfel(t_query, o_query, ["ToyLH"])
 
@@ -148,8 +154,8 @@ class TestFull:
 
 if __name__ == "__main__":
     plain = TestPlain()
-    plain.test_LO()
-    plain.test_NLO()
+    #plain.test_LO()
+    #plain.test_NLO()
 
     # sv = TestScaleVariations()
     # sv.test_LO()
@@ -159,5 +165,5 @@ if __name__ == "__main__":
     #tmc.test_LO()
     # tmc.test_NLO()
 
-    #f = TestFFNS()
-    #f.test_LO()
+    f = TestFFNS()
+    f.test_LO()

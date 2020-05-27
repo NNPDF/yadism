@@ -27,7 +27,7 @@ class StructureFunction:
 
     def __init__(self, name, runner=None, *, eko_components, theory_stuffs):
         # internal managers
-        self._name = name
+        self.name = name
         self.__ESF = ESFmap[name] if theory_stuffs["TMC"] == 0 else ESFTMCmap[name[:2]]
         self.__runner = runner
         self.__ESFs = []
@@ -71,7 +71,7 @@ class StructureFunction:
                 docs
         """
         # is it us or do we need to delegate?
-        if name == self._name:
+        if name == self.name:
             # convert to tuple
             key = tuple(kinematics.values())
             # search

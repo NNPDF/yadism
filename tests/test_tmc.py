@@ -49,7 +49,7 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            _name = "F2light"
+            name = "F2light"
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
@@ -86,7 +86,7 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            _name = "F2light"
+            name = "F2light"
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
@@ -148,7 +148,7 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            _name = "F2light"
+            name = "F2light"
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 

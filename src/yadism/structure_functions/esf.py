@@ -398,7 +398,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             .. todo::
                 docs
         """
-        if self._nhq >= self._n_f:
+        if self._nhq <= self._n_f:
             # use massless case
             hqname = self._SF.name
             esf_light = self._SF.get_esf(hqname[:2]+"light", {"x":self._x, "Q2": self._Q2})

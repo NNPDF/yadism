@@ -51,7 +51,7 @@ def list_all_theories():
     data = []
     for t in theories:
         obj = {"doc_id": t.doc_id}
-        for f in ["PTO", "XIF", "XIR", "TMC"]:
+        for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS"]:
             obj[f] = t[f]
         dt = unstr_datetime(t["_modify_time"])
         obj["modified"] = human_dates(dt)

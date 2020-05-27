@@ -22,7 +22,7 @@ $$ sum_q q_+ ( c_ns * e_q^2 + <e2> * c_ps ) ) $$
 --
 
 
-F_2(x) = x sum_q e_q^2 * q_+(x)
+$$ F_2(x) = x sum_q e_q^2 * q_+(x) $$
 
 F_2(x) = x ( q_ns(x) + <e2> q_s(x) )
  = x ( q_ns(x) + <e2> sum_q q_+(x) )

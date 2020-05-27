@@ -10,7 +10,7 @@ XIF: 1.0
 NfFF: 3
 MaxNfAs: 3
 MaxNfPdf: 6
-Q0: 1.275
+Q0: 1
 alphas: 0.11800000000000001
 Qref: 91.2
 QED: 0
@@ -20,10 +20,10 @@ SxRes: 0
 SxOrd: "LL"
 HQ: "POLE"
 mc: 1.275
-Qmc: 1.275
+Qmc: 2
 kcThr: 1.0
 mb: 4.18
-Qmb: 4.18
+Qmb: 4
 kbThr: 1.0
 mt: 173.07
 Qmt: 173.07
