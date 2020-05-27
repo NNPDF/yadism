@@ -1,3 +1,16 @@
+---
+documentclass: standalone
+classoption:
+  - preview
+  - border=20pt
+header-includes: |
+   \usepackage{physics}
+   \newcommand{\bps}{\bra{\psi}}
+   \newcommand{\kph}{\ket{\phi}}
+---
+<!--compile with:-->
+<!--pandoc -s -o q_ns.pdf q_ns.md-->
+
 q_ns = sum_q e_q^2 (q + qbar)
 
 c_ns * q_ns + <e2> * (c_ns + c_ps)*q_s
@@ -25,3 +38,5 @@ $$ q_ns(x) = eu^2 u_+(x) + ed^2 d_+(x) - (eu^2 + ed^2)/2 ( u_+(x) + d_+(x) ) $$
 
 =>
 $$ q_ns(x) = sum_q (eq^2 - <e2>) q_+(x) $$
+
+<!-- vim: set ft=pandoc: -->
