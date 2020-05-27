@@ -6,6 +6,10 @@ import tinydb
 import numpy as np
 
 # import yaml
+ask = input("Do you want to refill the regression observables? [y/n]")
+if ask != "y":
+    print("Nothing done.")
+    exit()
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / ".." / "aux"))

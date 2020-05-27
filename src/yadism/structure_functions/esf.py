@@ -11,6 +11,10 @@ They are:
     shared methods (like initializer and :py:meth:`get_output`, responsible also
     for :ref:`local caching<local-caching>`.
 
+:py:class:`EvaluatedStructureFunctionLight` :
+    this class is inheriting from the former, factorizing some common procedure
+    needed for light calculation.
+
 :py:class:`EvaluatedStructureFunctionHeavy` :
     this class is inheriting from the former, factorizing some common procedure
     needed for heavy quark calculation, like auxiliary variable definition,
@@ -128,6 +132,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._n_f = self._SF.threshold.get_areas(self._Q2)[-1].nf
         self._computed = False
 
+    @abc.abstractmethod
     def _compute_weights(self):
         """
             Compute PDF weights for different channels.
@@ -137,18 +142,8 @@ class EvaluatedStructureFunction(abc.ABC):
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
-        weights = {"q":{},"g":{}}
-        # quark couplings
-        tot_ch_sq = 0
-        for q in range(1,self._n_f + 1):
-            eq2 = self._SF.coupling_constants.electric_charge_sq[q]
-            weights["q"][q] = eq2
-            tot_ch_sq += eq2
-        # gluon coupling = charge average (omitting the *2/2)
-        weights["g"][21] = tot_ch_sq / self._n_f
-        return weights
 
-    def _compute(self):
+    def _compute_local(self):
         """
             Here is where the local caching is actually implemented: if the
             coefficient functions are already computed don't do nothing,
@@ -211,14 +206,12 @@ class EvaluatedStructureFunction(abc.ABC):
 
         return np.array(ls), np.array(els)
 
+    @abc.abstractmethod
     def get_result(self):
         """
             .. todo::
                 docs
         """
-        self._compute()
-
-        return self._res
 
     def get_output(self) -> dict:
         """
@@ -296,6 +289,41 @@ class EvaluatedStructureFunction(abc.ABC):
         """
 
 
+class EvaluatedStructureFunctionLight(EvaluatedStructureFunction): # pylint:disable=abstract-method
+    """
+        Parent class for the light ESF implementations -
+        really meaning up, down, and strange quark contributions.
+    """
+
+    def _compute_weights(self):
+        """
+            Compute PDF weights for different channels.
+
+            Returns
+            -------
+                weights : dict
+                    dictionary with key refering to the channel and a dictionary with pid -> weight
+        """
+        weights = {"q":{},"g":{}}
+        # quark couplings
+        tot_ch_sq = 0
+        for q in range(1,3+1): # u+d+s
+            eq2 = self._SF.coupling_constants.electric_charge_sq[q]
+            weights["q"][q] = eq2
+            tot_ch_sq += eq2
+        # gluon coupling = charge average (omitting the *2/2)
+        weights["g"][21] = tot_ch_sq / self._n_f
+        return weights
+
+    def get_result(self):
+        """
+            .. todo::
+                docs
+        """
+        self._compute_local()
+
+        return self._res
+
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     """
         Specialize EvaluatedStructureFunction for heavy flavours.
@@ -329,7 +357,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             - charge_em
     """
 
-    def __init__(self, SF, kinematics: dict, charge_em: float):
+    def __init__(self, SF, kinematics: dict, nhq: int):
         """
             collect electric charge (relevant for heavy flavours coefficient
             functions) and compute common derived variables
@@ -349,9 +377,9 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         """
         super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
 
-        self._charge_em = charge_em
+        self._nhq = nhq
         # FH - Vogt comparison prefactor
-        self._FHprefactor = self._Q2 / (np.pi * self._SF.M2hq) * 9 / 2  # / self._x
+        self._FHprefactor = self._Q2 / (np.pi * self._SF.M2hq)
 
         # common variables
         self._s = self._Q2 * (1 - self._x) / self._x
@@ -364,6 +392,15 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         self._beta = lambda z: np.sqrt(1 - self._rho(z))
 
         self._chi = lambda z: (1 - self._beta(z)) / (1 + self._beta(z))
+
+    def get_result(self):
+        """
+            .. todo::
+                docs
+        """
+        self._compute_local()
+
+        return self._res
 
     def is_below_threshold(self, z):
         """
@@ -386,6 +423,19 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 docs
         """
         return 0
+
+    def _compute_weights(self):
+        """
+            Compute PDF weights for different channels.
+
+            Returns
+            -------
+                weights : dict
+                    dictionary with key refering to the channel and a dictionary with pid -> weight
+        """
+        weights = {"q":{},"g":{}}
+        weights["g"][21] = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+        return weights
 
     @abc.abstractmethod
     def _gluon_1(self):

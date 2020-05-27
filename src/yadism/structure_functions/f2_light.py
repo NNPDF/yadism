@@ -17,15 +17,16 @@ Scale varitions main reference is :cite:`vogt-sv`.
 
 import numpy as np
 
-from .esf import EvaluatedStructureFunction as ESF
+from .esf import EvaluatedStructureFunctionLight as ESFLight
 from . import splitting_functions as split
 
 
-class EvaluatedStructureFunctionF2light(ESF):
+class EvaluatedStructureFunctionF2light(ESFLight):
     """
         Compute F2 structure functions for light quark flavours.
 
-        This class inherits from :py:class:`ESF`, providing only the formulas
+        This class inherits from :py:class:`EvaluatedStructureFunctionLight`,
+        providing only the formulas
         for coefficient functions, while all the machinery for dealing with
         distributions, making convolution with PDFs, and packaging results is
         completely defined in the parent.

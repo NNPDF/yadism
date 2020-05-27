@@ -15,6 +15,12 @@ from apfel_utils import (  # pylint:disable=import-error,wrong-import-position
 
 is_regression = False
 
+if is_regression:
+    ask = input("Do you want to refill the regression theories? [y/n]")
+    if ask != "y":
+        print("Nothing done.")
+        exit()
+
 db_name = "regression.json" if is_regression else "input.json"
 print(f"writing to {db_name}")
 db = tinydb.TinyDB(here / db_name)

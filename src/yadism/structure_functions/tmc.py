@@ -35,10 +35,10 @@ following layout:
 - when asked for output if noTMC a ESF is called and the instance is
   registered
     - `self.get_ouput()` is used for getting the result passing through:
-    - `self.get_ESF()` is used for getting the instance and register to the
+    - `self.get_esf()` is used for getting the instance and register to the
       cache
 - if TMC a ESFTMC is called, and whenever he needs an ESF instance to
-  compute a point it will ask its parent SF with `SF.get_ESF()` method, in
+  compute a point it will ask its parent SF with `SF.get_esf()` method, in
   this way passing through the cache
 
 Note 3 (physics)
@@ -153,7 +153,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             if pj.is_below_x(self._xi):
                 continue
             # compute F2 matrix (j,k) (where k is wrapped inside get_result)
-            F2j = self._SF.get_ESF(
+            F2j = self._SF.get_esf(
                 "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
             ).get_result()
             # compute interpolated h2 integral (j)
@@ -227,7 +227,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         # fmt: on
 
         # collect F2
-        F2out = self._SF.get_ESF(
+        F2out = self._SF.get_esf(
             "F2" + self._flavour, self._shifted_kinematics
         ).get_result()
         # join
@@ -235,7 +235,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
 
     def _get_result_APFEL(self):
         # collect F2
-        F2out = self._SF.get_ESF(
+        F2out = self._SF.get_esf(
             "F2" + self._flavour, self._shifted_kinematics
         ).get_result()
         # compute integral
@@ -247,7 +247,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     def _get_result_exact(self):
         factor_g2 = 12.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 5
         # collect F2
-        F2out = self._SF.get_ESF(
+        F2out = self._SF.get_esf(
             "F2" + self._flavour, self._shifted_kinematics
         ).get_result()
         # compute raw integral
@@ -267,7 +267,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         for xj in self._SF.interpolator.xgrid_raw:
             # collect support points
             F2list.append(
-                self._SF.get_ESF(
+                self._SF.get_esf(
                     "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
                 ).get_result()
             )
@@ -315,10 +315,10 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         # fmt: on
 
         # collect structure functions at shifted kinematics
-        FLout = self._SF.get_ESF(
+        FLout = self._SF.get_esf(
             "FL" + self._flavour, self._shifted_kinematics
         ).get_result()
-        F2out = self._SF.get_ESF(
+        F2out = self._SF.get_esf(
             "F2" + self._flavour, self._shifted_kinematics
         ).get_result()
 
@@ -327,7 +327,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
 
     def _get_result_APFEL(self):
         # collect F2
-        FLout = self._SF.get_ESF(
+        FLout = self._SF.get_esf(
             "FL" + self._flavour, self._shifted_kinematics
         ).get_result()
         # compute integral
@@ -339,7 +339,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
     def _get_result_exact(self):
         factor_g2 = 8.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 3
         # collect F2
-        FLout = self._SF.get_ESF(
+        FLout = self._SF.get_esf(
             "FL" + self._flavour, self._shifted_kinematics
         ).get_result()
         # compute raw integral

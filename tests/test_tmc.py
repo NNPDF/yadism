@@ -53,7 +53,7 @@ class TestTMC:
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
-            def get_ESF(self, _name, kinematics):
+            def get_esf(self, _name, kinematics):
                 # this means F2(x>.6) = 0
                 if kinematics["x"] >= 0.6:
                     return MockESF([0.0, 0.0, 0.0])
@@ -90,7 +90,7 @@ class TestTMC:
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
-            def get_ESF(self, _name, kinematics):
+            def get_esf(self, _name, kinematics):
                 # this means F2 = pdf
                 if kinematics["x"] == 0.2:
                     return MockESF([1, 0, 0])
@@ -111,7 +111,7 @@ class TestTMC:
 
         def isdelta(pdf):  # assert F2 = pdf
             for x, pdf_val in zip(xg, pdf):
-                ESF_F2 = objSF.get_ESF("", {"x": x, "Q2": 1})
+                ESF_F2 = objSF.get_esf("", {"x": x, "Q2": 1})
                 F2 = np.matmul(ESF_F2.get_result().q, pdf)
                 assert pytest.approx(F2) == pdf_val
 
@@ -152,7 +152,7 @@ class TestTMC:
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
-            def get_ESF(self, _name, kinematics):
+            def get_esf(self, _name, kinematics):
                 pass
 
         # build objects

@@ -23,8 +23,8 @@ class TestPlain:
 
         o_query = p.obs_query.F2light.exists()
 
-        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
-        # p.run_queries_apfel(t_query, o_query, ["uonly-dense"])
+        #p.run_queries_apfel(t_query, o_query, ["ToyLH"])
+        p.run_queries_apfel(t_query, o_query, ["gonly"])
 
     def test_NLO(self):
         """
@@ -39,7 +39,8 @@ class TestPlain:
 
         o_query = p.obs_query.prDIS.exists()
 
-        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
+        #p.run_queries_apfel(t_query, o_query, ["ToyLH"])
+        p.run_queries_apfel(t_query, o_query, ["gonly"])
 
 
 @pytest.mark.commit_check
@@ -146,9 +147,9 @@ class TestFull:
 
 
 if __name__ == "__main__":
-    #plain = TestPlain()
-    #plain.test_LO()
-    #plain.test_NLO()
+    plain = TestPlain()
+    plain.test_LO()
+    plain.test_NLO()
 
     # sv = TestScaleVariations()
     # sv.test_LO()
@@ -158,5 +159,5 @@ if __name__ == "__main__":
     #tmc.test_LO()
     # tmc.test_NLO()
 
-    f = TestFFNS()
-    f.test_LO()
+    #f = TestFFNS()
+    #f.test_LO()
