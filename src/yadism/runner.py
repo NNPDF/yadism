@@ -59,7 +59,6 @@ class Runner:
         # ============
         self._theory = theory
         self._observables = observables
-        self._n_f: int = theory["NfFF"]
 
         # ===========================
         # Setup interpolator from eko
@@ -81,10 +80,10 @@ class Runner:
         FNS = theory["FNS"]
         q2_ref = pow(theory["Q0"], 2)
         if FNS != "FFNS":
-            qmc = theory["Qmc"]
-            qmb = theory["Qmb"]
-            qmt = theory["Qmt"]
-            threshold_list = pow(np.array([qmc, qmb, qmt]), 2)
+            mc = theory["mc"]
+            mb = theory["mb"]
+            mt = theory["mt"]
+            threshold_list = pow(np.array([mc, mb, mt]), 2)
             nf = None
         else:
             nf = theory["NfFF"]

@@ -107,7 +107,7 @@ class EvaluatedStructureFunctionFLlight(ESFLight):
         """
 
         def cg(z):
-            return self._n_f * 8.0 * z * (1.0 - z)
+            return self.nf * 8.0 * z * (1.0 - z)
 
         return cg
 

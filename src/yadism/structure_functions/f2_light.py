@@ -146,7 +146,7 @@ class EvaluatedStructureFunctionF2light(ESFLight):
             return (
                 2  # TODO: to be understood
                 * 2
-                * self._n_f
+                * self.nf
                 * (
                     split.pqg(z, self._SF.constants) * (np.log((1 - z) / z) - 4)
                     + 3 * TR
@@ -175,6 +175,6 @@ class EvaluatedStructureFunctionF2light(ESFLight):
         """
 
         def cg(z):
-            return 2 * self._n_f * split.pqg(z, self._SF.constants)
+            return 2 * self.nf * split.pqg(z, self._SF.constants)
 
         return cg

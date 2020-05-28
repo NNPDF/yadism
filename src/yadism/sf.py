@@ -56,16 +56,18 @@ class StructureFunction:
         for kinematics in kinematic_configs:
             self.__ESFs.append(self.__ESF(self, kinematics))
 
-    def get_esf(self, name, kinematics):
+    def get_esf(self, name, kinematics, *args):
         """
             get_esf.
 
             Parameters
             ----------
-            name :
+            name : string
                 name
-            kinematics :
-                kinematics
+            kinematics : dict
+                kinematic configuration
+            args :
+                further arguments passed to the ESF
 
             .. todo::
                 docs
@@ -78,12 +80,12 @@ class StructureFunction:
             try:
                 return self.__ESFcache[key]
             except KeyError:
-                obj = ESFmap[name](self, kinematics)
+                obj = ESFmap[name](self, kinematics, *args)
                 self.__ESFcache[key] = obj
                 return obj
         else:
             # ask our parent (as always)
-            return self.__runner.observable_instances[name].get_esf(name, kinematics)
+            return self.__runner.observable_instances[name].get_esf(name, kinematics, *args)
 
     def get_output(self):
         """

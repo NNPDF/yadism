@@ -41,16 +41,16 @@ xgrid = np.unique(
 # xgrid = xgrid[-6:]
 # xgrid = np.array(xgrid)
 
-polynomial_degree = 1
+polynomial_degree = 4
 is_log_interpolation = True
 
 kinematics = []
 # fixed Q2
 #kinematics.extend([dict(x=x, Q2=90.0) for x in xgrid[::3].tolist()])
-#kinematics.extend([dict(x=x, Q2=90.0) for x in np.logspace(-3, -1, 12).tolist()])
-#kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.15, 0.9, 12).tolist()])
+kinematics.extend([dict(x=x, Q2=90.0) for x in np.logspace(-3, -1, 3).tolist()])
+kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.15, 0.9, 3).tolist()])
 # fixed x
-kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.logspace(0, 2, 20).tolist()])
+kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.logspace(0, 2, 10).tolist()])
 
 # iterate over observables (one dict for each)
 for sf in observables:

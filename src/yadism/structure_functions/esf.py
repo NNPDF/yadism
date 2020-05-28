@@ -108,8 +108,6 @@ class EvaluatedStructureFunction(abc.ABC):
                 error on :py:attr:`_cgv`
             _a_s :
                 value of $ \alpha_s / 4 \pi $ at the scale :py:attr:`_Q2`
-            _n_f :
-                number of flavours at the scale :py:attr:`_Q2`
         """
 
         x = kinematics["x"]
@@ -129,7 +127,6 @@ class EvaluatedStructureFunction(abc.ABC):
         )
         # localize external parameters
         self._a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
-        self._n_f = self._SF.threshold.get_areas(self._Q2)[-1].nf
         self._computed = False
 
     @abc.abstractmethod
@@ -295,6 +292,11 @@ class EvaluatedStructureFunctionLight(EvaluatedStructureFunction): # pylint:disa
         really meaning up, down, and strange quark contributions.
     """
 
+    def __init__(self, SF, kinematics: dict, nf = 3):  # 3 = u+d+s
+        super(EvaluatedStructureFunctionLight,self).__init__(SF, kinematics)
+        # expose number of flavours
+        self.nf = nf
+
     def _compute_weights(self):
         """
             Compute PDF weights for different channels.
@@ -312,7 +314,7 @@ class EvaluatedStructureFunctionLight(EvaluatedStructureFunction): # pylint:disa
             weights["q"][q] = eq2
             tot_ch_sq += eq2
         # gluon coupling = charge average (omitting the *2/2)
-        weights["g"][21] = tot_ch_sq / self._n_f
+        weights["g"][21] = tot_ch_sq / 3 # 3 = u+d+s
         return weights
 
     def get_result(self):
@@ -398,10 +400,11 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             .. todo::
                 docs
         """
-        if self._nhq <= self._n_f:
+        nf = self._SF.threshold.get_areas(self._Q2 * self._SF.xiF ** 2)[-1].nf
+        if self._nhq <= nf:
             # use massless case
             hqname = self._SF.name
-            esf_light = self._SF.get_esf(hqname[:2]+"light", {"x":self._x, "Q2": self._Q2})
+            esf_light = self._SF.get_esf(hqname[:2]+"light", {"x":self._x, "Q2": self._Q2}, 1)
             self._res = esf_light.get_result()
             # readjust the weights
             ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]

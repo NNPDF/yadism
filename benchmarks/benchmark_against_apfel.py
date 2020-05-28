@@ -111,9 +111,8 @@ class TestFFNS:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
-        #t_query &= p.theory_query.NfFF == 4
 
-        o_query = p.obs_query.F2bottom.exists()
+        o_query = p.obs_query.F2light.exists()
 
         p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
         #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
@@ -128,9 +127,10 @@ class TestFFNS:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.F2charm.exists()
+        o_query = p.obs_query.F2light.exists()
 
-        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
+        #p.run_queries_apfel(t_query, o_query, ["gonly"])
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
 
 @pytest.mark.full
 class TestFull:
@@ -167,3 +167,4 @@ if __name__ == "__main__":
 
     f = TestFFNS()
     f.test_LO()
+    f.test_NLO()
