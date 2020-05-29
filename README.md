@@ -5,8 +5,8 @@
   <a href="https://n3pdf.github.io/dis/"><img alt="Docs" src="https://github.com/N3PDF/dis/workflows/docs/badge.svg"></a>
 </p>
 
-# DIS
-Yet another DIS module.
+<img alt="Yadism" src="docs/logo.svg">
+
 <!--Future Badges
 /github/workflow/status/N3PDF/dis/yadism
 
