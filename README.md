@@ -4,8 +4,8 @@
 
 <p align="center">
   <a href="https://github.com/N3PDF/dis/actions?query=workflow%3A%22yadism%22"><img alt="Tests" src="https://github.com/N3PDF/dis/workflows/yadism/badge.svg"></a>
-  <a href="https://codecov.io/gh/N3PDF/dis"><img src="https://codecov.io/gh/N3PDF/dis/branch/master/graph/badge.svg?token=qgCFyUQ6oG"/></a>
-  <a href="https://www.codefactor.io/repository/github/n3pdf/dis"><img src="https://www.codefactor.io/repository/github/n3pdf/dis/badge?s=dd1c326325585a549c157120b9f55c06e6ea2b22" alt="CodeFactor" /></a>
+  <a href="https://codecov.io/gh/N3PDF/yadism"><img src="https://codecov.io/gh/N3PDF/yadism/branch/master/graph/badge.svg?token=qgCFyUQ6oG" /></a>
+  <a href="https://www.codefactor.io/repository/github/n3pdf/yadism"><img src="https://www.codefactor.io/repository/github/n3pdf/yadism/badge?s=e5a00668b58574b5b056e1aca01c7b25d2c203f8" alt="CodeFactor" /></a>
   <a href="https://n3pdf.github.io/dis/"><img alt="Docs" src="https://github.com/N3PDF/dis/workflows/docs/badge.svg"></a>
 </p>
 
