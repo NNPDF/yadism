@@ -34,9 +34,11 @@ following layout:
   are the observables to be computed)
 - when asked for output if noTMC a ESF is called and the instance is
   registered
+
     - `self.get_ouput()` is used for getting the result passing through:
     - `self.get_ESF()` is used for getting the instance and register to the
       cache
+
 - if TMC a ESFTMC is called, and whenever he needs an ESF instance to
   compute a point it will ask its parent SF with `SF.get_ESF()` method, in
   this way passing through the cache
