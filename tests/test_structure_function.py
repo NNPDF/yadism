@@ -44,12 +44,12 @@ class TestStructureFunction:
         # setup env
         r = MockRunner()
         eko_components = MockDict()
-        theory_stuffs = MockDict()
+        theory_params = MockDict()
 
         # becarefull about what the esf instantiation need
         for name in ["FLlight", "F2light"]:
             sf = StructureFunction(
-                name, r, eko_components=eko_components, theory_stuffs=theory_stuffs
+                name, r, eko_components=eko_components, theory_params=theory_params
             )
             # test mapping to self
             assert sf._StructureFunction__ESF == ESFmap[name]
@@ -66,12 +66,12 @@ class TestStructureFunction:
     def test_get_esf_outside_grid(self):
         r = MockRunner()
         eko_components = MockDict()
-        theory_stuffs = MockDict()
+        theory_params = MockDict()
 
         name = "FLlight"
 
         sf = StructureFunction(
-            name, r, eko_components=eko_components, theory_stuffs=theory_stuffs
+            name, r, eko_components=eko_components, theory_params=theory_params
         )
         with pytest.raises(ValueError):
             sf.get_esf(name, {"x": 0.1, "Q2": 1})

@@ -125,8 +125,6 @@ class EvaluatedStructureFunction(abc.ABC):
         self._res = ESFResult(
             len(self._SF.interpolator.xgrid_raw), x=self._x, Q2=self._Q2
         )
-        # localize external parameters
-        self._a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
         self._computed = False
 
     @abc.abstractmethod
@@ -188,7 +186,8 @@ class EvaluatedStructureFunction(abc.ABC):
         # combine orders
         d_vec = conv.DistributionVec(f_LO())
         if self._SF.pto > 0:
-            d_vec += self._a_s * (
+            a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
+            d_vec += a_s * (
                 conv.DistributionVec(f_NLO())
                 + 2  # TODO: to be understood
                 * (-np.log(self._SF.xiF ** 2))
@@ -286,14 +285,16 @@ class EvaluatedStructureFunction(abc.ABC):
         """
 
 
-class EvaluatedStructureFunctionLight(EvaluatedStructureFunction): # pylint:disable=abstract-method
+class EvaluatedStructureFunctionLight(
+    EvaluatedStructureFunction
+):  # pylint:disable=abstract-method
     """
         Parent class for the light ESF implementations -
         really meaning up, down, and strange quark contributions.
     """
 
-    def __init__(self, SF, kinematics: dict, nf = 3):  # 3 = u+d+s
-        super(EvaluatedStructureFunctionLight,self).__init__(SF, kinematics)
+    def __init__(self, SF, kinematics: dict, nf=3):  # 3 = u+d+s
+        super(EvaluatedStructureFunctionLight, self).__init__(SF, kinematics)
         # expose number of flavours
         self.nf = nf
 
@@ -306,15 +307,15 @@ class EvaluatedStructureFunctionLight(EvaluatedStructureFunction): # pylint:disa
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
-        weights = {"q":{},"g":{}}
+        weights = {"q": {}, "g": {}}
         # quark couplings
         tot_ch_sq = 0
-        for q in range(1,3+1): # u+d+s
+        for q in range(1, 3 + 1):  # u+d+s
             eq2 = self._SF.coupling_constants.electric_charge_sq[q]
             weights["q"][q] = eq2
             tot_ch_sq += eq2
         # gluon coupling = charge average (omitting the *2/2)
-        weights["g"][21] = tot_ch_sq / 3 # 3 = u+d+s
+        weights["g"][21] = tot_ch_sq / 3  # 3 = u+d+s
         return weights
 
     def get_result(self):
@@ -325,6 +326,7 @@ class EvaluatedStructureFunctionLight(EvaluatedStructureFunction): # pylint:disa
         self._compute_local()
 
         return self._res
+
 
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     """
@@ -348,15 +350,13 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             from :py:mod:`eko`, e.g. :py:class:``) and implements the global caching
         kinematics : dict
             the specific kinematic point as a dict with two elements ('x', 'Q2')
-        charge_em : float
+        nhq : int
+            heavy quark flavor number, i.e. c=4,b=5,t=6
 
         Methods
         -------
         get_output()
             compute the coefficient functions (see :py:class:`EvaluatedStructureFunction`)
-
-        .. todo::
-            - charge_em
     """
 
     def __init__(self, SF, kinematics: dict, nhq: int):
@@ -384,9 +384,6 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         self._FHprefactor = self._Q2 / (np.pi * self._SF.M2hq)
 
         # common variables
-        self._s = self._Q2 * (1 - self._x) / self._x
-        self._shat = lambda z: self._Q2 * (1 - z) / z
-
         self._rho_q = -4 * self._SF.M2hq / self._Q2
         self._rho = lambda z: -self._rho_q * z / (1 - z)
         self._rho_p = lambda z: -self._rho_q * z
@@ -404,15 +401,14 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         if self._nhq <= nf:
             # use massless case
             hqname = self._SF.name
-            esf_light = self._SF.get_esf(hqname[:2]+"light", {"x":self._x, "Q2": self._Q2}, 1)
+            esf_light = self._SF.get_esf(
+                hqname[:2] + "light", {"x": self._x, "Q2": self._Q2}, 1
+            )
             self._res = esf_light.get_result()
             # readjust the weights
             ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
-            self._res.weights = {
-                "g": {21: ehq},
-                "q": {self._nhq: ehq}
-            }
-        else: # use massive coeffs
+            self._res.weights = {"g": {21: ehq}, "q": {self._nhq: ehq}}
+        else:  # use massive coeffs
             self._compute_local()
 
         return self._res
@@ -424,7 +420,8 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             .. todo::
                 use threshold on shat or using FH's zmax?
         """
-        return self._shat(z) <= 4 * self._SF.M2hq
+        shat = self._Q2 * (1 - z) / z
+        return shat(z) <= 4 * self._SF.M2hq
 
     def quark_0(self) -> float:
         return 0
@@ -448,7 +445,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
-        weights = {"q":{},"g":{}}
+        weights = {"q": {}, "g": {}}
         weights["g"][21] = self._SF.coupling_constants.electric_charge_sq[self._nhq]
         return weights
 
@@ -462,7 +459,8 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             (delegated to internal :py:meth:`_gluon_1`) checking before for
             production threshold
         """
-        if self._s <= 4 * self._SF.M2hq:
+        s_h = self._Q2 * (1 - self._x) / self._x
+        if s_h <= 4 * self._SF.M2hq:
             return 0
         else:
             return self._gluon_1()

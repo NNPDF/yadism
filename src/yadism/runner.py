@@ -113,7 +113,7 @@ class Runner:
             alpha_s=self.strong_coupling,
             coupling_constants=self.coupling_constants,
         )
-        theory_stuffs = dict(
+        theory_params = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
             xiF=self.xiF,
@@ -126,14 +126,14 @@ class Runner:
         for name in ESFmap.keys():
             lab = utils.get_mass_label(name)
             if lab is not None:
-                theory_stuffs["M2hq"] = theory[lab] ** 2
+                theory_params["M2hq"] = theory[lab] ** 2
 
             # initialize an SF instance for each possible structure function
             obj = SF(
                 name,
                 runner=self,
                 eko_components=eko_components,
-                theory_stuffs=theory_stuffs,
+                theory_params=theory_params,
             )
 
             # read kinematics
