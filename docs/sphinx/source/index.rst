@@ -39,10 +39,8 @@ Current features:
    :maxdepth: 1
    :caption: Theory
 
-   theory/LO.rst
-   theory/NLO.rst
-   theory/NNLO.rst
-   theory/N3LO.rst
+   theory/DIS-intro.rst
+   theory/coeff-funcs.rst 
    theory/heavy-flavors.rst
    theory/scale-variations.rst
    theory/TMC.rst
