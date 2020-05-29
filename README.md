@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Yadism" src="docs/logo.svg" width=600>
+  <a href="https://n3pdf.github.io/dis/"><img alt="Yadism" src="docs/logo.svg" width=600></a>
 </p>
 
 <p align="center">
