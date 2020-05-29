@@ -15,10 +15,10 @@ Scale varitions main reference is :cite:`vogt-sv`.
 
 """
 
-from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
+from .esf import EvaluatedStructureFunction as ESF
 
 
-class ESF_FLlight(ESF):
+class EvaluatedStructureFunctionFLlight(ESF):
     """
         Compute FL structure functions for light quark flavours.
 

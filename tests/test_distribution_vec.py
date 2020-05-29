@@ -7,7 +7,7 @@ import copy
 import numpy as np
 import pytest
 
-import yadism.structure_functions.convolution as conv
+import yadism.structure_functions.distribution_vec as conv
 from eko.interpolation import InterpolatorDispatcher
 
 
@@ -177,6 +177,10 @@ class TestSpecial:
 
             for d_other in [d_vec1, d_vec2, d_vec3, d_vec4]:
                 assert not d_vec0.compare(d_other, x)
+        
+        # error
+        with pytest.raises(ValueError):
+            d_vec0.compare(1,1)
 
 
 @pytest.mark.quick_check
