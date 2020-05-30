@@ -77,3 +77,9 @@ Show known marks with `pytest --markers` and run them with:
 
 ### Test coverage
 Use `pytest ... --cov=src` to obtain a report for test coverage.
+
+## Contributing or contacting the authors
+For any kind of interaction consider before to read [contribution guidelines](.github/contributing.md), otherwise just send an email to the authors:
+- [Felix Hekhorn](mailto:felix.hekhorn@mi.infn.it)
+- [Stefano Carrazza](mailto:stefano.carrazza@cern.ch)
+- [Alessandro Candido](mailto:alessandro.candido@mi.infn.it)
