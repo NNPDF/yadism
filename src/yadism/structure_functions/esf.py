@@ -77,7 +77,8 @@ class EvaluatedStructureFunction(abc.ABC):
         SF : StructureFunction
             the parent :py:class:`StructureFunction` instance, provides an
             interface, holds references to global objects (like managers coming
-            from :py:mod:`eko`, e.g. :py:class:``) and implements the global caching
+            from :py:mod:`eko`, e.g. :py:class:`InterpolatorDispatcher`) and
+            implements the global caching
         kinematics : dict
             the specific kinematic point as a dict with two elements ('x', 'Q2')
 
@@ -347,7 +348,8 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         SF : StructureFunction
             the parent :py:class:`StructureFunction` instance, provides an
             interface, holds references to global objects (like managers coming
-            from :py:mod:`eko`, e.g. :py:class:``) and implements the global caching
+            from :py:mod:`eko`, e.g. :py:class:`InterpolatorDispatcher`) and
+            implements the global caching
         kinematics : dict
             the specific kinematic point as a dict with two elements ('x', 'Q2')
         nhq : int

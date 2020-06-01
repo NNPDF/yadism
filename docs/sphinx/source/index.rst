@@ -18,6 +18,7 @@ corresponding one inside |APFEL|.
 
    yadism.rst
    dev.rst
+   tutorials/index.rst
    interpolation.rst
 
    zzz-refs.rst
@@ -29,26 +30,53 @@ Features
 ~~~~~~~~
 Current features:
 
-* |LO| structure functions (|NC|)
-* |NLO| structure functions (|NC|)
-* |NLO| scale variations
+- |LO| structure functions (|NC|)
+- |NLO| structure functions (|NC|)
+- |NLO| scale variations
 
 
 .. toctree::
    :maxdepth: 1
    :caption: Theory
 
-   theory/LO.rst
-   theory/NLO.rst
-   theory/NNLO.rst
-   theory/N3LO.rst
+   theory/DIS-intro.rst
+   theory/coeff-funcs.rst 
    theory/heavy-flavors.rst
    theory/scale-variations.rst
+   theory/TMC.rst
 
 And here there is some *physics documentation*.
 
 Some of these are trivial and will be replaced, they are here just to create a
 structure.
+
+
+Dev Tools
+~~~~~~~~~
+Current tools:
+
+- benchmark db suite
+  - db generating scripts
+  - navigator
+- benchmark runner
+  - currently in `benchmarks/conftest.py`
+- actual tests/benchmarks
+  - unit tests
+  - regression tests
+  - benchmark (against APFEL)
+- third-party tools
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Dev Tools
+
+   dev-tools/db-suite.rst
+   dev-tools/benchmark-runner.rst
+   dev-tools/tests.rst
+   dev-tools/third-party.rst
+
+This tools have been developed alongside `yadism`, in order to automatize tests
+and improve the quality of code (less bugs, more readable... hopefully...).
 
 ---------
 
