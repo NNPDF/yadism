@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-This module contains the implementation of the DIS F2 coefficient functions, for
+This module contains the implementation of the DIS FL coefficient functions, for
 heavy quark flavours.
 
-Differently from the :py:mod:`F2heavy` here more classes are provided, since
+Differently from the :py:mod:`FLheavy` here more classes are provided, since
 its flavour can be individually selected. Nevertheless a common class is also
-defined, :py:class:`ESF_F2heavy`, to factorize all the common structure related
+defined, :py:class:`ESF_FLheavy`, to factorize all the common structure related
 to heavy flavours; the common class is a further intermediate node in the
 hierarchy, since it is a direct child of :py:class:`ESFH` (it is actually the
-F2 flavoured version of :py:class:`ESFH`) at it is the direct ancestor for the
+FL flavoured version of :py:class:`ESFH`) at it is the direct ancestor for the
 individual flavour ones.
 
 Actually the coefficient functions formulas are encoded already at the level of
-:py:class:`ESF_F2heavy`, while the explicit leaf classes are used to handle the
+:py:class:`ESF_FLheavy`, while the explicit leaf classes are used to handle the
 differences between flavours (e.g. electric charge).
 
 The main reference used is: :cite:`felix-thesis`.
@@ -21,12 +21,12 @@ The main reference used is: :cite:`felix-thesis`.
 
 import numpy as np
 
-from .EvaluatedStructureFunction import EvaluatedStructureFunctionHeavy as ESFH
+from .esf import EvaluatedStructureFunctionHeavy as ESFH
 
 
-class ESF_F2heavy(ESFH):
+class EvaluatedStructureFunctionFLheavy(ESFH):
     """
-        Compute F2 structure functions for heavy quark flavours.
+        Compute FL structure functions for heavy quark flavours.
 
         This class inherits from :py:class:`ESFH`, providing only the formulas
         for coefficient functions, while all the machinery for dealing with
@@ -42,10 +42,10 @@ class ESF_F2heavy(ESFH):
 
     def _gluon_1(self):
         """
-            Computes the gluon part of the next to leading order F2 structure
+            Computes the gluon part of the next to leading order FL structure
             function.
 
-            |ref| implements :eqref:`D.1`, :cite:`felix-thesis`.
+            |ref| implements :eqref:`D.2`, :cite:`felix-thesis`.
 
             Returns
             -------
@@ -65,67 +65,64 @@ class ESF_F2heavy(ESFH):
             if self.is_below_threshold(z):
                 return 0
             # fmt: off
-            return self._FHprefactor * self._charge_em ** 2 * (
+            return  self._FHprefactor * self._charge_em ** 2 * (
                 3 * CF / 4
-                * (-np.pi * self._rho_p(z) ** 3)
-                / (4 * self._rho(z) ** 2 * self._rho_q ** 2)
-                * (
-                    2 * self._beta(z) * (
-                        self._rho(z) ** 2
-                        + self._rho_q ** 2
-                        + self._rho(z) * self._rho_q * (6 + self._rho_q)
-                    )
-                    +
-                    np.log(self._chi(z)) * (
-                        2 * self._rho_q ** 2 * (1 + self._rho(z))
-                        + self._rho(z) ** 2 * (2 - (self._rho_q - 4) * self._rho_q)
-                    )
-                )) / z
+                * (-np.pi * self._rho_p(z) ** 3) / (self._rho(z) * self._rho_q)
+                * (2 * self._beta(z) + self._rho(z) * np.log(self._chi(z)))
+            ) / z
             # fmt: on
 
         return cg
 
 
-class ESF_F2charm(ESF_F2heavy):
+class EvaluatedStructureFunctionFLcharm(EvaluatedStructureFunctionFLheavy):
     """
-        Compute F2 structure functions for *charm* quark.
+        Compute FL structure functions for *charm* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`ESF_F2heavy`.
+        :py:class:`ESF_FLheavy`.
         Currently this class sets only:
 
         - electric charge = 2/3
+
     """
 
     def __init__(self, SF, kinematics):
-        super(ESF_F2charm, self).__init__(SF, kinematics, charge_em=2 / 3)
+        super(EvaluatedStructureFunctionFLcharm, self).__init__(
+            SF, kinematics, charge_em=2 / 3
+        )
 
 
-class ESF_F2bottom(ESF_F2heavy):
+class EvaluatedStructureFunctionFLbottom(EvaluatedStructureFunctionFLheavy):
     """
-        Compute F2 structure functions for *bottom* quark.
+        Compute FL structure functions for *bottom* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`ESF_F2heavy`.
+        :py:class:`ESF_FLheavy`.
         Currently this class sets only:
 
         - electric charge = 1/3
+
     """
 
     def __init__(self, SF, kinematics):
-        super(ESF_F2bottom, self).__init__(SF, kinematics, charge_em=1 / 3)
+        super(EvaluatedStructureFunctionFLbottom, self).__init__(
+            SF, kinematics, charge_em=1 / 3
+        )
 
 
-class ESF_F2top(ESF_F2heavy):
+class EvaluatedStructureFunctionFLtop(EvaluatedStructureFunctionFLheavy):
     """
-        Compute F2 structure functions for *top* quark.
+        Compute FL structure functions for *top* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`ESF_F2heavy`.
+        :py:class:`ESF_FLheavy`.
         Currently this class sets only:
 
         - electric charge = 2/3
     """
 
     def __init__(self, SF, kinematics):
-        super(ESF_F2top, self).__init__(SF, kinematics, charge_em=2 / 3)
+        super(EvaluatedStructureFunctionFLtop, self).__init__(
+            SF, kinematics, charge_em=2 / 3
+        )

@@ -17,11 +17,11 @@ Scale varitions main reference is :cite:`vogt-sv`.
 
 import numpy as np
 
-from .EvaluatedStructureFunction import EvaluatedStructureFunction as ESF
+from .esf import EvaluatedStructureFunction as ESF
 from . import splitting_functions as split
 
 
-class ESF_F2light(ESF):
+class EvaluatedStructureFunctionF2light(ESF):
     """
         Compute F2 structure functions for light quark flavours.
 

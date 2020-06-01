@@ -13,7 +13,11 @@ from apfel_utils import (  # pylint:disable=import-error,wrong-import-position
     str_datetime,
 )
 
-db = tinydb.TinyDB(here / "input.json")
+is_regression = True
+
+db_name = "regression.json" if is_regression else "input.json"
+print(f"writing to {db_name}")
+db = tinydb.TinyDB(here / db_name)
 theories_table = db.table("theories")
 # for the time being the table is freshly generated at each run of this script
 theories_table.truncate()
