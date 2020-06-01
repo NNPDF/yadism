@@ -18,30 +18,17 @@ use the ones provided by shields.io:
 note: in order to make shields.io the repo must be public (or accessible to it in some way)
 
 wanted:
-- Workflows (github):
-  - yadism-tests: /github/workflow/status/N3PDF/dis/yadism
-  - docs: /github/workflow/status/N3PDF/dis/docs
-- Test coverage:
-  - codecov: /codecov/c/:vcsName/:user/:repo?token=abc123def456
-- Python version/s:
-  - pypi: /pypi/pyversions/:packageName
-  - github: /github/pipenv/locked/python-version/:user/:repo
 - Package version
   - pypi: /pypi/v/:packageName
   - github: /github/v/release/:user/:repo?sort=semver
-- Dependency on 'eko':
-  - /librariesio/github/:user/:repo
-  - or anything else
 
 optional:
 - Release-date (github):
   - /github/release-date/:user/:repo
-- Last-commit (github):
-  - /github/last-commit/:user/:repo
 - Downloads:
   - github: /github/downloads/:user/:repo/total
   - pypi: /pypi/:period/:packageName
-License:
+- License:
   - pypi-license: /pypi/l/:packageName
   - github-license: /github/license/:user/:repo
 - Activity:
