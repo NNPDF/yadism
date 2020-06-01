@@ -7,6 +7,7 @@
   <a href="https://codecov.io/gh/N3PDF/yadism"><img src="https://codecov.io/gh/N3PDF/yadism/branch/master/graph/badge.svg?token=qgCFyUQ6oG" /></a>
   <a href="https://www.codefactor.io/repository/github/n3pdf/yadism"><img src="https://www.codefactor.io/repository/github/n3pdf/yadism/badge?s=e5a00668b58574b5b056e1aca01c7b25d2c203f8" alt="CodeFactor" /></a>
   <a href="https://n3pdf.github.io/yadism/"><img alt="Docs" src="https://github.com/N3PDF/yadism/workflows/docs/badge.svg"></a>
+  <a href="https://zenodo.org/badge/latestdoi/219968694"><img src="https://zenodo.org/badge/219968694.svg" alt="DOI"></a>
 </p>
 
 <!--Future Badges
