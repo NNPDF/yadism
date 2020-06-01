@@ -11,6 +11,8 @@ coverage:
   status:
     project:
       default:
+        # check only master and branches that should be merged directly into
+        # master
         branches:
           - master
           - "feature/*"
@@ -28,7 +30,10 @@ comment:
   layout: "reach,diff,flags,tree"
   behavior: default
   require_changes: no
-  branches:
-    - master
-    - "feature/*"
-    - "release/*"
+  # comments in the pull request are not preventing the merge, and can be
+  # useful to detect dropping in unit and regression tests since they are
+  # individually reported [so keep the following option commented]
+  #branches:
+  #- master
+  #- "feature/*"
+  #- "release/*"
