@@ -81,28 +81,70 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
     @abc.abstractmethod
     def _get_result_APFEL(self):
         """
-            .. todo:
-                docs
+            This method is defined by subclasses to provide the implementation
+            of TMC calculation according to the same formula used by APFEL, see
+            :cite:`???`
+
+            .. todo::
+
+                - APFEL TMC reference missing
+
         """
 
     @abc.abstractmethod
     def _get_result_approx(self):
         """
-            .. todo:
-                docs
+            This method is defined by subclasses to provide the implementation
+            of TMC calculation according to the approximate formula defined in
+            :eqref:`4` in :cite:`tmc-iranian`, and already presented in
+            :cite:`tmc-review`.
+
+            The convenience of this formula is that the integration is
+            approximate by a simple evaluation of the integrand in a suitable
+            point, so the evaluation of the full expression is much faster
+            (because integration yields an array of evaluations, ranging from 1
+            to the `xgrid` length).
+            Despite the approximation the formula is quite in a good agreement
+            with the exact one (for comparison see :cite:`tmc-review`).
+
         """
 
     @abc.abstractmethod
     def _get_result_exact(self):
         """
-            .. todo:
-                docs
+            This method is defined by subclasses to provide the implementation
+            of TMC calculation according to the exact formula defined in
+            :eqref:`2` in :cite:`tmc-iranian`, and already presented in
+            :cite:`tmc-review` and older literature like :cite:`tmc-georgi`.
+
+            Note
+            ----
+            This method will always involve an integration (and more than one
+            according to the structure function). If this is to expensive check
+            :py:meth:`_get_result_approx`.
+
         """
 
     def get_result(self):
         """
-            .. todo:
-                docs
+            This is the interfaces provided to get the evaluation of the TMC
+            corrected structure function.
+
+            The kinematics is set to be the requested one, as it should (and not
+            the shifted one used in evaluation of expression terms).
+
+            Returns
+            -------
+            out : ESFResult
+                an object that stores the details and result of the calculation
+
+            Note
+            ----
+            Another interfaces is provided, :py:meth:`get_output`, that makes
+            use of this one, so results of the two are consistent, but simply
+            output in a different format (see :py:class:`ESFResult`, and its
+            :py:meth:`ESFResult.get_raw` method).
+
         """
         if self._SF.TMC == 0:  # no TMC
             raise RuntimeError(
@@ -125,8 +167,20 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
     def get_output(self):
         """
-            .. todo::
-                docs
+            This is the interfaces provided to get the evaluation of the TMC
+            corrected structure function.
+
+            The kinematics is set to be the requested one, as it should (and not
+            the shifted one used in evaluation of expression terms).
+
+            This method is the sibling of :py:meth:`get_result`, providing a
+            :py:class:`dict` as output, instead of an object.
+
+            Returns
+            -------
+            out : dict
+                an dictionary that stores the details and result of the calculation
+
         """
         return self.get_result().get_raw()
 
