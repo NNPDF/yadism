@@ -60,26 +60,20 @@ python setup.py install
 ```
 
 ## Documentation
-The documentation style of this code follows closely the [numpy documentation guide](https://numpydoc.readthedocs.io/en/latest/format.html).
+The documentation style of this code follows closely the [numpy documentation
+guide](https://numpydoc.readthedocs.io/en/latest/format.html).
 
 Docs available at: https://n3pdf.github.io/dis/
 
-## Tests
-To run test install the package and `pytest`.
-
-Then run `pytest ...` in the root directory (configurations are in `setup.cfg`).
-
-### Markers
-Show known marks with `pytest --markers` and run them with:
-- quick check: `pytest -m quick_check`
-- commit check: `pytest -m "quick_check or commit_check"`
-- full check: `pytest`
-
-### Test coverage
-Use `pytest ... --cov=src` to obtain a report for test coverage.
+## Development
+Members of the development team should always follow the [contribution
+guidelines](.github/contributing.md), to have a uniform strategy in code
+development and improve collaboration.
 
 ## Contributing or contacting the authors
-For any kind of interaction consider before to read [contribution guidelines](.github/contributing.md), otherwise just send an email to the authors:
+For any kind of interaction consider before to read [external contribution
+guidelines](.github/contributing.md#external-contributions), otherwise just send
+an email to the authors:
 - [Felix Hekhorn](mailto:felix.hekhorn@mi.infn.it)
 - [Stefano Carrazza](mailto:stefano.carrazza@cern.ch)
 - [Alessandro Candido](mailto:alessandro.candido@mi.infn.it)
