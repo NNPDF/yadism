@@ -100,7 +100,7 @@ class TestTMC:
 
         p.run_queries_apfel(t_query, o_query, ["ToyLH"])
 
-class TestFFNS:
+class TestFNS:
     # def test_LO(self, DBInterface):
     def test_LO(self):
         """
@@ -112,10 +112,10 @@ class TestFFNS:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.F2light.exists()
+        o_query = p.obs_query.F2charm.exists()
 
-        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
         #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+        p.run_queries_apfel(t_query, o_query, ["gonly"])
 
     def test_NLO(self):
         """
@@ -127,10 +127,10 @@ class TestFFNS:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.F2light.exists()
+        o_query = p.obs_query.F2charm.exists()
 
-        #p.run_queries_apfel(t_query, o_query, ["gonly"])
-        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+        p.run_queries_apfel(t_query, o_query, ["gonly"])
+        #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
 
 @pytest.mark.full
 class TestFull:
@@ -165,6 +165,6 @@ if __name__ == "__main__":
     #tmc.test_LO()
     # tmc.test_NLO()
 
-    f = TestFFNS()
+    f = TestFNS()
     f.test_LO()
     f.test_NLO()

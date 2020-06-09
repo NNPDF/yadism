@@ -14,4 +14,4 @@ def run_yadism(theory: dict, observables: dict) -> Runner:
         - docs
     """
     runner = Runner(theory, observables)
-    return runner
+    return runner.get_output()

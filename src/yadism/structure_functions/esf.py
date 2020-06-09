@@ -423,7 +423,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 use threshold on shat or using FH's zmax?
         """
         shat = self._Q2 * (1 - z) / z
-        return shat(z) <= 4 * self._SF.M2hq
+        return shat <= 4 * self._SF.M2hq
 
     def quark_0(self) -> float:
         return 0
