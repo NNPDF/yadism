@@ -124,7 +124,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._x = x
         self._Q2 = kinematics["Q2"]
         self._res = ESFResult(
-            len(self._SF.interpolator.xgrid_raw), x=self._x, Q2=self._Q2
+            x=self._x, Q2=self._Q2
         )
         self._computed = False
 
@@ -152,12 +152,13 @@ class EvaluatedStructureFunction(abc.ABC):
         if self._computed:
             return
         # run
-        self._res.q, self._res.q_error = self._compute_component(
+        self._res.values["q"], self._res.errors["q"] = self._compute_component(
             self.quark_0, self.quark_1, self.quark_1_fact
         )
-        self._res.g, self._res.g_error = self._compute_component(
+        self._res.values["g"], self._res.errors["g"] = self._compute_component(
             self.gluon_0, self.gluon_1, self.gluon_1_fact
         )
+        # add the factor x from the LHS
         self._res *= self._x
         # setup weights
         self._res.weights = self._compute_weights()

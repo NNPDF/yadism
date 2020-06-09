@@ -149,7 +149,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 f"xi outside xgrid - cannot convolute starting from xi={self._xi}"
             )
         # iterate grid
-        res = ESFResult(len(self._SF.interpolator.xgrid_raw), self._xi, self._Q2)
+        res = ESFResult(self._xi, self._Q2)
         for xj, pj in zip(self._SF.interpolator.xgrid_raw, self._SF.interpolator):
             # basis function does not contribute?
             if pj.is_below_x(self._xi):
