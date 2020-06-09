@@ -13,7 +13,13 @@ from apfel_utils import (  # pylint:disable=import-error,wrong-import-position
     str_datetime,
 )
 
-is_regression = True
+is_regression = False
+
+if is_regression:
+    ask = input("Do you want to refill the regression theories? [y/n]")
+    if ask != "y":
+        print("Nothing done.")
+        exit()
 
 db_name = "regression.json" if is_regression else "input.json"
 print(f"writing to {db_name}")
@@ -27,6 +33,8 @@ matrix = {
     "XIR": [0.5, 1.0, 2.0],
     "XIF": [0.5, 1.0, 2.0],
     "TMC": [0, 1, 2, 3],
+    "NfFF": [3, 4, 5],
+    "FNS": ["FFNS", "ZM-VFNS"],
 }
 
 

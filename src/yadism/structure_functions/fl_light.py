@@ -3,8 +3,8 @@
 This module contains the implementation of the DIS FL coefficient functions, for
 light quark flavours.
 
-The only element present is the :py:class:`ESF_FLlight`, that inherits the
-:py:class:`EvaluatedStructureFunction` machinery, but it is used just to store
+The only element present is the :py:class:`EvaluatedStructureFunctionFLlight`, that inherits the
+:py:class:`EvaluatedStructureFunctionLight` machinery, but it is used just to store
 the definitions of the related coefficient functions formula.
 
 The coefficient functions definition is given in :eqref:`4.2`, :cite:`vogt` (the
@@ -15,14 +15,15 @@ Scale varitions main reference is :cite:`vogt-sv`.
 
 """
 
-from .esf import EvaluatedStructureFunction as ESF
+from .esf import EvaluatedStructureFunctionLight as ESFLight
 
 
-class EvaluatedStructureFunctionFLlight(ESF):
+class EvaluatedStructureFunctionFLlight(ESFLight):
     """
         Compute FL structure functions for light quark flavours.
 
-        This class inherits from :py:class:`ESF`, providing only the formulas
+        This class inherits from :py:class:`EvaluatedStructureFunctionLight`,
+        providing only the formulas
         for coefficient functions, while all the machinery for dealing with
         distributions, making convolution with PDFs, and packaging results is
         completely defined in the parent.
@@ -106,7 +107,7 @@ class EvaluatedStructureFunctionFLlight(ESF):
         """
 
         def cg(z):
-            return self._n_f * 8.0 * z * (1.0 - z)
+            return self.nf * 8.0 * z * (1.0 - z)
 
         return cg
 

@@ -19,6 +19,7 @@ class ESFResult:
     def __init__(self, length, x=None, Q2=None):
         self.x = x
         self.Q2 = Q2
+        self.weights = {}
         self.q = np.zeros(length)
         self.q_error = np.zeros(length)
         self.g = np.zeros(length)
@@ -31,6 +32,7 @@ class ESFResult:
                 docs
         """
         new_output = cls(len(input_dict["q"]), input_dict["x"], input_dict["Q2"])
+        new_output.weights = input_dict["weights"]
         # explicitly cast arrays
         new_output.q = np.array(input_dict["q"], dtype=dtype)
         new_output.q_error = np.array(input_dict["q_error"], dtype=dtype)
@@ -108,32 +110,27 @@ class ESFResult:
             .. todo::
                 docs
         """
-        if not isinstance(self.Q2,numbers.Number):
+        if not isinstance(self.Q2, numbers.Number):
             raise ValueError("Q2 is not set!")
+        # factorization scale
+        muF2 = self.Q2 * xiF ** 2
 
-        def get_charged_sum(z: float, Q2: float) -> float:
-            """
-                d/9 + db/9 + s/9 + sb/9 + 4*u/9 + 4*ub/9
-
-                .. todo::
-                    docs
-            """
-            pdf_fl = lambda k: pdfs.xfxQ2(k, z, Q2)
-            return (pdf_fl(1) + pdf_fl(-1) + pdf_fl(3) + pdf_fl(-3)) / 9 + (
-                pdf_fl(2) + pdf_fl(-2)
-            ) * 4 / 9
-
-        # collect pdfs
+        # build quark contributions grid
         fq = []
+        for z in xgrid:
+            e = 0
+            # collect all pdfs
+            for pid, w in self.weights["q"].items():
+                e += w * (pdfs.xfxQ2(pid, z, muF2) + pdfs.xfxQ2(-pid, z, muF2)) / z
+            fq.append(e)
+        # build gluon grid
         fg = []
         for z in xgrid:
-            fq.append(get_charged_sum(z, self.Q2 * xiF ** 2) / z)
-            fg.append(pdfs.xfxQ2(21, z, self.Q2 * xiF ** 2) / z)
-        #__import__("pdb").set_trace()
+            fg.append(self.weights["g"][21] * pdfs.xfxQ2(21, z, muF2) / z)
 
-        # contract with coefficient functions
-        result = (np.dot(fq, self.q) + 2 / 9 * np.dot(fg, self.g))
-        error = (np.dot(fq, self.q_error) + 2 / 9 * np.dot(fg, self.g_error))
+        # join
+        result = np.dot(fq, self.q) + np.dot(fg, self.g)
+        error = np.dot(fq, self.q_error) + np.dot(fg, self.g_error)
 
         return dict(x=self.x, Q2=self.Q2, result=result, error=error)
 
@@ -149,4 +146,5 @@ class ESFResult:
             q_error=self.q_error.tolist(),
             g=self.g.tolist(),
             g_error=self.g_error.tolist(),
+            weights=self.weights,
         )

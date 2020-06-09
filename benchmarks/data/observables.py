@@ -4,7 +4,8 @@ from datetime import datetime
 
 import tinydb
 import numpy as np
-#import yaml
+
+# import yaml
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / ".." / "aux"))
@@ -33,23 +34,23 @@ observables = [
 xgrid = np.unique(
     np.concatenate([np.logspace(-4, np.log10(0.15), 20), np.linspace(0.15, 1.0, 12)])
 )
-#with open("apfel_xg.yaml") as o:
+# with open("apfel_xg.yaml") as o:
 #    xgrid = yaml.safe_load(o)
-#xgrid = xgrid.split()
-#xgrid = [float(x[1:]) for x in xgrid]
-#xgrid = xgrid[-6:]
-#xgrid = np.array(xgrid)
+# xgrid = xgrid.split()
+# xgrid = [float(x[1:]) for x in xgrid]
+# xgrid = xgrid[-6:]
+# xgrid = np.array(xgrid)
 
 polynomial_degree = 4
 is_log_interpolation = True
 
 kinematics = []
 # fixed Q2
-#kinematics.extend([dict(x=x, Q2=90.0) for x in xgrid[-5:-4].tolist()])
-kinematics.extend([dict(x=x, Q2=90.0) for x in np.logspace(-3, -1, 12).tolist()])
-kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.15, 0.9, 12).tolist()])
+#kinematics.extend([dict(x=x, Q2=90.0) for x in xgrid[::3].tolist()])
+kinematics.extend([dict(x=x, Q2=90.0) for x in np.logspace(-3, -1, 3).tolist()])
+kinematics.extend([dict(x=x, Q2=90.0) for x in np.linspace(0.15, 0.9, 3).tolist()])
 # fixed x
-kinematics.extend([dict(x=0.8, Q2=Q2) for Q2 in np.logspace(1.5, 2.5, 6).tolist()])
+kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.linspace(2, 6, 10).tolist()])
 
 # iterate over observables (one dict for each)
 for sf in observables:

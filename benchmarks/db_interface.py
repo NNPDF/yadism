@@ -13,7 +13,9 @@ from yadism.runner import Runner
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
 import toyLH  # pylint:disable=import-error,wrong-import-position
-from apfel_utils import str_datetime  # pylint:disable=import-error,wrong-import-position
+from apfel_utils import (
+    str_datetime,
+)  # pylint:disable=import-error,wrong-import-position
 
 
 class DBInterface:
@@ -33,9 +35,7 @@ class DBInterface:
 
     def _load_input(self, theory_query, obs_query):
         theories = self._db.table("theories").search(theory_query)
-        observables = self._db.table("observables").search(
-            obs_query
-        )
+        observables = self._db.table("observables").search(obs_query)
         return theories, observables
 
     def run_queries_regression(self, theory_query, obs_query):
@@ -70,7 +70,9 @@ class DBInterface:
             observables_f :
                 file path for the observables runcard
         """
-        from apfel_utils import get_apfel_data  # pylint:disable=import-error,import-outside-toplevel
+        from apfel_utils import (
+            get_apfel_data,
+        )  # pylint:disable=import-error,import-outside-toplevel
 
         # ======================
         # get observables values
@@ -82,7 +84,8 @@ class DBInterface:
             if pdf_name == "ToyLH":
                 pdf = toyLH.mkPDF("ToyLH", 0)
             else:
-                import lhapdf # pylint:disable=import-outside-toplevel
+                import lhapdf  # pylint:disable=import-outside-toplevel
+
                 pdf = lhapdf.mkPDF(pdf_name, 0)
             # run codes
             yad_tab = runner.apply(pdf)
@@ -168,7 +171,7 @@ class DBInterface:
         kin["yadism"] = fx = yad["result"]
         kin["yadism_error"] = yad["error"]
         # compare for log
-        with np.errstate(divide="ignore",invalid="ignore"):
+        with np.errstate(divide="ignore", invalid="ignore"):
             comparison = (fx / np.array(ref) - 1.0) * 100
         kin["rel_err[%]"] = comparison
         return kin
@@ -207,11 +210,12 @@ class DBInterface:
                 # check kinematics
                 if any([yad[k] != oth[k] for k in ["x", "Q2"]]):
                     raise ValueError("Sort problem: x and/or Q2 do not match.")
-                # extract values
-                kin = process_log(yad, oth)
                 # add common values
+                kin = {}
                 kin["x"] = yad["x"]
                 kin["Q2"] = yad["Q2"]
+                # extract values
+                kin.update(process_log(yad, oth))
                 kinematics.append(kin)
             log_tab[sf] = kinematics
 

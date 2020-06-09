@@ -11,6 +11,10 @@ They are:
     shared methods (like initializer and :py:meth:`get_output`, responsible also
     for :ref:`local caching<local-caching>`.
 
+:py:class:`EvaluatedStructureFunctionLight` :
+    this class is inheriting from the former, factorizing some common procedure
+    needed for light calculation.
+
 :py:class:`EvaluatedStructureFunctionHeavy` :
     this class is inheriting from the former, factorizing some common procedure
     needed for heavy quark calculation, like auxiliary variable definition,
@@ -105,8 +109,6 @@ class EvaluatedStructureFunction(abc.ABC):
                 error on :py:attr:`_cgv`
             _a_s :
                 value of $ \alpha_s / 4 \pi $ at the scale :py:attr:`_Q2`
-            _n_f :
-                number of flavours at the scale :py:attr:`_Q2`
         """
 
         x = kinematics["x"]
@@ -124,12 +126,20 @@ class EvaluatedStructureFunction(abc.ABC):
         self._res = ESFResult(
             len(self._SF.interpolator.xgrid_raw), x=self._x, Q2=self._Q2
         )
-        # localize external parameters
-        self._a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
-        self._n_f = self._SF.threshold.get_areas(self._Q2)[-1].nf
         self._computed = False
 
-    def _compute(self):
+    @abc.abstractmethod
+    def _compute_weights(self):
+        """
+            Compute PDF weights for different channels.
+
+            Returns
+            -------
+                weights : dict
+                    dictionary with key refering to the channel and a dictionary with pid -> weight
+        """
+
+    def _compute_local(self):
         """
             Here is where the local caching is actually implemented: if the
             coefficient functions are already computed don't do nothing,
@@ -149,6 +159,8 @@ class EvaluatedStructureFunction(abc.ABC):
             self.gluon_0, self.gluon_1, self.gluon_1_fact
         )
         self._res *= self._x
+        # setup weights
+        self._res.weights = self._compute_weights()
 
     def _compute_component(self, f_LO, f_NLO, f_NLO_fact):
         """
@@ -175,7 +187,8 @@ class EvaluatedStructureFunction(abc.ABC):
         # combine orders
         d_vec = conv.DistributionVec(f_LO())
         if self._SF.pto > 0:
-            d_vec += self._a_s * (
+            a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
+            d_vec += a_s * (
                 conv.DistributionVec(f_NLO())
                 + 2  # TODO: to be understood
                 * (-np.log(self._SF.xiF ** 2))
@@ -190,14 +203,12 @@ class EvaluatedStructureFunction(abc.ABC):
 
         return np.array(ls), np.array(els)
 
+    @abc.abstractmethod
     def get_result(self):
         """
             .. todo::
                 docs
         """
-        self._compute()
-
-        return self._res
 
     def get_output(self) -> dict:
         """
@@ -275,6 +286,49 @@ class EvaluatedStructureFunction(abc.ABC):
         """
 
 
+class EvaluatedStructureFunctionLight(
+    EvaluatedStructureFunction
+):  # pylint:disable=abstract-method
+    """
+        Parent class for the light ESF implementations -
+        really meaning up, down, and strange quark contributions.
+    """
+
+    def __init__(self, SF, kinematics: dict, nf=3):  # 3 = u+d+s
+        super(EvaluatedStructureFunctionLight, self).__init__(SF, kinematics)
+        # expose number of flavours
+        self.nf = nf
+
+    def _compute_weights(self):
+        """
+            Compute PDF weights for different channels.
+
+            Returns
+            -------
+                weights : dict
+                    dictionary with key refering to the channel and a dictionary with pid -> weight
+        """
+        weights = {"q": {}, "g": {}}
+        # quark couplings
+        tot_ch_sq = 0
+        for q in range(1, 3 + 1):  # u+d+s
+            eq2 = self._SF.coupling_constants.electric_charge_sq[q]
+            weights["q"][q] = eq2
+            tot_ch_sq += eq2
+        # gluon coupling = charge average (omitting the *2/2)
+        weights["g"][21] = tot_ch_sq / 3  # 3 = u+d+s
+        return weights
+
+    def get_result(self):
+        """
+            .. todo::
+                docs
+        """
+        self._compute_local()
+
+        return self._res
+
+
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     """
         Specialize EvaluatedStructureFunction for heavy flavours.
@@ -298,18 +352,16 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             implements the global caching
         kinematics : dict
             the specific kinematic point as a dict with two elements ('x', 'Q2')
-        charge_em : float
+        nhq : int
+            heavy quark flavor number, i.e. c=4,b=5,t=6
 
         Methods
         -------
         get_output()
             compute the coefficient functions (see :py:class:`EvaluatedStructureFunction`)
-
-        .. todo::
-            - charge_em
     """
 
-    def __init__(self, SF, kinematics: dict, charge_em: float):
+    def __init__(self, SF, kinematics: dict, nhq: int):
         """
             collect electric charge (relevant for heavy flavours coefficient
             functions) and compute common derived variables
@@ -329,14 +381,11 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         """
         super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
 
-        self._charge_em = charge_em
+        self._nhq = nhq
         # FH - Vogt comparison prefactor
-        self._FHprefactor = self._Q2 / (np.pi * self._SF.M2hq) * 9 / 2  # / self._x
+        self._FHprefactor = self._Q2 / (np.pi * self._SF.M2hq)
 
         # common variables
-        self._s = self._Q2 * (1 - self._x) / self._x
-        self._shat = lambda z: self._Q2 * (1 - z) / z
-
         self._rho_q = -4 * self._SF.M2hq / self._Q2
         self._rho = lambda z: -self._rho_q * z / (1 - z)
         self._rho_p = lambda z: -self._rho_q * z
@@ -345,6 +394,27 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
 
         self._chi = lambda z: (1 - self._beta(z)) / (1 + self._beta(z))
 
+    def get_result(self):
+        """
+            .. todo::
+                docs
+        """
+        nf = self._SF.threshold.get_areas(self._Q2 * self._SF.xiF ** 2)[-1].nf
+        if self._nhq <= nf:
+            # use massless case
+            hqname = self._SF.name
+            esf_light = self._SF.get_esf(
+                hqname[:2] + "light", {"x": self._x, "Q2": self._Q2}, 1
+            )
+            self._res = esf_light.get_result()
+            # readjust the weights
+            ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+            self._res.weights = {"g": {21: ehq}, "q": {self._nhq: ehq}}
+        else:  # use massive coeffs
+            self._compute_local()
+
+        return self._res
+
     def is_below_threshold(self, z):
         """
             check if available energy is below production threshold or not
@@ -352,7 +422,8 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             .. todo::
                 use threshold on shat or using FH's zmax?
         """
-        return self._shat(z) <= 4 * self._SF.M2hq
+        shat = self._Q2 * (1 - z) / z
+        return shat <= 4 * self._SF.M2hq
 
     def quark_0(self) -> float:
         return 0
@@ -367,6 +438,19 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         """
         return 0
 
+    def _compute_weights(self):
+        """
+            Compute PDF weights for different channels.
+
+            Returns
+            -------
+                weights : dict
+                    dictionary with key refering to the channel and a dictionary with pid -> weight
+        """
+        weights = {"q": {}, "g": {}}
+        weights["g"][21] = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+        return weights
+
     @abc.abstractmethod
     def _gluon_1(self):
         pass
@@ -377,7 +461,8 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             (delegated to internal :py:meth:`_gluon_1`) checking before for
             production threshold
         """
-        if self._s <= 4 * self._SF.M2hq:
+        s_h = self._Q2 * (1 - self._x) / self._x
+        if s_h <= 4 * self._SF.M2hq:
             return 0
         else:
             return self._gluon_1()

@@ -25,6 +25,7 @@ from eko.alpha_s import StrongCoupling
 from .output import Output
 from .sf import StructureFunction as SF
 from .structure_functions import ESFmap
+from .coupling_constants import CouplingConstants
 from . import utils
 
 
@@ -58,7 +59,6 @@ class Runner:
         # ============
         self._theory = theory
         self._observables = observables
-        self._n_f: int = theory["NfFF"]
 
         # ===========================
         # Setup interpolator from eko
@@ -80,10 +80,10 @@ class Runner:
         FNS = theory["FNS"]
         q2_ref = pow(theory["Q0"], 2)
         if FNS != "FFNS":
-            qmc = theory["Qmc"]
-            qmb = theory["Qmb"]
-            qmt = theory["Qmt"]
-            threshold_list = pow(np.array([qmc, qmb, qmt]), 2)
+            mc = theory["mc"]
+            mb = theory["mb"]
+            mt = theory["mt"]
+            threshold_list = pow(np.array([mc, mb, mt]), 2)
             nf = None
         else:
             nf = theory["NfFF"]
@@ -99,6 +99,8 @@ class Runner:
             self.constants, alpha_ref, q2_alpha, self.threshold
         )
 
+        # Non-eko theory
+        self.coupling_constants = CouplingConstants.from_theory(theory)
         self.xiF = theory["XIF"]
 
         # ==============================
@@ -109,8 +111,9 @@ class Runner:
             constants=self.constants,
             threshold=self.threshold,
             alpha_s=self.strong_coupling,
+            coupling_constants=self.coupling_constants,
         )
-        theory_stuffs = dict(
+        theory_params = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
             xiF=self.xiF,
@@ -123,14 +126,14 @@ class Runner:
         for name in ESFmap.keys():
             lab = utils.get_mass_label(name)
             if lab is not None:
-                theory_stuffs["M2hq"] = theory[lab] ** 2
+                theory_params["M2hq"] = theory[lab] ** 2
 
             # initialize an SF instance for each possible structure function
             obj = SF(
                 name,
                 runner=self,
                 eko_components=eko_components,
-                theory_stuffs=theory_stuffs,
+                theory_params=theory_params,
             )
 
             # read kinematics
