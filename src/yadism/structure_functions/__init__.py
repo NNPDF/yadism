@@ -10,6 +10,7 @@ The 3-loop reference is :cite:`vogt` which includes also the lower order results
 
 from .f2_light import EvaluatedStructureFunctionF2light
 from .fl_light import EvaluatedStructureFunctionFLlight
+from .f_total import EvaluatedStructureFunctionFtotal
 from .f2_heavy import (
     EvaluatedStructureFunctionF2charm,
     EvaluatedStructureFunctionF2bottom,
@@ -30,4 +31,6 @@ ESFmap = {
     "FLcharm": EvaluatedStructureFunctionFLcharm,
     "FLbottom": EvaluatedStructureFunctionFLbottom,
     "FLtop": EvaluatedStructureFunctionFLtop,
+    "F2total": EvaluatedStructureFunctionFtotal,
+    "FLtotal": EvaluatedStructureFunctionFtotal,
 }

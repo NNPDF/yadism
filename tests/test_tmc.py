@@ -22,14 +22,8 @@ class MockESF:  # return init arguments
                 "x": 0,
                 "Q2": 0,
                 "weights": {},
-                "values": {
-                    "q": np.array(self._q),
-                    "g": np.array(self._g), 
-                },
-                "errors": {
-                    "q": np.zeros(len(self._q)),
-                    "g": np.zeros(len(self._g)),
-                }
+                "values": {"q": np.array(self._q), "g": np.array(self._g),},
+                "errors": {"q": np.zeros(len(self._q)), "g": np.zeros(len(self._g)),},
             }
         )
 
@@ -63,13 +57,12 @@ class TestTMC:
                     return MockESF([0.0, 0.0, 0.0])
                 return MockESF([1e1, 1e2, 1e3])
 
-        # TODO
+        # is empty
         def is0(res):
-            pass
-        #    assert pytest.approx(res.values["q"], 0, 0) == [0] * 3
-        #    assert pytest.approx(res.values["g"], 0, 0) == [0] * 3
-        #    assert pytest.approx(res.errors["q"], 0, 0) == [0] * 3
-        #    assert pytest.approx(res.errors["g"], 0, 0) == [0] * 3
+            assert pytest.approx(res.values["q"], 0, 0) == [0] * 3
+            assert pytest.approx(res.values["g"], 0, 0) == [0] * 3
+            assert pytest.approx(res.errors["q"], 0, 0) == [0] * 3
+            assert pytest.approx(res.errors["g"], 0, 0) == [0] * 3
 
         # build objects
         objSF = MockSF()
@@ -112,8 +105,10 @@ class TestTMC:
         # convolute with constant function
         # res_const = int_xi^1 du/u 1 F2(u)
         res_const = obj._convolute_F2(lambda x: 1)
+        assert isinstance(res_const, ESFResult)
         # res_h2 = int_xi^1 du/u 1/xi*(xi/u) F2(u)  = int_xi^1 du/u 1/u F2(u)
         res_h2 = obj._h2()
+        assert isinstance(res_h2, ESFResult)
 
         def isdelta(pdf):  # assert F2 = pdf
             for x, pdf_val in zip(xg, pdf):

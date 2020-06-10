@@ -66,7 +66,9 @@ class StructureFunction:
         self.__ESFs = []
         # iterate F* configurations
         for kinematics in kinematic_configs:
-            self.__ESFs.append(self.__ESF(self, kinematics)) # TODO delegate this to get_esf?
+            self.__ESFs.append(
+                self.__ESF(self, kinematics)
+            )  # TODO delegate this to get_esf?
 
     def get_esf(self, name, kinematics, *args):
         """
@@ -97,7 +99,7 @@ class StructureFunction:
         # is it us or do we need to delegate?
         if name == self.name:
             # convert to tuple
-            key = tuple(kinematics.values()) # TODO how to incorporate args?
+            key = tuple(kinematics.values())  # TODO how to incorporate args?
             # search
             try:
                 return self.__ESFcache[key]

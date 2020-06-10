@@ -18,13 +18,17 @@ class MockPDFgonly:
 class TestESFResult:
     def test_init(self):
         # test creation
-        for x in [0.1,.2]:
+        for x in [0.1, 0.2]:
             r = ESFResult(x)
             assert r.x == x
 
     def test_from_dict(self):
         d = dict(
-            x=0.5, Q2=10, weights={}, values=dict(q=[0, 1],g=[1, 0]), errors=dict(q=[0, 0], g=[0, 0])
+            x=0.5,
+            Q2=10,
+            weights={},
+            values=dict(q=[0, 1], g=[1, 0]),
+            errors=dict(q=[0, 0], g=[0, 0]),
         )
         dt = np.float
         r = ESFResult.from_dict(d, dt)
@@ -33,10 +37,18 @@ class TestESFResult:
 
     def test_add(self):
         a = dict(
-            x=0.5, Q2=10, weights={}, values=dict(q=[0, 1],g=[1, 0]), errors=dict(q=[0, 0], g=[0, 0])
+            x=0.5,
+            Q2=10,
+            weights={},
+            values=dict(q=[0, 1], g=[1, 0]),
+            errors=dict(q=[0, 0], g=[0, 0]),
         )
         b = dict(
-            x=0.5, Q2=10, weights={}, values=dict(q=[1, 0],g=[0, 1]), errors=dict(q=[1, 1], g=[1, 1])
+            x=0.5,
+            Q2=10,
+            weights={},
+            values=dict(q=[1, 0], g=[0, 1]),
+            errors=dict(q=[1, 1], g=[1, 1]),
         )
 
         ra = ESFResult.from_dict(a)
@@ -64,7 +76,8 @@ class TestESFResult:
             x=0.5,
             Q2=10,
             weights={},
-            values=dict(q=[0,1],g=[-1,0]), errors=dict(q=[1, 0], g=[1, 0])
+            values=dict(q=[0, 1], g=[-1, 0]),
+            errors=dict(q=[1, 0], g=[1, 0]),
         )
 
         ra = ESFResult.from_dict(a)
@@ -80,7 +93,8 @@ class TestESFResult:
             x=0.5,
             Q2=10,
             weights={},
-            values=dict(q=[0,1],g=[-1,0]), errors=dict(q=[1, 0], g=[1, 0])
+            values=dict(q=[0, 1], g=[-1, 0]),
+            errors=dict(q=[1, 0], g=[1, 0]),
         )
 
         ra = ESFResult.from_dict(a)
@@ -115,7 +129,8 @@ class TestESFResult:
             x=0.5,
             Q2=10,
             weights={},
-            values=dict(q=[0,1],g=[-1,0]), errors=dict(q=[1, 0], g=[1, 0])
+            values=dict(q=[0, 1], g=[-1, 0]),
+            errors=dict(q=[1, 0], g=[1, 0]),
         )
 
         ra = ESFResult.from_dict(a)
@@ -130,7 +145,8 @@ class TestESFResult:
                 x=0.5,
                 Q2=Q2,
                 weights={"g": {21: 2 / 9}, "q": {}},
-                values=dict(q=[0,1],g=[-1,0]), errors=dict(q=[1, 0], g=[1, 0])
+                values=dict(q=[0, 1], g=[-1, 0]),
+                errors=dict(q=[1, 0], g=[1, 0]),
             )
             # plain
             ra = ESFResult.from_dict(a)
@@ -144,7 +160,7 @@ class TestESFResult:
                 pra = ra.apply_pdf([0.5, 1.0], xiF, MockPDFgonly())
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
-                
+
         # errors
         with pytest.raises(ValueError, match=r"Q2"):
             r = ESFResult()

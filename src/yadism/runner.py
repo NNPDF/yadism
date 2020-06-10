@@ -14,6 +14,7 @@ There are two ways of using ``yadism``:
     decide about ``run_dis`` and document it properly in module header
 """
 from typing import Any
+import time
 
 import numpy as np
 
@@ -169,9 +170,14 @@ class Runner:
                 * docs
                 * get_output pipeline
         """
+        start = time.time()
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
                 self._output[name] = obs.get_output()
+        end = time.time()
+        diff = end - start
+        # TODO move to log and make more readable
+        print(f"took {diff:.2f} s")
 
         return self._output
 

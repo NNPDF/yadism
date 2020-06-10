@@ -23,9 +23,10 @@ class TestPlain:
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.F2light.exists()
+        o_query |= p.obs_query.F2total.exists()
 
-        #p.run_queries_apfel(t_query, o_query, ["ToyLH"])
-        p.run_queries_apfel(t_query, o_query, ["toy_gonly"])
+        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
+        #p.run_queries_apfel(t_query, o_query, ["toy_gonly"])
 
     def test_NLO(self):
         """
@@ -41,8 +42,8 @@ class TestPlain:
 
         o_query = p.obs_query.prDIS.exists()
 
-        #p.run_queries_apfel(t_query, o_query, ["ToyLH"])
-        p.run_queries_apfel(t_query, o_query, ["toy_gonly"])
+        p.run_queries_apfel(t_query, o_query, ["ToyLH"])
+        #p.run_queries_apfel(t_query, o_query, ["toy_gonly"])
 
 
 @pytest.mark.commit_check
@@ -101,7 +102,6 @@ class TestTMC:
         p.run_queries_apfel(t_query, o_query, ["ToyLH"])
 
 class TestFNS:
-    # def test_LO(self, DBInterface):
     def test_LO(self):
         """
         Test the full LO order against APFEL's.
@@ -112,10 +112,10 @@ class TestFNS:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.F2charm.exists()
+        o_query = p.obs_query.F2total.exists()
 
-        #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
-        p.run_queries_apfel(t_query, o_query, ["gonly"])
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+        #p.run_queries_apfel(t_query, o_query, ["gonly"])
 
     def test_NLO(self):
         """
@@ -127,10 +127,10 @@ class TestFNS:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.F2charm.exists()
+        o_query = p.obs_query.prDIS.exists()
 
-        p.run_queries_apfel(t_query, o_query, ["gonly"])
-        #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+        #p.run_queries_apfel(t_query, o_query, ["gonly"])
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
 
 @pytest.mark.full
 class TestFull:
@@ -153,7 +153,7 @@ class TestFull:
 
 
 if __name__ == "__main__":
-    plain = TestPlain()
+    #plain = TestPlain()
     #plain.test_LO()
     #plain.test_NLO()
 
@@ -167,4 +167,4 @@ if __name__ == "__main__":
 
     f = TestFNS()
     f.test_LO()
-    f.test_NLO()
+    #f.test_NLO()

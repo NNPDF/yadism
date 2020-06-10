@@ -32,9 +32,9 @@ class ESFResult:
         new_output = cls(input_dict["x"], input_dict["Q2"])
         new_output.weights = input_dict["weights"]
         # explicitly cast arrays
-        for k,v in input_dict["values"].items():
-            new_output.values[k] = np.array(v,dtype=dtype)
-            new_output.errors[k] = np.array(input_dict["errors"][k],dtype=dtype)
+        for k, v in input_dict["values"].items():
+            new_output.values[k] = np.array(v, dtype=dtype)
+            new_output.errors[k] = np.array(input_dict["errors"][k], dtype=dtype)
         return new_output
 
     def __add__(self, other):
@@ -47,14 +47,18 @@ class ESFResult:
         # if isinstance(other, ESFResult):
         # else:
         # raise ValueError("ESFResult can only be summed with another ESFResult")
-        for k in self.values:
-            self.values[k] += other.values[k]
-            self.errors[k] += other.errors[k]
+        for k in other.values:
+            if k in self.values:
+                self.values[k] += other.values[k]
+                self.errors[k] += other.errors[k]
+            else:
+                self.values[k] = other.values[k]
+                self.errors[k] = other.errors[k]
         return self
 
     def __neg__(self):
         res = copy.deepcopy(self)
-        for k,v in self.values.items():
+        for k, v in self.values.items():
             res.values[k] = -v
         return res
 
@@ -81,7 +85,9 @@ class ESFResult:
             # assuming is a number with an error
             # note that the error has to be asigned first, as it needs the old value!
             for k in self.values:
-                self.errors[k] = np.abs(other[1] * self.values[k]) + np.abs(other[0] * self.errors[k])
+                self.errors[k] = np.abs(other[1] * self.values[k]) + np.abs(
+                    other[0] * self.errors[k]
+                )
                 self.values[k] *= other[0]
         else:
             raise ValueError(
@@ -117,7 +123,11 @@ class ESFResult:
                 for pid, w in self.weights[k].items():
                     # is a quark?
                     if pid <= 6:
-                        e += w * (pdfs.xfxQ2(pid, z, muF2) + pdfs.xfxQ2(-pid, z, muF2)) / z
+                        e += (
+                            w
+                            * (pdfs.xfxQ2(pid, z, muF2) + pdfs.xfxQ2(-pid, z, muF2))
+                            / z
+                        )
                     else:
                         e += w * pdfs.xfxQ2(pid, z, muF2) / z
                 f.append(e)
