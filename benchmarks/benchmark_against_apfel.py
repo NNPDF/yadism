@@ -112,7 +112,7 @@ class TestFNS:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.F2total.exists()
+        o_query = p.obs_query.F2light.exists()
 
         p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
         #p.run_queries_apfel(t_query, o_query, ["gonly"])
@@ -126,6 +126,37 @@ class TestFNS:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
+
+        o_query = p.obs_query.prDIS.exists()
+
+        #p.run_queries_apfel(t_query, o_query, ["gonly"])
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+
+class TestTMCFNS:
+    def test_LO(self):
+        """
+        Test the full LO order against APFEL's.
+        """
+        p = DBInterface("input.json")
+        t_query = p.theory_query.PTO == 0
+        t_query &= p.theory_query.XIR == 1.0
+        t_query &= p.theory_query.XIF == 1.0
+        t_query &= p.theory_query.TMC == 2
+
+        o_query = p.obs_query.prDIS.exists()
+
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+        #p.run_queries_apfel(t_query, o_query, ["gonly"])
+
+    def test_NLO(self):
+        """
+        Test the full NLO order against APFEL's.
+        """
+        p = DBInterface("input.json")
+        t_query = p.theory_query.PTO == 1
+        t_query &= p.theory_query.XIR == 1.0
+        t_query &= p.theory_query.XIF == 1.0
+        t_query &= p.theory_query.TMC == 2
 
         o_query = p.obs_query.prDIS.exists()
 
@@ -165,6 +196,10 @@ if __name__ == "__main__":
     #tmc.test_LO()
     # tmc.test_NLO()
 
-    f = TestFNS()
-    f.test_LO()
-    #f.test_NLO()
+    #fns = TestFNS()
+    #fns.test_LO()
+    #fns.test_NLO()
+
+    tmc_fns = TestTMCFNS()
+    tmc_fns.test_LO()
+    #tmc_fns.test_NLO
