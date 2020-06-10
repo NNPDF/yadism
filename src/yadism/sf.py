@@ -66,9 +66,11 @@ class StructureFunction:
         self.__ESFs = []
         # iterate F* configurations
         for kinematics in kinematic_configs:
-            self.__ESFs.append(self.__ESF(self, kinematics)) # TODO delegate this to get_esf?
+            self.__ESFs.append(
+                self.__ESF(self, kinematics)
+            )  # TODO delegate this to get_esf?
 
-    def get_esf(self, name, kinematics, *args):
+    def get_esf(self, name, kinematics, *args, use_raw=True):
         """
             Returns a *raw* :py:class:`EvaluatedStructureFunction` instance.
 
@@ -88,6 +90,8 @@ class StructureFunction:
                     kinematic configuration
                 args : any
                     further arguments passed down to the instance
+                use_raw : bool
+                    eventually use the ESFTMC? (or just the uncorrected one)
 
             Returns
             -------
@@ -97,12 +101,18 @@ class StructureFunction:
         # is it us or do we need to delegate?
         if name == self.name:
             # convert to tuple
-            key = tuple(kinematics.values()) # TODO how to incorporate args?
+            key = list(kinematics.values())
+            key.append(use_raw)
+            key = tuple(key)
+            # TODO how to incorporate args?
             # search
             try:
                 return self.__ESFcache[key]
             except KeyError:
-                obj = ESFmap[name](self, kinematics, *args)
+                if not use_raw and self.TMC != 0:
+                    obj = ESFTMCmap[self.name[:2]]
+                else:
+                    obj = ESFmap[name](self, kinematics, *args)
                 self.__ESFcache[key] = obj
                 return obj
         else:

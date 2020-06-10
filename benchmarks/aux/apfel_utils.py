@@ -214,6 +214,8 @@ def get_apfel_data(theory, observables, pdf_name, apfel_cache):
             "FLcharm": apfel.FLcharm,
             "FLbottom": apfel.FLbottom,
             "FLtop": apfel.FLtop,
+            "F2total": apfel.F2total,
+            "FLtotal": apfel.FLtotal,
         }
 
         # compute observables with APFEL

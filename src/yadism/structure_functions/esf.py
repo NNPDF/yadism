@@ -23,6 +23,7 @@ They are:
 """
 
 import abc
+import copy
 
 import numpy as np
 
@@ -74,13 +75,13 @@ class EvaluatedStructureFunction(abc.ABC):
 
         Parameters
         ----------
-        SF : StructureFunction
-            the parent :py:class:`StructureFunction` instance, provides an
-            interface, holds references to global objects (like managers coming
-            from :py:mod:`eko`, e.g. :py:class:`InterpolatorDispatcher`) and
-            implements the global caching
-        kinematics : dict
-            the specific kinematic point as a dict with two elements ('x', 'Q2')
+            SF : StructureFunction
+                the parent :py:class:`StructureFunction` instance, provides an
+                interface, holds references to global objects (like managers coming
+                from :py:mod:`eko`, e.g. :py:class:`InterpolatorDispatcher`) and
+                implements the global caching
+            kinematics : dict
+                the specific kinematic point as a dict with two elements ('x', 'Q2')
 
         Methods
         -------
@@ -99,16 +100,6 @@ class EvaluatedStructureFunction(abc.ABC):
                 momentum fraction
             _Q2 :
                 process energy
-            _cqv :
-                singlet quark coefficient function (implements the cache)
-            _e_cqv :
-                error on :py:attr:`_cqv`
-            _cgv :
-                gluon coefficient function (implements the cache)
-            _e_cgv :
-                error on :py:attr:`_cgv`
-            _a_s :
-                value of $ \alpha_s / 4 \pi $ at the scale :py:attr:`_Q2`
         """
 
         x = kinematics["x"]
@@ -123,9 +114,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._SF = SF
         self._x = x
         self._Q2 = kinematics["Q2"]
-        self._res = ESFResult(
-            len(self._SF.interpolator.xgrid_raw), x=self._x, Q2=self._Q2
-        )
+        self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
 
     @abc.abstractmethod
@@ -152,12 +141,13 @@ class EvaluatedStructureFunction(abc.ABC):
         if self._computed:
             return
         # run
-        self._res.q, self._res.q_error = self._compute_component(
+        self._res.values["q"], self._res.errors["q"] = self._compute_component(
             self.quark_0, self.quark_1, self.quark_1_fact
         )
-        self._res.g, self._res.g_error = self._compute_component(
+        self._res.values["g"], self._res.errors["g"] = self._compute_component(
             self.gluon_0, self.gluon_1, self.gluon_1_fact
         )
+        # add the factor x from the LHS
         self._res *= self._x
         # setup weights
         self._res.weights = self._compute_weights()
@@ -326,7 +316,7 @@ class EvaluatedStructureFunctionLight(
         """
         self._compute_local()
 
-        return self._res
+        return copy.deepcopy(self._res)
 
 
 class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
@@ -413,7 +403,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         else:  # use massive coeffs
             self._compute_local()
 
-        return self._res
+        return copy.deepcopy(self._res)
 
     def is_below_threshold(self, z):
         """
