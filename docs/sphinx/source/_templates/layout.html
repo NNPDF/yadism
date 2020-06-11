@@ -1,25 +1,29 @@
 {% extends '!layout.html' %}
 
-{% block navigation %}
-<div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-  {% block menu %}
-    {#
-      The singlehtml builder doesn't handle this toctree call when the
-      toctree is empty. Skip building this for now.
-    #}
-    {% if 'singlehtml' not in builder %}
-      {% set global_toc = toctree(maxdepth=theme_navigation_depth|int,
-                                  collapse=theme_collapse_navigation|tobool,
-                                  includehidden=theme_includehidden|tobool,
-                                  titles_only=theme_titles_only|tobool) %}
-    {% endif %}
-    {% if global_toc %}
-      {{ global_toc }}
-    {% else %}
-      <!-- Local TOC -->
-      <div class="local-toc">{{ toc }}</div>
-    {% endif %}
-  {% endblock %}
-  <img src="_static/n3pdf_logo.svg" width="500" alt="N3PDF-logo" class="logo">
-</div>
+
+{% block footer %}
+<script>
+  var image_container = document.createElement("DIV");
+  var n3pdf_link = document.createElement("A");
+  n3pdf_link.href = "http://n3pdf.mi.infn.it/";
+  image_container.appendChild(n3pdf_link)
+  var image = document.createElement("IMG");
+  image.src = "_static/n3pdf_logo.png";
+  image.alt = "N3PDF-logo";
+  image.className = "logo";
+  image.style.width = "70%";
+  image.style.marginTop = "17%";
+  image.style.display = "block";
+  image.style.marginLeft = "auto";
+  image.style.marginRight = "auto";
+  n3pdf_link.appendChild(image)
+  var sidebar_content  = document.getElementsByClassName("wy-side-scroll")[0];
+  sidebar_content.appendChild(image_container);
+</script>
 {% endblock %}
+
+{#<div>#}
+    {#&nbsp;#}
+      {#<img src="_static/n3pdf_logo.png" alt="N3PDF-logo" class="logo" style="display: block; margin-left: auto; margin-right: auto;" width="80%">#}
+{#</div>#}
+{#and make it a link to n3pdf.mi.infn.it#}
