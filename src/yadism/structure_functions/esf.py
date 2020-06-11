@@ -83,10 +83,6 @@ class EvaluatedStructureFunction(abc.ABC):
             kinematics : dict
                 the specific kinematic point as a dict with two elements ('x', 'Q2')
 
-        Methods
-        -------
-        get_output()
-            compute the coefficient functions
     """
 
     def __init__(self, SF, kinematics: dict):

@@ -1,9 +1,9 @@
 .. DIS documentation master file.
 
 
-#################
-DIS documentation
-#################
+####################
+Yadism documentation
+####################
 
 .. the following transition is only used for highlight the main title
 
@@ -17,9 +17,7 @@ corresponding one inside |APFEL|.
    :caption: Package Reference
 
    yadism.rst
-   dev.rst
    tutorials/index.rst
-   interpolation.rst
 
    zzz-refs.rst
 

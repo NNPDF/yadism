@@ -15,8 +15,9 @@ The :eqref:`2.3`. |DIS|
 .. toctree::
    :maxdepth: 2
 
-   Structure <package-structure/index>
-   API <modules/index>
+   Structure <package-structure/index.rst>
+   API <modules/yadism.rst>
+   Miscellanea <misc/index.rst>
 
 
 .. todo::

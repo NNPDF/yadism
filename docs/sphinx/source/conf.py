@@ -16,21 +16,23 @@
 import os
 import pathlib
 
+import sphinx_rtd_theme
+from sphinx.locale import _
+
 # sys.path.insert(0, os.path.abspath('.'))
 
 from recommonmark.transform import AutoStructify
 
 # -- Project information -----------------------------------------------------
 
-project = "DIS"
+project = "yadism"
 copyright = "2019, the N3PDF team"
 author = "N3PDF team"
 
 # The short X.Y version
-version = ""
+version = "0.1"
 # The full version, including alpha/beta/rc tags
-release = ""
-
+release = "0.1.1"
 
 # -- General configuration ---------------------------------------------------
 
@@ -58,6 +60,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.graphviz",
     "sphinxcontrib.bibtex",
+    "sphinx_rtd_theme",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -107,6 +110,8 @@ rst_prolog = "\n".join([open(x).read() for x in os.scandir(shared)])
 #
 html_theme = "sphinx_rtd_theme"
 
+html_logo = "../../logo-docs.svg"
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -114,7 +119,7 @@ html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     # "canonical_url": "",
     # "analytics_id": "UA-XXXXXXX-1",  #  Provided by Google in your dashboard
-    # "logo_only": False,
+    "logo_only": True,
     "display_version": True,
     # "prev_next_buttons_location": "bottom",
     # "style_external_links": False,
@@ -128,9 +133,19 @@ html_theme_options = {
     # "titles_only": False,
 }
 
+html_show_sourcelink = True
+
 # set variables for template system
 html_context = {
-    # # footer:
+    # breadcrumbs
+    "github_host": "github.com",
+    "github_user": "N3PDF",
+    "github_repo": "yadism",
+    "github_version": "master",
+    "conf_py_path": "/docs/sphinx/source/",
+    "source_suffix": ".rst",
+    "display_github": True,
+    # footer:
     "show_copyright": False,
     "show_sphinx": False,
 }
@@ -167,7 +182,7 @@ napoleon_use_rtype = True
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "DISDocumentationdoc"
+htmlhelp_basename = "yadismDocumentationdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -193,8 +208,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "DISDocumentation.tex",
-        "DIS Documentation Documentation",
+        "yadismDocumentation.tex",
+        "yadism Documentation Documentation",
         "N3PDF team",
         "manual",
     ),
@@ -206,7 +221,13 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, "DISdocumentation", "DIS Documentation Documentation", [author], 1)
+    (
+        master_doc,
+        "yadism-documentation",
+        "yadism Documentation Documentation",
+        [author],
+        1,
+    )
 ]
 
 
@@ -218,10 +239,10 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "DISDocumentation",
-        "DIS Documentation Documentation",
+        "yadismDocumentation",
+        "yadism Documentation Documentation",
         author,
-        "DISDocumentation",
+        "yadismDocumentation",
         "One line description of project.",
         "Miscellaneous",
     ),
@@ -273,8 +294,8 @@ todo_include_todos = True
 
 # -- Options for edit on github extension ------------------------------------
 # https://gist.github.com/mgedmin/6052926
-# edit_on_github_project = 'username/reponame'
-# edit_on_github_branch = 'master'
+edit_on_github_project = "N3PDF/yadism"
+edit_on_github_branch = "master"
 
 # Adapted this from
 # https://github.com/readthedocs/recommonmark/blob/ddd56e7717e9745f11300059e4268e204138a6b1/docs/conf.py
