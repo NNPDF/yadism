@@ -45,9 +45,9 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
               functions, :math:`h_2` and :math:`g_2` (see :cite:`tmc-review`)
             - an interface for picking up the chosen formulas between:
 
-                - *APFEL*
-                - *approximate*
-                - *exact*
+                1. *APFEL*
+                2. *approximate*
+                3. *exact*
 
               (see :cite:`tmc-iranian`)
 
@@ -185,11 +185,39 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         return self.get_result().get_raw()
 
     def _convolute_F2(self, ker):
-        """
-            Convolute F2 and ker.
+        r"""
+            Implement generic structure to convolute any function `ker` with `F2`.
 
-            .. todo::
-                docs
+            This method is provided for internal use, in order to factorize the
+            machinery for TMC integrals.
+            The implementation is flavor transparent, in the sense that takes
+            any flavor from up and it's passing it down in the call for a
+            proper F2 instance (done by using :py:meth:`self._SF.get_ESF`).
+
+            The integration is made over the interpolation basis, postponing the
+            once more the the contraction with the PDF.
+
+            .. math::
+                :nowrap:
+
+                \begin{align*}
+                \tilde{F}_X \otimes f &= \sum_i (\tilde{F}_X \otimes w_i) f_i =
+                        \left[ a + \sum_{i} ((F_2 \otimes k) \otimes w_i)
+                        \right] f_i \\
+                    & = \left[ a + \sum_{i,j} \underbrace{{F_2}_j ((w_j \otimes
+                        k)}_{\texttt{_convolute_F2}} \otimes w_i) \right] f_i
+                \end{align*} 
+
+            where :math:`\tilde{F}_X` is the target mass corrected structure
+            function, :math:`F_2` is the bare structure function, :math:`k` is
+            the kernel function `ker`, and :math:`a` is representing all the
+            other terms not described here.
+
+            Parameters
+            ----------
+            ker : callable
+                the kernel function to be convoluted with `F2`
+
         """
         # check domain
         if self._xi < min(self._SF.interpolator.xgrid_raw):
@@ -216,12 +244,17 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
     def _h2(self):
         r"""
-            Compute raw integral over F2.
+            Compute raw integral over `F2`, making use of :py:meth:`_convolute_F2`.
 
             .. math::
-                h_2(\xi,Q^2) &= \int_\xi^1 du \frac{F_2^(u,Q^2)}{u^2}
-                             &= \int_\xi^1 \frac{du}{u} \frac{1}{\xi} \frac{\xi}{u} F_2^(u,Q^2)
+                :nowrap:
+
+                \begin{align*}
+                h_2(\xi,Q^2) &= \int_\xi^1 du \frac{F_2(u,Q^2)}{u^2}\\
+                             &= \int_\xi^1 \frac{du}{u} \frac{1}{\xi}
+                             \frac{\xi}{u} F_2(u,Q^2)\\
                              &= ((z\to z/\xi) \otimes F_2(z))(\xi)
+                \end{align*}
 
             Returns
             -------
@@ -236,12 +269,18 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
     def _g2(self):
         r"""
-            Compute nested integral over F2.
+            Compute nested integral over `F2`, making use of :py:meth:`_convolute_F2`.
 
             .. math::
-                g_2(\xi,Q^2) &= \int_\xi^1 du (u-\xi) \frac{F_2^(u,Q^2)}{u^2}
-                             &= \int_\xi^1 \frac{du}{u} \left(1 - \frac{\xi}{u}\right) F_2^(u,Q^2)
-                             &= ((z\to 1-z) \otimes F_2(z))(\xi)
+                :nowrap:
+
+                \begin{align*}
+                    g_2(\xi,Q^2) &= \int_\xi^1 du (u-\xi)
+                                     \frac{F_2(u,Q^2)}{u^2}\\
+                                 &= \int_\xi^1 \frac{du}{u} \left(1 -
+                                     \frac{\xi}{u}\right) F_2(u,Q^2)\\
+                                 &= ((z\to 1-z) \otimes F_2(z))(\xi)
+                \end{align*}
 
             Returns
             -------
@@ -257,8 +296,18 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     """
-        .. todo::
-            docs
+        This function implements the actual formula for target mass corrections
+        of F2, for all the three (+1) kinds described in the parent class
+        :py:class:`EvaluatedStructureFunctionTMC`.
+
+        Parameters
+        ----------
+        SF : StructureFunction
+            the interface object representing the structure function kind he
+            belongs to
+        kinematics : dict
+            requested kinematic point
+
     """
 
     def __init__(self, SF, kinematics):
@@ -310,7 +359,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             self._factor_shifted * F2out + self._factor_h2 * h2out + factor_g2 * g2out
         )
 
-    ### ----- APFEL crap
+    ### ----- APFEL stuffs
     def _get_result_APFEL_strict(self):
         # interpolate F2(xi)
         F2list = []
@@ -344,10 +393,25 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         # join
         return res
 
-    ### ----- /APFEL crap
+    ### ----- /APFEL stuffs
 
 
 class ESFTMC_FL(EvaluatedStructureFunctionTMC):
+    """
+        This function implements the actual formula for target mass corrections
+        of FL, for all the three (+1) kinds described in the parent class
+        :py:class:`EvaluatedStructureFunctionTMC`.
+
+        Parameters
+        ----------
+        SF : StructureFunction
+            the interface object representing the structure function kind he
+            belongs to
+        kinematics : dict
+            requested kinematic point
+
+    """
+
     def __init__(self, SF, kinematics):
         super(ESFTMC_FL, self).__init__(SF, kinematics)
         # shifted prefactor is common
@@ -404,3 +468,8 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL}
+"""dict: mapping of ESF TMC classes
+
+This dictionary is used to redirect to the correct class from a string
+indicating the kind of the required structure function.
+"""
