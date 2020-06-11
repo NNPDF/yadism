@@ -41,7 +41,29 @@ optional:
 ## Scope of the project
 Provide all necessary tools to compute the DIS structure functions and related object. This project is linked closely to [EKO](https://github.com/N3PDF/eko).
 
+## Dependencies
+Currently this package has three non-python/non-packaged dependencies:
+- `eko`, required for running
+- `lhapdf`, provides PDF sets, only required for benchmarks
+- `apfel`, only required for benchmarks
+
+One instance of `eko` is provided as a `git` submodule. If no other installation
+of `eko` is already available on your machine simply run the following in your
+local `yadism` repo:
+```
+git submodule init
+git submodule update
+cd eko
+python setup.py install
+```
+(note that `eko` has its own dependencies, so be sure to have
+[`GSL`](https://www.gnu.org/software/gsl/) available)
+
+For `apfel` and `lhapdf` you should get them following the instructions on their
+respective official distribution sources.
+
 ## Installation
+Once all the dependencies are available simply run:
 ```
 python setup.py install
 ```
