@@ -30,8 +30,8 @@ Features
 ~~~~~~~~
 Current features:
 
-- |LO| structure functions (|NC|)
-- |NLO| structure functions (|NC|)
+- |LO| structure functions (|EM|)
+- |NLO| structure functions (|EM|)
 - |NLO| scale variations
 
 
