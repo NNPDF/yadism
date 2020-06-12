@@ -26,6 +26,16 @@
 .. |N3LO| replace::
    :abbr:`N3LO (Next to Next to Next to Leading Order)`
 
+.. -------
+   objects
+   -------
+
+.. |SF| replace::
+   :abbr:`SF (Structure Function)`
+
+.. |ESF| replace::
+   :abbr:`ESF (Evaluated Structure Function)`
+
 .. ----
    misc
    ----
