@@ -83,6 +83,5 @@ development and improve collaboration.
 For any kind of interaction consider before to read [external contribution
 guidelines](.github/contributing.md#external-contributions), otherwise just send
 an email to the authors:
-- [Felix Hekhorn](mailto:felix.hekhorn@mi.infn.it)
-- [Stefano Carrazza](mailto:stefano.carrazza@cern.ch)
 - [Alessandro Candido](mailto:alessandro.candido@mi.infn.it)
+- [Felix Hekhorn](mailto:felix.hekhorn@mi.infn.it)
