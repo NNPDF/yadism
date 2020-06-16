@@ -39,14 +39,14 @@ class TestESFResult:
         a = dict(
             x=0.5,
             Q2=10,
-            weights={},
+            weights=dict(q=1,g=1),
             values=dict(q=[0, 1], g=[1, 0]),
             errors=dict(q=[0, 0], g=[0, 0]),
         )
         b = dict(
             x=0.5,
             Q2=10,
-            weights={},
+            weights=dict(q=1,g=1),
             values=dict(q=[1, 0], g=[0, 1]),
             errors=dict(q=[1, 1], g=[1, 1]),
         )

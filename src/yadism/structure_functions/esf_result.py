@@ -48,10 +48,13 @@ class ESFResult:
         # else:
         # raise ValueError("ESFResult can only be summed with another ESFResult")
         for k in other.values:
-            if k in self.values:
+            if k in self.values: # it was present before, so try to add it
+                if not np.isclose(self.weights[k], other.weights[k]):
+                    raise ValueError("Weights are not compatible")
                 self.values[k] += other.values[k]
                 self.errors[k] += other.errors[k]
-            else:
+            else: # truly new, so truly add it
+                self.weights[k] = other.weights[k]
                 self.values[k] = other.values[k]
                 self.errors[k] = other.errors[k]
         return self

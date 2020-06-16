@@ -26,7 +26,7 @@ class MockSF:
     name = "F2total"
     interpolator = MockInterpolator()
 
-    def get_esf(self, name, kinematics):
+    def get_esf(self, name, kinematics, **_kwargs):
         src = copy.deepcopy(kinematics)
         if name == "F2light":
             src.update({"values":{"q":[1]},"errors":{"q":[0]},"weights":{"q":{1:1}}})
