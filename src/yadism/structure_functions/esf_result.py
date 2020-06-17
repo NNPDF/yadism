@@ -40,20 +40,42 @@ class ESFResult:
     def __add__(self, other):
         res = copy.deepcopy(self)
         res.__iadd__(other)
-
         return res
+
+    def suffix(self, suffix):
+        """
+            Returns a new object with all keys suffixed.
+
+            Parameters
+            ----------
+                val : str
+                    suffix
+
+            Returns
+            -------
+                res : ESFResult
+                    suffixed result
+        """
+        res = ESFResult(self.x, self.Q2)
+        for k in self.values:
+            res.values[k + suffix] = self.values[k]
+            res.errors[k + suffix] = self.errors[k]
+            res.weights[k + suffix] = self.weights[k]
+        return copy.deepcopy(res)
 
     def __iadd__(self, other):
         # if isinstance(other, ESFResult):
         # else:
-        # raise ValueError("ESFResult can only be summed with another ESFResult")
+        # raise ValueError("ESFResult can only be summed with another ESFResult
+
+        # iterate other as we're fine with ourselves as we are
         for k in other.values:
-            if k in self.values: # it was present before, so try to add it
-                if not np.isclose(self.weights[k], other.weights[k]):
+            if k in self.values:  # it was present before, so try to add it
+                if other.weights[k] != self.weights[k]:
                     raise ValueError("Weights are not compatible")
                 self.values[k] += other.values[k]
                 self.errors[k] += other.errors[k]
-            else: # truly new, so truly add it
+            else:  # truly new, so truly add it
                 self.weights[k] = other.weights[k]
                 self.values[k] = other.values[k]
                 self.errors[k] = other.errors[k]

@@ -34,7 +34,7 @@ matrix = {
     "XIF": [0.5, 1.0, 2.0],
     "TMC": [0, 1, 2, 3],
     "NfFF": [3, 4, 5],
-    "FNS": ["FFNS", "ZM-VFNS"],
+    "FNS": ["FFNS", "ZM-VFNS", "FONLL-A"],
 }
 
 

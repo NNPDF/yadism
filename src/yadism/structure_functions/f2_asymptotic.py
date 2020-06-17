@@ -6,6 +6,7 @@ heavy quark flavours.
 .. todo::
     docs
 """
+import copy
 
 import numpy as np
 
@@ -29,7 +30,16 @@ class EvaluatedStructureFunctionF2Asymptotic(ESFH):
 
     """
 
-    def _gluon_1(self):
+    def get_result(self):
+        """
+            .. todo::
+                docs
+        """
+        self._compute_local()
+
+        return copy.deepcopy(self._res)
+
+    def gluon_1(self):
         """
             Returns
             -------
@@ -43,8 +53,8 @@ class EvaluatedStructureFunctionF2Asymptotic(ESFH):
         TR = self._SF.constants.TF
 
         def cg(z):
-            if self.is_below_threshold(z):
-                return 0
+            # if self.is_below_threshold(z):
+            #    return 0
             # fmt: off
             return 4. * ( # self._FHprefactor
                 split.pqg(z, self._SF.constants) * (L + np.log((1-z)/z))
@@ -53,6 +63,9 @@ class EvaluatedStructureFunctionF2Asymptotic(ESFH):
             # fmt: on
 
         return cg
+
+    def _gluon_1(self):
+        pass
 
 
 class EvaluatedStructureFunctionF2charmAsymptotic(

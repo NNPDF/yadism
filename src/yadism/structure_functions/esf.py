@@ -349,7 +349,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 compute the coefficient functions (see :py:class:`EvaluatedStructureFunction`)
     """
 
-    def __init__(self, SF, kinematics: dict, nhq: int, force_local: bool):
+    def __init__(self, SF, kinematics: dict, nhq: int, force_local: bool = False):
         """
             collect electric charge (relevant for heavy flavours coefficient
             functions) and compute common derived variables
@@ -394,35 +394,36 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         if self._force_local or nf < self._nhq:
             self._compute_local()
         else:
-            # else checkout scheme:
+            # compute zero-mass part
+            name = self._SF.name
+            kind = name[:2]
+            res_light = self._SF.get_esf(
+                kind + "light", {"x": self._x, "Q2": self._Q2}, 1
+            ).get_result()
+            # readjust the weights
+            ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+            res_light.weights = {"g": {21: ehq}, "q": {self._nhq: ehq}}
+            # now checkout scheme:
             # matching is only needed for FONLL and in there only if we just crossed our threshold
             # otherwise we continue with the ZM expressions (in contrast to APFEL which treats only
             # F2c in this way)
-            if self._SF.threshold.scheme == "FONLL-A" and nf == self._nhq:
-                name = self._SF.name
-                kind = name[:2]
+            # TODO in APFEL the nf condition is nf >= _nhq
+            if self._SF.threshold.scheme == "FONLL-A" and nf >= self._nhq:
                 # collect all parts
                 res_heavy = self._SF.get_esf(
                     name, {"x": self._x, "Q2": self._Q2}, force_local=True
                 ).get_result()
-                res_light = self._SF.get_esf(
-                    kind + "light", {"x": self._x, "Q2": self._Q2}, 1
+                res_asy = self._SF.get_esf(
+                    name + "asy", {"x": self._x, "Q2": self._Q2}
                 ).get_result()
-                # readjust the weights
-                ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
-                res_light.weights = {"g": {21: ehq}, "q": {self._nhq: ehq}}
-                res_asy = self._SF.get_esf(name + "asy", {"x": self._x, "Q2": self._Q2})
                 # join all
-                self._res = res_heavy + res_light - res_asy
-            else:  # use massless case
-                hqname = self._SF.name
-                esf_light = self._SF.get_esf(
-                    hqname[:2] + "light", {"x": self._x, "Q2": self._Q2}, 1
+                self._res = (
+                    res_heavy.suffix("_FONLL-A_heavy")
+                    + res_light.suffix("_FONLL-A_light")
+                    - res_asy.suffix("_FONLL-A_asymptotic")
                 )
-                self._res = esf_light.get_result()
-                # readjust the weights
-                ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
-                self._res.weights = {"g": {21: ehq}, "q": {self._nhq: ehq}}
+            else:
+                self._res = res_light
 
         return copy.deepcopy(self._res)
 
@@ -458,8 +459,8 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
-        weights = {"q": {}, "g": {}}
-        weights["g"][21] = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+        e2hq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+        weights = {"q": {1: e2hq, 2: e2hq, 3: e2hq}, "g": {21: e2hq}}
         return weights
 
     @abc.abstractmethod

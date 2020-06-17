@@ -89,7 +89,7 @@ class EvaluatedStructureFunctionFLcharm(EvaluatedStructureFunctionFLheavy):
 
     """
 
-    def __init__(self, SF, kinematics, force_local):
+    def __init__(self, SF, kinematics, force_local=False):
         super(EvaluatedStructureFunctionFLcharm, self).__init__(
             SF, kinematics, 4, force_local
         )
@@ -107,7 +107,7 @@ class EvaluatedStructureFunctionFLbottom(EvaluatedStructureFunctionFLheavy):
 
     """
 
-    def __init__(self, SF, kinematics, force_local):
+    def __init__(self, SF, kinematics, force_local=False):
         super(EvaluatedStructureFunctionFLbottom, self).__init__(
             SF, kinematics, 5, force_local
         )
@@ -125,7 +125,7 @@ class EvaluatedStructureFunctionFLtop(EvaluatedStructureFunctionFLheavy):
 
     """
 
-    def __init__(self, SF, kinematics, force_local):
+    def __init__(self, SF, kinematics, force_local=False):
         super(EvaluatedStructureFunctionFLtop, self).__init__(
             SF, kinematics, 6, force_local
         )

@@ -26,7 +26,7 @@ class TestESFResult:
         d = dict(
             x=0.5,
             Q2=10,
-            weights={},
+            weights=dict(q={1: 1}, g={21: 1}),
             values=dict(q=[0, 1], g=[1, 0]),
             errors=dict(q=[0, 0], g=[0, 0]),
         )
@@ -35,18 +35,18 @@ class TestESFResult:
         assert len(r.values["q"]) == len(d["values"]["q"])
         assert isinstance(r.values["q"][0], dt)
 
-    def test_add(self):
+    def test_add_1(self):
         a = dict(
             x=0.5,
             Q2=10,
-            weights=dict(q=1,g=1),
+            weights=dict(q={1: 1}, g={21: 1}),
             values=dict(q=[0, 1], g=[1, 0]),
             errors=dict(q=[0, 0], g=[0, 0]),
         )
         b = dict(
             x=0.5,
             Q2=10,
-            weights=dict(q=1,g=1),
+            weights=dict(q={1: 1}, g={21: 1}),
             values=dict(q=[1, 0], g=[0, 1]),
             errors=dict(q=[1, 1], g=[1, 1]),
         )
@@ -71,11 +71,54 @@ class TestESFResult:
             assert pytest.approx(rc.values["g"], 0, 0) == np.array([1, -1])
             assert pytest.approx(rc.errors["g"], 0, 0) == np.array([1, 1])
 
+    def test_add_2(self):
+        rempty = ESFResult(0.5, 10)
+        a = dict(
+            x=0.5,
+            Q2=10,
+            weights=dict(q={1: 1}),
+            values=dict(q=[0, 1]),
+            errors=dict(q=[0, 1]),
+        )
+        ra = ESFResult.from_dict(a)
+        rea = rempty + ra
+        assert rea.weights["q"] == {1: 1}
+        b = dict(
+            x=0.5,
+            Q2=10,
+            weights=dict(g={21: 1}),
+            values=dict(g=[1, 0]),
+            errors=dict(g=[1, 0]),
+        )
+        rb = ESFResult.from_dict(b)
+        reab = rea + rb
+        assert reab.weights["q"] == {1: 1}
+        assert reab.weights["g"] == {21: 1}
+
+        with pytest.raises(ValueError, match="Weights"):
+            a = dict(
+                x=0.5,
+                Q2=10,
+                weights=dict(q={1: 1}),
+                values=dict(q=[0, 1]),
+                errors=dict(q=[0, 1]),
+            )
+            ra = ESFResult.from_dict(a)
+            b = dict(
+                x=0.5,
+                Q2=10,
+                weights=dict(q={2: 1}),
+                values=dict(q=[1, 0]),
+                errors=dict(q=[1, 0]),
+            )
+            rb = ESFResult.from_dict(b)
+            _ = ra + rb
+
     def test_neg(self):
         a = dict(
             x=0.5,
             Q2=10,
-            weights={},
+            weights=dict(q={1: 1}, g={21: 1}),
             values=dict(q=[0, 1], g=[-1, 0]),
             errors=dict(q=[1, 0], g=[1, 0]),
         )
@@ -92,7 +135,7 @@ class TestESFResult:
         a = dict(
             x=0.5,
             Q2=10,
-            weights={},
+            weights=dict(q={1: 1}, g={21: 1}),
             values=dict(q=[0, 1], g=[-1, 0]),
             errors=dict(q=[1, 0], g=[1, 0]),
         )
@@ -128,7 +171,7 @@ class TestESFResult:
         a = dict(
             x=0.5,
             Q2=10,
-            weights={},
+            weights=dict(q={1: 1}, g={21: 1}),
             values=dict(q=[0, 1], g=[-1, 0]),
             errors=dict(q=[1, 0], g=[1, 0]),
         )

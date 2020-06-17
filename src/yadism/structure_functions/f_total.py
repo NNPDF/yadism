@@ -31,7 +31,6 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
                     joined elements
         """
         # final object
-        res = esf_result.ESFResult(self._x, self._Q2)
         kin = {"x": self._x, "Q2": self._Q2}
         # light component
         res_light = self._SF.get_esf(
@@ -50,17 +49,12 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
             self._sf_kind + "top", kin, use_raw=False
         ).get_result()
         # rename and add
-        for res_sub, suffix in [
-            (res_light, "light"),
-            (res_charm, "charm"),
-            (res_bottom, "bottom"),
-            (res_top, "top"),
-        ]:
-            for k in res_sub.values:
-                res.values[k + suffix] = res_sub.values[k]
-                res.errors[k + suffix] = res_sub.errors[k]
-                res.weights[k + suffix] = res_sub.weights[k]
-        return res
+        return (
+            res_light.suffix("_total_light")
+            + res_charm.suffix("_total_charm")
+            + res_bottom.suffix("_total_bottom")
+            + res_top.suffix("_total_top")
+        )
 
     def _compute_weights(self):
         raise NotImplementedError(

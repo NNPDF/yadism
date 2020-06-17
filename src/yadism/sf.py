@@ -100,7 +100,7 @@ class StructureFunction:
         """
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
-            obj = ESFmap[name](self, kinematics, True)
+            obj = ESFmap[name](self, kinematics, force_local=True)
             return obj
         # else we're happy to cache
         # is it us or do we need to delegate?
