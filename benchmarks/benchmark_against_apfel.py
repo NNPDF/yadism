@@ -111,11 +111,13 @@ class TestFNS:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
+        t_query &= p.theory_query.NfFF == 3
+        t_query &= p.theory_query.FNS == "FFNS"
 
         o_query = p.obs_query.F2light.exists()
 
-        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
-        #p.run_queries_apfel(t_query, o_query, ["gonly"])
+        #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+        p.run_queries_apfel(t_query, o_query, ["uonly"])
 
     def test_NLO(self):
         """
@@ -126,11 +128,14 @@ class TestFNS:
         t_query &= p.theory_query.XIR == 1.0
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
+        t_query &= p.theory_query.NfFF == 4
+        #t_query &= p.theory_query.FNS == "FFNS"
+        t_query &= p.theory_query.FNS == "FONLL-A"
 
-        o_query = p.obs_query.prDIS.exists()
+        o_query = p.obs_query.F2charm.exists()
 
-        #p.run_queries_apfel(t_query, o_query, ["gonly"])
-        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+        p.run_queries_apfel(t_query, o_query, ["gonly"])
+        #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
 
 class TestTMCFNS:
     def test_LO(self):
@@ -196,10 +201,10 @@ if __name__ == "__main__":
     #tmc.test_LO()
     # tmc.test_NLO()
 
-    #fns = TestFNS()
+    fns = TestFNS()
     #fns.test_LO()
-    #fns.test_NLO()
+    fns.test_NLO()
 
-    tmc_fns = TestTMCFNS()
-    tmc_fns.test_LO()
+    #tmc_fns = TestTMCFNS()
+    #tmc_fns.test_LO()
     #tmc_fns.test_NLO

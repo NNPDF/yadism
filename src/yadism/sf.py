@@ -70,7 +70,7 @@ class StructureFunction:
                 self.__ESF(self, kinematics)
             )  # TODO delegate this to get_esf?
 
-    def get_esf(self, name, kinematics, *args, use_raw=True):
+    def get_esf(self, name, kinematics, *args, use_raw=True, force_local=False):
         """
             Returns a *raw* :py:class:`EvaluatedStructureFunction` instance.
 
@@ -98,6 +98,11 @@ class StructureFunction:
                 obj : EvaluatedStructureFunction
                     created object
         """
+        # if force_local is active suppress caching to avoid circular dependecy
+        if force_local:
+            obj = ESFmap[name](self, kinematics, force_local=True)
+            return obj
+        # else we're happy to cache
         # is it us or do we need to delegate?
         if name == self.name:
             # convert to tuple

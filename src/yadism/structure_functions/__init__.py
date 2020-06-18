@@ -21,16 +21,36 @@ from .fl_heavy import (
     EvaluatedStructureFunctionFLbottom,
     EvaluatedStructureFunctionFLtop,
 )
+from .f2_asymptotic import (
+    EvaluatedStructureFunctionF2charmAsymptotic,
+    EvaluatedStructureFunctionF2bottomAsymptotic,
+    EvaluatedStructureFunctionF2topAsymptotic,
+)
+from .fl_asymptotic import (
+    EvaluatedStructureFunctionFLcharmAsymptotic,
+    EvaluatedStructureFunctionFLbottomAsymptotic,
+    EvaluatedStructureFunctionFLtopAsymptotic,
+)
 
 ESFmap = {
+    # F2 -------
     "F2light": EvaluatedStructureFunctionF2light,
     "F2charm": EvaluatedStructureFunctionF2charm,
     "F2bottom": EvaluatedStructureFunctionF2bottom,
     "F2top": EvaluatedStructureFunctionF2top,
+    "F2total": EvaluatedStructureFunctionFtotal,
+    # asymptotics
+    "F2charmasy": EvaluatedStructureFunctionF2charmAsymptotic,
+    "F2bottomasy": EvaluatedStructureFunctionF2bottomAsymptotic,
+    "F2topasy": EvaluatedStructureFunctionF2topAsymptotic,
+    # FL -----
     "FLlight": EvaluatedStructureFunctionFLlight,
     "FLcharm": EvaluatedStructureFunctionFLcharm,
     "FLbottom": EvaluatedStructureFunctionFLbottom,
     "FLtop": EvaluatedStructureFunctionFLtop,
-    "F2total": EvaluatedStructureFunctionFtotal,
     "FLtotal": EvaluatedStructureFunctionFtotal,
+    # asymptotics
+    "FLcharmasy": EvaluatedStructureFunctionFLcharmAsymptotic,
+    "FLbottomasy": EvaluatedStructureFunctionFLbottomAsymptotic,
+    "FLtopasy": EvaluatedStructureFunctionFLtopAsymptotic,
 }
