@@ -20,8 +20,8 @@ import numpy as np
 
 from eko.interpolation import InterpolatorDispatcher
 from eko.constants import Constants
-from eko.thresholds import Threshold
-from eko.alpha_s import StrongCoupling
+from eko import thresholds
+from eko import strong_coupling
 
 from .output import Output
 from .sf import StructureFunction as SF
@@ -62,42 +62,15 @@ class Runner:
         self._observables = observables
 
         # ===========================
-        # Setup interpolator from eko
+        # Setup eko stuff
         # ===========================
-        polynomial_degree: int = observables["polynomial_degree"]
-        self.interpolator = InterpolatorDispatcher(
-            observables["xgrid"],
-            polynomial_degree,
-            log=observables.get("is_log_interpolation", True),
-            mode_N=False,
-            numba_it=False,  # TODO: make it available for the user to choose
+        self.interpolator = InterpolatorDispatcher.from_dict(
+            observables, mode_N=False, numba_it=False
         )
-
-        # ==========================
-        # Create physics environment
-        # ==========================
         self.constants = Constants()
-
-        FNS = theory["FNS"]
-        q2_ref = pow(theory["Q0"], 2)
-        if FNS != "FFNS":
-            mc = theory["mc"]
-            mb = theory["mb"]
-            mt = theory["mt"]
-            threshold_list = pow(np.array([mc, mb, mt]), 2)
-            nf = None
-        else:
-            nf = theory["NfFF"]
-            threshold_list = None
-        self.threshold = Threshold(
-            q2_ref=q2_ref, scheme=FNS, threshold_list=threshold_list, nf=nf
-        )
-
-        # Now generate the operator alpha_s class
-        alpha_ref = theory["alphas"]
-        q2_alpha = pow(theory["Qref"], 2)
-        self.strong_coupling = StrongCoupling(
-            self.constants, alpha_ref, q2_alpha, self.threshold
+        self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
+        self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
+            theory, self.constants, self.threshold
         )
 
         # Non-eko theory

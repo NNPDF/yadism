@@ -410,7 +410,9 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             # FONLL-A corresponds to (strict) APFEL
             # FONLL-A' reduces to the ZM-VFNS scheme if above the next threshold (which would numerically happen anyway)
             scheme = self._SF.threshold.scheme
-            if (scheme == "FONLL-A" and nf >= self._nhq) or (scheme == "FONLL-A'" and nf == self._nhq) :
+            if (scheme == "FONLL-A" and nf >= self._nhq) or (
+                scheme == "FONLL-A'" and nf == self._nhq
+            ):
                 # collect all parts
                 res_heavy = self._SF.get_esf(
                     name, {"x": self._x, "Q2": self._Q2}, force_local=True

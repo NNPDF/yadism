@@ -59,9 +59,9 @@ kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(2, 300, 10).tolist
 # iterate over observables (one dict for each)
 for sf in observables:
     content = dict(
-        xgrid=xgrid.tolist(),
-        polynomial_degree=polynomial_degree,
-        is_log_interpolation=is_log_interpolation,
+        interpolation_xgrid=xgrid.tolist(),
+        interpolation_polynomial_degree=polynomial_degree,
+        interpolation_is_log=is_log_interpolation,
         prDIS="EM",
         comments="",
         _modify_time=str_datetime(datetime.now()),
