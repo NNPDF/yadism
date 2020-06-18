@@ -134,8 +134,8 @@ class TestFNS:
 
         o_query = p.obs_query.F2charm.exists()
 
-        p.run_queries_apfel(t_query, o_query, ["gonly"])
-        #p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
+        #p.run_queries_apfel(t_query, o_query, ["gonly"])
+        p.run_queries_apfel(t_query, o_query, ["CT14llo_NF6"])
 
 class TestTMCFNS:
     def test_LO(self):

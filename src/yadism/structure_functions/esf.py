@@ -407,8 +407,10 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             # matching is only needed for FONLL and in there only if we just crossed our threshold
             # otherwise we continue with the ZM expressions (in contrast to APFEL which treats only
             # F2c in this way)
-            # TODO in APFEL the nf condition is nf >= _nhq
-            if self._SF.threshold.scheme == "FONLL-A" and nf >= self._nhq:
+            # FONLL-A corresponds to (strict) APFEL
+            # FONLL-A' reduces to the ZM-VFNS scheme if above the next threshold (which would numerically happen anyway)
+            scheme = self._SF.threshold.scheme
+            if (scheme == "FONLL-A" and nf >= self._nhq) or (scheme == "FONLL-A'" and nf == self._nhq) :
                 # collect all parts
                 res_heavy = self._SF.get_esf(
                     name, {"x": self._x, "Q2": self._Q2}, force_local=True
@@ -418,9 +420,9 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 ).get_result()
                 # join all
                 self._res = (
-                    res_heavy.suffix("_FONLL-A_heavy")
-                    + res_light.suffix("_FONLL-A_light")
-                    - res_asy.suffix("_FONLL-A_asymptotic")
+                    res_heavy.suffix(f"_{scheme}_heavy")
+                    + res_light.suffix(f"_{scheme}_light")
+                    - res_asy.suffix(f"_{scheme}_asymptotic")
                 )
             else:
                 self._res = res_light
