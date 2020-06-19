@@ -1,0 +1,76 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module extpdf__user__routines 
+    interface
+        function func(ipdf,x,q,first)! in :QCDNUM:qcdnum/usr/usrevol.f:extpdf
+            integer intent(in) :: ipdf
+            real intent(in) :: x,q
+            logical intent(in) :: first
+        end function func
+    end interface
+end python module extpdf__user__routines
+
+python module QCDNUM ! in 
+    interface  ! in :QCDNUM
+        subroutine qcinit(lun,fname) ! in :QCDNUM:qcdnum/usr/usrini.f
+            integer intent(in) :: lun
+            character intent(in) :: fname
+        end subroutine qcinit
+        subroutine setord(iord) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            integer intent(in) :: iord
+        end subroutine setord
+        subroutine getord(iord) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            integer intent(out) :: iord
+        end subroutine getord
+        subroutine setalf(as,r2) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            double precision intent(in) :: as
+            double precision intent(in) :: r2
+        end subroutine setalf
+        subroutine getalf(as,r2) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            double precision intent(out) :: as
+            double precision intent(out) :: r2
+        end subroutine getalf
+        subroutine setcbt(nfix,iqc,iqb,iqt) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            integer intent(in) :: nfix
+            integer intent(in) :: iqc
+            integer intent(in) :: iqb
+            integer intent(in) :: iqt
+        end subroutine setcbt
+        subroutine gxmake(xmi,iwx,n,nxin,nxout,iosp) ! in :QCDNUM:qcdnum/usr/usrgrd.f
+            real dimension(n),intent(in) :: xmi
+            real dimension(n),intent(in) :: iwx
+            integer, optional,intent(hide),depend(xmi) :: n=len(xmi)
+            integer intent(in) :: nxin
+            integer intent(out) :: nxout
+            integer intent(in) :: iosp
+        end subroutine gxmake
+        subroutine gqmake(qq,ww,n,nqin,nqout) ! in :QCDNUM:qcdnum/usr/usrgrd.f
+            double precision dimension(n),intent(in) :: qq
+            double precision dimension(n),intent(in) :: ww
+            integer intent(hide),depend(qq,ww) :: n=len(qq)
+            integer intent(in) :: nqin
+            integer intent(out) :: nqout
+        end subroutine gqmake
+        subroutine extpdf(func,jset,n,offset,epsi) ! in :QCDNUM:qcdnum/usr/usrevol.f
+            use extpdf__user__routines
+            external func
+            integer intent(in) :: jset
+            integer intent(in) :: n
+            double precision intent(in) :: offset
+            double precision intent(out) :: epsi
+        end subroutine extpdf
+        subroutine zmstfun(istf,qvec,x,q,f,n,ichk) ! in :QCDNUM:zmstf/src/zmstfs.f
+            integer intent(in) :: istf
+            double precision dimension(13),intent(in) :: qvec
+            double precision dimension(n),intent(in) :: x
+            double precision dimension(n),intent(in)depend(n), :: q
+            double precision dimension(n),intent(out),depend(n) :: f
+            integer, optional,intent(hide),depend(x) :: n=len(x)
+            integer intent(in) :: ichk
+        end subroutine zmstfun
+    end interface 
+end python module QCDNUM
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

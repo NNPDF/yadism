@@ -72,6 +72,8 @@ class Runner:
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
             theory, self.constants, self.threshold
         )
+        print(theory["Qref"])
+        print(self.strong_coupling.a_s(theory["Qref"]**2)*4*np.pi)
 
         # Non-eko theory
         self.coupling_constants = CouplingConstants.from_theory(theory)
