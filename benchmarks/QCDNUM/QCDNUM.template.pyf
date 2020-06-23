@@ -7,6 +7,18 @@ python module QCDNUM ! in
             integer intent(in) :: lun
             character intent(in) :: fname
         end subroutine qcinit
+        function nxtlun(lmin) ! in :QCDNUM:qcdnum/usr/usrini.f
+            integer :: lmin
+            integer :: nxtlun
+        end function nxtlun
+        subroutine setval(chopt,dval) ! in :QCDNUM:qcdnum/usr/usrini.f
+            character*(*) :: chopt
+            double precision :: dval
+        end subroutine setval
+        subroutine getval(chopt,dval) ! in :QCDNUM:qcdnum/usr/usrini.f
+            character*(*) :: chopt
+            double precision :: dval
+        end subroutine getval
         subroutine setord(iord) ! in :QCDNUM:qcdnum/usr/usrparams.f
             integer intent(in) :: iord
         end subroutine setord
@@ -35,20 +47,35 @@ python module QCDNUM ! in
             double precision :: epsi
         end subroutine extpdf
         subroutine gxmake(xmi,iwx,n,nxin,nxout,iosp) ! in :QCDNUM:qcdnum/usr/usrgrd.f
-            real dimension(n),intent(in) :: xmi
-            real dimension(n),intent(in) :: iwx
-            integer, optional,intent(hide),depend(xmi) :: n=len(xmi)
-            integer intent(in) :: nxin
-            integer intent(out) :: nxout
-            integer intent(in) :: iosp
+            double precision dimension(*) :: xmi
+            integer dimension(*) :: iwx
+            integer :: n
+            integer :: nxin
+            integer :: nxout
+            integer :: iosp
         end subroutine gxmake
         subroutine gqmake(qq,ww,n,nqin,nqout) ! in :QCDNUM:qcdnum/usr/usrgrd.f
-            real dimension(n),intent(in) :: qq
-            real dimension(n),intent(in) :: ww
-            integer, optional,intent(hide),depend(qq) :: n=len(qq)
-            integer intent(in) :: nqin
-            integer intent(out) :: nqout
+            double precision dimension(*) :: qq
+            double precision dimension(*) :: ww
+            integer :: n
+            integer :: nqin
+            integer :: nqout
         end subroutine gqmake
+        function iqfrmq(q) ! in :QCDNUM:qcdnum/usr/usrgrd.f
+            double precision :: q
+            integer :: iqfrmq
+        end function iqfrmq
+        subroutine wtfile(itype,file) ! in :QCDNUM:qcdnum/usr/usrwgt.f
+            integer :: itype
+            character*(*) :: file
+        end subroutine wtfile
+        subroutine zmwords(ntot,nused) ! in :QCDNUM:zmstf/src/zmstfs.f
+            integer :: ntot
+            integer :: nused
+        end subroutine zmwords
+        subroutine zswitch(jset) ! in :QCDNUM:zmstf/src/zmstfs.f
+            integer :: jset
+        end subroutine zswitch
         subroutine zmstfun(istf,qvec,x,q,f,n,ichk) ! in :QCDNUM:zmstf/src/zmstfs.f
             integer intent(in) :: istf
             real dimension(13),intent(in) :: qvec
@@ -58,6 +85,19 @@ python module QCDNUM ! in
             integer, optional,intent(hide),depend(x) :: n=len(x)
             integer intent(in) :: ichk
         end subroutine zmstfun
+        subroutine zmfillw(nwords) ! in :QCDNUM:zmstf/src/zmweits.f
+            integer :: nwords
+        end subroutine zmfillw
+        subroutine zmdumpw(lun,file) ! in :QCDNUM:zmstf/src/zmweits.f
+            integer :: lun
+            character*(*) :: file
+        end subroutine zmdumpw
+        subroutine zmreadw(lun,file,nwords,ierr) ! in :QCDNUM:zmstf/src/zmweits.f
+            integer :: lun
+            character*(*) :: file
+            integer :: nwords
+            integer :: ierr
+        end subroutine zmreadw
     end interface 
 end python module QCDNUM
 
