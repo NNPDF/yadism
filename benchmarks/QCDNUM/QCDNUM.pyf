@@ -7,6 +7,7 @@ python module extpdf__user__routines
             integer intent(in) :: ipdf
             double precision intent(in) :: x,q
             logical intent(in) :: first
+            double precision intent(out) :: func
         end function func
     end interface
 end python module extpdf__user__routines
@@ -15,7 +16,7 @@ python module QCDNUM ! in
     interface  ! in :QCDNUM
         subroutine qcinit(lun,fname) ! in :QCDNUM:qcdnum/usr/usrini.f
             integer intent(in) :: lun
-            character intent(in) :: fname
+            character*(*) intent(in) :: fname
         end subroutine qcinit
         subroutine setval(chopt,dval) ! in :QCDNUM:qcdnum/usr/usrini.f
             character*(*) intent(in) :: chopt
@@ -75,6 +76,15 @@ python module QCDNUM ! in
             double precision intent(in) :: offset
             double precision intent(out) :: epsi
         end subroutine extpdf
+        function sumfxq(jset,def,isel,xx,qq,jchk) ! in :QCDNUM:qcdnum/usr/usrpdf.f
+            integer intent(in) :: jset
+            double precision dimension(13),intent(in) :: def
+            integer intent(in) :: isel
+            double precision intent(in) :: xx
+            double precision intent(in) :: qq
+            integer intent(in) :: jchk
+            double precision intent(out) :: sumfxq
+        end function sumfxq
         subroutine zmstfun(istf,qvec,x,q,f,n,ichk) ! in :QCDNUM:zmstf/src/zmstfs.f
             integer intent(in) :: istf
             double precision dimension(13),intent(in) :: qvec

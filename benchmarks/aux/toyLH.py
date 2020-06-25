@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-#
-# toyLHPDFs from APFEL:
-# --------------------
-# This routine returns the toyLH PDFs at the intitial scale
-# which is supposed to be Q = sqrt(2) GeV.
+"""
+toyLHPDFs from APFEL:
+--------------------
+This routine returns the toyLH PDFs at the intitial scale
+which is supposed to be Q = sqrt(2) GeV.
+"""
 
 
 def toyLHPDFs(id, x):
@@ -41,12 +42,16 @@ def toyLHPDFs(id, x):
     xpdf[3] = xs
     xpdf[2] = xuv + xubar
     xpdf[1] = xdv + xdbar
-    xpdf[21] = xpdf[0] = xg
+    xpdf[21] =xpdf[0] = xg
     xpdf[-1] = xdbar
     xpdf[-2] = xubar
     xpdf[-3] = xsbar
 
     return xpdf[id]
+
+
+class toyPDFSet:
+    name = "toyPDF"
 
 
 class toyPDF:
@@ -96,6 +101,18 @@ class toyPDF:
         """
 
         return toyLHPDFs(id, x)
+
+    def alphasQ(self, q):
+        "Return alpha_s at q"
+        return 0.35
+
+    def alphasQ2(self, q2):
+        "Return alpha_s at q2"
+        return 0.35
+
+    def set(self):
+        "Return the corresponding PDFSet"
+        return toyPDFSet()
 
 
 def mkPDF(setname, member):

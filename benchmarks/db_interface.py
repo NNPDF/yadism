@@ -44,68 +44,52 @@ class DBInterface:
             # run against regression data
             self.run_regression(theory, obs)
 
-    def run_queries_apfel(self, theory_query, obs_query, pdfs):
+    def run_queries_external(self, theory_query, obs_query, pdfs, external="APFEL"):
         theories, observables = self._load_input(theory_query, obs_query)
         for theory, obs in itertools.product(theories, observables):
-            # run against APFEL
-            self.run_apfel(theory, obs, pdfs)
+            # create our own object
+            runner = Runner(theory, obs)
+            for pdf_name in pdfs:
+                # setup PDFset
+                if pdf_name == "ToyLH":
+                    pdf = toyLH.mkPDF("ToyLH", 0)
+                else:
+                    import lhapdf  # pylint:disable=import-outside-toplevel
 
-    def run_apfel(self, theory, observables, pdfs):
-        """
-            Run APFEL comparison on the given runcards.
+                    pdf = lhapdf.mkPDF(pdf_name, 0)
+                # get our data
+                yad_tab = runner.apply(pdf)
+                # get external data
+                if external == "APFEL":
+                    from apfel_utils import (  # pylint:disable=import-error,import-outside-toplevel
+                        get_apfel_data,
+                    )
 
-            Steps:
-            - instantiate and call yadism's Runner
-                - using ``yadism.Runner``
-            - retrieve APFEL data to compare with
-                - using ``get_apfel_data``
-            - check and collect comparison results
-                - using ``assert``
-                - using ``print_comparison_table``
+                    ext_tab = get_apfel_data(
+                        theory, obs, pdf_name, self._db.table("apfel_cache")
+                    )
+                elif external == "QCDNUM":
+                    from qcdnum_utils import (  # pylint:disable=import-error,import-outside-toplevel
+                        get_qcdnum_data,
+                    )
 
-            Parameters
-            ----------
-            theory_f :
-                file path for the theory runcard
-            observables_f :
-                file path for the observables runcard
-        """
-        from apfel_utils import (
-            get_apfel_data,
-        )  # pylint:disable=import-error,import-outside-toplevel
+                    ext_tab = get_qcdnum_data(
+                        theory, obs, pdf, self._db.table("qcdnum_cache")
+                    )
 
-        # ======================
-        # get observables values
-        # ======================
-        runner = Runner(theory, observables)
-        for pdf_name in pdfs:
+                # collect and check results
+                log_tab = self._get_output_comparison(
+                    theory, obs, yad_tab, ext_tab, self._process_external_log, external
+                )
 
-            # setup PDFset
-            if pdf_name == "ToyLH":
-                pdf = toyLH.mkPDF("ToyLH", 0)
-            else:
-                import lhapdf  # pylint:disable=import-outside-toplevel
-
-                pdf = lhapdf.mkPDF(pdf_name, 0)
-            # run codes
-            yad_tab = runner.apply(pdf)
-            apf_tab = get_apfel_data(
-                theory, observables, pdf_name, self._db.table("apfel_cache")
-            )
-
-            # collect and check results
-            log_tab = self._get_output_comparison(
-                theory, observables, yad_tab, apf_tab, self._process_APFEL_log
-            )
-
-            # =============
-            # print and log
-            # =============
-            log_tab["_pdf"] = pdf_name
-            # print immediately
-            self._print_res(log_tab)
-            # store the log
-            self._log(log_tab)
+                # =============
+                # print and log
+                # =============
+                log_tab["_pdf"] = pdf_name
+                # print immediately
+                self._print_res(log_tab)
+                # store the log
+                self._log(log_tab)
 
     def run_generate_regression(self, theory_query, obs_query):
         ask = input("Regenerate regression data? [y/n]")
@@ -165,9 +149,9 @@ class DBInterface:
         self._log(log_tab)
 
     @staticmethod
-    def _process_APFEL_log(yad, apf):
+    def _process_external_log(yad, apf, external):
         kin = dict()
-        kin["APFEL"] = ref = apf["value"]
+        kin[external] = ref = apf["value"]
         kin["yadism"] = fx = yad["result"]
         kin["yadism_error"] = yad["error"]
         # compare for log
@@ -197,7 +181,7 @@ class DBInterface:
         return kin
 
     def _get_output_comparison(
-        self, theory, observables, yad_tab, other_tab, process_log
+        self, theory, observables, yad_tab, other_tab, process_log, external
     ):
         log_tab = {}
         # loop kinematics
@@ -215,7 +199,7 @@ class DBInterface:
                 kin["x"] = yad["x"]
                 kin["Q2"] = yad["Q2"]
                 # extract values
-                kin.update(process_log(yad, oth))
+                kin.update(process_log(yad, oth, external))
                 kinematics.append(kin)
             log_tab[sf] = kinematics
 
