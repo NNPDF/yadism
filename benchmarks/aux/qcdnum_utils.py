@@ -1,18 +1,23 @@
-from datetime import datetime
-import platform
-
 import numpy as np
-import tinydb
 
+def compute_qcdnum_data(theory, observables, pdf):
+    """
+        Run QCDNUM to compute observables.
 
-def str_datetime(dt):
-    return str(dt)
+        Parameters
+        ----------
+            theory : dict
+                theory runcard
+            observables : dict
+                observables runcard
+            pdf : Any
+                PDF object (LHAPDF like)
 
-
-def unstr_datetime(s):
-    return datetime.strptime(s, "%Y-%m-%d %H:%M:%S.%f")
-
-def get_qcdnum_data(theory, observables, pdf, qcdnum_cache):
+        Returns
+        -------
+            num_tab : dict
+                QCDNUM numbers
+    """
     import QCDNUM # pylint:disable=import-outside-toplevel
 
     # init
@@ -34,15 +39,15 @@ def get_qcdnum_data(theory, observables, pdf, qcdnum_cache):
             q2min = min(q2min, kin["Q2"])
             q2max = max(q2max, kin["Q2"])
 
-    iosp  = 2;
-    n_x   = 100;
-    n_q   = 60;
+    iosp  = 2
+    n_x   = 100
+    n_q   = 60
     QCDNUM.gxmake([xmin],[1],n_x,iosp) # grid walls, grid weights, points, interpolation type
     qarr = [q2min, q2max]
     print(qarr)
     warr = [1, 1]
     QCDNUM.gqmake(qarr,warr,n_q)
-    
+
     # setup FNS
     mc2 = theory["mc"]**2
     mb2 = theory["mb"]**2
@@ -57,16 +62,16 @@ def get_qcdnum_data(theory, observables, pdf, qcdnum_cache):
     QCDNUM.setcbt(nfix,iqc,iqb,iqt)
 
     # Try to read the weight file and create one if that fails
-    wname = "unpolarised-py.wgt";
-    QCDNUM.wtfile(1,wname);
+    wname = "unpolarised-py.wgt"
+    QCDNUM.wtfile(1,wname)
 
     # Try to read the weight file and create one if that fails
     lunw = QCDNUM.nxtlun(10)
     zmname = "zmstf-py.wgt"
-    nwords, ierr = QCDNUM.zmreadw(lunw,zmname)
+    _nwords, ierr = QCDNUM.zmreadw(lunw,zmname)
     if ierr != 0:
-        QCDNUM.zmfillw();
-        QCDNUM.zmdumpw(lunw,zmname);
+        QCDNUM.zmfillw()
+        QCDNUM.zmdumpw(lunw,zmname)
 
     # setup external PDF
     iset = 1
@@ -79,8 +84,8 @@ def get_qcdnum_data(theory, observables, pdf, qcdnum_cache):
                 a = self.pdf.xfxQ2(ipdf,x,qmu2)
                 return a
             return 0.
-    
-    QCDNUM.extpdf(PdfCallable(pdf), iset, 0, 0) # func, pdf set number, nr. extra pdfs, thershold offset
+    # func, pdf set number, nr. extra pdfs, thershold offset
+    QCDNUM.extpdf(PdfCallable(pdf), iset, 0, 0)
 
     weights = np.array([4., 1., 4., 1., 4., 1., 0., 1., 4., 1., 4., 1., 4.])/9
 
@@ -96,7 +101,7 @@ def get_qcdnum_data(theory, observables, pdf, qcdnum_cache):
             key = 1
         else:
             raise NotImplementedError(f"heavys are not implemented yet {obs}")
-        
+
         # collect kins
         xs = []
         q2s = []
@@ -108,11 +113,5 @@ def get_qcdnum_data(theory, observables, pdf, qcdnum_cache):
         for x,q2,f in zip(xs,q2s,fs):
             f_out.append(dict(x=x,Q2=q2,value=f))
         num_tab[obs] = f_out
-
-    # store the cache
-    num_tab["_theory_doc_id"] = theory.doc_id
-    num_tab["_observables_doc_id"] = observables.doc_id
-    num_tab["_pdf"] = pdf.set().name
-    num_tab["_creation_time"] = str_datetime(datetime.now())
 
     return num_tab

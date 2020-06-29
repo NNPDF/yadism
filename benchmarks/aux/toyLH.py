@@ -51,7 +51,7 @@ def toyLHPDFs(id, x):
 
 
 class toyPDFSet:
-    name = "toyPDF"
+    name = "ToyLH"
 
 
 class toyPDF:

@@ -2,15 +2,6 @@ from datetime import datetime
 import platform
 
 import numpy as np
-import tinydb
-
-
-def str_datetime(dt):
-    return str(dt)
-
-
-def unstr_datetime(s):
-    return datetime.strptime(s, "%Y-%m-%d %H:%M:%S.%f")
 
 
 def load_apfel(theory, observables, pdf="ToyLH"):
@@ -151,104 +142,64 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     return apfel
 
 
-def get_apfel_data(theory, observables, pdf_name, apfel_cache):
+def compute_apfel_data(theory, observables, pdf):
     """
-        Run APFEL to compute observables or simply use cached values.
+        Run APFEL to compute observables.
 
         Parameters
         ----------
-        theory_path :
-            path for the theory runcard
-        observables_path :
-            path for the observables runcard
+            theory : dict
+                theory runcard
+            observables : dict
+                observables runcard
+            pdf : Any
+                PDF object (LHAPDF like)
+
+        Returns
+        -------
+            apf_tab : dict
+                AFPEL numbers
     """
+    # setup APFEL
+    apfel = load_apfel(theory, observables, pdf.set().name)
 
-    # search for document in the cache
-    cache_query = tinydb.Query()
-    c_query = (
-        cache_query._theory_doc_id == theory.doc_id
-    )  # pylint:disable=protected-access
-    c_query &= (
-        cache_query._observables_doc_id == observables.doc_id
-    )  # pylint:disable=protected-access
-    c_query &= cache_query._pdf == pdf_name  # pylint:disable=protected-access
-    query_res = apfel_cache.search(c_query)
+    # mapping observables names to APFEL methods
+    apfel_methods = {
+        "F2light": apfel.F2light,
+        "FLlight": apfel.FLlight,
+        "F2charm": apfel.F2charm,
+        "F2bottom": apfel.F2bottom,
+        "F2top": apfel.F2top,
+        "FLcharm": apfel.FLcharm,
+        "FLbottom": apfel.FLbottom,
+        "FLtop": apfel.FLtop,
+        "F2total": apfel.F2total,
+        "FLtotal": apfel.FLtotal,
+    }
 
-    apf_tab = None
-    # check if cache existing
-    if len(query_res) == 1:
-        apf_tab = query_res[0]
-    elif len(query_res) > 1:
-        raise ValueError("Cache query matched more than once.")
-    # check is updated
-    if apf_tab is not None:
-        theory_changed = unstr_datetime(
-            theory["_modify_time"]
-        )  # pylint:disable=protected-access
-        obs_changed = unstr_datetime(
-            observables["_modify_time"]
-        )  # pylint:disable=protected-access
-        tab_changed = unstr_datetime(
-            apf_tab["_creation_time"]
-        )  # pylint:disable=protected-access
-        if (theory_changed - tab_changed).total_seconds() > 0 or (
-            obs_changed - tab_changed
-        ).total_seconds() > 0:
-            # delete old one
-            apfel_cache.remove(doc_ids=[apf_tab.doc_id])
-            apf_tab = None
-    # cached or recompute
-    if apf_tab is not None:
-        return apf_tab
-    else:
-        # setup APFEL
-        apfel = load_apfel(theory, observables, pdf_name)
+    # compute observables with APFEL
+    apf_tab = {}
+    for FX, apfel_FX in apfel_methods.items():
+        if FX not in observables:
+            # if not in the runcard just skip
+            continue
 
-        # mapping observables names to APFEL methods
-        apfel_methods = {
-            "F2light": apfel.F2light,
-            "FLlight": apfel.FLlight,
-            "F2charm": apfel.F2charm,
-            "F2bottom": apfel.F2bottom,
-            "F2top": apfel.F2top,
-            "FLcharm": apfel.FLcharm,
-            "FLbottom": apfel.FLbottom,
-            "FLtop": apfel.FLtop,
-            "F2total": apfel.F2total,
-            "FLtotal": apfel.FLtotal,
-        }
+        # iterate over input kinematics
+        apf_tab[FX] = []
+        for kinematics in observables.get(FX, []):
+            Q2 = kinematics["Q2"]
+            x = kinematics["x"]
 
-        # compute observables with APFEL
-        apf_tab = {}
-        for FX, apfel_FX in apfel_methods.items():
-            if FX not in observables:
-                # if not in the runcard just skip
-                continue
+            # disable APFEL evolution: we are interested in the pure DIS part
+            #
+            # setting initial scale to muF (sqrt(Q2)*xiF) APFEL is going to:
+            # - take the PDF at the scale of muF (exactly as we are doing)
+            # - evolve from muF to muF because the final scale is the second
+            #   argument times xiF (internally), so actually it's not evolving
+            apfel.ComputeStructureFunctionsAPFEL(
+                np.sqrt(Q2) * theory["XIF"], np.sqrt(Q2)
+            )
+            value = apfel_FX(x)
 
-            # iterate over input kinematics
-            apf_tab[FX] = []
-            for kinematics in observables.get(FX, []):
-                Q2 = kinematics["Q2"]
-                x = kinematics["x"]
-
-                # disable APFEL evolution: we are interested in the pure DIS part
-                #
-                # setting initial scale to muF (sqrt(Q2)*xiF) APFEL is going to:
-                # - take the PDF at the scale of muF (exactly as we are doing)
-                # - evolve from muF to muF because the final scale is the second
-                #   argument times xiF (internally), so actually it's not evolving
-                apfel.ComputeStructureFunctionsAPFEL(
-                    np.sqrt(Q2) * theory["XIF"], np.sqrt(Q2)
-                )
-                value = apfel_FX(x)
-
-                apf_tab[FX].append(dict(x=x, Q2=Q2, value=value))
-
-        # store the cache
-        apf_tab["_theory_doc_id"] = theory.doc_id
-        apf_tab["_observables_doc_id"] = observables.doc_id
-        apf_tab["_pdf"] = pdf_name
-        apf_tab["_creation_time"] = str_datetime(datetime.now())
-        apfel_cache.insert(apf_tab)
-
+            apf_tab[FX].append(dict(x=x, Q2=Q2, value=value))
     return apf_tab

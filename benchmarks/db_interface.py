@@ -13,10 +13,7 @@ from yadism.runner import Runner
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
 import toyLH  # pylint:disable=import-error,wrong-import-position
-from apfel_utils import (
-    str_datetime,
-)  # pylint:disable=import-error,wrong-import-position
-
+import external_utils # pylint:disable=import-error,wrong-import-position
 
 class DBInterface:
     """
@@ -61,20 +58,16 @@ class DBInterface:
                 yad_tab = runner.apply(pdf)
                 # get external data
                 if external == "APFEL":
-                    from apfel_utils import (  # pylint:disable=import-error,import-outside-toplevel
-                        get_apfel_data,
-                    )
+                    import apfel_utils  # pylint:disable=import-error,import-outside-toplevel
 
-                    ext_tab = get_apfel_data(
-                        theory, obs, pdf_name, self._db.table("apfel_cache")
+                    ext_tab = external_utils.get_external_data(
+                        theory, obs, pdf, self._db.table("apfel_cache"), apfel_utils.compute_apfel_data
                     )
                 elif external == "QCDNUM":
-                    from qcdnum_utils import (  # pylint:disable=import-error,import-outside-toplevel
-                        get_qcdnum_data,
-                    )
+                    import qcdnum_utils   # pylint:disable=import-error,import-outside-toplevel
 
-                    ext_tab = get_qcdnum_data(
-                        theory, obs, pdf, self._db.table("qcdnum_cache")
+                    ext_tab = external_utils.get_external_data(
+                        theory, obs, pdf, self._db.table("qcdnum_cache"), qcdnum_utils.compute_qcdnum_data
                     )
 
                 # collect and check results
@@ -105,7 +98,7 @@ class DBInterface:
         runner = Runner(theory, obs)
         out = runner.get_output()
         # add metadata to log record
-        out["_creation_time"] = str_datetime(datetime.datetime.now())
+        out["_creation_time"] = external_utils.str_datetime(datetime.datetime.now())
         out["_theory_doc_id"] = theory.doc_id
         out["_observables_doc_id"] = obs.doc_id
         # check existence
@@ -181,7 +174,7 @@ class DBInterface:
         return kin
 
     def _get_output_comparison(
-        self, theory, observables, yad_tab, other_tab, process_log, external
+        self, theory, observables, yad_tab, other_tab, process_log, external = None
     ):
         log_tab = {}
         # loop kinematics
@@ -204,7 +197,7 @@ class DBInterface:
             log_tab[sf] = kinematics
 
         # add metadata to log record
-        log_tab["_creation_time"] = str_datetime(datetime.datetime.now())
+        log_tab["_creation_time"] = external_utils.str_datetime(datetime.datetime.now())
         log_tab["_theory_doc_id"] = theory.doc_id
         log_tab["_observables_doc_id"] = observables.doc_id
         return log_tab
