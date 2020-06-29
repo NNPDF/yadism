@@ -9,7 +9,7 @@ import numpy as np
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / ".." / "aux"))
-from apfel_utils import (  # pylint:disable=import-error,wrong-import-position
+from external_utils import (  # pylint:disable=import-error,wrong-import-position
     str_datetime,
 )
 

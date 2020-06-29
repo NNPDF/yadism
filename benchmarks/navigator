@@ -2,5 +2,5 @@
 ipython --InteractiveShellApp.exec_lines="['from navigator import *',
 'from yadism import *',
 'print(\"\",\"Welcome to yadism benchmark skript!\",\"call yelp() or h() for a brief overview.\",sep=\"\\\n\")',
-'check_apfel()'
+'check_external()'
 ]"  --pylab

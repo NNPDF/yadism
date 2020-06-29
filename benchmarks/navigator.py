@@ -16,16 +16,16 @@ from external_utils import (  # pylint:disable=import-error,wrong-import-positio
 
 # database access
 here = pathlib.Path(__file__).parent.absolute()
-db_APFEL = TinyDB(here / "data" / "input.json")
+db_external = TinyDB(here / "data" / "input.json")
 db_regression = TinyDB(here / "data" / "regression.json")
 
 idb = None
 
 
-def check_apfel():
+def check_external():
     global idb
-    print("APFEL mode activated")
-    idb = db_APFEL
+    print("EXTERNAL mode activated")
+    idb = db_external
 
 
 def check_regression():
@@ -497,14 +497,14 @@ def subtract_tables(id1, id2):
             raise ValueError("Cannot compare tables with different (x, Q2)")
 
         # subtract and propagate
-        known_col_set = set(["x","Q2","yadism", "yadism_error", "rel_err[%]"])
+        known_col_set = set(["x", "Q2", "yadism", "yadism_error", "rel_err[%]"])
         t1_ext = list(set(table1.keys()) - known_col_set)[0]
         t2_ext = list(set(table2.keys()) - known_col_set)[0]
         if t1_ext == t2_ext:
             tout_ext = t1_ext
         else:
             tout_ext = f"{t2_ext}-{t1_ext}"
-        table_out.rename(columns={t2_ext:tout_ext},inplace=True)
+        table_out.rename(columns={t2_ext: tout_ext}, inplace=True)
         table_out[tout_ext] = table2[t2_ext] - table1[t1_ext]
         # subtract our values
         table_out["yadism"] -= table1["yadism"]
@@ -518,6 +518,7 @@ def subtract_tables(id1, id2):
                 return np.nan
             else:
                 return (row["yadism"] / row[tout_ext] - 1.0) * 100
+
         table_out["rel_err[%]"] = table_out.apply(rel_err, axis=1)
 
         # dump results' table
