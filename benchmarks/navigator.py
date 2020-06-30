@@ -531,6 +531,37 @@ def subtract_tables(id1, id2):
 diff = subtract_tables
 
 
+def join(id1, id2):
+    tabs = []
+    tabs1 = []
+    exts = []
+    suffixes = (f" ({id1})", f" ({id2})")
+
+    for i, doc_id in enumerate([id1, id2]):
+        tabs += [dfl(doc_id)[0]]
+        tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
+        exts += [tabs1[i].columns.drop(["x", "Q2"])[0] + suffixes[i]]
+
+    def rel_err(row):
+        ref = row[exts[0]]
+        cmp = row[exts[1]]
+        if ref != 0:
+            return (cmp / ref - 1) * 100
+        else:
+            return np.nan
+
+    tab_joint = tabs1[0].merge(tabs1[1], on=["x", "Q2"], how="outer", suffixes=suffixes)
+    tab_joint["ext_rel_err [%]"] = tab_joint.apply(rel_err, axis=1)
+
+    if all(np.isclose(tabs[0]["yadism"], tabs[1]["yadism"])):
+        tab_joint["yadism"] = tabs[0]["yadism"]
+        tab_joint["yadism_error"] = tabs[0]["yadism_error"]
+    else:
+        pass
+
+    return tab_joint
+
+
 def compare_dicts(d1, d2, exclude_underscored=False):
     """
         Check which entries of the two dictionaries are different, and output
