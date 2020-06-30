@@ -26,7 +26,7 @@ class TestPlain:
         # o_query |= p.obs_query.F2total.exists()
 
         p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
-        # p.run_queries_external(t_query, o_query, ["toy_gonly"])
+        # p.run_queries_external(t_query, o_query, ["toy_gonly"], "QCDNUM")
 
     def test_NLO(self):
         """
@@ -40,13 +40,13 @@ class TestPlain:
         t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.FLcharm.exists()
+        o_query = p.obs_query.F2bottom.exists()
 
         p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
-        # p.run_queries_external(t_query, o_query, ["toy_gonly"])
+        # p.run_queries_external(t_query, o_query, ["toy_gonly"], "QCDNUM")
 
 
 if __name__ == "__main__":
     plain = TestPlain()
-    plain.test_LO()
+    #plain.test_LO()
     plain.test_NLO()

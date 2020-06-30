@@ -1,3 +1,4 @@
+import pathlib
 import numpy as np
 
 def compute_qcdnum_data(theory, observables, pdf):
@@ -24,7 +25,6 @@ def compute_qcdnum_data(theory, observables, pdf):
     QCDNUM.qcinit(6, " ")
 
     # set params
-    QCDNUM.setord(1 + theory["PTO"]) # 1 = LO, ...
     QCDNUM.setalf(theory["alphas"], theory["Qref"]**2)
 
     # make x and Q grids
@@ -38,15 +38,18 @@ def compute_qcdnum_data(theory, observables, pdf):
             xmin = min(xmin, kin["x"])
             q2min = min(q2min, kin["Q2"])
             q2max = max(q2max, kin["Q2"])
-
-    iosp  = 2
+    xarr = [xmin]
+    xwarr = [1]
+    if xmin < 0.1:
+        xarr += [0.1,0.5]
+        xwarr += [1,1]
+    iosp  = 3
     n_x   = 100
     n_q   = 60
-    QCDNUM.gxmake([xmin],[1],n_x,iosp) # grid walls, grid weights, points, interpolation type
+    QCDNUM.gxmake(xarr,xwarr,n_x,iosp) # grid walls, grid weights, points, interpolation type
     qarr = [q2min, q2max]
-    print(qarr)
-    warr = [1, 1]
-    QCDNUM.gqmake(qarr,warr,n_q)
+    qwarr = [1, 1]
+    QCDNUM.gqmake(qarr,qwarr,n_q)
 
     # setup FNS
     mc = theory["mc"]
@@ -69,6 +72,7 @@ def compute_qcdnum_data(theory, observables, pdf):
     zmlunw = QCDNUM.nxtlun(10)
     zmname = f"zmstf-py-{theory.doc_id}.wgt"
     _nwords, ierr = QCDNUM.zmreadw(zmlunw,zmname)
+    print("zwierr=",ierr)
     if ierr != 0:
         QCDNUM.zmfillw()
         QCDNUM.zmdumpw(zmlunw,zmname)
@@ -123,17 +127,29 @@ def compute_qcdnum_data(theory, observables, pdf):
         # select fnc by flavor
         flavor = obs[2:]
         if flavor == "light":
+            QCDNUM.setord(1 + theory["PTO"]) # 1 = LO, ...
             fs = QCDNUM.zmstfun(kind_key, weights, xs, q2s, 1 )
-        elif flavor == "charm":
-            fs = QCDNUM.hqstfun(kind_key, 1, weights, xs, q2s, 1 )
-        elif flavor == "bottom":
-            fs = QCDNUM.hqstfun(kind_key, -2, weights, xs, q2s, 1 )
-        elif flavor == "top":
-            fs = QCDNUM.hqstfun(kind_key, -3, weights, xs, q2s, 1 )
+        else:
+            # for HQ pto is not absolute but rather relative,
+            # i.e., 1 loop DIS here meas "LO"[QCDNUM]
+            if theory["PTO"] == 0:
+                fs = [0.] * len(xs)
+            else:
+                QCDNUM.setord(theory["PTO"]) # 1 = LO, ...
+                if flavor == "charm":
+                    fs = QCDNUM.hqstfun(kind_key, 1, weights, xs, q2s, 1 )
+                elif flavor == "bottom":
+                    fs = QCDNUM.hqstfun(kind_key, -2, weights, xs, q2s, 1 )
+                elif flavor == "top":
+                    fs = QCDNUM.hqstfun(kind_key, -3, weights, xs, q2s, 1 )
         # reshuffle output
         f_out = []
         for x,q2,f in zip(xs,q2s,fs):
             f_out.append(dict(x=x,Q2=q2,value=f))
         num_tab[obs] = f_out
+
+    # remove QCDNUM cache files
+    for f in [wname, zmname, hqname]:
+        pathlib.Path(f).unlink()
 
     return num_tab
