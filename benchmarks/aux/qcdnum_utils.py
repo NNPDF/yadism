@@ -49,12 +49,12 @@ def compute_qcdnum_data(theory, observables, pdf):
     QCDNUM.gqmake(qarr,warr,n_q)
 
     # setup FNS
-    mc2 = theory["mc"]**2
-    mb2 = theory["mb"]**2
-    mt2 = theory["mt"]**2
-    iqc = QCDNUM.iqfrmq(mc2)
-    iqb = QCDNUM.iqfrmq(mb2)
-    iqt = QCDNUM.iqfrmq(mt2)
+    mc = theory["mc"]
+    mb = theory["mb"]
+    mt = theory["mt"]
+    iqc = QCDNUM.iqfrmq(mc**2)
+    iqb = QCDNUM.iqfrmq(mb**2)
+    iqt = QCDNUM.iqfrmq(mt**2)
     if theory["FNS"] == "FFNS":
         nfix = theory["NfFF"]
     else:
@@ -65,17 +65,28 @@ def compute_qcdnum_data(theory, observables, pdf):
     wname = "unpolarised-py.wgt"
     QCDNUM.wtfile(1,wname)
 
-    # Try to read the weight file and create one if that fails
-    lunw = QCDNUM.nxtlun(10)
-    zmname = "zmstf-py.wgt"
-    _nwords, ierr = QCDNUM.zmreadw(lunw,zmname)
+    # Try to read the ZM-weight file and create one if that fails
+    zmlunw = QCDNUM.nxtlun(10)
+    zmname = f"zmstf-py-{theory.doc_id}.wgt"
+    _nwords, ierr = QCDNUM.zmreadw(zmlunw,zmname)
     if ierr != 0:
         QCDNUM.zmfillw()
-        QCDNUM.zmdumpw(lunw,zmname)
+        QCDNUM.zmdumpw(zmlunw,zmname)
+
+    # Try to read the HQ-weight file and create one if that fails
+    hqlunw = QCDNUM.nxtlun(10)
+    hqname = f"hqstf-py-{theory.doc_id}.wgt"
+    _nwords, ierr = QCDNUM.hqreadw(hqlunw,hqname)
+    if ierr != 0:
+        aq2 = 1.
+        bq2 = 0.
+        QCDNUM.hqfillw(3,[mc, mb, mt],aq2,bq2)
+        QCDNUM.hqdumpw(hqlunw,hqname)
 
     # setup external PDF
     iset = 1
     QCDNUM.zswitch(iset)
+    QCDNUM.hswitch(iset)
     class PdfCallable:
         def __init__(self, pdf):
             self.pdf = pdf
@@ -93,14 +104,15 @@ def compute_qcdnum_data(theory, observables, pdf):
     for obs in observables:
         if obs[0] != "F":
             continue
-        # select key
-        key = None
-        if obs == "F2light":
-            key = 2
-        elif obs == "FLlight":
-            key = 1
+        # select key by kind
+        kind = obs[:2]
+        kind_key = None
+        if kind == "F2":
+            kind_key = 2
+        elif kind == "FL":
+            kind_key = 1
         else:
-            raise NotImplementedError(f"heavys are not implemented yet {obs}")
+            raise NotImplementedError(f"kind {kind} is not implemented!")
 
         # collect kins
         xs = []
@@ -108,7 +120,17 @@ def compute_qcdnum_data(theory, observables, pdf):
         for kin in observables[obs]:
             xs.append(kin["x"])
             q2s.append(kin["Q2"])
-        fs = QCDNUM.zmstfun(key, weights, xs, q2s, 1 )
+        # select fnc by flavor
+        flavor = obs[2:]
+        if flavor == "light":
+            fs = QCDNUM.zmstfun(kind_key, weights, xs, q2s, 1 )
+        elif flavor == "charm":
+            fs = QCDNUM.hqstfun(kind_key, 1, weights, xs, q2s, 1 )
+        elif flavor == "bottom":
+            fs = QCDNUM.hqstfun(kind_key, -2, weights, xs, q2s, 1 )
+        elif flavor == "top":
+            fs = QCDNUM.hqstfun(kind_key, -3, weights, xs, q2s, 1 )
+        # reshuffle output
         f_out = []
         for x,q2,f in zip(xs,q2s,fs):
             f_out.append(dict(x=x,Q2=q2,value=f))

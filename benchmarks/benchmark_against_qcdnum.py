@@ -12,7 +12,7 @@ class TestPlain:
     # def test_LO(self, DBInterface):
     def test_LO(self):
         """
-        Test the full LO order against APFEL's.
+        Test the full LO order against QCDNUM
         """
         p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 0
@@ -30,7 +30,7 @@ class TestPlain:
 
     def test_NLO(self):
         """
-        Test the full NLO order against APFEL's.
+        Test the full NLO order against QCDNUM
         """
         p = DBInterface("input.json")
         t_query = p.theory_query.PTO == 1
@@ -40,7 +40,7 @@ class TestPlain:
         t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.F2light.exists()
+        o_query = p.obs_query.FLcharm.exists()
 
         p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
         # p.run_queries_external(t_query, o_query, ["toy_gonly"])

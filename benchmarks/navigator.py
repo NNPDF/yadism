@@ -449,7 +449,7 @@ get = g
 
 def subtract_tables(id1, id2):
     """
-        Subtract yadism and APFEL result in the second table from the first one,
+        Subtract results in the second table from the first one,
         properly propagate the integration error and recompute the relative
         error on the subtracted results.
 
