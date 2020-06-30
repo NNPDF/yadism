@@ -9,7 +9,7 @@ jobs:
   deploy-ghpages:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 2
+#      max-parallel: 2
       matrix:
         python-version: [3.7]
       fail-fast: false
@@ -29,11 +29,6 @@ jobs:
         run: |
           # install pip
           python -m pip install --upgrade pip
-          # install eko
-          sudo apt-get install libgsl-dev # eko dependency
-          cd eko
-          pip install .
-          cd ..
           # install yadism
           pip install .
       - name: Build 🔨

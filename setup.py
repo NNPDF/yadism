@@ -20,20 +20,9 @@ setup(
         "Topic :: Scientific/Engineering :: Physics",
     ],
     install_requires=[
-        # resort true install dependencies and test/benchmark ones
         "eko",
         "numpy",
         "scipy",
-        "pandas",
-        "numba",
-        # "pyyaml",
-        # "tinydb~=4.1",
-        # "human-dates2",
-        # "sphinx",
-        # "sphinx_rtd_theme",
-        # "recommonmark",
-        # "sphinxcontrib-bibtex",
     ],
     python_requires=">=3.7",
-    # entry_points={"console_scripts": ["run-dis=yadism.runner:run_dis"],},
 )
