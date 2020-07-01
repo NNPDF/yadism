@@ -45,13 +45,13 @@ def compute_qcdnum_data(theory, observables, pdf):
             xmin = min(xmin, kin["x"])
             q2min = min(q2min, kin["Q2"])
             q2max = max(q2max, kin["Q2"])
-    xarr = [xmin]
-    xwarr = [1]
+    xarr = [xmin, np.power(xmin,2./3.)]
+    xwarr = [1, 1]
     if xmin < 0.1:
         xarr += [0.1,0.5]
         xwarr += [1,1]
     iosp  = 3
-    n_x   = 100
+    n_x   = 289
     n_q   = 60
     af = 1/theory["XIF"]**2
     QCDNUM.gxmake(xarr,xwarr,n_x,iosp) # grid walls, grid weights, points, interpolation type
@@ -75,6 +75,8 @@ def compute_qcdnum_data(theory, observables, pdf):
     # Try to read the weight file and create one if that fails
     QCDNUM.wtfile(1,wname)
 
+    iset = 1
+
     # Try to read the ZM-weight file and create one if that fails
     zmlunw = QCDNUM.nxtlun(10)
     _nwords, ierr = QCDNUM.zmreadw(zmlunw,zmname)
@@ -84,6 +86,7 @@ def compute_qcdnum_data(theory, observables, pdf):
     # set fact. scale
     bf = 0.
     QCDNUM.zmdefq2(af,bf)
+    QCDNUM.zswitch(iset)
 
     # Try to read the HQ-weight file and create one if that fails
     hqlunw = QCDNUM.nxtlun(10)
@@ -96,11 +99,9 @@ def compute_qcdnum_data(theory, observables, pdf):
     arf = theory["XIR"]**2/theory["XIF"]**2
     brf = 0
     QCDNUM.setabr(arf, brf)
+    QCDNUM.hswitch(iset)
 
     # setup external PDF
-    iset = 1
-    QCDNUM.zswitch(iset)
-    QCDNUM.hswitch(iset)
     class PdfCallable:
         def __init__(self, pdf):
             self.pdf = pdf
@@ -138,6 +139,7 @@ def compute_qcdnum_data(theory, observables, pdf):
         flavor = obs[2:]
         if flavor == "light":
             QCDNUM.setord(1 + theory["PTO"]) # 1 = LO, ...
+            weights = np.array([4.*0, 1.*0, 4.*0, 1., 4., 1., 0., 1., 4., 1., 4.*0, 1.*0, 4.*0])/9
             #fs = []
             #for x, Q2 in zip(xs,q2s):
             #    fs.append(QCDNUM.zmstfun(kind_key, weights, [x], [Q2], 1 ))

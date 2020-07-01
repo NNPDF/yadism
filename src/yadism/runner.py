@@ -68,7 +68,7 @@ class Runner:
         self.constants = Constants()
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory, self.constants, self.threshold
+            theory, self.threshold, self.constants
         )
 
         # Non-eko theory
