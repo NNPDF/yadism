@@ -6,17 +6,14 @@ on:
       - master
       - "feature/*"
       - "release/*"
-      - "benchmarks/*"
-      - "tests/*"
+      - "benchmark/*"
+      - "test/*"
   pull_request:
     # TODO: https://github.community/t5/GitHub-Actions/Triggering-workflow-on-merge/td-p/40930
     types:
       - closed
     branches:
       - master
-
-env:
-  UPLOAD_NON_MASTER: false
 
 jobs:
   # build is the <job_id>

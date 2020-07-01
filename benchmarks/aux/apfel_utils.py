@@ -32,10 +32,16 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     apfel.SetPerturbativeOrder(theory.get("PTO"))
 
     if theory.get("ModEv") == "EXA":
+        apfel.SetPDFEvolution("exactalpha")
+        apfel.SetAlphaEvolution("exact")
+    elif theory.get("ModEv") == "EXP":
         apfel.SetPDFEvolution("expandalpha")
         apfel.SetAlphaEvolution("expanded")
+    elif theory.get("ModEv") == "TRN":
+        apfel.SetPDFEvolution("truncated")
+        apfel.SetAlphaEvolution("expanded")
     else:
-        raise RuntimeError(" ERROR: Unrecognised MODEV:", theory.get("ModEv"))
+        raise RuntimeError("ERROR: Unrecognised MODEV:", theory.get("ModEv"))
 
     # Coupling
     apfel.SetAlphaQCDRef(theory.get("alphas"), theory.get("Qref"))

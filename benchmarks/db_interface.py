@@ -15,6 +15,22 @@ sys.path.append(str(here / "aux"))
 import toyLH  # pylint:disable=import-error,wrong-import-position
 import external_utils # pylint:disable=import-error,wrong-import-position
 
+class QueryFieldsEqual(tinydb.queries.QueryInstance):
+    """
+        Tests that two fields of the document are equal to each other
+
+        Parameters
+        ----------
+            field_a : str
+                first field
+            field_b : str
+                second field
+    """
+    def __init__(self, field_a, field_b):
+        def test(doc):
+            return field_a in doc and field_b in doc and doc[field_a] == doc[field_b]
+        super().__init__(test,("==", (field_a,), (field_b,)))
+
 class DBInterface:
     """
         Interface to access DB

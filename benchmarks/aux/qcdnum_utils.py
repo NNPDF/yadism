@@ -21,6 +21,13 @@ def compute_qcdnum_data(theory, observables, pdf):
     """
     import QCDNUM # pylint:disable=import-outside-toplevel
 
+    # remove QCDNUM cache files
+    wname = "unpolarised-py.wgt"
+    zmname = f"zmstf-py-{theory.doc_id}.wgt"
+    hqname = f"hqstf-py-{theory.doc_id}.wgt"
+    for f in [wname, zmname, hqname]:
+        pathlib.Path(f).unlink(missing_ok=True)
+
     # init
     QCDNUM.qcinit(6, " ")
 
@@ -46,8 +53,9 @@ def compute_qcdnum_data(theory, observables, pdf):
     iosp  = 3
     n_x   = 100
     n_q   = 60
+    af = 1/theory["XIF"]**2
     QCDNUM.gxmake(xarr,xwarr,n_x,iosp) # grid walls, grid weights, points, interpolation type
-    qarr = [q2min, q2max]
+    qarr = [q2min/af, q2max/af]
     qwarr = [1, 1]
     QCDNUM.gqmake(qarr,qwarr,n_q)
 
@@ -65,27 +73,29 @@ def compute_qcdnum_data(theory, observables, pdf):
     QCDNUM.setcbt(nfix,iqc,iqb,iqt)
 
     # Try to read the weight file and create one if that fails
-    wname = "unpolarised-py.wgt"
     QCDNUM.wtfile(1,wname)
 
     # Try to read the ZM-weight file and create one if that fails
     zmlunw = QCDNUM.nxtlun(10)
-    zmname = f"zmstf-py-{theory.doc_id}.wgt"
     _nwords, ierr = QCDNUM.zmreadw(zmlunw,zmname)
-    print("zwierr=",ierr)
     if ierr != 0:
         QCDNUM.zmfillw()
         QCDNUM.zmdumpw(zmlunw,zmname)
+    # set fact. scale
+    bf = 0.
+    QCDNUM.zmdefq2(af,bf)
 
     # Try to read the HQ-weight file and create one if that fails
     hqlunw = QCDNUM.nxtlun(10)
-    hqname = f"hqstf-py-{theory.doc_id}.wgt"
     _nwords, ierr = QCDNUM.hqreadw(hqlunw,hqname)
     if ierr != 0:
-        aq2 = 1.
-        bq2 = 0.
-        QCDNUM.hqfillw(3,[mc, mb, mt],aq2,bq2)
+        QCDNUM.hqfillw(3,[mc, mb, mt],af,bf)
         QCDNUM.hqdumpw(hqlunw,hqname)
+
+    # set ren scale
+    arf = theory["XIR"]**2/theory["XIF"]**2
+    brf = 0
+    QCDNUM.setabr(arf, brf)
 
     # setup external PDF
     iset = 1
@@ -128,6 +138,9 @@ def compute_qcdnum_data(theory, observables, pdf):
         flavor = obs[2:]
         if flavor == "light":
             QCDNUM.setord(1 + theory["PTO"]) # 1 = LO, ...
+            #fs = []
+            #for x, Q2 in zip(xs,q2s):
+            #    fs.append(QCDNUM.zmstfun(kind_key, weights, [x], [Q2], 1 ))
             fs = QCDNUM.zmstfun(kind_key, weights, xs, q2s, 1 )
         else:
             # for HQ pto is not absolute but rather relative,
@@ -150,6 +163,6 @@ def compute_qcdnum_data(theory, observables, pdf):
 
     # remove QCDNUM cache files
     for f in [wname, zmname, hqname]:
-        pathlib.Path(f).unlink()
+        pathlib.Path(f).unlink(missing_ok=True)
 
     return num_tab
