@@ -540,7 +540,9 @@ def join(id1, id2):
     for i, doc_id in enumerate([id1, id2]):
         tabs += [dfl(doc_id)[0]]
         tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
-        exts += [tabs1[i].columns.drop(["x", "Q2"])[0]]# + suffixes[i]] # TODO the suffixes are not working as expected
+        exts += [
+            tabs1[i].columns.drop(["x", "Q2"])[0]
+        ]  # + suffixes[i]] # TODO the suffixes are not working as expected
 
     def rel_err(row):
         ref = row[exts[0]]

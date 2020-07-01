@@ -13,7 +13,8 @@ from yadism.runner import Runner
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
 import toyLH  # pylint:disable=import-error,wrong-import-position
-import external_utils # pylint:disable=import-error,wrong-import-position
+import external_utils  # pylint:disable=import-error,wrong-import-position
+
 
 class QueryFieldsEqual(tinydb.queries.QueryInstance):
     """
@@ -26,10 +27,13 @@ class QueryFieldsEqual(tinydb.queries.QueryInstance):
             field_b : str
                 second field
     """
+
     def __init__(self, field_a, field_b):
         def test(doc):
             return field_a in doc and field_b in doc and doc[field_a] == doc[field_b]
-        super().__init__(test,("==", (field_a,), (field_b,)))
+
+        super().__init__(test, ("==", (field_a,), (field_b,)))
+
 
 class DBInterface:
     """
@@ -77,13 +81,21 @@ class DBInterface:
                     import apfel_utils  # pylint:disable=import-error,import-outside-toplevel
 
                     ext_tab = external_utils.get_external_data(
-                        theory, obs, pdf, self._db.table("apfel_cache"), apfel_utils.compute_apfel_data
+                        theory,
+                        obs,
+                        pdf,
+                        self._db.table("apfel_cache"),
+                        apfel_utils.compute_apfel_data,
                     )
                 elif external == "QCDNUM":
-                    import qcdnum_utils   # pylint:disable=import-error,import-outside-toplevel
+                    import qcdnum_utils  # pylint:disable=import-error,import-outside-toplevel
 
                     ext_tab = external_utils.get_external_data(
-                        theory, obs, pdf, self._db.table("qcdnum_cache"), qcdnum_utils.compute_qcdnum_data
+                        theory,
+                        obs,
+                        pdf,
+                        self._db.table("qcdnum_cache"),
+                        qcdnum_utils.compute_qcdnum_data,
                     )
 
                 # collect and check results
@@ -190,7 +202,7 @@ class DBInterface:
         return kin
 
     def _get_output_comparison(
-        self, theory, observables, yad_tab, other_tab, process_log, external = None
+        self, theory, observables, yad_tab, other_tab, process_log, external=None
     ):
         log_tab = {}
         # loop kinematics

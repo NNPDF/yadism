@@ -2,6 +2,7 @@ from datetime import datetime
 
 import tinydb
 
+
 def str_datetime(dt):
     return str(dt)
 
@@ -36,7 +37,7 @@ def get_external_data(theory, observables, pdf, cache_table, cb_compute_data):
     # search for document in the cache
     cache_query = tinydb.Query()
     c_query = (
-        cache_query._theory_doc_id == theory.doc_id # pylint:disable=protected-access
+        cache_query._theory_doc_id == theory.doc_id  # pylint:disable=protected-access
     )  # pylint:disable=protected-access
     c_query &= (
         cache_query._observables_doc_id == observables.doc_id

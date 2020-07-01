@@ -76,7 +76,7 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     apfel.EnableDampingFONLL(theory.get("DAMP"))
     if theory.get("FNS") == "FFNS":
         apfel.SetFFNS(theory.get("NfFF"))
-        apfel.SetMassScheme("FFNS%d"%theory.get("NfFF"))
+        apfel.SetMassScheme("FFNS%d" % theory.get("NfFF"))
     else:
         apfel.SetVFNS()
 
