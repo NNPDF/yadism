@@ -9,11 +9,11 @@ import numpy as np
 ask = input("Do you want to refill the regression observables? [y/n]")
 if ask != "y":
     print("Nothing done.")
-    exit()
+    sys.exit()
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / ".." / "aux"))
-from apfel_utils import (  # pylint:disable=import-error,wrong-import-position
+from external_utils import (  # pylint:disable=import-error,wrong-import-position
     str_datetime,
 )
 

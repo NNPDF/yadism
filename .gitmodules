@@ -1,4 +1,0 @@
-[submodule "eko"]
-	path = eko
-	url = git@github.com:N3PDF/eko.git
-	branch = master

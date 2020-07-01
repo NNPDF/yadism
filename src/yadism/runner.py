@@ -16,8 +16,6 @@ There are two ways of using ``yadism``:
 from typing import Any
 import time
 
-import numpy as np
-
 from eko.interpolation import InterpolatorDispatcher
 from eko.constants import Constants
 from eko import thresholds
@@ -70,7 +68,7 @@ class Runner:
         self.constants = Constants()
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory, self.constants, self.threshold
+            theory, self.threshold, self.constants
         )
 
         # Non-eko theory

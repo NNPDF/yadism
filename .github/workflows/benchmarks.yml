@@ -6,17 +6,14 @@ on:
       - master
       - "feature/*"
       - "release/*"
-      - "benchmarks/*"
-      - "tests/*"
+      - "benchmark/*"
+      - "test/*"
   pull_request:
     # TODO: https://github.community/t5/GitHub-Actions/Triggering-workflow-on-merge/td-p/40930
     types:
       - closed
     branches:
       - master
-
-env:
-  UPLOAD_NON_MASTER: false
 
 jobs:
   # build is the <job_id>
@@ -35,14 +32,6 @@ jobs:
     steps:
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.ALE_DIS_PAT }}
-          submodules: "true"
-      # fetch all tags & stuffs
-      #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
-      #   --> needed only for the conda-recipe
-      - name: Fetch tags
-        run: git fetch --unshallow --no-recurse-submodules
       # use an external action to setup miniconda
       #   - also setup a conda virtual environment named 'yadism'
       #
@@ -63,23 +52,6 @@ jobs:
           conda config --add channels https://packages.nnpdf.science/conda
           conda install -y lhapdf
           conda install -y apfel
-      # install eko
-      #   - @ the correct commit (no official suitable tag currently available)
-      #   - providing the C dependencies
-      - name: Install eko
-        shell: bash -l {0}
-        run: |
-          conda activate yadism
-          #
-          cd eko
-          # git fetch --unshallow
-          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
-          cd ..
-          # install Gnu Scientific Library (GSL)
-          #   sudo works passwordless on github-workflow
-          sudo apt-get install libgsl-dev
-          # install eko (trailing '/' needed!)
-          pip install eko/
       # install the actual python package 'yadism'
       - name: Install yadism
         shell: bash -l {0}
@@ -109,12 +81,6 @@ jobs:
           conda activate yadism
           # run tests
           pytest -m quick_check benchmarks
-          #pytest
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v1
-        with:
-          name: htmlcov
-          path: htmlcov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

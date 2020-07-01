@@ -6,3 +6,4 @@ tinydb~=4.1
 human_dates2
 ipython
 matplotlib
+pandas
