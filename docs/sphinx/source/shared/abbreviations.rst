@@ -63,3 +63,17 @@
 .. |APFEL| raw:: html
 
    <a href="https://apfel.mi.infn.it/"><abbr title="A PDF Evolution Library">APFEL</abbr></a>
+
+
+.. -----------
+   not physics
+   -----------
+
+.. |CI| raw:: html
+
+   <a href="https://en.wikipedia.org/wiki/Continuous_integration"><abbr title="Continuous Integration">CI</abbr></a>
+
+
+.. |gh-act| raw:: html
+
+   <a href="https://github.com/features/actions">GitHub Actions</a>
