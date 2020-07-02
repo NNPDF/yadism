@@ -9,3 +9,5 @@ Flavor Number Schemes
 - FFNS
 - ZM-VFNS
 - FONLL
+  
+  - Damping
