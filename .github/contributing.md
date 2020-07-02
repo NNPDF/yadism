@@ -5,6 +5,33 @@ contributions guidelines](.github/contributing.md#external-contributions)
 
 ## Internal development
 
+### Installation
+
+#### Test Dependencies
+
+Currently this package has two non-python test dependencies:
+
+- `lhapdf`, provides PDF sets, only required for benchmarks
+- `apfel`, only required for benchmarks
+
+For `apfel` and `lhapdf` you should get them following the instructions on their
+respective official distribution sources.
+Than make sure to make them available in your python (virtual)environment.
+
+Install the other dependencies using:
+
+```
+pip install -r test_requirements.txt --ignore-installed
+```
+
+#### Docs dependencies
+
+Install the dependencies using:
+
+```
+pip install -r doc_requirements.txt --ignore-installed
+```
+
 ### Unit Tests
 
 To run test install the package and run `pytest tests` in the project root
