@@ -1,0 +1,114 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module QCDNUM ! in 
+    interface  ! in :QCDNUM
+        subroutine qcinit(lun,fname) ! in :QCDNUM:qcdnum/usr/usrini.f
+            integer :: lun
+            character*(*) :: fname
+        end subroutine qcinit
+        function nxtlun(lmin) ! in :QCDNUM:qcdnum/usr/usrini.f
+            integer :: lmin
+            integer :: nxtlun
+        end function nxtlun
+        subroutine setval(chopt,dval) ! in :QCDNUM:qcdnum/usr/usrini.f
+            character*(*) :: chopt
+            double precision :: dval
+        end subroutine setval
+        subroutine getval(chopt,dval) ! in :QCDNUM:qcdnum/usr/usrini.f
+            character*(*) :: chopt
+            double precision :: dval
+        end subroutine getval
+        subroutine setord(iord) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            integer :: iord
+        end subroutine setord
+        subroutine getord(iord) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            integer :: iord
+        end subroutine getord
+        subroutine setalf(as,r2) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            double precision :: as
+            double precision :: r2
+        end subroutine setalf
+        subroutine getalf(as,r2) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            double precision :: as
+            double precision :: r2
+        end subroutine getalf
+        subroutine setcbt(nfix,iqc,iqb,iqt) ! in :QCDNUM:qcdnum/usr/usrparams.f
+            integer :: nfix
+            integer :: iqc
+            integer :: iqb
+            integer :: iqt
+        end subroutine setcbt
+        function sumfxq(jset,def,isel,xx,qq,jchk) ! in :QCDNUM:qcdnum/usr/usrpdf.f90
+            integer :: jset
+            double precision dimension(13) :: def
+            integer :: isel
+            double precision :: xx
+            double precision :: qq
+            integer :: jchk
+            double precision :: sumfxq
+        end function sumfxq
+        subroutine extpdf(func,jset,n,offset,epsi) ! in :QCDNUM:qcdnum/usr/usrevol.f
+            external func
+            integer :: jset
+            integer :: n
+            double precision :: offset
+            double precision :: epsi
+        end subroutine extpdf
+        subroutine gxmake(xmi,iwx,n,nxin,nxout,iosp) ! in :QCDNUM:qcdnum/usr/usrgrd.f
+            double precision dimension(*) :: xmi
+            integer dimension(*) :: iwx
+            integer :: n
+            integer :: nxin
+            integer :: nxout
+            integer :: iosp
+        end subroutine gxmake
+        subroutine gqmake(qq,ww,n,nqin,nqout) ! in :QCDNUM:qcdnum/usr/usrgrd.f
+            double precision dimension(*) :: qq
+            double precision dimension(*) :: ww
+            integer :: n
+            integer :: nqin
+            integer :: nqout
+        end subroutine gqmake
+        function iqfrmq(q) ! in :QCDNUM:qcdnum/usr/usrgrd.f
+            double precision :: q
+            integer :: iqfrmq
+        end function iqfrmq
+        subroutine wtfile(itype,file) ! in :QCDNUM:qcdnum/usr/usrwgt.f
+            integer :: itype
+            character*(*) :: file
+        end subroutine wtfile
+        subroutine zmwords(ntot,nused) ! in :QCDNUM:zmstf/src/zmstfs.f
+            integer :: ntot
+            integer :: nused
+        end subroutine zmwords
+        subroutine zswitch(jset) ! in :QCDNUM:zmstf/src/zmstfs.f
+            integer :: jset
+        end subroutine zswitch
+        subroutine zmstfun(istf,qvec,x,q,f,n,ichk) ! in :QCDNUM:zmstf/src/zmstfs.f
+            integer :: istf
+            double precision dimension(13) :: qvec
+            double precision dimension(*) :: x
+            double precision dimension(*) :: q
+            double precision dimension(*) :: f
+            integer :: n
+            integer :: ichk
+        end subroutine zmstfun
+        subroutine zmfillw(nwords) ! in :QCDNUM:zmstf/src/zmweits.f
+            integer :: nwords
+        end subroutine zmfillw
+        subroutine zmdumpw(lun,file) ! in :QCDNUM:zmstf/src/zmweits.f
+            integer :: lun
+            character*(*) :: file
+        end subroutine zmdumpw
+        subroutine zmreadw(lun,file,nwords,ierr) ! in :QCDNUM:zmstf/src/zmweits.f
+            integer :: lun
+            character*(*) :: file
+            integer :: nwords
+            integer :: ierr
+        end subroutine zmreadw
+    end interface 
+end python module QCDNUM
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

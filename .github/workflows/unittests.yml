@@ -5,86 +5,29 @@ on:
     branches-ignore:
       - "*docs*"
 
-defaults:
-  run:
-    shell: bash -l {0}
-
-env:
-  UPLOAD_NON_MASTER: false
-
 jobs:
   # build is the <job_id>
   build:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 2
+#      max-parallel: 2
       matrix:
-        python-version: [3.8]
-        include:
-          - python-version: 3.8
-            conda-py: 38
-    env:
-      CONDA_PY: ${{ matrix.conda-py }} # strange way to manage env vars inclusion
-
+        python-version: [3.7, 3.8]
+      fail-fast: false
+    
     steps:
-      # checkout the repo on the github runner
       - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }} 🐍
+        uses: actions/setup-python@v1
         with:
-          token: ${{ secrets.ALE_DIS_PAT }}
-          submodules: "true"
-      # fetch all tags & stuffs
-      #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
-      #   --> needed only for the conda-recipe
-      - name: Fetch tags
-        run: git fetch --unshallow --no-recurse-submodules
-      # use an external action to setup miniconda
-      #   - also setup a conda virtual environment named 'yadism'
-      #
-      # (in order to use the conda venv at each step you need to login with
-      # 'bash -l {0}' in the 'shell' field, and to activate the environment)
-      - uses: goanpeca/setup-miniconda@v1
-        with:
-          auto-update-conda: true
-          miniconda-version: "latest"
-          activate-environment: yadism
           python-version: ${{ matrix.python-version }}
-      # install lhapdf and apfel from the nnpdf conda repo
-      - name: Install lhapdf and apfel with conda
-        run: |
-          conda activate yadism
-          #
-          conda config --add channels https://packages.nnpdf.science/conda
-          conda install -y lhapdf
-          conda install -y apfel
-      # install eko
-      #   - @ the correct commit (no official suitable tag currently available)
-      #   - providing the C dependencies
-      - name: Install eko
-        run: |
-          conda activate yadism
-          #
-          cd eko
-          # git fetch --unshallow
-          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
-          cd ..
-          # install Gnu Scientific Library (GSL)
-          #   sudo works passwordless on github-workflow
-          sudo apt-get install libgsl-dev
-          # install eko (trailing '/' needed!)
-          pip install eko/
       # install the actual python package 'yadism'
       - name: Install yadism
         run: |
-          conda activate yadism
-          #
+          python -m pip install --upgrade pip
           pip install .
       - name: Prepare Test environment
         run: |
-          conda activate yadism
-          # download required data:
-          # - install needed lhapdf PDFSets
-          #lhapdf update
-          #lhapdf get CT14llo_NF3
           # install packages needed for testing
           pip install -r test_requirements.txt
           # generate input db
@@ -96,11 +39,8 @@ jobs:
       #   - only for 'dis', 'eko' is a dependency (supposed to be delivered
       #     already checked)
       - name: Lint with pylint
-        shell: bash -l {0}
         run: |
-          conda activate yadism
-          #
-          conda install -y pylint toml
+          pip install pylint
           # Search for actual errors
           pylint src/*/*.py -E
           # For warnings instead return always zero
@@ -108,15 +48,8 @@ jobs:
       #  run the test with 'pytest'
       - name: Test yadism
         run: |
-          conda activate yadism
           # run tests
           pytest -m quick_check tests
-          #pytest
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v1
-        with:
-          name: htmlcov
-          path: htmlcov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

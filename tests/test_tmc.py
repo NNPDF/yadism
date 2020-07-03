@@ -21,10 +21,9 @@ class MockESF:  # return init arguments
             {
                 "x": 0,
                 "Q2": 0,
-                "q": np.array(self._q),
-                "g": np.array(self._g),
-                "q_error": np.zeros(len(self._q)),
-                "g_error": np.zeros(len(self._g)),
+                "weights": dict(q={1: 1}, g={21: 1}),
+                "values": {"q": np.array(self._q), "g": np.array(self._g),},
+                "errors": {"q": np.zeros(len(self._q)), "g": np.zeros(len(self._g)),},
             }
         )
 
@@ -48,21 +47,22 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            _name = "F2light"
+            name = "F2light"
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
-            def get_ESF(self, _name, kinematics):
+            def get_esf(self, _name, kinematics):
                 # this means F2(x>.6) = 0
                 if kinematics["x"] >= 0.6:
                     return MockESF([0.0, 0.0, 0.0])
                 return MockESF([1e1, 1e2, 1e3])
 
+        # is empty
         def is0(res):
-            assert pytest.approx(res.q, 0, 0) == [0] * 3
-            assert pytest.approx(res.g, 0, 0) == [0] * 3
-            assert pytest.approx(res.q_error, 0, 0) == [0] * 3
-            assert pytest.approx(res.g_error, 0, 0) == [0] * 3
+            assert pytest.approx(res.values["q"], 0, 0) == [0] * 3
+            assert pytest.approx(res.values["g"], 0, 0) == [0] * 3
+            assert pytest.approx(res.errors["q"], 0, 0) == [0] * 3
+            assert pytest.approx(res.errors["g"], 0, 0) == [0] * 3
 
         # build objects
         objSF = MockSF()
@@ -85,11 +85,11 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            _name = "F2light"
+            name = "F2light"
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
-            def get_ESF(self, _name, kinematics):
+            def get_esf(self, _name, kinematics):
                 # this means F2 = pdf
                 if kinematics["x"] == 0.2:
                     return MockESF([1, 0, 0])
@@ -105,13 +105,15 @@ class TestTMC:
         # convolute with constant function
         # res_const = int_xi^1 du/u 1 F2(u)
         res_const = obj._convolute_F2(lambda x: 1)
+        assert isinstance(res_const, ESFResult)
         # res_h2 = int_xi^1 du/u 1/xi*(xi/u) F2(u)  = int_xi^1 du/u 1/u F2(u)
         res_h2 = obj._h2()
+        assert isinstance(res_h2, ESFResult)
 
         def isdelta(pdf):  # assert F2 = pdf
             for x, pdf_val in zip(xg, pdf):
-                ESF_F2 = objSF.get_ESF("", {"x": x, "Q2": 1})
-                F2 = np.matmul(ESF_F2.get_result().q, pdf)
+                ESF_F2 = objSF.get_esf("", {"x": x, "Q2": 1})
+                F2 = np.matmul(ESF_F2.get_result().values["q"], pdf)
                 assert pytest.approx(F2) == pdf_val
 
         # use F2 = pdf = c
@@ -119,12 +121,12 @@ class TestTMC:
             pdf_const = c * np.array([1, 1, 1])
             isdelta(pdf_const)
             # int_const = int_xi^1 du/u = -ln(xi)
-            integral_with_pdf = np.matmul(res_const.q, pdf_const)
+            integral_with_pdf = np.matmul(res_const.values["q"], pdf_const)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
                 -np.log(obj._xi)
             )
             # int_h2 = int_xi^1 du/u^2 = -1 + 1/xi
-            integral_with_pdf = np.matmul(res_h2.q, pdf_const)
+            integral_with_pdf = np.matmul(res_h2.values["q"], pdf_const)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
                 -1.0 + 1.0 / obj._xi
             )
@@ -134,10 +136,10 @@ class TestTMC:
             pdf_lin = c * xg
             isdelta(pdf_lin)
             # int_const = int_xi^1 du = 1-xi
-            integral_with_pdf = np.matmul(res_const.q, pdf_lin)
+            integral_with_pdf = np.matmul(res_const.values["q"], pdf_lin)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (1.0 - obj._xi)
             # int_h2 = int_xi^1 du/u = -ln(xi)
-            integral_with_pdf = np.matmul(res_h2.q, pdf_lin)
+            integral_with_pdf = np.matmul(res_h2.values["q"], pdf_lin)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (
                 -np.log(obj._xi)
             )
@@ -147,11 +149,11 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            _name = "F2light"
+            name = "F2light"
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
-            def get_ESF(self, _name, kinematics):
+            def get_esf(self, _name, kinematics):
                 pass
 
         # build objects

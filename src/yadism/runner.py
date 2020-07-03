@@ -14,17 +14,17 @@ There are two ways of using ``yadism``:
     decide about ``run_dis`` and document it properly in module header
 """
 from typing import Any
-
-import numpy as np
+import time
 
 from eko.interpolation import InterpolatorDispatcher
 from eko.constants import Constants
-from eko.thresholds import Threshold
-from eko.alpha_s import StrongCoupling
+from eko import thresholds
+from eko import strong_coupling
 
 from .output import Output
 from .sf import StructureFunction as SF
 from .structure_functions import ESFmap
+from .coupling_constants import CouplingConstants
 from . import utils
 
 
@@ -58,47 +58,21 @@ class Runner:
         # ============
         self._theory = theory
         self._observables = observables
-        self._n_f: int = theory["NfFF"]
 
         # ===========================
-        # Setup interpolator from eko
+        # Setup eko stuff
         # ===========================
-        polynomial_degree: int = observables["polynomial_degree"]
-        self.interpolator = InterpolatorDispatcher(
-            observables["xgrid"],
-            polynomial_degree,
-            log=observables.get("is_log_interpolation", True),
-            mode_N=False,
-            numba_it=False,  # TODO: make it available for the user to choose
+        self.interpolator = InterpolatorDispatcher.from_dict(
+            observables, mode_N=False, numba_it=False
         )
-
-        # ==========================
-        # Create physics environment
-        # ==========================
         self.constants = Constants()
-
-        FNS = theory["FNS"]
-        q2_ref = pow(theory["Q0"], 2)
-        if FNS != "FFNS":
-            qmc = theory["Qmc"]
-            qmb = theory["Qmb"]
-            qmt = theory["Qmt"]
-            threshold_list = pow(np.array([qmc, qmb, qmt]), 2)
-            nf = None
-        else:
-            nf = theory["NfFF"]
-            threshold_list = None
-        self.threshold = Threshold(
-            q2_ref=q2_ref, scheme=FNS, threshold_list=threshold_list, nf=nf
+        self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
+        self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
+            theory, self.threshold, self.constants
         )
 
-        # Now generate the operator alpha_s class
-        alpha_ref = theory["alphas"]
-        q2_alpha = pow(theory["Qref"], 2)
-        self.strong_coupling = StrongCoupling(
-            self.constants, alpha_ref, q2_alpha, self.threshold
-        )
-
+        # Non-eko theory
+        self.coupling_constants = CouplingConstants.from_dict(theory)
         self.xiF = theory["XIF"]
 
         # ==============================
@@ -109,28 +83,42 @@ class Runner:
             constants=self.constants,
             threshold=self.threshold,
             alpha_s=self.strong_coupling,
+            coupling_constants=self.coupling_constants,
         )
-        theory_stuffs = dict(
+        # FONLL damping powers
+        FONLL_damping = bool(theory["DAMP"])
+        if FONLL_damping:
+            damping_power = theory.get("DAMPPOWER", 2)
+            damping_power_c = theory.get("DAMPPOWERCHARM", damping_power)
+            damping_power_b = theory.get("DAMPPOWERBOTTOM", damping_power)
+            damping_power_t = theory.get("DAMPPOWERTOP", damping_power)
+            damping_powers = [damping_power_c, damping_power_b, damping_power_t]
+        else:
+            damping_powers = [2] * 3
+        # pass theory params
+        theory_params = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
             xiF=self.xiF,
             M2hq=None,
             TMC=theory["TMC"],
             M2target=theory["MP"] ** 2,
+            FONLL_damping=FONLL_damping,
+            damping_powers=damping_powers,
         )
 
         self.observable_instances = {}
-        for name in ESFmap.keys():
+        for name in ESFmap:
             lab = utils.get_mass_label(name)
             if lab is not None:
-                theory_stuffs["M2hq"] = theory[lab] ** 2
+                theory_params["M2hq"] = theory[lab] ** 2
 
             # initialize an SF instance for each possible structure function
             obj = SF(
                 name,
                 runner=self,
                 eko_components=eko_components,
-                theory_stuffs=theory_stuffs,
+                theory_params=theory_params,
             )
 
             # read kinematics
@@ -166,9 +154,14 @@ class Runner:
                 * docs
                 * get_output pipeline
         """
+        start = time.time()
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
                 self._output[name] = obs.get_output()
+        end = time.time()
+        diff = end - start
+        # TODO move to log and make more readable
+        print(f"took {diff:.2f} s")
 
         return self._output
 

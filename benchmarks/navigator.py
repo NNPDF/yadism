@@ -10,24 +10,29 @@ from human_dates import human_dates
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / "aux"))
-from apfel_utils import unstr_datetime  # pylint:disable=import-error,wrong-import-position
+from external_utils import (  # pylint:disable=import-error,wrong-import-position
+    unstr_datetime,
+)
 
 # database access
 here = pathlib.Path(__file__).parent.absolute()
-db_APFEL = TinyDB(here / "data" / "input.json")
+db_external = TinyDB(here / "data" / "input.json")
 db_regression = TinyDB(here / "data" / "regression.json")
 
 idb = None
 
-def check_apfel():
+
+def check_external():
     global idb
-    print("APFEL mode activated")
-    idb = db_APFEL
+    print("EXTERNAL mode activated")
+    idb = db_external
+
 
 def check_regression():
     global idb
     print("regression mode activated")
     idb = db_regression
+
 
 # Theory ------------------
 # all theories
@@ -46,7 +51,7 @@ def list_all_theories():
     data = []
     for t in theories:
         obj = {"doc_id": t.doc_id}
-        for f in ["PTO", "XIF", "XIR", "TMC"]:
+        for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS"]:
             obj[f] = t[f]
         dt = unstr_datetime(t["_modify_time"])
         obj["modified"] = human_dates(dt)
@@ -444,7 +449,7 @@ get = g
 
 def subtract_tables(id1, id2):
     """
-        Subtract yadism and APFEL result in the second table from the first one,
+        Subtract results in the second table from the first one,
         properly propagate the integration error and recompute the relative
         error on the subtracted results.
 
@@ -485,37 +490,78 @@ def subtract_tables(id1, id2):
         # load observable tables
         table1 = pd.DataFrame(log1[obs])
         table2 = pd.DataFrame(log2[obs])
+        table_out = table2.copy()
 
         # check for compatible kinematics
         if any([any(table1[y] != table2[y]) for y in ["x", "Q2"]]):
             raise ValueError("Cannot compare tables with different (x, Q2)")
 
         # subtract and propagate
-        table2["APFEL"] -= table1["APFEL"]
-        table2["yadism"] -= table1["yadism"]
-        table2["yadism_error"] += table1["yadism_error"]
+        known_col_set = set(["x", "Q2", "yadism", "yadism_error", "rel_err[%]"])
+        t1_ext = list(set(table1.keys()) - known_col_set)[0]
+        t2_ext = list(set(table2.keys()) - known_col_set)[0]
+        if t1_ext == t2_ext:
+            tout_ext = t1_ext
+        else:
+            tout_ext = f"{t2_ext}-{t1_ext}"
+        table_out.rename(columns={t2_ext: tout_ext}, inplace=True)
+        table_out[tout_ext] = table2[t2_ext] - table1[t1_ext]
+        # subtract our values
+        table_out["yadism"] -= table1["yadism"]
+        table_out["yadism_error"] += table1["yadism_error"]
 
         # compute relative error
         def rel_err(row):
-            if row["APFEL"] == 0.0:
+            if row[tout_ext] == 0.0:
                 if row["yadism"] == 0.0:
                     return 0.0
                 return np.nan
             else:
-                return (row["yadism"] / row["APFEL"] - 1.0) * 100
+                return (row["yadism"] / row[tout_ext] - 1.0) * 100
 
-        table2["rel_err[%]"] = table2.apply(rel_err, axis=1)
+        table_out["rel_err[%]"] = table_out.apply(rel_err, axis=1)
 
         # dump results' table
-        # with open(output_f, "w") as f:
-        # table2.to_csv(f)
         diffout.print(obs, "-" * len(obs), sep="\n")
-        diffout.register(table2)
+        diffout.register(table_out)
 
     return diffout
 
 
 diff = subtract_tables
+
+
+def join(id1, id2):
+    tabs = []
+    tabs1 = []
+    exts = []
+    suffixes = (f" ({id1})", f" ({id2})")
+
+    for i, doc_id in enumerate([id1, id2]):
+        tabs += [dfl(doc_id)[0]]
+        tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
+        exts += [
+            tabs1[i].columns.drop(["x", "Q2"])[0]
+        ]  # + suffixes[i]] # TODO the suffixes are not working as expected
+
+    def rel_err(row):
+        ref = row[exts[0]]
+        cmp = row[exts[1]]
+        if ref != 0:
+            return (cmp / ref - 1) * 100
+        else:
+            return np.nan
+
+    tab_joint = tabs1[0].merge(tabs1[1], on=["x", "Q2"], how="outer", suffixes=suffixes)
+    tab_joint["ext_rel_err [%]"] = tab_joint.apply(rel_err, axis=1)
+
+    if all(np.isclose(tabs[0]["yadism"], tabs[1]["yadism"])):
+        tab_joint["yadism"] = tabs[0]["yadism"]
+        tab_joint["yadism_error"] = tabs[0]["yadism_error"]
+    else:
+        pass
+
+    return tab_joint
 
 
 def compare_dicts(d1, d2, exclude_underscored=False):

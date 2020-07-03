@@ -4,11 +4,16 @@ from datetime import datetime
 
 import tinydb
 import numpy as np
-#import yaml
+
+# import yaml
+ask = input("Do you want to refill the regression observables? [y/n]")
+if ask != "y":
+    print("Nothing done.")
+    sys.exit()
 
 here = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(here / ".." / "aux"))
-from apfel_utils import (  # pylint:disable=import-error,wrong-import-position
+from external_utils import (  # pylint:disable=import-error,wrong-import-position
     str_datetime,
 )
 
@@ -35,12 +40,12 @@ content = dict(
     _modify_time=str_datetime(datetime.now()),
 )
 
-content["F2light"] = [dict(x=0.01, Q2=90),dict(x=0.8, Q2=190)]
+content["F2light"] = [dict(x=0.01, Q2=90), dict(x=0.8, Q2=190)]
 content["FLlight"] = [dict(x=0.1, Q2=190)]
 
 for kind in ["F2", "FL"]:
-    content[f"{kind}charm"] = [dict(x=0.01,Q2=50)]
-    content[f"{kind}bottom"] = [dict(x=0.01,Q2=100)]
-    content[f"{kind}top"] = [dict(x=0.01,Q2=1000)]
+    content[f"{kind}charm"] = [dict(x=0.01, Q2=50)]
+    content[f"{kind}bottom"] = [dict(x=0.01, Q2=100)]
+    content[f"{kind}top"] = [dict(x=0.01, Q2=1000)]
 
 obs_table.insert(content)

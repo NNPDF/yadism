@@ -39,28 +39,35 @@ optional:
 -->
 
 ## Scope of the project
+
 Provide all necessary tools to compute the DIS structure functions and related object. This project is linked closely to [EKO](https://github.com/N3PDF/eko).
 
 ## Installation
+
+Once all the dependencies are available simply run:
+
 ```
 python setup.py install
 ```
 
 ## Documentation
+
 The documentation style of this code follows closely the [numpy documentation
 guide](https://numpydoc.readthedocs.io/en/latest/format.html).
 
 Docs available at: https://n3pdf.github.io/dis/
 
 ## Development
+
 Members of the development team should always follow the [contribution
 guidelines](.github/contributing.md), to have a uniform strategy in code
 development and improve collaboration.
 
 ## Contributing or contacting the authors
+
 For any kind of interaction consider before to read [external contribution
 guidelines](.github/contributing.md#external-contributions), otherwise just send
 an email to the authors:
-- [Felix Hekhorn](mailto:felix.hekhorn@mi.infn.it)
-- [Stefano Carrazza](mailto:stefano.carrazza@cern.ch)
+
 - [Alessandro Candido](mailto:alessandro.candido@mi.infn.it)
+- [Felix Hekhorn](mailto:felix.hekhorn@mi.infn.it)

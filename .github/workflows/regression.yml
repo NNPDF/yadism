@@ -1,60 +1,30 @@
 name: yadism-regression
 
 on:
-  - push
-
-env:
-  UPLOAD_NON_MASTER: false
+  push:
+    branches-ignore:
+      - "*docs*"
 
 jobs:
   # build is the <job_id>
   build:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 2
+#      max-parallel: 2
       matrix:
-        python-version: [3.8]
-        include:
-          - python-version: 3.8
+        python-version: [3.7, 3.8]
+      fail-fast: false
 
     steps:
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
-      # checkout submodules
-      - name: Checkout submodules
-        uses: actions/checkout@v2
-        with:
-          repository: N3PDF/eko
-          token: ${{ secrets.ALE_DIS_PAT }}
-          path: eko
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      # fetch all tags & stuffs
-      #   in order to make GIT_DESCRIBE_* available (from git describe --tags)
-      #   --> needed only for the conda-recipe
-      - name: Fetch tags
-        run: git fetch --unshallow --no-recurse-submodules
-      # install eko
-      #   - @ the correct commit (no official suitable tag currently available)
-      #   - providing the C dependencies
-      - name: Install eko
-        run: |
-          #
-          cd eko
-          # git fetch --unshallow
-          # git checkout 8b4f1c44664ed699d455c52c80f2bd1f9c0c642d
-          cd ..
-          # install Gnu Scientific Library (GSL)
-          #   sudo works passwordless on github-workflow
-          sudo apt-get install libgsl-dev
-          # install eko (trailing '/' needed!)
-          pip install eko/
       # install the actual python package 'yadism'
       - name: Install yadism
         run: |
-          #
           pip install .
       - name: Prepare Test environment
         run: |
@@ -68,12 +38,6 @@ jobs:
         run: |
           # run tests
           pytest -m regression
-          #pytest
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v1
-        with:
-          name: htmlcov
-          path: htmlcov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

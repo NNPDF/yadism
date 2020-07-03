@@ -17,6 +17,7 @@ The :eqref:`2.3`. |DIS|
 
    Structure <package-structure/index.rst>
    API <modules/yadism.rst>
+   Miscellanea <misc/index.rst>
 
 
 .. todo::

@@ -28,7 +28,8 @@ class EvaluatedStructureFunctionF2heavy(ESFH):
     """
         Compute F2 structure functions for heavy quark flavours.
 
-        This class inherits from :py:class:`ESFH`, providing only the formulas
+        This class inherits from :py:class:`EvaluatedStructureFunctionHeavy`,
+        providing only the formulas
         for coefficient functions, while all the machinery for dealing with
         distributions, making convolution with PDFs, and packaging results is
         completely defined in the parent (and, mainly, in its own parent).
@@ -49,25 +50,23 @@ class EvaluatedStructureFunctionF2heavy(ESFH):
 
             Returns
             -------
-            sequence of callables
-                coefficient functions, as two arguments functions: :py:`(x, Q2)`
+                sequence of callables
+                    coefficient functions, as two arguments functions: :py:`(x, Q2)`
 
             Note
             ----
-            Immediately check if the available energy is below threshold for
-            flavour production (no other calculation is needed nor performed in
-            this case).
+                Immediately check if the available energy is below threshold for
+                flavour production (no other calculation is needed nor performed in
+                this case).
 
         """
-        CF = self._SF.constants.CF
 
         def cg(z):
             if self.is_below_threshold(z):
                 return 0
             # fmt: off
-            return self._FHprefactor * self._charge_em ** 2 * (
-                3 * CF / 4
-                * (-np.pi * self._rho_p(z) ** 3)
+            return self._FHprefactor * (
+                (-np.pi * self._rho_p(z) ** 3)
                 / (4 * self._rho(z) ** 2 * self._rho_q ** 2)
                 * (
                     2 * self._beta(z) * (
@@ -91,16 +90,16 @@ class EvaluatedStructureFunctionF2charm(EvaluatedStructureFunctionF2heavy):
         Compute F2 structure functions for *charm* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`ESF_F2heavy`.
+        :py:class:`EvaluatedStructureFunctionF2heavy`.
         Currently this class sets only:
 
-        - electric charge = 2/3
+        - nhq = 4
 
     """
 
-    def __init__(self, SF, kinematics):
+    def __init__(self, SF, kinematics, force_local=False):
         super(EvaluatedStructureFunctionF2charm, self).__init__(
-            SF, kinematics, charge_em=2 / 3
+            SF, kinematics, 4, force_local
         )
 
 
@@ -109,16 +108,16 @@ class EvaluatedStructureFunctionF2bottom(EvaluatedStructureFunctionF2heavy):
         Compute F2 structure functions for *bottom* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`ESF_F2heavy`.
+        :py:class:`EvaluatedStructureFunctionF2heavy`.
         Currently this class sets only:
 
-        - electric charge = 1/3
+        - nhq = 5
 
     """
 
-    def __init__(self, SF, kinematics):
+    def __init__(self, SF, kinematics, force_local=False):
         super(EvaluatedStructureFunctionF2bottom, self).__init__(
-            SF, kinematics, charge_em=1 / 3
+            SF, kinematics, 5, force_local
         )
 
 
@@ -127,14 +126,14 @@ class EvaluatedStructureFunctionF2top(EvaluatedStructureFunctionF2heavy):
         Compute F2 structure functions for *top* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`ESF_F2heavy`.
+        :py:class:`EvaluatedStructureFunctionF2heavy`.
         Currently this class sets only:
 
-        - electric charge = 2/3
+        - nhq = 6
 
     """
 
-    def __init__(self, SF, kinematics):
+    def __init__(self, SF, kinematics, force_local=False):
         super(EvaluatedStructureFunctionF2top, self).__init__(
-            SF, kinematics, charge_em=2 / 3
+            SF, kinematics, 6, force_local
         )

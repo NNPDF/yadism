@@ -18,7 +18,7 @@ ignore-patterns=
 #init-hook=
 
 # Use multiple processes to speed up Pylint.
-jobs=2
+jobs=1
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
@@ -423,7 +423,7 @@ ignored-classes=optparse.Values,thread._local,_thread._local
 # (useful for modules/projects where namespaces are manipulated during runtime
 # and thus existing member attributes cannot be deduced by static analysis. It
 # supports qualified module names, as well as Unix pattern matching.
-ignored-modules=matplotlib.cm,eko
+ignored-modules=matplotlib.cm,eko,QCDNUM
 
 # Show a hint with possible names when a member name was not found. The aspect
 # of finding the hint is based on edit distance.
