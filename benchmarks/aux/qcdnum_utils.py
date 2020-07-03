@@ -1,6 +1,8 @@
 import pathlib
 import numpy as np
 
+from yadism import observable_name as on
+
 
 def compute_qcdnum_data(
     theory, observables, pdf
@@ -42,7 +44,7 @@ def compute_qcdnum_data(
     q2min = 10
     q2max = 20
     for obs in observables:
-        if obs[0] != "F":
+        if not on.ObservableName.is_valid(obs):
             continue
         for kin in observables[obs]:
             xmin = min(xmin, kin["x"])
@@ -56,11 +58,12 @@ def compute_qcdnum_data(
     iosp = 3
     n_x = 289
     n_q = 60
-    af = 1 / theory["XIF"] ** 2
+    af = 1.0 / theory["XIF"] ** 2
+    bf = 0.0
     QCDNUM.gxmake(
         xarr, xwarr, n_x, iosp
     )  # grid walls, grid weights, points, interpolation type
-    qarr = [q2min / af, q2max / af]
+    qarr = [q2min / af * 0.99, q2max / af * 1.01]
     qwarr = [1, 1]
     QCDNUM.gqmake(qarr, qwarr, n_q)
 
@@ -83,28 +86,29 @@ def compute_qcdnum_data(
     iset = 1
 
     # Try to read the ZM-weight file and create one if that fails
-    zmlunw = QCDNUM.nxtlun(10)
-    _nwords, ierr = QCDNUM.zmreadw(zmlunw, zmname)
-    if ierr != 0:
-        QCDNUM.zmfillw()
-        QCDNUM.zmdumpw(zmlunw, zmname)
-    # set fact. scale
-    bf = 0.0
-    QCDNUM.zmdefq2(af, bf)
-    QCDNUM.zswitch(iset)
+    if on.ObservableName.has_lights(observables.keys()):
+        zmlunw = QCDNUM.nxtlun(10)
+        _nwords, ierr = QCDNUM.zmreadw(zmlunw, zmname)
+        if ierr != 0:
+            QCDNUM.zmfillw()
+            QCDNUM.zmdumpw(zmlunw, zmname)
+        # set fact. scale
+        QCDNUM.zmdefq2(af, bf)
+        QCDNUM.zswitch(iset)
 
     # Try to read the HQ-weight file and create one if that fails
-    hqlunw = QCDNUM.nxtlun(10)
-    _nwords, ierr = QCDNUM.hqreadw(hqlunw, hqname)
-    if ierr != 0:
-        QCDNUM.hqfillw(3, [mc, mb, mt], af, bf)
-        QCDNUM.hqdumpw(hqlunw, hqname)
+    if on.ObservableName.has_heavies(observables.keys()):
+        hqlunw = QCDNUM.nxtlun(10)
+        _nwords, ierr = QCDNUM.hqreadw(hqlunw, hqname)
+        if ierr != 0:
+            QCDNUM.hqfillw(3, [mc, mb, mt], af, bf)
+            QCDNUM.hqdumpw(hqlunw, hqname)
+        QCDNUM.hswitch(iset)
 
     # set ren scale
     arf = theory["XIR"] ** 2 / theory["XIF"] ** 2
     brf = 0
     QCDNUM.setabr(arf, brf)
-    QCDNUM.hswitch(iset)
 
     # setup external PDF
     class PdfCallable:
@@ -126,17 +130,17 @@ def compute_qcdnum_data(
 
     num_tab = {}
     for obs in observables:
-        if obs[0] != "F":
+        if not on.ObservableName.is_valid(obs):
             continue
         # select key by kind
-        kind = obs[:2]
+        obs_name = on.ObservableName(obs)
         kind_key = None
-        if kind == "F2":
+        if obs_name.kind == "F2":
             kind_key = 2
-        elif kind == "FL":
+        elif obs_name.kind == "FL":
             kind_key = 1
         else:
-            raise NotImplementedError(f"kind {kind} is not implemented!")
+            raise NotImplementedError(f"kind {obs_name.kind} is not implemented!")
 
         # collect kins
         xs = []
@@ -145,8 +149,7 @@ def compute_qcdnum_data(
             xs.append(kin["x"])
             q2s.append(kin["Q2"])
         # select fnc by flavor
-        flavor = obs[2:]
-        if flavor == "light":
+        if obs_name.flavor == "light":
             QCDNUM.setord(1 + theory["PTO"])  # 1 = LO, ...
             weights = (
                 np.array(
@@ -179,11 +182,11 @@ def compute_qcdnum_data(
                 fs = [0.0] * len(xs)
             else:
                 QCDNUM.setord(theory["PTO"])  # 1 = LO, ...
-                if flavor == "charm":
+                if obs_name.flavor == "charm":
                     fs = QCDNUM.hqstfun(kind_key, 1, weights, xs, q2s, 1)
-                elif flavor == "bottom":
+                elif obs_name.flavor == "bottom":
                     fs = QCDNUM.hqstfun(kind_key, -2, weights, xs, q2s, 1)
-                elif flavor == "top":
+                elif obs_name.flavor == "top":
                     fs = QCDNUM.hqstfun(kind_key, -3, weights, xs, q2s, 1)
         # reshuffle output
         f_out = []

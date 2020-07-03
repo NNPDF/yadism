@@ -1,4 +1,3 @@
-from datetime import datetime
 import platform
 
 import numpy as np

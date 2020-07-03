@@ -395,10 +395,9 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             self._compute_local()
         else:
             # compute zero-mass part
-            name = self._SF.name
-            kind = name[:2]
+            obs_name = self._SF.obs_name
             res_light = self._SF.get_esf(
-                kind + "light", {"x": self._x, "Q2": self._Q2}, 1
+                obs_name.apply_flavor("light"), {"x": self._x, "Q2": self._Q2}, 1
             ).get_result()
             # readjust the weights
             ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
@@ -415,10 +414,10 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             ):
                 # collect all parts
                 res_heavy = self._SF.get_esf(
-                    name, {"x": self._x, "Q2": self._Q2}, force_local=True
+                    obs_name, {"x": self._x, "Q2": self._Q2}, force_local=True
                 ).get_result()
                 res_asy = self._SF.get_esf(
-                    name + "asy", {"x": self._x, "Q2": self._Q2}
+                    obs_name.get_asy(), {"x": self._x, "Q2": self._Q2}
                 ).get_result()
                 # add damping
                 damp = 1

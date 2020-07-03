@@ -23,8 +23,8 @@ class StructureFunction:
 
         Parameters
         ----------
-            name : str
-                common name, e.g. F2light, F2charm, FLbottom
+            obs_name : .observable_name.ObservableName
+                name
             eko_components : dict
                 managers dictionary that holds all created managers (which wrap
                 some more complicated structure)
@@ -32,10 +32,10 @@ class StructureFunction:
                 theory dictionary containing all needed parameters
     """
 
-    def __init__(self, name, runner=None, *, eko_components, theory_params):
+    def __init__(self, obs_name, runner=None, *, eko_components, theory_params):
         # internal managers
-        self.name = name
-        self.__ESF = ESFmap[name] if theory_params["TMC"] == 0 else ESFTMCmap[name[:2]]
+        self.obs_name = obs_name
+        self.__ESF = ESFmap[obs_name.name] if theory_params["TMC"] == 0 else ESFTMCmap[obs_name.kind]
         self.__runner = runner
         self.__ESFs = []
         self.__ESFcache = {}
@@ -72,7 +72,7 @@ class StructureFunction:
                 self.__ESF(self, kinematics)
             )  # TODO delegate this to get_esf?
 
-    def get_esf(self, name, kinematics, *args, use_raw=True, force_local=False):
+    def get_esf(self, obs_name, kinematics, *args, use_raw=True, force_local=False):
         """
             Returns a *raw* :py:class:`EvaluatedStructureFunction` instance.
 
@@ -86,7 +86,7 @@ class StructureFunction:
 
             Parameters
             ----------
-                name : string
+                obs_name : .observable_name.ObservableName
                     structure function name
                 kinematics : dict
                     kinematic configuration
@@ -102,11 +102,11 @@ class StructureFunction:
         """
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
-            obj = ESFmap[name](self, kinematics, force_local=True)
+            obj = ESFmap[obs_name.name](self, kinematics, force_local=True)
             return obj
         # else we're happy to cache
         # is it us or do we need to delegate?
-        if name == self.name:
+        if obs_name == self.obs_name:
             # convert to tuple
             key = list(kinematics.values())
             key.append(use_raw)
@@ -117,15 +117,15 @@ class StructureFunction:
                 return self.__ESFcache[key]
             except KeyError:
                 if not use_raw and self.TMC != 0:
-                    obj = ESFTMCmap[self.name[:2]]
+                    obj = ESFTMCmap[obs_name.kind]
                 else:
-                    obj = ESFmap[name](self, kinematics, *args)
+                    obj = ESFmap[obs_name.name](self, kinematics, *args)
                 self.__ESFcache[key] = obj
                 return obj
         else:
             # ask our parent (as always)
-            return self.__runner.observable_instances[name].get_esf(
-                name, kinematics, *args
+            return self.__runner.observable_instances[obs_name.name].get_esf(
+                obs_name, kinematics, *args
             )
 
     def get_output(self):

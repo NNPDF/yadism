@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import copy
 
-# import numpy as np
-# import pytest
-
+from yadism import observable_name
 from yadism.structure_functions import f_total
 from yadism.structure_functions import esf_result
 
@@ -21,24 +19,24 @@ class MockESF:
 
 
 class MockPDFdonly:
-    def xfxQ2(self, pid, x, Q2):
+    def xfxQ2(self, pid, _x, _Q2):
         if pid == 1:
             return 1.0  # it is xfxQ2! beware of the additional x
         return 0
 
 
 class MockSF:
-    name = "F2total"
+    obs_name = observable_name.ObservableName("F2total")
     interpolator = MockInterpolator()
 
-    def get_esf(self, name, kinematics, **_kwargs):
+    def get_esf(self, obs_name, kinematics, **_kwargs):
         src = copy.deepcopy(kinematics)
-        if name == "F2light":
+        if obs_name.name == "F2light":
             src.update(
                 {"values": {"q": [1]}, "errors": {"q": [0]}, "weights": {"q": {1: 1}}}
             )
             return MockESF(esf_result.ESFResult.from_dict(src))
-        if name == "F2charm":
+        if obs_name.name == "F2charm":
             src.update(
                 {"values": {"q": [2]}, "errors": {"q": [0]}, "weights": {"q": {1: 2}}}
             )
