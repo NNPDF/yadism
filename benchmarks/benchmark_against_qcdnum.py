@@ -36,7 +36,7 @@ class TestPlain:
         t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.TMC == 0
 
-        o_query = p.obs_query.F2light.exists()
+        o_query = p.obs_query.F2charm.exists()
 
         p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
 
@@ -129,8 +129,8 @@ class TestFNS:
 
 if __name__ == "__main__":
     plain = TestPlain()
-    # plain.test_LO()
-    # plain.test_NLO()
+    #plain.test_LO()
+    plain.test_NLO()
 
     sv = TestScaleVar()
     # sv.test_LO()
@@ -138,4 +138,4 @@ if __name__ == "__main__":
 
     fns = TestFNS()
     # fns.test_LO()
-    fns.test_NLO()
+    # fns.test_NLO()

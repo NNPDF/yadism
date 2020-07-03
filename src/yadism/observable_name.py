@@ -84,7 +84,7 @@ class ObservableName:
                 is_heavy : bool
                     is a heavy flavor?
         """
-        return self.flavor in heavys
+        return not self.flavor == "light"
 
     @classmethod
     def has_heavies(cls,names):
@@ -106,6 +106,29 @@ class ObservableName:
                 continue
             o = cls(n)
             if o.is_heavy:
+                return True
+        return False
+
+    @classmethod
+    def has_lights(cls,names):
+        """
+            Are there any light objects in names?
+
+            Parameters
+            ----------
+                names : list(str)
+                    names to check
+
+            Returns
+            -------
+                has_lights : bool
+                    are there light obs in names?
+        """
+        for n in names:
+            if not cls.is_valid(n):
+                continue
+            o = cls(n)
+            if o.flavor == "light":
                 return True
         return False
 
