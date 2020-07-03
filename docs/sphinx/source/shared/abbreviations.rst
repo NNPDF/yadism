@@ -10,6 +10,9 @@
 .. |NC| replace::
    :abbr:`NC (Neutral Current)`
 
+.. |EM| replace::
+   :abbr:`EM (Electromagnetic Current)`
+
 .. -------------------
    perturbative orders
    -------------------

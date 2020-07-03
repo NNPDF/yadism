@@ -274,6 +274,7 @@ autodoc_default_options = {
     # "members": "var1, var2",
     # "member-order": "bysource",
     "special-members": True,
+    "private-members": True,
     # "inherited-members": True,
     # "undoc-members": True,
     "exclude-members": "__weakref__, __init__, __dict__, __module__"

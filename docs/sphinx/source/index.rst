@@ -25,8 +25,8 @@ In these :underlined:`documents` you can find the reference for all *yadism* API
 
 **Features** already implemented include:
 
-- |LO| structure functions (|NC|)
-- |NLO| structure functions (|NC|)
+- |LO| structure functions (|EM|)
+- |NLO| structure functions (|EM|)
 - |NLO| scale variations
 - |NLO| target mass corrections
   
