@@ -21,7 +21,7 @@ from recommonmark.transform import AutoStructify
 # -- Project information -----------------------------------------------------
 
 project = "yadism"
-copyright = "2019, the N3PDF team" # pylint: disable=redefined-builtin
+copyright = "2019, the N3PDF team"  # pylint: disable=redefined-builtin
 author = "N3PDF team"
 
 # The short X.Y version
@@ -105,7 +105,7 @@ rst_prolog = "\n".join([open(x).read() for x in os.scandir(shared)])
 #
 html_theme = "sphinx_rtd_theme"
 
-html_logo = "../../logo-docs.svg"
+html_logo = "../../logo-docs.pdf"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
