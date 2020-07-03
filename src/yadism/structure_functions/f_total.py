@@ -19,7 +19,6 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
 
     def __init__(self, SF, kinematics: dict):
         super(EvaluatedStructureFunctionFtotal, self).__init__(SF, kinematics)
-        self._sf_kind = self._SF.name[:2]
 
     def get_result(self):
         """
@@ -34,19 +33,19 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
         kin = {"x": self._x, "Q2": self._Q2}
         # light component
         res_light = self._SF.get_esf(
-            self._sf_kind + "light", kin, use_raw=False
+            self._SF.obs_name.apply_flavor("light"), kin, use_raw=False
         ).get_result()
         # charm component
         res_charm = self._SF.get_esf(
-            self._sf_kind + "charm", kin, use_raw=False
+            self._SF.obs_name.apply_flavor("charm"), kin, use_raw=False
         ).get_result()
         # bottom component
         res_bottom = self._SF.get_esf(
-            self._sf_kind + "bottom", kin, use_raw=False
+            self._SF.obs_name.apply_flavor("bottom"), kin, use_raw=False
         ).get_result()
         # top component
         res_top = self._SF.get_esf(
-            self._sf_kind + "top", kin, use_raw=False
+            self._SF.obs_name.apply_flavor("top"), kin, use_raw=False
         ).get_result()
         # rename and add
         return (
@@ -58,30 +57,30 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
 
     def _compute_weights(self):
         raise NotImplementedError(
-            f"{self._sf_kind}total: this method should never be called!"
+            f"{self._SF.obs_name.name}: this method should never be called!"
         )
 
     def quark_0(self):
         raise NotImplementedError(
-            f"{self._sf_kind}total: this method should never be called!"
+            f"{self._SF.obs_name.name}: this method should never be called!"
         )
 
     def quark_1(self):
         raise NotImplementedError(
-            f"{self._sf_kind}total: this method should never be called!"
+            f"{self._SF.obs_name.name}: this method should never be called!"
         )
 
     def quark_1_fact(self):
         raise NotImplementedError(
-            f"{self._sf_kind}total: this method should never be called!"
+            f"{self._SF.obs_name.name}: this method should never be called!"
         )
 
     def gluon_1(self):
         raise NotImplementedError(
-            f"{self._sf_kind}total: this method should never be called!"
+            f"{self._SF.obs_name.name}: this method should never be called!"
         )
 
     def gluon_1_fact(self):
         raise NotImplementedError(
-            f"{self._sf_kind}total: this method should never be called!"
+            f"{self._SF.obs_name.name}: this method should never be called!"
         )

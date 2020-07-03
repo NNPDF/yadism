@@ -25,7 +25,7 @@ from .output import Output
 from .sf import StructureFunction as SF
 from .structure_functions import ESFmap
 from .coupling_constants import CouplingConstants
-from . import utils
+from . import observable_name
 
 
 class Runner:
@@ -109,13 +109,14 @@ class Runner:
 
         self.observable_instances = {}
         for name in ESFmap:
-            lab = utils.get_mass_label(name)
+            obs_name = observable_name.ObservableName(name)
+            lab = obs_name.mass_label
             if lab is not None:
                 theory_params["M2hq"] = theory[lab] ** 2
 
             # initialize an SF instance for each possible structure function
             obj = SF(
-                name,
+                obs_name,
                 runner=self,
                 eko_components=eko_components,
                 theory_params=theory_params,

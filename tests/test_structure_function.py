@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-# from eko.interpolation import InterpolatorDispatcher
-
+from yadism import observable_name
 from yadism.sf import StructureFunction
 from yadism.structure_functions import ESFmap
 
@@ -48,19 +47,20 @@ class TestStructureFunction:
 
         # becarefull about what the esf instantiation need
         for name in ["FLlight", "F2light"]:
+            obs_name = observable_name.ObservableName(name)
             sf = StructureFunction(
-                name, r, eko_components=eko_components, theory_params=theory_params
+                obs_name, r, eko_components=eko_components, theory_params=theory_params
             )
             # test mapping to self
             assert sf._StructureFunction__ESF == ESFmap[name]
             assert len(sf._StructureFunction__ESFcache) == 0
-            obj = sf.get_esf(name, {"x": 0.5, "Q2": 1})
+            obj = sf.get_esf(obs_name, {"x": 0.5, "Q2": 1})
             assert isinstance(obj, ESFmap[name])
             # check creation
             assert len(sf._StructureFunction__ESFcache) == 1
             assert list(sf._StructureFunction__ESFcache.values())[0] == obj
             # check caching
-            obj2 = sf.get_esf(name, {"x": 0.5, "Q2": 1})
+            obj2 = sf.get_esf(obs_name, {"x": 0.5, "Q2": 1})
             assert len(sf._StructureFunction__ESFcache) == 1
 
     def test_get_esf_outside_grid(self):
@@ -68,7 +68,7 @@ class TestStructureFunction:
         eko_components = MockDict()
         theory_params = MockDict()
 
-        name = "FLlight"
+        name = observable_name.ObservableName("FLlight")
 
         sf = StructureFunction(
             name, r, eko_components=eko_components, theory_params=theory_params
