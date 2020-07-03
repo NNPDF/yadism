@@ -420,10 +420,14 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 res_asy = self._SF.get_esf(
                     name + "asy", {"x": self._x, "Q2": self._Q2}
                 ).get_result()
+                # add damping
+                damp = 1
+                if self._SF.FONLL_damping:
+                    power = self._SF.damping_powers[self._nhq - 3]
+                    damp = np.power(1.0 - self._SF.M2hq / self._Q2, power)
                 # join all
-                self._res = (
-                    res_heavy.suffix(f"_{scheme}_heavy")
-                    + res_light.suffix(f"_{scheme}_light")
+                self._res = res_heavy.suffix(f"_{scheme}_heavy") + damp * (
+                    res_light.suffix(f"_{scheme}_light")
                     - res_asy.suffix(f"_{scheme}_asymptotic")
                 )
             else:

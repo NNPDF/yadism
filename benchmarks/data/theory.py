@@ -35,6 +35,7 @@ matrix = {
     "TMC": [0, 1, 2, 3],
     "NfFF": [3, 4, 5],
     "FNS": ["FFNS", "ZM-VFNS", "FONLL-A"],
+    "DAMP": [0, 1],
 }
 
 

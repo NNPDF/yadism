@@ -53,6 +53,8 @@ class StructureFunction:
         self.M2hq = theory_params["M2hq"]
         self.TMC = theory_params["TMC"]
         self.M2target = theory_params["M2target"]
+        self.FONLL_damping = theory_params["FONLL_damping"]
+        self.damping_powers = theory_params["damping_powers"]
 
     def load(self, kinematic_configs):
         """

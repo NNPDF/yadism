@@ -85,6 +85,17 @@ class Runner:
             alpha_s=self.strong_coupling,
             coupling_constants=self.coupling_constants,
         )
+        # FONLL damping powers
+        FONLL_damping = bool(theory["DAMP"])
+        if FONLL_damping:
+            damping_power = theory.get("DAMPPOWER", 2)
+            damping_power_c = theory.get("DAMPPOWERCHARM", damping_power)
+            damping_power_b = theory.get("DAMPPOWERBOTTOM", damping_power)
+            damping_power_t = theory.get("DAMPPOWERTOP", damping_power)
+            damping_powers = [damping_power_c, damping_power_b, damping_power_t]
+        else:
+            damping_powers = [2] * 3
+        # pass theory params
         theory_params = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
@@ -92,10 +103,12 @@ class Runner:
             M2hq=None,
             TMC=theory["TMC"],
             M2target=theory["MP"] ** 2,
+            FONLL_damping=FONLL_damping,
+            damping_powers=damping_powers,
         )
 
         self.observable_instances = {}
-        for name in ESFmap.keys():
+        for name in ESFmap:
             lab = utils.get_mass_label(name)
             if lab is not None:
                 theory_params["M2hq"] = theory[lab] ** 2
