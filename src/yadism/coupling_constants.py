@@ -9,7 +9,7 @@ class CouplingConstants:
     def __init__(self):
         # electric charge
         self.electric_charge = {21: 0}
-        for q in range(7):
+        for q in range(1, 7):
             self.electric_charge[q] = 2 / 3 if q % 2 == 0 else -1 / 3
             self.electric_charge[-q] = -self.electric_charge[q]
         self.electric_charge_sq = {
@@ -17,7 +17,7 @@ class CouplingConstants:
         }
 
     @classmethod
-    def from_theory(cls, _theory):
+    def from_dict(cls, _theory):
         """
             Creates the object from the theory dictionary
 

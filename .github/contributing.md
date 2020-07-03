@@ -5,7 +5,35 @@ contributions guidelines](.github/contributing.md#external-contributions)
 
 ## Internal development
 
+### Installation
+
+#### Test Dependencies
+
+Currently this package has two non-python test dependencies:
+
+- `lhapdf`, provides PDF sets, only required for benchmarks
+- `apfel`, only required for benchmarks
+
+For `apfel` and `lhapdf` you should get them following the instructions on their
+respective official distribution sources.
+Than make sure to make them available in your python (virtual)environment.
+
+Install the other dependencies using:
+
+```
+pip install -r test_requirements.txt --ignore-installed
+```
+
+#### Docs dependencies
+
+Install the dependencies using:
+
+```
+pip install -r doc_requirements.txt --ignore-installed
+```
+
 ### Unit Tests
+
 To run test install the package and run `pytest tests` in the project root
 (configurations are in `setup.cfg`).
 
@@ -14,15 +42,19 @@ unique place to reference for development and to keep this document as short as
 possible-->
 
 #### Markers
+
 Show known marks with `pytest --markers` and run them with:
+
 - quick check: `pytest -m quick_check`
 - commit check: `pytest -m "quick_check or commit_check"`
 - full check: `pytest`
 
 #### Test coverage
+
 Use `pytest ... --cov=src` to obtain a report for test coverage.
 
 ### Benchmarks and regression tests
+
 Since there is a non-trivial framework to manage these tasks you should look
 into the specific
 [documentation](https://n3pdf.github.io/yadism/dev-tools/db-suite.html).
@@ -33,12 +65,15 @@ input you are interested in, and running the benchmark utility passing the
 queries as arguments.
 
 ### Release based workflow
-Since we are adopting a release based workflow choose a *suitable base* for your
-*pull request*:
-- if you are submitting a quick fix, or small proposal, choose as base a
- `feature/**/*` or `release/**/*` branch
-- if you are setting up a major update (i.e. your new branch itself is a
- `feature/**/*` or `release/**/*` one) choose as base `master`
+
+Since it is appropriate to develop this code in versions (as in the way
+suggested by [SemVer](https://semver.org/)) we decided to base our workflow on
+the popular [git flow model](https://nvie.com/posts/a-successful-git-branching-model/).
+
+In order to help you with the management consider using [`git flow`](https://github.com/petervanderdoes/gitflow-avh) CLI tool (and the
+corresponding [shell
+completion](https://github.com/petervanderdoes/git-flow-completion)), or the
+original version of [`git flow`](https://github.com/nvie/gitflow).
 
 ## External contributions
 
@@ -52,4 +87,3 @@ available choose simply `master` as base, and it will be moved to a suitable one
 by maintainers.
 
 Please take the time to fulfill the proper template (it will be automatically provided).
-
