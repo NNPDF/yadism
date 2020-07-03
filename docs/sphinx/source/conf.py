@@ -16,17 +16,12 @@
 import os
 import pathlib
 
-import sphinx_rtd_theme
-from sphinx.locale import _
-
-# sys.path.insert(0, os.path.abspath('.'))
-
 from recommonmark.transform import AutoStructify
 
 # -- Project information -----------------------------------------------------
 
 project = "yadism"
-copyright = "2019, the N3PDF team"
+copyright = "2019, the N3PDF team" # pylint: disable=redefined-builtin
 author = "N3PDF team"
 
 # The short X.Y version
