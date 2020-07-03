@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="yadism",
-    version="0.0.1",
+    version="0.3.0",
     description="Deep Inelastic Scattering",
     author="A.Candido, S.Carrazza, F. Hekhorn",
     author_email="stefano.carrazza@cern.ch",
