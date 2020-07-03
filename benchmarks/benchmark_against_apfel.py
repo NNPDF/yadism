@@ -20,6 +20,7 @@ class TestPlain:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.NfFF == 3
         t_query &= p.theory_query.FNS == "FFNS"
+        t_query &= p.theory_query.DAMP == 0
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.F2light.exists()
@@ -38,6 +39,7 @@ class TestPlain:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.NfFF == 3
         t_query &= p.theory_query.FNS == "FFNS"
+        t_query &= p.theory_query.DAMP == 0
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.F2light.exists()
@@ -53,6 +55,7 @@ class TestScaleVariations:
         t_query = p.theory_query.PTO == 0
         t_query &= p.theory_query.NfFF == 3
         t_query &= p.theory_query.FNS == "FFNS"
+        t_query &= p.theory_query.DAMP == 0
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.F2light.exists()
@@ -64,6 +67,7 @@ class TestScaleVariations:
         t_query = p.theory_query.PTO == 1
         t_query &= p.theory_query.NfFF == 3
         t_query &= p.theory_query.FNS == "FFNS"
+        t_query &= p.theory_query.DAMP == 0
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.prDIS.exists()
@@ -80,6 +84,7 @@ class TestTMC:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.NfFF == 3
         t_query &= p.theory_query.FNS == "FFNS"
+        t_query &= p.theory_query.DAMP == 0
         t_query &= p.theory_query.TMC != 0
 
         o_query = p.obs_query.F2light.exists()
@@ -94,6 +99,7 @@ class TestTMC:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.NfFF == 3
         t_query &= p.theory_query.FNS == "FFNS"
+        t_query &= p.theory_query.DAMP == 0
         t_query &= p.theory_query.TMC != 0
         # t_query &= p.theory_query.TMC == 1
 
@@ -114,6 +120,7 @@ class TestFNS:
         t_query &= p.theory_query.TMC == 0
         t_query &= p.theory_query.NfFF == 3
         t_query &= p.theory_query.FNS == "FFNS"
+        t_query &= p.theory_query.DAMP == 0
 
         o_query = p.obs_query.F2light.exists()
 
@@ -130,8 +137,8 @@ class TestFNS:
         t_query &= p.theory_query.XIF == 1.0
         t_query &= p.theory_query.TMC == 0
         t_query &= p.theory_query.NfFF == 4
-        # t_query &= p.theory_query.FNS == "FFNS"
         t_query &= p.theory_query.FNS == "FONLL-A"
+        t_query &= p.theory_query.DAMP == 0
 
         o_query = p.obs_query.F2light.exists()
         o_query |= p.obs_query.F2charm.exists()
