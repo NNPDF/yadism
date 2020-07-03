@@ -2,6 +2,7 @@
 import numpy as np
 import pytest
 
+from yadism import observable_name
 import yadism.structure_functions.tmc as TMC
 from yadism.structure_functions.esf_result import ESFResult
 
@@ -47,7 +48,7 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            name = "F2light"
+            obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
@@ -85,7 +86,7 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            name = "F2light"
+            obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 
@@ -149,7 +150,7 @@ class TestTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            name = "F2light"
+            obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
 

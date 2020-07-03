@@ -23,7 +23,7 @@ class TestPlain:
         t_query &= p.theory_query.TMC == 0
 
         o_query = p.obs_query.F2light.exists()
-        # o_query |= p.obs_query.F2total.exists()
+        o_query |= p.obs_query.F2total.exists()
 
         p.run_queries_external(t_query, o_query, ["ToyLH"])
         # p.run_queries_external(t_query, o_query, ["toy_gonly"])
@@ -193,7 +193,7 @@ class TestFull:
 
 if __name__ == "__main__":
     plain = TestPlain()
-    #plain.test_LO()
+    plain.test_LO()
     #plain.test_NLO()
 
     # sv = TestScaleVariations()
@@ -206,7 +206,7 @@ if __name__ == "__main__":
 
     fns = TestFNS()
     #fns.test_LO()
-    fns.test_NLO()
+    #fns.test_NLO()
 
     # tmc_fns = TestTMCFNS()
     # tmc_fns.test_LO()
