@@ -68,7 +68,6 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         """
         self._SF = SF
-        self._flavour = SF.name[2:]
         self._x = kinematics["x"]
         self._Q2 = kinematics["Q2"]
         # compute variables
@@ -206,7 +205,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                         \right] f_i \\
                     & = \left[ a + \sum_{i,j} \underbrace{{F_2}_j ((w_j \otimes
                         k)}_{\texttt{_convolute_F2}} \otimes w_i) \right] f_i
-                \end{align*} 
+                \end{align*}
 
             where :math:`\tilde{F}_X` is the target mass corrected structure
             function, :math:`F_2` is the bare structure function, :math:`k` is
@@ -232,7 +231,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 continue
             # compute F2 matrix (j,k) (where k is wrapped inside get_result)
             F2j = self._SF.get_esf(
-                "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
+                self._SF.obs_name.apply_kind("F2"), {"Q2": self._Q2, "x": xj}
             ).get_result()
             # compute interpolated h2 integral (j)
             d = DistributionVec(ker)
@@ -327,7 +326,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
 
         # collect F2
         F2out = self._SF.get_esf(
-            "F2" + self._flavour, self._shifted_kinematics
+            self._SF.obs_name, self._shifted_kinematics
         ).get_result()
         # join
         return approx_prefactor * F2out
@@ -335,7 +334,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     def _get_result_APFEL(self):
         # collect F2
         F2out = self._SF.get_esf(
-            "F2" + self._flavour, self._shifted_kinematics
+            self._SF.obs_name, self._shifted_kinematics
         ).get_result()
         # compute integral
         h2out = self._h2()
@@ -347,7 +346,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         factor_g2 = 12.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 5
         # collect F2
         F2out = self._SF.get_esf(
-            "F2" + self._flavour, self._shifted_kinematics
+            self._SF.obs_name, self._shifted_kinematics
         ).get_result()
         # compute raw integral
         h2out = self._h2()
@@ -367,7 +366,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             # collect support points
             F2list.append(
                 self._SF.get_esf(
-                    "F2" + self._flavour, {"Q2": self._Q2, "x": xj}
+                    self._SF.obs_name, {"Q2": self._Q2, "x": xj}
                 ).get_result()
             )
 
@@ -430,10 +429,10 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
 
         # collect structure functions at shifted kinematics
         FLout = self._SF.get_esf(
-            "FL" + self._flavour, self._shifted_kinematics
+            self._SF.obs_name, self._shifted_kinematics
         ).get_result()
         F2out = self._SF.get_esf(
-            "F2" + self._flavour, self._shifted_kinematics
+            self._SF.obs_name.apply_kind("F2"), self._shifted_kinematics
         ).get_result()
 
         # join
@@ -442,7 +441,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
     def _get_result_APFEL(self):
         # collect F2
         FLout = self._SF.get_esf(
-            "FL" + self._flavour, self._shifted_kinematics
+            self._SF.obs_name, self._shifted_kinematics
         ).get_result()
         # compute integral
         h2out = self._h2()
@@ -454,7 +453,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         factor_g2 = 8.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 3
         # collect F2
         FLout = self._SF.get_esf(
-            "FL" + self._flavour, self._shifted_kinematics
+            self._SF.obs_name, self._shifted_kinematics
         ).get_result()
         # compute raw integral
         h2out = self._h2()

@@ -182,23 +182,26 @@ class DBInterface:
         return kin
 
     @staticmethod
-    def _process_regression_log(yad, reg):
+    def _process_regression_log(yad, reg, *args):
         kin = dict()
         # iterate flavours
-        for fl in ["q", "g"]:
-            kin[f"reg {fl}"] = reg[fl]
-            kin[f"reg {fl}_error"] = reg[f"{fl}_error"]
-            kin[f"yad {fl}"] = yad[fl]
-            kin[f"yad {fl}_error"] = yad[f"{fl}_error"]
-            # do hard test?
-            for f, r, e1, e2 in zip(
-                yad[fl], reg[fl], yad[f"{fl}_error"], reg[f"{fl}_error"]
-            ):
+        for k in reg["values"]:
+            kin[f"reg {k}"] = reg_val = reg["values"][k]
+            kin[f"reg {k}_error"] = reg_err = reg["errors"][k]
+            kin[f"reg {k}_weights"] = reg_weights = reg["weights"][k]
+            kin[f"yad {k}"] = yad_val = yad["values"][k]
+            kin[f"yad {k}_error"] = yad_err = yad["errors"][k]
+            kin[f"yad {k}_weights"] = yad_weights = yad["weights"][k]
+            # test equality
+            for f, r, e1, e2 in zip(yad_val, reg_val, yad_err, reg_err):
                 assert pytest.approx(r, rel=0.01, abs=max(e1 + e2, 1e-6)) == f
+            # check weights
+            reg_weights = {int(k): v for k, v in reg_weights.items()}
+            assert pytest.approx(reg_weights) == yad_weights
             # compare for log
             with np.errstate(divide="ignore"):
-                comparison = (np.array(yad[fl]) / np.array(reg[fl]) - 1.0) * 100
-            kin[f"rel {fl}_err[%]"] = comparison.tolist()
+                comparison = (np.array(yad_val) / np.array(reg_val) - 1.0) * 100
+            kin[f"rel {k}_err[%]"] = comparison.tolist()
         return kin
 
     def _get_output_comparison(

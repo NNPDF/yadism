@@ -31,7 +31,7 @@ jobs:
           # install packages needed for testing
           pip install -r test_requirements.txt
           # download regression db
-          wget https://gist.githubusercontent.com/felixhekhorn/f89d04db0565e8f880f2547be281fbdf/raw/73c56ff8e038887d8487183d886009d44ffd208b/regression.json
+          wget https://gist.githubusercontent.com/felixhekhorn/f89d04db0565e8f880f2547be281fbdf/raw/regression.json
           mv regression.json benchmarks/data/
       #  run the test with 'pytest'
       - name: Test yadism

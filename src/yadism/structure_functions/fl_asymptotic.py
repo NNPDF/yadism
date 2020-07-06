@@ -6,6 +6,7 @@ heavy quark flavours.
 .. todo::
     docs
 """
+import copy
 
 from .esf import EvaluatedStructureFunctionHeavy as ESFH
 
@@ -26,6 +27,15 @@ class EvaluatedStructureFunctionFLAsymptotic(ESFH):
         charge).
 
     """
+
+    def get_result(self):
+        """
+            .. todo::
+                docs
+        """
+        self._compute_local()
+
+        return copy.deepcopy(self._res)
 
     def _gluon_1(self):
         """
