@@ -6,7 +6,7 @@ import pytest
 from db_interface import DBInterface, QueryFieldsEqual
 
 
-@pytest.mark.quick_check
+#@pytest.mark.quick_check
 class TestPlain:
     def test_LO(self):
         """
