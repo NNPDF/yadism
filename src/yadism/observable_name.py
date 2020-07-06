@@ -54,9 +54,13 @@ class ObservableName:
                 get_asy : type(self)
                     asymptotic heavy correspondend
         """
-        if not self.is_heavy:
+        if self.flavor not in heavys:
             raise ValueError("observable is not heavy!")
         return self.apply_flavor(self.flavor+ "asy")
+
+    def __repr__(self):
+        """return name as representation"""
+        return self.name
 
     def apply_flavor(self, flavor):
         """

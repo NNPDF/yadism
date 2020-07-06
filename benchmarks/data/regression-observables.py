@@ -29,12 +29,12 @@ xgrid = np.unique(
 )
 
 polynomial_degree = 4
-is_log_interpolation = True
+interpolation_is_log = True
 
 content = dict(
-    xgrid=xgrid.tolist(),
-    polynomial_degree=polynomial_degree,
-    is_log_interpolation=is_log_interpolation,
+    interpolation_xgrid=xgrid.tolist(),
+    interpolation_polynomial_degree=polynomial_degree,
+    interpolation_is_log=interpolation_is_log,
     prDIS="EM",
     comments="",
     _modify_time=str_datetime(datetime.now()),
@@ -47,5 +47,6 @@ for kind in ["F2", "FL"]:
     content[f"{kind}charm"] = [dict(x=0.01, Q2=50)]
     content[f"{kind}bottom"] = [dict(x=0.01, Q2=100)]
     content[f"{kind}top"] = [dict(x=0.01, Q2=1000)]
+    content[f"{kind}total"] = [dict(x=0.01, Q2=90)]
 
 obs_table.insert(content)
