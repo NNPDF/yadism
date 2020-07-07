@@ -42,13 +42,16 @@ class DBInterface:
 
         Parameters
         ----------
+            external : str
+                program to compare to
             db_name : str
                 database name (relative to data/ directory)
     """
 
-    def __init__(self, external="APFEL", db_name="input.json"):
+    def __init__(self, external="APFEL", input_db_name="input.json", output_db_name="output.json"):
         self.external = external
-        self._db = tinydb.TinyDB(here / "data" / db_name)
+        self._idb = tinydb.TinyDB(here / "data" / input_db_name)
+        self._odb = tinydb.TinyDB(here / "data" / output_db_name)
         self.theory_query = tinydb.Query()
         self.obs_query = tinydb.Query()
 
@@ -62,8 +65,8 @@ class DBInterface:
         }
 
     def _load_input_from_queries(self, theory_query, obs_query):
-        theories = self._db.table("theories").search(theory_query)
-        observables = self._db.table("observables").search(obs_query)
+        theories = self._idb.table("theories").search(theory_query)
+        observables = self._idb.table("observables").search(obs_query)
         return theories, observables
 
     def run_queries_regression(self, theory_query, obs_query):
@@ -94,13 +97,13 @@ class DBInterface:
         query = (q._theory_doc_id == theory.doc_id) & (
             q._observables_doc_id == obs.doc_id
         )
-        regression_log = self._db.table("regressions").search(query)
+        regression_log = self._idb.table("regressions").search(query)
         if len(regression_log) != 0:
             raise RuntimeError(
                 f"there is already a document for t={theory.doc_id} and o={obs.doc_id}"
             )
         # insert
-        self._db.table("regressions").insert(out)
+        self._idb.table("regressions").insert(out)
 
     def run_regression(self, theory, obs):
         runner = Runner(theory, obs)
@@ -110,7 +113,7 @@ class DBInterface:
         query = (q._theory_doc_id == theory.doc_id) & (
             q._observables_doc_id == obs.doc_id
         )
-        regression_log = self._db.table("regressions").search(query)
+        regression_log = self._idb.table("regressions").search(query)
         if len(regression_log) == 0:
             raise RuntimeError(
                 "no regression data to compare to! you need to generate first ..."
@@ -134,7 +137,7 @@ class DBInterface:
         if theory_update is None:
             theory_update = {}
         theory_update["PTO"] = self.theory_query.PTO == PTO
-        theory = copy.copy(self.defaults)
+        theory = copy.deepcopy(self.defaults)
         theory.update(theory_update)
         theory_query = self.theory_query.noop()
         for cond in theory.values():
@@ -173,7 +176,7 @@ class DBInterface:
                         theory,
                         obs,
                         pdf,
-                        self._db.table("apfel_cache"),
+                        self._idb.table("apfel_cache"),
                         apfel_utils.compute_apfel_data,
                     )
                 elif self.external == "QCDNUM":
@@ -183,7 +186,7 @@ class DBInterface:
                         theory,
                         obs,
                         pdf,
-                        self._db.table("qcdnum_cache"),
+                        self._idb.table("qcdnum_cache"),
                         qcdnum_utils.compute_qcdnum_data,
                     )
                 else:
@@ -300,7 +303,5 @@ class DBInterface:
         """
 
         # store the log of results
-        self._db.table("logs").insert(log_tab)
-
-    def empty_cache(self):
-        self._db.table("apfel_cache").purge()
+        new_id = self._odb.table("logs").insert(log_tab)
+        print("Added log with id=",new_id)

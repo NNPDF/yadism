@@ -35,7 +35,10 @@ class BenchmarkPlain(ApfelBenchmark):
             ["ToyLH"],
             None,
             obs_query=(
-                ~(self.db.obs_query.F2total.exists() | self.db.obs_query.FLtotal.exists() )
+                ~(
+                    self.db.obs_query.F2total.exists()
+                    | self.db.obs_query.FLtotal.exists()
+                )
             ),
         )
 
