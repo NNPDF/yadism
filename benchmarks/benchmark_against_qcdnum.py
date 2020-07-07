@@ -5,144 +5,55 @@
 import pytest
 from db_interface import DBInterface, QueryFieldsEqual
 
+class QCDNUMBenchmark:
+    db = None
+
+    def _db(self):
+        self.db = DBInterface("QCDNUM")
+        return self.db
 
 #@pytest.mark.quick_check
-class TestPlain:
-    def test_LO(self):
-        """
-        Test the full LO order against QCDNUM
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
+class BenchmarkPlain(QCDNUMBenchmark):
+    """The most basic checks"""
+    def benchmark_LO(self):
+        return self._db().run_external(0, ["ToyLH"])
 
-        o_query = p.obs_query.F2light.exists()
+    def benchmark_NLO(self):
+        return self._db().run_external(1, ["ToyLH"])
 
-        p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
+class BenchmarkScaleVariations(QCDNUMBenchmark):
+    """Vary factorization and renormalization scale"""
 
-    def test_NLO(self):
-        """
-        Test the full NLO order against QCDNUM
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
+    def benchmark_LO(self):
+        return self._db().run_external(0, ["CT14llo_NF6"], {"XIR": QueryFieldsEqual("XIR", "XIF"), "XIF": None})
 
-        o_query = p.obs_query.F2charm.exists()
+    def benchmark_NLO(self):
+        return self._db().run_external(1, ["CT14llo_NF6"], {"XIR": QueryFieldsEqual("XIR", "XIF"), "XIF": None})
 
-        p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
+class BenchmarkFNS(QCDNUMBenchmark):
+    """Flavor Number Schemes"""
 
+    def benchmark_LO(self):
+        return self._db().run_external(0, ["CT14llo_NF6"], {"FNS": ~(self.db.theory_query.FNS == "FONLL-A"), "NfFF": None})
 
-class TestScaleVar:
-    def test_LO(self):
-        """
-        Test the full LO order against QCDNUM
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-        t_query &= QueryFieldsEqual("XIR", "XIF")
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
+    def _benchmark_NLO_FFNS(self):
+        return self._db().run_external(
+            1,
+            ["CT14llo_NF6"],
+            {"FNS": self.db.theory_query.FNS == "FFNS", "NfFF": None},
+        )
 
-        o_query = p.obs_query.F2light.exists()
+    def _benchmark_NLO_ZM_VFNS(self):
+        return self._db().run_external(
+            1, ["CT14llo_NF6"], {"FNS": self.db.theory_query.FNS == "ZM-VFNS"}
+        )
 
-        p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
-
-    def test_NLO(self):
-        """
-        Test the full NLO order against QCDNUM
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= QueryFieldsEqual("XIR", "XIF")
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
-
-        o_query = p.obs_query.F2light.exists()
-
-        p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
-
-
-class TestFNS:
-    def test_LO(self):
-        """
-        Test the full LO order against QCDNUM
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= ~(p.theory_query.FNS == "FONLL-A")
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
-
-        o_query = p.obs_query.F2light.exists()
-
-        p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
-
-    def run_NLO_FFNS(self):
-        """
-        Test the full NLO order against QCDNUM
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
-
-        o_query = ~p.obs_query.F2total.exists()
-        o_query &= ~p.obs_query.FLtotal.exists()
-
-        p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
-
-    def run_NLO_ZM_VFNS(self):
-        """
-        Test the full NLO order against QCDNUM
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "ZM-VFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
-
-        o_query = p.obs_query.F2light.exists()
-        o_query |= p.obs_query.FLlight.exists()
-
-        p.run_queries_external(t_query, o_query, ["ToyLH"], "QCDNUM")
-
-    def test_NLO(self):
-        self.run_NLO_FFNS()
-        self.run_NLO_ZM_VFNS()
-
+    def benchmark_NLO(self):
+        self._benchmark_NLO_FFNS()
+        self._benchmark_NLO_ZM_VFNS()
 
 if __name__ == "__main__":
-    plain = TestPlain()
-    plain.test_LO()
-    #plain.test_NLO()
+    plain = BenchmarkPlain()
+    plain.benchmark_LO()
+    #plain.benchmark_NLO()
 
-    #sv = TestScaleVar()
-    # sv.test_LO()
-    # sv.test_NLO()
-
-    #fns = TestFNS()
-    # fns.test_LO()
-    # fns.test_NLO()

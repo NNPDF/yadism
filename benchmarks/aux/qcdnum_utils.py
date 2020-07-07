@@ -175,7 +175,7 @@ def compute_qcdnum_data(
             # for x, Q2 in zip(xs,q2s):
             #    fs.append(QCDNUM.zmstfun(kind_key, weights, [x], [Q2], 1 ))
             fs = QCDNUM.zmstfun(kind_key, weights, xs, q2s, 1)
-        else:
+        elif obs_name.is_raw_heavy:
             # for HQ pto is not absolute but rather relative,
             # i.e., 1 loop DIS here meas "LO"[QCDNUM]
             if theory["PTO"] == 0:
@@ -188,6 +188,8 @@ def compute_qcdnum_data(
                     fs = QCDNUM.hqstfun(kind_key, -2, weights, xs, q2s, 1)
                 elif obs_name.flavor == "top":
                     fs = QCDNUM.hqstfun(kind_key, -3, weights, xs, q2s, 1)
+        else:
+            raise NotImplementedError(f"flavor {obs_name.flavor} is not implemented!")
         # reshuffle output
         f_out = []
         for x, q2, f in zip(xs, q2s, fs):

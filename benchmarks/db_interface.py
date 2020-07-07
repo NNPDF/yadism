@@ -2,6 +2,7 @@ import sys
 import pathlib
 import itertools
 import datetime
+import copy
 
 import numpy as np
 import pandas as pd
@@ -45,79 +46,38 @@ class DBInterface:
                 database name (relative to data/ directory)
     """
 
-    def __init__(self, db_name):
+    def __init__(self, external="APFEL", db_name="input.json"):
+        self.external = external
         self._db = tinydb.TinyDB(here / "data" / db_name)
         self.theory_query = tinydb.Query()
         self.obs_query = tinydb.Query()
 
-    def _load_input(self, theory_query, obs_query):
+        self.defaults = {
+            "XIR": self.theory_query.XIR == 1.0,
+            "XIF": self.theory_query.XIF == 1.0,
+            "NfFF": self.theory_query.NfFF == 3,
+            "FNS": self.theory_query.FNS == "FFNS",
+            "DAMP": self.theory_query.DAMP == 0,
+            "TMC": self.theory_query.TMC == 0,
+        }
+
+    def _load_input_from_queries(self, theory_query, obs_query):
         theories = self._db.table("theories").search(theory_query)
         observables = self._db.table("observables").search(obs_query)
         return theories, observables
 
     def run_queries_regression(self, theory_query, obs_query):
-        theories, observables = self._load_input(theory_query, obs_query)
+        theories, observables = self._load_input_from_queries(theory_query, obs_query)
         for theory, obs in itertools.product(theories, observables):
             # run against regression data
             self.run_regression(theory, obs)
-
-    def run_queries_external(self, theory_query, obs_query, pdfs, external="APFEL"):
-        theories, observables = self._load_input(theory_query, obs_query)
-        for theory, obs in itertools.product(theories, observables):
-            # create our own object
-            runner = Runner(theory, obs)
-            for pdf_name in pdfs:
-                # setup PDFset
-                if pdf_name == "ToyLH":
-                    pdf = toyLH.mkPDF("ToyLH", 0)
-                else:
-                    import lhapdf  # pylint:disable=import-outside-toplevel
-
-                    pdf = lhapdf.mkPDF(pdf_name, 0)
-                # get our data
-                yad_tab = runner.apply(pdf)
-                # get external data
-                if external == "APFEL":
-                    import apfel_utils  # pylint:disable=import-error,import-outside-toplevel
-
-                    ext_tab = external_utils.get_external_data(
-                        theory,
-                        obs,
-                        pdf,
-                        self._db.table("apfel_cache"),
-                        apfel_utils.compute_apfel_data,
-                    )
-                elif external == "QCDNUM":
-                    import qcdnum_utils  # pylint:disable=import-error,import-outside-toplevel
-
-                    ext_tab = external_utils.get_external_data(
-                        theory,
-                        obs,
-                        pdf,
-                        self._db.table("qcdnum_cache"),
-                        qcdnum_utils.compute_qcdnum_data,
-                    )
-
-                # collect and check results
-                log_tab = self._get_output_comparison(
-                    theory, obs, yad_tab, ext_tab, self._process_external_log, external
-                )
-
-                # =============
-                # print and log
-                # =============
-                log_tab["_pdf"] = pdf_name
-                # print immediately
-                self._print_res(log_tab)
-                # store the log
-                self._log(log_tab)
 
     def run_generate_regression(self, theory_query, obs_query):
         ask = input("Regenerate regression data? [y/n]")
         if ask != "y":
             print("Nothing done.")
             return
-        theories, observables = self._load_input(theory_query, obs_query)
+        theories, observables = self._load_input_from_queries(theory_query, obs_query)
         for theory, obs in itertools.product(theories, observables):
             # run against apfel (test)
             self.generate_regression(theory, obs)
@@ -169,12 +129,93 @@ class DBInterface:
         # store the log
         self._log(log_tab)
 
+    def run_external(self, PTO, pdfs, theory_update=None, obs_query=None):
+        # add PTO and build theory query
+        if theory_update is None:
+            theory_update = {}
+        theory_update["PTO"] = self.theory_query.PTO == PTO
+        theory = copy.copy(self.defaults)
+        theory.update(theory_update)
+        theory_query = self.theory_query.noop()
+        for cond in theory.values():
+            # skip empty ones
+            if cond is None:
+                continue
+            theory_query &= cond
+        # build obs query
+        if obs_query is None:
+            if PTO == 0:
+                obs_query = self.obs_query.F2light.exists()
+            else:
+                obs_query = self.obs_query.prDIS.exists()
+        return self.run_queries_external(theory_query, obs_query, pdfs)
+
+    def run_queries_external(self, theory_query, obs_query, pdfs):
+        theories, observables = self._load_input_from_queries(theory_query, obs_query)
+        for theory, obs in itertools.product(theories, observables):
+            # create our own object
+            runner = Runner(theory, obs)
+            for pdf_name in pdfs:
+                # setup PDFset
+                if pdf_name == "ToyLH":
+                    pdf = toyLH.mkPDF("ToyLH", 0)
+                else:
+                    import lhapdf  # pylint:disable=import-outside-toplevel
+
+                    pdf = lhapdf.mkPDF(pdf_name, 0)
+                # get our data
+                yad_tab = runner.apply(pdf)
+                # get external data
+                if self.external == "APFEL":
+                    import apfel_utils  # pylint:disable=import-error,import-outside-toplevel
+
+                    ext_tab = external_utils.get_external_data(
+                        theory,
+                        obs,
+                        pdf,
+                        self._db.table("apfel_cache"),
+                        apfel_utils.compute_apfel_data,
+                    )
+                elif self.external == "QCDNUM":
+                    import qcdnum_utils  # pylint:disable=import-error,import-outside-toplevel
+
+                    ext_tab = external_utils.get_external_data(
+                        theory,
+                        obs,
+                        pdf,
+                        self._db.table("qcdnum_cache"),
+                        qcdnum_utils.compute_qcdnum_data,
+                    )
+                else:
+                    raise ValueError(f"Unknown external {self.external}")
+
+                # collect and check results
+                log_tab = self._get_output_comparison(
+                    theory,
+                    obs,
+                    yad_tab,
+                    ext_tab,
+                    self._process_external_log,
+                    self.external,
+                )
+
+                # =============
+                # print and log
+                # =============
+                log_tab["_pdf"] = pdf_name
+                # print immediately
+                self._print_res(log_tab)
+                # store the log
+                self._log(log_tab)
+
     @staticmethod
     def _process_external_log(yad, apf, external):
         kin = dict()
         kin[external] = ref = apf["value"]
         kin["yadism"] = fx = yad["result"]
-        kin["yadism_error"] = yad["error"]
+        kin["yadism_error"] = err = yad["error"]
+        # test equality
+        assert pytest.approx(ref, rel=0.01, abs=max(err, 1e-6)) == fx
         # compare for log
         with np.errstate(divide="ignore", invalid="ignore"):
             comparison = (fx / np.array(ref) - 1.0) * 100

@@ -117,10 +117,10 @@ def list_all_observables():
     data = []
     for o in obs:
         obj = {"doc_id": o.doc_id}
-        xgrid = o["xgrid"]
+        xgrid = o["interpolation_xgrid"]
         obj["xgrid"] = "[{}, ..., {}] ({}) ".format(min(xgrid), max(xgrid), len(xgrid))
-        obj["log"] = o["is_log_interpolation"]
-        obj["degree"] = o["polynomial_degree"]
+        obj["log"] = o["interpolation_is_log"]
+        obj["degree"] = o["interpolation_polynomial_degree"]
         dt = unstr_datetime(o["_modify_time"])
         obj["modified"] = human_dates(dt)
         sfs = []
