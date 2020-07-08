@@ -3,7 +3,7 @@ import inspect
 import IPython
 from traitlets.config.loader import Config
 
-from .navigator import NavigatorApp,t,o,l
+from .navigator import NavigatorApp, t, o, l
 
 
 def yelp(*args):
@@ -60,6 +60,11 @@ def p(*args):
 def ls(*args):
     global app
     return app.list_all(*args)
+
+
+def dfl(*args):
+    global app
+    return app.get_log_DataFrames(*args)
 
 
 def subtract_tables(*args):

@@ -48,8 +48,10 @@ class DBInterface(mode_selector.ModeSelector):
                 database name (relative to data/ directory)
     """
 
-    def __init__(self, mode, external=None):
+    def __init__(self, mode, external=None, assert_external=None):
         super(DBInterface, self).__init__(mode, external)
+        self.assert_external = assert_external
+
         self.theory_query = tinydb.Query()
         self.obs_query = tinydb.Query()
 
@@ -168,9 +170,9 @@ class DBInterface(mode_selector.ModeSelector):
                 yad_tab = runner.apply(pdf)
                 # get external data
                 if self.external == "APFEL":
-                    from .external import (
+                    from .external import (  # pylint:disable=import-error,import-outside-toplevel
                         apfel_utils,
-                    )  # pylint:disable=import-error,import-outside-toplevel
+                    )
 
                     ext_tab = external.get_external_data(
                         theory,
@@ -180,9 +182,9 @@ class DBInterface(mode_selector.ModeSelector):
                         apfel_utils.compute_apfel_data,
                     )
                 elif self.external == "QCDNUM":
-                    from .external import (
+                    from .external import (  # pylint:disable=import-error,import-outside-toplevel
                         qcdnum_utils,
-                    )  # pylint:disable=import-error,import-outside-toplevel
+                    )
 
                     ext_tab = external.get_external_data(
                         theory,
@@ -202,6 +204,7 @@ class DBInterface(mode_selector.ModeSelector):
                     ext_tab,
                     self._process_external_log,
                     self.external,
+                    self.assert_external,
                 )
 
                 # =============
@@ -214,13 +217,21 @@ class DBInterface(mode_selector.ModeSelector):
                 self._log(log_tab)
 
     @staticmethod
-    def _process_external_log(yad, apf, external):
+    def _process_external_log(yad, apf, external, assert_external):
         kin = dict()
         kin[external] = ref = apf["value"]
         kin["yadism"] = fx = yad["result"]
         kin["yadism_error"] = err = yad["error"]
         # test equality
-        # assert pytest.approx(ref, rel=0.01, abs=max(err, 1e-6)) == fx
+        if assert_external is not None:
+            assert (
+                pytest.approx(
+                    ref,
+                    rel=assert_external.get("rel", 0.01),
+                    abs=max(err, assert_external.get("abs", 1e-6)),
+                )
+                == fx
+            )
         # compare for log
         with np.errstate(divide="ignore", invalid="ignore"):
             comparison = (fx / np.array(ref) - 1.0) * 100
@@ -251,7 +262,7 @@ class DBInterface(mode_selector.ModeSelector):
         return kin
 
     def _get_output_comparison(
-        self, theory, observables, yad_tab, other_tab, process_log, external=None
+        self, theory, observables, yad_tab, other_tab, process_log, *args
     ):
         log_tab = {}
         # loop kinematics
@@ -268,7 +279,7 @@ class DBInterface(mode_selector.ModeSelector):
                 kin["x"] = yad["x"]
                 kin["Q2"] = yad["Q2"]
                 # extract values
-                kin.update(process_log(yad, oth, external))
+                kin.update(process_log(yad, oth, *args))
                 kinematics.append(kin)
             log_tab[sf] = kinematics
 
@@ -305,4 +316,4 @@ class DBInterface(mode_selector.ModeSelector):
 
         # store the log of results
         new_id = self.odb.table("logs").insert(log_tab)
-        print("Added log with id=", new_id)
+        print(f"Added log with id={new_id}")

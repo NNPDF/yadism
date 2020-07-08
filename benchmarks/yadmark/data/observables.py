@@ -20,6 +20,14 @@ class ObservablesGenerator(mode_selector.ModeSelector):
     """
 
     def get_observables(self):
+        """
+            Collect all runcards
+
+            Returns
+            -------
+                observables : list(dict)
+                    list of runcards
+        """
         # default interpolation setup
         interpolation_xgrid = np.unique(
             np.concatenate([np.geomspace(1e-4, 0.15, 20), np.linspace(0.15, 1.0, 12)])
@@ -77,7 +85,6 @@ class ObservablesGenerator(mode_selector.ModeSelector):
             return [lo_card, nlo_card]
         # sandbox
         sandbox = copy.deepcopy(defaults)
-        sandbox["F2light"] = [dict(x=0.1, Q2=10)]
         return [sandbox]
 
     def write_observables(self, observables):

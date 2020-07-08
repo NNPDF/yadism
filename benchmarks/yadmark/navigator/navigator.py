@@ -167,7 +167,7 @@ class NavigatorApp(mode_selector.ModeSelector):
     def get_all_logs(self):
         """Retrieve all logs from db."""
         # collect
-        return self.idb.table("logs").all()
+        return self.odb.table("logs").all()
 
     def list_all_logs(self):
         """Collect important information of all logs."""
@@ -220,7 +220,7 @@ class NavigatorApp(mode_selector.ModeSelector):
                 log : dict
                     document
         """
-        return self.idb.table("logs").get(doc_id=doc_id)
+        return self.odb.table("logs").get(doc_id=doc_id)
 
     def get_log_DataFrames(self, doc_id):
         """
