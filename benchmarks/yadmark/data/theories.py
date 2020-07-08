@@ -1,18 +1,16 @@
+# -*- coding: utf-8 -*-
 import pathlib
 import itertools
-import sys
 from datetime import datetime
 import argparse
 
 import yaml
-import tinydb
 
-# import numpy as np
+from .. import mode_selector
+from ..utils import str_datetime
+
 here = pathlib.Path(__file__).parent.absolute()
-sys.path.append(str(here / ".." / "aux"))
-from external_utils import (  # pylint:disable=import-error,wrong-import-position
-    str_datetime,
-)
+
 
 def my_product(inp):
     """
@@ -22,12 +20,19 @@ def my_product(inp):
         dict(zip(inp.keys(), values)) for values in itertools.product(*inp.values())
     ]
 
-class TheoriesGenerator:
+
+class TheoriesGenerator(mode_selector.ModeSelector):
     """
         Compile all theories to compare against
+
+        Parameters
+        ----------
+            mode : str
+                active mode
     """
+
     def __init__(self, mode):
-        self.mode = mode
+        super(TheoriesGenerator, self).__init__(mode)
         self.theories_table = None
 
     def get_matrix(self):
@@ -62,17 +67,6 @@ class TheoriesGenerator:
             "DAMP": [0, 1],
         }
 
-    def get_db_name(self):
-        """Determine DB name"""
-        if self.mode == "regression":
-            return "regression.json"
-        if self.mode == "APFEL":
-            return "apfel-input.json"
-        if self.mode == "QCDNUM":
-            return "qcdnum-input.json"
-        # sandbox
-        return "input.json"
-
     def write_matrix(self, matrix):
         """Insert all test options"""
         # read template
@@ -92,20 +86,24 @@ class TheoriesGenerator:
             if ask != "y":
                 print("Nothing done.")
                 return
-        # lod db
-        db_name = self.get_db_name()
-        print(f"writing to {db_name}")
-        db = tinydb.TinyDB(here / db_name)
-        self.theories_table = db.table("theories")
+        # load db
+        print(f"writing to {self.input_name}")
+        self.theories_table = self.idb.table("theories")
         # clear and refill
         self.theories_table.truncate()
         self.write_matrix(self.get_matrix())
 
-if __name__ == "__main__":
+
+def run_parser():
     # setup
     ap = argparse.ArgumentParser()
     arggroup = ap.add_mutually_exclusive_group()
-    arggroup.add_argument("--mode", choices=["APFEL", "QCDNUM", "regression", "sandbox"], default="sandbox", help="input DB to fill")
+    arggroup.add_argument(
+        "--mode",
+        choices=["APFEL", "QCDNUM", "regression", "sandbox"],
+        default="sandbox",
+        help="input DB to fill",
+    )
     # do it
     args = ap.parse_args()
     tg = TheoriesGenerator(args.mode)

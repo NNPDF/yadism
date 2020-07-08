@@ -1,5 +1,4 @@
-import sys
-import pathlib
+# -*- coding: utf-8 -*-
 import itertools
 import datetime
 import copy
@@ -10,11 +9,12 @@ import tinydb
 import pytest
 
 from yadism.runner import Runner
+from yadism import observable_name
 
-here = pathlib.Path(__file__).parent.absolute()
-sys.path.append(str(here / "aux"))
-import toyLH  # pylint:disable=import-error,wrong-import-position
-import external_utils  # pylint:disable=import-error,wrong-import-position
+from . import toyLH
+from . import external
+from . import utils
+from . import mode_selector
 
 
 class QueryFieldsEqual(tinydb.queries.QueryInstance):
@@ -36,7 +36,7 @@ class QueryFieldsEqual(tinydb.queries.QueryInstance):
         super().__init__(test, ("==", (field_a,), (field_b,)))
 
 
-class DBInterface:
+class DBInterface(mode_selector.ModeSelector):
     """
         Interface to access DB
 
@@ -48,10 +48,8 @@ class DBInterface:
                 database name (relative to data/ directory)
     """
 
-    def __init__(self, external="APFEL", input_db_name="input.json", output_db_name="output.json"):
-        self.external = external
-        self._idb = tinydb.TinyDB(here / "data" / input_db_name)
-        self._odb = tinydb.TinyDB(here / "data" / output_db_name)
+    def __init__(self, mode, external=None):
+        super(DBInterface, self).__init__(mode, external)
         self.theory_query = tinydb.Query()
         self.obs_query = tinydb.Query()
 
@@ -65,8 +63,8 @@ class DBInterface:
         }
 
     def _load_input_from_queries(self, theory_query, obs_query):
-        theories = self._idb.table("theories").search(theory_query)
-        observables = self._idb.table("observables").search(obs_query)
+        theories = self.idb.table("theories").search(theory_query)
+        observables = self.idb.table("observables").search(obs_query)
         return theories, observables
 
     def run_queries_regression(self, theory_query, obs_query):
@@ -89,7 +87,7 @@ class DBInterface:
         runner = Runner(theory, obs)
         out = runner.get_output()
         # add metadata to log record
-        out["_creation_time"] = external_utils.str_datetime(datetime.datetime.now())
+        out["_creation_time"] = utils.str_datetime(datetime.datetime.now())
         out["_theory_doc_id"] = theory.doc_id
         out["_observables_doc_id"] = obs.doc_id
         # check existence
@@ -97,13 +95,13 @@ class DBInterface:
         query = (q._theory_doc_id == theory.doc_id) & (
             q._observables_doc_id == obs.doc_id
         )
-        regression_log = self._idb.table("regressions").search(query)
+        regression_log = self.idb.table("regressions").search(query)
         if len(regression_log) != 0:
             raise RuntimeError(
                 f"there is already a document for t={theory.doc_id} and o={obs.doc_id}"
             )
         # insert
-        self._idb.table("regressions").insert(out)
+        self.idb.table("regressions").insert(out)
 
     def run_regression(self, theory, obs):
         runner = Runner(theory, obs)
@@ -113,7 +111,7 @@ class DBInterface:
         query = (q._theory_doc_id == theory.doc_id) & (
             q._observables_doc_id == obs.doc_id
         )
-        regression_log = self._idb.table("regressions").search(query)
+        regression_log = self.idb.table("regressions").search(query)
         if len(regression_log) == 0:
             raise RuntimeError(
                 "no regression data to compare to! you need to generate first ..."
@@ -170,23 +168,23 @@ class DBInterface:
                 yad_tab = runner.apply(pdf)
                 # get external data
                 if self.external == "APFEL":
-                    import apfel_utils  # pylint:disable=import-error,import-outside-toplevel
+                    from .external import apfel_utils  # pylint:disable=import-error,import-outside-toplevel
 
-                    ext_tab = external_utils.get_external_data(
+                    ext_tab = external.get_external_data(
                         theory,
                         obs,
                         pdf,
-                        self._idb.table("apfel_cache"),
+                        self.idb.table("apfel_cache"),
                         apfel_utils.compute_apfel_data,
                     )
                 elif self.external == "QCDNUM":
-                    import qcdnum_utils  # pylint:disable=import-error,import-outside-toplevel
+                    from .external import qcdnum_utils  # pylint:disable=import-error,import-outside-toplevel
 
-                    ext_tab = external_utils.get_external_data(
+                    ext_tab = external.get_external_data(
                         theory,
                         obs,
                         pdf,
-                        self._idb.table("qcdnum_cache"),
+                        self.idb.table("qcdnum_cache"),
                         qcdnum_utils.compute_qcdnum_data,
                     )
                 else:
@@ -226,7 +224,7 @@ class DBInterface:
         return kin
 
     @staticmethod
-    def _process_regression_log(yad, reg, *args):
+    def _process_regression_log(yad, reg, *_args):
         kin = dict()
         # iterate flavours
         for k in reg["values"]:
@@ -254,8 +252,7 @@ class DBInterface:
         log_tab = {}
         # loop kinematics
         for sf in yad_tab:
-            # TODO make this more stable
-            if sf[0] != "F":
+            if not observable_name.ObservableName.is_valid(sf):
                 continue
             kinematics = []
             for yad, oth in zip(yad_tab[sf], other_tab[sf]):
@@ -272,7 +269,7 @@ class DBInterface:
             log_tab[sf] = kinematics
 
         # add metadata to log record
-        log_tab["_creation_time"] = external_utils.str_datetime(datetime.datetime.now())
+        log_tab["_creation_time"] = utils.str_datetime(datetime.datetime.now())
         log_tab["_theory_doc_id"] = theory.doc_id
         log_tab["_observables_doc_id"] = observables.doc_id
         return log_tab
@@ -303,5 +300,5 @@ class DBInterface:
         """
 
         # store the log of results
-        new_id = self._odb.table("logs").insert(log_tab)
+        new_id = self.odb.table("logs").insert(log_tab)
         print("Added log with id=",new_id)

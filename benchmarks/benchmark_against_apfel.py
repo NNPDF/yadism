@@ -4,14 +4,14 @@
 
 import pytest
 
-from db_interface import DBInterface
+from yadmark.db_interface import DBInterface
 
 
 class ApfelBenchmark:
     db = None
 
     def _db(self):
-        self.db = DBInterface()
+        self.db = DBInterface("APFEL")
         return self.db
 
 
@@ -98,8 +98,8 @@ class BenchmarkFNS(ApfelBenchmark):
 
 if __name__ == "__main__":
     plain = BenchmarkPlain()
-    # plain.benchmark_LO()
+    plain.benchmark_LO()
     # plain.benchmark_NLO()
 
-    sv = BenchmarkScaleVariations()
-    sv.benchmark_LO()
+    #sv = BenchmarkScaleVariations()
+    #sv.benchmark_LO()
