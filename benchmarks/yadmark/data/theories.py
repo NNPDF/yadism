@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pathlib
 import itertools
 from datetime import datetime
 import argparse
@@ -8,8 +7,6 @@ import yaml
 
 from .. import mode_selector
 from ..utils import str_datetime
-
-here = pathlib.Path(__file__).parent.absolute()
 
 
 def my_product(inp):
@@ -31,10 +28,6 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 active mode
     """
 
-    def __init__(self, mode):
-        super(TheoriesGenerator, self).__init__(mode)
-        self.theories_table = None
-
     def get_matrix(self):
         """Gather all available options"""
         if self.mode == "QCDNUM":
@@ -46,7 +39,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 "FNS": ["FFNS", "ZM-VFNS"],
             }
         # we're aiming for a APFEL replacement, so they appread naturally together
-        if self.mode == "APFEL" or self.mode == "regression":
+        if self.mode in ["APFEL", "QCDNUM"]:
             return {
                 "PTO": [0, 1],
                 "XIR": [0.5, 1.0, 2.0],
@@ -70,13 +63,15 @@ class TheoriesGenerator(mode_selector.ModeSelector):
     def write_matrix(self, matrix):
         """Insert all test options"""
         # read template
-        with open(here / "theory_template.yaml") as f:
+        with open(self.data_dir.parent / "theory_template.yaml") as f:
             template = yaml.safe_load(f)
         # write all possible combinations
+        theories_table = self.idb.table("theories")
+        theories_table.truncate()
         for config in my_product(matrix):
             template.update(config)
             template["_modify_time"] = str_datetime(datetime.now())
-            self.theories_table.insert(template)
+            theories_table.insert(template)
 
     def fill(self):
         """Fill table in DB"""
@@ -88,17 +83,14 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 return
         # load db
         print(f"writing to {self.input_name}")
-        self.theories_table = self.idb.table("theories")
         # clear and refill
-        self.theories_table.truncate()
         self.write_matrix(self.get_matrix())
 
 
 def run_parser():
     # setup
     ap = argparse.ArgumentParser()
-    arggroup = ap.add_mutually_exclusive_group()
-    arggroup.add_argument(
+    ap.add_argument(
         "--mode",
         choices=["APFEL", "QCDNUM", "regression", "sandbox"],
         default="sandbox",

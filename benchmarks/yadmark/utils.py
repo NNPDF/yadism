@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+
 def str_datetime(dt):
     return str(dt)
 

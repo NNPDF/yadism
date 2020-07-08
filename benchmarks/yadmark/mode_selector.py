@@ -5,6 +5,7 @@ import tinydb
 
 here = pathlib.Path(__file__).parent.absolute()
 
+
 class ModeSelector:
     """
         Handle the mode-related stuff
@@ -16,7 +17,8 @@ class ModeSelector:
             external : str
                 external program name to compare to if in sandbox mode
     """
-    def __init__(self, mode, external = None):
+
+    def __init__(self, mode, external=None):
         self.mode = mode
         if mode == "sandbox":
             self.external = external
