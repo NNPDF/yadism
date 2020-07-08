@@ -9,6 +9,7 @@ from yadmark.db_interface import DBInterface
 
 class ApfelBenchmark:
     """Wrapper to apply some default settings"""
+
     db = None
 
     def _db(self):

@@ -8,6 +8,7 @@ from yadmark.db_interface import DBInterface, QueryFieldsEqual
 
 class QCDNUMBenchmark:
     """Wrapper to apply some default settings"""
+
     db = None
 
     def _db(self):
