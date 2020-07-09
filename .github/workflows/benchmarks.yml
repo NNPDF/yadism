@@ -23,9 +23,14 @@ jobs:
       fail-fast: false
             
     steps:
+      - name: Configure git-lfs to ignore most files
+        run: |
+          git config --global lfs.fetchinclude 'benchmarks/storage/apfel-input.json'
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
-        lfs: true
+        with:
+          fetch-depth: 1
+          #lfs: true
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
         with:
