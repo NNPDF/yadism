@@ -1,4 +1,4 @@
-name: yadism - unit tests
+name: unit tests
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - "*docs*"
 
 jobs:
-  build:
+  unittests:
     runs-on: ubuntu-latest
     strategy:
 #      max-parallel: 2
