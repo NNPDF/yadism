@@ -21,7 +21,6 @@ jobs:
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 1
           lfs: true
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
