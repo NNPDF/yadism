@@ -32,7 +32,7 @@ def generate_observables():
         "FLtop",
     ]
     cards = []
-    for obs in ["FLtop"]:# obs_list:
+    for obs in ["FLbottom"]:# obs_list:
         card = copy.deepcopy(defaults)
         card[obs] = light_kin
         cards.append(card)
@@ -57,7 +57,7 @@ class ApfelSandbox:
 
 
 if __name__ == "__main__":
-    generate_observables()
+    #generate_observables()
     apf = ApfelSandbox()
     #apf.run_LO()
     apf.run_NLO()

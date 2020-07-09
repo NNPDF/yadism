@@ -28,8 +28,8 @@ def compute_qcdnum_data(
 
     # remove QCDNUM cache files
     wname = "unpolarised-py.wgt"
-    zmname = f"zmstf-py-{theory.doc_id}.wgt"
-    hqname = f"hqstf-py-{theory.doc_id}.wgt"
+    zmname = f"zmstf-py.wgt"
+    hqname = f"hqstf-py.wgt"
     for f in [wname, zmname, hqname]:
         pathlib.Path(f).unlink(missing_ok=True)
 

@@ -262,7 +262,7 @@ class DBInterface(mode_selector.ModeSelector):
         return kin
 
     def _get_output_comparison(
-        self, theory, observables, yad_tab, other_tab, process_log, *args
+        self, theory, observables, yad_tab, other_tab, process_log, external = None, assert_external = None
     ):
         log_tab = {}
         # loop kinematics
@@ -279,7 +279,11 @@ class DBInterface(mode_selector.ModeSelector):
                 kin["x"] = yad["x"]
                 kin["Q2"] = yad["Q2"]
                 # extract values
-                kin.update(process_log(yad, oth, *args))
+                if callable(assert_external):
+                    assert_external_dict = assert_external(theory, sf, yad)
+                else:
+                    assert_external_dict = assert_external
+                kin.update(process_log(yad, oth, external, assert_external_dict))
                 kinematics.append(kin)
             log_tab[sf] = kinematics
 

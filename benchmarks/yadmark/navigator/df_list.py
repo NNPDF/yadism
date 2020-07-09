@@ -8,7 +8,9 @@ class DFlist(list):
         loop and print if its dropped directly in the interpreter
     """
 
-    msgs = []
+    def __init__(self, *args):
+        super(DFlist, self).__init__(*args)
+        self.msgs = []
 
     def print(self, *msgs, sep=" ", end="\n"):
         if len(msgs) > 0:
