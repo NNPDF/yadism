@@ -4,7 +4,7 @@
 
 import pytest
 
-from db_interface import DBInterface
+from yadmark.db_interface import DBInterface
 
 
 @pytest.mark.regression
@@ -12,7 +12,7 @@ class TestRegression:
     db = None
 
     def _db(self):
-        self.db = DBInterface("regression", "regression.json")
+        self.db = DBInterface("regression")
         return self.db
 
     def _run(self, t_query):

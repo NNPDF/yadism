@@ -40,6 +40,7 @@ jobs:
           pip install -r test_requirements.txt
           # move db
           mv benchmarks/storage/apfel-input.json benchmarks/data/
+          file benchmarks/data/apfel-input.json
       #  run the test with 'pytest'
       - name: Test yadism
         run: |
