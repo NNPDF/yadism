@@ -90,6 +90,18 @@ class ObservableName:
         """
         return not self.flavor == "light"
 
+    @property
+    def is_raw_heavy(self):
+        """
+            Is it a raw heavy flavor? i.e. charm, bottom, or, top
+
+            Returns
+            -------
+                is_heavy : bool
+                    is a heavy flavor?
+        """
+        return self.flavor in heavys
+
     @classmethod
     def has_heavies(cls,names):
         """

@@ -4,217 +4,100 @@
 
 import pytest
 
-from db_interface import DBInterface
+from yadmark.db_interface import DBInterface
+
+
+class ApfelBenchmark:
+    """Wrapper to apply some default settings"""
+
+    db = None
+
+    def _db(self,assert_external=None):
+        """init DB connection"""
+        self.db = DBInterface("APFEL",assert_external=assert_external)
+        return self.db
+
+    def run_external(self, PTO, pdfs, theory_update=None, obs_query=None, assert_external=None):
+        """Query for PTO also in obs by default"""
+        self._db(assert_external)
+        if obs_query is None:
+            obs_query = self.db.obs_query.PTO == PTO
+        return self.db.run_external(PTO, pdfs, theory_update, obs_query,)
 
 
 @pytest.mark.quick_check
-class TestPlain:
-    # def test_LO(self, DBInterface):
-    def test_LO(self):
-        """
-        Test the full LO order against APFEL's.
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
+@pytest.mark.commit_check
+class BenchmarkPlain(ApfelBenchmark):
+    """The most basic checks"""
 
-        o_query = p.obs_query.F2light.exists()
-        o_query |= p.obs_query.F2total.exists()
+    def benchmark_LO(self):
+        return self.run_external(0, ["ToyLH"])
 
-        p.run_queries_external(t_query, o_query, ["ToyLH"])
-        # p.run_queries_external(t_query, o_query, ["toy_gonly"])
-
-    def test_NLO(self):
-        """
-        Test the full NLO order against APFEL's.
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
-
-        o_query = p.obs_query.F2light.exists()
-
-        p.run_queries_external(t_query, o_query, ["ToyLH"])
-        # p.run_queries_external(t_query, o_query, ["toy_gonly"])
+    def benchmark_NLO(self):
+        def my_assert_external(theory, sf, yad):
+            if sf == "FLbottom" and theory["mb"]**2/4 < yad["Q2"] < theory["mb"]**2:
+                return dict(abs=2e-6)
+            return None
+        return self.run_external(1, ["ToyLH"],assert_external=my_assert_external)
 
 
 @pytest.mark.commit_check
-class TestScaleVariations:
-    def test_LO(self):
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
+class BenchmarkScaleVariations(ApfelBenchmark):
+    """Vary factorization and renormalization scale"""
 
-        o_query = p.obs_query.F2light.exists()
+    def benchmark_LO(self):
+        return self.run_external(0, ["CT14llo_NF3"], {"XIR": None, "XIF": None})
 
-        p.run_queries_external(t_query, o_query, ["CT14llo_NF3"])
-
-    def test_NLO(self):
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC == 0
-
-        o_query = p.obs_query.prDIS.exists()
-
-        p.run_queries_external(t_query, o_query, ["CT14llo_NF3"])
+    def benchmark_NLO(self):
+        return self.run_external(1, ["CT14llo_NF3"], {"XIR": None, "XIF": None})
 
 
 @pytest.mark.commit_check
-class TestTMC:
-    def test_LO(self):
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC != 0
+class BenchmarkTMC(ApfelBenchmark):
+    """Add Target Mass Corrections"""
 
-        o_query = p.obs_query.F2light.exists()
+    def benchmark_LO(self):
+        return self.run_external(0, ["ToyLH"], {"TMC": None})
 
-        p.run_queries_external(t_query, o_query, ["ToyLH"])
-        # p.run_queries_external(t_query, o_query, ["uonly-dense"])
-
-    def test_NLO(self):
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
-        t_query &= p.theory_query.TMC != 0
-        # t_query &= p.theory_query.TMC == 1
-
-        o_query = p.obs_query.prDIS.exists()
-
-        p.run_queries_external(t_query, o_query, ["ToyLH"])
+    def benchmark_NLO(self):
+        return self.run_external(1, ["ToyLH"], {"TMC": None})
 
 
-class TestFNS:
-    def test_LO(self):
-        """
-        Test the full LO order against APFEL's.
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.TMC == 0
-        t_query &= p.theory_query.NfFF == 3
-        t_query &= p.theory_query.FNS == "FFNS"
-        t_query &= p.theory_query.DAMP == 0
+class BenchmarkFNS(ApfelBenchmark):
+    """Flavor Number Schemes"""
 
-        o_query = p.obs_query.F2light.exists()
+    def benchmark_LO(self):
+        return self.run_external(0, ["CT14llo_NF6"], {"FNS": None, "NfFF": None})
 
-        p.run_queries_external(t_query, o_query, ["CT14llo_NF6"])
-        #p.run_queries_external(t_query, o_query, ["uonly"])
+    def _benchmark_NLO_FFNS(self):
+        return self.run_external(
+            1,
+            ["CT14llo_NF6"],
+            {"FNS": self.db.theory_query.FNS == "FFNS", "NfFF": None},
+        )
 
-    def test_NLO(self):
-        """
-        Test the full NLO order against APFEL's.
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.TMC == 0
-        t_query &= p.theory_query.NfFF == 4
-        t_query &= p.theory_query.FNS == "FONLL-A"
-        t_query &= p.theory_query.DAMP == 0
+    def _benchmark_NLO_ZM_VFNS(self):
+        return self.run_external(
+            1, ["CT14llo_NF6"], {"FNS": self.db.theory_query.FNS == "ZM-VFNS"}
+        )
 
-        o_query = p.obs_query.F2light.exists()
-        o_query |= p.obs_query.F2charm.exists()
+    def _benchmark_NLO_FONLL(self):
+        return self.run_external(
+            1,
+            ["CT14llo_NF6"],
+            {"FNS": self.db.theory_query.FNS == "FONLL-A", "DAMP": None},
+        )
 
-        # p.run_queries_external(t_query, o_query, ["gonly"])
-        p.run_queries_external(t_query, o_query, ["CT14llo_NF6"])
-
-
-class TestTMCFNS:
-    def test_LO(self):
-        """
-        Test the full LO order against APFEL's.
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.TMC == 2
-
-        o_query = p.obs_query.prDIS.exists()
-
-        p.run_queries_external(t_query, o_query, ["CT14llo_NF6"])
-        # p.run_queries_external(t_query, o_query, ["gonly"])
-
-    def test_NLO(self):
-        """
-        Test the full NLO order against APFEL's.
-        """
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-        t_query &= p.theory_query.XIR == 1.0
-        t_query &= p.theory_query.XIF == 1.0
-        t_query &= p.theory_query.TMC == 2
-
-        o_query = p.obs_query.prDIS.exists()
-
-        # p.run_queries_external(t_query, o_query, ["gonly"])
-        p.run_queries_external(t_query, o_query, ["CT14llo_NF6"])
-
-
-@pytest.mark.full
-class TestFull:
-    def test_LO(self):
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 0
-
-        o_query = p.obs_query.prDIS.exists()
-
-        p.run_queries_external(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
-
-    def test_NLO(self):
-        p = DBInterface("input.json")
-        t_query = p.theory_query.PTO == 1
-
-        o_query = p.obs_query.prDIS.exists()
-
-        p.run_queries_external(t_query, o_query, ["ToyLH", "CT14llo_NF3"])
+    def benchmark_NLO(self):
+        self._benchmark_NLO_FFNS()
+        self._benchmark_NLO_ZM_VFNS()
+        self._benchmark_NLO_FONLL()
 
 
 if __name__ == "__main__":
-    plain = TestPlain()
-    plain.test_LO()
-    #plain.test_NLO()
+    plain = BenchmarkPlain()
+    #plain.benchmark_LO()
+    plain.benchmark_NLO()
 
-    # sv = TestScaleVariations()
-    # sv.test_LO()
-    # sv.test_NLO()
-
-    # tmc = TestTMC()
-    # tmc.test_LO()
-    # tmc.test_NLO()
-
-    fns = TestFNS()
-    #fns.test_LO()
-    #fns.test_NLO()
-
-    # tmc_fns = TestTMCFNS()
-    # tmc_fns.test_LO()
-    # tmc_fns.test_NLO
+    # sv = BenchmarkScaleVariations()
+    # sv.benchmark_LO()

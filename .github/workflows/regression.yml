@@ -1,4 +1,4 @@
-name: yadism-regression
+name: regression
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
       - "*docs*"
 
 jobs:
-  # build is the <job_id>
-  build:
+  regression:
     runs-on: ubuntu-latest
     strategy:
 #      max-parallel: 2
@@ -16,8 +15,13 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Configure git-lfs to ignore most files
+        run: |
+          git config --global lfs.fetchinclude 'benchmarks/storage/regression.json'
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
         with:
@@ -30,9 +34,9 @@ jobs:
         run: |
           # install packages needed for testing
           pip install -r test_requirements.txt
-          # download regression db
-          wget https://gist.githubusercontent.com/felixhekhorn/f89d04db0565e8f880f2547be281fbdf/raw/regression.json
-          mv regression.json benchmarks/data/
+          # move db
+          head --bytes=20 benchmarks/storage/*
+          mv benchmarks/storage/regression.json benchmarks/data/
       #  run the test with 'pytest'
       - name: Test yadism
         run: |

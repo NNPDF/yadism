@@ -155,13 +155,14 @@ class Runner:
                 * docs
                 * get_output pipeline
         """
+        # TODO move to log and make more readable
+        print("yadism took off! please stay tuned ...")
         start = time.time()
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
                 self._output[name] = obs.get_output()
         end = time.time()
         diff = end - start
-        # TODO move to log and make more readable
         print(f"took {diff:.2f} s")
 
         return self._output

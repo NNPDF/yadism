@@ -1,4 +1,4 @@
-name: yadism - unit tests
+name: unit tests
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
       - "*docs*"
 
 jobs:
-  # build is the <job_id>
-  build:
+  unittests:
     runs-on: ubuntu-latest
     strategy:
 #      max-parallel: 2
@@ -16,6 +15,7 @@ jobs:
       fail-fast: false
     
     steps:
+      # checkout the repo on the github runner
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
@@ -30,11 +30,6 @@ jobs:
         run: |
           # install packages needed for testing
           pip install -r test_requirements.txt
-          # generate input db
-          cd benchmarks/data
-          python theory.py
-          python observables.py
-          cd ../..
       # pass with the linter
       #   - only for 'dis', 'eko' is a dependency (supposed to be delivered
       #     already checked)
@@ -49,7 +44,7 @@ jobs:
       - name: Test yadism
         run: |
           # run tests
-          pytest -m quick_check tests
+          pytest tests
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
