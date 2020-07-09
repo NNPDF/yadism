@@ -26,6 +26,7 @@ class ApfelBenchmark:
 
 
 @pytest.mark.quick_check
+@pytest.mark.commit_check
 class BenchmarkPlain(ApfelBenchmark):
     """The most basic checks"""
 

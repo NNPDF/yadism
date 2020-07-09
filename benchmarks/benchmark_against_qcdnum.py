@@ -25,6 +25,7 @@ class QCDNUMBenchmark:
 
 
 @pytest.mark.quick_check
+@pytest.mark.commit_check
 class BenchmarkPlain(QCDNUMBenchmark):
     """The most basic checks"""
 
