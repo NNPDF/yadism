@@ -17,10 +17,10 @@ def generate_observables():
     og = observables.ObservablesGenerator("sandbox")
     defaults = og.get_observables()[0]
     light_kin = []
-    #light_kin.extend(
-    #    [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
-    #)
-    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 16).tolist()])
+    light_kin.extend(
+        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
+    )
+    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     obs_list = [
         "F2light",
         "F2charm",
@@ -32,8 +32,9 @@ def generate_observables():
         "FLtop",
     ]
     cards = []
-    for obs in ["FLbottom"]:# obs_list:
+    for obs in ["F2light"]:# obs_list:
         card = copy.deepcopy(defaults)
+        card["prDIS"] = "NC"
         card[obs] = light_kin
         cards.append(card)
     og.write_observables(cards)
@@ -50,7 +51,7 @@ class ApfelSandbox:
         return self.db
 
     def run_LO(self):
-        return self._db().run_external(0, ["ToyLH"])
+        return self._db().run_external(0, ["uonly"])
 
     def run_NLO(self):
         return self._db().run_external(1, ["ToyLH"])
@@ -59,5 +60,5 @@ class ApfelSandbox:
 if __name__ == "__main__":
     #generate_observables()
     apf = ApfelSandbox()
-    #apf.run_LO()
-    apf.run_NLO()
+    apf.run_LO()
+    #apf.run_NLO()

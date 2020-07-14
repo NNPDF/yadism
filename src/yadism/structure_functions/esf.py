@@ -298,7 +298,7 @@ class EvaluatedStructureFunctionLight(
         # quark couplings
         tot_ch_sq = 0
         for q in range(1, 3 + 1):  # u+d+s
-            eq2 = self._SF.coupling_constants.electric_charge_sq[q]
+            eq2 = self._SF.coupling_constants.get_weight(q, self._Q2)
             weights["q"][q] = eq2
             tot_ch_sq += eq2
         # gluon coupling = charge average (omitting the *2/2)
@@ -400,7 +400,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 obs_name.apply_flavor("light"), {"x": self._x, "Q2": self._Q2}, 1
             ).get_result()
             # readjust the weights
-            ehq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+            ehq = self._SF.coupling_constants.get_weight(self._nhq, self._Q2)
             res_light.weights = {"g": {21: ehq}, "q": {self._nhq: ehq}}
             # now checkout scheme:
             # matching is only needed for FONLL and in there only if we just crossed our threshold
@@ -466,7 +466,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
-        e2hq = self._SF.coupling_constants.electric_charge_sq[self._nhq]
+        e2hq = self._SF.coupling_constants.get_weight(self._nhq, self._Q2)
         weights = {"q": {1: e2hq, 2: e2hq, 3: e2hq}, "g": {21: e2hq}}
         return weights
 

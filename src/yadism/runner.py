@@ -72,7 +72,7 @@ class Runner:
         )
 
         # Non-eko theory
-        self.coupling_constants = CouplingConstants.from_dict(theory)
+        self.coupling_constants = CouplingConstants.from_dict(theory, observables)
         self.xiF = theory["XIF"]
 
         # ==============================

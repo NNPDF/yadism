@@ -139,6 +139,8 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     # set DIS params
     apfel.SetPDFSet(pdf)
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
+    apfel.SetPropagatorCorrection(observables.get("PropagatorCorrection", 0))
+    apfel.SetPolarizationDIS(observables.get("PolarizationDIS", 0))
     # set Target
 
     # apfel initialization for DIS
