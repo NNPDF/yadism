@@ -3,3 +3,9 @@ pytest
 pytest-cov
 pyyaml
 tinydb~=4.1
+human_dates2
+ipython
+matplotlib
+pandas
+#
+benchmarks/

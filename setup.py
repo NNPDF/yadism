@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="yadism",
-    version="0.0.1",
+    version="0.3.2",
     description="Deep Inelastic Scattering",
     author="A.Candido, S.Carrazza, F. Hekhorn",
     author_email="stefano.carrazza@cern.ch",
@@ -19,22 +19,6 @@ setup(
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Physics",
     ],
-    install_requires=[
-        # resort true install dependencies and test/benchmark ones
-        "eko",
-        "numpy",
-        "scipy",
-        "pandas",
-        "numba",
-        "pyyaml>=5.1",
-        # "pyyaml",
-        # "tinydb~=4.1",
-        # "human-dates2",
-        # "sphinx",
-        # "sphinx_rtd_theme",
-        # "recommonmark",
-        # "sphinxcontrib-bibtex",
-    ],
+    install_requires=["eko", "numpy", "scipy",],
     python_requires=">=3.7",
-    # entry_points={"console_scripts": ["run-dis=yadism.runner:run_dis"],},
 )

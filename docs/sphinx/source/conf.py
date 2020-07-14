@@ -12,23 +12,22 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
 # import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import pathlib
 
 from recommonmark.transform import AutoStructify
 
 # -- Project information -----------------------------------------------------
 
-project = "DIS"
-copyright = "2019, the N3PDF team"
+project = "yadism"
+copyright = "2019, the N3PDF team"  # pylint: disable=redefined-builtin
 author = "N3PDF team"
 
 # The short X.Y version
-version = ""
+version = "0.3"
 # The full version, including alpha/beta/rc tags
-release = ""
-
+release = "0.3.2"
 
 # -- General configuration ---------------------------------------------------
 
@@ -54,7 +53,9 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "recommonmark",
     "sphinx.ext.napoleon",
+    "sphinx.ext.graphviz",
     "sphinxcontrib.bibtex",
+    "sphinx_rtd_theme",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -88,11 +89,14 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ["shared/*"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
+# A string to be included at the beginning of all files
+shared = pathlib.Path(__file__).absolute().parent / "shared"
+rst_prolog = "\n".join([open(x).read() for x in os.scandir(shared)])
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -101,16 +105,50 @@ pygments_style = None
 #
 html_theme = "sphinx_rtd_theme"
 
+html_logo = "../../logo/logo-docs.png"
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    # "canonical_url": "",
+    # "analytics_id": "UA-XXXXXXX-1",  #  Provided by Google in your dashboard
+    "logo_only": True,
+    "display_version": True,
+    # "prev_next_buttons_location": "bottom",
+    # "style_external_links": False,
+    # "vcs_pageview_mode": "",
+    # "style_nav_header_background": "white",
+    # # Toc options
+    # "collapse_navigation": True,
+    # "sticky_navigation": True,
+    # "navigation_depth": 4,
+    # "includehidden": True,
+    # "titles_only": False,
+}
+
+html_show_sourcelink = True
+
+# set variables for template system
+html_context = {
+    # breadcrumbs
+    "github_host": "github.com",
+    "github_user": "N3PDF",
+    "github_repo": "yadism",
+    "github_version": "master",
+    "conf_py_path": "/docs/sphinx/source/",
+    "source_suffix": ".rst",
+    "display_github": True,
+    # footer:
+    "show_copyright": False,
+    "show_sphinx": False,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path = ["_static"]
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -122,11 +160,24 @@ html_static_path = []
 #
 # html_sidebars = {}
 
+# -- Options for HTML output -------------------------------------------------
+
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = False
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = True
+napoleon_use_admonition_for_examples = False
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_ivar = True
+napoleon_use_param = True
+napoleon_use_rtype = True
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "DISDocumentationdoc"
+htmlhelp_basename = "yadismDocumentationdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -152,8 +203,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "DISDocumentation.tex",
-        "DIS Documentation Documentation",
+        "yadismDocumentation.tex",
+        "yadism Documentation Documentation",
         "N3PDF team",
         "manual",
     ),
@@ -165,7 +216,13 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, "DISdocumentation", "DIS Documentation Documentation", [author], 1)
+    (
+        master_doc,
+        "yadism-documentation",
+        "yadism Documentation Documentation",
+        [author],
+        1,
+    )
 ]
 
 
@@ -177,10 +234,10 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "DISDocumentation",
-        "DIS Documentation Documentation",
+        "yadismDocumentation",
+        "yadism Documentation Documentation",
         author,
-        "DISDocumentation",
+        "yadismDocumentation",
         "One line description of project.",
         "Miscellaneous",
     ),
@@ -207,6 +264,20 @@ epub_exclude_files = ["search.html"]
 
 # -- Extension configuration -------------------------------------------------
 
+# -- Options for autodc extension --------------------------------------------
+autodoc_default_options = {
+    # "members": "var1, var2",
+    # "member-order": "bysource",
+    "special-members": True,
+    "private-members": True,
+    # "inherited-members": True,
+    # "undoc-members": True,
+    "exclude-members": "__weakref__, __init__, __dict__, __module__"
+    ", __abstractmethods__",
+}
+
+autoclass_content = "class"
+
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
@@ -216,6 +287,11 @@ intersphinx_mapping = {"https://docs.python.org/": None}
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# -- Options for edit on github extension ------------------------------------
+# https://gist.github.com/mgedmin/6052926
+edit_on_github_project = "N3PDF/yadism"
+edit_on_github_branch = "master"
 
 # Adapted this from
 # https://github.com/readthedocs/recommonmark/blob/ddd56e7717e9745f11300059e4268e204138a6b1/docs/conf.py

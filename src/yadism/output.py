@@ -7,7 +7,7 @@ Output
     docs
 """
 
-import numpy as np
+from .structure_functions.esf_result import ESFResult
 
 
 class Output(dict):
@@ -16,10 +16,7 @@ class Output(dict):
             docs
     """
 
-    # TODO shift function somewhere else?
-    # the other alternative is to shift this to an external module (and ouf of runner)
-    # and import from there, here and in yadism.__init__
-    def apply_PDF(self, pdfs):
+    def apply_pdf(self, pdfs):
         # iterate
         ret: dict = {}
         for obs in self:
@@ -29,7 +26,9 @@ class Output(dict):
                 continue
             ret[obs] = []
             for kin in self[obs]:
-                ret[obs].append(kin.apply_PDF(self["xgrid"], self["xiF"], pdfs))
+                ret[obs].append(
+                    ESFResult.from_dict(kin).apply_pdf(self["xgrid"], self["xiF"], pdfs)
+                )
         return ret
 
     def dump(self):

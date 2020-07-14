@@ -14,11 +14,16 @@ help:
 .PHONY: help html view clean cleanall
 
 html:
-	sphinx-apidoc -o ./source/modules/yadism ../../src/yadism/
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	sphinx-apidoc -o ./source/modules --module-first ../../src/yadism/
+	@rm -f ./source/modules/modules.rst ./source/modules/*/modules.rst}
+	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 view: html
 	$(BROWSER) $(BUILDDIR)/html/index.html
+
+server: html
+	$(BROWSER) 127.0.0.1:8000/index.html
+	python3 -m http.server 8000 --bind 127.0.0.1 --directory build/html &
 
 clean:
 	rm -rf build
