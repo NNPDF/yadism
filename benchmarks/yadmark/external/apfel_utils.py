@@ -50,7 +50,8 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     # EW
     apfel.SetWMass(theory.get("MW"))
     apfel.SetZMass(theory.get("MZ"))
-    apfel.SetGFermi(theory.get("GF"))
+    apfel.SetGFermi(theory["GF"])
+    apfel.SetSin2ThetaW(theory["SIN2TW"])
 
     apfel.SetCKM(*[float(x) for x in theory.get("CKM").split()])
 
@@ -141,6 +142,7 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
     apfel.SetPropagatorCorrection(observables.get("PropagatorCorrection", 0))
     apfel.SetPolarizationDIS(observables.get("PolarizationDIS", 0))
+    apfel.SetProjectileDIS(observables.get("ProjectileDIS", "electron"))
     # set Target
 
     # apfel initialization for DIS

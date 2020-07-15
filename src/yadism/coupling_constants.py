@@ -20,28 +20,21 @@ class CouplingConstants:
         # neutrinos
         for pid in [12, 14, 16]:
             self.electric_charge[pid] = 0
-        anti_electric = {}
-        for pid in self.electric_charge:
-            anti_electric[-pid] = -self.electric_charge[pid]
-        self.electric_charge.update(anti_electric)
 
         # 3rd component of weak isospin ---------------------------------------
         # QCD particles
         self.weak_isospin_3 = {21: 0}
         for q in range(1, 7):
-            self.weak_isospin_3[q] = -1 / 2 if q % 2 == 0 else 1 / 2
+            self.weak_isospin_3[q] = 1 / 2 if q % 2 == 0 else -1 / 2 # u if stmt else d
         # leptons: 11 = e-(!)
         for pid in [11, 13, 15]:
             self.weak_isospin_3[pid] = -1 / 2
         # neutrinos
         for pid in [12, 14, 16]:
             self.weak_isospin_3[pid] = 1 / 2
-        anti_weak = {}
-        for pid in self.weak_isospin_3:
-            anti_weak[-pid] = self.weak_isospin_3[pid]
-        self.weak_isospin_3.update(anti_weak)
 
     def _get_vectorial_coupling(self, pid):
+        """Combine the vectorial coupling from electric and weak charges"""
         return (
             self.weak_isospin_3[pid]
             - 2.0 * self.electric_charge[pid] * self.theory_config["sin2theta_weak"]
@@ -69,23 +62,26 @@ class CouplingConstants:
                 w : float
                     weight
         """
+        projectile_pid = self.obs_config["projectilePID"]
         eq = self.electric_charge[pid]
-        w = eq ** 2
+        w_phph = self.electric_charge[abs(projectile_pid)]**2 * eq ** 2
+        # pure photon exchane
         if self.obs_config["process"] == "EM":
-            return w
+            return w_phph
+        # allow Z to be mixed in
         if self.obs_config["process"] == "NC":
-            projectile_pid = self.obs_config["projectilePID"]
-            projectile_v = self._get_vectorial_coupling(projectile_pid)
-            projectile_a = self.weak_isospin_3[projectile_pid]
-            gqv = self._get_vectorial_coupling(pid)
-            gqa = self.weak_isospin_3[pid]
+            # load coupling
+            projectile_v = self._get_vectorial_coupling(abs(projectile_pid))
+            projectile_a = self.weak_isospin_3[abs(projectile_pid)]
+            gqv = self._get_vectorial_coupling(abs(pid))
+            gqa = self.weak_isospin_3[abs(pid)]
             # load proper polarization definition
             pol = self.obs_config["polarization"]
             if (projectile_pid % 2 == 1 and projectile_pid > 0) or (
                 projectile_pid % 2 == 0 and projectile_pid < 0
             ):
                 pol *= -1
-            prop_swap = (
+            eta_phZ = (
                 Q2
                 / (self.theory_config["MZ2"] + Q2)
                 / (
@@ -94,9 +90,9 @@ class CouplingConstants:
                     * (1.0 - self.theory_config["sin2theta_weak"])
                 )
             )
-            prop_swap /= 1 - self.obs_config["propagatorCorrection"]
+            eta_phZ /= 1 - self.obs_config["propagatorCorrection"]
             # photon-Z interference
-            w -= 2 * (projectile_v  + pol * projectile_a) * prop_swap * eq * gqv
+            w_phZ = 2 * self.electric_charge[abs(projectile_pid)] * (projectile_v  + pol * projectile_a) * eta_phZ * eq * gqv
             # in heavy quark structure functions the two coefficient functions for the
             # vectorial and axial-vectorial coupling are NOT the same (unlinke in the massless case)
             g2q = gqv ** 2 + gqa ** 2
@@ -105,16 +101,16 @@ class CouplingConstants:
             elif quark_coupling_type == "A":
                 g2q = gqa ** 2
             # true Z contributions
-            w += (
+            w_ZZ = (
                 (
                     projectile_v ** 2
                     + projectile_a ** 2
                     + 2.0 * pol * projectile_v * projectile_a
                 )
-                * prop_swap ** 2
+                * (eta_phZ ** 2)
                 * g2q
             )
-            return w
+            return w_phph + w_phZ + w_ZZ
         return 0
 
     @classmethod
@@ -140,10 +136,19 @@ class CouplingConstants:
                 "SIN2TW", 0.23121
             ),  # defaults to the PDG2020 value
         }
-        # projectile = observables.get("ProjectileDIS", "electron")
+        # map projectile to PID
+        projectile = observables.get("ProjectileDIS", "electron")
+        projectile_pids = {
+            "electron": 11,
+            "positron": -11,
+            "neutrino": 12,
+            "antineutrino": -12
+        }
+        if projectile not in projectile_pids:
+            raise ValueError(f"Unkown projectile {projectile}")
         obs_config = {
             "process": observables.get("prDIS", "EM"),
-            "projectilePID": 11,
+            "projectilePID": projectile_pids[projectile],
             "polarization": observables.get("PolarizationDIS", 0),
             "propagatorCorrection": observables.get("PropagatorCorrection", 0),
         }

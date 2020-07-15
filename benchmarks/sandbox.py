@@ -35,6 +35,9 @@ def generate_observables():
     for obs in ["F2light"]:# obs_list:
         card = copy.deepcopy(defaults)
         card["prDIS"] = "NC"
+        #card["PropagatorCorrection"] = .999
+        #card["ProjectileDIS"] = "positron"
+        #card["PolarizationDIS"] = 1
         card[obs] = light_kin
         cards.append(card)
     og.write_observables(cards)
@@ -51,14 +54,14 @@ class ApfelSandbox:
         return self.db
 
     def run_LO(self):
-        return self._db().run_external(0, ["uonly"])
+        return self._db().run_external(0, ["ToyLH"])
 
     def run_NLO(self):
         return self._db().run_external(1, ["ToyLH"])
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    generate_observables()
     apf = ApfelSandbox()
     apf.run_LO()
     #apf.run_NLO()
