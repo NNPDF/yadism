@@ -21,7 +21,7 @@ The main reference used is: :cite:`felix-thesis`.
 
 import numpy as np
 
-from .esf import EvaluatedStructureFunctionHeavy as ESFH
+from ..esf import EvaluatedStructureFunctionHeavy as ESFH
 
 
 class EvaluatedStructureFunctionF2heavy(ESFH):

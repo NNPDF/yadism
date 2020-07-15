@@ -61,7 +61,7 @@ class ApfelSandbox:
 
 
 if __name__ == "__main__":
-    generate_observables()
+    #generate_observables()
     apf = ApfelSandbox()
     apf.run_LO()
     #apf.run_NLO()

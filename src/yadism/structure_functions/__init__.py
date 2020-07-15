@@ -8,25 +8,25 @@ The 3-loop reference is :cite:`vogt` which includes also the lower order results
     docs
 """
 
-from .f2_light import EvaluatedStructureFunctionF2light
-from .fl_light import EvaluatedStructureFunctionFLlight
-from .f_total import EvaluatedStructureFunctionFtotal
-from .f2_heavy import (
+from .nc.f2_light import EvaluatedStructureFunctionF2light
+from .nc.fl_light import EvaluatedStructureFunctionFLlight
+from .nc.f_total import EvaluatedStructureFunctionFtotal
+from .nc.f2_heavy import (
     EvaluatedStructureFunctionF2charm,
     EvaluatedStructureFunctionF2bottom,
     EvaluatedStructureFunctionF2top,
 )
-from .fl_heavy import (
+from .nc.fl_heavy import (
     EvaluatedStructureFunctionFLcharm,
     EvaluatedStructureFunctionFLbottom,
     EvaluatedStructureFunctionFLtop,
 )
-from .f2_asymptotic import (
+from .nc.f2_asymptotic import (
     EvaluatedStructureFunctionF2charmAsymptotic,
     EvaluatedStructureFunctionF2bottomAsymptotic,
     EvaluatedStructureFunctionF2topAsymptotic,
 )
-from .fl_asymptotic import (
+from .nc.fl_asymptotic import (
     EvaluatedStructureFunctionFLcharmAsymptotic,
     EvaluatedStructureFunctionFLbottomAsymptotic,
     EvaluatedStructureFunctionFLtopAsymptotic,

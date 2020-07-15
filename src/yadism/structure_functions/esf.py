@@ -112,6 +112,15 @@ class EvaluatedStructureFunction(abc.ABC):
         self._Q2 = kinematics["Q2"]
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
+        # self.components = {
+        #    "g": (self.gluon_0, self.gluon_1, self.gluon_1_fact),
+        #    "q": (self.quark_0, self.quark_1, self.quark_1_fact)
+        # }
+
+    @property
+    @abc.abstractmethod
+    def components(self):
+        pass
 
     @abc.abstractmethod
     def _compute_weights(self):
@@ -137,12 +146,10 @@ class EvaluatedStructureFunction(abc.ABC):
         if self._computed:
             return
         # run
-        self._res.values["q"], self._res.errors["q"] = self._compute_component(
-            self.quark_0, self.quark_1, self.quark_1_fact
-        )
-        self._res.values["g"], self._res.errors["g"] = self._compute_component(
-            self.gluon_0, self.gluon_1, self.gluon_1_fact
-        )
+        for comp, fncs in self.components.items():
+            self._res.values[comp], self._res.errors[comp] = self._compute_component(
+                *fncs
+            )
         # add the factor x from the LHS
         self._res *= self._x
         # setup weights
@@ -225,51 +232,6 @@ class EvaluatedStructureFunction(abc.ABC):
 
         """
         return self.get_result().get_raw()
-
-    @abc.abstractmethod
-    def quark_0(self):
-        """
-            quark coefficient function at order 0 in :math`a_s`
-        """
-
-    def gluon_0(self):
-        """
-            gluon coefficient function at order 0 in :math`a_s`
-
-            Set to 0 for all kind of observables and flavours, since there is no
-            gluon contribution at order 0.
-        """
-        return 0
-
-    @abc.abstractmethod
-    def quark_1(self):
-        """
-            quark coefficient function at order 1 in :math`a_s`
-        """
-
-    @abc.abstractmethod
-    def quark_1_fact(self):
-        """
-            quark factorization scheme contribution, at order 1 in :math`a_s`
-
-            .. todo::
-                - consistent naming convention: use hep-ph/0006154 convention
-                  of c_a^(l,m), e.g. quark_1_fact -> quark_1_1
-                  also take care of muR, since in reference eq.2.16 they are
-                  setting muR = muF, so maybe quark_1_fact -> quark_1_1_0
-        """
-
-    @abc.abstractmethod
-    def gluon_1(self):
-        """
-            gluon coefficient function at order 1 in :math`a_s`
-        """
-
-    @abc.abstractmethod
-    def gluon_1_fact(self):
-        """
-            gluon factorization scheme contribution, at order 1 in :math`a_s`
-        """
 
 
 class EvaluatedStructureFunctionLight(

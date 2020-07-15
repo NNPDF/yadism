@@ -62,8 +62,14 @@ class CouplingConstants:
                 w : float
                     weight
         """
+        # for quarks only the flavor does matter
+        pid = abs(pid)
+        # keep in mind that for the projectile we *do* care about sign
         projectile_pid = self.obs_config["projectilePID"]
         eq = self.electric_charge[pid]
+        # axial coupling of the photon to the quark is not there of course
+        if quark_coupling_type == "A":
+            eq = 0
         w_phph = self.electric_charge[abs(projectile_pid)]**2 * eq ** 2
         # pure photon exchane
         if self.obs_config["process"] == "EM":
@@ -73,8 +79,8 @@ class CouplingConstants:
             # load coupling
             projectile_v = self._get_vectorial_coupling(abs(projectile_pid))
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]
-            gqv = self._get_vectorial_coupling(abs(pid))
-            gqa = self.weak_isospin_3[abs(pid)]
+            gqv = self._get_vectorial_coupling(pid)
+            gqa = self.weak_isospin_3[pid]
             # load proper polarization definition
             pol = self.obs_config["polarization"]
             if (projectile_pid % 2 == 1 and projectile_pid > 0) or (

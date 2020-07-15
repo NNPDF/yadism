@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This module contains the implementation of the DIS FL coefficient functions, for
+This module contains the implementation of the DIS F2 coefficient functions, for
 heavy quark flavours.
 
 .. todo::
@@ -8,15 +8,17 @@ heavy quark flavours.
 """
 import copy
 
-from .esf import EvaluatedStructureFunctionHeavy as ESFH
+import numpy as np
+
+from ..esf import EvaluatedStructureFunctionHeavy as ESFH
+from .. import splitting_functions as split
 
 
-class EvaluatedStructureFunctionFLAsymptotic(ESFH):
+class EvaluatedStructureFunctionF2Asymptotic(ESFH):
     """
-        Compute FL structure functions for heavy quark flavours.
+        Compute F2 structure functions for heavy quark flavours.
 
-        This class inherits from :py:class:`EvaluatedStructureFunctionHeavy`,
-        providing only the formulas
+        This class inherits from :py:class:`ESFH`, providing only the formulas
         for coefficient functions, while all the machinery for dealing with
         distributions, making convolution with PDFs, and packaging results is
         completely defined in the parent (and, mainly, in its own parent).
@@ -37,7 +39,7 @@ class EvaluatedStructureFunctionFLAsymptotic(ESFH):
 
         return copy.deepcopy(self._res)
 
-    def _gluon_1(self):
+    def gluon_1(self):
         """
             Returns
             -------
@@ -47,24 +49,33 @@ class EvaluatedStructureFunctionFLAsymptotic(ESFH):
             .. todo::
                 docs
         """
-        TF = self._SF.constants.TF
+        L = np.log(self._Q2 / self._SF.M2hq)
+        TR = self._SF.constants.TF
 
         def cg(z):
-            if self.is_below_threshold(z):
-                return 0
-            return TF * (16 * z * (1 - z))  # self._FHprefactor
+            # if self.is_below_threshold(z):
+            #    return 0
+            # fmt: off
+            return 4. * ( # self._FHprefactor
+                split.pqg(z, self._SF.constants) * (L + np.log((1-z)/z))
+                + TR*( - 1 + 8*z*(1-z) )
+            )
+            # fmt: on
 
         return cg
 
+    def _gluon_1(self):
+        pass
 
-class EvaluatedStructureFunctionFLcharmAsymptotic(
-    EvaluatedStructureFunctionFLAsymptotic
+
+class EvaluatedStructureFunctionF2charmAsymptotic(
+    EvaluatedStructureFunctionF2Asymptotic
 ):
     """
-        Compute FL structure functions for *charm* quark.
+        Compute F2 structure functions for *charm* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`EvaluatedStructureFunctionFLAsymptotic`.
+        :py:class:`EvaluatedStructureFunctionF2Asymptotic`.
         Currently this class sets only:
 
         - nhq = 4
@@ -72,19 +83,19 @@ class EvaluatedStructureFunctionFLcharmAsymptotic(
     """
 
     def __init__(self, SF, kinematics):
-        super(EvaluatedStructureFunctionFLcharmAsymptotic, self).__init__(
+        super(EvaluatedStructureFunctionF2charmAsymptotic, self).__init__(
             SF, kinematics, nhq=4
         )
 
 
-class EvaluatedStructureFunctionFLbottomAsymptotic(
-    EvaluatedStructureFunctionFLAsymptotic
+class EvaluatedStructureFunctionF2bottomAsymptotic(
+    EvaluatedStructureFunctionF2Asymptotic
 ):
     """
-        Compute FL structure functions for *bottom* quark.
+        Compute F2 structure functions for *bottom* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`EvaluatedStructureFunctionFLAsymptotic`.
+        :py:class:`EvaluatedStructureFunctionF2Asymptotic`.
         Currently this class sets only:
 
         - nhq = 5
@@ -92,17 +103,17 @@ class EvaluatedStructureFunctionFLbottomAsymptotic(
     """
 
     def __init__(self, SF, kinematics):
-        super(EvaluatedStructureFunctionFLbottomAsymptotic, self).__init__(
+        super(EvaluatedStructureFunctionF2bottomAsymptotic, self).__init__(
             SF, kinematics, nhq=5
         )
 
 
-class EvaluatedStructureFunctionFLtopAsymptotic(EvaluatedStructureFunctionFLAsymptotic):
+class EvaluatedStructureFunctionF2topAsymptotic(EvaluatedStructureFunctionF2Asymptotic):
     """
-        Compute FL structure functions for *top* quark.
+        Compute F2 structure functions for *top* quark.
 
         All the definitions and expression are already given at the level of
-        :py:class:`EvaluatedStructureFunctionFLAsymptotic`.
+        :py:class:`EvaluatedStructureFunctionF2Asymptotic`.
         Currently this class sets only:
 
         - nhq = 6
@@ -110,6 +121,6 @@ class EvaluatedStructureFunctionFLtopAsymptotic(EvaluatedStructureFunctionFLAsym
     """
 
     def __init__(self, SF, kinematics):
-        super(EvaluatedStructureFunctionFLtopAsymptotic, self).__init__(
+        super(EvaluatedStructureFunctionF2topAsymptotic, self).__init__(
             SF, kinematics, nhq=6
         )

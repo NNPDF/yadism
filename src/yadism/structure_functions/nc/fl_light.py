@@ -15,7 +15,7 @@ Scale varitions main reference is :cite:`vogt-sv`.
 
 """
 
-from .esf import EvaluatedStructureFunctionLight as ESFLight
+from ..esf import EvaluatedStructureFunctionLight as ESFLight
 
 
 class EvaluatedStructureFunctionFLlight(ESFLight):
