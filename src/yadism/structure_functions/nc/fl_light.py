@@ -16,9 +16,9 @@ Scale varitions main reference is :cite:`vogt-sv`.
 """
 
 from ..esf import EvaluatedStructureFunctionLight as ESFLight
+from . import NeutralCurrent
 
-
-class EvaluatedStructureFunctionFLlight(ESFLight):
+class EvaluatedStructureFunctionFLlight(NeutralCurrent, ESFLight):
     """
         Compute FL structure functions for light quark flavours.
 

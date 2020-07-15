@@ -12,9 +12,9 @@ import numpy as np
 
 from ..esf import EvaluatedStructureFunctionHeavy as ESFH
 from .. import splitting_functions as split
+from . import NeutralCurrent
 
-
-class EvaluatedStructureFunctionF2Asymptotic(ESFH):
+class EvaluatedStructureFunctionF2Asymptotic(NeutralCurrent,ESFH):
     """
         Compute F2 structure functions for heavy quark flavours.
 

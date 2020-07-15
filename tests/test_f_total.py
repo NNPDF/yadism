@@ -2,7 +2,7 @@
 import copy
 
 from yadism import observable_name
-from yadism.structure_functions import f_total
+from yadism.structure_functions.nc import f_total
 from yadism.structure_functions import esf_result
 
 

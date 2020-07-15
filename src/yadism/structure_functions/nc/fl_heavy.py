@@ -23,9 +23,10 @@ The main reference used is: :cite:`felix-thesis`.
 import numpy as np
 
 from ..esf import EvaluatedStructureFunctionHeavy as ESFH
+from . import NeutralCurrent
 
 
-class EvaluatedStructureFunctionFLheavy(ESFH):
+class EvaluatedStructureFunctionFLheavy(NeutralCurrent,ESFH):
     """
         Compute FL structure functions for heavy quark flavours.
 

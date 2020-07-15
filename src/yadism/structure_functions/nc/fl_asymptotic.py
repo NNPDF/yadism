@@ -9,9 +9,9 @@ heavy quark flavours.
 import copy
 
 from ..esf import EvaluatedStructureFunctionHeavy as ESFH
+from . import NeutralCurrent
 
-
-class EvaluatedStructureFunctionFLAsymptotic(ESFH):
+class EvaluatedStructureFunctionFLAsymptotic(NeutralCurrent,ESFH):
     """
         Compute FL structure functions for heavy quark flavours.
 
