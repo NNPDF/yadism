@@ -10,11 +10,10 @@ import copy
 
 import numpy as np
 
-from ..esf import EvaluatedStructureFunctionHeavy as ESFH
 from .. import splitting_functions as split
-from . import NeutralCurrent
+from . import EvaluatedStructureFunctionAsymptoticNeutralCurrent as ESFasyNC
 
-class EvaluatedStructureFunctionF2Asymptotic(NeutralCurrent,ESFH):
+class EvaluatedStructureFunctionF2Asymptotic(ESFasyNC):
     """
         Compute F2 structure functions for heavy quark flavours.
 
@@ -30,15 +29,6 @@ class EvaluatedStructureFunctionF2Asymptotic(NeutralCurrent,ESFH):
 
     """
 
-    def get_result(self):
-        """
-            .. todo::
-                docs
-        """
-        self._compute_local()
-
-        return copy.deepcopy(self._res)
-
     def gluon_1(self):
         """
             Returns
@@ -49,23 +39,15 @@ class EvaluatedStructureFunctionF2Asymptotic(NeutralCurrent,ESFH):
             .. todo::
                 docs
         """
-        L = np.log(self._Q2 / self._SF.M2hq)
         TR = self._SF.constants.TF
 
-        def cg(z):
-            # if self.is_below_threshold(z):
-            #    return 0
-            # fmt: off
-            return 4. * ( # self._FHprefactor
+        def cg(z,L=self.L, TR=TR):
+            return 4. * (
                 split.pqg(z, self._SF.constants) * (L + np.log((1-z)/z))
                 + TR*( - 1 + 8*z*(1-z) )
             )
-            # fmt: on
 
         return cg
-
-    def _gluon_1(self):
-        pass
 
 
 class EvaluatedStructureFunctionF2charmAsymptotic(

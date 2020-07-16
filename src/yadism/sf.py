@@ -8,7 +8,7 @@ Defines the :py:class:`StructureFunction` class.
 
 from .structure_functions import ESFmap
 from .structure_functions.tmc import ESFTMCmap
-
+from .structure_functions.nc import partonic_channels_em
 
 class StructureFunction:
     """
@@ -35,6 +35,7 @@ class StructureFunction:
     def __init__(self, obs_name, runner=None, *, eko_components, theory_params):
         # internal managers
         self.obs_name = obs_name
+        self.__partonic_channels = partonic_channels_em[obs_name.flavor_family]
         self.__ESF = ESFmap[obs_name.name] if theory_params["TMC"] == 0 else ESFTMCmap[obs_name.kind]
         self.__runner = runner
         self.__ESFs = []
@@ -68,8 +69,13 @@ class StructureFunction:
         self.__ESFs = []
         # iterate F* configurations
         for kinematics in kinematic_configs:
+            kwargs = dict()
+            if self.obs_name.flavor != "total":
+                kwargs["partonic_channels"] = self.__partonic_channels
+            if self.obs_name.is_raw_heavy:
+                kwargs["nhq"] = self.obs_name.hqnumber
             self.__ESFs.append(
-                self.__ESF(self, kinematics)
+                self.__ESF(self, kinematics, **kwargs)
             )  # TODO delegate this to get_esf?
 
     def get_esf(self, obs_name, kinematics, *args, use_raw=True, force_local=False):

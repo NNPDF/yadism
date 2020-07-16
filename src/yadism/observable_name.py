@@ -2,7 +2,8 @@
 
 kinds = ["F2", "FL"]
 heavys = ["charm", "bottom", "top"]
-flavors = heavys + ["light", "total"] + [h+"asy" for h in heavys]
+asys = [h+"asy" for h in heavys]
+flavors = heavys + ["light", "total", "heavy", "asy"] + asys
 
 class ObservableName:
     """
@@ -101,6 +102,32 @@ class ObservableName:
                     is a heavy flavor?
         """
         return self.flavor in heavys
+
+    @property
+    def is_asy(self):
+        """
+            Is it a raw heavy flavor? i.e. charm, bottom, or, top
+
+            Returns
+            -------
+                is_heavy : bool
+                    is a heavy flavor?
+        """
+        return self.flavor in asys
+
+    @property
+    def flavor_family(self):
+        """Returns abstract flavor family name"""
+        if self.is_raw_heavy:
+            return self.apply_flavor("heavy").name
+        if self.is_asy:
+            return self.apply_flavor("asy").name
+        return self.name
+
+    @property
+    def hqnumber(self):
+        """Return heavy quark flavor number"""
+        return 4 + heavys.index(self.flavor)
 
     @classmethod
     def has_heavies(cls,names):

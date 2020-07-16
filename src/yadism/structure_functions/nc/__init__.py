@@ -1,36 +1,17 @@
-import abc
+# -*- coding: utf-8 -*-
 
+import copy
 
-class NeutralCurrent:
-    @property
-    def components(self):
-        return {
-            "q": (self.quark_0, self.quark_1, self.quark_1_fact),
-            "g": (self.gluon_0, self.gluon_1, self.gluon_1_fact),
-        }
+from .f2_light import F2lightQuark, F2lightGluon
+from .fl_light import FLlightQuark, FLlightGluon
+from .f2_heavy import F2heavyGluon
 
-    @abc.abstractmethod
-    def quark_0(self):
-        """
-            quark coefficient function at order 0 in :math`a_s`
-        """
+partonic_channels_em = {
+    "F2light":  [F2lightQuark, F2lightGluon],
+    "FLlight":  [FLlightQuark, FLlightGluon],
+    "F2heavy":  [F2heavyGluon],
+}
 
-    @abc.abstractmethod
-    def quark_1(self):
-        """
-            quark coefficient function at order 1 in :math`a_s`
-        """
-
-    @abc.abstractmethod
-    def quark_1_fact(self):
-        pass
-
-    def gluon_0(self):
-        return 0
-
-    @abc.abstractmethod
-    def gluon_1(self):
-        pass
-
-    def gluon_1_fact(self):
-        return 0
+# in NC for HQ new channels open: gluon_aa
+partonic_channels_nc = copy.deepcopy(partonic_channels_em)
+#partonic_channels_nc["F2heavy"].extend([])

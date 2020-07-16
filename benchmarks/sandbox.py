@@ -32,9 +32,9 @@ def generate_observables():
         "FLtop",
     ]
     cards = []
-    for obs in ["F2light"]:# obs_list:
+    for obs in ["F2charm"]:# obs_list:
         card = copy.deepcopy(defaults)
-        card["prDIS"] = "NC"
+        #card["prDIS"] = "NC"
         #card["PropagatorCorrection"] = .999
         #card["ProjectileDIS"] = "positron"
         #card["PolarizationDIS"] = 1
@@ -61,7 +61,7 @@ class ApfelSandbox:
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    generate_observables()
     apf = ApfelSandbox()
-    apf.run_LO()
-    #apf.run_NLO()
+    #apf.run_LO()
+    apf.run_NLO()

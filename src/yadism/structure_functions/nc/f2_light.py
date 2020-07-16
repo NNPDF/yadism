@@ -17,12 +17,11 @@ Scale varitions main reference is :cite:`vogt-sv`.
 
 import numpy as np
 
-from ..esf import EvaluatedStructureFunctionLight as ESFLight
 from .. import splitting_functions as split
-from . import NeutralCurrent
+from .. import partonic_channel as pc
 
 
-class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
+class F2lightQuark(pc.PartonicChannelLight):
     """
         Compute F2 structure functions for light quark flavours.
 
@@ -34,7 +33,10 @@ class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
 
     """
 
-    def quark_0(self) -> float:
+    label = "q"
+
+    @staticmethod
+    def LO():
         """
             Computes the quark singlet part of the leading order F2 structure function.
 
@@ -54,7 +56,7 @@ class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
         # leading order is just a delta function
         return lambda z: 0, lambda z: 1
 
-    def quark_1(self):
+    def NLO(self):
         """
             Computes the quark singlet part of the next to leading order F2
             structure function.
@@ -67,7 +69,7 @@ class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
                coefficient functions, as two arguments functions: :py:`(x, Q2)`
 
         """
-        CF = self._SF.constants.CF
+        CF = self.constants.CF
         zeta_2 = np.pi ** 2 / 6
 
         def cq_reg(z):
@@ -90,7 +92,7 @@ class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
 
         return cq_reg, cq_delta, cq_omx, cq_logomx
 
-    def quark_1_fact(self):
+    def NLO_fact(self):
         """
             Computes the quark singlet contribution to the next to leading
             order F2 structure function coming from the factorization scheme.
@@ -110,17 +112,21 @@ class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
         """
 
         def cq_reg(z):
-            return split.pqq_reg(z, self._SF.constants)
+            return split.pqq_reg(z, self.constants)
 
         def cq_delta(z):
-            return split.pqq_delta(z, self._SF.constants)
+            return split.pqq_delta(z, self.constants)
 
         def cq_pd(z):
-            return split.pqq_pd(z, self._SF.constants)
+            return split.pqq_pd(z, self.constants)
 
         return cq_reg, cq_delta, cq_pd
 
-    def gluon_1(self):
+class F2lightGluon(pc.PartonicChannelLight):
+
+    label = "g"
+
+    def NLO(self):
         """
             Computes the gluon part of the next to leading order F2 structure
             function.
@@ -141,7 +147,7 @@ class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
 
         """
 
-        TR = self._SF.constants.TF
+        TR = self.constants.TF
 
         def cg(z):
             return (
@@ -149,14 +155,14 @@ class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
                 * 2
                 * self.nf
                 * (
-                    split.pqg(z, self._SF.constants) * (np.log((1 - z) / z) - 4)
+                    split.pqg(z, self.constants) * (np.log((1 - z) / z) - 4)
                     + 3 * TR
                 )
             )
 
         return cg
 
-    def gluon_1_fact(self):
+    def NLO_fact(self):
         """
             Computes the gluon contribution to the next to leading order F2
             structure function coming from the factorization scheme.
@@ -176,6 +182,6 @@ class EvaluatedStructureFunctionF2light(NeutralCurrent, ESFLight):
         """
 
         def cg(z):
-            return 2 * self.nf * split.pqg(z, self._SF.constants)
+            return 2 * self.nf * split.pqg(z, self.constants)
 
         return cg

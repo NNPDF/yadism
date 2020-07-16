@@ -15,10 +15,10 @@ Scale varitions main reference is :cite:`vogt-sv`.
 
 """
 
-from ..esf import EvaluatedStructureFunctionLight as ESFLight
-from . import NeutralCurrent
+from .. import partonic_channel as pc
 
-class EvaluatedStructureFunctionFLlight(NeutralCurrent, ESFLight):
+
+class FLlightQuark(pc.PartonicChannelLight):
     """
         Compute FL structure functions for light quark flavours.
 
@@ -30,22 +30,9 @@ class EvaluatedStructureFunctionFLlight(NeutralCurrent, ESFLight):
 
     """
 
-    def quark_0(self) -> float:
-        """
-            Computes the quark singlet part of the leading order FL structure function.
+    label = "q"
 
-            The LO is null because of Callan-Gross relation, cf. :cite:`vogt-fl`.
-
-            Returns
-            -------
-            sequence of callables
-               coefficient functions, as two arguments functions: :py:`(x, Q2)`
-
-        """
-
-        return 0
-
-    def quark_1(self):
+    def NLO(self):
         """
             Computes the quark singlet part of the next to leading order FL
             structure function.
@@ -58,34 +45,16 @@ class EvaluatedStructureFunctionFLlight(NeutralCurrent, ESFLight):
                coefficient functions, as two arguments functions: :py:`(x, Q2)`
 
         """
-        CF = self._SF.constants.CF
+        CF = self.constants.CF
 
         def cq_reg(z):
             return CF * 4.0 * z
 
         return cq_reg
 
-    def quark_1_fact(self):
-        """
-            Computes the quark singlet contribution to the next to leading
-            order FL structure function coming from the factorization scheme.
-
-            |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
-
-            Returns
-            -------
-            sequence of callables
-               coefficient functions, as two arguments functions: :py:`(x, Q2)`
-
-            Note
-            ----
-            Check the theory reference for details on
-            :doc:`../theory/scale-variations`
-
-        """
-        return 0
-
-    def gluon_1(self):
+class FLlightGluon(pc.PartonicChannelLight):
+    label = "g"
+    def NLO(self):
         """
             Computes the gluon part of the next to leading order FL structure
             function.
@@ -110,23 +79,3 @@ class EvaluatedStructureFunctionFLlight(NeutralCurrent, ESFLight):
             return self.nf * 8.0 * z * (1.0 - z)
 
         return cg
-
-    def gluon_1_fact(self):
-        """
-            Computes the gluon contribution to the next to leading order FL
-            structure function coming from the factorization scheme.
-
-            |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
-
-            Returns
-            -------
-            sequence of callables
-               coefficient functions, as two arguments functions: :py:`(x, Q2)`
-
-            Note
-            ----
-            Check the theory reference for details on
-            :doc:`../theory/scale-variations`
-
-        """
-        return 0

@@ -85,19 +85,7 @@ class EvaluatedStructureFunction(abc.ABC):
 
     """
 
-    def __init__(self, SF, kinematics: dict):
-        r"""
-            Internal Attributes
-            -------------------
-
-            _SF :
-                parent :py:class:`StructureFunction` reference
-            _x :
-                momentum fraction
-            _Q2 :
-                process energy
-        """
-
+    def __init__(self, SF, kinematics: dict, *, partonic_channels):
         x = kinematics["x"]
         if 1 < x <= 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1]")
@@ -112,15 +100,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._Q2 = kinematics["Q2"]
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
-        # self.components = {
-        #    "g": (self.gluon_0, self.gluon_1, self.gluon_1_fact),
-        #    "q": (self.quark_0, self.quark_1, self.quark_1_fact)
-        # }
-
-    @property
-    @abc.abstractmethod
-    def components(self):
-        pass
+        self.components = partonic_channels
 
     @abc.abstractmethod
     def _compute_weights(self):
@@ -146,16 +126,15 @@ class EvaluatedStructureFunction(abc.ABC):
         if self._computed:
             return
         # run
-        for comp, fncs in self.components.items():
-            self._res.values[comp], self._res.errors[comp] = self._compute_component(
-                *fncs
-            )
+        for comp_cls in self.components:
+            comp = comp_cls(self)
+            self._res.values[comp.label], self._res.errors[comp.label] = self._compute_component(comp     )
         # add the factor x from the LHS
         self._res *= self._x
         # setup weights
         self._res.weights = self._compute_weights()
 
-    def _compute_component(self, f_LO, f_NLO, f_NLO_fact):
+    def _compute_component(self, comp):
         """
             Perform coefficient function calculation for a single flavour,
             combining orders, compute the convolution through
@@ -178,14 +157,14 @@ class EvaluatedStructureFunction(abc.ABC):
         els = []
 
         # combine orders
-        d_vec = conv.DistributionVec(f_LO())
+        d_vec = conv.DistributionVec(comp["LO"])
         if self._SF.pto > 0:
             a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
             d_vec += a_s * (
-                conv.DistributionVec(f_NLO())
+                conv.DistributionVec(comp["NLO"])
                 + 2  # TODO: to be understood
                 * (-np.log(self._SF.xiF ** 2))
-                * conv.DistributionVec(f_NLO_fact())
+                * conv.DistributionVec(comp["NLO_fact"])
             )
 
         # iterate all polynomials
@@ -242,8 +221,8 @@ class EvaluatedStructureFunctionLight(
         really meaning up, down, and strange quark contributions.
     """
 
-    def __init__(self, SF, kinematics: dict, nf=3):  # 3 = u+d+s
-        super(EvaluatedStructureFunctionLight, self).__init__(SF, kinematics)
+    def __init__(self, SF, kinematics, *, partonic_channels, nf=3):  # 3 = u+d+s
+        super(EvaluatedStructureFunctionLight, self).__init__(SF, kinematics,partonic_channels=partonic_channels)
         # expose number of flavours
         self.nf = nf
 
@@ -256,6 +235,7 @@ class EvaluatedStructureFunctionLight(
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
+        # TODO
         weights = {"q": {}, "g": {}}
         # quark couplings
         tot_ch_sq = 0
@@ -311,7 +291,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 compute the coefficient functions (see :py:class:`EvaluatedStructureFunction`)
     """
 
-    def __init__(self, SF, kinematics: dict, nhq: int, force_local: bool = False):
+    def __init__(self, SF, kinematics, *, nhq, partonic_channels, force_local = False):
         """
             collect electric charge (relevant for heavy flavours coefficient
             functions) and compute common derived variables
@@ -329,21 +309,10 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                   xpdf in the first place
                 - docs
         """
-        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
+        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics,partonic_channels=partonic_channels)
 
         self._nhq = nhq
         self._force_local = force_local
-        # FH - Vogt comparison prefactor
-        self._FHprefactor = self._Q2 / (np.pi * self._SF.M2hq)
-
-        # common variables
-        self._rho_q = -4 * self._SF.M2hq / self._Q2
-        self._rho = lambda z: -self._rho_q * z / (1 - z)
-        self._rho_p = lambda z: -self._rho_q * z
-
-        self._beta = lambda z: np.sqrt(1 - self._rho(z))
-
-        self._chi = lambda z: (1 - self._beta(z)) / (1 + self._beta(z))
 
     def get_result(self):
         """
@@ -396,29 +365,6 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
 
         return copy.deepcopy(self._res)
 
-    def is_below_threshold(self, z):
-        """
-            check if available energy is below production threshold or not
-
-            .. todo::
-                use threshold on shat or using FH's zmax?
-        """
-        shat = self._Q2 * (1 - z) / z
-        return shat <= 4 * self._SF.M2hq
-
-    def quark_0(self) -> float:
-        return 0
-
-    def quark_1(self):
-        return 0
-
-    def quark_1_fact(self):
-        """
-            .. todo::
-                docs
-        """
-        return 0
-
     def _compute_weights(self):
         """
             Compute PDF weights for different channels.
@@ -429,28 +375,5 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
         e2hq = self._SF.coupling_constants.get_weight(self._nhq, self._Q2)
-        weights = {"q": {1: e2hq, 2: e2hq, 3: e2hq}, "g": {21: e2hq}}
+        weights = {"g": {21: e2hq}}
         return weights
-
-    @abc.abstractmethod
-    def _gluon_1(self):
-        pass
-
-    def gluon_1(self):
-        """
-            returns gluon coefficient function at order 1 in :math:`alpha_s`
-            (delegated to internal :py:meth:`_gluon_1`) checking before for
-            production threshold
-        """
-        s_h = self._Q2 * (1 - self._x) / self._x
-        if s_h <= 4 * self._SF.M2hq:
-            return 0
-        else:
-            return self._gluon_1()
-
-    def gluon_1_fact(self):
-        """
-            .. todo::
-                docs
-        """
-        return 0

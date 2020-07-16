@@ -21,11 +21,10 @@ The main reference used is: :cite:`felix-thesis`.
 
 import numpy as np
 
-from ..esf import EvaluatedStructureFunctionHeavy as ESFH
-from . import NeutralCurrent
+from .. import partonic_channel as pc
 
 
-class EvaluatedStructureFunctionF2heavy(NeutralCurrent, ESFH):
+class F2heavyGluon(pc.PartonicChannelHeavy):
     """
         Compute F2 structure functions for heavy quark flavours.
 
@@ -42,7 +41,9 @@ class EvaluatedStructureFunctionF2heavy(NeutralCurrent, ESFH):
 
     """
 
-    def _gluon_1(self):
+    label = "g"
+
+    def NLO(self):
         """
             Computes the gluon part of the next to leading order F2 structure
             function.
@@ -84,57 +85,3 @@ class EvaluatedStructureFunctionF2heavy(NeutralCurrent, ESFH):
             # fmt: on
 
         return cg
-
-
-class EvaluatedStructureFunctionF2charm(EvaluatedStructureFunctionF2heavy):
-    """
-        Compute F2 structure functions for *charm* quark.
-
-        All the definitions and expression are already given at the level of
-        :py:class:`EvaluatedStructureFunctionF2heavy`.
-        Currently this class sets only:
-
-        - nhq = 4
-
-    """
-
-    def __init__(self, SF, kinematics, force_local=False):
-        super(EvaluatedStructureFunctionF2charm, self).__init__(
-            SF, kinematics, 4, force_local
-        )
-
-
-class EvaluatedStructureFunctionF2bottom(EvaluatedStructureFunctionF2heavy):
-    """
-        Compute F2 structure functions for *bottom* quark.
-
-        All the definitions and expression are already given at the level of
-        :py:class:`EvaluatedStructureFunctionF2heavy`.
-        Currently this class sets only:
-
-        - nhq = 5
-
-    """
-
-    def __init__(self, SF, kinematics, force_local=False):
-        super(EvaluatedStructureFunctionF2bottom, self).__init__(
-            SF, kinematics, 5, force_local
-        )
-
-
-class EvaluatedStructureFunctionF2top(EvaluatedStructureFunctionF2heavy):
-    """
-        Compute F2 structure functions for *top* quark.
-
-        All the definitions and expression are already given at the level of
-        :py:class:`EvaluatedStructureFunctionF2heavy`.
-        Currently this class sets only:
-
-        - nhq = 6
-
-    """
-
-    def __init__(self, SF, kinematics, force_local=False):
-        super(EvaluatedStructureFunctionF2top, self).__init__(
-            SF, kinematics, 6, force_local
-        )
