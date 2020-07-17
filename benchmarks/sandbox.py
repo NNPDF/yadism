@@ -54,7 +54,7 @@ class ApfelSandbox:
         return self.db
 
     def run_LO(self):
-        return self._db().run_external(0, ["ToyLH"])#,{"TMC": self.db.theory_query["FNS"]== "FONLL-A"})
+        return self._db().run_external(0, ["ToyLH"],{"TMC": self.db.theory_query["TMC"]== 2})
 
     def run_NLO(self):
         return self._db().run_external(1, ["ToyLH"])

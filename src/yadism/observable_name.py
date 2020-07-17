@@ -63,7 +63,7 @@ class ObservableName:
                     asymptotic heavy correspondend
         """
         if self.flavor not in heavys:
-            raise ValueError("observable is not heavy!")
+            raise ValueError(f"observable is not heavy! [{self}]")
         return self.apply_flavor(self.flavor + "asy")
 
     def __repr__(self):
@@ -136,7 +136,11 @@ class ObservableName:
     @property
     def hqnumber(self):
         """Heavy quark flavor number"""
-        return 4 + heavys.index(self.flavor)
+        if self.is_asy:
+            idx = asys.index(self.flavor)
+        else:
+            idx = heavys.index(self.flavor)
+        return 4 + idx
 
     @classmethod
     def has_heavies(cls, names):

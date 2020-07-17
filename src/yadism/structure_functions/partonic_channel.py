@@ -17,9 +17,9 @@ class PartonicChannel(dict):
         self.ESF = ESF
         self.constants = self.ESF._SF.constants
         # default coeff functions to 0
-        self["LO"] = self.decorator(self.LO)()
-        self["NLO"] = self.decorator(self.NLO)()
-        self["NLO_fact"] = self.decorator(self.NLO_fact)()
+        self["LO"] = self.decorator(self.LO)
+        self["NLO"] = self.decorator(self.NLO)
+        self["NLO_fact"] = self.decorator(self.NLO_fact)
 
     def decorator(self, f):
         """

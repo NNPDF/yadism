@@ -162,14 +162,14 @@ class EvaluatedStructureFunction(abc.ABC):
         els = []
 
         # combine orders
-        d_vec = conv.DistributionVec(comp["LO"])
+        d_vec = conv.DistributionVec(comp["LO"]())
         if self._SF.pto > 0:
             a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
             d_vec += a_s * (
-                conv.DistributionVec(comp["NLO"])
+                conv.DistributionVec(comp["NLO"]())
                 + 2  # TODO: to be understood
                 * (-np.log(self._SF.xiF ** 2))
-                * conv.DistributionVec(comp["NLO_fact"])
+                * conv.DistributionVec(comp["NLO_fact"]())
             )
 
         # iterate all polynomials
@@ -180,12 +180,18 @@ class EvaluatedStructureFunction(abc.ABC):
 
         return np.array(ls), np.array(els)
 
-    @abc.abstractmethod
     def get_result(self):
         """
-            .. todo::
-                docs
+            Compute actual result
+
+            Returns
+            -------
+                res : ESFResult
+                    result
         """
+        self._compute_local()
+
+        return copy.deepcopy(self._res)
 
     def get_output(self) -> dict:
         """
@@ -200,27 +206,21 @@ class EvaluatedStructureFunction(abc.ABC):
 
             Returns
             -------
-            dict
-                a collection of the output arrays with the following structure:
+                dict
+                    a collection of the output arrays with the following structure:
 
-                - `x`: the input momentum fraction
-                - `Q2`: the input process scale
-                - `q`: a :py:meth:`numpy.array` for the quark coefficient
-                  functions
-                - `q_error`: a :py:meth:`numpy.array` with the integration
-                  errors for `q` calculation
-                - `g`: a :py:meth:`numpy.array` for the gluon coefficient
-                  functions
-                - `g_error`: a :py:meth:`numpy.array` with the integration
-                  errors for `g` calculation
+                    - `x`: the input momentum fraction
+                    - `Q2`: the input process scale
+                    - `values`: a :py:meth:`numpy.array` for the coefficient
+                    functions
+                    - `errors`: a :py:meth:`numpy.array` with the integration
+                    errors
 
         """
         return self.get_result().get_raw()
 
 
-class EvaluatedStructureFunctionLight(
-    EvaluatedStructureFunction
-):  # pylint:disable=abstract-method
+class EvaluatedStructureFunctionLight(EvaluatedStructureFunction):
     """
         Parent class for the light ESF implementations -
         really meaning up, down, and strange quark contributions.
@@ -240,7 +240,6 @@ class EvaluatedStructureFunctionLight(
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
-        # TODO
         weights = {"q": {}, "g": {}}
         # quark couplings
         tot_ch_sq = 0
@@ -252,24 +251,10 @@ class EvaluatedStructureFunctionLight(
         weights["g"][21] = tot_ch_sq / 3  # 3 = u+d+s
         return weights
 
-    def get_result(self):
-        """
-            .. todo::
-                docs
-        """
-        self._compute_local()
 
-        return copy.deepcopy(self._res)
-
-
-class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
+class EvaluatedStructureFunctionAsy(EvaluatedStructureFunction):
     """
-        Specialize EvaluatedStructureFunction for heavy flavours.
-
-        This class factorizes some common tasks needed for heavy flavours
-        (namely: charm, bottom and top quarks), in particular:
-
-        - apply heavy quark matching scheme
+        Specialize EvaluatedStructureFunction for asy flavours.
 
         Parameters
         ----------
@@ -284,24 +269,47 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     """
 
     def __init__(self, SF, kinematics, force_local=False):
-        """
-            .. todo::
-                - document prefactor: FH page 61 (6.1), 65 (7.2) - Vogt page 21 (4.1)
-                - a_s expansion factor already included (simplify with alpha_s/4pi)
-                  pay attention to Vogt 1/x in (4.1) in FH appendix are written
-                  the expressions for c's (6.1), convolution defined in (7.2)
-                  also the charge average 9 / 2 is coming from Vogt (4.1)
-                  definition in the gluon
-                - remember that is only for the gluon and quark singlet, so it
-                  should be removed from the non-singlet prefactor
-                - why is it not the pdf but xpdf used? check why Laenen is using
-                  xpdf in the first place
-                - docs
-        """
-        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
+        super(EvaluatedStructureFunctionAsy, self).__init__(SF, kinematics)
 
         self._nhq = self._SF.obs_name.hqnumber
         self._force_local = force_local
+
+    def _compute_weights(self):
+        """
+            Compute PDF weights for different channels.
+
+            Returns
+            -------
+                weights : dict
+                    dictionary with key refering to the channel and a dictionary with pid -> weight
+        """
+        e2hq = self._SF.coupling_constants.get_weight(self._nhq, self._Q2)
+        weights = {"g": {21: e2hq}}
+        return weights
+
+
+class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunctionAsy):
+    """
+        Specialize EvaluatedStructureFunction for heavy flavours.
+
+        This class factorizes some common tasks needed for heavy flavours
+        (namely: charm, bottom and top quarks), in particular:
+
+        - apply heavy quark matching scheme
+
+        .. todo::
+            - document prefactor: FH page 61 (6.1), 65 (7.2) - Vogt page 21 (4.1)
+            - a_s expansion factor already included (simplify with alpha_s/4pi)
+                pay attention to Vogt 1/x in (4.1) in FH appendix are written
+                the expressions for c's (6.1), convolution defined in (7.2)
+                also the charge average 9 / 2 is coming from Vogt (4.1)
+                definition in the gluon
+            - remember that is only for the gluon and quark singlet, so it
+                should be removed from the non-singlet prefactor
+            - why is it not the pdf but xpdf used? check why Laenen is using
+                xpdf in the first place
+            - docs
+    """
 
     def get_result(self):
         """
@@ -353,16 +361,3 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 self._res = res_light
 
         return copy.deepcopy(self._res)
-
-    def _compute_weights(self):
-        """
-            Compute PDF weights for different channels.
-
-            Returns
-            -------
-                weights : dict
-                    dictionary with key refering to the channel and a dictionary with pid -> weight
-        """
-        e2hq = self._SF.coupling_constants.get_weight(self._nhq, self._Q2)
-        weights = {"g": {21: e2hq}}
-        return weights

@@ -8,13 +8,16 @@ The 3-loop reference is :cite:`vogt` which includes also the lower order results
     docs
 """
 
-from .esf import EvaluatedStructureFunctionLight
-from .esf import EvaluatedStructureFunctionHeavy
+from .esf import (
+    EvaluatedStructureFunctionLight,
+    EvaluatedStructureFunctionHeavy,
+    EvaluatedStructureFunctionAsy,
+)
 from .f_total import EvaluatedStructureFunctionFtotal
 
 ESFmap = {
     "light": EvaluatedStructureFunctionLight,
     "heavy": EvaluatedStructureFunctionHeavy,
-    "asy": EvaluatedStructureFunctionHeavy,
+    "asy": EvaluatedStructureFunctionAsy,
     "total": EvaluatedStructureFunctionFtotal,
 }

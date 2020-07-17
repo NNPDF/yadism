@@ -18,6 +18,8 @@ class F2asyGluon(pc.PartonicChannelAsy):
         Computes the gluon channel of the asymptotic limit of F2heavy.
     """
 
+    label = "g"
+
     def NLO(self):
         """
             Returns
