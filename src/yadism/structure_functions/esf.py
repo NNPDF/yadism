@@ -337,7 +337,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                     obs_name, {"x": self._x, "Q2": self._Q2}, force_local=True
                 ).get_result()
                 res_asy = self._SF.get_esf(
-                    obs_name.get_asy(), {"x": self._x, "Q2": self._Q2}
+                    obs_name.apply_asy(), {"x": self._x, "Q2": self._Q2}
                 ).get_result()
                 # add damping
                 damp = 1

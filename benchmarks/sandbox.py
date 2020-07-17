@@ -32,7 +32,7 @@ def generate_observables():
         "FLtop",
     ]
     cards = []
-    for obs in ["F2charm"]:# obs_list:
+    for obs in ["F2light"]:# obs_list:
         card = copy.deepcopy(defaults)
         #card["prDIS"] = "NC"
         #card["PropagatorCorrection"] = .999
@@ -54,14 +54,14 @@ class ApfelSandbox:
         return self.db
 
     def run_LO(self):
-        return self._db().run_external(0, ["ToyLH"],{"TMC": self.db.theory_query["FNS"]== "FONLL-A"})
+        return self._db().run_external(0, ["ToyLH"])#,{"TMC": self.db.theory_query["FNS"]== "FONLL-A"})
 
     def run_NLO(self):
         return self._db().run_external(1, ["ToyLH"])
 
 
 if __name__ == "__main__":
-    generate_observables()
+    #generate_observables()
     apf = ApfelSandbox()
-    #apf.run_LO()
-    apf.run_NLO()
+    apf.run_LO()
+    #apf.run_NLO()
