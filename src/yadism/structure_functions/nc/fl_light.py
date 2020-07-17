@@ -3,10 +3,6 @@
 This module contains the implementation of the DIS FL coefficient functions, for
 light quark flavours.
 
-The only element present is the :py:class:`EvaluatedStructureFunctionFLlight`, that inherits the
-:py:class:`EvaluatedStructureFunctionLight` machinery, but it is used just to store
-the definitions of the related coefficient functions formula.
-
 The coefficient functions definition is given in :eqref:`4.2`, :cite:`vogt` (the
 same of :eqref:`1` in :cite:`vogt-fl`).
 The main reference for their expression is :cite:`vogt-fl`.
@@ -20,14 +16,7 @@ from .. import partonic_channel as pc
 
 class FLlightQuark(pc.PartonicChannelLight):
     """
-        Compute FL structure functions for light quark flavours.
-
-        This class inherits from :py:class:`EvaluatedStructureFunctionLight`,
-        providing only the formulas
-        for coefficient functions, while all the machinery for dealing with
-        distributions, making convolution with PDFs, and packaging results is
-        completely defined in the parent.
-
+        Computes light quark channel of FLlight
     """
 
     label = "q"
@@ -41,8 +30,8 @@ class FLlightQuark(pc.PartonicChannelLight):
 
             Returns
             -------
-            sequence of callables
-               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+                sequence of callables
+                    coefficient functions
 
         """
         CF = self.constants.CF
@@ -52,8 +41,14 @@ class FLlightQuark(pc.PartonicChannelLight):
 
         return cq_reg
 
+
 class FLlightGluon(pc.PartonicChannelLight):
+    """
+        Computes gluon channel of FLlight
+    """
+
     label = "g"
+
     def NLO(self):
         """
             Computes the gluon part of the next to leading order FL structure
@@ -63,8 +58,8 @@ class FLlightGluon(pc.PartonicChannelLight):
 
             Returns
             -------
-            sequence of callables
-                coefficient functions, as two arguments functions: :py:`(x, Q2)`
+                sequence of callables
+                    coefficient functions
 
 
             .. todo::

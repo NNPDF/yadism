@@ -3,10 +3,6 @@
 This module contains the implementation of the DIS F2 coefficient functions, for
 light quark flavours.
 
-The only element present is the :py:class:`ESF_F2light`, that inherits the
-:py:class:`EvaluatedStructureFunction` machinery, but it is used just to store
-the definitions of the related coefficient functions formula.
-
 The coefficient functions definition is given in :eqref:`4.2`, :cite:`vogt` (that
 is the main reference for their expression, i.e. all the formulas in this
 module).
@@ -23,14 +19,7 @@ from .. import partonic_channel as pc
 
 class F2lightQuark(pc.PartonicChannelLight):
     """
-        Compute F2 structure functions for light quark flavours.
-
-        This class inherits from :py:class:`EvaluatedStructureFunctionLight`,
-        providing only the formulas
-        for coefficient functions, while all the machinery for dealing with
-        distributions, making convolution with PDFs, and packaging results is
-        completely defined in the parent.
-
+        Computes the light quark channel of  F2light
     """
 
     label = "q"
@@ -48,8 +37,8 @@ class F2lightQuark(pc.PartonicChannelLight):
 
             Returns
             -------
-            sequence of callables
-               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+                sequence of callables
+                coefficient functions
 
         """
 
@@ -65,8 +54,8 @@ class F2lightQuark(pc.PartonicChannelLight):
 
             Returns
             -------
-            sequence of callables
-               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+                sequence of callables
+                coefficient functions
 
         """
         CF = self.constants.CF
@@ -101,13 +90,13 @@ class F2lightQuark(pc.PartonicChannelLight):
 
             Returns
             -------
-            sequence of callables
-               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+                sequence of callables
+                coefficient functions
 
             Note
             ----
-            Check the theory reference for details on
-            :doc:`../theory/scale-variations`
+                Check the theory reference for details on
+                :doc:`../theory/scale-variations`
 
         """
 
@@ -122,7 +111,11 @@ class F2lightQuark(pc.PartonicChannelLight):
 
         return cq_reg, cq_delta, cq_pd
 
+
 class F2lightGluon(pc.PartonicChannelLight):
+    """
+        Computes the gluon channel of  F2light
+    """
 
     label = "g"
 
@@ -135,8 +128,8 @@ class F2lightGluon(pc.PartonicChannelLight):
 
             Returns
             -------
-            sequence of callables
-                coefficient functions, as two arguments functions: :py:`(x, Q2)`
+                sequence of callables
+                    coefficient functions
 
 
             .. todo::
@@ -154,10 +147,7 @@ class F2lightGluon(pc.PartonicChannelLight):
                 2  # TODO: to be understood
                 * 2
                 * self.nf
-                * (
-                    split.pqg(z, self.constants) * (np.log((1 - z) / z) - 4)
-                    + 3 * TR
-                )
+                * (split.pqg(z, self.constants) * (np.log((1 - z) / z) - 4) + 3 * TR)
             )
 
         return cg
@@ -171,13 +161,13 @@ class F2lightGluon(pc.PartonicChannelLight):
 
             Returns
             -------
-            sequence of callables
-               coefficient functions, as two arguments functions: :py:`(x, Q2)`
+                sequence of callables
+                coefficient functions
 
             Note
             ----
-            Check the theory reference for details on
-            :doc:`../theory/scale-variations`
+                Check the theory reference for details on
+                :doc:`../theory/scale-variations`
 
         """
 

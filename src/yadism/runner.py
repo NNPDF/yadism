@@ -108,9 +108,8 @@ class Runner:
         )
 
         self.observable_instances = {}
-        # TODO iterate an exteranl list rather the ESFmap maybe?
-        for name in ESFmap:
-            obs_name = observable_name.ObservableName(name)
+        for obs_name in observable_name.ObservableName.all():
+            name = obs_name.name
             lab = obs_name.mass_label
             if lab is not None:
                 theory_params["M2hq"] = theory[lab] ** 2

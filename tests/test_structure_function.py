@@ -52,10 +52,9 @@ class TestStructureFunction:
                 obs_name, r, eko_components=eko_components, theory_params=theory_params
             )
             # test mapping to self
-            assert sf._StructureFunction__ESF == ESFmap[name]
             assert len(sf._StructureFunction__ESFcache) == 0
             obj = sf.get_esf(obs_name, {"x": 0.5, "Q2": 1})
-            assert isinstance(obj, ESFmap[name])
+            assert isinstance(obj, ESFmap[obs_name.flavor_family])
             # check creation
             assert len(sf._StructureFunction__ESFcache) == 1
             assert list(sf._StructureFunction__ESFcache.values())[0] == obj

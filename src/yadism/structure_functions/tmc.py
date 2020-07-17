@@ -325,6 +325,8 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         # fmt: on
 
         # collect F2
+        print(self._shifted_kinematics)
+        print(approx_prefactor)
         F2out = self._SF.get_esf(
             self._SF.obs_name, self._shifted_kinematics
         ).get_result()

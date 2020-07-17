@@ -17,9 +17,7 @@ They are:
 
 :py:class:`EvaluatedStructureFunctionHeavy` :
     this class is inheriting from the former, factorizing some common procedure
-    needed for heavy quark calculation, like auxiliary variable definition,
-    threshold passing calculation or directly setting to 0 some coefficient
-    functions.
+    needed for heavy quark calculation, like matching schemes
 """
 
 import abc
@@ -29,6 +27,7 @@ import numpy as np
 
 from . import distribution_vec as conv
 from .esf_result import ESFResult
+from .nc import partonic_channels_em
 
 
 class EvaluatedStructureFunction(abc.ABC):
@@ -85,7 +84,7 @@ class EvaluatedStructureFunction(abc.ABC):
 
     """
 
-    def __init__(self, SF, kinematics: dict, *, partonic_channels):
+    def __init__(self, SF, kinematics: dict):
         x = kinematics["x"]
         if 1 < x <= 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1]")
@@ -100,7 +99,10 @@ class EvaluatedStructureFunction(abc.ABC):
         self._Q2 = kinematics["Q2"]
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
-        self.components = partonic_channels
+        if not SF.obs_name.is_composed:
+            self.components = partonic_channels_em[
+                SF.obs_name.apply_flavor_family().name
+            ]
 
     @abc.abstractmethod
     def _compute_weights(self):
@@ -128,7 +130,10 @@ class EvaluatedStructureFunction(abc.ABC):
         # run
         for comp_cls in self.components:
             comp = comp_cls(self)
-            self._res.values[comp.label], self._res.errors[comp.label] = self._compute_component(comp     )
+            (
+                self._res.values[comp.label],
+                self._res.errors[comp.label],
+            ) = self._compute_component(comp)
         # add the factor x from the LHS
         self._res *= self._x
         # setup weights
@@ -221,8 +226,8 @@ class EvaluatedStructureFunctionLight(
         really meaning up, down, and strange quark contributions.
     """
 
-    def __init__(self, SF, kinematics, *, partonic_channels, nf=3):  # 3 = u+d+s
-        super(EvaluatedStructureFunctionLight, self).__init__(SF, kinematics,partonic_channels=partonic_channels)
+    def __init__(self, SF, kinematics, nf=3):  # 3 = u+d+s
+        super(EvaluatedStructureFunctionLight, self).__init__(SF, kinematics)
         # expose number of flavours
         self.nf = nf
 
@@ -264,38 +269,22 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         This class factorizes some common tasks needed for heavy flavours
         (namely: charm, bottom and top quarks), in particular:
 
-        - compute some auxiliary derived variables at initialization time
-        - check if the available energy for heavy quark production is above the
-          mass threshold of the quark itself (returning immediately 0 otherwise)
-        - set :py:meth:`quark_0` and :py:meth:`quark_1` (and the factorization
-          scheme contributions corresponding to both gluon and quark, since the
-          LO is completely null) to 0
+        - apply heavy quark matching scheme
 
         Parameters
         ----------
             SF : StructureFunction
-                the parent :py:class:`StructureFunction` instance, provides an
-                interface, holds references to global objects (like managers coming
-                from :py:mod:`eko`, e.g. :py:class:`InterpolatorDispatcher`) and
-                implements the global caching
+                the parent :py:class:`StructureFunction` instance
             kinematics : dict
                 the specific kinematic point as a dict with two elements ('x', 'Q2')
             nhq : int
                 heavy quark flavor number, i.e. c=4,b=5,t=6
             force_local : bool
                 always return the local object? i.e. ignore e.g. scheme
-
-        Methods
-        -------
-            get_output()
-                compute the coefficient functions (see :py:class:`EvaluatedStructureFunction`)
     """
 
-    def __init__(self, SF, kinematics, *, nhq, partonic_channels, force_local = False):
+    def __init__(self, SF, kinematics, force_local=False):
         """
-            collect electric charge (relevant for heavy flavours coefficient
-            functions) and compute common derived variables
-
             .. todo::
                 - document prefactor: FH page 61 (6.1), 65 (7.2) - Vogt page 21 (4.1)
                 - a_s expansion factor already included (simplify with alpha_s/4pi)
@@ -309,9 +298,9 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                   xpdf in the first place
                 - docs
         """
-        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics,partonic_channels=partonic_channels)
+        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
 
-        self._nhq = nhq
+        self._nhq = self._SF.obs_name.hqnumber
         self._force_local = force_local
 
     def get_result(self):

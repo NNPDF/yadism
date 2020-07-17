@@ -8,7 +8,7 @@ Defines the :py:class:`StructureFunction` class.
 
 from .structure_functions import ESFmap
 from .structure_functions.tmc import ESFTMCmap
-from .structure_functions.nc import partonic_channels_em
+
 
 class StructureFunction:
     """
@@ -35,8 +35,6 @@ class StructureFunction:
     def __init__(self, obs_name, runner=None, *, eko_components, theory_params):
         # internal managers
         self.obs_name = obs_name
-        self.__partonic_channels = partonic_channels_em[obs_name.flavor_family]
-        self.__ESF = ESFmap[obs_name.name] if theory_params["TMC"] == 0 else ESFTMCmap[obs_name.kind]
         self.__runner = runner
         self.__ESFs = []
         self.__ESFcache = {}
@@ -69,18 +67,11 @@ class StructureFunction:
         self.__ESFs = []
         # iterate F* configurations
         for kinematics in kinematic_configs:
-            kwargs = dict()
-            if self.obs_name.flavor != "total":
-                kwargs["partonic_channels"] = self.__partonic_channels
-            if self.obs_name.is_raw_heavy:
-                kwargs["nhq"] = self.obs_name.hqnumber
-            self.__ESFs.append(
-                self.__ESF(self, kinematics, **kwargs)
-            )  # TODO delegate this to get_esf?
+            self.__ESFs.append(self.get_esf(self.obs_name, kinematics, use_raw=False))
 
     def get_esf(self, obs_name, kinematics, *args, use_raw=True, force_local=False):
         """
-            Returns a *raw* :py:class:`EvaluatedStructureFunction` instance.
+            Returns a :py:class:`EvaluatedStructureFunction` instance.
 
             This wrappers allows
 
@@ -108,7 +99,7 @@ class StructureFunction:
         """
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
-            obj = ESFmap[obs_name.name](self, kinematics, force_local=True)
+            obj = ESFmap[obs_name.flavor_family](self, kinematics, force_local=True)
             return obj
         # else we're happy to cache
         # is it us or do we need to delegate?
@@ -123,9 +114,9 @@ class StructureFunction:
                 return self.__ESFcache[key]
             except KeyError:
                 if not use_raw and self.TMC != 0:
-                    obj = ESFTMCmap[obs_name.kind]
+                    obj = ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
-                    obj = ESFmap[obs_name.name](self, kinematics, *args)
+                    obj = ESFmap[obs_name.flavor_family](self, kinematics, *args)
                 self.__ESFcache[key] = obj
                 return obj
         else:

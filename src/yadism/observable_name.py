@@ -2,8 +2,11 @@
 
 kinds = ["F2", "FL"]
 heavys = ["charm", "bottom", "top"]
-asys = [h+"asy" for h in heavys]
-flavors = heavys + ["light", "total", "heavy", "asy"] + asys
+asys = [h + "asy" for h in heavys]
+external_flavors = heavys + ["light", "total"] + asys
+flavor_families = ["asy", "heavy"]
+flavors = external_flavors + flavor_families
+
 
 class ObservableName:
     """
@@ -14,6 +17,7 @@ class ObservableName:
             name : str
                 full observable name
     """
+
     def __init__(self, name):
         self.kind = name[:2]
         if self.kind not in kinds:
@@ -57,7 +61,7 @@ class ObservableName:
         """
         if self.flavor not in heavys:
             raise ValueError("observable is not heavy!")
-        return self.apply_flavor(self.flavor+ "asy")
+        return self.apply_flavor(self.flavor + "asy")
 
     def __repr__(self):
         """return name as representation"""
@@ -116,13 +120,21 @@ class ObservableName:
         return self.flavor in asys
 
     @property
+    def is_composed(self):
+        return self.flavor == "total"
+
+    @property
     def flavor_family(self):
         """Returns abstract flavor family name"""
         if self.is_raw_heavy:
-            return self.apply_flavor("heavy").name
+            return "heavy"
         if self.is_asy:
-            return self.apply_flavor("asy").name
-        return self.name
+            return "asy"
+        return self.flavor
+
+    def apply_flavor_family(self):
+        """Returns abstract flavor family name"""
+        return self.apply_flavor(self.flavor_family)
 
     @property
     def hqnumber(self):
@@ -130,7 +142,7 @@ class ObservableName:
         return 4 + heavys.index(self.flavor)
 
     @classmethod
-    def has_heavies(cls,names):
+    def has_heavies(cls, names):
         """
             Are there any heavy objects in names?
 
@@ -153,7 +165,7 @@ class ObservableName:
         return False
 
     @classmethod
-    def has_lights(cls,names):
+    def has_lights(cls, names):
         """
             Are there any light objects in names?
 
@@ -198,3 +210,9 @@ class ObservableName:
             return True
         except ValueError:
             return False
+
+    @staticmethod
+    def all():
+        for kind in kinds:
+            for flav in external_flavors:
+                yield ObservableName(kind + flav)

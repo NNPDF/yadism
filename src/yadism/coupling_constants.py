@@ -25,7 +25,7 @@ class CouplingConstants:
         # QCD particles
         self.weak_isospin_3 = {21: 0}
         for q in range(1, 7):
-            self.weak_isospin_3[q] = 1 / 2 if q % 2 == 0 else -1 / 2 # u if stmt else d
+            self.weak_isospin_3[q] = 1 / 2 if q % 2 == 0 else -1 / 2  # u if stmt else d
         # leptons: 11 = e-(!)
         for pid in [11, 13, 15]:
             self.weak_isospin_3[pid] = -1 / 2
@@ -70,7 +70,7 @@ class CouplingConstants:
         # axial coupling of the photon to the quark is not there of course
         if quark_coupling_type == "A":
             eq = 0
-        w_phph = self.electric_charge[abs(projectile_pid)]**2 * eq ** 2
+        w_phph = self.electric_charge[abs(projectile_pid)] ** 2 * eq ** 2
         # pure photon exchane
         if self.obs_config["process"] == "EM":
             return w_phph
@@ -98,7 +98,14 @@ class CouplingConstants:
             )
             eta_phZ /= 1 - self.obs_config["propagatorCorrection"]
             # photon-Z interference
-            w_phZ = 2 * self.electric_charge[abs(projectile_pid)] * (projectile_v  + pol * projectile_a) * eta_phZ * eq * gqv
+            w_phZ = (
+                2
+                * self.electric_charge[abs(projectile_pid)]
+                * (projectile_v + pol * projectile_a)
+                * eta_phZ
+                * eq
+                * gqv
+            )
             # in heavy quark structure functions the two coefficient functions for the
             # vectorial and axial-vectorial coupling are NOT the same (unlinke in the massless case)
             g2q = gqv ** 2 + gqa ** 2
@@ -148,7 +155,7 @@ class CouplingConstants:
             "electron": 11,
             "positron": -11,
             "neutrino": 12,
-            "antineutrino": -12
+            "antineutrino": -12,
         }
         if projectile not in projectile_pids:
             raise ValueError(f"Unkown projectile {projectile}")
