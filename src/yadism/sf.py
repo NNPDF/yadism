@@ -106,14 +106,15 @@ class StructureFunction:
         if obs_name == self.obs_name:
             # convert to tuple
             key = list(kinematics.values())
-            key.append(use_raw)
+            use_tmc_if_available = not use_raw and self.TMC != 0
+            key.append(use_tmc_if_available)
             key = tuple(key)
             # TODO how to incorporate args?
             # search
             try:
                 return self.__ESFcache[key]
             except KeyError:
-                if not use_raw and self.TMC != 0:
+                if use_tmc_if_available:
                     obj = ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
                     obj = ESFmap[obs_name.flavor_family](self, kinematics, *args)

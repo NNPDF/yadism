@@ -35,8 +35,9 @@ class PartonicChannel(dict):
                 f : callable
                     output
         """
-        s_h = self.ESF._Q2 * (1 - self.ESF._x) / self.ESF._x
-        if s_h <= 4 * self.ESF._SF.M2hq:
+        #s_h = self.ESF._Q2 * (1 - self.ESF._x) / self.ESF._x
+        #if s_h <= 4 * self.ESF._SF.M2hq:
+        if self.is_below_threshold(self.ESF._x):
             return lambda: 0
         return f
 
@@ -100,6 +101,22 @@ class PartonicChannelAsy(PartonicChannel):
     def __init__(self, *args):
         super(PartonicChannelAsy, self).__init__(*args)
         self.L = np.log(self.ESF._SF.M2hq / self.ESF._Q2)
+
+    def decorator(self, f):
+        """
+            Deactivate preprocessing
+
+            Parameters
+            ----------
+                f : callable
+                    input
+
+            Returns
+            -------
+                f : callable
+                    output
+        """
+        return f
 
 
 class PartonicChannelHeavy(PartonicChannelAsy):

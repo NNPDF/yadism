@@ -268,12 +268,6 @@ class EvaluatedStructureFunctionAsy(EvaluatedStructureFunction):
                 always return the local object? i.e. ignore e.g. scheme
     """
 
-    def __init__(self, SF, kinematics, force_local=False):
-        super(EvaluatedStructureFunctionAsy, self).__init__(SF, kinematics)
-
-        self._nhq = self._SF.obs_name.hqnumber
-        self._force_local = force_local
-
     def _compute_weights(self):
         """
             Compute PDF weights for different channels.
@@ -283,7 +277,8 @@ class EvaluatedStructureFunctionAsy(EvaluatedStructureFunction):
                 weights : dict
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
-        e2hq = self._SF.coupling_constants.get_weight(self._nhq, self._Q2)
+        nhq = self._SF.obs_name.hqnumber
+        e2hq = self._SF.coupling_constants.get_weight(nhq, self._Q2)
         weights = {"g": {21: e2hq}}
         return weights
 
@@ -311,15 +306,20 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunctionAsy):
             - docs
     """
 
+    def __init__(self, SF, kinematics, force_local=False):
+        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
+        self._force_local = force_local
+
     def get_result(self):
         """
             .. todo::
                 docs
         """
+        nhq = self._SF.obs_name.hqnumber
         # get our local active number of flavors
         nf = self._SF.threshold.get_areas(self._Q2 * self._SF.xiF ** 2)[-1].nf
         # use local only? i.e. by force or because we (Q2) are below our threshold (name)
-        if self._force_local or nf < self._nhq:
+        if self._force_local or nf < nhq:
             self._compute_local()
         else:
             # compute zero-mass part
@@ -328,17 +328,18 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunctionAsy):
                 obs_name.apply_flavor("light"), {"x": self._x, "Q2": self._Q2}, 1
             ).get_result()
             # readjust the weights
-            ehq = self._SF.coupling_constants.get_weight(self._nhq, self._Q2)
-            res_light.weights = {"g": {21: ehq}, "q": {self._nhq: ehq}}
+            ehq = self._SF.coupling_constants.get_weight(nhq, self._Q2)
+            res_light.weights = {"g": {21: ehq}, "q": {nhq: ehq}}
             # now checkout scheme:
             # matching is only needed for FONLL and in there only if we just crossed our threshold
             # otherwise we continue with the ZM expressions (in contrast to APFEL which treats only
             # F2c in this way)
             # FONLL-A corresponds to (strict) APFEL
-            # FONLL-A' reduces to the ZM-VFNS scheme if above the next threshold (which would numerically happen anyway)
+            # FONLL-A' reduces to the ZM-VFNS scheme if above the next threshold (which would
+            # numerically happen anyway)
             scheme = self._SF.threshold.scheme
-            if (scheme == "FONLL-A" and nf >= self._nhq) or (
-                scheme == "FONLL-A'" and nf == self._nhq
+            if (scheme == "FONLL-A" and nf >= nhq) or (
+                scheme == "FONLL-A'" and nf == nhq
             ):
                 # collect all parts
                 res_heavy = self._SF.get_esf(
@@ -350,7 +351,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunctionAsy):
                 # add damping
                 damp = 1
                 if self._SF.FONLL_damping:
-                    power = self._SF.damping_powers[self._nhq - 3]
+                    power = self._SF.damping_powers[nhq - 3]
                     damp = np.power(1.0 - self._SF.M2hq / self._Q2, power)
                 # join all
                 self._res = res_heavy.suffix(f"_{scheme}_heavy") + damp * (

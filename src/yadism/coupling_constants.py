@@ -70,7 +70,7 @@ class CouplingConstants:
         # axial coupling of the photon to the quark is not there of course
         if quark_coupling_type == "A":
             eq = 0
-        w_phph = self.electric_charge[abs(projectile_pid)] ** 2 * eq ** 2
+        w_phph = (self.electric_charge[abs(projectile_pid)] ** 2) * (eq ** 2)
         # pure photon exchane
         if self.obs_config["process"] == "EM":
             return w_phph

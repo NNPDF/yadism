@@ -57,6 +57,7 @@ class TestRegression:
             self.db.theory_query.XIR: [1.0],
             self.db.theory_query.XIF: [1.0],
             self.db.theory_query.TMC: [0],
+            self.db.theory_query.PTO: [1],
         }
         # get the raw operator
         raw_query = self.db.theory_query.noop()
@@ -78,11 +79,11 @@ class TestRegression:
             & (self.db.theory_query.NfFF == 5)
             & self.db.theory_query.DAMP.one_of([0, 1])
         )
-        total_query = raw_query & (ffns_query | zm_vfns_query | fonll_query)
+        total_query = raw_query & fonll_query#(ffns_query | zm_vfns_query | fonll_query)
         self._run(total_query)
 
 
 if __name__ == "__main__":
     r = TestRegression()
-    r.test_one_hot()
+    #r.test_one_hot()
     r.test_FNS()
