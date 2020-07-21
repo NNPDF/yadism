@@ -245,8 +245,7 @@ class DBInterface(mode_selector.ModeSelector):
     def _process_regression_log(yad, reg, *_args):
         kin = dict()
         # iterate flavours
-        for k in yad["values"]:
-        # for k in reg["values"]:
+        for k in reg["values"]:
             kin[f"reg {k}"] = reg_val = reg["values"][k]
             kin[f"reg {k}_error"] = reg_err = reg["errors"][k]
             kin[f"reg {k}_weights"] = reg_weights = reg["weights"][k]
@@ -271,6 +270,7 @@ class DBInterface(mode_selector.ModeSelector):
     ):
         log_tab = {}
         # add metadata to log record
+        print(f"comparing for theory={theory.doc_id} and obs={observables.doc_id} ...")
         log_tab["_creation_time"] = utils.str_datetime(datetime.datetime.now())
         log_tab["_theory_doc_id"] = theory.doc_id
         log_tab["_observables_doc_id"] = observables.doc_id
@@ -299,10 +299,10 @@ class DBInterface(mode_selector.ModeSelector):
                 try:
                     kin.update(process_log(yad, oth, external, assert_external_dict))
                 except AssertionError as e:
-                    __import__("pdb").set_trace()
                     log_tab["_crash"] = e
                     log_tab["_crash_sf"] = sf
                     log_tab["_crash_kin"] = kin
+                    #__import__("pdb").set_trace()
                     return log_tab
                 kinematics.append(kin)
             log_tab[sf] = kinematics

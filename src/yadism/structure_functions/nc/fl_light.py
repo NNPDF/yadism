@@ -70,7 +70,8 @@ class FLlightGluon(pc.PartonicChannelLight):
 
         """
 
-        def cg(z):
-            return self.nf * 8.0 * z * (1.0 - z)
+        TF = self.constants.TF
+        def cg(z, nf=self.nf, TF=TF):
+            return nf * TF * 16 * z * (1.0 - z)
 
         return cg

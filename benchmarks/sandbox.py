@@ -57,11 +57,11 @@ class ApfelSandbox:
         return self._db().run_external(0, ["ToyLH"])
 
     def run_NLO(self):
-        return self._db().run_external(1, ["ToyLH"], {"FNS": self.db.theory_query.FNS == "FONLL-A","DAMP": self.db.theory_query.DAMP == 1})
+        return self._db().run_external(1, ["ToyLH"],{"FNS": self.db.theory_query.FNS == "FONLL-A","DAMP": self.db.theory_query.DAMP == 0})
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    generate_observables()
     apf = ApfelSandbox()
     #apf.run_LO()
     apf.run_NLO()

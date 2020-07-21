@@ -29,9 +29,7 @@ class FLasyGluon(pc.PartonicChannelAsy):
         """
         TF = self.constants.TF
 
-        def cg(z):
-            #if self.is_below_threshold(z):
-            #    return 0
+        def cg(z, TF=TF):
             return TF * (16 * z * (1 - z))
 
         return cg

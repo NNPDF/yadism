@@ -61,7 +61,7 @@ class F2lightQuark(pc.PartonicChannelLight):
         CF = self.constants.CF
         zeta_2 = np.pi ** 2 / 6
 
-        def cq_reg(z):
+        def cq_reg(z, CF=CF):
             # fmt: off
             return CF*(
                 - 2 * (1 + z) * np.log((1 - z) / z)
@@ -70,13 +70,13 @@ class F2lightQuark(pc.PartonicChannelLight):
             )
             # fmt: on
 
-        def cq_delta(_z):
+        def cq_delta(_z, CF=CF):
             return -CF * (9 + 4 * zeta_2)
 
-        def cq_omx(_z):
+        def cq_omx(_z, CF=CF):
             return -3 * CF
 
-        def cq_logomx(_z):
+        def cq_logomx(_z, CF=CF):
             return 4 * CF
 
         return cq_reg, cq_delta, cq_omx, cq_logomx
@@ -100,14 +100,14 @@ class F2lightQuark(pc.PartonicChannelLight):
 
         """
 
-        def cq_reg(z):
-            return split.pqq_reg(z, self.constants)
+        def cq_reg(z, constants=self.constants):
+            return split.pqq_reg(z, constants)
 
-        def cq_delta(z):
-            return split.pqq_delta(z, self.constants)
+        def cq_delta(z, constants=self.constants):
+            return split.pqq_delta(z, constants)
 
-        def cq_pd(z):
-            return split.pqq_pd(z, self.constants)
+        def cq_pd(z, constants=self.constants):
+            return split.pqq_pd(z, constants)
 
         return cq_reg, cq_delta, cq_pd
 
@@ -140,14 +140,12 @@ class F2lightGluon(pc.PartonicChannelLight):
 
         """
 
-        TR = self.constants.TF
-
-        def cg(z):
+        def cg(z, nf=self.nf, constants=self.constants):
             return (
                 2  # TODO: to be understood
                 * 2
-                * self.nf
-                * (split.pqg(z, self.constants) * (np.log((1 - z) / z) - 4) + 3 * TR)
+                * nf
+                * (split.pqg(z, constants) * (np.log((1 - z) / z) - 4) + 3 * constants.TF)
             )
 
         return cg
@@ -171,7 +169,7 @@ class F2lightGluon(pc.PartonicChannelLight):
 
         """
 
-        def cg(z):
-            return 2 * self.nf * split.pqg(z, self.constants)
+        def cg(z, nf=self.nf, constants=self.constants):
+            return 2 * nf * split.pqg(z, constants)
 
         return cg
