@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Installation script for python
 from setuptools import setup, find_packages
 
@@ -19,10 +20,6 @@ setup(
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Physics",
     ],
-    install_requires=[
-        "eko",
-        "numpy",
-        "scipy",
-    ],
+    install_requires=["eko", "numpy", "scipy", "rich",],
     python_requires=">=3.7",
 )

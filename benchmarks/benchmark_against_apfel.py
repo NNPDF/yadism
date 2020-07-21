@@ -12,12 +12,14 @@ class ApfelBenchmark:
 
     db = None
 
-    def _db(self,assert_external=None):
+    def _db(self, assert_external=None):
         """init DB connection"""
-        self.db = DBInterface("APFEL",assert_external=assert_external)
+        self.db = DBInterface("APFEL", assert_external=assert_external)
         return self.db
 
-    def run_external(self, PTO, pdfs, theory_update=None, obs_query=None, assert_external=None):
+    def run_external(
+        self, PTO, pdfs, theory_update=None, obs_query=None, assert_external=None
+    ):
         """Query for PTO also in obs by default"""
         self._db(assert_external)
         if obs_query is None:
@@ -35,10 +37,14 @@ class BenchmarkPlain(ApfelBenchmark):
 
     def benchmark_NLO(self):
         def my_assert_external(theory, sf, yad):
-            if sf == "FLbottom" and theory["mb"]**2/4 < yad["Q2"] < theory["mb"]**2:
+            if (
+                sf == "FLbottom"
+                and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
+            ):
                 return dict(abs=2e-6)
             return None
-        return self.run_external(1, ["ToyLH"],assert_external=my_assert_external)
+
+        return self.run_external(1, ["ToyLH"], assert_external=my_assert_external)
 
 
 @pytest.mark.commit_check
@@ -96,7 +102,7 @@ class BenchmarkFNS(ApfelBenchmark):
 
 if __name__ == "__main__":
     plain = BenchmarkPlain()
-    #plain.benchmark_LO()
+    plain.benchmark_LO()
     plain.benchmark_NLO()
 
     # sv = BenchmarkScaleVariations()

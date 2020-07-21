@@ -2,7 +2,6 @@
 
 
 from . import esf
-from . import esf_result
 
 
 class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
@@ -16,9 +15,6 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
             kinematics : dict
                 the specific kinematic point as a dict with two elements ('x', 'Q2')
     """
-
-    def __init__(self, SF, kinematics: dict):
-        super(EvaluatedStructureFunctionFtotal, self).__init__(SF, kinematics)
 
     def get_result(self):
         """
@@ -55,32 +51,13 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
             + res_top.suffix("_total_top")
         )
 
+    @property
+    def components(self):
+        raise NotImplementedError(
+            f"{self._SF.obs_name.name}: this method should never be called!"
+        )
+
     def _compute_weights(self):
-        raise NotImplementedError(
-            f"{self._SF.obs_name.name}: this method should never be called!"
-        )
-
-    def quark_0(self):
-        raise NotImplementedError(
-            f"{self._SF.obs_name.name}: this method should never be called!"
-        )
-
-    def quark_1(self):
-        raise NotImplementedError(
-            f"{self._SF.obs_name.name}: this method should never be called!"
-        )
-
-    def quark_1_fact(self):
-        raise NotImplementedError(
-            f"{self._SF.obs_name.name}: this method should never be called!"
-        )
-
-    def gluon_1(self):
-        raise NotImplementedError(
-            f"{self._SF.obs_name.name}: this method should never be called!"
-        )
-
-    def gluon_1_fact(self):
         raise NotImplementedError(
             f"{self._SF.obs_name.name}: this method should never be called!"
         )

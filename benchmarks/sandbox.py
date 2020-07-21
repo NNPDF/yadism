@@ -17,10 +17,10 @@ def generate_observables():
     og = observables.ObservablesGenerator("sandbox")
     defaults = og.get_observables()[0]
     light_kin = []
-    #light_kin.extend(
-    #    [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
-    #)
-    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 16).tolist()])
+    light_kin.extend(
+        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
+    )
+    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     obs_list = [
         "F2light",
         "F2charm",
@@ -32,8 +32,12 @@ def generate_observables():
         "FLtop",
     ]
     cards = []
-    for obs in ["FLbottom"]:# obs_list:
+    for obs in ["FLcharm"]:# obs_list:
         card = copy.deepcopy(defaults)
+        card["prDIS"] = "NC"
+        #card["PropagatorCorrection"] = .999
+        #card["ProjectileDIS"] = "positron"
+        #card["PolarizationDIS"] = 1
         card[obs] = light_kin
         cards.append(card)
     og.write_observables(cards)
@@ -53,11 +57,11 @@ class ApfelSandbox:
         return self._db().run_external(0, ["ToyLH"])
 
     def run_NLO(self):
-        return self._db().run_external(1, ["ToyLH"])
+        return self._db().run_external(1, ["ToyLH"],{"FNS": self.db.theory_query.FNS == "FONLL-A","DAMP": self.db.theory_query.DAMP == 0})
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    generate_observables()
     apf = ApfelSandbox()
     #apf.run_LO()
     apf.run_NLO()

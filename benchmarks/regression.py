@@ -57,6 +57,7 @@ class TestRegression:
             self.db.theory_query.XIR: [1.0],
             self.db.theory_query.XIF: [1.0],
             self.db.theory_query.TMC: [0],
+            self.db.theory_query.PTO: [1],
         }
         # get the raw operator
         raw_query = self.db.theory_query.noop()

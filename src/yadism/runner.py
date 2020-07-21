@@ -15,6 +15,14 @@ There are two ways of using ``yadism``:
 """
 from typing import Any
 import time
+import inspect
+
+import rich
+import rich.align
+import rich.panel
+import rich.box
+import rich.progress
+import rich.markdown
 
 from eko.interpolation import InterpolatorDispatcher
 from eko.constants import Constants
@@ -52,6 +60,25 @@ class Runner:
 
     """
 
+    banner = rich.align.Align(
+        rich.panel.Panel.fit(
+            inspect.cleandoc(
+                """
+                     __     __       _ _
+                     \ \   / /      | (_)
+                      \ \_/ /_ _  __| |_ ___ _ __ ___
+                       \   / _` |/ _` | / __| '_ ` _ \ 
+                        | | (_| | (_| | \__ \ | | | | |
+                        |_|\__,_|\__,_|_|___/_| |_| |_|
+                """
+            ),
+            rich.box.SQUARE,
+            padding=1,
+            style="magenta",
+        ),
+        "center",
+    )
+
     def __init__(self, theory: dict, observables: dict):
         # ============
         # Store inputs
@@ -72,7 +99,7 @@ class Runner:
         )
 
         # Non-eko theory
-        self.coupling_constants = CouplingConstants.from_dict(theory)
+        self.coupling_constants = CouplingConstants.from_dict(theory, observables)
         self.xiF = theory["XIF"]
 
         # ==============================
@@ -106,10 +133,13 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
+        obs_params = dict(
+            process=observables.get("prDIS", "EM")
+        )
 
         self.observable_instances = {}
-        for name in ESFmap:
-            obs_name = observable_name.ObservableName(name)
+        for obs_name in observable_name.ObservableName.all():
+            name = obs_name.name
             lab = obs_name.mass_label
             if lab is not None:
                 theory_params["M2hq"] = theory[lab] ** 2
@@ -120,6 +150,7 @@ class Runner:
                 runner=self,
                 eko_components=eko_components,
                 theory_params=theory_params,
+                obs_params=obs_params
             )
 
             # read kinematics
@@ -155,15 +186,30 @@ class Runner:
                 * docs
                 * get_output pipeline
         """
-        # TODO move to log and make more readable
-        print("yadism took off! please stay tuned ...")
-        start = time.time()
+        rich.print(self.banner)
+
+        # precomputing the plan of calculation
+        precomputed_plan = {}
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
-                self._output[name] = obs.get_output()
+                precomputed_plan[name] = obs
+
+        rich.print(rich.markdown.Markdown("## Plan"))
+        printable_plan = "\n".join([f"- {obs}" for obs in precomputed_plan])
+        rich.print(rich.markdown.Markdown(printable_plan))
+
+        # running the calculation
+        rich.print(rich.markdown.Markdown("## Calculation"))
+        print("yadism took off! please stay tuned ...")
+        # TODO move to log and make more readable
+        start = time.time()
+        for name, obs in rich.progress.track(
+            precomputed_plan.items(), description="computing...", transient=True
+        ):
+            self._output[name] = obs.get_output()
         end = time.time()
         diff = end - start
-        print(f"took {diff:.2f} s")
+        rich.print(f"[cyan]took {diff:.2f} s")
 
         return self._output
 
