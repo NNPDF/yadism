@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Installation script for python
 from setuptools import setup, find_packages
 

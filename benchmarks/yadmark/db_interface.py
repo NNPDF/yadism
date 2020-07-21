@@ -8,6 +8,9 @@ import pandas as pd
 import tinydb
 import pytest
 
+import rich
+import rich.markdown
+
 from yadism.runner import Runner
 from yadism import observable_name
 
@@ -252,7 +255,7 @@ class DBInterface(mode_selector.ModeSelector):
             kin[f"yad {k}"] = yad_val = yad["values"][k]
             kin[f"yad {k}_error"] = yad_err = yad["errors"][k]
             kin[f"yad {k}_weights"] = yad_weights = yad["weights"][k]
-            
+
             # test equality
             for f, r, e1, e2 in zip(yad_val, reg_val, yad_err, reg_err):
                 assert pytest.approx(r, rel=0.01, abs=max(e1 + e2, 1e-6)) == f
@@ -266,11 +269,23 @@ class DBInterface(mode_selector.ModeSelector):
         return kin
 
     def _get_output_comparison(
-        self, theory, observables, yad_tab, other_tab, process_log, external = None, assert_external = None
+        self,
+        theory,
+        observables,
+        yad_tab,
+        other_tab,
+        process_log,
+        external=None,
+        assert_external=None,
     ):
+        rich.print(rich.markdown.Markdown("## Reporting results"))
+
         log_tab = {}
         # add metadata to log record
-        print(f"comparing for theory={theory.doc_id} and obs={observables.doc_id} ...")
+        rich.print(
+            f"comparing for theory=[b]{theory.doc_id}[/b] and "
+            f"obs=[b]{observables.doc_id}[/b] ..."
+        )
         log_tab["_creation_time"] = utils.str_datetime(datetime.datetime.now())
         log_tab["_theory_doc_id"] = theory.doc_id
         log_tab["_observables_doc_id"] = observables.doc_id
@@ -302,7 +317,7 @@ class DBInterface(mode_selector.ModeSelector):
                     log_tab["_crash"] = e
                     log_tab["_crash_sf"] = sf
                     log_tab["_crash_kin"] = kin
-                    #__import__("pdb").set_trace()
+                    # __import__("pdb").set_trace()
                     return log_tab
                 kinematics.append(kin)
             log_tab[sf] = kinematics
@@ -317,11 +332,14 @@ class DBInterface(mode_selector.ModeSelector):
                 continue
 
             print_tab = pd.DataFrame(tab)
+            length = len(str(print_tab).split("\n")[1])
+            rl = (length - len(FX)) // 2  # reduced length
 
             # print results
-            print(f"\n---{FX}---\n")
-            print(print_tab)
-            print("\n--------\n")
+            rich.print("\n" + "-" * rl + f"[green i]{FX}[/]" + "-" * rl + "\n")
+            # __import__("pdb").set_trace()
+            rich.print(print_tab)
+            rich.print("-" * length + "\n\n")
 
     def _log(self, log_tab):
         """
@@ -339,7 +357,7 @@ class DBInterface(mode_selector.ModeSelector):
         if crash_exception is not None:
             log_tab["_crash"] = str(type(crash_exception)) + ": " + str(crash_exception)
         new_id = self.odb.table("logs").insert(log_tab)
-        print(f"Added log with id={new_id}")
+        rich.print(f"Added log with id={new_id}")
         # reraise exception if there is one
         if crash_exception is not None:
             raise crash_exception

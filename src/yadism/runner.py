@@ -22,6 +22,7 @@ import rich.align
 import rich.panel
 import rich.box
 import rich.progress
+import rich.markdown
 
 from eko.interpolation import InterpolatorDispatcher
 from eko.constants import Constants
@@ -188,18 +189,23 @@ class Runner:
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
                 precomputed_plan[name] = obs
-        rich.print(precomputed_plan.keys())
 
+        rich.print(rich.markdown.Markdown("## Plan"))
+        printable_plan = "\n".join([f"- {obs}" for obs in precomputed_plan])
+        rich.print(rich.markdown.Markdown(printable_plan))
+
+        # running the calculation
+        rich.print(rich.markdown.Markdown("## Calculation"))
         print("yadism took off! please stay tuned ...")
         # TODO move to log and make more readable
         start = time.time()
         for name, obs in rich.progress.track(
-            precomputed_plan.items(), description="computing"
+            precomputed_plan.items(), description="computing...", transient=True
         ):
             self._output[name] = obs.get_output()
         end = time.time()
         diff = end - start
-        print(f"took {diff:.2f} s")
+        rich.print(f"[cyan]took {diff:.2f} s")
 
         return self._output
 
