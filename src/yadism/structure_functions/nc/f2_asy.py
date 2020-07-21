@@ -13,7 +13,7 @@ from .. import splitting_functions as split
 from .. import partonic_channel as pc
 
 
-class F2asyGluon(pc.PartonicChannelAsy):
+class F2asyGluonVV(pc.PartonicChannelAsy):
     """
         Computes the gluon channel of the asymptotic limit of F2heavy.
     """
@@ -38,3 +38,6 @@ class F2asyGluon(pc.PartonicChannelAsy):
             )
 
         return cg
+
+class F2asyGluonAA(F2asyGluonVV):
+    label = "gAA"

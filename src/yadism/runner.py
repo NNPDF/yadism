@@ -133,6 +133,9 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
+        obs_params = dict(
+            process=observables.get("prDIS", "EM")
+        )
 
         self.observable_instances = {}
         for obs_name in observable_name.ObservableName.all():
@@ -147,6 +150,7 @@ class Runner:
                 runner=self,
                 eko_components=eko_components,
                 theory_params=theory_params,
+                obs_params=obs_params
             )
 
             # read kinematics

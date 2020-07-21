@@ -27,7 +27,7 @@ import numpy as np
 
 from . import distribution_vec as conv
 from .esf_result import ESFResult
-from .nc import partonic_channels_em
+from .nc import partonic_channels_em, partonic_channels_nc
 
 
 class EvaluatedStructureFunction(abc.ABC):
@@ -99,9 +99,12 @@ class EvaluatedStructureFunction(abc.ABC):
         self._Q2 = kinematics["Q2"]
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
+        # load partonic channels
         if not SF.obs_name.is_composed:
-            # TODO make aware of prDIS
-            self.components = partonic_channels_em[
+            partonic_channels = partonic_channels_em
+            if self._SF.obs_params["process"] == "NC":
+                partonic_channels = partonic_channels_nc
+            self.components = partonic_channels[
                 SF.obs_name.apply_flavor_family().name
             ]
 

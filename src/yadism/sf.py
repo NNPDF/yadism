@@ -32,7 +32,7 @@ class StructureFunction:
                 theory dictionary containing all needed parameters
     """
 
-    def __init__(self, obs_name, runner=None, *, eko_components, theory_params):
+    def __init__(self, obs_name, runner=None, *, eko_components, theory_params, obs_params):
         # internal managers
         self.obs_name = obs_name
         self.__runner = runner
@@ -54,6 +54,7 @@ class StructureFunction:
         self.M2target = theory_params["M2target"]
         self.FONLL_damping = theory_params["FONLL_damping"]
         self.damping_powers = theory_params["damping_powers"]
+        self.obs_params = obs_params
 
     def load(self, kinematic_configs):
         """

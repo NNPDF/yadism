@@ -32,9 +32,9 @@ def generate_observables():
         "FLtop",
     ]
     cards = []
-    for obs in ["F2charm"]:# obs_list:
+    for obs in ["FLcharm"]:# obs_list:
         card = copy.deepcopy(defaults)
-        #card["prDIS"] = "NC"
+        card["prDIS"] = "NC"
         #card["PropagatorCorrection"] = .999
         #card["ProjectileDIS"] = "positron"
         #card["PolarizationDIS"] = 1
