@@ -15,7 +15,7 @@ class FLasyGluon(pc.PartonicChannelAsy):
         Computes the gluon channel of the asymptotic limit of FLheavy.
     """
 
-    label = "g"
+    label = "gVV"
 
     def NLO(self):
         """
