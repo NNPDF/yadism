@@ -100,6 +100,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
         if not SF.obs_name.is_composed:
+            # TODO make aware of prDIS
             self.components = partonic_channels_em[
                 SF.obs_name.apply_flavor_family().name
             ]
@@ -278,8 +279,9 @@ class EvaluatedStructureFunctionAsy(EvaluatedStructureFunction):
                     dictionary with key refering to the channel and a dictionary with pid -> weight
         """
         nhq = self._SF.obs_name.hqnumber
-        e2hq = self._SF.coupling_constants.get_weight(nhq, self._Q2)
-        weights = {"g": {21: e2hq}}
+        weight_vv = self._SF.coupling_constants.get_weight(nhq, self._Q2, "V")
+        weight_aa = self._SF.coupling_constants.get_weight(nhq, self._Q2, "A")
+        weights = {"gVV": {21: weight_vv},"gAA": {21: weight_aa}}
         return weights
 
 

@@ -145,7 +145,10 @@ class F2lightGluon(pc.PartonicChannelLight):
                 2  # TODO: to be understood
                 * 2
                 * nf
-                * (split.pqg(z, constants) * (np.log((1 - z) / z) - 4) + 3 * constants.TF)
+                * (
+                    split.pqg(z, constants) * (np.log((1 - z) / z) - 4)
+                    + 3 * constants.TF
+                )
             )
 
         return cg

@@ -12,12 +12,12 @@ import numpy as np
 from .. import partonic_channel as pc
 
 
-class F2heavyGluon(pc.PartonicChannelHeavy):
+class F2heavyGluonVV(pc.PartonicChannelHeavy):
     """
         Computes the gluon channel of F2heavy.
     """
 
-    label = "g"
+    label = "gVV"
 
     def NLO(self):
         """
@@ -52,5 +52,37 @@ class F2heavyGluon(pc.PartonicChannelHeavy):
                     )
                 )) / z
             # fmt: on
+
+        return cg
+
+
+class F2heavyGluonAA(F2heavyGluonVV):
+    """
+        Computes the gluon channel of F2heavy.
+    """
+
+    label = "gAA"
+
+    def NLO(self):
+        """
+            Computes the gluon part of the next to leading order F2 structure
+            function.
+
+            |ref| implements :eqref:`D.4`, :cite:`felix-thesis`.
+
+            Returns
+            -------
+                sequence of callables
+                    coefficient functions
+        """
+
+        VV = super(F2heavyGluonAA, self).NLO()
+
+        def cg(z, VV=VV):
+            if self.is_below_threshold(z):
+                return 0
+            return VV(z) + self._FHprefactor * np.pi / 2.0 * (
+                self._rho_p(z) * self._rho_q * np.log(self._chi(z))
+            )
 
         return cg

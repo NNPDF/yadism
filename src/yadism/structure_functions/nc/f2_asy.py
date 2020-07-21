@@ -30,6 +30,7 @@ class F2asyGluon(pc.PartonicChannelAsy):
             .. todo::
                 docs
         """
+
         def cg(z, L=self.L, constants=self.constants):
             return 4.0 * (
                 split.pqg(z, constants) * (L + np.log((1 - z) / z))
