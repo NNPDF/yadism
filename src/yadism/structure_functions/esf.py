@@ -101,6 +101,7 @@ class EvaluatedStructureFunction(abc.ABC):
         self._computed = False
         # load partonic channels
         if not SF.obs_name.is_composed:
+            # TODO add CC
             partonic_channels = partonic_channels_em
             if self._SF.obs_params["process"] == "NC":
                 partonic_channels = partonic_channels_nc
