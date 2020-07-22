@@ -34,6 +34,7 @@ class FLasyGluonVV(pc.PartonicChannelAsy):
 
         return cg
 
+
 class FLasyGluonAA(FLasyGluonVV):
     """
         Computes the gluon channel of the asymptotic limit of FLheavy.

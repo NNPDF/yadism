@@ -33,3 +33,6 @@ class Output(dict):
 
     def dump(self):
         pass
+
+    def load(self):
+        pass

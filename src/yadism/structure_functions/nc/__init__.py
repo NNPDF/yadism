@@ -9,6 +9,8 @@ from .fl_heavy import FLheavyGluonVV, FLheavyGluonAA
 from .f2_asy import F2asyGluonVV, F2asyGluonAA
 from .fl_asy import FLasyGluonVV, FLasyGluonAA
 
+from .weights import light_factory, heavy_factory
+
 partonic_channels_em = {
     "F2light": [F2lightQuark, F2lightGluon],
     "FLlight": [FLlightQuark, FLlightGluon],
@@ -24,3 +26,13 @@ partonic_channels_nc["F2heavy"].extend([F2heavyGluonAA])
 partonic_channels_nc["FLheavy"].extend([FLheavyGluonAA])
 partonic_channels_nc["F2asy"].extend([F2asyGluonAA])
 partonic_channels_nc["FLasy"].extend([FLasyGluonAA])
+
+weigths_nc = {
+    "light": light_factory(range(1, 3 + 1)),
+    "charm": heavy_factory(4),
+    "charmlight": light_factory([4]),
+    "bottom": heavy_factory(5),
+    "bottomlight": light_factory([5]),
+    "top": heavy_factory(6),
+    "toplight": light_factory([6]),
+}

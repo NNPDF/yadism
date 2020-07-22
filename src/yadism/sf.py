@@ -32,7 +32,9 @@ class StructureFunction:
                 theory dictionary containing all needed parameters
     """
 
-    def __init__(self, obs_name, runner=None, *, eko_components, theory_params, obs_params):
+    def __init__(
+        self, obs_name, runner=None, *, eko_components, theory_params, obs_params
+    ):
         # internal managers
         self.obs_name = obs_name
         self.__runner = runner

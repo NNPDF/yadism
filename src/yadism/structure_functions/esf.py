@@ -20,17 +20,17 @@ They are:
     needed for heavy quark calculation, like matching schemes
 """
 
-import abc
 import copy
 
 import numpy as np
 
 from . import distribution_vec as conv
 from .esf_result import ESFResult
-from .nc import partonic_channels_em, partonic_channels_nc
+from .nc import partonic_channels_em, partonic_channels_nc, weigths_nc
+from .cc import partonic_channels_cc
 
 
-class EvaluatedStructureFunction(abc.ABC):
+class EvaluatedStructureFunction():
     """
         The actual Structure Function implementation.
 
@@ -99,26 +99,17 @@ class EvaluatedStructureFunction(abc.ABC):
         self._Q2 = kinematics["Q2"]
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
-        # load partonic channels
         if not SF.obs_name.is_composed:
-            # TODO add CC
+            # load partonic channels
             partonic_channels = partonic_channels_em
-            if self._SF.obs_params["process"] == "NC":
+            process = self._SF.obs_params["process"]
+            if process == "NC":
                 partonic_channels = partonic_channels_nc
-            self.components = partonic_channels[
-                SF.obs_name.apply_flavor_family().name
-            ]
-
-    @abc.abstractmethod
-    def _compute_weights(self):
-        """
-            Compute PDF weights for different channels.
-
-            Returns
-            -------
-                weights : dict
-                    dictionary with key refering to the channel and a dictionary with pid -> weight
-        """
+            elif process == "CC":
+                partonic_channels = partonic_channels_cc
+            self.components = partonic_channels[SF.obs_name.apply_flavor_family().name]
+            # load weights
+            self.weigths = weigths_nc
 
     def _compute_local(self):
         """
@@ -142,7 +133,7 @@ class EvaluatedStructureFunction(abc.ABC):
         # add the factor x from the LHS
         self._res *= self._x
         # setup weights
-        self._res.weights = self._compute_weights()
+        self._res.weights = self.weigths[self._SF.obs_name.weight_family](self._SF.coupling_constants,self._Q2).w
 
     def _compute_component(self, comp):
         """
@@ -236,60 +227,8 @@ class EvaluatedStructureFunctionLight(EvaluatedStructureFunction):
         # expose number of flavours
         self.nf = nf
 
-    def _compute_weights(self):
-        """
-            Compute PDF weights for different channels.
 
-            Returns
-            -------
-                weights : dict
-                    dictionary with key refering to the channel and a dictionary with pid -> weight
-        """
-        weights = {"q": {}, "g": {}}
-        # quark couplings
-        tot_ch_sq = 0
-        for q in range(1, 3 + 1):  # u+d+s
-            eq2 = self._SF.coupling_constants.get_weight(q, self._Q2)
-            weights["q"][q] = eq2
-            tot_ch_sq += eq2
-        # gluon coupling = charge average (omitting the *2/2)
-        weights["g"][21] = tot_ch_sq / 3  # 3 = u+d+s
-        return weights
-
-
-class EvaluatedStructureFunctionAsy(EvaluatedStructureFunction):
-    """
-        Specialize EvaluatedStructureFunction for asy flavours.
-
-        Parameters
-        ----------
-            SF : StructureFunction
-                the parent :py:class:`StructureFunction` instance
-            kinematics : dict
-                the specific kinematic point as a dict with two elements ('x', 'Q2')
-            nhq : int
-                heavy quark flavor number, i.e. c=4,b=5,t=6
-            force_local : bool
-                always return the local object? i.e. ignore e.g. scheme
-    """
-
-    def _compute_weights(self):
-        """
-            Compute PDF weights for different channels.
-
-            Returns
-            -------
-                weights : dict
-                    dictionary with key refering to the channel and a dictionary with pid -> weight
-        """
-        nhq = self._SF.obs_name.hqnumber
-        weight_vv = self._SF.coupling_constants.get_weight(nhq, self._Q2, "V")
-        weight_aa = self._SF.coupling_constants.get_weight(nhq, self._Q2, "A")
-        weights = {"gVV": {21: weight_vv},"gAA": {21: weight_aa}}
-        return weights
-
-
-class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunctionAsy):
+class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     """
         Specialize EvaluatedStructureFunction for heavy flavours.
 

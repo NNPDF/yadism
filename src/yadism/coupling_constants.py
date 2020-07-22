@@ -33,12 +33,129 @@ class CouplingConstants:
         for pid in [12, 14, 16]:
             self.weak_isospin_3[pid] = 1 / 2
 
-    def _get_vectorial_coupling(self, pid):
+    def vectorial_coupling(self, pid):
         """Combine the vectorial coupling from electric and weak charges"""
         return (
             self.weak_isospin_3[pid]
             - 2.0 * self.electric_charge[pid] * self.theory_config["sin2theta_weak"]
         )
+
+    def leptonic_coupling(self, mode):
+        """
+            Computes the coupling of the boson to the lepton
+
+            Parameters
+            ----------
+                mode : str
+                    scattered bosons
+
+            Returns
+            -------
+                leptonic_coupling : float
+                    leptonic coupling
+        """
+        projectile_pid = self.obs_config["projectilePID"]
+        # correct projectile polarization
+        pol = self.obs_config["polarization"]
+        if (projectile_pid % 2 == 1 and projectile_pid > 0) or (
+            projectile_pid % 2 == 0 and projectile_pid < 0
+        ):
+            pol *= -1
+        # load Z coupling
+        if mode in ["phZ","ZZ"]:
+            projectile_v = self.vectorial_coupling(abs(projectile_pid))
+            projectile_a = self.weak_isospin_3[abs(projectile_pid)]
+        elif mode == "WW":
+            projectile_v = 1
+            projectile_a = 1
+        # switch mode
+        if mode == "phph":
+            return self.electric_charge[abs(projectile_pid)] ** 2
+        elif mode == "phZ":
+            return self.electric_charge[abs(projectile_pid)] * (
+                projectile_v + pol * projectile_a
+            )
+        elif mode in ["ZZ", "WW"]:
+            return (
+                projectile_v ** 2
+                + projectile_a ** 2
+                + 2.0 * pol * projectile_v * projectile_a
+            )
+        raise ValueError(f"Unknown mode: {mode}")
+
+    def hadronic_coupling(self, mode, pid, quark_coupling_type=None):
+        """
+            Computes the coupling of the boson to the parton
+
+            Parameters
+            ----------
+                mode : str
+                    scattered bosons
+                pid : int
+                    parton identifier
+                quark_coupling_type : str
+                    flag to distinguish for heavy quarks between vectorial and axial-vectorial
+                    coupling
+
+            Returns
+            -------
+                hadronic_coupling : float
+                    hadronic coupling
+        """
+        # for quarks only the flavor does matter
+        pid = abs(pid)
+        # load couplings
+        eq = self.electric_charge[pid]
+        # axial coupling of the photon to the quark is not there of course
+        if quark_coupling_type == "A":
+            eq = 0
+        gqv = self.vectorial_coupling(pid)
+        gqa = self.weak_isospin_3[pid]
+        # switch mode
+        if mode == "phph":
+            return eq ** 2
+        elif mode == "phZ":
+            return eq * gqv
+        elif mode == "ZZ":
+            g2q = gqv ** 2 + gqa ** 2
+            # in heavy quark structure functions the two coefficient functions for the
+            # vectorial and axial-vectorial coupling are NOT the same (unlinke in the massless case)
+            if quark_coupling_type == "V":
+                g2q = gqv ** 2
+            elif quark_coupling_type == "A":
+                g2q = gqa ** 2
+            return g2q
+        raise ValueError(f"Unknown mode: {mode}")
+
+    def propagator_factor(self, mode, Q2):
+        """
+            Propagator correction to account for different bosons (:math:`\\eta` in PDG)
+
+            Parameters
+            ----------
+                mode : str
+                    scattered bosons
+                Q2 : float
+                    virtuality of the process
+
+            Returns
+            -------
+                propagator_factor : float
+                    propagator shift
+        """
+        if mode == "phph":
+            return 1
+        eta_phZ = (Q2 / (self.theory_config["MZ2"] + Q2)) / (
+            4.0
+            * self.theory_config["sin2theta_weak"]
+            * (1.0 - self.theory_config["sin2theta_weak"])
+        )
+        eta_phZ /= 1 - self.obs_config["propagatorCorrection"]
+        if mode == "phZ":
+            return eta_phZ
+        if mode == "ZZ":
+            return eta_phZ ** 2
+        raise ValueError(f"Unknown mode: {mode}")
 
     def get_weight(self, pid, Q2, quark_coupling_type=None):
         """
@@ -62,66 +179,28 @@ class CouplingConstants:
                 w : float
                     weight
         """
-        # for quarks only the flavor does matter
-        pid = abs(pid)
-        # keep in mind that for the projectile we *do* care about sign
-        projectile_pid = self.obs_config["projectilePID"]
-        eq = self.electric_charge[pid]
-        # axial coupling of the photon to the quark is not there of course
-        if quark_coupling_type == "A":
-            eq = 0
-        w_phph = (self.electric_charge[abs(projectile_pid)] ** 2) * (eq ** 2)
+        w_phph = (
+            self.leptonic_coupling("phph")
+            * self.propagator_factor("phph", Q2)
+            * self.hadronic_coupling("phph", pid, quark_coupling_type)
+        )
         # pure photon exchane
         if self.obs_config["process"] == "EM":
             return w_phph
         # allow Z to be mixed in
         if self.obs_config["process"] == "NC":
-            # load coupling
-            projectile_v = self._get_vectorial_coupling(abs(projectile_pid))
-            projectile_a = self.weak_isospin_3[abs(projectile_pid)]
-            gqv = self._get_vectorial_coupling(pid)
-            gqa = self.weak_isospin_3[pid]
-            # load proper polarization definition
-            pol = self.obs_config["polarization"]
-            if (projectile_pid % 2 == 1 and projectile_pid > 0) or (
-                projectile_pid % 2 == 0 and projectile_pid < 0
-            ):
-                pol *= -1
-            eta_phZ = (
-                Q2
-                / (self.theory_config["MZ2"] + Q2)
-                / (
-                    4.0
-                    * self.theory_config["sin2theta_weak"]
-                    * (1.0 - self.theory_config["sin2theta_weak"])
-                )
-            )
-            eta_phZ /= 1 - self.obs_config["propagatorCorrection"]
             # photon-Z interference
             w_phZ = (
                 2
-                * self.electric_charge[abs(projectile_pid)]
-                * (projectile_v + pol * projectile_a)
-                * eta_phZ
-                * eq
-                * gqv
+                * self.leptonic_coupling("phZ")
+                * self.propagator_factor("phZ", Q2)
+                * self.hadronic_coupling("phZ", pid, quark_coupling_type)
             )
-            # in heavy quark structure functions the two coefficient functions for the
-            # vectorial and axial-vectorial coupling are NOT the same (unlinke in the massless case)
-            g2q = gqv ** 2 + gqa ** 2
-            if quark_coupling_type == "V":
-                g2q = gqv ** 2
-            elif quark_coupling_type == "A":
-                g2q = gqa ** 2
             # true Z contributions
             w_ZZ = (
-                (
-                    projectile_v ** 2
-                    + projectile_a ** 2
-                    + 2.0 * pol * projectile_v * projectile_a
-                )
-                * (eta_phZ ** 2)
-                * g2q
+                self.leptonic_coupling("ZZ")
+                * self.propagator_factor("ZZ", Q2)
+                * self.hadronic_coupling("ZZ", pid, quark_coupling_type)
             )
             return w_phph + w_phZ + w_ZZ
         return 0
@@ -143,6 +222,7 @@ class CouplingConstants:
                 o : CouplingConstants
                     created object
         """
+        #CKM = theory[""]
         theory_config = {
             "MZ2": theory.get("MZ", 91.1876) ** 2,  # defaults to the PDG2020 value
             "sin2theta_weak": theory.get(

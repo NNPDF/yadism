@@ -4,7 +4,8 @@ kinds = ["F2", "FL"]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
 asys = [h + "asy" for h in heavys]
-external_flavors = heavys + ["light", "total"] + asys
+heavylight = [h + "light" for h in heavys]
+external_flavors = heavys + ["light", "total"] + asys + heavylight
 # internally we allow in addition for the flavor families
 flavor_families = ["asy", "heavy"]
 flavors = external_flavors + flavor_families
@@ -109,6 +110,11 @@ class ObservableName:
         return self.flavor in asys
 
     @property
+    def is_heavylight(self):
+        """Is it a heavylight flavor? i.e. charmlight, bottomlight, or, toplight"""
+        return self.flavor in heavylight
+
+    @property
     def is_composed(self):
         """Is it a composed flavor? i.e. total"""
         return self.flavor == "total"
@@ -120,6 +126,8 @@ class ObservableName:
             return "heavy"
         if self.is_asy:
             return "asy"
+        if self.is_heavylight:
+            return "light"
         return self.flavor
 
     def apply_flavor_family(self):
@@ -141,6 +149,13 @@ class ObservableName:
         else:
             idx = heavys.index(self.flavor)
         return 4 + idx
+
+    @property
+    def weight_family(self):
+        """Underlying flavor (i.e. evetually without asy)"""
+        if self.is_asy:
+            return heavys[self.hqnumber-4]
+        return self.flavor
 
     @classmethod
     def has_heavies(cls, names):
