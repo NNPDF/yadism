@@ -1,18 +1,25 @@
 # -*- coding: utf-8 -*-
 
 kinds = ["F2", "FL"]
+# external flavors:
 heavys = ["charm", "bottom", "top"]
-flavors = heavys + ["light", "total"] + [h+"asy" for h in heavys]
+asys = [h + "asy" for h in heavys]
+external_flavors = heavys + ["light", "total"] + asys
+# internally we allow in addition for the flavor families
+flavor_families = ["asy", "heavy"]
+flavors = external_flavors + flavor_families
+
 
 class ObservableName:
     """
-        Abstract wrapper to observables to easy split their names in two parts
+        Wrapper to observable names to easy split them into two parts.
 
         Parameters
         ----------
             name : str
                 full observable name
     """
+
     def __init__(self, name):
         self.kind = name[:2]
         if self.kind not in kinds:
@@ -27,6 +34,7 @@ class ObservableName:
         return self.kind + self.flavor
 
     def __eq__(self, other):
+        """Test equality of kind and flavor"""
         return self.kind == other.kind and self.flavor == other.flavor
 
     def apply_kind(self, kind):
@@ -45,21 +53,21 @@ class ObservableName:
         """
         return type(self)(kind + self.flavor)
 
-    def get_asy(self):
+    def apply_asy(self):
         """
             Computes the asymptotic heavy correspondend.
 
             Returns
             -------
-                get_asy : type(self)
+                apply_asy : type(self)
                     asymptotic heavy correspondend
         """
         if self.flavor not in heavys:
-            raise ValueError("observable is not heavy!")
-        return self.apply_flavor(self.flavor+ "asy")
+            raise ValueError(f"observable is not heavy! [{self}]")
+        return self.apply_flavor(self.flavor + "asy")
 
     def __repr__(self):
-        """return name as representation"""
+        """The full name is the representation"""
         return self.name
 
     def apply_flavor(self, flavor):
@@ -90,8 +98,52 @@ class ObservableName:
         """
         return not self.flavor == "light"
 
+    @property
+    def is_raw_heavy(self):
+        """Is it a raw heavy flavor? i.e. charm, bottom, or, top"""
+        return self.flavor in heavys
+
+    @property
+    def is_asy(self):
+        """Is it a asymptotic raw heavy flavor? i.e. charmasy, bottomasy, or, topasy"""
+        return self.flavor in asys
+
+    @property
+    def is_composed(self):
+        """Is it a composed flavor? i.e. total"""
+        return self.flavor == "total"
+
+    @property
+    def flavor_family(self):
+        """Abstract flavor family name"""
+        if self.is_raw_heavy:
+            return "heavy"
+        if self.is_asy:
+            return "asy"
+        return self.flavor
+
+    def apply_flavor_family(self):
+        """
+            Return name with abstract flavor family name
+
+            Returns
+            -------
+                apply_flavor_family : type(self)
+                    new ObservableName
+        """
+        return self.apply_flavor(self.flavor_family)
+
+    @property
+    def hqnumber(self):
+        """Heavy quark flavor number"""
+        if self.is_asy:
+            idx = asys.index(self.flavor)
+        else:
+            idx = heavys.index(self.flavor)
+        return 4 + idx
+
     @classmethod
-    def has_heavies(cls,names):
+    def has_heavies(cls, names):
         """
             Are there any heavy objects in names?
 
@@ -114,7 +166,7 @@ class ObservableName:
         return False
 
     @classmethod
-    def has_lights(cls,names):
+    def has_lights(cls, names):
         """
             Are there any light objects in names?
 
@@ -138,14 +190,14 @@ class ObservableName:
 
     @property
     def mass_label(self):
-        """mass label in the theory runcard"""
+        """Mass label in the theory runcard"""
         if self.flavor == "light":
             return None
         else:
             return f"m{self.flavor[0]}"
 
-    @staticmethod
-    def is_valid(name):
+    @classmethod
+    def is_valid(cls, name):
         """
             Tests whether the name is a valid observable name
 
@@ -155,7 +207,21 @@ class ObservableName:
                     is valid name?
         """
         try:
-            ObservableName(name)
+            cls(name)
             return True
         except ValueError:
             return False
+
+    @classmethod
+    def all(cls):
+        """
+            Iterates all valid (external) names.
+
+            Yields
+            ------
+                all : cls
+                    ObservableName
+        """
+        for kind in kinds:
+            for flav in external_flavors:
+                yield cls(kind + flav)

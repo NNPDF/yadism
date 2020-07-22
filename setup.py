@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 # Installation script for python
 from setuptools import setup, find_packages
 
 setup(
     name="yadism",
-    version="0.3.2",
+    version="0.3.3",
     description="Deep Inelastic Scattering",
     author="A.Candido, S.Carrazza, F. Hekhorn",
     author_email="stefano.carrazza@cern.ch",
@@ -19,10 +20,6 @@ setup(
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Physics",
     ],
-    install_requires=[
-        "eko",
-        "numpy",
-        "scipy",
-    ],
+    install_requires=["eko", "numpy", "scipy", "rich",],
     python_requires=">=3.7",
 )
