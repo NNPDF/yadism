@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+
 
 class CouplingConstants:
     """
@@ -62,7 +64,7 @@ class CouplingConstants:
         ):
             pol *= -1
         # load Z coupling
-        if mode in ["phZ","ZZ"]:
+        if mode in ["phZ", "ZZ"]:
             projectile_v = self.vectorial_coupling(abs(projectile_pid))
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]
         elif mode == "WW":
@@ -83,7 +85,7 @@ class CouplingConstants:
             )
         raise ValueError(f"Unknown mode: {mode}")
 
-    def hadronic_coupling(self, mode, pid, quark_coupling_type=None):
+    def hadronic_coupling(self, mode, pid, quark_coupling_type=None, cc_flavor=None):
         """
             Computes the coupling of the boson to the parton
 
@@ -125,6 +127,9 @@ class CouplingConstants:
             elif quark_coupling_type == "A":
                 g2q = gqa ** 2
             return g2q
+        elif mode == "WW":
+            return np.sum(self.theory_config["CKM"].masked(cc_flavor)(pid))
+
         raise ValueError(f"Unknown mode: {mode}")
 
     def propagator_factor(self, mode, Q2):
@@ -155,9 +160,16 @@ class CouplingConstants:
             return eta_phZ
         if mode == "ZZ":
             return eta_phZ ** 2
+        if mode == "WW":
+            eta_W = (
+                (eta_phZ / 2)
+                * (1 + Q2 / self.theory_config["MZ2"])
+                / (1 + Q2 / self.theory_config["MW2"])
+            ) ** 2
+            return eta_W
         raise ValueError(f"Unknown mode: {mode}")
 
-    def get_weight(self, pid, Q2, quark_coupling_type=None):
+    def get_weight(self, pid, Q2, quark_coupling_type=None, cc_flavor=None):
         """
             Compute the weight for the pid contributions to the structure function.
 
@@ -203,6 +215,11 @@ class CouplingConstants:
                 * self.hadronic_coupling("ZZ", pid, quark_coupling_type)
             )
             return w_phph + w_phZ + w_ZZ
+        # CC = W
+        if self.obs_config["process"] == "CC":
+            return self.leptonic_coupling("WW") * self.hadronic_coupling(
+                "WW", pid, cc_flavor=cc_flavor
+            )
         return 0
 
     @classmethod
@@ -222,13 +239,25 @@ class CouplingConstants:
                 o : CouplingConstants
                     created object
         """
-        #CKM = theory[""]
         theory_config = {
             "MZ2": theory.get("MZ", 91.1876) ** 2,  # defaults to the PDG2020 value
+            "CKM": CKM2Matrix.from_str(
+                theory["CKM"]
+            ),  # default in https://pdg.lbl.gov/2019/reviews/rpp2019-rev-ckm-matrix.pdf Eq. 12.33
             "sin2theta_weak": theory.get(
                 "SIN2TW", 0.23121
             ),  # defaults to the PDG2020 value
         }
+        # set MW
+        MW = theory.get("MW")
+        if MW is None:
+            theory_config["MW2"] = theory_config["MZ2"] / (
+                1 - theory_config["sin2theta_weak"]
+            )
+            # TODO raise warning in log if inconsitent
+        else:
+            theory_config["MW2"] = MW ** 2
+
         # map projectile to PID
         projectile = observables.get("ProjectileDIS", "electron")
         projectile_pids = {
@@ -247,3 +276,116 @@ class CouplingConstants:
         }
         o = cls(theory_config, obs_config)
         return o
+
+
+class CKM2Matrix:
+    """
+        Wrapper for the CKM matrix
+
+        Parameters
+        ----------
+            elems : list(float)
+                squared elements in row order
+    """
+
+    flav_rows = ["u", "c", "t"]
+    pid_rows = [2, 4, 6]
+    flav_cols = ["d", "s", "b"]
+    pid_cols = [1, 3, 5]
+
+    def __init__(self, elems):
+        self.m = np.array(elems).reshape(3, 3)
+        # TODO maybe raise warning if non-unitarian
+
+    def __getitem__(self, key):
+        """
+            Allows pid and strings as key
+
+            Parameters
+            ----------
+                key :
+                    input key
+
+            Returns
+            -------
+                item :
+                    element(s)
+        """
+        nkey = []
+        if not isinstance(key, tuple):
+            key = (key,)
+        if len(key) > 2:
+            raise KeyError("CKM matrices are 3x3 matrices")
+        for k, flavs, pids in zip(
+            key, [self.flav_rows, self.flav_cols], [self.pid_rows, self.pid_cols]
+        ):
+            if isinstance(k, str):
+                nkey.append(flavs.index(k))
+            elif isinstance(k, int):
+                nkey.append(pids.index(k))
+            else:
+                nkey.append(k)
+        return self.m[tuple(nkey)]
+
+    def __call__(self, pid):
+        """
+            Get column and row depending on pid
+
+            Parameters
+            ----------
+                pid : int
+                    particle identifier
+
+            Returns
+            -------
+                elems : list(float)
+                    row or column
+        """
+        if pid % 2 == 0:
+            return self[pid]
+        return self[:, pid]
+
+    def masked(self, flavor):
+        """
+            Apply a mask according to the flavor
+
+            Parameters
+            ----------
+                flavor : str
+                    flavor type
+
+            Returns
+            -------
+                matrix : CKMMatrix
+                    masked matrix
+        """
+        if flavor == "light":
+            op = np.array([[1, 1, 0], [0, 0, 0], [0, 0, 0]])
+        elif flavor == "charm":
+            op = np.array([[0, 0, 0], [1, 1, 0], [0, 0, 0]])
+        elif flavor == "bottom":
+            op = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
+        elif flavor == "top":
+            op = np.array([[0, 0, 0], [0, 0, 0], [1, 1, 1]])
+        else:
+            raise ValueError(f"Unknown flavor {flavor}")
+        return type(self)(self.m * op)
+
+    @classmethod
+    def from_str(cls, theory_string):
+        """
+            Create the object from a string representation
+
+            Parameters
+            ----------
+                theory_string : str
+                    all elements rowwise in a string
+
+
+            Returns
+            -------
+                m : CKMMatrix
+                    created object
+        """
+        elems = theory_string.split(" ")
+        return cls(np.power(np.array(elems, dtype=np.float), 2))

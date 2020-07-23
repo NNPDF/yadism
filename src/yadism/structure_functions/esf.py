@@ -27,10 +27,10 @@ import numpy as np
 from . import distribution_vec as conv
 from .esf_result import ESFResult
 from .nc import partonic_channels_em, partonic_channels_nc, weigths_nc
-from .cc import partonic_channels_cc
+from .cc import partonic_channels_cc, weigths_cc
 
 
-class EvaluatedStructureFunction():
+class EvaluatedStructureFunction:
     """
         The actual Structure Function implementation.
 
@@ -100,16 +100,16 @@ class EvaluatedStructureFunction():
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
         if not SF.obs_name.is_composed:
-            # load partonic channels
+            # load partonic channels and weights
             partonic_channels = partonic_channels_em
             process = self._SF.obs_params["process"]
+            self.weigths = weigths_nc
             if process == "NC":
                 partonic_channels = partonic_channels_nc
             elif process == "CC":
                 partonic_channels = partonic_channels_cc
+                self.weigths = weigths_cc
             self.components = partonic_channels[SF.obs_name.apply_flavor_family().name]
-            # load weights
-            self.weigths = weigths_nc
 
     def _compute_local(self):
         """
@@ -133,7 +133,9 @@ class EvaluatedStructureFunction():
         # add the factor x from the LHS
         self._res *= self._x
         # setup weights
-        self._res.weights = self.weigths[self._SF.obs_name.weight_family](self._SF.coupling_constants,self._Q2).w
+        self._res.weights = self.weigths[self._SF.obs_name.weight_family](
+            self._SF.coupling_constants, self._Q2
+        ).w
 
     def _compute_component(self, comp):
         """

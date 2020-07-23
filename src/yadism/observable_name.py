@@ -154,7 +154,7 @@ class ObservableName:
     def weight_family(self):
         """Underlying flavor (i.e. evetually without asy)"""
         if self.is_asy:
-            return heavys[self.hqnumber-4]
+            return heavys[self.hqnumber - 4]
         return self.flavor
 
     @classmethod

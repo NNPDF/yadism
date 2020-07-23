@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class WeightLight:
     def __init__(self, pids, coupling_constants, Q2):
         weights = {"q": {}, "g": {}}
@@ -14,6 +15,7 @@ class WeightLight:
         weights["g"][21] = tot_ch_sq / 3  # 3 = u+d+s
         self.w = weights
 
+
 class WeightHeavy:
     def __init__(self, nhq, coupling_constants, Q2):
         weight_vv = coupling_constants.get_weight(nhq, Q2, "V")
@@ -21,8 +23,10 @@ class WeightHeavy:
         weights = {"gVV": {21: weight_vv}, "gAA": {21: weight_aa}}
         self.w = weights
 
+
 def light_factory(pids):
     return lambda coupling_constants, Q2: WeightLight(pids, coupling_constants, Q2)
+
 
 def heavy_factory(nhq):
     return lambda coupling_constants, Q2: WeightHeavy(nhq, coupling_constants, Q2)
