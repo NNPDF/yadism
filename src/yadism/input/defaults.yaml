@@ -5,13 +5,12 @@
 # they don't conflict with any other input (either because they apply only if
 # not explicitly defined, or because it sets internal parameters)
 
-
 # Polarized - perturbative order
 - name: Polarized - perturbative order
   involve:
     - Polarized
     - ipt
-  descriptio:
+  description:
   rules:
   hints:
     - Polarized and not ipt --> ipt = 1
@@ -45,8 +44,7 @@
     - Nf_FF
     - ipt
   description:
-    - "WARNING: ",MassScheme," is a VFN scheme"
-    - Nf_FF < 3 or Nf_FF > 6
+    - "Nf_FF < 3 or Nf_FF > 6"
     - MassScheme = 'FONLL-A' - "WARNING FONLL-A is NLO scheme"
     - MassScheme = 'FONLL-B' - "WARNING FONLL-B is NLO scheme"
     - MassScheme = 'FONLL-C' - "WARNING FONLL-C is NNLO scheme"
@@ -73,7 +71,6 @@
   hints:
     - SetRenQRatio(1d0)
     - SetFacQRatio(1d0)
-
 #       if(InWelcome.ne."done")        call EnableWelcomeMessage(.true.)
 #       if(InMassScheme.ne."done")     call SetMassScheme("ZM-VFNS")
 #       if(InProcessDIS.ne."done")     call SetProcessDIS("EM")

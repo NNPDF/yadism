@@ -26,7 +26,6 @@
 #     'domain' field
 #
 
-
 - name: MassScheme
   description: >
     MassScheme
@@ -34,12 +33,12 @@
   type: enum
   domain:
     - ZM-VFNS
-    - FFNS      # (default NF=3)
+    - FFNS # (default NF=3)
     - FFNS3
     - FFNS4
     - FFNS5
     - FFNS6
-    - FFN0      # (default NF=3)
+    - FFN0 # (default NF=3)
     - FFN03
     - FFN04
     - FFN05
@@ -47,6 +46,15 @@
     - FONLL-A
     - FONLL-B
     - FONLL-C
+
+- name: Nf_FF
+  description: >
+    number of active flavours
+  known_as: NfFF
+  type: integer
+  metavar: nf
+  domain:
+    - 3 <= nf <= 6
 
 - name: ProcessDIS
   description: >
@@ -58,20 +66,10 @@
     - NC
     - CC
 
-- name: PolarizationDIS
-  description: >
-    PolarizationDIS
-  known_as: polDIS
-  type: real
-  metavar: pol
-  domain:
-    - -1 <= pol <= 1
-
 - name: ProjectileDIS
   description: >
     ProjectileDIS
   type: enum
-  known_as:
   domain:
     - electron
     - positron
@@ -81,7 +79,6 @@
 - name: TargetDIS
   description: >
     TargetDIS
-  known_as:
   type: enum
   domain:
     - proton
@@ -90,46 +87,43 @@
     - iron
     - lead
 
-- name: SelectedCharge
+- name: PolarizationDIS
   description: >
-    SelectedCharge
-  known_as:
-  type: enum
-  domain:
-    - down
-    - up
-    - strange
-    - charm
-    - bottom
-    - top
-    - all
-
-- name: ScVarProc
-  description: >
-    TargetDIS
-  known_as:
+    PolarizationDIS
+  known_as: polDIS
   type: real
-  metavar: scvar
+  metavar: pol
   domain:
-    - 0 <= scvar <= 1
+    - -1 <= pol <= 1
 
-- name: Nf_FF
-  description: >
-    number of active flavours
-  known_as:
-  type: integer
-  metavar: nf
-  domain:
-    - 3 <= nf <= 6
-
-# should also be positive?
+# TODO: should also be positive?
 - name: DeltaR
   description: >
     propagator correction
 
     WARNING: The propagator correction cannot be equal to one
     --> SetPropagatorCorrection(0d0)
-  known_as:
   type: real
   domain:
     - DeltaR != 1.
+#
+#- name: SelectedCharge
+#  description: >
+#    SelectedCharge
+#  type: enum
+#  domain:
+#    - down
+#    - up
+#    - strange
+#    - charm
+#    - bottom
+#    - top
+#    - all
+#
+#- name: ScVarProc
+#  description: >
+#    Scale Variations
+#  type: real
+#  metavar: scvar
+#  domain:
+#    - 0 <= scvar <= 1

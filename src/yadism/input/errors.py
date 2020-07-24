@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+
+import re
+import textwrap
+
+
+class DomainError(ValueError):
+    """Error raised while checking inputs (single argument violation).
+
+    .. todo::
+        format domain properly according the type, this should be done by
+        error Argument subclasses before raising.
+
+    Parameters
+    ----------
+    name : str
+        Name of the input variable.
+    description : str
+        Domain description provided.
+    domain : list, optional
+        The set of rules used to provide .
+    """
+
+    def __init__(
+        self, *, name, description, type, known_as, value, domain="", **kwargs
+    ):
+        """Generates the error message to be included in the Traceback.
+
+        It formats the provided fields in a single string, and stores it as
+        first element of ``args`` attribute.
+        """
+        self.name = known_as
+        msg = f"""Following argument outside the domain:
+               name: {known_as}
+               description:
+               DESCRIPTION
+               type: {type}
+               domain:
+               DOMAIN
+               value provided: {value}
+               """
+        domain = "\t" + re.sub("\n", "\n\t\t", domain)
+        description = "\n\t\t".join(
+            textwrap.wrap(description.strip(), 66, break_long_words=False)
+        )
+        msg = re.sub("\n *", "\n\t", msg)
+        msg = re.sub("DOMAIN", domain, msg)
+        msg = re.sub("DESCRIPTION", f"\t{description}", msg)
+        msg = re.sub("\t", "   ", msg)
+        self.args = (msg,)
+        # raise ValueError
+
+
+class CrossConstraintError(ValueError):
+    """Error raised while checking inputs (more arguments involved)."""
+
+    def __init__(self):
+        """Generate the error message to be included in the Traceback.
+
+        It formats the provided fields in a single string, and stores it as
+        first element of ``args`` attribute.
+
+        ..todo::
+            * define the arguments involved
+            * define the actual format
+        """
+        pass
+
+
+class DefaultWarning(RuntimeWarning):
+    """Warn the user that a default is being applied"""
+
+    def __init__(self):
+        """Generate the error message to be reported.
+
+        """
