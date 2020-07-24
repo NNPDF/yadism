@@ -59,3 +59,19 @@ class TestInspector:
         with pytest.raises(input_.errors.DomainError, match="polDIS"):
             inspector = input_.inspector.Inspector(runcard)
             inspector.check_domains()
+
+    def test_default(self):
+        runcard = {}
+        with pytest.raises(input_.errors.DefaultError):
+            inspector = input_.inspector.Inspector(runcard)
+            inspector.apply_default()
+
+        inspector = input_.inspector.Inspector(runcard)
+        inspector.apply_default(missing_yields_error=False)
+
+
+if __name__ == "__main__":
+    # import warnings
+
+    # warnings.simplefilter("error")
+    TestInspector().test_default()

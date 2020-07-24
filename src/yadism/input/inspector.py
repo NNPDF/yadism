@@ -8,7 +8,6 @@ for the input restrictions defined in the following files:
 """
 
 import pathlib
-import warnings
 
 import yaml
 
@@ -89,5 +88,14 @@ class Inspector:
         """
         pass
 
-    def apply_default(self):
+    def apply_default(self, missing_yields_error=True):
         """Apply default for missing required arguments"""
+
+        for default in self.defaults["simple-defaults"]:
+            default_manager = constraints.DefaultManager(default)
+            self.user_inputs = default_manager(self.user_inputs, missing_yields_error)
+
+    def perform_all_checks(self):
+        self.check_domains()
+        self.check_cross_constraints()
+        self.apply_default()

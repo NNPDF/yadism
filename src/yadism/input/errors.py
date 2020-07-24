@@ -67,10 +67,24 @@ class CrossConstraintError(ValueError):
         pass
 
 
-class DefaultWarning(RuntimeWarning):
-    """Warn the user that a default is being applied"""
+class DefaultError(ValueError):
+    """Missing argument for field without default"""
 
-    def __init__(self):
+    def __init__(self, default):
         """Generate the error message to be reported.
 
         """
+        self.name = default["name"]
+        msg = f"Missing default for the variable `{default['involve']}`"
+        self.args = (msg,)
+
+
+class DefaultWarning(RuntimeWarning):
+    """Warn the user that a default is being applied"""
+
+    def __init__(self, msg):
+        """Generate the error message to be reported.
+
+        """
+
+        self.args = (msg,)

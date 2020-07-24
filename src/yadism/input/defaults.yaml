@@ -1,105 +1,236 @@
-# default found in the cross constraints section:
+# In this file defaults and cross-defaults are stored, with the following
+# properties:
+# - name: a descriptive name of the option
+# - involve: variable/list of variables involved
+# - description: a description of the default choice (NOT of the variable, for
+#     that one check `domains.yaml`)
+# - default/rule: the actual default/rule to apply
+#
+# ==============
+# Simple Defaults
+# ==============
+simple-defaults:
+  # Scale Variations
+  # ----------------
+  - name: KrenQ
+    involve: XIR
+    description: |
+      Renormalization scale ratio (APFEL choice: 1, ours: no default)
+    default: null
+
+  - name: KfacQ
+    involve: XIF
+    description: |
+      Factorization scale ratio (APFEL choice: 1, ours: no default)
+    default: null
+
+  - name: DynScVar
+    involve: DynScVar
+    description: |
+      Dynamical Scale Variations (APFEL choice: False, ours: currently not in use)
+    default: ""
+
+  - name: ScVarProc
+    involve: ScVarProc
+    description: |
+      Scale Variation Procedure (APFEL choice: False, ours: currently not in use)
+    default: ""
+
+  # Target Mass Corrections
+  # -----------------------
+  - name: TargetMassCorrections
+    involve: TMC
+    description: |
+      Target Mass Corrections (APFEL choice: False, ours: no default)
+    default: null
+
+  - name: MProton
+    involve: MP
+    description: |
+      Mass of the Proton (APFEL choice: 0.938272046, ours: no default)
+    default: null
+
+  # Heavy Quarks Scheme
+  # -------------------
+  - name: MassScheme
+    involve: FNS
+    description: |
+      Heavy quark flavor number scheme (APFEL choice: ZM-VFNS, ours: no default)
+    default: null
+
+  - name: DampingFONLL
+    involve: DAMP
+    description: |
+      Damping FONLL (APFEL choice: True, ours: no default)
+    default: null
+
+  - name: DampPowerFONLL
+    involve: DampPowerFONLL
+    description: |
+      Damping FONLL (APFEL choice: (2,2,2), ours: currently not in use)
+    default: ""
+
+  # Intrinsic Charm
+  # ---------------
+  - name: IntrinsicCharm
+    involve: IC
+    description: |
+      Damping FONLL (APFEL choice: IC, ours: currently not in use)
+    default: ""
+
+  # ElectroWeak Parameters
+  # ----------------------
+  - name: Z Mass
+    involve: MZ
+    description: |
+      Mass of the Z vector boson (APFEL choice: 91.1876, ours: no default)
+    default: null
+
+  - name: Sin2ThetaW
+    involve: SIN2TW
+    description: |
+      Sin squared of theta weak (APFEL choice: 0.23126, ours: no default)
+    default: null
+
+  - name: CKM
+    involve: CKM
+    description: |
+      CKM Matrix (APFEL choice: "0.97428 0.22530 0.003470 0.22520 0.97345
+      0.041000 0.00862 0.04030 0.999152", ours: no default)
+    default: null
+
+  - name: DeltaR
+    involve: DeltaR
+    description: |
+      Propagator Correction (APFEL choice: 0, ours: no default)
+    default: null
+
+  - name: EWCouplings
+    involve: EWCouplings
+    description: |
+      ElectroWeak Couplings (APFEL choice: (0., 0., 0., 0.), ours: currently
+      not in use)
+    default: ""
+
+  - name: SFNLOQED
+    involve: SFNLOQED
+    description: |
+      SFNLOQED (APFEL choice: True, ours: currently not in use)
+    default: ""
+
+  # Weights
+  # -------
+  - name: ProcessDIS
+    involve: prDIS
+    description: |
+      DIS specific process, i.e. vector boson kind (APFEL choice: EM, ours: no default)
+    default: null
+
+  - name: PolarizationDIS
+    involve: polDIS
+    description: |
+      Polarization of incoming lepton beam (APFEL choice: 0., ours: no default)
+    default: null
+
+  - name: ProjectileDIS
+    involve: projDIS
+    description: |
+      Incoming lepton kind (APFEL choice: electron, ours: no default)
+    default: null
+
+  - name: SelectedCharge
+    involve: SelectedCharge
+    description: |
+      ??? (APFEL choice: all, ours: currently not used)
+    default: ""
+
+  - name: TargetDIS
+    involve: targetDIS
+    description: |
+      Incoming target kind (APFEL choice: proton, ours: no default)
+    default: null
+
+# ==============
+# Cross Defaults
+# ==============
 #
 # in some sense the defaults found in the cross constraints section are cross
 # defaults, so rules that set a value if another one is given as input, but
 # they don't conflict with any other input (either because they apply only if
 # not explicitly defined, or because it sets internal parameters)
+#
+# TODO:
+# - remove hints (collapse with description)
+# - try to collect the `rules` into a single `rule`
 
-# Polarized - perturbative order
-- name: Polarized - perturbative order
-  involve:
-    - Polarized
-    - ipt
-  description:
-  rules:
-  hints:
-    - Polarized and not ipt --> ipt = 1
+cross-defaults:
+  #       if(InMW.ne."done")             call SetWMass(80.385d0)
+  #       if(InGFermi.ne."done")         call SetGFermi(1.1663787d-5)
+  #       if(InCKM.ne."done")            check unitarity
+  #
+  # Polarized - perturbative order
+  - name: Polarized - perturbative order
+    involve:
+      - Polarized
+      - ipt
+    description:
+    rules:
+    hints:
+      - Polarized and not ipt --> ipt = 1
 
-# MassScheme
+  # MassScheme
 
-- name: Mass Scheme - FFN
-  involve:
-    - MassScheme
-    - Nf_FF
-  description:
-    # "WARNING: ",MassScheme(1:4)," is a FFN scheme"
-    - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '3'
-    - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '4'
-    - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '5'
-    - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '6'
-    - >
-      MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] not in ['3', '4',
-      '5', '6']
-  rules:
-  hints:
-    - ... setting NF = 3 FFNS PDF evolution --> Nf_FF = 3
-    - ... setting NF = 4 FFNS PDF evolution --> Nf_FF = 4
-    - ... setting NF = 5 FFNS PDF evolution --> Nf_FF = 5
-    - ... setting NF = 6 FFNS PDF evolution --> Nf_FF = 6
-    - ... setting NF = 3 FFNS PDF evolution --> Nf_FF = 3
+  - name: Mass Scheme - FFN
+    involve:
+      - MassScheme
+      - Nf_FF
+    description:
+      # "WARNING: ",MassScheme(1:4)," is a FFN scheme"
+      - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '3'
+      - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '4'
+      - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '5'
+      - MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] = '6'
+      - >
+        MassScheme[:4] in  ['FFNS', 'FFN0'] and MassScheme[4] not in ['3', '4',
+        '5', '6']
+    rules:
+    hints:
+      - ... setting NF = 3 FFNS PDF evolution --> Nf_FF = 3
+      - ... setting NF = 4 FFNS PDF evolution --> Nf_FF = 4
+      - ... setting NF = 5 FFNS PDF evolution --> Nf_FF = 5
+      - ... setting NF = 6 FFNS PDF evolution --> Nf_FF = 6
+      - ... setting NF = 3 FFNS PDF evolution --> Nf_FF = 3
 
-- name: Mass Scheme - VFN
-  involve:
-    - MassScheme
-    - Nf_FF
-    - ipt
-  description:
-    - "Nf_FF < 3 or Nf_FF > 6"
-    - MassScheme = 'FONLL-A' - "WARNING FONLL-A is NLO scheme"
-    - MassScheme = 'FONLL-B' - "WARNING FONLL-B is NLO scheme"
-    - MassScheme = 'FONLL-C' - "WARNING FONLL-C is NNLO scheme"
-  rules:
-  hints:
-    - ... setting VFNS PDF evolution --> SetVFNS
-    - Nf_FF = 3
-    - ... setting NLO perturbative order --> SetPerturbativeOrder(1)
-    - ... setting NLO perturbative order --> SetPerturbativeOrder(1)
-    - ... setting NNLO perturbative order --> SetPerturbativeOrder(2)
+  - name: Mass Scheme - VFN
+    involve:
+      - MassScheme
+      - Nf_FF
+      - ipt
+    description:
+      - "Nf_FF < 3 or Nf_FF > 6"
+      - MassScheme = 'FONLL-A' - "WARNING FONLL-A is NLO scheme"
+      - MassScheme = 'FONLL-B' - "WARNING FONLL-B is NLO scheme"
+      - MassScheme = 'FONLL-C' - "WARNING FONLL-C is NNLO scheme"
+    rules:
+    hints:
+      - ... setting VFNS PDF evolution --> SetVFNS
+      - Nf_FF = 3
+      - ... setting NLO perturbative order --> SetPerturbativeOrder(1)
+      - ... setting NLO perturbative order --> SetPerturbativeOrder(1)
+      - ... setting NNLO perturbative order --> SetPerturbativeOrder(2)
 
-# DynScVar
+  # DynScVar
 
-- name: DynScVar
-  involve:
-    - DynScVar
-    - krenQ
-    - kfacQ
-  description: >
-    WARNING: Dynamical scale variation enabled ... the initialization will be
-    done with factorization and renormalization scales set equal to Q (mu_R =
-    mu_F = Q)
-  rules:
-  hints:
-    - SetRenQRatio(1d0)
-    - SetFacQRatio(1d0)
-#       if(InWelcome.ne."done")        call EnableWelcomeMessage(.true.)
-#       if(InMassScheme.ne."done")     call SetMassScheme("ZM-VFNS")
-#       if(InProcessDIS.ne."done")     call SetProcessDIS("EM")
-#       if(InPolarizationDIS.ne."done")call SetPolarizationDIS(0d0)
-#       if(InProjectileDIS.ne."done")  call SetProjectileDIS("electron")
-#       if(InTargetDIS.ne."done")      call SetTargetDIS("proton")
-#       if(InSelectedCharge.ne."done") call SelectCharge("all")
-#       if(InKrenQ.ne."done")          call SetRenQRatio(1d0)
-#       if(InKfacQ.ne."done")          call SetFacQRatio(1d0)
-#       if(InDynScVar.ne."done")       call EnableDynamicalScaleVariations
-#      1                                    (.false.)
-#       if(InDampingFONLL.ne."done")   call EnableDampingFONLL(.true.)
-#       if(InDampPowerFONLL.ne."done") call SetDampingPowerFONLL(2,2,2)
-#       if(InTMC.ne."done")            call EnableTargetMassCorrections
-#      1                                                         (.false.)
-#       if(InIntrinsicCharm.ne."done") call EnableIntrinsicCharm(.false.)
-# *
-#       if(InMZ.ne."done")             call SetZMass(91.1876d0)
-#       if(InMW.ne."done")             call SetWMass(80.385d0)
-#       if(InMProton.ne."done")        call SetProtonMass(0.938272046d0)
-#       if(InSin2ThetaW.ne."done")     call SetSin2ThetaW(0.23126d0)
-#       if(InGFermi.ne."done")         call SetGFermi(1.1663787d-5)
-#       if(InCKM.ne."done")            call SetCKM(
-#      1                               0.97427d0, 0.22536d0, 0.00355d0,
-#      2                               0.22522d0, 0.97343d0, 0.04140d0,
-#      3                               0.00886d0, 0.04050d0, 0.99914d0)
-#       if(InDeltaR.ne."done")         call SetPropagatorCorrection(0d0)
-#       if(InEWCouplings.ne."done")    call SetEWCouplings(0d0,0d0,
-#      1                                                   0d0,0d0)
-#       if(InSFNLOQED.ne."done")       call EnableSFNLOQEDCorrections
-#      1                                                          (.true.)
-#       if(InScVarProc.ne."done")      call SetScaleVariationProcedure(0)
+  - name: DynScVar
+    involve:
+      - DynScVar
+      - krenQ
+      - kfacQ
+    description: >
+      WARNING: Dynamical scale variation enabled ... the initialization will be
+      done with factorization and renormalization scales set equal to Q (mu_R =
+      mu_F = Q)
+    rules:
+    hints:
+      - SetRenQRatio(1d0)
+      - SetFacQRatio(1d0)
