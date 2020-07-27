@@ -76,16 +76,16 @@ class DistributionVec:
         """
         try:
             iter_ = iter(regular)
-            self.regular = next(regular, None)
-            self.singular = next(singular, None)
-            self.local = next(local, None)
+            self.regular = next(iter_, None)
+            self.singular = next(iter_, None)
+            self.local = next(iter_, None)
         except TypeError:
             self.regular = regular
             self.singular = singular
             self.local = local
 
-    @classmethod
-    def from_distribution_coefficients(cls, regular, coeffs):
+    @staticmethod
+    def args_from_distr_coeffs(regular, delta, *coeffs):
         def singular(z, coeffs=coeffs):
             log_ = np.log(1 - z)
             res = 0
@@ -98,9 +98,9 @@ class DistributionVec:
             res = 0
             for k, coeff in enumerate(coeffs):
                 res += coeff * log_ ** (k + 1) / (k + 1)
-            return res
+            return res + delta
 
-        return cls(regular, singular, local)
+        return regular, singular, local
 
     def __iter__(self):
         yield self.regular
@@ -137,9 +137,9 @@ class DistributionVec:
             for c1, c2 in zip(self, other):
                 if c1 is None:
                     result_args.append(c2)
-                if c2 is None:
+                elif c2 is None:
                     result_args.append(c1)
-                if callable(c1):
+                elif callable(c1):
                     if callable(c2):
                         result_args.append(lambda x, c1=c1, c2=c2: c1(x) + c2(x))
                     else:
@@ -208,14 +208,13 @@ class DistributionVec:
         other = float(other)
         result_args = []
 
-        if self.regular is None:
-            result_args.append(other)
-        elif callable(self.regular):
-            result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2)
-        else:
-            result_args.append(c1 + c2)
-        result_args.append(self.singular)
-        result_args.append(self.local)
+        for c1 in self:
+            if c1 is None:
+                result_args.append(None)
+            elif callable(c1):
+                result_args.append(lambda x, c1=c1, c2=other: c1(x) * c2)
+            else:
+                result_args.append(c1 * other)
 
         return DistributionVec(*result_args)
 
@@ -350,17 +349,19 @@ class DistributionVec:
 
         def ker(z):
             # cache again
-            regular_at_z, singular_at_z = 0, 0
-            for var, attr in (
-                (regular_at_z, self.regular),
-                (singular_at_z, self.singular),
-            ):
-                if attr is None:
-                    var = 0
-                elif callable(attr):
-                    var = attr(z)
-                else:
-                    var = attr
+            if self.regular is None:
+                regular_at_z = 0
+            elif callable(self.regular):
+                regular_at_z = self.regular(z)
+            else:
+                regular_at_z = self.regular
+
+            if self.singular is None:
+                singular_at_z = 0
+            elif callable(self.singular):
+                singular_at_z = self.singular(z)
+            else:
+                singular_at_z = self.singular
 
             pdf_at_x_ov_z_div_z = pdf_func(x / z) / z
             # compute

@@ -99,7 +99,7 @@ class PartonicChannelHeavy(PartonicChannelAsy):
         # s_h = self.ESF._Q2 * (1 - self.ESF._x) / self.ESF._x
         # if s_h <= 4 * self.ESF._SF.M2hq:
         if self.is_below_threshold(self.ESF._x):
-            return 0
+            return lambda: 0
         return f
 
     def is_below_threshold(self, z):

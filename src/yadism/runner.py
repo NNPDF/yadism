@@ -133,9 +133,7 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
-        obs_params = dict(
-            process=observables.get("prDIS", "EM")
-        )
+        obs_params = dict(process=observables.get("prDIS", "EM"))
 
         self.observable_instances = {}
         for obs_name in observable_name.ObservableName.all():
@@ -150,7 +148,7 @@ class Runner:
                 runner=self,
                 eko_components=eko_components,
                 theory_params=theory_params,
-                obs_params=obs_params
+                obs_params=obs_params,
             )
 
             # read kinematics
@@ -203,9 +201,10 @@ class Runner:
         print("yadism took off! please stay tuned ...")
         # TODO move to log and make more readable
         start = time.time()
-        for name, obs in rich.progress.track(
-            precomputed_plan.items(), description="computing...", transient=True
-        ):
+        # for name, obs in rich.progress.track(
+        # precomputed_plan.items(), description="computing...", transient=True
+        # ):
+        for name, obs in precomputed_plan.items():
             self._output[name] = obs.get_output()
         end = time.time()
         diff = end - start
