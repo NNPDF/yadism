@@ -68,6 +68,10 @@ class Inspector:
         for dom_def in self.domains:
             # load checker with domain definition
             checker = constraints.type_class_map[dom_def["type"]](**dom_def)
+
+            if checker is None:
+                continue
+
             # check value provided by user
             try:
                 name = dom_def["known_as"] if "known_as" in dom_def else dom_def["name"]

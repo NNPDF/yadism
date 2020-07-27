@@ -93,9 +93,9 @@ class RealArgument(Argument):
             If `value` is not in the domain of the ``type``.
         """
         # load the value in the namespace with the name used in rules
-        if hasattr(self, "metavar") and self.metavar:
+        try:
             var_name = self.metavar
-        else:
+        except AttributeError:
             var_name = self.name
 
         # NOTE: the value is the only thing user provided, so it will be parsed
@@ -110,6 +110,7 @@ class RealArgument(Argument):
             # NOTE: rule is a part of `yadism`, so `eval` is safe
             intervals += [eval(rule)]
 
+        # NOTE: multiple conditions are in OR (not in AND)
         if not any(intervals):
             self._raise_error(value)
 
@@ -142,6 +143,7 @@ type_class_map = {
     "enum": EnumArgument,
     "real": RealArgument,
     "integer": IntegerArgument,
+    "any": None,
 }
 
 # ┌───────────────────────────┐

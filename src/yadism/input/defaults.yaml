@@ -14,25 +14,25 @@ simple-defaults:
   # ----------------
   - name: KrenQ
     involve: XIR
-    description: |
+    description: >
       Renormalization scale ratio (APFEL choice: 1, ours: no default)
     default: null
 
   - name: KfacQ
     involve: XIF
-    description: |
+    description: >
       Factorization scale ratio (APFEL choice: 1, ours: no default)
     default: null
 
   - name: DynScVar
     involve: DynScVar
-    description: |
+    description: >
       Dynamical Scale Variations (APFEL choice: False, ours: currently not in use)
     default: ""
 
   - name: ScVarProc
     involve: ScVarProc
-    description: |
+    description: >
       Scale Variation Procedure (APFEL choice: False, ours: currently not in use)
     default: ""
 
@@ -40,13 +40,13 @@ simple-defaults:
   # -----------------------
   - name: TargetMassCorrections
     involve: TMC
-    description: |
+    description: >
       Target Mass Corrections (APFEL choice: False, ours: no default)
     default: null
 
   - name: MProton
     involve: MP
-    description: |
+    description: >
       Mass of the Proton (APFEL choice: 0.938272046, ours: no default)
     default: null
 
@@ -54,19 +54,19 @@ simple-defaults:
   # -------------------
   - name: MassScheme
     involve: FNS
-    description: |
+    description: >
       Heavy quark flavor number scheme (APFEL choice: ZM-VFNS, ours: no default)
     default: null
 
   - name: DampingFONLL
     involve: DAMP
-    description: |
+    description: >
       Damping FONLL (APFEL choice: True, ours: no default)
     default: null
 
   - name: DampPowerFONLL
     involve: DampPowerFONLL
-    description: |
+    description: >
       Damping FONLL (APFEL choice: (2,2,2), ours: currently not in use)
     default: ""
 
@@ -74,47 +74,47 @@ simple-defaults:
   # ---------------
   - name: IntrinsicCharm
     involve: IC
-    description: |
+    description: >
       Damping FONLL (APFEL choice: IC, ours: currently not in use)
     default: ""
 
   # ElectroWeak Parameters
   # ----------------------
-  - name: Z Mass
+  - name: ZMass
     involve: MZ
-    description: |
+    description: >
       Mass of the Z vector boson (APFEL choice: 91.1876, ours: no default)
     default: null
 
   - name: Sin2ThetaW
     involve: SIN2TW
-    description: |
+    description: >
       Sin squared of theta weak (APFEL choice: 0.23126, ours: no default)
     default: null
 
   - name: CKM
     involve: CKM
-    description: |
+    description: >
       CKM Matrix (APFEL choice: "0.97428 0.22530 0.003470 0.22520 0.97345
       0.041000 0.00862 0.04030 0.999152", ours: no default)
     default: null
 
   - name: DeltaR
     involve: DeltaR
-    description: |
+    description: >
       Propagator Correction (APFEL choice: 0, ours: no default)
     default: null
 
   - name: EWCouplings
     involve: EWCouplings
-    description: |
+    description: >
       ElectroWeak Couplings (APFEL choice: (0., 0., 0., 0.), ours: currently
       not in use)
     default: ""
 
   - name: SFNLOQED
     involve: SFNLOQED
-    description: |
+    description: >
       SFNLOQED (APFEL choice: True, ours: currently not in use)
     default: ""
 
@@ -122,31 +122,31 @@ simple-defaults:
   # -------
   - name: ProcessDIS
     involve: prDIS
-    description: |
+    description: >
       DIS specific process, i.e. vector boson kind (APFEL choice: EM, ours: no default)
     default: null
 
   - name: PolarizationDIS
     involve: polDIS
-    description: |
+    description: >
       Polarization of incoming lepton beam (APFEL choice: 0., ours: no default)
     default: null
 
   - name: ProjectileDIS
     involve: projDIS
-    description: |
+    description: >
       Incoming lepton kind (APFEL choice: electron, ours: no default)
     default: null
 
   - name: SelectedCharge
     involve: SelectedCharge
-    description: |
+    description: >
       ??? (APFEL choice: all, ours: currently not used)
     default: ""
 
   - name: TargetDIS
     involve: targetDIS
-    description: |
+    description: >
       Incoming target kind (APFEL choice: proton, ours: no default)
     default: null
 

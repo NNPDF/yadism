@@ -1,3 +1,4 @@
+# -------------------
 # Domain restrictions
 # -------------------
 #
@@ -26,10 +27,61 @@
 #     'domain' field
 #
 
-- name: MassScheme
+# Scale Variations
+- name: KrenQ
+  known_as: XIR
   description: >
-    MassScheme
+    Renormalization scale ratio (APFEL choice: 1, ours: no default)
+  type: real
+  domain:
+    - XIR > 0
+
+- name: KfacQ
+  known_as: XIF
+  description: >
+    Factorization scale ratio (APFEL choice: 1, ours: no default)
+  domain:
+    - XIF > 0
+
+#- name: DynScVar
+#  known_as: DynScVar
+#  description: >
+#    Dynamical Scale Variations (APFEL choice: False, ours: currently not in use)
+#
+#- name: ScVarProc
+#  description: >
+#    Scale Variations
+#  type: real
+#  metavar: scvar
+#  domain:
+#    - 0 <= scvar <= 1
+
+# Target Mass Corrections
+# -----------------------
+- name: TargetMassCorrections
+  known_as: TMC
+  description: >
+    Target Mass Corrections (APFEL choice: False, ours: no default)
+  type: integer
+  metavar: tmc
+  domain:
+    - 0 <= tmc <= 3
+
+- name: MProton
+  known_as: MP
+  description: >
+    Mass of the Proton (APFEL choice: 0.938272046, ours: no default)
+  type: real
+  metavar: mp
+  domain:
+    - mp > 0
+
+# Heavy Quarks Scheme
+# -------------------
+- name: MassScheme
   known_as: FNS
+  description: >
+    Heavy quark flavor number scheme (APFEL choice: ZM-VFNS, ours: no default)
   type: enum
   domain:
     - ZM-VFNS
@@ -48,53 +100,72 @@
     - FONLL-C
 
 - name: Nf_FF
+  known_as: NfFF
   description: >
     number of active flavours
-  known_as: NfFF
   type: integer
   metavar: nf
   domain:
     - 3 <= nf <= 6
 
-- name: ProcessDIS
+# TODO: convert to boolean?
+- name: DampingFONLL
+  known_as: DAMP
   description: >
-    ProcessDIS
-  known_as: prDIS
-  type: enum
+    Damping FONLL (APFEL choice: True, ours: no default)
+  type: integer
+  metavar: damp
   domain:
-    - EM
-    - NC
-    - CC
+    - 0 <= damp <= 1
 
-- name: ProjectileDIS
+- name: DampPowerFONLL
+  known_as: DampPowerFONLL
   description: >
-    ProjectileDIS
-  type: enum
+    Damping FONLL (APFEL choice: (2,2,2), ours: currently not in use)
+  type: any
   domain:
-    - electron
-    - positron
-    - neutrino
-    - antineutrino
+    - True
 
-- name: TargetDIS
+# Intrinsic Charm
+# ---------------
+# TODO: convert to boolean?
+- name: IntrinsicCharm
+  known_as: IC
   description: >
-    TargetDIS
-  type: enum
+    Damping FONLL (APFEL choice: IC, ours: currently not in use)
+  type: integer
+  metavar: ic
   domain:
-    - proton
-    - neutron
-    - isoscalar
-    - iron
-    - lead
+    - 0 <= ic <= 1
 
-- name: PolarizationDIS
+# ElectroWeak Parameters
+# ----------------------
+- name: ZMass
+  known_as: MZ
   description: >
-    PolarizationDIS
-  known_as: polDIS
+    Mass of the Z vector boson (APFEL choice: 91.1876, ours: no default)
   type: real
-  metavar: pol
+  metavar: mz
   domain:
-    - -1 <= pol <= 1
+    - mz > 0
+
+- name: Sin2ThetaW
+  known_as: SIN2TW
+  description: >
+    Sin squared of theta weak (APFEL choice: 0.23126, ours: no default)
+  type: real
+  metavar: s2w
+  domain:
+    - 0 <= s2w <= 1
+
+- name: CKM
+  known_as: CKM
+  description: >
+    CKM Matrix (APFEL choice: "0.97428 0.22530 0.003470 0.22520 0.97345
+    0.041000 0.00862 0.04030 0.999152", ours: no default)
+  type: any
+  domain:
+    - True
 
 # TODO: should also be positive?
 - name: DeltaR
@@ -106,6 +177,49 @@
   type: real
   domain:
     - DeltaR != 1.
+
+#- name: EWCouplings
+#  known_as: EWCouplings
+#  description: >
+#    ElectroWeak Couplings (APFEL choice: (0., 0., 0., 0.), ours: currently
+#    not in use)
+#
+#- name: SFNLOQED
+#  known_as: SFNLOQED
+#  description: >
+#    SFNLOQED (APFEL choice: True, ours: currently not in use)
+
+# Weights
+# -------
+- name: ProcessDIS
+  description: >
+    ProcessDIS
+  known_as: prDIS
+  type: enum
+  domain:
+    - EM
+    - NC
+    - CC
+
+- name: PolarizationDIS
+  description: >
+    PolarizationDIS
+  known_as: polDIS
+  type: real
+  metavar: pol
+  domain:
+    - -1 <= pol <= 1
+
+- name: ProjectileDIS
+  description: >
+    ProjectileDIS
+  type: enum
+  domain:
+    - electron
+    - positron
+    - neutrino
+    - antineutrino
+
 #
 #- name: SelectedCharge
 #  description: >
@@ -119,11 +233,14 @@
 #    - bottom
 #    - top
 #    - all
-#
-#- name: ScVarProc
-#  description: >
-#    Scale Variations
-#  type: real
-#  metavar: scvar
-#  domain:
-#    - 0 <= scvar <= 1
+
+- name: TargetDIS
+  description: >
+    TargetDIS
+  type: enum
+  domain:
+    - proton
+    - neutron
+    - isoscalar
+    - iron
+    - lead
