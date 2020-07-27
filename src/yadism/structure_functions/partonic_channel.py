@@ -39,15 +39,15 @@ class PartonicChannel(dict):
 
     @staticmethod
     def LO():
-        return lambda z: 0
+        return 0
 
     @staticmethod
     def NLO():
-        return lambda z: 0
+        return 0
 
     @staticmethod
     def NLO_fact():
-        return lambda z: 0
+        return 0
 
 
 class PartonicChannelLight(PartonicChannel):
@@ -59,7 +59,7 @@ class PartonicChannelLight(PartonicChannel):
 class PartonicChannelAsy(PartonicChannel):
     def __init__(self, *args):
         super(PartonicChannelAsy, self).__init__(*args)
-        self.L = np.log(self.ESF._Q2/self.ESF._SF.M2hq)
+        self.L = np.log(self.ESF._Q2 / self.ESF._SF.M2hq)
 
 
 class PartonicChannelHeavy(PartonicChannelAsy):
@@ -96,10 +96,10 @@ class PartonicChannelHeavy(PartonicChannelAsy):
                 f : callable
                     output
         """
-        #s_h = self.ESF._Q2 * (1 - self.ESF._x) / self.ESF._x
-        #if s_h <= 4 * self.ESF._SF.M2hq:
+        # s_h = self.ESF._Q2 * (1 - self.ESF._x) / self.ESF._x
+        # if s_h <= 4 * self.ESF._SF.M2hq:
         if self.is_below_threshold(self.ESF._x):
-            return lambda: 0
+            return 0
         return f
 
     def is_below_threshold(self, z):

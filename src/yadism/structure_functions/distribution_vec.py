@@ -74,9 +74,15 @@ class DistributionVec:
               the total number of distributions available; if the length is less
               than *max* missing argument are set to `None`
         """
-        self.regular = regular
-        self.singular = singular
-        self.local = local
+        try:
+            iter_ = iter(regular)
+            self.regular = next(regular, None)
+            self.singular = next(singular, None)
+            self.local = next(local, None)
+        except TypeError:
+            self.regular = regular
+            self.singular = singular
+            self.local = local
 
     @classmethod
     def from_distribution_coefficients(cls, regular, coeffs):

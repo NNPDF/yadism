@@ -104,9 +104,7 @@ class EvaluatedStructureFunction(abc.ABC):
             partonic_channels = partonic_channels_em
             if self._SF.obs_params["process"] == "NC":
                 partonic_channels = partonic_channels_nc
-            self.components = partonic_channels[
-                SF.obs_name.apply_flavor_family().name
-            ]
+            self.components = partonic_channels[SF.obs_name.apply_flavor_family().name]
 
     @abc.abstractmethod
     def _compute_weights(self):
@@ -284,7 +282,7 @@ class EvaluatedStructureFunctionAsy(EvaluatedStructureFunction):
         nhq = self._SF.obs_name.hqnumber
         weight_vv = self._SF.coupling_constants.get_weight(nhq, self._Q2, "V")
         weight_aa = self._SF.coupling_constants.get_weight(nhq, self._Q2, "A")
-        weights = {"gVV": {21: weight_vv},"gAA": {21: weight_aa}}
+        weights = {"gVV": {21: weight_vv}, "gAA": {21: weight_aa}}
         return weights
 
 
