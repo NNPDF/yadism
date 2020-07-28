@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-kinds = ["F2", "FL"]
+fake_kind = "??"
+kinds = ["F2", "FL", fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
 asys = [h + "asy" for h in heavys]

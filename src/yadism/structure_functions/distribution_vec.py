@@ -373,13 +373,16 @@ class DistributionVec:
         # ------------------
 
         # integrate the kernel
-        res, err = scipy.integrate.quad(
-            ker,
-            z_min * (1 + self.eps_integration_border),
-            z_max * (1 - self.eps_integration_border),
-            epsabs=self.eps_integration_abs,
-            points=breakpoints,
-        )
+        if self.regular is None and self.singular is None:
+            res, err = 0, 0
+        else:
+            res, err = scipy.integrate.quad(
+                ker,
+                z_min * (1 + self.eps_integration_border),
+                z_max * (1 - self.eps_integration_border),
+                epsabs=self.eps_integration_abs,
+                points=breakpoints,
+            )
 
         # sum the addends
         if self.local is None:

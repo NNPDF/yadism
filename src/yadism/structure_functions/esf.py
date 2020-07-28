@@ -27,7 +27,7 @@ import numpy as np
 from . import distribution_vec as conv
 from .esf_result import ESFResult
 from .nc import partonic_channels_em, partonic_channels_nc, weigths_nc
-from .cc import partonic_channels_cc, weigths_cc
+from .cc import partonic_channels_cc, weigths_cc, convolution_point_cc
 
 
 class EvaluatedStructureFunction:
@@ -104,11 +104,15 @@ class EvaluatedStructureFunction:
             partonic_channels = partonic_channels_em
             process = self._SF.obs_params["process"]
             self.weigths = weigths_nc
+            self.convolution_point = self._x
             if process == "NC":
                 partonic_channels = partonic_channels_nc
             elif process == "CC":
                 partonic_channels = partonic_channels_cc
                 self.weigths = weigths_cc
+                self.convolution_point = convolution_point_cc[
+                    SF.obs_name.flavor_family
+                ](self._x, self._Q2, self._SF.M2hq)
             self.components = partonic_channels[SF.obs_name.apply_flavor_family().name]
 
     def _compute_local(self):
@@ -131,7 +135,7 @@ class EvaluatedStructureFunction:
                 self._res.errors[comp.label],
             ) = self._compute_component(comp)
         # add the factor x from the LHS
-        self._res *= self._x
+        self._res *= self.convolution_point
         # setup weights
         self._res.weights = self.weigths[self._SF.obs_name.weight_family](
             self._SF.coupling_constants, self._Q2
@@ -172,7 +176,7 @@ class EvaluatedStructureFunction:
 
         # iterate all polynomials
         for polynomial_f in self._SF.interpolator:
-            cv, ecv = d_vec.convolution(self._x, polynomial_f)
+            cv, ecv = d_vec.convolution(self.convolution_point, polynomial_f)
             ls.append(cv)
             els.append(ecv)
 

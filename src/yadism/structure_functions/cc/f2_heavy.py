@@ -11,7 +11,7 @@ import numpy as np
 from .. import partonic_channel as pc
 
 
-class F2heavyQuark(pc.PartonicChannelHeavy):
+class F2heavyQuark(pc.PartonicChannel):
     """
         Computes the quark heavy quark channel of F2heavy
     """
@@ -19,10 +19,13 @@ class F2heavyQuark(pc.PartonicChannelHeavy):
     label = "q"
 
     def LO(self):
+        return 0, 0, 1
+
+    def NLO(self):
+        pass
 
 
-
-class F2heavyGluon(pc.PartonicChannelHeavy):
+class F2heavyGluon(pc.PartonicChannel):
     """
         Computes the gluon heavy quark channel of F2heavy
     """

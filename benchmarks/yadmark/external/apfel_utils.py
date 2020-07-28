@@ -123,7 +123,7 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     # apfel.SetGridParameters(3, 50, 3, 8e-1)
 
     # set APFEL grid to ours
-    if platform.node() == "FHe19b":
+    if platform.node() in ["FHe19b", "topolinia-arch"]:
         apfel.SetNumberOfGrids(1)
         # create a 'double *' using swig wrapper
         yad_xgrid = observables["interpolation_xgrid"]

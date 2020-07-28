@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from ... import observable_name as obs_name
 
 
 class Weights:
@@ -12,7 +13,15 @@ class Weights:
             rest = 0
         # quark couplings
         tot_ch_sq = 0
-        for q in range(1, 6 + 1):
+
+        # decide the number of active flavors
+        name = obs_name.ObservableName(obs_name.fake_kind + cc_flavor)
+        if name.is_raw_heavy:
+            active_light_flavors = name.hqnumber - 1
+        else:
+            active_light_flavors = 6
+
+        for q in range(1, active_light_flavors + 1):
             sign = 1 if q % 2 == rest else -1
             w = coupling_constants.get_weight(q, Q2, cc_flavor=cc_flavor)
             # __import__("pdb").set_trace()

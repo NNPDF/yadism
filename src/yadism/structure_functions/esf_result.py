@@ -134,6 +134,7 @@ class ESFResult:
         """
         if not isinstance(self.Q2, numbers.Number):
             raise ValueError("Q2 is not set!")
+
         # factorization scale
         muF2 = self.Q2 * xiF ** 2
 

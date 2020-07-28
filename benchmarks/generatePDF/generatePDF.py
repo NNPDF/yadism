@@ -206,8 +206,11 @@ def check(pdfset, pid):
 
 
 if __name__ == "__main__":
-    # uonly_dense()
-    toy_gonly()
+    uonly_dense()
+    uonly()
+    donly()
+    # toy_gonly()
+    # gonly()
     # check("uonly", 2)
     # check("uonly-dense", 2)
     # check("gonly", 21)
