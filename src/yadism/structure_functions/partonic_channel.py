@@ -39,15 +39,15 @@ class PartonicChannel(dict):
 
     @staticmethod
     def LO():
-        return lambda z: 0
+        return 0
 
     @staticmethod
     def NLO():
-        return lambda z: 0
+        return 0
 
     @staticmethod
     def NLO_fact():
-        return lambda z: 0
+        return 0
 
 
 class PartonicChannelLight(PartonicChannel):

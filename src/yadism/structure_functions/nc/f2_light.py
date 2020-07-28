@@ -15,6 +15,7 @@ import numpy as np
 
 from .. import splitting_functions as split
 from .. import partonic_channel as pc
+from .. import distribution_vec as dv
 
 
 class F2lightQuark(pc.PartonicChannelLight):
@@ -43,7 +44,7 @@ class F2lightQuark(pc.PartonicChannelLight):
         """
 
         # leading order is just a delta function
-        return lambda z: 0, lambda z: 1
+        return 0, 0, 1
 
     def NLO(self):
         """
@@ -70,16 +71,15 @@ class F2lightQuark(pc.PartonicChannelLight):
             )
             # fmt: on
 
-        def cq_delta(_z, CF=CF):
-            return -CF * (9 + 4 * zeta_2)
+        cq_delta = -CF * (9 + 4 * zeta_2)
 
-        def cq_omx(_z, CF=CF):
-            return -3 * CF
+        cq_omx = -3 * CF
 
-        def cq_logomx(_z, CF=CF):
-            return 4 * CF
+        cq_logomx = 4 * CF
 
-        return cq_reg, cq_delta, cq_omx, cq_logomx
+        return dv.DistributionVec.args_from_distr_coeffs(
+            cq_reg, cq_delta, cq_omx, cq_logomx
+        )
 
     def NLO_fact(self):
         """
@@ -100,16 +100,16 @@ class F2lightQuark(pc.PartonicChannelLight):
 
         """
 
-        def cq_reg(z, constants=self.constants):
+        def regular(z, constants=self.constants):
             return split.pqq_reg(z, constants)
 
-        def cq_delta(z, constants=self.constants):
-            return split.pqq_delta(z, constants)
-
-        def cq_pd(z, constants=self.constants):
+        def singular(z, constants=self.constants):
             return split.pqq_pd(z, constants)
 
-        return cq_reg, cq_delta, cq_pd
+        def local(x, constants=self.constants):
+            return split.pqq_delta(x, constants)
+
+        return regular, singular, local
 
 
 class F2lightGluon(pc.PartonicChannelLight):

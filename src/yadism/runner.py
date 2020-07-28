@@ -201,9 +201,9 @@ class Runner:
         print("yadism took off! please stay tuned ...")
         # TODO move to log and make more readable
         start = time.time()
-        #for name, obs in rich.progress.track(
-        #    precomputed_plan.items(), description="computing...", transient=True
-        #):
+        # for name, obs in rich.progress.track(
+        # precomputed_plan.items(), description="computing...", transient=True
+        # ):
         for name, obs in precomputed_plan.items():
             self._output[name] = obs.get_output()
         end = time.time()

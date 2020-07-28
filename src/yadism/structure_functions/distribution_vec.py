@@ -37,16 +37,11 @@ class DistributionVec:
         ----------
         regular : number or callable
             regular
-        delta : number or callable
+        singular : number or callable
             delta (default: None)
-        omx : number or callable
+        local : number or callable
             omx (default: None)
-        logomx : number or callable
-            logomx (default: None)
     """
-
-    __names = ["regular", "delta", "omx", "logomx"]
-    "Set the names for available distribution kinds"
 
     eps_integration_border = 1e-10
     """Set the integration domain restriction, see
@@ -56,7 +51,7 @@ class DistributionVec:
     """Set the integration target absolute error, see
     :ref:`Integration Note<integration-note>`"""
 
-    def __init__(self, regular, delta=None, omx=None, logomx=None):
+    def __init__(self, regular=None, singular=None, local=None):
         """
             A variety of argument is accepted, in order to make the constructor
             really flexible:
@@ -80,61 +75,37 @@ class DistributionVec:
               than *max* missing argument are set to `None`
         """
         try:
-            # check if regular is iterable
-            comp_list = [
-                x for x in regular  # pylint: disable=unnecessary-comprehension
-            ]
-            # if a sequence provided fill the missing slots with `None`
-            for _i in range(len(self.__names) - len(regular)):
-                comp_list.append(None)
+            iter_ = iter(regular)
+            self.regular = next(iter_, None)
+            self.singular = next(iter_, None)
+            self.local = next(iter_, None)
         except TypeError:
-            # if single arguments are chosen build up a list with their values
-            comp_list = [regular, delta, omx, logomx]
+            self.regular = regular
+            self.singular = singular
+            self.local = local
 
-        # zip names with values
-        components = zip(self.__names, comp_list)
+    @staticmethod
+    def args_from_distr_coeffs(regular, delta, *coeffs):
+        def singular(z, coeffs=coeffs):
+            log_ = np.log(1 - z)
+            res = 0
+            for k, coeff in enumerate(coeffs):
+                res += coeff * 1 / (1 - z) * log_ ** k
+            return res
 
-        # check the type of each value and recast to a suitable callable
-        for name, component in components:
-            if callable(component):
-                component_func = component
-            elif component is None:
-                component_func = lambda x: 0
-            else:
-                # if component is None:
-                component_func = lambda x, component=component: float(component)
+        def local(x, coeffs=coeffs):
+            log_ = np.log(1 - x)
+            res = 0
+            for k, coeff in enumerate(coeffs):
+                res += coeff * log_ ** (k + 1) / (k + 1)
+            return res + delta
 
-            setattr(self, f"_{name}", component_func)
-
-    def __getitem__(self, key):
-        """
-            Implements dictionary semantics for :py:class:`DistributionVec`.
-
-        """
-        if 0 <= key < len(self.__names):
-            name = self.__names[key]
-            return getattr(self, f"_{name}")
-        else:
-            raise IndexError("todo")
-
-    def __setitem__(self, key, value):
-        """
-            Implements dictionary semantics for :py:class:`DistributionVec`.
-
-        """
-        if 0 <= key < len(self.__names):
-            name = self.__names[key]
-            return setattr(self, f"_{name}", value)
-        else:
-            raise IndexError("todo")
+        return regular, singular, local
 
     def __iter__(self):
-        """
-            Implements iterable semantics for :py:class:`DistributionVec`.
-
-        """
-        for n in self.__names:
-            yield getattr(self, f"_{n}")
+        yield self.regular
+        yield self.singular
+        yield self.local
 
     def __add__(self, other):
         """
@@ -159,20 +130,47 @@ class DistributionVec:
                 d_vec + DistributionVec(*iterable)
 
         """
+        # TODO: compile a proper comutational graph....
+        # currently: compute the minimal nesting
+        result_args = []
         if isinstance(other, DistributionVec):
-            result = DistributionVec(0)
-            for i, (c1, c2) in enumerate(zip(self, other)):
-                result[i] = lambda x, c1=c1, c2=c2: c1(x) + c2(x)
+            for c1, c2 in zip(self, other):
+                if c1 is None:
+                    result_args.append(c2)
+                elif c2 is None:
+                    result_args.append(c1)
+                elif callable(c1):
+                    if callable(c2):
+                        result_args.append(lambda x, c1=c1, c2=c2: c1(x) + c2(x))
+                    else:
+                        result_args.append(lambda x, c1=c1, c2=c2: c1(x) + c2)
+                else:
+                    if callable(c2):
+                        result_args.append(lambda x, c1=c1, c2=c2: c1 + c2(x))
+                    else:
+                        result_args.append(c1 + c2)
         elif callable(other):
-            result = copy.deepcopy(self)
-            old = result[0]
-            result[0] = lambda x, old=old, other=other: old(x) + other(x)
+            if self.regular is None:
+                result_args.append(other)
+            elif callable(self.regular):
+                result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2(x))
+            else:
+                result_args.append(lambda x, c1=self.regular, c2=other: c1 + c2(x))
+            result_args.append(self.singular)
+            result_args.append(self.local)
         else:
-            result = copy.deepcopy(self)
-            old = result[0]
-            result[0] = lambda x, old=old, other=other: old(x) + float(other)
+            # pretend to be a float
+            other = float(other)
+            if self.regular is None:
+                result_args.append(other)
+            elif callable(self.regular):
+                result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2)
+            else:
+                result_args.append(c1 + c2)
+            result_args.append(self.singular)
+            result_args.append(self.local)
 
-        return result
+        return DistributionVec(*result_args)
 
     def __radd__(self, other):
         """
@@ -206,11 +204,19 @@ class DistributionVec:
             implemented).
 
         """
-        result = DistributionVec(0)
-        for i, el in enumerate(self):
-            result[i] = lambda x, el=el, other=other: el(x) * float(other)
+        # pretend that other is a float
+        other = float(other)
+        result_args = []
 
-        return result
+        for c1 in self:
+            if c1 is None:
+                result_args.append(None)
+            elif callable(c1):
+                result_args.append(lambda x, c1=c1, c2=other: c1(x) * c2)
+            else:
+                result_args.append(c1 * other)
+
+        return DistributionVec(*result_args)
 
     def __rmul__(self, other):
         """
@@ -250,10 +256,15 @@ class DistributionVec:
                 does not match the type an error is raised.
 
         """
+        # TODO: if not used in yadism move in the tests
         if isinstance(other, DistributionVec):
             for c1, c2 in zip(self, other):
-                if c1(x) != c2(x):
-                    return False
+                try:
+                    if c1(x) != c2(x):
+                        return False
+                except TypeError:
+                    if c1 != c2:
+                        return False
             return True
         else:
             raise ValueError("Comparison only available with other DistributionVec")
@@ -334,35 +345,29 @@ class DistributionVec:
         # ------------------------------------------
 
         # cache values
-        self_at_1 = [e(1 - self.eps_integration_border) for e in self]
         pdf_at_x = pdf_func(x)
 
         def ker(z):
             # cache again
-            self_at_z = [e(z) for e in self]
+            if self.regular is None:
+                regular_at_z = 0
+            elif callable(self.regular):
+                regular_at_z = self.regular(z)
+            else:
+                regular_at_z = self.regular
+
+            if self.singular is None:
+                singular_at_z = 0
+            elif callable(self.singular):
+                singular_at_z = self.singular(z)
+            else:
+                singular_at_z = self.singular
+
             pdf_at_x_ov_z_div_z = pdf_func(x / z) / z
             # compute
-            res = self_at_z[0] * pdf_at_x_ov_z_div_z  # regular
-            # keep delta bit in addendum (for now)
-            # iterate plus distributions
-            for j, (pd_at_z, pd_at_1) in enumerate(zip(self_at_z, self_at_1), -2):
-                # skip
-                if j < 0:
-                    continue
-                res += (
-                    (pd_at_z * pdf_at_x_ov_z_div_z - pd_at_1 * pdf_at_x)
-                    / (1.0 - z)
-                    * np.log(1 - z) ** (j)
-                )
-            return res
-
-        # addends
-        addends = [
-            0.0,
-            self_at_1[1] * pdf_at_x,
-            self_at_1[2] * pdf_at_x * np.log(1 - x),
-            self_at_1[3] * pdf_at_x * np.log(1 - x) ** 2 / 2,
-        ]
+            reg_integrand = regular_at_z * pdf_at_x_ov_z_div_z
+            sing_integrand = singular_at_z * (pdf_at_x_ov_z_div_z - pdf_at_x)
+            return reg_integrand + sing_integrand
 
         # actual convolution
         # ------------------
@@ -377,7 +382,13 @@ class DistributionVec:
         )
 
         # sum the addends
-        for a in addends:
-            res += a
+        if self.local is None:
+            local_at_x = 0
+        elif callable(self.local):
+            local_at_x = self.local(x)
+        else:
+            local_at_x = self.local
+
+        res += pdf_at_x * local_at_x
 
         return res, err
