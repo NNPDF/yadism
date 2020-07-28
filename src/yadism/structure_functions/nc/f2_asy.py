@@ -39,5 +39,6 @@ class F2asyGluonVV(pc.PartonicChannelAsy):
 
         return cg
 
+
 class F2asyGluonAA(F2asyGluonVV):
     label = "gAA"
