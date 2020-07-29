@@ -6,8 +6,8 @@ Defines the :py:class:`StructureFunction` class.
     refer to the sf-esf overview
 """
 
-from .structure_functions import ESFmap
-from .structure_functions.tmc import ESFTMCmap
+from .esfmap import ESFmap
+from .tmc import ESFTMCmap
 
 
 class StructureFunction:

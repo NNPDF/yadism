@@ -15,7 +15,7 @@ import numpy as np
 
 from .. import splitting_functions as split
 from .. import partonic_channel as pc
-from .. import distribution_vec as dv
+from ..esf import rsl_from_distr_coeffs
 
 
 class F2lightQuark(pc.PartonicChannelLight):
@@ -77,7 +77,7 @@ class F2lightQuark(pc.PartonicChannelLight):
 
         logomx = 4 * CF
 
-        return dv.DistributionVec.args_from_distr_coeffs(reg, delta, omx, logomx)
+        return rsl_from_distr_coeffs(reg, delta, omx, logomx)
 
     def NLO_fact(self):
         """

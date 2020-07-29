@@ -8,7 +8,7 @@ The 3-loop reference is :cite:`vogt` which includes also the lower order results
     docs
 """
 
-from .esf import (
+from .esf.esf import (
     EvaluatedStructureFunction,
     EvaluatedStructureFunctionLight,
     EvaluatedStructureFunctionHeavy,

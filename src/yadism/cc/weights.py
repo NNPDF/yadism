@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ... import observable_name as obs_name
+from .. import observable_name as obs_name
 
 
 class Weights:

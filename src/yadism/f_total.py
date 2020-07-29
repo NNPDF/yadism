@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from . import esf
+from .esf import esf
 
 
 class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):

@@ -7,7 +7,6 @@ Scale varitions main reference is :cite:`vogt-f3nc`.
 
 """
 
-from .. import distribution_vec as dv
 from . import f2_light
 
 

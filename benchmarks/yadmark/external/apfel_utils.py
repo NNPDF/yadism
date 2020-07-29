@@ -176,14 +176,19 @@ def compute_apfel_data(theory, observables, pdf):
     apfel_methods = {
         "F2light": apfel.F2light,
         "FLlight": apfel.FLlight,
+        "F3light": apfel.F3light,
         "F2charm": apfel.F2charm,
         "F2bottom": apfel.F2bottom,
         "F2top": apfel.F2top,
         "FLcharm": apfel.FLcharm,
         "FLbottom": apfel.FLbottom,
         "FLtop": apfel.FLtop,
+        "F3charm": apfel.F3charm,
+        "F3bottom": apfel.F3bottom,
+        "F3top": apfel.F3top,
         "F2total": apfel.F2total,
         "FLtotal": apfel.FLtotal,
+        "F3total": apfel.F3total,
     }
 
     # compute observables with APFEL

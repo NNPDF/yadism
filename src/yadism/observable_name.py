@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 fake_kind = "??"
-kinds = ["F2", "FL", fake_kind]
+kinds = ["F2", "FL", "F3", fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
 asys = [h + "asy" for h in heavys]
@@ -239,5 +239,7 @@ class ObservableName:
                     ObservableName
         """
         for kind in kinds:
+            if kind == fake_kind:
+                continue
             for flav in external_flavors:
                 yield cls(kind + flav)

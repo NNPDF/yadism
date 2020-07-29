@@ -31,7 +31,7 @@ from eko import strong_coupling
 
 from .output import Output
 from .sf import StructureFunction as SF
-from .structure_functions import ESFmap
+from .esfmap import ESFmap
 from .coupling_constants import CouplingConstants
 from . import observable_name
 

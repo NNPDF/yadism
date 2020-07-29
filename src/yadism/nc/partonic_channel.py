@@ -1,3 +1,5 @@
+import numpy as np
+
 from .. import partonic_channel as pc
 
 

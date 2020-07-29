@@ -26,8 +26,8 @@ import numpy as np
 
 from . import distribution_vec as conv
 from .esf_result import ESFResult
-from .nc import partonic_channels_em, partonic_channels_nc, weigths_nc
-from .cc import partonic_channels_cc, weigths_cc, convolution_point_cc
+from ..nc import partonic_channels_em, partonic_channels_nc, weigths_nc
+from ..cc import partonic_channels_cc, weigths_cc, convolution_point_cc
 
 
 class EvaluatedStructureFunction:
