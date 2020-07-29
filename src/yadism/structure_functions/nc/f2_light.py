@@ -62,7 +62,7 @@ class F2lightQuark(pc.PartonicChannelLight):
         CF = self.constants.CF
         zeta_2 = np.pi ** 2 / 6
 
-        def cq_reg(z, CF=CF):
+        def reg(z, CF=CF):
             # fmt: off
             return CF*(
                 - 2 * (1 + z) * np.log((1 - z) / z)
@@ -71,15 +71,13 @@ class F2lightQuark(pc.PartonicChannelLight):
             )
             # fmt: on
 
-        cq_delta = -CF * (9 + 4 * zeta_2)
+        delta = -CF * (9 + 4 * zeta_2)
 
-        cq_omx = -3 * CF
+        omx = -3 * CF
 
-        cq_logomx = 4 * CF
+        logomx = 4 * CF
 
-        return dv.DistributionVec.args_from_distr_coeffs(
-            cq_reg, cq_delta, cq_omx, cq_logomx
-        )
+        return dv.DistributionVec.args_from_distr_coeffs(reg, delta, omx, logomx)
 
     def NLO_fact(self):
         """
@@ -140,7 +138,7 @@ class F2lightGluon(pc.PartonicChannelLight):
 
         """
 
-        def cg(z, nf=self.nf, constants=self.constants):
+        def reg(z, nf=self.nf, constants=self.constants):
             return (
                 2  # TODO: to be understood
                 * 2
@@ -151,7 +149,7 @@ class F2lightGluon(pc.PartonicChannelLight):
                 )
             )
 
-        return cg
+        return reg
 
     def NLO_fact(self):
         """

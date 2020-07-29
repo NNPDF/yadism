@@ -9,10 +9,10 @@ The main reference used is: :cite:`felix-thesis`.
 
 import numpy as np
 
-from .. import partonic_channel as pc
+from . import partonic_channel as pcnc
 
 
-class FLheavyGluonVV(pc.PartonicChannelHeavy):
+class FLheavyGluonVV(pcnc.PartonicChannelHeavy):
     """
         Computes the gluon channel of FLheavy.
     """
