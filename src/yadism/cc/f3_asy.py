@@ -10,9 +10,9 @@ heavy quark flavours.
 from .. import partonic_channel as pc
 
 
-class F3asyQuarkVA(pc.PartonicChannelAsy):
+class F3asyQuark(pc.PartonicChannelAsy):
     """
         Computes the gluon channel of the asymptotic limit of FLheavy.
     """
 
-    label = "qVA"
+    label = "q"

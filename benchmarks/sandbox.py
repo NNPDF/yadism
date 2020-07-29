@@ -19,10 +19,10 @@ def generate_observables():
     # defaults["interpolation_xgrid"] = np.linspace(1e-5, 1, 100).tolist()
     light_kin = []
     light_kin.extend(
-        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"]]
+        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][::3]]
         # np.linspace(1e-3, 1, 50)
     )
-    # light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     obs_list = [
         "F2light",
         "F2charm",
@@ -34,13 +34,13 @@ def generate_observables():
         "FLtop",
     ]
     cards = []
+    # for obs in ["F2charm"]:  # obs_list:
     for obs in ["F3charm"]:  # obs_list:
-        # for obs in ["F3light"]:  # obs_list:
         card = copy.deepcopy(defaults)
-        card["prDIS"] = "NC"
+        card["prDIS"] = "CC"
         # card["PropagatorCorrection"] = .999
-        # card["ProjectileDIS"] = "neutrino"
-        # card["PolarizationDIS"] = .5
+        card["ProjectileDIS"] = "antineutrino"
+        # card["PolarizationDIS"] = 1.0
         card[obs] = light_kin
         cards.append(card)
     og.write_observables(cards)
@@ -57,7 +57,7 @@ class ApfelSandbox:
         return self.db
 
     def run_LO(self):
-        return self._db().run_external(0, ["donly"])
+        return self._db().run_external(0, ["ToyLH"])
 
     def run_NLO(self):
         return self._db().run_external(

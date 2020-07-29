@@ -3,7 +3,7 @@ from .. import observable_name as obs_name
 
 
 class Weights:
-    def __init__(self, coupling_constants, Q2, cc_flavor):
+    def __init__(self, coupling_constants, Q2, kind, cc_flavor):
         weights = {"q": {}, "g": {}}
         # determine couplings
         projectile_pid = coupling_constants.obs_config["projectilePID"]
@@ -23,15 +23,17 @@ class Weights:
 
         for q in range(1, active_light_flavors + 1):
             sign = 1 if q % 2 == rest else -1
-            w = coupling_constants.get_weight(q, Q2, cc_flavor=cc_flavor)
+            w = coupling_constants.get_weight(q, Q2, kind, cc_flavor=cc_flavor)
             # __import__("pdb").set_trace()
 
-            weights["q"][sign * q] = w
+            weights["q"][sign * q] = w if kind != "F3" else sign * w
             tot_ch_sq += w
         # gluon coupling = charge sum
         weights["g"][21] = tot_ch_sq / 6  # TODO why is there a 6?
         self.w = weights
 
 
-def weight_factory(cc_flavor):
-    return lambda coupling_constants, Q2: Weights(coupling_constants, Q2, cc_flavor)
+def weight_factory(kind, cc_flavor):
+    return lambda coupling_constants, Q2: Weights(
+        coupling_constants, Q2, kind, cc_flavor
+    )

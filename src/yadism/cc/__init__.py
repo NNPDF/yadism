@@ -4,26 +4,31 @@ import copy
 
 from .f2_light import F2lightQuark, F2lightGluon
 from .fl_light import FLlightQuark, FLlightGluon
+from .f3_light import F3lightQuark
 from .f2_heavy import F2heavyQuark, F2heavyGluon
+from .f3_heavy import F3heavyQuark
+from .f3_asy import F3asyQuark
 
 from .weights import weight_factory
 
 partonic_channels_cc = {
     "F2light": [F2lightQuark, F2lightGluon],
     "FLlight": [FLlightQuark, FLlightGluon],
+    "F3light": [F3lightQuark],
     "F2heavy": [F2heavyQuark, F2heavyGluon],
+    "FLheavy": [],
+    "F3heavy": [F3heavyQuark],
+    "F2asy": [],
+    "FLasy": [],
+    "F3asy": [F3asyQuark],
 }
 
 
-weigths_cc = {
-    "light": weight_factory("light"),
-    "charm": weight_factory("charm"),
-    "charmlight": weight_factory("light"),
-    "bottom": weight_factory("bottom"),
-    "bottomlight": weight_factory("light"),
-    "top": weight_factory("top"),
-    "toplight": weight_factory("light"),
-}
+def weights_cc(obs_name):
+    if obs_name.flavor_family == "light":
+        return weight_factory(obs_name.kind, "light")
+    return weight_factory(obs_name.kind, obs_name.weight_family)
+
 
 convolution_point_cc = {
     "light": lambda x, *args: x,

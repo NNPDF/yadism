@@ -7,17 +7,17 @@ from .fl_light import FLlightQuark, FLlightGluon
 from .f3_light import F3lightQuark
 from .f2_heavy import F2heavyGluonVV, F2heavyGluonAA
 from .fl_heavy import FLheavyGluonVV, FLheavyGluonAA
-from .f3_heavy import F3heavyGluonVA
+from .f3_heavy import F3heavyQuarkVA
 from .f2_asy import F2asyGluonVV, F2asyGluonAA
 from .fl_asy import FLasyGluonVV, FLasyGluonAA
-from .f3_asy import F3asyGluonVA
+from .f3_asy import F3asyQuarkVA
 
 from .weights import light_factory, heavy_factory
 
 partonic_channels_em = {
     "F2light": [F2lightQuark, F2lightGluon],
     "FLlight": [FLlightQuark, FLlightGluon],
-    "F3light": [FLlightQuark],
+    "F3light": [F3lightQuark],
     "F2heavy": [F2heavyGluonVV],
     "FLheavy": [FLheavyGluonVV],
     "F3heavy": [],
@@ -30,17 +30,16 @@ partonic_channels_em = {
 partonic_channels_nc = copy.deepcopy(partonic_channels_em)
 partonic_channels_nc["F2heavy"].extend([F2heavyGluonAA])
 partonic_channels_nc["FLheavy"].extend([FLheavyGluonAA])
-partonic_channels_nc["F3heavy"].extend([F3heavyGluonVA])
+partonic_channels_nc["F3heavy"].extend([F3heavyQuarkVA])
 partonic_channels_nc["F2asy"].extend([F2asyGluonAA])
 partonic_channels_nc["FLasy"].extend([FLasyGluonAA])
-partonic_channels_nc["F3asy"].extend([F3asyGluonVA])
+partonic_channels_nc["F3asy"].extend([F3asyQuarkVA])
 
-weigths_nc = {
-    "light": light_factory(range(1, 3 + 1)),
-    "charm": heavy_factory(4),
-    "charmlight": light_factory([4]),
-    "bottom": heavy_factory(5),
-    "bottomlight": light_factory([5]),
-    "top": heavy_factory(6),
-    "toplight": light_factory([6]),
-}
+
+def weights_nc(obs_name):
+    if obs_name.flavor == "light":
+        return light_factory(obs_name.kind, range(1, 3 + 1))
+    elif obs_name.flavor_family == "light":
+        # so it's heavylight
+        return light_factory(obs_name.kind, [obs_name.hqnumber])
+    return heavy_factory(obs_name.kind, obs_name.hqnumber)

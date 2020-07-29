@@ -15,5 +15,5 @@ class PartonicChannelHeavy(pc.PartonicChannelAsy):
         self._FHprefactor = self.ESF._Q2 / (np.pi * self.ESF._SF.M2hq)
 
         # common variables
-        self.lamda = 1 / (1 + self.m2hq / self.ESF._SF.M2hq)
+        self.lamda = 1 / (1 + self.ESF._SF.M2hq / self.ESF._Q2)
         self.ka = 1 / self.lamda * (1 - self.lamda) * np.log(1 - self.lamda)

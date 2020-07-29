@@ -5,8 +5,8 @@ kinds = ["F2", "FL", "F3", fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
 asys = [h + "asy" for h in heavys]
-heavylight = [h + "light" for h in heavys]
-external_flavors = heavys + ["light", "total"] + asys + heavylight
+heavylights = [h + "light" for h in heavys]
+external_flavors = heavys + ["light", "total"] + asys + heavylights
 # internally we allow in addition for the flavor families
 flavor_families = ["asy", "heavy"]
 flavors = external_flavors + flavor_families
@@ -113,7 +113,7 @@ class ObservableName:
     @property
     def is_heavylight(self):
         """Is it a heavylight flavor? i.e. charmlight, bottomlight, or, toplight"""
-        return self.flavor in heavylight
+        return self.flavor in heavylights
 
     @property
     def is_composed(self):
@@ -147,6 +147,8 @@ class ObservableName:
         """Heavy quark flavor number"""
         if self.is_asy:
             idx = asys.index(self.flavor)
+        elif self.is_heavylight:
+            idx = heavylights.index(self.flavor)
         else:
             idx = heavys.index(self.flavor)
         return 4 + idx

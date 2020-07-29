@@ -6,8 +6,10 @@ Defines the :py:class:`StructureFunction` class.
     refer to the sf-esf overview
 """
 
-from .esfmap import ESFmap
+from .esf import ESFmap
 from .tmc import ESFTMCmap
+from .nc import partonic_channels_em, partonic_channels_nc, weights_nc
+from .cc import partonic_channels_cc, weights_cc, convolution_point_cc
 
 
 class StructureFunction:
@@ -57,6 +59,24 @@ class StructureFunction:
         self.FONLL_damping = theory_params["FONLL_damping"]
         self.damping_powers = theory_params["damping_powers"]
         self.obs_params = obs_params
+
+        if not self.obs_name.is_composed:
+            # load partonic channels and weights
+            partonic_channels = partonic_channels_em
+            process = self.obs_params["process"]
+            self.weights = weights_nc
+            self.convolution_point = lambda x, *args: x
+            if process == "NC":
+                partonic_channels = partonic_channels_nc
+            elif process == "CC":
+                partonic_channels = partonic_channels_cc
+                self.weights = weights_cc
+                self.convolution_point = convolution_point_cc[
+                    self.obs_name.flavor_family
+                ]
+            self.partonic_channels = partonic_channels[
+                self.obs_name.apply_flavor_family().name
+            ]
 
     def load(self, kinematic_configs):
         """

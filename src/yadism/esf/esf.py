@@ -26,8 +26,6 @@ import numpy as np
 
 from . import distribution_vec as conv
 from .esf_result import ESFResult
-from ..nc import partonic_channels_em, partonic_channels_nc, weigths_nc
-from ..cc import partonic_channels_cc, weigths_cc, convolution_point_cc
 
 
 class EvaluatedStructureFunction:
@@ -99,21 +97,13 @@ class EvaluatedStructureFunction:
         self._Q2 = kinematics["Q2"]
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
-        if not SF.obs_name.is_composed:
-            # load partonic channels and weights
-            partonic_channels = partonic_channels_em
-            process = self._SF.obs_params["process"]
-            self.weigths = weigths_nc
-            self.convolution_point = self._x
-            if process == "NC":
-                partonic_channels = partonic_channels_nc
-            elif process == "CC":
-                partonic_channels = partonic_channels_cc
-                self.weigths = weigths_cc
-                self.convolution_point = convolution_point_cc[
-                    SF.obs_name.flavor_family
-                ](self._x, self._Q2, self._SF.M2hq)
-            self.components = partonic_channels[SF.obs_name.apply_flavor_family().name]
+
+        if not self._SF.obs_name.is_composed:
+            self.partonic_channels = self._SF.partonic_channels
+            self.weights = self._SF.weights
+            self.convolution_point = self._SF.convolution_point(
+                self._x, self._Q2, self._SF.M2hq
+            )
 
     def _compute_local(self):
         """
@@ -128,7 +118,7 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         # run
-        for comp_cls in self.components:
+        for comp_cls in self.partonic_channels:
             comp = comp_cls(self)
             (
                 self._res.values[comp.label],
@@ -137,7 +127,7 @@ class EvaluatedStructureFunction:
         # add the factor x from the LHS
         self._res *= self.convolution_point
         # setup weights
-        self._res.weights = self.weigths[self._SF.obs_name.weight_family](
+        self._res.weights = self.weights(self._SF.obs_name)(
             self._SF.coupling_constants, self._Q2
         ).w
 

@@ -9,14 +9,17 @@ The main reference used is: :cite:`felix-thesis`.
 
 import numpy as np
 
-from . import partonic_channel as pcnc
+from . import partonic_channel as pccc
 
 
-class F3heavyQuarkVA(pcnc.PartonicChannelHeavy):
+class F3heavyQuark(pccc.PartonicChannelHeavy):
     """
         Computes the gluon channel of F3heavy.
 
         :eqref:`D.7`
     """
 
-    label = "qVA"
+    label = "q"
+
+    def LO(self):
+        return 0, 0, 1
