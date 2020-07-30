@@ -6,6 +6,7 @@ from .f2_light import F2lightQuark, F2lightGluon
 from .fl_light import FLlightQuark, FLlightGluon
 from .f3_light import F3lightQuark
 from .f2_heavy import F2heavyQuark, F2heavyGluon
+from .fl_heavy import FLheavyQuark, FLheavyGluon
 from .f3_heavy import F3heavyQuark
 from .f3_asy import F3asyQuark
 
@@ -16,7 +17,7 @@ partonic_channels_cc = {
     "FLlight": [FLlightQuark, FLlightGluon],
     "F3light": [F3lightQuark],
     "F2heavy": [F2heavyQuark, F2heavyGluon],
-    "FLheavy": [],
+    "FLheavy": [FLheavyQuark, FLheavyGluon],
     "F3heavy": [F3heavyQuark],
     "F2asy": [],
     "FLasy": [],

@@ -35,7 +35,7 @@ def generate_observables():
     ]
     cards = []
     # for obs in ["F2charm"]:  # obs_list:
-    for obs in ["F3charm"]:  # obs_list:
+    for obs in ["FLcharm"]:  # obs_list:
         card = copy.deepcopy(defaults)
         card["prDIS"] = "CC"
         # card["PropagatorCorrection"] = .999
