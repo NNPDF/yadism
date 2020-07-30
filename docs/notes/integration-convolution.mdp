@@ -1,0 +1,23 @@
+---
+documentclass: standalone
+classoption:
+  - preview
+  - border=20pt
+header-includes: |
+   \usepackage{physics}
+---
+
+# Convolution to integration
+For plus distributions
+
+\begin{align}
+\int_x^1 \frac{\dd z}{z} f(z) \cdot \left[ h(z) \right]_+ &=
+\int_0^1 \frac{\dd z}{z} f(z) \cdot \left[ h(z) \right]_+ - \int_0^x \frac{\dd
+z}{z} f(z) \cdot \left[ h(z) \right]_+\\
+&= \int_0^1 \dd z \left(\frac{f(z)}{z} - f(1)\right) \cdot h(z) - \int_0^x \dd
+z \frac{ f(z)}{z} \cdot h(z)\\
+&= \int_x^1 \dd z \left(\frac{f(z)}{z} - f(1)\right) \cdot h(z) - f(1) \int_0^x
+\dd z~ h(z)
+\end{align}
+
+<!-- vim: set ft=pandoc: -->
