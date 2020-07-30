@@ -3,7 +3,7 @@ import numpy as np
 from .. import partonic_channel as pc
 
 
-class PartonicChannelHeavy(pc.PartonicChannelAsy):
+class PartonicChannelHeavy(pc.PartonicChannel):
     """
         Heavy partonic coefficient functions that respect hadronic and partonic
         thresholds.

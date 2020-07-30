@@ -22,8 +22,7 @@ class F2heavyQuark(pc.PartonicChannel):
         return 0, 0, 1
 
     def NLO(self):
-        # -Power(Pi,2)/6. + Li2(\[Lambda]) + Li2((-1 + \[Lambda])/(-1 + x*\[Lambda])) + ln(1 - \[Lambda])*ln(\[Lambda]) - ln(1 - x)*ln(1 - x*\[Lambda]) - ln(\[Lambda])*ln(1 - x*\[Lambda]) + Power(ln(1 - x*\[Lambda]),2)/2.
-        pass
+        return
 
 
 class F2heavyGluon(pc.PartonicChannel):
