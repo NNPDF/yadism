@@ -3,7 +3,7 @@
 This module contains the implementation of the DIS F3 coefficient functions, for
 light quark flavours.
 
-Scale varitions main reference is :cite:`vogt-f3nc`.
+Scale varitions main reference is :cite:`moch-f3nc`.
 
 """
 
@@ -20,7 +20,7 @@ class F3lightQuark(f2_light.F2lightQuark):
             Computes the quark singlet part of the next to leading order F3
             structure function.
 
-            |ref| implements :eqref:`155`, :cite:`vogt-f3nc`.
+            |ref| implements :eqref:`155`, :cite:`moch-f3nc`.
 
             Returns
             -------

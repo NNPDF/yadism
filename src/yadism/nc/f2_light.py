@@ -3,9 +3,9 @@
 This module contains the implementation of the DIS F2 coefficient functions, for
 light quark flavours.
 
-The coefficient functions definition is given in :eqref:`4.2`, :cite:`vogt` (that
-is the main reference for their expression, i.e. all the formulas in this
-module).
+The coefficient functions definition is given in :eqref:`4.2`,
+:cite:`vogt-f2nc` (that is the main reference for their expression, i.e. all
+the formulas in this module).
 
 Scale varitions main reference is :cite:`vogt-sv`.
 
@@ -34,7 +34,7 @@ class F2lightQuark(pc.PartonicChannelLight):
             in the simplest coefficient function possible (a delta, that makes
             the structure function completely proportional to the incoming PDF).
 
-            |ref| implements :eqref:`4.2`, :cite:`vogt`.
+            |ref| implements :eqref:`4.2`, :cite:`vogt-f2nc`.
 
             Returns
             -------
@@ -51,7 +51,7 @@ class F2lightQuark(pc.PartonicChannelLight):
             Computes the quark singlet part of the next to leading order F2
             structure function.
 
-            |ref| implements :eqref:`4.3`, :cite:`vogt`.
+            |ref| implements :eqref:`4.3`, :cite:`vogt-f2nc`.
 
             Returns
             -------
@@ -122,7 +122,7 @@ class F2lightGluon(pc.PartonicChannelLight):
             Computes the gluon part of the next to leading order F2 structure
             function.
 
-            |ref| implements :eqref:`4.4`, :cite:`vogt`.
+            |ref| implements :eqref:`4.4`, :cite:`vogt-f2nc`.
 
             Returns
             -------

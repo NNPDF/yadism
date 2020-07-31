@@ -43,6 +43,7 @@ In these :underlined:`documents` you can find the reference for all *yadism* API
 
    theory/DIS-intro.rst
    theory/coeff-funcs.rst 
+   theory/light-flavors.rst
    theory/heavy-flavors.rst
    theory/scale-variations.rst
    theory/TMC.rst

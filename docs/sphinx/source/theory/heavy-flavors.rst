@@ -1,13 +1,29 @@
 Heavy Flavors
 =============
 
-The heavy-quark reference is :cite:`felix-thesis`.
+.. _heavy-nc:
+
+NC
+--
+
+The main reference is :cite:`felix-thesis`.
+
+.. _heavy-cc:
+
+CC
+--
+
+The main reference is :cite:`gluck-ccheavy`.
 
 Flavor Number Schemes
 ---------------------
 
 - FFNS
 - ZM-VFNS
-- FONLL
+
+.. _asymptotic:
+
+FONLL
+~~~~~
   
-  - Damping
+- Damping

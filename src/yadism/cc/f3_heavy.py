@@ -3,7 +3,7 @@
 This module contains the implementation of the DIS F3 coefficient functions, for
 heavy quark flavors.
 
-The main reference used is: :cite:`felix-thesis`.
+The main reference used is: :cite:`gluck-ccheavy`.
 
 """
 
