@@ -17,9 +17,10 @@ class PartonicChannelHeavy(pc.PartonicChannel):
 
         # common variables
         self.labda = 1 / (1 + self.ESF._SF.M2hq / self.ESF._Q2)
+        self.x = self.ESF._x
         self.ka = 1 / self.labda * (1 - self.labda) * np.log(1 - self.labda)
-        self.l_labda = lambda z, labda=self.labda: (
-            np.log(1 - labda * z) / (1 - labda) / z
+        self.l_labda = lambda z, labda=self.labda: np.log(
+            (1 - labda * z) / (1 - labda) / z
         )
 
         # different only for FL

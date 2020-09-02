@@ -8,6 +8,8 @@ from .f3_light import F3lightQuark
 from .f2_heavy import F2heavyQuark, F2heavyGluon
 from .fl_heavy import FLheavyQuark, FLheavyGluon
 from .f3_heavy import F3heavyQuark
+from .f2_asy import F2asyQuark
+from .fl_asy import FLasyQuark
 from .f3_asy import F3asyQuark
 
 from .weights import weight_factory
@@ -19,8 +21,8 @@ partonic_channels_cc = {
     "F2heavy": [F2heavyQuark, F2heavyGluon],
     "FLheavy": [FLheavyQuark, FLheavyGluon],
     "F3heavy": [F3heavyQuark],
-    "F2asy": [],
-    "FLasy": [],
+    "F2asy": [F2asyQuark],
+    "FLasy": [FLasyQuark],
     "F3asy": [F3asyQuark],
 }
 

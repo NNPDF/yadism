@@ -16,3 +16,6 @@ class F3asyQuark(pc.PartonicChannelAsy):
     """
 
     label = "q"
+
+    def LO(self):
+        return 0, 0, 1

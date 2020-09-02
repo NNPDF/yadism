@@ -22,4 +22,4 @@ class F3heavyQuark(pccc.PartonicChannelHeavy):
     label = "q"
 
     def LO(self):
-        return 0, 0, 1
+        return 0, 0, self.labda

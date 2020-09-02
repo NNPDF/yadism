@@ -16,7 +16,8 @@ from yadmark.data import observables
 def generate_observables():
     og = observables.ObservablesGenerator("sandbox")
     defaults = og.get_observables()[0]
-    # defaults["interpolation_xgrid"] = np.linspace(1e-5, 1, 100).tolist()
+    #xgrid = np.array(defaults["interpolation_xgrid"]).copy()
+    #defaults["interpolation_xgrid"] = np.unique(np.concatenate([xgrid, (1. + 4./90.)*xgrid[:-1]]))
     light_kin = []
     light_kin.extend(
         [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][::3]]
@@ -37,9 +38,11 @@ def generate_observables():
     # for obs in ["F2charm"]:  # obs_list:
     for obs in ["FLcharm"]:  # obs_list:
         card = copy.deepcopy(defaults)
+        #card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
+        #print(card)
         card["prDIS"] = "CC"
         # card["PropagatorCorrection"] = .999
-        card["ProjectileDIS"] = "antineutrino"
+        card["ProjectileDIS"] = "neutrino"
         # card["PolarizationDIS"] = 1.0
         card[obs] = light_kin
         cards.append(card)
@@ -57,12 +60,12 @@ class ApfelSandbox:
         return self.db
 
     def run_LO(self):
-        return self._db().run_external(0, ["ToyLH"])
+        return self._db().run_external(0, ["gonly"])
 
     def run_NLO(self):
         return self._db().run_external(
             1,
-            ["ToyLH"],
+            ["gonly"],
             # {
             # "FNS": self.db.theory_query.FNS == "FONLL-A",
             # "DAMP": self.db.theory_query.DAMP == 0,
@@ -73,5 +76,5 @@ class ApfelSandbox:
 if __name__ == "__main__":
     generate_observables()
     apf = ApfelSandbox()
-    apf.run_LO()
-    # apf.run_NLO()
+    #apf.run_LO()
+    apf.run_NLO()

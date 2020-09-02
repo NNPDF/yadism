@@ -308,7 +308,7 @@ class DistributionVec:
             else:
                 # set breakpoints as relevant points of the integrand
                 # computed from interpolation areas of `pdf_func`
-                # and also restrict integration domain
+                # and also eventually restrict integration domain
                 area_borders = []
                 for area in pdf_func.areas:
                     area_borders.extend([area.xmin, area.xmax])

@@ -50,6 +50,8 @@ class CouplingConstants:
             ----------
                 mode : str
                     scattered bosons
+                kind : str
+                    observable kind to distinguish parity violating and parity conserving couplings
 
             Returns
             -------
@@ -108,11 +110,15 @@ class CouplingConstants:
             ----------
                 mode : str
                     scattered bosons
+                kind : str
+                    observable kind to distinguish parity violating and parity conserving couplings
                 pid : int
                     parton identifier
                 quark_coupling_type : str
                     flag to distinguish for heavy quarks between vectorial and axial-vectorial
                     coupling
+                cc_flavor : str
+                    observable flavor to determine the heavy flavour couplings in F3
 
             Returns
             -------
@@ -206,9 +212,13 @@ class CouplingConstants:
                     particle identifier
                 Q2 : float
                     DIS virtuality
+                kind : str
+                    observable kind to distinguish parity violating and parity conserving couplings
                 quark_coupling_type : str
                     flag to distinguish for heavy quarks between vectorial and axial-vectorial
                     coupling
+                cc_flavor : str
+                    observable flavor to determine the heavy flavour couplings in F3
 
             Returns
             -------
