@@ -154,11 +154,11 @@ class ObservableName:
         return 4 + idx
 
     @property
-    def weight_family(self):
-        """Underlying flavor (i.e. evetually without asy)"""
-        if self.is_asy:
-            return heavys[self.hqnumber - 4]
-        return self.flavor
+    def raw_flavor(self):
+        """underlying raw flavor"""
+        if self.flavor == "light":
+            return self.flavor
+        return heavys[self.hqnumber - 4]
 
     @classmethod
     def has_heavies(cls, names):

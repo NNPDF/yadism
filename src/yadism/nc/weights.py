@@ -6,7 +6,7 @@ class WeightLight:
         weights = {"q": {}, "g": {}}
         # quark couplings
         tot_ch_sq = 0
-        for q in pids:  # u+d+j
+        for q in pids:  # u+d+s
             w = coupling_constants.get_weight(q, Q2, kind)
             weights["q"][q] = w
             weights["q"][-q] = w if kind != "F3" else -w

@@ -267,11 +267,9 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
                 obs_name.apply_flavor("light"), {"x": self._x, "Q2": self._Q2}, 1
             ).get_result()
             # readjust the weights
-            # TODO reconsider this line for heavy NC (quark_coupling_type = VV/AA)
-            ehq = self._SF.coupling_constants.get_weight(
-                nhq, self._Q2, obs_name.kind, cc_flavor=obs_name.flavor
-            )
-            res_light.weights = {"g": {21: ehq}, "q": {nhq: ehq}}
+            res_light.weights = self.weights(obs_name.apply_flavor(obs_name.flavor + "light"))(
+                self._SF.coupling_constants, self._Q2
+            ).w
             # now checkout scheme:
             # matching is only needed for FONLL and in there only if we just crossed our threshold
             # otherwise we continue with the ZM expressions (in contrast to APFEL which treats only

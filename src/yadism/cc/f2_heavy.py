@@ -32,12 +32,13 @@ class F2heavyGluon(pccc.PartonicChannelHeavy):
 
     def NLO(self):
         def reg(z):
-            c1 = 12.0 * self.labda ** 2 - 6.0 * self.labda - 10.0
+            c1 = 12.0 * (1 - self.labda) ** 2 - 18 * (1 - self.labda) + 8 # =12l^2 - 6l +2
             c2 = (1.0 - self.labda) / (1.0 - self.labda * z) - 1.0
             c3 = 6.0 * self.labda
             c4 = -12.0 * self.labda
             return (
-                split.pqg(z, self.constants) * (self.l_labda(z) - np.log(self.labda))
-            ) + self.h_g(z, [c1, c2, c3, c4])
+                (split.pqg(z, self.constants) * (self.l_labda(z) - np.log(self.labda)))
+                + self.h_g(z, [c1, c2, c3, c4])
+            ) * 2
 
         return reg

@@ -58,6 +58,12 @@ class CouplingConstants:
                 leptonic_coupling : float
                     leptonic coupling
         """
+        # for CC the polarisation are NOT part of the structure functions, but are accounted for on
+        # the cross section level. In order to have a true-trivial LO coeficient function, return here 2.
+        if mode == "WW":
+            return 2
+
+        # now NC only ...
         projectile_pid = self.obs_config["projectilePID"]
         # correct projectile polarization
         pol = self.obs_config["polarization"]
@@ -69,9 +75,6 @@ class CouplingConstants:
         if mode in ["phZ", "ZZ"]:
             projectile_v = self.vectorial_coupling(abs(projectile_pid))
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]
-        elif mode == "WW":
-            projectile_v = 1
-            projectile_a = 1
         # switch mode
         if mode == "phph":
             if kind != "F3":
@@ -87,7 +90,7 @@ class CouplingConstants:
                 return self.electric_charge[abs(projectile_pid)] * (
                     projectile_a + pol * projectile_v
                 )
-        elif mode in ["ZZ", "WW"]:
+        elif mode == "ZZ":
             if kind != "F3":
                 return (
                     projectile_v ** 2
