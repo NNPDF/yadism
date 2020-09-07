@@ -1,8 +1,8 @@
 ---
-documentclass: standalone
+documentclass: scrartcl
 classoption:
   - preview
-  - border=20pt
+  - border=0pt
 header-includes: |
    \usepackage{physics}
 ---
@@ -18,6 +18,21 @@ z}{z} f(z) \cdot \left[ h(z) \right]_+\\
 z \frac{ f(z)}{z} \cdot h(z)\\
 &= \int_x^1 \dd z \left(\frac{f(z)}{z} - f(1)\right) \cdot h(z) - f(1) \int_0^x
 \dd z~ h(z)
+\end{align}
+
+## Product of functions
+
+\begin{align}
+ & \int_x^1 \frac{\dd z}{z} f(z) g(z) \cdot \left[ h(z) \right]_+\\
+ &=
+\int_0^1 \frac{\dd z}{z} f(z) g(z) \cdot \left[ h(z) \right]_+ - \int_0^x \frac{\dd
+z}{z} f(z) g(z) \cdot \left[ h(z) \right]_+\\
+&= \int_0^1 \dd z \left(\frac{f(z)g(z)}{z} - f(1)g(1)\right) \cdot h(z) - \int_0^x \dd
+z \frac{ f(z) g(z)}{z} \cdot h(z)\\
+&= \int_x^1 \dd z \left(\frac{f(z)g(z)}{z} - f(1)g(1)\right) \cdot h(z) - f(1) g(1) \int_0^x\dd z~ h(z)\\
+&= \int_x^1 \dd z \left(\frac{f(z)(g(z)+g(1)-g(1))}{z} - f(1)g(1)\right) \cdot h(z) - f(1) g(1) \int_0^x\dd z~ h(z)\\
+&= \int_x^1 \dd z \left(\frac{f(z)}{z} - f(1)\right)  g(1)\cdot h(z) + \int_x^1 \dd z \frac{f(z)(g(z)-g(1)))}{z} h(z)  - f(1) g(1) \int_0^x\dd z~ h(z)\\
+&= \int_x^1  \frac{\dd z}{ z} f(z)  g(1)\cdot \left[h(z)\right]_+ + \int_x^1 \dd z \frac{f(z)(g(z)-g(1)))}{z} h(z)
 \end{align}
 
 <!-- vim: set ft=pandoc: -->

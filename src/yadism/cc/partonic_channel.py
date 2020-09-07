@@ -6,15 +6,25 @@ from .. import splitting_functions as split
 
 
 class PartonicChannelHeavy(pc.PartonicChannel):
-    """
+    r"""
         Heavy partonic coefficient functions that respect hadronic and partonic
         thresholds.
+
+        The main reference used is: :cite:`gluck-ccheavy`.
+
+        .. todo:: write about normalization in Eq. 2
+
+        From above we see that partonic coefficient functions have to be multiplied
+        by different factors for the different structure functions. In order to keep
+        track of this we use the :attr:`sf_prefactor` attribute. Coefficients
+        that to not explicitly depend on the structure function kind are mulitplied
+        by this factor (:math:`B_{3,i}` and the explicit factorization bits).
+        For all the other the factors have to be applied explicitly: e.g.
+        :math:`A_L = A_2 - \lambda A_1`.
     """
 
     def __init__(self, *args):
         super(PartonicChannelHeavy, self).__init__(*args)
-        # TODO: check prefactor
-
         # common variables
         self.labda = 1 / (1 + self.ESF._SF.M2hq / self.ESF._Q2)
         self.x = self.ESF._x
@@ -22,8 +32,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         self.l_labda = lambda z, labda=self.labda: np.log(
             (1 - labda * z) / (1 - labda) / z
         )
-
-        # different only for FL
+        # normalization helper
         self.sf_prefactor = 1
 
     def r_integral(self, x):
@@ -48,48 +57,78 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         CF = self.constants.CF
 
         b3 = self.sf_prefactor / 2
+        as_norm = 2
 
         def reg(z, b1=b1, b2=b2, CF=CF, pqq_reg=split.pqq_reg):
             hq_reg = -(1 + z ** 2) * np.log(z) / (1 - z) - (1 + z) * (
                 2 * np.log(1 - z) - np.log(1 - self.labda * z)
             )
             return (
-                -self.sf_prefactor * np.log(self.labda) * pqq_reg(z, self.constants)
-            ) + CF * (
-                self.sf_prefactor * hq_reg
-                + (b1(z) - b1(1)) / (1 - z)
-                + b2(z) / (1 - self.labda * z)
-            )
+                (-self.sf_prefactor * np.log(self.labda) * pqq_reg(z, self.constants))
+                + CF
+                * (
+                    self.sf_prefactor * hq_reg
+                    + (b1(z) - b1(1)) / (1 - z)
+                    + (b2(z) - b2(1)) / (1 - self.labda * z)
+                    # b3(z) - b3(1) = 0 = 1/2 - 1/2
+                )
+            ) * as_norm
 
         def sing(z, b1=b1, b3=b3, CF=CF, pqq_pd=split.pqq_pd):
             hq_sing = 2 * ((2 * np.log(1 - z) - np.log(1 - self.labda * z)) / (1 - z))
             return (
-                -self.sf_prefactor * np.log(self.labda) * pqq_pd(z, self.constants)
-            ) + CF * (
-                self.sf_prefactor * hq_sing
-                + b1(1) / (1 - z)
-                + b3 * (1 - z) / (1 - self.labda * z) ** 2
-            )
+                (
+                    -self.sf_prefactor
+                    * np.log(self.labda)
+                    * (pqq_pd(z, self.constants) / (1 - z))
+                )
+                + CF
+                * (
+                    self.sf_prefactor * hq_sing
+                    + b1(1) / (1 - z)
+                    + b2(1) / (1 - self.labda * z)
+                    + b3 * (1 - z) / (1 - self.labda * z) ** 2
+                )
+            ) * as_norm
 
-        def local(x, a=a, b1=b1, b3=b3, CF=CF, pqq_delta=split.pqq_delta):
+        def local(
+            x, a=a, b1=b1, b3=b3, CF=CF, pqq_pd=split.pqq_pd, pqq_delta=split.pqq_delta
+        ):
+            log_pd_int = -np.log(1 - x) ** 2 / 2
             hq_loc = -(
                 4
                 + 1 / (2 * self.labda)
-                + np.pi ** 2 / 3  ## see erratum
+                + np.pi ** 2 / 3  # see erratum
                 + (1 + 3 * self.labda) / (2 * self.labda) * self.ka
-            ) + 2 * (2 * np.log(1 - x) ** 2 / 2 - self.r_integral(x))
+            ) - 2 * (2 * log_pd_int - self.r_integral(x))
+
+            b1_int = -np.log(1 - x)
+
+            b2_int = -np.log(1 - x * self.labda) / self.labda
 
             b3_int = (
-                -(self.labda - 1) / (self.labda ** 3 * x - self.labda ** 2)
-                - (self.labda - 1) / self.labda ** 2
+                -((x * (-1 + self.labda)) / (self.labda * (-1 + x * self.labda)))
                 - np.log(1 - self.labda * x) / self.labda ** 2
             )
 
             return (
-                -self.sf_prefactor * np.log(self.labda) * pqq_delta(x, self.constants)
-            ) + CF * (
-                self.sf_prefactor * hq_loc + a + b1(1) * np.log(1 - x) + b3 * b3_int
-            )
+                (
+                    -self.sf_prefactor
+                    * np.log(self.labda)
+                    * (
+                        pqq_delta(x, self.constants)
+                        - pqq_pd(x, self.constants) * b1_int
+                    )
+                )
+                + CF
+                * (
+                    self.sf_prefactor * hq_loc
+                    + a
+                    - b1(1) * b1_int
+                    - b2(1) * b2_int
+                    - b3 * b3_int
+                )
+            ) * as_norm
 
         return reg, sing, local
 

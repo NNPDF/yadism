@@ -5,8 +5,6 @@ heavy quark flavors.
 
 The main reference used is: :cite:`gluck-ccheavy`.
 
-.. todo:: write about FL=F2-2xF1 and all the normalization business
-
 """
 
 import numpy as np
@@ -24,8 +22,19 @@ class F3heavyQuark(pccc.PartonicChannelHeavy):
 
     label = "q"
 
+    def __init__(self, *args):
+        super(F3heavyQuark, self).__init__(*args)
+        self.sf_prefactor = self.labda
+
     def LO(self):
-        return 0, 0, self.labda
+        return 0, 0, self.sf_prefactor
+
+    def NLO(self):
+        a = 0
+        b1 = lambda z: (-1 - z ** 2) * self.sf_prefactor
+        b2 = lambda z: (1 - z) * self.sf_prefactor
+
+        return self.h_q(a, b1, b2)
 
 
 class F3heavyGluon(pccc.PartonicChannelHeavy):

@@ -17,25 +17,25 @@ def generate_observables():
     og = observables.ObservablesGenerator("sandbox")
     defaults = og.get_observables()[0]
     #xgrid = np.array(defaults["interpolation_xgrid"]).copy()
-    #defaults["interpolation_xgrid"] = np.geomspace(1e-5,1.0,50).tolist()
+    defaults["interpolation_xgrid"] = np.geomspace(.1,1,40).tolist()
     light_kin = []
     light_kin.extend(
-        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][::3]]
+        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"]]
         # np.linspace(1e-3, 1, 50)
     )
     #light_kin.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
-    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
-    #light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+    #light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     #light_kin.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+    #light_kin.extend([dict(x=0.85, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
     obs_list = [
         #"F2light",
-        #"F2charm",
+        "F2charm",
         #"F2bottom",
-        "FLlight",
+        #"FLlight",
         "FLcharm",
-        "FLbottom",
+        #"FLbottom",
         #"F3light",
-        #"F3charm",
+        "F3charm",
         #"F3bottom",
     ]
     cards = []
@@ -44,7 +44,7 @@ def generate_observables():
     #print(card)
     card["prDIS"] = "CC"
     # card["PropagatorCorrection"] = .999
-    #card["ProjectileDIS"] = "antineutrino"
+    card["ProjectileDIS"] = "neutrino"
     #card["PolarizationDIS"] = 0.5
     #for obs in ["F3charm"]:  # obs_list:
     for obs in obs_list:
@@ -64,17 +64,17 @@ class ApfelSandbox:
         return self.db
 
     def run_LO(self):
-        return self._db().run_external(0, ["ToyLH"],{
-            "NfFF": self.db.theory_query.NfFF == 4,
+        return self._db().run_external(0, ["sonly"],{
+            #"NfFF": self.db.theory_query.NfFF == 4,
             # "DAMP": self.db.theory_query.DAMP == 0,
             })
 
     def run_NLO(self):
         return self._db().run_external(
             1,
-            ["uonly"],
+            ["sonly"],
             {
-             "NfFF": self.db.theory_query.NfFF == 4,
+            # "NfFF": self.db.theory_query.NfFF == 4,
             # "DAMP": self.db.theory_query.DAMP == 0,
             },
         )
@@ -83,5 +83,5 @@ class ApfelSandbox:
 if __name__ == "__main__":
     generate_observables()
     apf = ApfelSandbox()
-    #apf.run_LO()
+    apf.run_LO()
     apf.run_NLO()

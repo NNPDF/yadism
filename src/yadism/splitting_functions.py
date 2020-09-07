@@ -17,6 +17,8 @@ which see :py:mod:`convolution`.
 
 The reference for LO splitting functions is :cite:`pink-book`.
 
+.. todo:: rewrite pqq in RSL fashion
+
 """
 
 

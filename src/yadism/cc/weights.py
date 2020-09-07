@@ -15,14 +15,14 @@ class Weights:
         tot_ch_sq = 0
 
         # decide the number of active flavors
-        #name = obs_name.ObservableName(obs_name.fake_kind + cc_flavor)
-        #if name.is_raw_heavy:
+        # name = obs_name.ObservableName(obs_name.fake_kind + cc_flavor)
+        # if name.is_raw_heavy:
         #    active_light_flavors = name.hqnumber - 1
-        #else:
+        # else:
         #    active_light_flavors = 6
-        #if cc_flavor == "light":
+        # if cc_flavor == "light":
         #    norm = 3
-        #else:
+        # else:
         norm = 1
 
         for q in range(1, 6 + 1):
