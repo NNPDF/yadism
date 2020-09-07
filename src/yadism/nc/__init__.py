@@ -12,7 +12,7 @@ from .f2_asy import F2asyGluonVV, F2asyGluonAA
 from .fl_asy import FLasyGluonVV, FLasyGluonAA
 from .f3_asy import F3asyQuarkVA
 
-from .weights import light_factory, heavy_factory
+from .weights import weights_light, weights_heavy
 
 partonic_channels_em = {
     "F2light": [F2lightQuark, F2lightGluon],
@@ -36,10 +36,10 @@ partonic_channels_nc["FLasy"].extend([FLasyGluonAA])
 partonic_channels_nc["F3asy"].extend([F3asyQuarkVA])
 
 
-def weights_nc(obs_name):
+def weights_nc(obs_name, coupling_constants, Q2):
     if obs_name.flavor == "light":
-        return light_factory(obs_name.kind, range(1, 3 + 1))
+        return weights_light(range(1, 3 + 1), coupling_constants, Q2, obs_name.kind)
     elif obs_name.flavor_family == "light":
         # so it's heavylight
-        return light_factory(obs_name.kind, [obs_name.hqnumber])
-    return heavy_factory(obs_name.kind, obs_name.hqnumber)
+        return weights_light([obs_name.hqnumber], coupling_constants, Q2, obs_name.kind)
+    return weights_heavy(obs_name.hqnumber, coupling_constants, Q2, obs_name.kind)

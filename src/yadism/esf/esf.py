@@ -127,9 +127,9 @@ class EvaluatedStructureFunction:
         # add the factor x from the LHS
         self._res *= self.convolution_point
         # setup weights
-        self._res.weights = self.weights(self._SF.obs_name)(
+        self._res.weights = self.weights(self._SF.obs_name,
             self._SF.coupling_constants, self._Q2
-        ).w
+        )
 
     def _compute_component(self, comp):
         """
@@ -268,8 +268,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             ).get_result()
             # readjust the weights
             res_light.weights = self.weights(
-                obs_name.apply_flavor(obs_name.flavor + "light")
-            )(self._SF.coupling_constants, self._Q2).w
+                obs_name.apply_flavor(obs_name.flavor + "light"),self._SF.coupling_constants, self._Q2)
             # now checkout scheme:
             # matching is only needed for FONLL and in there only if we just crossed our threshold
             # otherwise we continue with the ZM expressions (in contrast to APFEL which treats only

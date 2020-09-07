@@ -12,7 +12,7 @@ from .f2_asy import F2asyQuark
 from .fl_asy import FLasyQuark
 from .f3_asy import F3asyQuark
 
-from .weights import weight_factory
+from .weights import weights as weights_cc
 
 partonic_channels_cc = {
     "F2light": [F2lightQuark, F2lightGluon],
@@ -25,10 +25,6 @@ partonic_channels_cc = {
     "FLasy": [FLasyQuark],
     "F3asy": [F3asyQuark],
 }
-
-
-def weights_cc(obs_name):
-    return weight_factory(obs_name.kind, obs_name.raw_flavor)
 
 
 convolution_point_cc = {
