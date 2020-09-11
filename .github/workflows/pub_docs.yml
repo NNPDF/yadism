@@ -63,4 +63,4 @@ jobs:
           message: "I'm deploying ${{ github.ref }}"
           ref: "gh-pages"
         env:
-          GITHUB_TOKEN: ${{ secrets.PUBLISH_SITE }}
+          GITHUB_TOKEN: ${{ secrets.ALE_DIS_PAT }}
