@@ -23,7 +23,7 @@ import yadism.version
 # -- Project information -----------------------------------------------------
 
 project = "yadism"
-copyright = "2019, the N3PDF team"  # pylint: disable=redefined-builtin
+copyright = "2019-2020, the N3PDF team"  # pylint: disable=redefined-builtin
 author = "N3PDF team"
 
 # The short X.Y version
@@ -209,7 +209,7 @@ latex_documents = [
     (
         master_doc,
         "yadismDocumentation.tex",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         "N3PDF team",
         "manual",
     ),
@@ -224,7 +224,7 @@ man_pages = [
     (
         master_doc,
         "yadism-documentation",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         [author],
         1,
     )
@@ -240,7 +240,7 @@ texinfo_documents = [
     (
         master_doc,
         "yadismDocumentation",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         author,
         "yadismDocumentation",
         "One line description of project.",

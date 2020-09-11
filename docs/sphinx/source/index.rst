@@ -62,6 +62,7 @@ structure.
    dev-tools/benchmark-runner.rst
    dev-tools/tests.rst
    dev-tools/third-party.rst
+   dev-tools/code-todos.rst
 
 These tools have been developed alongside `yadism`, in order to automatize tests
 and improve the quality of code (less bugs, more readable... hopefully...).
