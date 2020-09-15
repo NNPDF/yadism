@@ -12,8 +12,6 @@ class PartonicChannelHeavy(pc.PartonicChannel):
 
         The main reference used is: :cite:`gluck-ccheavy`.
 
-        .. todo:: write about normalization in Eq. 2
-
         From above we see that partonic coefficient functions have to be multiplied
         by different factors for the different structure functions. In order to keep
         track of this we use the :attr:`sf_prefactor` attribute. Coefficients

@@ -16,6 +16,7 @@
     - weight[2] - weight[-2] does NOT change sign
 """
 
+
 def weights(obs_name, coupling_constants, Q2):
     weights = {"q": {}, "g": {}}
     # determine couplings
@@ -28,16 +29,16 @@ def weights(obs_name, coupling_constants, Q2):
     tot_ch_sq = 0
 
     # decide the number of active flavors
-    if obs_name.flavor_family == "light":
-        norm = 3 # TODO: why is there a 3? also in heavylight?!
+    if obs_name.flavor == "light":
+        norm = 3
     else:
         norm = 1
-        #if obs_name.kind == "F3":
-        #    norm *= -1
 
     for q in range(1, 6 + 1):
         sign = 1 if q % 2 == rest else -1
-        w = coupling_constants.get_weight(q, Q2, obs_name.kind, cc_flavor=obs_name.raw_flavor)
+        w = coupling_constants.get_weight(
+            q, Q2, obs_name.kind, cc_flavor=obs_name.raw_flavor
+        )
         weights["q"][sign * q] = w if obs_name.kind != "F3" else sign * w
         tot_ch_sq += w
     # gluon coupling = charge sum
