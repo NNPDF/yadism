@@ -205,7 +205,7 @@ class EvaluatedStructureFunction:
                 - `Q2`: the input process scale
                 - `values`: a :py:meth:`numpy.array` for the coefficient functions
                 - `errors`: a :py:meth:`numpy.array` with the integration errors
-                 
+
         """
         return self.get_result().get_raw()
 
@@ -263,15 +263,12 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         else:
             # compute zero-mass part
             obs_name = self._SF.obs_name
+            # TODO maybe we can cache the heavy light any how - for the moment we can't because of
+            # the explicit n_f dependece **inside** the coefficient functions (and not only in the
+            # weight)
             res_light = self._SF.get_esf(
-                obs_name.apply_flavor("light"), {"x": self._x, "Q2": self._Q2}, 1
+                obs_name.apply_flavor(obs_name.flavor + "light"), {"x": self._x, "Q2": self._Q2}, 1
             ).get_result()
-            # readjust the weights
-            res_light.weights = self.weights(
-                obs_name.apply_flavor(obs_name.flavor + "light"),
-                self._SF.coupling_constants,
-                self._Q2,
-            )
             # now checkout scheme:
             # matching is only needed for FONLL and in there only if we just crossed our threshold
             # otherwise we continue with the ZM expressions (in contrast to APFEL which treats only
