@@ -1,4 +1,4 @@
-.PHONY: all html css _js
+.PHONY: all html css _js clean
 
 all: html css _js
 
@@ -25,3 +25,6 @@ build/js: js build
 	@echo "\e[1m\e[4m\e[35mProviding Javascript:\e[0m"
 	cp -r $< $@
 	@echo
+
+clean:
+	rm -rf build

@@ -16,10 +16,10 @@
       </div>
       <div class="item">
         <div class="version-row">
-          <a href="/yadism/stable" class="docs-version is-success">
+          <a href="stable" class="docs-version is-success">
             stable
           </a>
-          <a href="/yadism/develop" class="docs-version">
+          <a href="develop" class="docs-version">
             develop
           </a>
         </div>
@@ -42,7 +42,7 @@
           <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <div class="dropdown-content">
               {% for minor in major["minors"] %}
-              <a href="/yadism/{{ major["num"] }}.{{minor}}" class="dropdown-item">
+              <a href="{{ major["num"] }}.{{minor}}" class="dropdown-item">
                 {{ major["num"] }}.{{minor}}
               </a>
               {% endfor %}
