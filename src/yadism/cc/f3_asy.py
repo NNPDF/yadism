@@ -67,7 +67,7 @@ class F3asyGluon(pc.PartonicChannelAsy):
         as_norm = 2.0
 
         def reg(z, L=self.L):
-            return split.pqg(z, self.constants) * L * as_norm
+            return -split.pqg(z, self.constants) * L * as_norm
 
         return reg
 
