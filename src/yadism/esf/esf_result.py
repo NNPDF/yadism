@@ -134,6 +134,7 @@ class ESFResult:
         """
         if not isinstance(self.Q2, numbers.Number):
             raise ValueError("Q2 is not set!")
+
         # factorization scale
         muF2 = self.Q2 * xiF ** 2
 
@@ -146,15 +147,7 @@ class ESFResult:
             for z in xgrid:
                 e = 0
                 for pid, w in self.weights[k].items():
-                    # is a quark?
-                    if pid <= 6:
-                        e += (
-                            w
-                            * (pdfs.xfxQ2(pid, z, muF2) + pdfs.xfxQ2(-pid, z, muF2))
-                            / z
-                        )
-                    else:
-                        e += w * pdfs.xfxQ2(pid, z, muF2) / z
+                    e += w * pdfs.xfxQ2(pid, z, muF2) / z
                 f.append(e)
             # add up
             res += np.dot(f, self.values[k])

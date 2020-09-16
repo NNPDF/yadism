@@ -3,9 +3,9 @@
 This module contains the implementation of the DIS FL coefficient functions, for
 light quark flavours.
 
-The coefficient functions definition is given in :eqref:`4.2`, :cite:`vogt` (the
-same of :eqref:`1` in :cite:`vogt-fl`).
-The main reference for their expression is :cite:`vogt-fl`.
+The coefficient functions definition is given in :eqref:`4.2`,
+:cite:`vogt-f2nc` (the same of :eqref:`1` in :cite:`vogt-flnc`).
+The main reference for their expression is :cite:`vogt-flnc`.
 
 Scale varitions main reference is :cite:`vogt-sv`.
 
@@ -26,7 +26,7 @@ class FLlightQuark(pc.PartonicChannelLight):
             Computes the quark singlet part of the next to leading order FL
             structure function.
 
-            |ref| implements :eqref:`3`, :cite:`vogt-fl`.
+            |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
 
             Returns
             -------
@@ -54,7 +54,7 @@ class FLlightGluon(pc.PartonicChannelLight):
             Computes the gluon part of the next to leading order FL structure
             function.
 
-            |ref| implements :eqref:`3`, :cite:`vogt-fl`.
+            |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
 
             Returns
             -------

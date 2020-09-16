@@ -153,10 +153,7 @@ class DBInterface(mode_selector.ModeSelector):
             theory_query &= cond
         # build obs query
         if obs_query is None:
-            if PTO == 0:
-                obs_query = self.obs_query.F2light.exists()
-            else:
-                obs_query = self.obs_query.prDIS.exists()
+            obs_query = self.obs_query.prDIS.exists()
         return self.run_queries_external(theory_query, obs_query, pdfs)
 
     def run_queries_external(self, theory_query, obs_query, pdfs):

@@ -6,7 +6,39 @@ References
     need to find out whether we can split the references into several
     files potentially ...
 
-.. bibliography:: refs.bib
+General
+~~~~~~~
+
+.. bibliography:: refs/gen.bib
+    :all:
+
+
+Coefficient functions
+~~~~~~~~~~~~~~~~~~~~~
+
+.. bibliography:: refs/cf.bib
+    :all:
+
+**Light**:
+
+.. bibliography:: refs/cf-light.bib
+    :all:
+
+**Heavy**:
+
+.. bibliography:: refs/cf-heavy.bib
+    :all:
+
+FNS
+~~~
+
+.. bibliography:: refs/fns.bib
+    :all:
+
+TMC
+~~~
+
+.. bibliography:: refs/tmc.bib
     :all:
 
 .. see usage.html#known-issues-and-workarounds on official docs

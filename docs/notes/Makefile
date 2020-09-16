@@ -1,8 +1,12 @@
 # Run `watch -n1 make`
 
 #files := $(shell xargs -a COMPILELIST.TXT)
-files := q_ns.md
+pdf_output := $(patsubst %.mdp,%.pdf,$(wildcard *.mdp))
 
-q_ns.pdf: $(files)
-	#pandoc $(files) --toc -f markdown -t html -c style.css -o $@
-	pandoc -s $(files) -o $@
+all: $(pdf_output)
+
+%.pdf: %.mdp
+	pandoc --toc -f markdown -t pdf -s $< -o $@
+
+#%.html: %.mdp
+	#pandoc --toc -f markdown -t html -c style.css -s $< -o $@

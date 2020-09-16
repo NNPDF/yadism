@@ -84,24 +84,6 @@ class DistributionVec:
             self.singular = singular
             self.local = local
 
-    @staticmethod
-    def args_from_distr_coeffs(regular, delta, *coeffs):
-        def singular(z, coeffs=coeffs):
-            log_ = np.log(1 - z)
-            res = 0
-            for k, coeff in enumerate(coeffs):
-                res += coeff * 1 / (1 - z) * log_ ** k
-            return res
-
-        def local(x, coeffs=coeffs):
-            log_ = np.log(1 - x)
-            res = 0
-            for k, coeff in enumerate(coeffs):
-                res += coeff * log_ ** (k + 1) / (k + 1)
-            return res + delta
-
-        return regular, singular, local
-
     def __iter__(self):
         yield self.regular
         yield self.singular
@@ -326,7 +308,7 @@ class DistributionVec:
             else:
                 # set breakpoints as relevant points of the integrand
                 # computed from interpolation areas of `pdf_func`
-                # and also restrict integration domain
+                # and also eventually restrict integration domain
                 area_borders = []
                 for area in pdf_func.areas:
                     area_borders.extend([area.xmin, area.xmax])
@@ -373,13 +355,16 @@ class DistributionVec:
         # ------------------
 
         # integrate the kernel
-        res, err = scipy.integrate.quad(
-            ker,
-            z_min * (1 + self.eps_integration_border),
-            z_max * (1 - self.eps_integration_border),
-            epsabs=self.eps_integration_abs,
-            points=breakpoints,
-        )
+        if self.regular is None and self.singular is None:
+            res, err = 0, 0
+        else:
+            res, err = scipy.integrate.quad(
+                ker,
+                z_min * (1 + self.eps_integration_border),
+                z_max * (1 - self.eps_integration_border),
+                epsabs=self.eps_integration_abs,
+                points=breakpoints,
+            )
 
         # sum the addends
         if self.local is None:
