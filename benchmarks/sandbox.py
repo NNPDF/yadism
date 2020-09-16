@@ -20,7 +20,7 @@ def generate_observables():
     #defaults["interpolation_xgrid"] = np.geomspace(.1,1,40).tolist()
     light_kin = []
     light_kin.extend(
-        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][::3]]
+        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
         # np.linspace(1e-3, 1, 50)
     )
     #light_kin.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
@@ -34,15 +34,15 @@ def generate_observables():
         "FLlight",
         "FLcharm",
         "FLbottom",
-        "F3light",
-        "F3charm",
-        "F3bottom",
+        #"F3light",
+        #"F3charm",
+        #"F3bottom",
     ]
     cards = []
     card = copy.deepcopy(defaults)
     #card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
     #print(card)
-    card["prDIS"] = "NC"
+    card["prDIS"] = "CC"
     # card["PropagatorCorrection"] = .999
     #card["ProjectileDIS"] = "positron"
     #card["PolarizationDIS"] = 0.5
@@ -66,6 +66,7 @@ class ApfelSandbox:
     def run_LO(self):
         return self._db().run_external(0, ["ToyLH"],{
             "FNS": self.db.theory_query.FNS == "ZM-VFNS",
+            "TMC": self.db.theory_query.TMC == 2,
             # "DAMP": self.db.theory_query.DAMP == 0,
             })
 
@@ -76,8 +77,9 @@ class ApfelSandbox:
             {
             #"NfFF": self.db.theory_query.NfFF == 4,
             "FNS": self.db.theory_query.FNS == "FONLL-A",
+            "TMC": self.db.theory_query.TMC == 2,
             #"FNS": self.db.theory_query.FNS == "ZM-VFNS",
-            # "DAMP": self.db.theory_query.DAMP == 0,
+            #"DAMP": self.db.theory_query.DAMP == 1,
             },
         )
 

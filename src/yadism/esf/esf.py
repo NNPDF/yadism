@@ -267,7 +267,9 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             # the explicit n_f dependece **inside** the coefficient functions (and not only in the
             # weight)
             res_light = self._SF.get_esf(
-                obs_name.apply_flavor(obs_name.flavor + "light"), {"x": self._x, "Q2": self._Q2}, 1
+                obs_name.apply_flavor(obs_name.flavor + "light"),
+                {"x": self._x, "Q2": self._Q2},
+                1,
             ).get_result()
             # now checkout scheme:
             # matching is only needed for FONLL and in there only if we just crossed our threshold
