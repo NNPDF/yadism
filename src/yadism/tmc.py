@@ -463,7 +463,11 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         )
 
 
-ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL}
+class ESFTMC_F3(EvaluatedStructureFunctionTMC):
+    pass # TODO fill from Schienbein
+
+
+ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL, "F3": ESFTMC_F3}
 """dict: mapping of ESF TMC classes
 
 This dictionary is used to redirect to the correct class from a string
