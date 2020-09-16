@@ -4,7 +4,7 @@ Pool of references to pick up to search for things, organized by topic.
 
 ## Generic
 
-- Pink book
+- Pink book by Ellis
 
 
 ## TMC
