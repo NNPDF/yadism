@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="item">
-        {% for major in majors %}
+        {% for major, minors in versions.items() %}
         <div class="dropdown">
           <div class="dropdown-trigger">
             <button
@@ -33,7 +33,7 @@
               aria-haspopup="true"
               aria-controls="dropdown-menu"
             >
-              <span>{{ major["num"] }}</span>
+              <span>{{ major }}</span>
               <span class="icon is-small">
                 <i class="fas fa-angle-down" aria-hidden="true"></i>
               </span>
@@ -41,9 +41,9 @@
           </div>
           <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <div class="dropdown-content">
-              {% for minor in major["minors"] %}
-              <a href="{{ major["num"] }}.{{minor}}" class="dropdown-item">
-                {{ major["num"] }}.{{minor}}
+              {% for minor in minors %}
+              <a href="{{ major }}.{{minor}}" class="dropdown-item">
+                {{ major }}.{{minor}}
               </a>
               {% endfor %}
             </div>

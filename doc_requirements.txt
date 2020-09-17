@@ -3,3 +3,7 @@ sphinx
 sphinx_rtd_theme
 recommonmark
 sphinxcontrib-bibtex
+Jinja2
+numpy
+pygit2
+semver

@@ -1,4 +1,4 @@
-.PHONY: all html css _js clean
+.PHONY: all html css _js view clean
 
 all: html css _js
 
@@ -25,6 +25,9 @@ build/js: js build
 	@echo "\e[1m\e[4m\e[35mProviding Javascript:\e[0m"
 	cp -r $< $@
 	@echo
+
+view:
+	@${BROWSER} build/index.html
 
 clean:
 	rm -rf build
