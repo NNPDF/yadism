@@ -49,6 +49,8 @@ jobs:
           make html
       - name: Save files 💾
         run: |
+          ls
+          ls build
           mv build/html ~
           mv ../home-page ~
           mv ../_assets ~
