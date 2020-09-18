@@ -64,6 +64,7 @@ jobs:
             dest_dir="stable"
           fi
           mv ~/home-page/* .
+          rm -rf _assets
           mv ~/_assets .
           rm -rf $dest_dir
           mv ~/html $dest_dir
