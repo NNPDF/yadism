@@ -65,6 +65,7 @@ jobs:
           fi
           mv ~/home-page/* .
           mv ~/_assets .
+          rm -rf $dest_dir
           mv ~/html $dest_dir
       - name: Deploy 🚀
         #uses: JamesIves/github-pages-deploy-action@releases/v3
