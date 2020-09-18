@@ -18,16 +18,21 @@ import pathlib
 
 from recommonmark.transform import AutoStructify
 
+import yadism.version
+
 # -- Project information -----------------------------------------------------
 
 project = "yadism"
-copyright = "2019, the N3PDF team"  # pylint: disable=redefined-builtin
+copyright = "2019-2020, the N3PDF team"  # pylint: disable=redefined-builtin
 author = "N3PDF team"
 
 # The short X.Y version
-version = "0.3"
+version = yadism.version.short_version
+if not yadism.version.is_released:
+    version = "develop"
+
 # The full version, including alpha/beta/rc tags
-release = "0.3.3"
+release = yadism.version.full_version
 
 # -- General configuration ---------------------------------------------------
 
@@ -204,7 +209,7 @@ latex_documents = [
     (
         master_doc,
         "yadismDocumentation.tex",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         "N3PDF team",
         "manual",
     ),
@@ -219,7 +224,7 @@ man_pages = [
     (
         master_doc,
         "yadism-documentation",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         [author],
         1,
     )
@@ -235,7 +240,7 @@ texinfo_documents = [
     (
         master_doc,
         "yadismDocumentation",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         author,
         "yadismDocumentation",
         "One line description of project.",

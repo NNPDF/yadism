@@ -20,17 +20,15 @@ They are:
     needed for heavy quark calculation, like matching schemes
 """
 
-import abc
 import copy
 
 import numpy as np
 
 from . import distribution_vec as conv
 from .esf_result import ESFResult
-from .nc import partonic_channels_em, partonic_channels_nc
 
 
-class EvaluatedStructureFunction(abc.ABC):
+class EvaluatedStructureFunction:
     """
         The actual Structure Function implementation.
 
@@ -99,23 +97,13 @@ class EvaluatedStructureFunction(abc.ABC):
         self._Q2 = kinematics["Q2"]
         self._res = ESFResult(x=self._x, Q2=self._Q2)
         self._computed = False
-        # load partonic channels
-        if not SF.obs_name.is_composed:
-            partonic_channels = partonic_channels_em
-            if self._SF.obs_params["process"] == "NC":
-                partonic_channels = partonic_channels_nc
-            self.components = partonic_channels[SF.obs_name.apply_flavor_family().name]
 
-    @abc.abstractmethod
-    def _compute_weights(self):
-        """
-            Compute PDF weights for different channels.
-
-            Returns
-            -------
-                weights : dict
-                    dictionary with key refering to the channel and a dictionary with pid -> weight
-        """
+        if not self._SF.obs_name.is_composed:
+            self.partonic_channels = self._SF.partonic_channels
+            self.weights = self._SF.weights
+            self.convolution_point = self._SF.convolution_point(
+                self._x, self._Q2, self._SF.M2hq
+            )
 
     def _compute_local(self):
         """
@@ -130,16 +118,18 @@ class EvaluatedStructureFunction(abc.ABC):
         if self._computed:
             return
         # run
-        for comp_cls in self.components:
+        for comp_cls in self.partonic_channels:
             comp = comp_cls(self)
             (
                 self._res.values[comp.label],
                 self._res.errors[comp.label],
             ) = self._compute_component(comp)
         # add the factor x from the LHS
-        self._res *= self._x
+        self._res *= self.convolution_point
         # setup weights
-        self._res.weights = self._compute_weights()
+        self._res.weights = self.weights(
+            self._SF.obs_name, self._SF.coupling_constants, self._Q2
+        )
 
     def _compute_component(self, comp):
         """
@@ -176,7 +166,7 @@ class EvaluatedStructureFunction(abc.ABC):
 
         # iterate all polynomials
         for polynomial_f in self._SF.interpolator:
-            cv, ecv = d_vec.convolution(self._x, polynomial_f)
+            cv, ecv = d_vec.convolution(self.convolution_point, polynomial_f)
             ls.append(cv)
             els.append(ecv)
 
@@ -188,8 +178,8 @@ class EvaluatedStructureFunction(abc.ABC):
 
             Returns
             -------
-                res : ESFResult
-                    result
+            res : ESFResult
+                result
         """
         self._compute_local()
 
@@ -197,26 +187,24 @@ class EvaluatedStructureFunction(abc.ABC):
 
     def get_output(self) -> dict:
         """
-           Returns the output for this instance.
+            Returns the output for this instance.
 
-           In particular it returns the convolution of the coefficient function
-           for the selected observable and the array of basis functions, so the
-           result will be an array itself, running over the interpolation grid.
+            In particular it returns the convolution of the coefficient function
+            for the selected observable and the array of basis functions, so the
+            result will be an array itself, running over the interpolation grid.
 
-           Caching is provided as explained in the class description (see
-           :py:class:`EvaluatedStructureFunction`).
+            Caching is provided as explained in the class description (see
+            :py:class:`EvaluatedStructureFunction`).
 
             Returns
             -------
-                dict
-                    a collection of the output arrays with the following structure:
+            dict
+                a collection of the output arrays with the following structure:
 
-                    - `x`: the input momentum fraction
-                    - `Q2`: the input process scale
-                    - `values`: a :py:meth:`numpy.array` for the coefficient
-                    functions
-                    - `errors`: a :py:meth:`numpy.array` with the integration
-                    errors
+                - `x`: the input momentum fraction
+                - `Q2`: the input process scale
+                - `values`: a :py:meth:`numpy.array` for the coefficient functions
+                - `errors`: a :py:meth:`numpy.array` with the integration errors
 
         """
         return self.get_result().get_raw()
@@ -233,60 +221,8 @@ class EvaluatedStructureFunctionLight(EvaluatedStructureFunction):
         # expose number of flavours
         self.nf = nf
 
-    def _compute_weights(self):
-        """
-            Compute PDF weights for different channels.
 
-            Returns
-            -------
-                weights : dict
-                    dictionary with key refering to the channel and a dictionary with pid -> weight
-        """
-        weights = {"q": {}, "g": {}}
-        # quark couplings
-        tot_ch_sq = 0
-        for q in range(1, 3 + 1):  # u+d+s
-            eq2 = self._SF.coupling_constants.get_weight(q, self._Q2)
-            weights["q"][q] = eq2
-            tot_ch_sq += eq2
-        # gluon coupling = charge average (omitting the *2/2)
-        weights["g"][21] = tot_ch_sq / 3  # 3 = u+d+s
-        return weights
-
-
-class EvaluatedStructureFunctionAsy(EvaluatedStructureFunction):
-    """
-        Specialize EvaluatedStructureFunction for asy flavours.
-
-        Parameters
-        ----------
-            SF : StructureFunction
-                the parent :py:class:`StructureFunction` instance
-            kinematics : dict
-                the specific kinematic point as a dict with two elements ('x', 'Q2')
-            nhq : int
-                heavy quark flavor number, i.e. c=4,b=5,t=6
-            force_local : bool
-                always return the local object? i.e. ignore e.g. scheme
-    """
-
-    def _compute_weights(self):
-        """
-            Compute PDF weights for different channels.
-
-            Returns
-            -------
-                weights : dict
-                    dictionary with key refering to the channel and a dictionary with pid -> weight
-        """
-        nhq = self._SF.obs_name.hqnumber
-        weight_vv = self._SF.coupling_constants.get_weight(nhq, self._Q2, "V")
-        weight_aa = self._SF.coupling_constants.get_weight(nhq, self._Q2, "A")
-        weights = {"gVV": {21: weight_vv}, "gAA": {21: weight_aa}}
-        return weights
-
-
-class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunctionAsy):
+class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     """
         Specialize EvaluatedStructureFunction for heavy flavours.
 
@@ -327,12 +263,14 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunctionAsy):
         else:
             # compute zero-mass part
             obs_name = self._SF.obs_name
+            # TODO maybe we can cache the heavy light any how - for the moment we can't because of
+            # the explicit n_f dependece **inside** the coefficient functions (and not only in the
+            # weight)
             res_light = self._SF.get_esf(
-                obs_name.apply_flavor("light"), {"x": self._x, "Q2": self._Q2}, 1
+                obs_name.apply_flavor(obs_name.flavor + "light"),
+                {"x": self._x, "Q2": self._Q2},
+                1,
             ).get_result()
-            # readjust the weights
-            ehq = self._SF.coupling_constants.get_weight(nhq, self._Q2)
-            res_light.weights = {"g": {21: ehq}, "q": {nhq: ehq}}
             # now checkout scheme:
             # matching is only needed for FONLL and in there only if we just crossed our threshold
             # otherwise we continue with the ZM expressions (in contrast to APFEL which treats only

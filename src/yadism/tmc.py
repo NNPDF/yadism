@@ -30,8 +30,8 @@ import numpy as np
 
 from eko.interpolation import InterpolatorDispatcher
 
-from .distribution_vec import DistributionVec
-from .esf_result import ESFResult
+from .esf.distribution_vec import DistributionVec
+from .esf.esf_result import ESFResult
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
@@ -317,12 +317,9 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         self._factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
 
     def _get_result_approx(self):
-        # fmt: off
         approx_prefactor = self._factor_shifted * (
-              1 + (6 * self._mu * self._x * self._xi)
-                     / self._rho * (1 - self._xi) ** 2
+            1 + (6 * self._mu * self._x * self._xi) / (self._rho * (1 - self._xi) ** 2)
         )
-        # fmt: on
 
         # collect F2
         F2out = self._SF.get_esf(

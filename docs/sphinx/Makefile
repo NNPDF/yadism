@@ -7,14 +7,18 @@ SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
 
+SRCDIR = ../../src/yadism
+
+TODOOUTFILE = ./source/dev-tools/code-todos.rst
+
 # Put it first so that "make" without argument is like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 .PHONY: help html view clean cleanall
 
-html:
-	sphinx-apidoc -o ./source/modules --module-first ../../src/yadism/
+html: todos
+	sphinx-apidoc -o ./source/modules --module-first $(SRCDIR)
 	@rm -f ./source/modules/modules.rst ./source/modules/*/modules.rst}
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
@@ -29,5 +33,12 @@ clean:
 	rm -rf build
 	rm -rf _build
 
-cleanall: clean
+cleanall: clean clean-todos
 	rm -rf $(SOURCEDIR)/modules
+
+# TODOs
+todos:
+	python generate_code_todos.py "$(SRCDIR)" "$(TODOOUTFILE)"
+
+clean-todos:
+	rm "$(TODOOUTFILE)"

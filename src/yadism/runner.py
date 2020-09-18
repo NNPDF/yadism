@@ -31,7 +31,6 @@ from eko import strong_coupling
 
 from .output import Output
 from .sf import StructureFunction as SF
-from .structure_functions import ESFmap
 from .coupling_constants import CouplingConstants
 from . import observable_name
 
@@ -63,11 +62,10 @@ class Runner:
     banner = rich.align.Align(
         rich.panel.Panel.fit(
             inspect.cleandoc(
-                """
-                     __     __       _ _
+                r"""  __     __       _ _
                      \ \   / /      | (_)
                       \ \_/ /_ _  __| |_ ___ _ __ ___
-                       \   / _` |/ _` | / __| '_ ` _ \ 
+                       \   / _` |/ _` | / __| '_ ` _ \
                         | | (_| | (_| | \__ \ | | | | |
                         |_|\__,_|\__,_|_|___/_| |_| |_|
                 """

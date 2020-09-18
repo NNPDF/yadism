@@ -9,7 +9,7 @@ setup(
     description="yadism benchmark",
     # package_dir={"": "."},
     packages=find_packages("."),
-    install_requires=["rich"],
+    install_requires=["rich", "tinydb"],
     entry_points={
         "console_scripts": [
             "generate_theories=yadmark.data.theories:run_parser",
