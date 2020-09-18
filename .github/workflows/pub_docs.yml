@@ -24,11 +24,15 @@ jobs:
           persist-credentials: false
           token: ${{ secrets.ALE_DIS_PAT }}
           submodules: "true"
+      - name: Set up Node 🧶
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12"
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package and build docs 📦
+      - name: Install package 📦
         run: |
           # install pip
           python -m pip install --upgrade pip
@@ -38,9 +42,16 @@ jobs:
         run: |
           pip install -r doc_requirements.txt
           sudo apt-get install graphviz
-          cd docs/sphinx/
+          cd docs/home-page
+          yarn
+          make
+          cd ../sphinx/
           make html
-          mv build/html ~/html
+      - name: Save files 💾
+        run: |
+          mv build/html ~
+          mv ../home-page ~
+          mv ../_assets ~
       - name: Prepare deployment ⌛
         run: |
           # fetch all branches
@@ -51,6 +62,8 @@ jobs:
           if [ "$dest_dir" = "master" ]; then
             dest_dir="stable"
           fi
+          mv ~/home-page/* .
+          mv ~/_assets .
           mv ~/html $dest_dir
       - name: Deploy 🚀
         #uses: JamesIves/github-pages-deploy-action@releases/v3
@@ -60,7 +73,7 @@ jobs:
         #FOLDER: "docs/sphinx/build/html" # The folder the action should deploy.
         uses: EndBug/add-and-commit@v4.4.0
         with:
-          message: "I'm deploying ${{ github.ref }}"
+          message: "Currently deploying: ${{ github.ref }}"
           ref: "gh-pages"
         env:
           GITHUB_TOKEN: ${{ secrets.ALE_DIS_PAT }}
