@@ -51,7 +51,7 @@ jobs:
         run: |
           cd docs
           mv sphinx/build/html ~
-          mv home-page ~
+          mv home-page/build ~/home-page
           mv _assets ~
       - name: Prepare deployment ⌛
         run: |
