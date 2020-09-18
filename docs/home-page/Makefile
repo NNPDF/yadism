@@ -1,3 +1,5 @@
+SASS="./node_modules/dart-sass/sass.js"
+
 .PHONY: all html css _js view clean
 
 all: html css _js
@@ -18,7 +20,7 @@ build/index.html: index.html.jinja build
 
 build/home.css: home.scss build
 	@echo "\e[1m\e[4m\e[35mCompiling CSS from SASS:\e[0m"
-	dart-sass --no-source-map $< $@
+	${SASS} --no-source-map $< $@
 	@echo
 	
 build/js: js build
