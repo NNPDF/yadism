@@ -87,9 +87,7 @@ class Runner:
         # ===========================
         # Setup eko stuff
         # ===========================
-        self.interpolator = InterpolatorDispatcher.from_dict(
-            observables, mode_N=False, numba_it=False
-        )
+        self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
         self.constants = Constants()
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
