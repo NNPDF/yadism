@@ -183,7 +183,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         """
         return self.get_result().get_raw()
 
-    def _convolute_F2(self, ker):
+    def _convolute_FX(self, kind, ker):
         r"""
             Implement generic structure to convolute any function `ker` with `F2`.
 
@@ -201,21 +201,23 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
                 \begin{align*}
                 \tilde{F}_X \otimes f &= \sum_i (\tilde{F}_X \otimes w_i) f_i =
-                        \left[ a + \sum_{i} ((F_2 \otimes k) \otimes w_i)
+                        \left[ a + \sum_{i} ((F_X \otimes k) \otimes w_i)
                         \right] f_i \\
-                    & = \left[ a + \sum_{i,j} \underbrace{{F_2}_j ((w_j \otimes
-                        k)}_{\texttt{_convolute_F2}} \otimes w_i) \right] f_i
+                    & = \left[ a + \sum_{i,j} \underbrace{{F_X}_j ((w_j \otimes
+                        k)}_{\texttt{_convolute_FX}} \otimes w_i) \right] f_i
                 \end{align*}
 
             where :math:`\tilde{F}_X` is the target mass corrected structure
-            function, :math:`F_2` is the bare structure function, :math:`k` is
+            function, :math:`F_X` is the bare structure function, :math:`k` is
             the kernel function `ker`, and :math:`a` is representing all the
             other terms not described here.
 
             Parameters
             ----------
-            ker : callable
-                the kernel function to be convoluted with `F2`
+                kind : str
+                    observable kind
+                ker : callable
+                    the kernel function to be convoluted with structure functions
 
         """
         # check domain
@@ -225,25 +227,25 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             )
         # iterate grid
         res = ESFResult(self._xi, self._Q2)
+        d = DistributionVec(ker)
         for xj, pj in zip(self._SF.interpolator.xgrid_raw, self._SF.interpolator):
             # basis function does not contribute?
             if pj.is_below_x(self._xi):
                 continue
-            # compute F2 matrix (j,k) (where k is wrapped inside get_result)
-            F2j = self._SF.get_esf(
-                self._SF.obs_name.apply_kind("F2"), {"Q2": self._Q2, "x": xj}
+            # compute FX matrix (j,k) (where k is wrapped inside get_result)
+            FXj = self._SF.get_esf(
+                self._SF.obs_name.apply_kind(kind), {"Q2": self._Q2, "x": xj}
             ).get_result()
-            # compute interpolated h2 integral (j)
-            d = DistributionVec(ker)
+            # compute interpolated h integral (j)
             h2j = d.convolution(self._xi, pj)
             # sum along j
-            res += h2j * F2j
+            res += h2j * FXj
 
         return res
 
     def _h2(self):
         r"""
-            Compute raw integral over `F2`, making use of :py:meth:`_convolute_F2`.
+            Compute raw integral over `F2`, making use of :py:meth:`_convolute_FX`.
 
             .. math::
                 :nowrap:
@@ -264,11 +266,11 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total 1/z^2 we need to convolute with z/xi
         # as we get a 1/z by the measure and an evaluation of 1/xi*xi/z
-        return self._convolute_F2(lambda z, xi=self._xi: 1 / xi * z)
+        return self._convolute_FX("F2", lambda z, xi=self._xi: 1 / xi * z)
 
     def _g2(self):
         r"""
-            Compute nested integral over `F2`, making use of :py:meth:`_convolute_F2`.
+            Compute nested integral over `F2`, making use of :py:meth:`_convolute_FX`.
 
             .. math::
                 :nowrap:
@@ -290,7 +292,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total (z-xi)/z^2 we need to convolute with 1-z
         # as we get a 1/z by the measure and an evaluation of 1-xi/z
-        return self._convolute_F2(lambda z: 1 - z)
+        return self._convolute_FX("F2", lambda z: 1 - z)
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
@@ -318,7 +320,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
 
     def _get_result_approx(self):
         approx_prefactor = self._factor_shifted * (
-            1 + (6 * self._mu * self._x * self._xi) / (self._rho * (1 - self._xi) ** 2)
+            1 + ((6 * self._mu * self._x * self._xi) / self._rho) * (1 - self._xi) ** 2
         )
 
         # collect F2
@@ -329,6 +331,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         return approx_prefactor * F2out
 
     def _get_result_APFEL(self):
+        #return self._get_result_APFEL_strict()
         # collect F2
         F2out = self._SF.get_esf(
             self._SF.obs_name, self._shifted_kinematics
@@ -369,7 +372,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
 
         # compute integral
         smallInterp = InterpolatorDispatcher(
-            self._SF.interpolator.xgrid_raw, 1, True, False, False
+            self._SF.interpolator.xgrid_raw, 1, True, False
         )
         h2list = []
         for xj in self._SF.interpolator.xgrid_raw:
@@ -388,7 +391,6 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             )
         # join
         return res
-
     ### ----- /APFEL stuffs
 
 
@@ -463,7 +465,84 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         )
 
 
-ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL}
+class ESFTMC_F3(EvaluatedStructureFunctionTMC):
+    """
+        This function implements the actual formula for target mass corrections
+        of F3, for all the three (+1) kinds described in the parent class
+        :py:class:`EvaluatedStructureFunctionTMC`.
+
+        Parameters
+        ----------
+        SF : StructureFunction
+            the interface object representing the structure function kind he
+            belongs to
+        kinematics : dict
+            requested kinematic point
+
+    """
+
+    def __init__(self, SF, kinematics):
+        super(ESFTMC_F3, self).__init__(SF, kinematics)
+        # shifted prefactor is common
+        # beware that we are dealing with xF_3(x) and so xiF_3(xi) also on the right
+        self._factor_shifted = self._x**2 / (self._xi**2 * self._rho ** 2)
+        # h3 comes with a seperate factor
+        self._factor_h3 = 2.0 * self._mu * self._x ** 3 / (self._rho ** 3)
+
+    def _get_result_approx(self):
+        approx_prefactor = self._factor_shifted * (
+            1
+            - ((self._mu * self._x * self._xi) / self._rho)
+            * ((1 - self._xi) * np.log(self._xi))
+        )
+
+        # collect F3
+        F3out = self._SF.get_esf(
+            self._SF.obs_name, self._shifted_kinematics
+        ).get_result()
+        # join
+        return approx_prefactor * F3out
+
+    def _get_result_APFEL(self):
+        # since there is no g3 h3 is already exact and so APFEL
+        return self._get_result_exact()
+
+    def _h3(self):
+        r"""
+            Compute raw integral over `F3`, making use of :py:meth:`_convolute_FX`.
+
+            .. math::
+                :nowrap:
+
+                \begin{align*}
+                h_3(\xi,Q^2) &= \int_\xi^1 du \frac{F_3(u,Q^2)}{u}\\
+                             &= \int_\xi^1 \frac{du}{u} F_3(u,Q^2)\\
+                             &= ((z\to 1) \otimes F_3(z))(\xi)
+                \end{align*}
+
+            Returns
+            -------
+                h3 : dict
+                    ESF output for the integral
+
+        """
+        # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
+        # so to achieve a total 1/z we need to convolute with 1
+        return self._convolute_FX("F3", lambda z, xi=self._xi: 1 / xi * z)
+
+    def _get_result_exact(self):
+        # collect F3
+        F3out = self._SF.get_esf(
+            self._SF.obs_name, self._shifted_kinematics
+        ).get_result()
+        # compute integral
+        h3out = self._h3()
+
+        # join
+        return self._factor_shifted * F3out + self._factor_h3 * h3out
+
+
+ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL, "F3": ESFTMC_F3}
 """dict: mapping of ESF TMC classes
 
 This dictionary is used to redirect to the correct class from a string
