@@ -5,9 +5,12 @@ import pandas as pd
 from tinydb import TinyDB
 from human_dates import human_dates
 
+from yadism import observable_name as on
+
 from ..utils import unstr_datetime
 from .. import mode_selector
 from .df_list import DFlist
+from . import table_manager as tm
 
 t = "t"
 o = "o"
@@ -15,6 +18,14 @@ l = "l"
 
 
 class NavigatorApp(mode_selector.ModeSelector):
+    def __init__(self, mode):
+        super(NavigatorApp, self).__init__(mode)
+        self.theories = tm.TableManager(self.idb.table("theories"))
+        self.observable = tm.TableManager(self.idb.table("observable"))
+        self.apfel_cache = tm.TableManager(self.idb.table("apfel_cache"))
+        self.qcdnum_cache = tm.TableManager(self.idb.table("qcdnum_cache"))
+        self.logs = tm.TableManager(self.odb.table("logs"))
+
     def change_mode(self, mode):
         """Change mode"""
         super(NavigatorApp, self).__init__(mode)
@@ -26,14 +37,14 @@ class NavigatorApp(mode_selector.ModeSelector):
 
     def get(self, table, doc_id=None):
         """
-            Getter wrapper.
+        Getter wrapper.
 
-            Parameters
-            ----------
-                table : str
-                    table name to query: short cut or singular for one document or plural for all
-                doc_id :
-                    if given, retrieve single document
+        Parameters
+        ----------
+            table : str
+                table name to query: short cut or singular for one document or plural for all
+            doc_id :
+                if given, retrieve single document
         """
         r = None
         # list all
@@ -179,12 +190,15 @@ class NavigatorApp(mode_selector.ModeSelector):
             sfs = []
             esfs = 0
             for sf in l:
-                # TODO quick fix
-                if sf[0] != "F":
+                if not on.ObservableName.is_valid(sf):
                     continue
                 sfs.append(sf)
                 esfs += len(l[sf])
-            obj["structure_functions"] = " ".join(sfs) + f" at {esfs} points"
+            crash = l.get("_crash", None)
+            if crash is None:
+                obj["structure_functions"] = ",".join(sfs) + f" at {esfs} points"
+            else:
+                obj["structure_functions"] = f"{crash} for {l['_crash_sf']} at f{l['_crash_kin']}"
             for f in [
                 "_theory_doc_id",
                 "_observables_doc_id",
@@ -221,6 +235,13 @@ class NavigatorApp(mode_selector.ModeSelector):
                     document
         """
         return self.odb.table("logs").get(doc_id=doc_id)
+
+    def truncate_logs(self):
+        """Truncate all logs"""
+        if input("Purge all logs? [y/n]") != "y":
+            print("Doing nothing.")
+            return
+        return self.odb.table("logs").truncate()
 
     def get_log_DataFrames(self, doc_id):
         """

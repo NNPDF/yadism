@@ -66,7 +66,7 @@ class ApfelSandbox:
     def run_LO(self):
         return self._db().run_external(0, ["ToyLH"],{
             "FNS": self.db.theory_query.FNS == "ZM-VFNS",
-            "TMC": self.db.theory_query.TMC == 1,
+            #"TMC": self.db.theory_query.TMC == 0,
             # "DAMP": self.db.theory_query.DAMP == 0,
             })
 
@@ -77,7 +77,7 @@ class ApfelSandbox:
             {
             #"NfFF": self.db.theory_query.NfFF == 4,
             "FNS": self.db.theory_query.FNS == "FONLL-A",
-            "TMC": self.db.theory_query.TMC == 1,
+            #"TMC": self.db.theory_query.TMC == 1,
             #"FNS": self.db.theory_query.FNS == "ZM-VFNS",
             #"DAMP": self.db.theory_query.DAMP == 1,
             },
