@@ -58,9 +58,9 @@ structure.
    :maxdepth: 1
    :caption: Dev Tools
 
-   dev-tools/db-suite.rst
-   dev-tools/benchmark-runner.rst
    dev-tools/tests.rst
+   dev-tools/db-suite.rst
+   dev-tools/yadmark.rst
    dev-tools/third-party.rst
    dev-tools/code-todos.rst
 
