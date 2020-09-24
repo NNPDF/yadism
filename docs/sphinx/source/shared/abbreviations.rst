@@ -67,6 +67,10 @@
 
    <a href="https://apfel.mi.infn.it/"><abbr title="A PDF Evolution Library">APFEL</abbr></a>
 
+.. |QCDNUM| raw:: html
+
+   <a href="https://www.nikhef.nl/~h24/qcdnum/"><abbr title="Quantum ChromoDynamics NUM">QCDNUM</abbr></a>
+
 
 .. -----------
    not physics

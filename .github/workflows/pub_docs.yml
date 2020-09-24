@@ -63,6 +63,7 @@ jobs:
           if [ "$dest_dir" = "master" ]; then
             dest_dir="stable"
           fi
+          rm -rf js
           mv ~/home-page/* .
           rm -rf _assets
           mv ~/_assets .

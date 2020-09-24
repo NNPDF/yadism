@@ -6,6 +6,10 @@ through a proper database (currently implemented on `tinydb`).
 
 The suite currently consists of:
 
+.. todo::
+
+   Update with the current structure
+
 - some scripts able to fill an **input database** (filling includes creating it,
   if does not exist yet)
 - a **navigator**, able to display the content of both the *input database*,
@@ -26,13 +30,26 @@ it very easy to store, transfer and manage. No system-wide installation is
 needed to interact with the db, and can be easily sent around since it is a
 bare text file, nothing more than formatted.
 
-In principle it is always possible to explore the file content through any text
-editor, but in order to save space (and since it is designed to be managed by a
-proper tool) the readability its reduced because of lack of whitespaces, and
-the presence of internal structures.
+
+(Little) human readability
+""""""""""""""""""""""""""
+
+In principle it is always possible to explore
+the file content through any text editor, but in order to save space (and since
+it is designed to be managed by a proper tool) the readability its reduced
+because of lack of whitespaces, and the presence of internal structures.
+
 If needed it can be simply reformatted adding automatically whitespaces, but
 when available its always better to interact with it through the proper
-manager.
+manager (consider also that is a **huge** text file, that can break simple
+editors trying to load all at once).
 
 .. _document-oriented: https://en.wikipedia.org/wiki/Document-oriented_database
 .. _json: https://it.wikipedia.org/wiki/JavaScript_Object_Notation
+
+Git LFS
+-------
+
+In order to keep the databases in the projects we decided to use `git-lfs`
+(`git` Large File Storage), a tool integrating with `git` and designed
+specifically to manage large files inside a `git` repo.
