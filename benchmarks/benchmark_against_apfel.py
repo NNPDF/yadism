@@ -4,7 +4,7 @@
 
 import pytest
 
-from yadmark.db_interface import DBInterface
+from yadmark.benchmark.db_interface import DBInterface
 
 
 class ApfelBenchmark:

@@ -5,7 +5,7 @@ import copy
 
 import numpy as np
 
-from yadmark.db_interface import (  # pylint: disable=unused-import
+from yadmark.benchmark.db_interface import (  # pylint: disable=unused-import
     DBInterface,
     QueryFieldsEqual,
 )

@@ -3,7 +3,7 @@
 # Compare the results with QCDNUM
 
 import pytest
-from yadmark.db_interface import DBInterface, QueryFieldsEqual
+from yadmark.benchmark.db_interface import DBInterface, QueryFieldsEqual
 
 
 class QCDNUMBenchmark:
