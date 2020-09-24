@@ -7,6 +7,7 @@ class TableManager:
         table : tinydb.Table
             table
     """
+
     def __init__(self, table):
         self.table = table
 
