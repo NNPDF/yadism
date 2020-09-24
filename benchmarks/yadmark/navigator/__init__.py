@@ -75,6 +75,11 @@ def subtract_tables(*args):
 diff = subtract_tables
 
 
+def truncate_logs():
+    global app
+    return app.logs.truncate()
+
+
 def launch_navigator():
     c = Config()
     banner = """
