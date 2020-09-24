@@ -198,7 +198,9 @@ class NavigatorApp(mode_selector.ModeSelector):
             if crash is None:
                 obj["structure_functions"] = ",".join(sfs) + f" at {esfs} points"
             else:
-                obj["structure_functions"] = f"{crash} for {l['_crash_sf']} at f{l['_crash_kin']}"
+                obj[
+                    "structure_functions"
+                ] = f"{crash} for {l['_crash_sf']} at f{l['_crash_kin']}"
             for f in [
                 "_theory_doc_id",
                 "_observables_doc_id",

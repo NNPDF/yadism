@@ -331,7 +331,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         return approx_prefactor * F2out
 
     def _get_result_APFEL(self):
-        #return self._get_result_APFEL_strict()
+        # return self._get_result_APFEL_strict()
         # collect F2
         F2out = self._SF.get_esf(
             self._SF.obs_name, self._shifted_kinematics
@@ -391,6 +391,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             )
         # join
         return res
+
     ### ----- /APFEL stuffs
 
 
@@ -485,7 +486,7 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
         super(ESFTMC_F3, self).__init__(SF, kinematics)
         # shifted prefactor is common
         # beware that we are dealing with xF_3(x) and so xiF_3(xi) also on the right
-        self._factor_shifted = self._x**2 / (self._xi**2 * self._rho ** 2)
+        self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 2)
         # h3 comes with a seperate factor
         self._factor_h3 = 2.0 * self._mu * self._x ** 3 / (self._rho ** 3)
 
