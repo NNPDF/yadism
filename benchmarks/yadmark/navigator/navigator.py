@@ -124,23 +124,32 @@ class NavigatorApp(mode_selector.ModeSelector):
         data = []
         for o in obs:
             obj = {"doc_id": o.doc_id}
+            if "PTO" in o:
+                obj["PTO"] = o["PTO"]
             xgrid = o["interpolation_xgrid"]
-            obj["xgrid"] = "[{}, ..., {}] ({}) ".format(
-                min(xgrid), max(xgrid), len(xgrid)
-            )
-            obj["log"] = o["interpolation_is_log"]
-            obj["degree"] = o["interpolation_polynomial_degree"]
-            dt = unstr_datetime(o["_modify_time"])
-            obj["modified"] = human_dates(dt)
-            sfs = []
+            obj[
+                "xgrid"
+            ] = f"{len(xgrid)}pts: {'log' if o['interpolation_is_log'] else 'x'}^{o['interpolation_polynomial_degree']}"
+            obj["curr"] = o["prDIS"]
+            proj_map = {
+                "electron": "e-",
+                "positron": "e+",
+                "neutrino": "ν",
+                "antineutrino": "ν~",
+            }
+            obj["proj"] = proj_map[o["projectile"]]
+            obj["pol"] = o["PolarizationDIS"]
+            sfs = 0
             esfs = 0
             for sf in o:
                 # quick fix
-                if sf[0] != "F":
+                if not on.ObservableName.is_valid(sf):
                     continue
-                sfs.append(sf)
+                sfs += 1
                 esfs += len(o[sf])
-            obj["structure_functions"] = " ".join(sfs) + f" at {esfs} points"
+            obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
+            dt = unstr_datetime(o["_modify_time"])
+            obj["modified"] = human_dates(dt)
             data.append(obj)
         # output
         df = pd.DataFrame(data)
@@ -187,20 +196,20 @@ class NavigatorApp(mode_selector.ModeSelector):
         data = []
         for l in logs:
             obj = {"doc_id": l.doc_id}
-            sfs = []
+            sfs = 0
             esfs = 0
             for sf in l:
                 if not on.ObservableName.is_valid(sf):
                     continue
-                sfs.append(sf)
+                sfs += 1
                 esfs += len(l[sf])
             crash = l.get("_crash", None)
             if crash is None:
-                obj["structure_functions"] = ",".join(sfs) + f" at {esfs} points"
+                obj["structure_functions"] =  f"{sfs} SF @ {esfs} pts"
             else:
                 obj[
                     "structure_functions"
-                ] = f"{crash} for {l['_crash_sf']} at f{l['_crash_kin']}"
+                ] = f"{crash} for {l['_crash_sf']} at {l['_crash_kin']}"
             for f in [
                 "_theory_doc_id",
                 "_observables_doc_id",

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import itertools
 from datetime import datetime
 import argparse
 
@@ -7,15 +6,7 @@ import yaml
 
 from .. import mode_selector
 from ..utils import str_datetime
-
-
-def my_product(inp):
-    """
-    Thank you: https://stackoverflow.com/questions/5228158/
-    """
-    return [
-        dict(zip(inp.keys(), values)) for values in itertools.product(*inp.values())
-    ]
+from . import power_set
 
 
 class TheoriesGenerator(mode_selector.ModeSelector):
@@ -68,7 +59,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
         # write all possible combinations
         theories_table = self.idb.table("theories")
         theories_table.truncate()
-        for config in my_product(matrix):
+        for config in power_set(matrix):
             template.update(config)
             template["_modify_time"] = str_datetime(datetime.now())
             theories_table.insert(template)

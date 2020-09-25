@@ -9,6 +9,9 @@ import tinydb
 import pytest
 
 import rich
+import rich.box
+import rich.panel
+import rich.progress
 import rich.markdown
 
 from yadism.runner import Runner
@@ -16,8 +19,8 @@ from yadism import observable_name
 
 from .. import toyLH
 from .. import utils
+from .. import mode_selector
 from . import external
-from . import mode_selector
 
 
 class QueryFieldsEqual(tinydb.queries.QueryInstance):
@@ -158,7 +161,14 @@ class DBInterface(mode_selector.ModeSelector):
 
     def run_queries_external(self, theory_query, obs_query, pdfs):
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
-        for theory, obs in itertools.product(theories, observables):
+        rich.print(
+            rich.panel.Panel.fit(
+                f" Theories: {len(theories)}\n" f" Observables: {len(observables)}",
+                rich.box.HORIZONTALS,
+            )
+        )
+        full = itertools.product(theories, observables)
+        for theory, obs in rich.progress.track(full,total=len(theories)*len(observables)):
             # create our own object
             runner = Runner(theory, obs)
             for pdf_name in pdfs:
@@ -226,7 +236,9 @@ class DBInterface(mode_selector.ModeSelector):
         kin["yadism"] = fx = yad["result"]
         kin["yadism_error"] = err = yad["error"]
         # test equality
-        if assert_external is not None:
+        if assert_external is not False:
+            if not isinstance(assert_external, dict):
+                assert_external = {}
             assert (
                 pytest.approx(
                     ref,
@@ -304,7 +316,7 @@ class DBInterface(mode_selector.ModeSelector):
                 kin["Q2"] = yad["Q2"]
                 # preprocess assertion contraints
                 if callable(assert_external):
-                    assert_external_dict = assert_external(theory, sf, yad)
+                    assert_external_dict = assert_external(theory, observables, sf, yad)
                 else:
                     assert_external_dict = assert_external
                 # run actual comparison
@@ -314,6 +326,10 @@ class DBInterface(mode_selector.ModeSelector):
                     log_tab["_crash"] = e
                     log_tab["_crash_sf"] = sf
                     log_tab["_crash_kin"] = kin
+                    log_tab["_crash_yadism"] = yad
+                    log_tab["_crash_other"] = oth
+                    log_tab["_crash_external"] = external
+                    log_tab["_crash_assert_rule"] = assert_external_dict
                     # __import__("pdb").set_trace()
                     return log_tab
                 kinematics.append(kin)

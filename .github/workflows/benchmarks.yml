@@ -48,7 +48,7 @@ jobs:
       - name: Test yadism
         run: |
           # run tests
-          pytest -m commit_check benchmarks/benchmark_against_apfel.py
+          pytest -m commit_check benchmarks/runners/benchmark_against_*.py
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
