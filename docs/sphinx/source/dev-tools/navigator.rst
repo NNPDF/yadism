@@ -1,11 +1,8 @@
 Navigator
 =========
 
-Enter through the entry script `navigator` running:
-```shell
-./navigator
-```
-in `benchmarks` folder.
+Enter in the `navigator` simply running ``navigator`` command, installed with
+the `yadmark` package.
 
 The script will load the full interface and drop into an `ipython` interpreter
 instance, so the interface is available as a set of python functions.

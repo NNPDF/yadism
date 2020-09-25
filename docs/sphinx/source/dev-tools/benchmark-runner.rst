@@ -1,6 +1,16 @@
 Benchmark Runner
 ================
 
+.. todo::
+
+   It is not anymore an ecosystem of scripts but a proper object-oriented
+   python subpackage.
+
+   - update the status
+   - describe the description of the API (how the user can interact with the
+     runner itself)
+   - describe the current design
+
 Generating Ecosystem
 --------------------
 It currently consists of some scripts able to iterate properly over the

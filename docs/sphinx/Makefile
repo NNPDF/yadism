@@ -8,6 +8,7 @@ SOURCEDIR     = source
 BUILDDIR      = build
 
 SRCDIR = ../../src/yadism
+YADMARKDIR = ../../benchmarks/yadmark
 
 TODOOUTFILE = ./source/dev-tools/code-todos.rst
 
@@ -19,7 +20,9 @@ help:
 
 html: todos
 	sphinx-apidoc -o ./source/modules --module-first $(SRCDIR)
-	@rm -f ./source/modules/modules.rst ./source/modules/*/modules.rst}
+	@rm -f ./source/modules/modules.rst
+	sphinx-apidoc -o ./source/dev-tools/yadmark --module-first $(YADMARKDIR)
+	@rm -f ./source/dev-tools/yadmark/modules.rst
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 view: html
