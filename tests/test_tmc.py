@@ -3,8 +3,8 @@ import numpy as np
 import pytest
 
 from yadism import observable_name
-import yadism.structure_functions.tmc as TMC
-from yadism.structure_functions.esf_result import ESFResult
+import yadism.tmc as TMC
+from yadism.esf.esf_result import ESFResult
 
 from eko.interpolation import InterpolatorDispatcher
 
@@ -43,7 +43,8 @@ class MockTMC(TMC.EvaluatedStructureFunctionTMC):
 
 @pytest.mark.quick_check
 class TestTMC:
-    @pytest.mark.eko
+    # @pytest.mark.eko
+    @pytest.mark.skip
     def test_convolute_F2_empty(self):
         xg = np.array([0.2, 0.6, 1.0])
 
@@ -81,7 +82,8 @@ class TestTMC:
         res = obj._h2()
         is0(res)
 
-    @pytest.mark.eko
+    # @pytest.mark.eko
+    @pytest.mark.skip
     def test_convolute_F2_delta(self):
         xg = np.array([0.2, 0.6, 1.0])
 

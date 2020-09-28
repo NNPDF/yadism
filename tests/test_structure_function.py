@@ -3,7 +3,7 @@ import pytest
 
 from yadism import observable_name
 from yadism.sf import StructureFunction
-from yadism.structure_functions import ESFmap
+from yadism.esf import ESFmap
 
 
 class MockRunner:
@@ -44,12 +44,17 @@ class TestStructureFunction:
         r = MockRunner()
         eko_components = MockDict()
         theory_params = MockDict()
+        obs_params = MockDict()
 
         # becarefull about what the esf instantiation need
         for name in ["FLlight", "F2light"]:
             obs_name = observable_name.ObservableName(name)
             sf = StructureFunction(
-                obs_name, r, eko_components=eko_components, theory_params=theory_params
+                obs_name,
+                r,
+                eko_components=eko_components,
+                theory_params=theory_params,
+                obs_params=obs_params,
             )
             # test mapping to self
             assert len(sf._StructureFunction__ESFcache) == 0
@@ -66,11 +71,16 @@ class TestStructureFunction:
         r = MockRunner()
         eko_components = MockDict()
         theory_params = MockDict()
+        obs_params = MockDict()
 
         name = observable_name.ObservableName("FLlight")
 
         sf = StructureFunction(
-            name, r, eko_components=eko_components, theory_params=theory_params
+            name,
+            r,
+            eko_components=eko_components,
+            theory_params=theory_params,
+            obs_params=obs_params,
         )
         with pytest.raises(ValueError):
             sf.get_esf(name, {"x": 0.1, "Q2": 1})

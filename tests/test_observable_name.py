@@ -3,6 +3,7 @@ import pytest
 
 from yadism.observable_name import ObservableName as ON
 
+
 class TestObservableName:
     def test_init(self):
         with pytest.raises(ValueError):
@@ -13,13 +14,13 @@ class TestObservableName:
     def test_all(self):
         all_obs_names = [o.name for o in ON.all()]
         assert "F2light" in all_obs_names
-        # [2L] * [l,t,2*(cbt)]
-        assert len(all_obs_names) == 2*(1 + 1 + 3*2)
+        # [2,L,3] * [l,t,(c,b,t)*(-,asy,light)]
+        assert len(all_obs_names) == 3 * (1 + 1 + 3 * 3)
 
     def test_f2light(self):
         k = "F2"
         f = "light"
-        n=k+f
+        n = k + f
         o = ON(n)
         assert o.kind == k
         assert o.flavor == f
@@ -33,12 +34,12 @@ class TestObservableName:
         assert not o.is_asy
         assert not o.is_composed
 
-        assert o != ON("FL"+f)
+        assert o != ON("FL" + f)
         assert o.apply_kind("FL").flavor == f
         assert o == o.apply_flavor_family()
         assert ON.is_valid(n)
-        assert ON.has_lights(["abc",n])
-        assert not ON.has_heavies(["abc",n])
+        assert ON.has_lights(["abc", n])
+        assert not ON.has_heavies(["abc", n])
 
         # check asy
         with pytest.raises(ValueError):
@@ -47,7 +48,7 @@ class TestObservableName:
     def test_flc(self):
         k = "F2"
         f = "charm"
-        n=k+f
+        n = k + f
         o = ON(n)
         assert o.kind == k
         assert o.flavor == f
@@ -62,11 +63,11 @@ class TestObservableName:
         assert not o.is_asy
         assert not o.is_composed
 
-        assert o != ON("FL"+f)
+        assert o != ON("FL" + f)
         assert o.apply_kind("FL").flavor == f
         assert ON.is_valid(n)
-        assert not ON.has_lights(["abc",n])
-        assert ON.has_heavies(["abc",n])
+        assert not ON.has_lights(["abc", n])
+        assert ON.has_heavies(["abc", n])
 
         # check asy
         oa = o.apply_asy()
