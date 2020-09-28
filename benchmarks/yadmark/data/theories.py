@@ -3,7 +3,9 @@ from datetime import datetime
 import argparse
 import pathlib
 
+import numpy as np
 import yaml
+import rich.progress
 
 from .. import mode_selector
 from ..utils import str_datetime
@@ -63,7 +65,10 @@ class TheoriesGenerator(mode_selector.ModeSelector):
         # write all possible combinations
         theories_table = self.idb.table("theories")
         theories_table.truncate()
-        for config in power_set(matrix):
+        full = power_set(matrix)
+        for config in rich.progress.track(
+            full, total=np.prod([len(v) for v in matrix.values()])
+        ):
             template.update(config)
             template["_modify_time"] = str_datetime(datetime.now())
             theories_table.insert(template)
