@@ -205,7 +205,7 @@ class NavigatorApp(mode_selector.ModeSelector):
                 esfs += len(l[sf])
             crash = l.get("_crash", None)
             if crash is None:
-                obj["structure_functions"] =  f"{sfs} SF @ {esfs} pts"
+                obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
             else:
                 obj[
                     "structure_functions"

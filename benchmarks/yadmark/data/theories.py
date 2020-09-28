@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import argparse
+import pathlib
 
 import yaml
 
 from .. import mode_selector
 from ..utils import str_datetime
 from . import power_set
+
+here = pathlib.Path(__file__).parent
 
 
 class TheoriesGenerator(mode_selector.ModeSelector):
@@ -21,6 +24,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
 
     def get_matrix(self):
         """Gather all available options"""
+        # QCDNUM has only limited options
         if self.mode == "QCDNUM":
             return {
                 "PTO": [0, 1],
@@ -30,7 +34,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 "FNS": ["FFNS", "ZM-VFNS"],
             }
         # we're aiming for a APFEL replacement, so they appread naturally together
-        if self.mode in ["APFEL", "QCDNUM"]:
+        if self.mode in ["APFEL", "regression"]:
             return {
                 "PTO": [0, 1],
                 "XIR": [0.5, 1.0, 2.0],
@@ -54,7 +58,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
     def write_matrix(self, matrix):
         """Insert all test options"""
         # read template
-        with open(self.data_dir.parent / "theory_template.yaml") as f:
+        with open(here / "theory_template.yaml") as f:
             template = yaml.safe_load(f)
         # write all possible combinations
         theories_table = self.idb.table("theories")
