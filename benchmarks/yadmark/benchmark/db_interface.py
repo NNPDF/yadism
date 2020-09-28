@@ -91,13 +91,15 @@ class DBInterface(mode_selector.ModeSelector):
         """
         Regenerates the regression data.
         """
-        ask = input("Regenerate regression data? [y/n]")
-        if ask != "y":
-            print("Nothing done.")
-            return
+        #ask = input("Regenerate regression data? [y/n]")
+        #if ask != "y":
+        #    print("Nothing done.")
+        #    return
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
-        for theory, obs in itertools.product(theories, observables):
-            # run against apfel (test)
+        full = itertools.product(theories, observables)
+        for theory, obs in rich.progress.track(
+            full, total=len(theories) * len(observables)
+        ):
             self.generate_regression(theory, obs)
 
     def generate_regression(self, theory, obs):
