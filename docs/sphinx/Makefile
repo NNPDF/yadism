@@ -25,10 +25,10 @@ html: todos
 	@rm -f ./source/dev-tools/yadmark/modules.rst
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-view: html
+view:
 	$(BROWSER) $(BUILDDIR)/html/index.html
 
-server: html
+server:
 	python3 -m http.server 8000 --bind 127.0.0.1 --directory build/html &
 	$(BROWSER) 127.0.0.1:8000/index.html
 

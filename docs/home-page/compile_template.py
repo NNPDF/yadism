@@ -7,17 +7,31 @@ import pygit2
 from jinja2 import Environment, FileSystemLoader
 import semver
 
-here = pathlib.Path(__file__)
-repo_path = here.absolute().parents[2]
-repo = pygit2.Repository(repo_path)
-
 # ==========
 # globals
 # ==========
 
 
 here = pathlib.Path(__file__).parent.absolute()
-env = Environment(loader=FileSystemLoader(str(here)))
+
+# Input
+# first the environment is loaded, and it will need the dir to load, then the
+# file is required, relative to the environment
+input_rel_path = pathlib.Path(sys.argv[1])
+input_dir = here / input_rel_path.parent
+input_file = input_rel_path.name
+
+# Output
+# needed for dumping, so it is directly the rel_path
+output_rel_path = pathlib.Path(sys.argv[2])
+output_file = output_rel_path
+
+# git repo
+repo_path = here.parents[1]
+repo = pygit2.Repository(repo_path)
+
+# jinja env
+env = Environment(loader=FileSystemLoader(str(input_dir)))
 
 
 def get_tags():
@@ -84,6 +98,6 @@ versions = tags_to_dict(filter_recent_tags("0.0.0", get_tags()))
 # ==========
 
 data = dict(versions=versions)
-template = env.get_template(sys.argv[1])
+template = env.get_template(str(input_file))
 stream = template.stream(data)
-stream.dump(str(here / sys.argv[2]))
+stream.dump(str(output_file))

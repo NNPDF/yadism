@@ -4,6 +4,8 @@
 @import "node_modules/bulma/sass/components/dropdown.sass";
 @import url("https://fonts.googleapis.com/css2?family=Grandstander:ital,wght@0,200;0,500;0,900;1,200;1,500;1,900&display=swap");
 
+// General
+
 body,
 html {
   margin: 0;
@@ -19,6 +21,56 @@ html {
 
 #home-page {
   height: 100vh;
+  background-color: #fff0d440;
+}
+
+// ┌─────────────┐
+// │flex defaults│
+// └─────────────┘
+
+.column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.item {
+}
+
+//
+// ┌────────┐
+// │elements│
+// └────────┘
+
+// top-bottom rows
+
+.external-logo {
+  width: 13em;
+  margin: 2em 3em;
+}
+
+#top-row .item,
+#bottom-row .item {
+  flex-grow: 1;
+
+  &.spacer {
+    flex-grow: 1000;
+  }
+}
+
+.signature {
+  margin: 1em 2em;
+}
+
+// central-matter
+
+#central-matter {
   justify-content: center;
 }
 
@@ -27,18 +79,8 @@ html {
   font-weight: 500;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.item {
-}
-
 .version-row {
-  @extend .container;
-  flex-direction: row;
+  @extend .row;
   justify-content: center;
 }
 
@@ -51,4 +93,8 @@ html {
 
 .dropdown {
   margin: 2em;
+}
+
+#cm-bottom-spacer {
+  flex-basis: 7em;
 }

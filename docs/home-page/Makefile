@@ -1,8 +1,9 @@
 SASS="./node_modules/dart-sass/sass.js"
-
-.PHONY: all html css _js view clean
+JINJA_BLOCKS=$(filter-out jinja/index.html.jinja, $(wildcard jinja/*.html.jinja)) 
 
 all: html css _js
+
+.PHONY: all html css _js view clean
 
 html: build/index.html
 
@@ -13,7 +14,7 @@ _js: build/js
 build:
 	@mkdir -p build
 
-build/index.html: index.html.jinja build
+build/index.html: jinja/index.html.jinja build $(JINJA_BLOCKS)
 	@echo "\e[1m\e[4m\e[35mFilling HTML templates:\e[0m"
 	python3 compile_template.py $< $@
 	@echo
@@ -33,3 +34,4 @@ view:
 
 clean:
 	rm -rf build
+

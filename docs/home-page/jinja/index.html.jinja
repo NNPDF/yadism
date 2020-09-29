@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Yadism documentation - Home</title>
+    <link rel="stylesheet" href="home.css" />
+    <script
+      defer=""
+      src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"
+    ></script>
+  </head>
+  <body>
+    <div id="home-page" class="column">
+      <div class="item">
+        {% include 'top-row.html.jinja' %}
+      </div>
+      <div class="item">
+        {% include 'central-matter.html.jinja' %}
+      </div>
+      <div class="item">
+        {% include 'bottom-row.html.jinja' %}
+      </div>
+    </div>
+    <script src="js/main.js"></script>
+    <script src="js/clipboard-1.7.1.min.js"></script>
+  </body>
+</html>
