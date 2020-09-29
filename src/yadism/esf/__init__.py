@@ -2,9 +2,6 @@
 """
 This subpackage contains the implementation of the DIS structure functions.
 
-The 3-loop reference is :cite:`???-RSL` which includes also the lower
-order results.
-
 .. todo::
     docs
 """

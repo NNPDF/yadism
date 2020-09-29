@@ -24,11 +24,3 @@ yadmark.benchmark.db\_interface module
    :members:
    :undoc-members:
    :show-inheritance:
-
-yadmark.benchmark.mode\_selector module
----------------------------------------
-
-.. automodule:: yadmark.benchmark.mode_selector
-   :members:
-   :undoc-members:
-   :show-inheritance:

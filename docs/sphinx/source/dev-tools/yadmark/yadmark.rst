@@ -19,6 +19,14 @@ Subpackages
 Submodules
 ----------
 
+yadmark.mode\_selector module
+-----------------------------
+
+.. automodule:: yadmark.mode_selector
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 yadmark.toyLH module
 --------------------
 

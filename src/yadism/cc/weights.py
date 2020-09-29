@@ -1,19 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-    - sf = F3
-    - q = 2 (i.e. u-quark)
-    - q%2 = 2%2 = 0
-    # projectile = e+ -> rest = 1
-    - sign = -1
-    - weight[2] is not set (i.e. 0) 
-    - weight[-2] = -w
-    # projectile = e- -> rest = 0
-    - sign = 1
-    - weight[2] = w
-    - weight[-2] is not set
-    # together
-    - weight[2] + weight[-2] changes sign
-    - weight[2] - weight[-2] does NOT change sign
+Note
+----
+Brief proof of @F3-sign@ for singlet and non-singlet combinations
+
+- sf = F3
+- q = 2 (i.e. u-quark)
+- q%2 = 2%2 = 0
+
+projectile = e+ -> rest = 1
+- sign = -1
+- weight[2] is not set (i.e. 0) 
+- weight[-2] = -w
+
+projectile = e- -> rest = 0
+- sign = 1
+- weight[2] = w
+- weight[-2] is not set
+
+together
+- weight[2] + weight[-2] changes sign
+- weight[2] - weight[-2] does NOT change sign
+
 """
 
 
@@ -39,6 +47,7 @@ def weights(obs_name, coupling_constants, Q2):
         w = coupling_constants.get_weight(
             q, Q2, obs_name.kind, cc_flavor=obs_name.raw_flavor
         )
+        # @F3-sign@
         weights["q"][sign * q] = w if obs_name.kind != "F3" else sign * w
         tot_ch_sq += w
     # gluon coupling = charge sum

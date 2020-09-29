@@ -8,7 +8,9 @@ SOURCEDIR     = source
 BUILDDIR      = build
 
 SRCDIR = ../../src/yadism
+YADISMOUT = $(SOURCEDIR)/modules
 YADMARKDIR = ../../benchmarks/yadmark
+YADMARKOUT = $(SOURCEDIR)/dev-tools/yadmark
 
 TODOOUTFILE = ./source/dev-tools/code-todos.rst
 
@@ -16,13 +18,13 @@ TODOOUTFILE = ./source/dev-tools/code-todos.rst
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help html view clean cleanall
+.PHONY: help html view clean clean-todos cleanall
 
 html: todos
-	sphinx-apidoc -o ./source/modules --module-first $(SRCDIR)
-	@rm -f ./source/modules/modules.rst
-	sphinx-apidoc -o ./source/dev-tools/yadmark --module-first $(YADMARKDIR)
-	@rm -f ./source/dev-tools/yadmark/modules.rst
+	sphinx-apidoc -o $(YADISMOUT) --module-first $(SRCDIR)
+	@rm -f $(YADISMOUT)/modules.rst
+	sphinx-apidoc -o $(YADMARKOUT) --module-first $(YADMARKDIR)
+	@rm -f $(YADMARKOUT)/modules.rst
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 view:
@@ -37,7 +39,8 @@ clean:
 	rm -rf _build
 
 cleanall: clean clean-todos
-	rm -rf $(SOURCEDIR)/modules
+	rm -rf $(YADISMOUT)
+	rm -rf $(YADMARKOUT)
 
 # TODOs
 todos:

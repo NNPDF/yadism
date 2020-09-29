@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 toyLHPDFs from APFEL:
---------------------
+---------------------
 This routine returns the toyLH PDFs at the intitial scale
 which is supposed to be Q = sqrt(2) GeV.
 """

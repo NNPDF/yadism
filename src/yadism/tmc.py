@@ -82,7 +82,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         """
             This method is defined by subclasses to provide the implementation
             of TMC calculation according to the same formula used by APFEL, see
-            :cite:`???`
+            :cite:`nnpdf-1.0`
 
             .. todo::
 

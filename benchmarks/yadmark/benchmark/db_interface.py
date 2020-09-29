@@ -91,8 +91,8 @@ class DBInterface(mode_selector.ModeSelector):
         """
         Regenerates the regression data.
         """
-        #ask = input("Regenerate regression data? [y/n]")
-        #if ask != "y":
+        # ask = input("Regenerate regression data? [y/n]")
+        # if ask != "y":
         #    print("Nothing done.")
         #    return
         theories, observables = self._load_input_from_queries(theory_query, obs_query)

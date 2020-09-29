@@ -54,21 +54,21 @@ class EvaluatedStructureFunction:
 
         .. _local-caching:
 
-        Caching
-        ~~~~~~~
+        .. admonition:: Cache
 
-        A part of the overall caching system is implemented at this level.
+            A part of the overall caching system is implemented at this level.
 
-        The one implemented here is only a **local, isolated** caching, i.e.:
+            The one implemented here is only a **local, isolated** caching,
+            i.e.:
 
-        - the first time the instance is asked for computing the result, through
-          the :py:meth:`get_output` method, it registers the result;
-        - any following call to the :py:meth:`get_output` method will make use
-          of the cached result, and will never recompute it.
+            - the first time the instance is asked for computing the result,
+              through the :py:meth:`get_output` method, it registers the result;
+            - any following call to the :py:meth:`get_output` method will make
+              use of the cached result, and will never recompute it.
 
-        If another instance with the same attributes is asked for the result it
-        will recompute it from scratch, because any instance is isolated and
-        doesn't keep any reference to the others.
+            If another instance with the same attributes is asked for the result
+            it will recompute it from scratch, because any instance is isolated
+            and doesn't keep any reference to the others.
 
         Parameters
         ----------
