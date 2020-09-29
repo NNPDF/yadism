@@ -17,8 +17,8 @@ class TestRegression:
 
     def _run(self, t_query):
         o_query = self.db.obs_query.noop()
-        # self.db.run_generate_regression(t_query, o_query)
-        self.db.run_queries_regression(t_query, o_query)
+        self.db.run_generate_regression(t_query, o_query)
+        #self.db.run_queries_regression(t_query, o_query)
 
     def test_one_hot(self):
         self._db()

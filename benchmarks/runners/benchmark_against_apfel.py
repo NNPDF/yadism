@@ -163,10 +163,10 @@ class BenchmarkFNS(ApfelBenchmark):
 
 
 if __name__ == "__main__":
-    #plain = BenchmarkPlain()
-    #plain.benchmark_LO()
-    #plain.benchmark_NLO()
+    # plain = BenchmarkPlain()
+    # plain.benchmark_LO()
+    # plain.benchmark_NLO()
 
     proj = BenchmarkProjectile()
     proj.benchmark_LO()
-    #proj.benchmark_NLO()
+    # proj.benchmark_NLO()

@@ -71,27 +71,41 @@ class DBInterface(mode_selector.ModeSelector):
         }
 
     def _load_input_from_queries(self, theory_query, obs_query):
+        """
+        Retrieve (JSON) data form the DB using the queries
+        """
         theories = self.idb.table("theories").search(theory_query)
         observables = self.idb.table("observables").search(obs_query)
         return theories, observables
 
     def run_queries_regression(self, theory_query, obs_query):
+        """
+        Do the regression test.
+        """
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
         for theory, obs in itertools.product(theories, observables):
             # run against regression data
             self.run_regression(theory, obs)
 
     def run_generate_regression(self, theory_query, obs_query):
-        ask = input("Regenerate regression data? [y/n]")
-        if ask != "y":
-            print("Nothing done.")
-            return
+        """
+        Regenerates the regression data.
+        """
+        #ask = input("Regenerate regression data? [y/n]")
+        #if ask != "y":
+        #    print("Nothing done.")
+        #    return
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
-        for theory, obs in itertools.product(theories, observables):
-            # run against apfel (test)
+        full = itertools.product(theories, observables)
+        for theory, obs in rich.progress.track(
+            full, total=len(theories) * len(observables)
+        ):
             self.generate_regression(theory, obs)
 
     def generate_regression(self, theory, obs):
+        """
+        Generates a single regression point.
+        """
         runner = Runner(theory, obs)
         out = runner.get_output()
         # add metadata to log record
@@ -112,6 +126,9 @@ class DBInterface(mode_selector.ModeSelector):
         self.idb.table("regressions").insert(out)
 
     def run_regression(self, theory, obs):
+        """
+        Run a single regression point.
+        """
         runner = Runner(theory, obs)
         try:
             out = runner.get_output()
@@ -168,7 +185,9 @@ class DBInterface(mode_selector.ModeSelector):
             )
         )
         full = itertools.product(theories, observables)
-        for theory, obs in rich.progress.track(full,total=len(theories)*len(observables)):
+        for theory, obs in rich.progress.track(
+            full, total=len(theories) * len(observables)
+        ):
             # create our own object
             runner = Runner(theory, obs)
             for pdf_name in pdfs:

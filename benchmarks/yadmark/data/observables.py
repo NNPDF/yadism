@@ -25,16 +25,26 @@ def regression_cards(defaults):
             list of cards
     """
     # only use a single card
-    reg = copy.deepcopy(defaults)
-    reg["prDIS"] = "EM"
-    reg["F2light"] = [dict(x=0.01, Q2=90), dict(x=0.8, Q2=190)]
-    reg["FLlight"] = [dict(x=0.1, Q2=190)]
-    for kind in ["F2", "FL"]:
-        reg[f"{kind}charm"] = [dict(x=0.01, Q2=50)]
-        reg[f"{kind}bottom"] = [dict(x=0.01, Q2=100)]
-        reg[f"{kind}top"] = [dict(x=0.01, Q2=1000)]
-        reg[f"{kind}total"] = [dict(x=0.01, Q2=90)]
-    return [reg]
+    cards = []
+    # iterate all options
+    matrix = dict(
+        prDIS=["EM", "NC", "CC"],
+        projectile=["electron", "positron", "neutrino", "antineutrino"],
+        PolarizationDIS=[0, 0.6],
+    )
+    for cfg in power_set(matrix):
+        reg = copy.deepcopy(defaults)
+        reg.update(cfg)
+        reg["F2light"] = [dict(x=0.01, Q2=90), dict(x=0.8, Q2=190)]
+        reg["FLlight"] = [dict(x=0.1, Q2=190)]
+        reg["F3light"] = [dict(x=0.1, Q2=190)]
+        for kind in ["F2", "FL", "F3"]:
+            reg[f"{kind}charm"] = [dict(x=0.01, Q2=50)]
+            reg[f"{kind}bottom"] = [dict(x=0.01, Q2=100)]
+            reg[f"{kind}top"] = [dict(x=0.01, Q2=1000)]
+            reg[f"{kind}total"] = [dict(x=0.01, Q2=90)]
+        cards.append(reg)
+    return cards
 
 
 def external_cards(defaults, mode):
