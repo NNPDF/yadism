@@ -6,11 +6,15 @@ Unit tests are provided to test all the components of the package isolated.
 Strategy
 --------
 
-#. **Minimal:** The setup for each test is kept always minimal, trying to reduce each test to
+
+Minimal
+   The setup for each test is kept always minimal, trying to reduce each test to
    its atomic components.
-#. **Mocking:** If needed some structures are mocked to be able to run piece of codes the
+Mocking
+   If needed some structures are mocked to be able to run piece of codes the
    depend on the presence of something else.
-#. **Errors:** Even the error raising is tested, to ensure its consistency.
+Errors
+   Even the error raising is tested, to ensure its consistency.
 
 Coverage
 --------

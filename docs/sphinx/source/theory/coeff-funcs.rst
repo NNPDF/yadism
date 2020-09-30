@@ -70,6 +70,7 @@ deserve special care:
    \text{d} z \left(\frac{f(z)}{z} - f(1)\right) \cdot h(z) - f(1) \int_0^x
    \text{d} z~ h(z)
 
+.
    as it is derived in the previous section; the first bit will be the plus
    distribution contribution to the *singular*, while the second to the *local*
    part of the integration
