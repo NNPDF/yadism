@@ -1,5 +1,16 @@
 .. define abbreviations & bla bla
 
+
+.. -------
+   general
+   -------
+
+.. |SM| replace::
+   :abbr:`SM (Standard Model)`
+
+.. |EW| replace::
+   :abbr:`EW (ElectroWeak)`
+
 .. ---------
    processes
    ---------
@@ -7,11 +18,14 @@
 .. |DIS| replace::
    :abbr:`DIS (Deep Inelastic Scattering)`
 
+.. |EM| replace::
+   :abbr:`EM (Electromagnetic Current)`
+
 .. |NC| replace::
    :abbr:`NC (Neutral Current)`
 
-.. |EM| replace::
-   :abbr:`EM (Electromagnetic Current)`
+.. |CC| replace::
+   :abbr:`CC (Charged Current)`
 
 .. -------------------
    perturbative orders
