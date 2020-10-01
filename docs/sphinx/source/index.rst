@@ -12,6 +12,25 @@ Yadism documentation
 `yadism` is a wonderful package for computing |DIS| observables replacing the
 corresponding one inside |APFEL|.
 
+Features
+~~~~~~~~
+
+**Features** already implemented include:
+
+- |LO| structure functions
+- |NLO| structure functions
+
+  1. scale variations
+  2. target mass corrections
+  3. flavor number schemes
+
+The implemented structure functions are :math:`F_2,~F_L,~F_3` for the following
+|DIS| processes:
+
+- |EM|
+- |NC|
+- |CC|
+
 .. toctree::
    :maxdepth: 1
    :caption: Package Reference
@@ -23,20 +42,6 @@ corresponding one inside |APFEL|.
 
 In these :underlined:`documents` you can find the reference for all *yadism* API and internals.
 
-**Features** already implemented include:
-
-- |LO| structure functions (|EM|)
-- |NLO| structure functions (|EM|)
-- |NLO| scale variations
-- |NLO| target mass corrections
-  
-  - almost completed, coming soon
-
-- |NLO| flavor number schemes
-
-  - |FFNS| and |ZM-VFNS| only
-
-
 .. toctree::
    :maxdepth: 1
    :caption: Theory
@@ -45,6 +50,7 @@ In these :underlined:`documents` you can find the reference for all *yadism* API
    theory/coeff-funcs.rst 
    theory/light-flavors.rst
    theory/heavy-flavors.rst
+   theory/processes.rst
    theory/scale-variations.rst
    theory/TMC.rst
 
