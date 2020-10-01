@@ -17,9 +17,9 @@ class TestRegression:
 
     def _run(self, t_query):
         o_query = self.db.obs_query.noop()
-        #o_query = ((self.db.obs_query.prDIS == "EM") & (self.db.obs_query.projectile == "electron") & (self.db.obs_query.PolarizationDIS == 0))
+        # o_query = ((self.db.obs_query.prDIS == "EM") & (self.db.obs_query.projectile == "electron") & (self.db.obs_query.PolarizationDIS == 0))
         self.db.run_generate_regression(t_query, o_query)
-        #self.db.run_queries_regression(t_query, o_query)
+        # self.db.run_queries_regression(t_query, o_query)
 
     def test_one_hot(self):
         self._db()

@@ -88,11 +88,9 @@ def launch_navigator():
     """
     c.TerminalInteractiveShell.banner2 = inspect.cleandoc(banner) + "\n" * 2
 
-    init_cmds = ["""from yadmark.navigator import *""","""from yadism import *"""]
+    init_cmds = ["""from yadmark.navigator import *""", """from yadism import *"""]
     args = ["--pylab"]
     for cmd in init_cmds:
         args.append(f"--InteractiveShellApp.exec_lines={cmd}")
 
-    IPython.start_ipython(
-        argv=args, config=c
-    )
+    IPython.start_ipython(argv=args, config=c)

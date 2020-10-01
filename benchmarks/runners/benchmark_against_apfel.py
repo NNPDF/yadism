@@ -114,10 +114,14 @@ class BenchmarkScaleVariations(ApfelBenchmark):
     """Vary factorization and renormalization scale"""
 
     def benchmark_LO(self):
-        return self.run_external(0, ["CT14llo_NF3"], {"XIR": None, "XIF": None})
+        return self.run_external(
+            0, ["CT14llo_NF3"], {"XIR": None, "XIF": None}, {"prDIS": None}
+        )
 
     def benchmark_NLO(self):
-        return self.run_external(1, ["CT14llo_NF3"], {"XIR": None, "XIF": None})
+        return self.run_external(
+            1, ["CT14llo_NF3"], {"XIR": None, "XIF": None}, {"prDIS": None}
+        )
 
 
 @pytest.mark.commit_check
