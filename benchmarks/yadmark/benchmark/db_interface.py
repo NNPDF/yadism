@@ -76,6 +76,12 @@ class DBInterface(mode_selector.ModeSelector):
         """
         theories = self.idb.table("theories").search(theory_query)
         observables = self.idb.table("observables").search(obs_query)
+        rich.print(
+            rich.panel.Panel.fit(
+                f" Theories: {len(theories)}\n" f" Observables: {len(observables)}",
+                rich.box.HORIZONTALS,
+            )
+        )
         return theories, observables
 
     def run_queries_regression(self, theory_query, obs_query):
@@ -95,6 +101,7 @@ class DBInterface(mode_selector.ModeSelector):
         # if ask != "y":
         #    print("Nothing done.")
         #    return
+        self.idb.table("regressions").truncate()
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
         full = itertools.product(theories, observables)
         for theory, obs in rich.progress.track(
@@ -178,12 +185,6 @@ class DBInterface(mode_selector.ModeSelector):
 
     def run_queries_external(self, theory_query, obs_query, pdfs):
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
-        rich.print(
-            rich.panel.Panel.fit(
-                f" Theories: {len(theories)}\n" f" Observables: {len(observables)}",
-                rich.box.HORIZONTALS,
-            )
-        )
         full = itertools.product(theories, observables)
         for theory, obs in rich.progress.track(
             full, total=len(theories) * len(observables)
