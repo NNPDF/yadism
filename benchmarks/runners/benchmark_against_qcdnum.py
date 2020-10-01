@@ -57,19 +57,19 @@ class BenchmarkFNS(QCDNUMBenchmark):
         return self.run_external(
             0,
             ["CT14llo_NF6"],
-            {"FNS": ~(self.db.theory_query.FNS == "FONLL-A"), "NfFF": None},
+            {"FNS": ~(self._db().theory_query.FNS == "FONLL-A"), "NfFF": None},
         )
 
     def _benchmark_NLO_FFNS(self):
         return self.run_external(
             1,
             ["CT14llo_NF6"],
-            {"FNS": self.db.theory_query.FNS == "FFNS", "NfFF": None},
+            {"FNS": self._db().theory_query.FNS == "FFNS", "NfFF": None},
         )
 
     def _benchmark_NLO_ZM_VFNS(self):
         return self.run_external(
-            1, ["CT14llo_NF6"], {"FNS": self.db.theory_query.FNS == "ZM-VFNS"}
+            1, ["CT14llo_NF6"], {"FNS": self._db().theory_query.FNS == "ZM-VFNS"}
         )
 
     def benchmark_NLO(self):

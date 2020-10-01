@@ -2,6 +2,7 @@
 import itertools
 import datetime
 import copy
+import subprocess
 
 import numpy as np
 import pandas as pd
@@ -166,6 +167,9 @@ class DBInterface(mode_selector.ModeSelector):
         self._log(log_tab)
 
     def run_external(self, PTO, pdfs, theory_update=None, obs_query=None):
+        """
+        Run an external program, i.e., either APFEL or QCDNUM
+        """
         # add PTO and build theory query
         if theory_update is None:
             theory_update = {}
@@ -184,6 +188,9 @@ class DBInterface(mode_selector.ModeSelector):
         return self.run_queries_external(theory_query, obs_query, pdfs)
 
     def run_queries_external(self, theory_query, obs_query, pdfs):
+        """
+        Run a test matrix for the external program
+        """
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
         full = itertools.product(theories, observables)
         for theory, obs in rich.progress.track(
@@ -197,7 +204,11 @@ class DBInterface(mode_selector.ModeSelector):
                     pdf = toyLH.mkPDF("ToyLH", 0)
                 else:
                     import lhapdf  # pylint:disable=import-outside-toplevel
-
+                    # is the set installed? if not do it now
+                    if pdf_name not in lhapdf.availablePDFSets():
+                        print(f"PDFSet {pdf_name} is not installed! Installing now ...")
+                        subprocess.run(["lhapdf", "get", pdf_name],check=True)
+                        print(f"{pdf_name} installed.")
                     pdf = lhapdf.mkPDF(pdf_name, 0)
                 # get our data
                 yad_tab = runner.apply(pdf)
@@ -251,6 +262,8 @@ class DBInterface(mode_selector.ModeSelector):
 
     @staticmethod
     def _process_external_log(yad, apf, external, assert_external):
+        """
+        """
         kin = dict()
         kin[external] = ref = apf["value"]
         kin["yadism"] = fx = yad["result"]

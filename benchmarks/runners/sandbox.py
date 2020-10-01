@@ -66,7 +66,7 @@ class ApfelSandbox:
     def run_LO(self):
         return self._db().run_external(
             0,
-            ["ToyLH"],
+            ["CT10"],
             {
                 "FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 # "TMC": self.db.theory_query.TMC == 0,
@@ -89,7 +89,7 @@ class ApfelSandbox:
 
 
 if __name__ == "__main__":
-    # generate_observables()
+    generate_observables()
     apf = ApfelSandbox()
     apf.run_LO()
     # apf.run_NLO()
