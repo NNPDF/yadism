@@ -16,6 +16,7 @@ There are two ways of using ``yadism``:
 from typing import Any
 import time
 import inspect
+import logging
 
 import rich
 import rich.align
@@ -34,6 +35,7 @@ from .sf import StructureFunction as SF
 from .coupling_constants import CouplingConstants
 from . import observable_name
 
+logger = logging.getLogger(__name__)
 
 class Runner:
     """

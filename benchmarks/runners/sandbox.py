@@ -66,7 +66,7 @@ class ApfelSandbox:
     def run_LO(self):
         return self._db().run_external(
             0,
-            ["CT10"],
+            ["ToyLH"],
             {
                 "FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 # "TMC": self.db.theory_query.TMC == 0,

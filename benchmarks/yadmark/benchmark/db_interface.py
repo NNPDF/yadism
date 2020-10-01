@@ -263,6 +263,7 @@ class DBInterface(mode_selector.ModeSelector):
     @staticmethod
     def _process_external_log(yad, apf, external, assert_external):
         """
+        Post-process the output log.
         """
         kin = dict()
         kin[external] = ref = apf["value"]
