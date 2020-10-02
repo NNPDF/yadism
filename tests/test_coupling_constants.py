@@ -265,5 +265,5 @@ class TestCKM2Matrix:
 
     def test_from_str(self):
         ra = np.random.rand(9)
-        ra_s = str(ra)[1:-1].replace("\n", "").replace("  ", " ")
-        coupl.CKM2Matrix(ra) == coupl.CKM2Matrix.from_str(ra_s)
+        ra_s = " ".join([str(x) for x in ra])
+        assert (coupl.CKM2Matrix(ra ** 2).m == coupl.CKM2Matrix.from_str(ra_s).m).all()
