@@ -28,8 +28,8 @@ def compute_qcdnum_data(
 
     # remove QCDNUM cache files
     wname = "unpolarised-py.wgt"
-    zmname = f"zmstf-py.wgt"
-    hqname = f"hqstf-py.wgt"
+    zmname = "zmstf-py.wgt"
+    hqname = "hqstf-py.wgt"
     for f in [wname, zmname, hqname]:
         pathlib.Path(f).unlink(missing_ok=True)
 
@@ -139,8 +139,10 @@ def compute_qcdnum_data(
             kind_key = 2
         elif obs_name.kind == "FL":
             kind_key = 1
+        elif obs_name.name == "F3light":
+            kind_key = 3
         else:
-            raise NotImplementedError(f"kind {obs_name.kind} is not implemented!")
+            raise NotImplementedError(f"kind {obs_name.name} is not implemented!")
 
         # collect kins
         xs = []
