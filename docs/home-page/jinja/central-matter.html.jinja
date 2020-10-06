@@ -1,10 +1,10 @@
-<div id="central-matter" class="column">
-  <div class="item">
+<div id="central-matter" class="home-column">
+  <div class="column-item">
     <h1 id="title">
-      <img width="30%" src="_assets/logo/logo.png" alt="Yadism">
+      <img id="main-logo" src="_assets/logo/logo.png" alt="Yadism">
     </h1>
   </div>
-  <div class="item">
+  <div class="column-item">
     <div class="version-row">
       <a href="stable" class="docs-version is-success">
         stable
@@ -14,7 +14,7 @@
       </a>
     </div>
   </div>
-  <div class="item">
+  <div class="column-item">
     {% for major, minors in versions.items() %}
     <div class="dropdown">
       <div class="dropdown-trigger">
@@ -41,6 +41,6 @@
     </div>
     {% endfor %}
   </div>
-  <div id="cm-bottom-spacer" class="item">
+  <div id="cm-bottom-spacer" class="column-item">
   </div>
 </div>

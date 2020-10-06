@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
+import yadism.observable_name as on
 from yadism.observable_name import ObservableName as ON
 
 
@@ -24,6 +25,7 @@ class TestObservableName:
         o = ON(n)
         assert o.kind == k
         assert o.flavor == f
+        assert o.raw_flavor == o.flavor
         assert o.name == n
         assert str(o) == n
         assert o.flavor_family == f
@@ -45,7 +47,7 @@ class TestObservableName:
         with pytest.raises(ValueError):
             o.apply_asy()
 
-    def test_flc(self):
+    def test_fxc(self):
         k = "F2"
         f = "charm"
         n = k + f
@@ -73,3 +75,9 @@ class TestObservableName:
         oa = o.apply_asy()
         assert oa.is_asy
         assert oa.flavor_family == "asy"
+        assert oa.hqnumber == 4
+
+        # check heavylight
+        ohl = o.apply_flavor(on.heavylights[o.hqnumber - 4])
+        assert ohl.hqnumber == o.hqnumber
+        assert ohl.raw_flavor == o.raw_flavor
