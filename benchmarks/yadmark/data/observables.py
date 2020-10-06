@@ -83,11 +83,12 @@ def external_cards(defaults, mode):
         "FLcharm",
         "FLbottom",
         "FLtop",
-        "F3light",
     ]
     # in APFEL total and F3heavy is accessible
     if mode == "APFEL":
-        obs_list.extend(["F3charm", "F3bottom", "F3top", "F2total", "FLtotal"])
+        obs_list.extend(
+            ["F3light", "F3charm", "F3bottom", "F3top", "F2total", "FLtotal"]
+        )
     for obs in obs_list:
         nlo_card[obs] = copy.copy(light_kin)  # for now take same kinematics
     cards = []

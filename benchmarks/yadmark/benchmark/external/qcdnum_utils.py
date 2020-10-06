@@ -139,8 +139,8 @@ def compute_qcdnum_data(
             kind_key = 2
         elif obs_name.kind == "FL":
             kind_key = 1
-        elif obs_name.name == "F3light":
-            kind_key = 3
+        # elif obs_name.name == "F3light":
+        #     kind_key = 3
         else:
             raise NotImplementedError(f"kind {obs_name.name} is not implemented!")
 
