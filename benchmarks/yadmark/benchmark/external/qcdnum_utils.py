@@ -47,7 +47,7 @@ def compute_qcdnum_data(
         if not on.ObservableName.is_valid(obs):
             continue
         for kin in observables[obs]:
-            xmin = min(xmin, kin["x"])
+            xmin = min(xmin, 0.5 * kin["x"])
             q2min = min(q2min, kin["Q2"])
             q2max = max(q2max, kin["Q2"])
     xarr = [xmin, np.power(xmin, 2.0 / 3.0)]

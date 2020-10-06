@@ -204,10 +204,11 @@ class DBInterface(mode_selector.ModeSelector):
                     pdf = toyLH.mkPDF("ToyLH", 0)
                 else:
                     import lhapdf  # pylint:disable=import-outside-toplevel
+
                     # is the set installed? if not do it now
                     if pdf_name not in lhapdf.availablePDFSets():
                         print(f"PDFSet {pdf_name} is not installed! Installing now ...")
-                        subprocess.run(["lhapdf", "get", pdf_name],check=True)
+                        subprocess.run(["lhapdf", "get", pdf_name], check=True)
                         print(f"{pdf_name} installed.")
                     pdf = lhapdf.mkPDF(pdf_name, 0)
                 # get our data
