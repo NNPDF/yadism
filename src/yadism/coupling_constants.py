@@ -257,7 +257,7 @@ class CouplingConstants:
             return self.leptonic_coupling("WW", kind) * self.hadronic_coupling(
                 "WW", kind, pid, cc_flavor=cc_flavor
             )
-        return 0
+        raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod
     def from_dict(cls, theory, observables):
@@ -304,7 +304,7 @@ class CouplingConstants:
             "antineutrino": -12,
         }
         if projectile not in projectile_pids:
-            raise ValueError(f"Unkown projectile {projectile}")
+            raise ValueError(f"Unknown projectile {projectile}")
         obs_config = {
             "process": observables.get("prDIS", "EM"),
             "projectilePID": projectile_pids[projectile],
