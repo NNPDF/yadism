@@ -193,9 +193,10 @@ class DBInterface(mode_selector.ModeSelector):
         """
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
         full = itertools.product(theories, observables)
-        for theory, obs in rich.progress.track(
-            full, total=len(theories) * len(observables)
-        ):
+        # for theory, obs in rich.progress.track(
+        #     full, total=len(theories) * len(observables)
+        # ):
+        for theory, obs in full:
             # create our own object
             runner = Runner(theory, obs)
             for pdf_name in pdfs:

@@ -47,9 +47,66 @@ def regression_cards(defaults):
     return cards
 
 
-def external_cards(defaults, mode):
+def external_cards_qcdnum(defaults):
     """
-    Collect external (APFEL/QCDNUM) run cards
+    Collect QCDNUM run cards
+
+    Parameters
+    ----------
+        defaults : dict
+            default setup
+
+    Returns
+    -------
+        cards : list(dict)
+            list of cards
+    """
+    # fixed Q2 and fixed x
+    light_kin = []
+    light_kin.extend(
+        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
+    )
+    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+    cards = []
+    # LO runcard - only F2light is non-zero
+    lo_card = copy.deepcopy(defaults)
+    lo_card["PTO"] = 0
+    lo_card["F2light"] = copy.copy(light_kin)
+    cards.append(lo_card)
+    # NLO runcard
+    nlo_card = copy.deepcopy(defaults)
+    nlo_card["PTO"] = 1
+    obs_lists = [
+        ["F2light", "FLlight"],  # in ZM-VFNS only lights are available
+        [  # in FFNS3 all are available
+            "F2light",
+            "F2charm",
+            "F2bottom",
+            "F2top",
+            "FLlight",
+            "FLcharm",
+            "FLbottom",
+            "FLtop",
+        ],
+        [  # in FFNS4 all above bottom are available
+            "F2bottom",
+            "F2top",
+            "FLbottom",
+            "FLtop",
+        ],
+        ["F2top", "FLtop"],  # in FFNS5 only top is available
+    ]
+    for obs_list in obs_lists:
+        c = copy.deepcopy(nlo_card)
+        for obs in obs_list:
+            c[obs] = copy.copy(light_kin)  # for now take same kinematics
+        cards.append(c)
+    return cards
+
+
+def external_cards_apfel(defaults):
+    """
+    Collect APFEL run cards
 
     Parameters
     ----------
@@ -79,25 +136,26 @@ def external_cards(defaults, mode):
         "F2charm",
         "F2bottom",
         "F2top",
+        "F2total",
         "FLlight",
         "FLcharm",
         "FLbottom",
         "FLtop",
+        "FLtotal" "F3light",
+        "F3charm",
+        "F3bottom",
+        "F3top",
+        "F3total",
     ]
-    # in APFEL total and F3heavy is accessible
-    if mode == "APFEL":
-        obs_list.extend(
-            ["F3light", "F3charm", "F3bottom", "F3top", "F2total", "FLtotal"]
-        )
     for obs in obs_list:
         nlo_card[obs] = copy.copy(light_kin)  # for now take same kinematics
     cards = []
     # now iterate meta, such as currents, etc.
-    matrix = dict(prDIS=["EM"], projectile=["electron"], PolarizationDIS=[0])
-    if mode == "APFEL":
-        matrix["prDIS"].extend(["NC", "CC"])
-        matrix["projectile"].extend(["positron", "neutrino", "antineutrino"])
-        matrix["PolarizationDIS"].extend([0.6])
+    matrix = dict(
+        prDIS=["EM", "NC", "CC"],
+        projectile=["electron", "positron", "neutrino", "antineutrino"],
+        PolarizationDIS=[0, 0.6],
+    )
     for cfg in power_set(matrix):
         for c in [lo_card, nlo_card]:
             c.update(cfg)
@@ -134,13 +192,18 @@ class ObservablesGenerator(mode_selector.ModeSelector):
             interpolation_xgrid=interpolation_xgrid.tolist(),
             interpolation_polynomial_degree=interpolation_polynomial_degree,
             interpolation_is_log=interpolation_is_log,
+            prDIS="EM",
+            projectile="electron",
+            PolarizationDIS=0,
         )
         cards = []
         # use only a small set in regression
         if self.mode == "regression":
             cards.extend(regression_cards(defaults))
-        elif self.mode in ["APFEL", "QCDNUM"]:
-            cards.extend(external_cards(defaults, self.mode))
+        elif self.mode == "APFEL":
+            cards.extend(external_cards_apfel(defaults))
+        elif self.mode == "QCDNUM":
+            cards.extend(external_cards_qcdnum(defaults))
         elif self.mode == "sandbox":
             # sandbox -> don't do anything; its cards are managed there
             cards.extend([copy.deepcopy(defaults)])
