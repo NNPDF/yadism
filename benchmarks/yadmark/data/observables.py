@@ -215,7 +215,8 @@ class ObservablesGenerator(mode_selector.ModeSelector):
         observables_table.truncate()
         for obs in observables:
             obs["_modify_time"] = str_datetime(datetime.now())
-            observables_table.insert(obs)
+        print(f"writing {len(observables)} cards to {self.input_name}")
+        observables_table.insert_multiple(observables)
 
     def fill(self):
         """Fill table in DB"""
@@ -226,9 +227,9 @@ class ObservablesGenerator(mode_selector.ModeSelector):
                 print("Nothing done.")
                 return
         # load db
-        print(f"writing to {self.input_name}")
+        observables = self.get_observables()
         # clear and refill
-        self.write_observables(self.get_observables())
+        self.write_observables(observables)
 
 
 def run_parser():
