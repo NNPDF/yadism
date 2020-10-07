@@ -2,7 +2,7 @@ Light Flavors
 =============
 
 - References
-- meanings of `light` (u+d+s)
+- meaning of `light` (u+d+s coupling to |EW| boson)
 - definitions of bases
   - charge: ns, s, g
   - the even more complicated thing for CC
