@@ -1,4 +1,4 @@
-class DFlist(list):
+class DFdict(dict):
     """
     TODO: translate in docs:
         output the table: since there are many table produced by this
@@ -9,7 +9,7 @@ class DFlist(list):
     """
 
     def __init__(self, *args):
-        super(DFlist, self).__init__(*args)
+        super(DFdict, self).__init__(*args)
         self.msgs = []
 
     def print(self, *msgs, sep=" ", end="\n"):
@@ -21,9 +21,21 @@ class DFlist(list):
                 self.msgs.append(msg)
         self.msgs.append(end)
 
-    def register(self, table):
-        self.print(table)
-        self.append(table)
+    def __setitem__(self, key, value):
+        self.print(f"PID: {key}")
+        self.print(value)
+        self.print()
+        super(DFdict, self).__setitem__(key, value)
 
     def __repr__(self):
         return "".join([str(x) for x in self.msgs])
+
+    def to_document(self):
+        """
+        TinyDB compatibility layer
+        """
+        d = {}
+        for k, v in self.items():
+            d[k] = v.to_dict(orient="records")
+
+        return d
