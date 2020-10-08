@@ -5,7 +5,7 @@ import copy
 
 import numpy as np
 
-from yadmark.benchmark.db_interface import (  # pylint: disable=unused-import
+from yadmark.benchmark.db_interface import (
     DBInterface,
     QueryFieldsEqual,
 )
@@ -17,7 +17,7 @@ def generate_observables():
     og = observables.ObservablesGenerator("sandbox")
     defaults = og.get_observables()[0]
     # xgrid = np.array(defaults["interpolation_xgrid"]).copy()
-    #defaults["interpolation_xgrid"] = np.geomspace(0.1, 1, 40).tolist()
+    # defaults["interpolation_xgrid"] = np.geomspace(0.1, 1, 40).tolist()
     light_kin = []
     light_kin.extend(
         [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
@@ -44,7 +44,7 @@ def generate_observables():
     # print(card)
     card["prDIS"] = "CC"
     # card["PropagatorCorrection"] = .999
-    # card["ProjectileDIS"] = "positron"
+    # card["ProjectileDIS"] = "antineutrino"
     # card["PolarizationDIS"] = 0.5
     # for obs in ["F3charm"]:  # obs_list:
     for obs in obs_list:
@@ -57,10 +57,10 @@ class Sandbox:
     """Wrapper to apply some default settings"""
 
     db = None
-# 649
-    def _db(self,assert_external=None):
+
+    def _db(self, assert_external=None):
         """init DB connection"""
-        self.db = DBInterface("sandbox", "APFEL",assert_external=assert_external)
+        self.db = DBInterface("sandbox", "APFEL", assert_external=assert_external)
         return self.db
 
     def run_LO(self):
@@ -79,18 +79,19 @@ class Sandbox:
             1,
             ["ToyLH"],
             {
-                "XIR": QueryFieldsEqual("XIR", "XIF"), "XIF": None
+                "XIR": self.db.theory_query.XIR == 1,
+                "XIF": self.db.theory_query.XIF == 2
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "FNS": self.db.theory_query.FNS == "",
                 # "TMC": self.db.theory_query.TMC == 1,
                 # "FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 # "DAMP": self.db.theory_query.DAMP == 1,
-            }
+            },
         )
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    generate_observables()
     sand = Sandbox()
-    #sand.run_LO()
+    sand.run_LO()
     sand.run_NLO()

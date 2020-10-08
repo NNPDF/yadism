@@ -131,6 +131,9 @@ class PartonicChannelHeavy(pc.PartonicChannel):
 
         return reg, sing, local
 
+    def _LO_q(self):
+        return 0, 0, self.sf_prefactor
+
     def _NLO_fact_q(self):
         as_norm = self.sf_prefactor
 
@@ -142,6 +145,14 @@ class PartonicChannelHeavy(pc.PartonicChannel):
             as_norm * split.pqq_delta(0, self.constants),
             as_norm * split.pqq_pd(0, self.constants),
         )
+
+    def _NLO_fact_g(self):
+        as_norm = self.sf_prefactor
+
+        def reg(z):
+            return split.pqg(z, self.constants) * as_norm
+
+        return reg
 
     def h_g(self, z, cs):
         c0 = (
