@@ -13,7 +13,7 @@ class QCDNUMBenchmark:
 
     def _db(self):
         """init DB connection"""
-        self.db = DBInterface("QCDNUM", assert_external=False)
+        self.db = DBInterface("QCDNUM")
         return self.db
 
     def run_external(self, PTO, pdfs, theory_update=None, obs_query=None):

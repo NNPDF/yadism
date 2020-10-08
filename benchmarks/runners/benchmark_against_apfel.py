@@ -14,6 +14,7 @@ class ApfelBenchmark:
 
     def _db(self, assert_external=None):
         """init DB connection"""
+        assert_external = False
         self.db = DBInterface("APFEL", assert_external=assert_external)
         return self.db
 
