@@ -3,6 +3,7 @@ from scipy.special import spence
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
+from ..esf import rsl_from_distr_coeffs
 
 
 class PartonicChannelHeavy(pc.PartonicChannel):
@@ -131,7 +132,16 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         return reg, sing, local
 
     def _NLO_fact_q(self):
-        return 0
+        as_norm = self.sf_prefactor
+
+        def reg(z):
+            return split.pqq_reg(z, self.constants) * as_norm
+
+        return rsl_from_distr_coeffs(
+            reg,
+            as_norm * split.pqq_delta(0, self.constants),
+            as_norm * split.pqq_pd(0, self.constants),
+        )
 
     def h_g(self, z, cs):
         c0 = (

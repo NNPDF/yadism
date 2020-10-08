@@ -36,6 +36,9 @@ class F3heavyQuark(pccc.PartonicChannelHeavy):
 
         return self.h_q(a, b1, b2)
 
+    def NLO_fact(self):
+        return self._NLO_fact_q()
+
 
 class F3heavyGluon(pccc.PartonicChannelHeavy):
     """

@@ -8,6 +8,7 @@ import numpy as np
 
 from . import partonic_channel as pccc
 from .. import splitting_functions as split
+from ..esf import rsl_from_distr_coeffs
 
 
 class F2heavyQuark(pccc.PartonicChannelHeavy):
@@ -26,6 +27,9 @@ class F2heavyQuark(pccc.PartonicChannelHeavy):
         b2 = lambda z: 2 / z - 1 - z
 
         return self.h_q(a, b1, b2)
+
+    def NLO_fact(self):
+        return self._NLO_fact_q()
 
 
 class F2heavyGluon(pccc.PartonicChannelHeavy):

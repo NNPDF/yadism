@@ -98,16 +98,16 @@ class F2lightQuark(pc.PartonicChannelLight):
 
         """
 
-        def regular(z, constants=self.constants):
-            return split.pqq_reg(z, constants)
+        as_norm = 1.0
 
-        def singular(z, constants=self.constants):
-            return split.pqq_pd(z, constants)
+        def reg(z):
+            return split.pqq_reg(z, self.constants) * as_norm
 
-        def local(x, constants=self.constants):
-            return split.pqq_delta(x, constants)
-
-        return regular, singular, local
+        return rsl_from_distr_coeffs(
+            reg,
+            as_norm * split.pqq_delta(0, self.constants),
+            as_norm * split.pqq_pd(0, self.constants),
+        )
 
 
 class F2lightGluon(pc.PartonicChannelLight):
