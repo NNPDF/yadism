@@ -11,12 +11,14 @@ class QCDNUMBenchmark:
 
     db = None
 
-    def _db(self,assert_external=None):
+    def _db(self, assert_external=None):
         """init DB connection"""
-        self.db = DBInterface("QCDNUM",assert_external=assert_external)
+        self.db = DBInterface("QCDNUM", assert_external=assert_external)
         return self.db
 
-    def run_external(self, PTO, pdfs, theory_update=None, obs_query=None, assert_external=None):
+    def run_external(
+        self, PTO, pdfs, theory_update=None, obs_query=None, assert_external=None
+    ):
         """Query for PTO also in obs by default"""
         self._db(assert_external)
         if obs_query is None:

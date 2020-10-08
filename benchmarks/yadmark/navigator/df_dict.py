@@ -22,7 +22,6 @@ class DFdict(dict):
         self.msgs.append(end)
 
     def __setitem__(self, key, value):
-        self.print(f"PID: {key}")
         self.print(value)
         self.print()
         super(DFdict, self).__setitem__(key, value)
