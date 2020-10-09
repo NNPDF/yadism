@@ -5,12 +5,14 @@ Defines the :py:class:`StructureFunction` class.
 .. todo::
     refer to the sf-esf overview
 """
+import logging
 
 from .esf import ESFmap
 from .tmc import ESFTMCmap
 from .nc import partonic_channels_em, partonic_channels_nc, weights_nc
 from .cc import partonic_channels_cc, weights_cc, convolution_point_cc
 
+logger = logging.getLogger(__name__)
 
 class StructureFunction:
     """
@@ -77,6 +79,10 @@ class StructureFunction:
             self.partonic_channels = partonic_channels[
                 self.obs_name.apply_flavor_family().name
             ]
+        logger.debug("Init %s", self)
+
+    def __repr__(self):
+        return self.obs_name.name
 
     def load(self, kinematic_configs):
         """
