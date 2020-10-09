@@ -27,7 +27,6 @@ import rich.markdown
 import rich.console
 
 from eko.interpolation import InterpolatorDispatcher
-from eko.constants import Constants
 from eko import thresholds
 from eko import strong_coupling
 
@@ -93,10 +92,9 @@ class Runner:
         # Setup eko stuff
         # ===========================
         self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
-        self.constants = Constants()
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory, self.threshold, self.constants
+            theory, self.threshold,
         )
 
         # Non-eko theory
@@ -108,7 +106,6 @@ class Runner:
         # ==============================
         eko_components = dict(
             interpolator=self.interpolator,
-            constants=self.constants,
             threshold=self.threshold,
             alpha_s=self.strong_coupling,
             coupling_constants=self.coupling_constants,
@@ -202,7 +199,6 @@ class Runner:
         # running the calculation
         self.console.print(rich.markdown.Markdown("## Calculation"))
         self.console.print("yadism took off! please stay tuned ...")
-        # TODO move to log and make more readable
         start = time.time()
         # for name, obs in rich.progress.track(
         # precomputed_plan.items(), description="computing...", transient=True

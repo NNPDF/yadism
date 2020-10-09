@@ -9,6 +9,8 @@ heavy quark flavours.
 
 import numpy as np
 
+from eko import constants
+
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
 from ..esf import rsl_from_distr_coeffs
@@ -25,7 +27,7 @@ class F3asyQuark(pc.PartonicChannelAsy):
         return 0, 0, 1
 
     def NLO(self):
-        CF = self.constants.CF
+        CF = constants.CF
         as_norm = 2.0
 
         def reg(z):
@@ -47,12 +49,12 @@ class F3asyQuark(pc.PartonicChannelAsy):
         as_norm = 2.0
 
         def reg(z):
-            return split.pqq_reg(z, self.constants) * as_norm
+            return split.pqq_reg(z) * as_norm
 
         return rsl_from_distr_coeffs(
             reg,
-            as_norm * split.pqq_delta(0, self.constants),
-            as_norm * split.pqq_pd(0, self.constants),
+            as_norm * split.pqq_delta(0),
+            as_norm * split.pqq_pd(0),
         )
 
 
@@ -67,7 +69,7 @@ class F3asyGluon(pc.PartonicChannelAsy):
         as_norm = 2.0
 
         def reg(z, L=self.L):
-            return -split.pqg(z, self.constants) * L * as_norm
+            return -split.pqg(z) * L * as_norm
 
         return reg
 
@@ -75,6 +77,6 @@ class F3asyGluon(pc.PartonicChannelAsy):
         as_norm = 2.0
 
         def reg(z):
-            return split.pqg(z, self.constants) * as_norm
+            return split.pqg(z) * as_norm
 
         return reg

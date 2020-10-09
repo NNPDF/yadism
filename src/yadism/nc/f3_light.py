@@ -7,6 +7,8 @@ Scale varitions main reference is :cite:`moch-f3nc`.
 
 """
 
+from eko import constants
+
 from . import f2_light
 
 
@@ -28,9 +30,9 @@ class F3lightQuark(f2_light.F2lightQuark):
                     coefficient functions
 
         """
-        CF = self.constants.CF
+        CF = constants.CF
 
-        reg_f2, sing, loc = super(F3lightQuark, self).NLO()
+        reg_f2, sing, loc = super().NLO()
 
         def reg(z, CF=CF):
             return reg_f2(z) - 2 * CF * (1 + z)

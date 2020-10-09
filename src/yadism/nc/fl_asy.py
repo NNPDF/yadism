@@ -7,6 +7,8 @@ heavy quark flavours.
     docs
 """
 
+from eko import constants
+
 from .. import partonic_channel as pc
 
 
@@ -27,10 +29,9 @@ class FLasyGluonVV(pc.PartonicChannelAsy):
             .. todo::
                 docs
         """
-        TF = self.constants.TF
 
-        def cg(z, TF=TF):
-            return TF * (16 * z * (1 - z))
+        def cg(z):
+            return constants.TR * (16 * z * (1 - z))
 
         return cg
 

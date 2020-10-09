@@ -56,7 +56,7 @@ class DBInterface(mode_selector.ModeSelector):
     """
 
     def __init__(self, mode, external=None, assert_external=None):
-        super(DBInterface, self).__init__(mode, external)
+        super().__init__(mode, external)
         self.assert_external = assert_external
 
         self.theory_query = tinydb.Query()

@@ -14,9 +14,8 @@ class PartonicChannel(dict):
     """
 
     def __init__(self, ESF):
-        super(PartonicChannel, self).__init__()
+        super().__init__()
         self.ESF = ESF
-        self.constants = self.ESF._SF.constants
         # default coeff functions to 0
         self["LO"] = self.decorator(self.LO)
         self["NLO"] = self.decorator(self.NLO)
@@ -53,11 +52,11 @@ class PartonicChannel(dict):
 
 class PartonicChannelLight(PartonicChannel):
     def __init__(self, *args):
-        super(PartonicChannelLight, self).__init__(*args)
+        super().__init__(*args)
         self.nf = self.ESF.nf
 
 
 class PartonicChannelAsy(PartonicChannel):
     def __init__(self, *args):
-        super(PartonicChannelAsy, self).__init__(*args)
+        super().__init__(*args)
         self.L = np.log(self.ESF._Q2 / self.ESF._SF.M2hq)

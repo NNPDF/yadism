@@ -312,7 +312,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     """
 
     def __init__(self, SF, kinematics):
-        super(ESFTMC_F2, self).__init__(SF, kinematics)
+        super().__init__(SF, kinematics)
         # shifted prefactor is common
         self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
         # h2 comes with a seperate factor
@@ -412,7 +412,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
     """
 
     def __init__(self, SF, kinematics):
-        super(ESFTMC_FL, self).__init__(SF, kinematics)
+        super().__init__(SF, kinematics)
         # shifted prefactor is common
         self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho)
         # h2 comes with a seperate factor
@@ -483,7 +483,7 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
     """
 
     def __init__(self, SF, kinematics):
-        super(ESFTMC_F3, self).__init__(SF, kinematics)
+        super().__init__(SF, kinematics)
         # shifted prefactor is common
         # beware that we are dealing with xF_3(x) and so xiF_3(xi) also on the right
         self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 2)

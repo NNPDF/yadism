@@ -10,7 +10,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
     """
 
     def __init__(self, *args):
-        super(PartonicChannelHeavy, self).__init__(*args)
+        super().__init__(*args)
         # FH - Vogt comparison prefactor
         self._FHprefactor = self.ESF._Q2 / (np.pi * self.ESF._SF.M2hq)
 

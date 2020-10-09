@@ -225,7 +225,7 @@ class EvaluatedStructureFunctionLight(EvaluatedStructureFunction):
     """
 
     def __init__(self, SF, kinematics, nf=3):  # 3 = u+d+s
-        super(EvaluatedStructureFunctionLight, self).__init__(SF, kinematics)
+        super().__init__(SF, kinematics)
         # expose number of flavours
         self.nf = nf
 
@@ -254,7 +254,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     """
 
     def __init__(self, SF, kinematics, force_local=False):
-        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
+        super().__init__(SF, kinematics)
         self._force_local = force_local
 
     def get_result(self):

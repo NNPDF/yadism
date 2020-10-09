@@ -6,6 +6,8 @@ This module contains the implementation of the CC FL coefficient functions
     docs
 """
 
+from eko import constants
+
 from .. import partonic_channel as pc
 
 
@@ -17,7 +19,7 @@ class FLasyQuark(pc.PartonicChannelAsy):
     label = "q"
 
     def NLO(self):
-        CF = self.constants.CF
+        CF = constants.CF
         as_norm = 2.0
 
         def reg(z):

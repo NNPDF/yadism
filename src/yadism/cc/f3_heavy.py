@@ -23,7 +23,7 @@ class F3heavyQuark(pccc.PartonicChannelHeavy):
     label = "q"
 
     def __init__(self, *args):
-        super(F3heavyQuark, self).__init__(*args)
+        super().__init__(*args)
         self.sf_prefactor = self.labda
 
     def LO(self):
@@ -58,7 +58,7 @@ class F3heavyGluon(pccc.PartonicChannelHeavy):
             return (
                 (
                     (
-                        split.pqg(z, self.constants)
+                        split.pqg(z)
                         * (-self.l_labda(z) - np.log(self.labda))
                     )
                     + self.h_g(z, [c1, c2, c3, c4])
@@ -73,6 +73,6 @@ class F3heavyGluon(pccc.PartonicChannelHeavy):
         as_norm = self.labda
 
         def reg(z):
-            return split.pqg(z, self.constants) * as_norm
+            return split.pqg(z) * as_norm
 
         return reg

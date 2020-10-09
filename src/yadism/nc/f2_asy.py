@@ -9,6 +9,8 @@ heavy quark flavours.
 
 import numpy as np
 
+from eko import constants
+
 from .. import splitting_functions as split
 from .. import partonic_channel as pc
 
@@ -31,10 +33,10 @@ class F2asyGluonVV(pc.PartonicChannelAsy):
                 docs
         """
 
-        def cg(z, L=self.L, constants=self.constants):
+        def cg(z, L=self.L):
             return 4.0 * (
-                split.pqg(z, constants) * (L + np.log((1 - z) / z))
-                + constants.TF * (-1 + 8 * z * (1 - z))
+                split.pqg(z) * (L + np.log((1 - z) / z))
+                + constants.TR * (-1 + 8 * z * (1 - z))
             )
 
         return cg

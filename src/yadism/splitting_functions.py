@@ -21,8 +21,9 @@ The reference for LO splitting functions is :cite:`pink-book`.
 
 """
 
+from eko import constants
 
-def pqq_reg(x, constants):
+def pqq_reg(x):
     """
         The expression of the regular part of :math:`P_{qq}` splitting function.
 
@@ -32,8 +33,6 @@ def pqq_reg(x, constants):
         ----------
         x : float
             momentum fraction
-        constants : object
-            an object holding constants value (for common QCD constants)
 
         Returns
         -------
@@ -44,7 +43,7 @@ def pqq_reg(x, constants):
     return -constants.CF * (1 + x)
 
 
-def pqq_delta(_x, constants):
+def pqq_delta(_x):
     r"""
         The coefficient of the Dirac-:math:`\delta(1-x)` part of :math:`P_{qq}`
         splitting function.
@@ -55,8 +54,6 @@ def pqq_delta(_x, constants):
         ----------
         x : float
             momentum fraction
-        constants : object
-            an object holding constants value (for common QCD constants)
 
         Returns
         -------
@@ -67,7 +64,7 @@ def pqq_delta(_x, constants):
     return (3 / 2) * constants.CF
 
 
-def pqq_pd(_x, constants):
+def pqq_pd(_x):
     """
         The coefficient of the :math:`1/(1-x)_+` part of :math:`P_{qq}`
         splitting function.
@@ -78,8 +75,6 @@ def pqq_pd(_x, constants):
         ----------
         x : float
             momentum fraction
-        constants : object
-            an object holding constants value (for common QCD constants)
 
         Returns
         -------
@@ -90,7 +85,7 @@ def pqq_pd(_x, constants):
     return 2 * constants.CF
 
 
-def pqg(x, constants):
+def pqg(x):
     """
         The expression of :math:`P_{qg}` splitting function.
 
@@ -100,8 +95,6 @@ def pqg(x, constants):
         ----------
         x : float
             momentum fraction
-        constants : object
-            an object holding constants value (for common QCD constants)
 
         Returns
         -------
@@ -109,4 +102,4 @@ def pqg(x, constants):
             the pqg splitting function @ :py:`x`
 
     """
-    return constants.TF * (x ** 2 + (1 - x) ** 2)
+    return constants.TR * (x ** 2 + (1 - x) ** 2)

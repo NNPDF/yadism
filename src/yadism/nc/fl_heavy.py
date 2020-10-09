@@ -9,6 +9,8 @@ The main reference used is: :cite:`felix-thesis`.
 
 import numpy as np
 
+from eko import constants
+
 from . import partonic_channel as pcnc
 
 
@@ -31,7 +33,7 @@ class FLheavyGluonVV(pcnc.PartonicChannelHeavy):
                 sequence of callables
                     coefficient functions
         """
-        CF = self.constants.CF
+        CF = constants.CF
 
         def cg(z):
             if self.is_below_threshold(z):
@@ -67,7 +69,7 @@ class FLheavyGluonAA(FLheavyGluonVV):
                     coefficient functions
         """
 
-        VV = super(FLheavyGluonAA, self).NLO()
+        VV = super().NLO()
 
         def cg(z, VV=VV):
             if self.is_below_threshold(z):

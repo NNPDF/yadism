@@ -47,7 +47,6 @@ class StructureFunction:
         # TODO wrap managers and parameters as single attributes
         # external managers
         self.interpolator = eko_components["interpolator"]
-        self.constants = eko_components["constants"]
         self.threshold = eko_components["threshold"]
         self.strong_coupling = eko_components["alpha_s"]
         self.coupling_constants = eko_components["coupling_constants"]

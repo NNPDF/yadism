@@ -18,7 +18,7 @@ class FLheavyQuark(pccc.PartonicChannelHeavy):
     label = "q"
 
     def __init__(self, *args):
-        super(FLheavyQuark, self).__init__(*args)
+        super().__init__(*args)
         self.sf_prefactor = 1.0 - self.labda
 
     def LO(self):
@@ -45,7 +45,7 @@ class FLheavyGluon(pccc.PartonicChannelHeavy):
     label = "g"
 
     def __init__(self, *args):
-        super(FLheavyGluon, self).__init__(*args)
+        super().__init__(*args)
         self.sf_prefactor = 1.0 - self.labda
 
     def NLO(self):
@@ -57,7 +57,7 @@ class FLheavyGluon(pccc.PartonicChannelHeavy):
             return (
                 (
                     self.sf_prefactor
-                    * split.pqg(z, self.constants)
+                    * split.pqg(z)
                     * (self.l_labda(z) - np.log(self.labda))
                 )
                 + self.h_g(z, [c1, c2, c3, c4])
