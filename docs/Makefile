@@ -15,6 +15,7 @@ home: demo-dir
 	cp -r home-page/build/* $(DEMODIR)
 
 assets: demo-dir
+	cd _assets && make
 	cp -r _assets $(DEMODIR)
 
 sphinx-html: demo-dir

@@ -9,7 +9,7 @@ from yadism import observable_name as on
 
 from ..utils import unstr_datetime
 from .. import mode_selector
-from .df_list import DFlist
+from .df_dict import DFdict
 from . import table_manager as tm
 
 t = "t"
@@ -254,7 +254,7 @@ class NavigatorApp(mode_selector.ModeSelector):
             return
         return self.odb.table("logs").truncate()
 
-    def get_log_DataFrames(self, doc_id):
+    def get_log_DFdict(self, doc_id):
         """
             Load all structure functions in log as DataFrame
 
@@ -269,14 +269,14 @@ class NavigatorApp(mode_selector.ModeSelector):
                     DataFrames
         """
         l = self.get_log(doc_id)
-        dfs = DFlist()
+        dfd = DFdict()
         for k in l:
             # TODO
             if k[0] != "F":
                 continue
-            dfs.print(f"{k} with theory={l['_theory_doc_id']} using {l['_pdf']}")
-            dfs.register(pd.DataFrame(l[k]))
-        return dfs
+            dfd.print(f"{k} with theory={l['_theory_doc_id']} using {l['_pdf']}")
+            dfd[k] = pd.DataFrame(l[k])
+        return dfd
 
     def pprint_log(self, doc_id):
         """
@@ -365,7 +365,7 @@ class NavigatorApp(mode_selector.ModeSelector):
             else:
                 print(f"Unkown table: {table}")
 
-    def subtract_tables(self, id1, id2):
+    def subtract_tables(self, dfd1, dfd2):
         """
             Subtract results in the second table from the first one,
             properly propagate the integration error and recompute the relative
@@ -382,16 +382,28 @@ class NavigatorApp(mode_selector.ModeSelector):
 
         """
 
-        diffout = DFlist()
+        diffout = DFdict()
+
+        # load json documents
+        logs = []
+        ids = []
+        for dfd in [dfd1, dfd2]:
+            if isinstance(dfd, int):
+                logs.append(self.get_log(dfd))
+                ids.append(dfd)
+            elif isinstance(dfd, DFdict):
+                logs.append(dfd.to_document())
+                ids.append("not-an-id")
+            else:
+                raise ("subtract_tables: DFList not recognized!")
+        log1, log2 = logs
+        id1, id2 = ids
 
         # print head
         msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
         diffout.print(msg, "=" * len(msg), sep="\n")
         diffout.print()
 
-        # load json documents
-        log1 = self.get_log(id1)
-        log2 = self.get_log(id2)
         if log1 is None:
             raise ValueError(f"Log id:{id1} not found")
         if log2 is None:
@@ -441,7 +453,7 @@ class NavigatorApp(mode_selector.ModeSelector):
 
             # dump results' table
             diffout.print(obs, "-" * len(obs), sep="\n")
-            diffout.register(table_out)
+            diffout[obs] = table_out
 
         return diffout
 
@@ -452,7 +464,7 @@ class NavigatorApp(mode_selector.ModeSelector):
         suffixes = (f" ({id1})", f" ({id2})")
 
         for i, doc_id in enumerate([id1, id2]):
-            tabs += [self.get_log_DataFrames(doc_id)[0]]
+            tabs += [self.get_log_DFdict(doc_id)[0]]
             tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
             exts += [
                 tabs1[i].columns.drop(["x", "Q2"])[0]

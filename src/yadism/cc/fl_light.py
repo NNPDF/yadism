@@ -15,5 +15,5 @@ class FLlightQuark(nc.fl_light.FLlightQuark):
 
 class FLlightGluon(nc.fl_light.FLlightGluon):
     """
-        Computes the light quark channel of  FLlight
+        Computes the gluon channel of  FLlight
     """

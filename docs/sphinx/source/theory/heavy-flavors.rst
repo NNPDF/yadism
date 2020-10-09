@@ -1,6 +1,10 @@
 Heavy Flavors
 =============
 
+- References
+- meanings of :math:`F_2^{charm}` (c coupling to |EW| boson) (and analogously
+  for `bottom` and `top`)
+
 .. _heavy-nc:
 
 NC

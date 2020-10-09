@@ -193,9 +193,10 @@ class DBInterface(mode_selector.ModeSelector):
         """
         theories, observables = self._load_input_from_queries(theory_query, obs_query)
         full = itertools.product(theories, observables)
-        for theory, obs in rich.progress.track(
-            full, total=len(theories) * len(observables)
-        ):
+        # for theory, obs in rich.progress.track(
+        #     full, total=len(theories) * len(observables)
+        # ):
+        for theory, obs in full:
             # create our own object
             runner = Runner(theory, obs)
             for pdf_name in pdfs:
@@ -204,10 +205,11 @@ class DBInterface(mode_selector.ModeSelector):
                     pdf = toyLH.mkPDF("ToyLH", 0)
                 else:
                     import lhapdf  # pylint:disable=import-outside-toplevel
+
                     # is the set installed? if not do it now
                     if pdf_name not in lhapdf.availablePDFSets():
                         print(f"PDFSet {pdf_name} is not installed! Installing now ...")
-                        subprocess.run(["lhapdf", "get", pdf_name],check=True)
+                        subprocess.run(["lhapdf", "get", pdf_name], check=True)
                         print(f"{pdf_name} installed.")
                     pdf = lhapdf.mkPDF(pdf_name, 0)
                 # get our data

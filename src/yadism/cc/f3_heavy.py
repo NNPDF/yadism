@@ -27,7 +27,7 @@ class F3heavyQuark(pccc.PartonicChannelHeavy):
         self.sf_prefactor = self.labda
 
     def LO(self):
-        return 0, 0, self.sf_prefactor
+        return self._LO_q()
 
     def NLO(self):
         a = 0
@@ -35,6 +35,9 @@ class F3heavyQuark(pccc.PartonicChannelHeavy):
         b2 = lambda z: (1 - z) * self.sf_prefactor
 
         return self.h_q(a, b1, b2)
+
+    def NLO_fact(self):
+        return self._NLO_fact_q()
 
 
 class F3heavyGluon(pccc.PartonicChannelHeavy):
@@ -63,5 +66,13 @@ class F3heavyGluon(pccc.PartonicChannelHeavy):
                 * self.labda
                 * 2
             )
+
+        return reg
+
+    def NLO_fact(self):
+        as_norm = self.labda
+
+        def reg(z):
+            return split.pqg(z, self.constants) * as_norm
 
         return reg

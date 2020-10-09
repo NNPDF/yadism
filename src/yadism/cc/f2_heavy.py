@@ -18,7 +18,7 @@ class F2heavyQuark(pccc.PartonicChannelHeavy):
     label = "q"
 
     def LO(self):
-        return 0, 0, 1
+        return self._LO_q()
 
     def NLO(self):
         a = self.ka
@@ -26,6 +26,9 @@ class F2heavyQuark(pccc.PartonicChannelHeavy):
         b2 = lambda z: 2 / z - 1 - z
 
         return self.h_q(a, b1, b2)
+
+    def NLO_fact(self):
+        return self._NLO_fact_q()
 
 
 class F2heavyGluon(pccc.PartonicChannelHeavy):
@@ -49,3 +52,6 @@ class F2heavyGluon(pccc.PartonicChannelHeavy):
             ) * 2
 
         return reg
+
+    def NLO_fact(self):
+        return self._NLO_fact_g()

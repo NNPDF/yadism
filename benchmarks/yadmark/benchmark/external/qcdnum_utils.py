@@ -28,8 +28,8 @@ def compute_qcdnum_data(
 
     # remove QCDNUM cache files
     wname = "unpolarised-py.wgt"
-    zmname = f"zmstf-py.wgt"
-    hqname = f"hqstf-py.wgt"
+    zmname = "zmstf-py.wgt"
+    hqname = "hqstf-py.wgt"
     for f in [wname, zmname, hqname]:
         pathlib.Path(f).unlink(missing_ok=True)
 
@@ -47,7 +47,7 @@ def compute_qcdnum_data(
         if not on.ObservableName.is_valid(obs):
             continue
         for kin in observables[obs]:
-            xmin = min(xmin, kin["x"])
+            xmin = min(xmin, 0.5 * kin["x"])
             q2min = min(q2min, kin["Q2"])
             q2max = max(q2max, kin["Q2"])
     xarr = [xmin, np.power(xmin, 2.0 / 3.0)]
@@ -139,8 +139,10 @@ def compute_qcdnum_data(
             kind_key = 2
         elif obs_name.kind == "FL":
             kind_key = 1
+        # elif obs_name.name == "F3light":
+        #     kind_key = 3
         else:
-            raise NotImplementedError(f"kind {obs_name.kind} is not implemented!")
+            raise NotImplementedError(f"kind {obs_name.name} is not implemented!")
 
         # collect kins
         xs = []

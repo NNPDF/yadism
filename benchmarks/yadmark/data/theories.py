@@ -2,6 +2,7 @@
 from datetime import datetime
 import argparse
 import pathlib
+import copy
 
 import numpy as np
 import yaml
@@ -62,16 +63,20 @@ class TheoriesGenerator(mode_selector.ModeSelector):
         # read template
         with open(here / "theory_template.yaml") as f:
             template = yaml.safe_load(f)
-        # write all possible combinations
+        # get all possible combinations
         theories_table = self.idb.table("theories")
         theories_table.truncate()
         full = power_set(matrix)
+        theories = []
         for config in rich.progress.track(
             full, total=np.prod([len(v) for v in matrix.values()])
         ):
             template.update(config)
             template["_modify_time"] = str_datetime(datetime.now())
-            theories_table.insert(template)
+            theories.append(copy.copy(template))
+        # write
+        print(f"writing {len(theories)} cards to {self.input_name}")
+        theories_table.insert_multiple(theories)
 
     def fill(self):
         """Fill table in DB"""
@@ -82,9 +87,9 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 print("Nothing done.")
                 return
         # load db
-        print(f"writing to {self.input_name}")
+        matrix = self.get_matrix()
         # clear and refill
-        self.write_matrix(self.get_matrix())
+        self.write_matrix(matrix)
 
 
 def run_parser():

@@ -64,7 +64,7 @@ def ls(*args):
 
 def dfl(*args):
     global app
-    return app.get_log_DataFrames(*args)
+    return app.get_log_DFdict(*args)
 
 
 def subtract_tables(*args):
