@@ -29,14 +29,15 @@ def generate_observables():
     # light_kin.extend([dict(x=0.85, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
     obs_list = [
         "F2light",
-        "F2charm",
-        "F2bottom",
-        "FLlight",
-        "FLcharm",
-        "FLbottom",
-        "F3light",
-        "F3charm",
-        "F3bottom",
+        # "F2charm",
+        # "F2bottom",
+        # "F2total",
+        # "FLlight",
+        # "FLcharm",
+        # "FLbottom",
+        # "F3light",
+        # "F3charm",
+        # "F3bottom",
     ]
     cards = []
     card = copy.deepcopy(defaults)
@@ -79,12 +80,12 @@ class Sandbox:
             1,
             ["ToyLH"],
             {
-                "XIR": self.db.theory_query.XIR == 1,
-                "XIF": self.db.theory_query.XIF == 2
+                #"XIR": self.db.theory_query.XIR == 1,
+                #"XIF": self.db.theory_query.XIF == 2
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "FNS": self.db.theory_query.FNS == "",
                 # "TMC": self.db.theory_query.TMC == 1,
-                # "FNS": self.db.theory_query.FNS == "ZM-VFNS",
+                "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
             },
         )

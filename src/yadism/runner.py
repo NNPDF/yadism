@@ -16,6 +16,7 @@ There are two ways of using ``yadism``:
 from typing import Any
 import time
 import inspect
+import logging
 
 import rich
 import rich.align
@@ -23,17 +24,21 @@ import rich.panel
 import rich.box
 import rich.progress
 import rich.markdown
+import rich.console
 
 from eko.interpolation import InterpolatorDispatcher
 from eko.constants import Constants
 from eko import thresholds
 from eko import strong_coupling
 
+from . import observable_name
+from . import log
 from .output import Output
 from .sf import StructureFunction as SF
 from .coupling_constants import CouplingConstants
-from . import observable_name
 
+log.setup()
+logger = logging.getLogger(__name__)
 
 class Runner:
     """
@@ -151,6 +156,8 @@ class Runner:
             obj.load(self._observables.get(name, []))
             self.observable_instances[name] = obj
 
+        # stdout
+        self.console = rich.console.Console()
         # =================
         # Initialize output
         # =================
@@ -180,7 +187,7 @@ class Runner:
                 * docs
                 * get_output pipeline
         """
-        rich.print(self.banner)
+        self.console.print(self.banner)
 
         # precomputing the plan of calculation
         precomputed_plan = {}
@@ -188,13 +195,13 @@ class Runner:
             if name in self._observables.keys():
                 precomputed_plan[name] = obs
 
-        rich.print(rich.markdown.Markdown("## Plan"))
+        self.console.print(rich.markdown.Markdown("## Plan"))
         printable_plan = "\n".join([f"- {obs}" for obs in precomputed_plan])
-        rich.print(rich.markdown.Markdown(printable_plan))
+        self.console.print(rich.markdown.Markdown(printable_plan))
 
         # running the calculation
-        rich.print(rich.markdown.Markdown("## Calculation"))
-        print("yadism took off! please stay tuned ...")
+        self.console.print(rich.markdown.Markdown("## Calculation"))
+        self.console.print("yadism took off! please stay tuned ...")
         # TODO move to log and make more readable
         start = time.time()
         # for name, obs in rich.progress.track(
@@ -204,7 +211,7 @@ class Runner:
             self._output[name] = obs.get_output()
         end = time.time()
         diff = end - start
-        rich.print(f"[cyan]took {diff:.2f} s")
+        self.console.print(f"[cyan]took {diff:.2f} s")
 
         return self._output
 

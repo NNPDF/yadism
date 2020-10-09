@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import logging
 
 import numpy as np
 
+logger = logging.getLogger(__name__)
 
 class CouplingConstants:
     """
@@ -34,6 +36,12 @@ class CouplingConstants:
         # neutrinos
         for pid in [12, 14, 16]:
             self.weak_isospin_3[pid] = 1 / 2
+        self.log()
+        
+    def log(self):
+        """Write current configuration to log"""
+        logger.info(self.theory_config)
+        logger.info(self.obs_config)
 
     def vectorial_coupling(self, pid):
         """Combine the vectorial coupling from electric and weak charges"""
@@ -333,6 +341,9 @@ class CKM2Matrix:
     def __init__(self, elems):
         self.m = np.array(elems).reshape(3, 3)
         # TODO maybe raise warning if non-unitarian
+
+    def __repr__(self):
+        return "CKM("+str(self.m).replace("\n","")+")"
 
     def __getitem__(self, key):
         """
