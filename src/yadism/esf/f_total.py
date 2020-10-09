@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-
+import logging
 
 from . import esf
+
+logger = logging.getLogger(__name__)
 
 
 class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
@@ -27,6 +29,7 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
         """
         # final object
         kin = {"x": self._x, "Q2": self._Q2}
+        logger.debug("Collect %s", self)
         # light component
         res_light = self._SF.get_esf(
             self._SF.obs_name.apply_flavor("light"), kin, use_raw=False

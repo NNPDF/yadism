@@ -11,6 +11,8 @@ Scale varitions main reference is :cite:`vogt-sv`.
 
 """
 
+from eko import constants
+
 from .. import partonic_channel as pc
 
 
@@ -34,7 +36,7 @@ class FLlightQuark(pc.PartonicChannelLight):
                     coefficient functions
 
         """
-        CF = self.constants.CF
+        CF = constants.CF
 
         def cq_reg(z):
             return CF * 4.0 * z
@@ -70,9 +72,7 @@ class FLlightGluon(pc.PartonicChannelLight):
 
         """
 
-        TF = self.constants.TF
-
-        def cg(z, nf=self.nf, TF=TF):
-            return nf * TF * 16 * z * (1.0 - z)
+        def cg(z, nf=self.nf):
+            return nf * constants.TR * 16 * z * (1.0 - z)
 
         return cg

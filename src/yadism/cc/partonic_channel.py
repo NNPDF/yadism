@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.special import spence
 
+from eko import constants
+
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
 from ..esf import rsl_from_distr_coeffs
@@ -23,7 +25,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
     """
 
     def __init__(self, *args):
-        super(PartonicChannelHeavy, self).__init__(*args)
+        super().__init__(*args)
         # common variables
         self.labda = 1 / (1 + self.ESF._SF.M2hq / self.ESF._Q2)
         self.x = self.ESF._x
@@ -53,7 +55,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         )
 
     def h_q(self, a, b1, b2):
-        CF = self.constants.CF
+        CF = constants.CF
 
         b3 = self.sf_prefactor / 2
         as_norm = 2
@@ -63,7 +65,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
                 2 * np.log(1 - z) - np.log(1 - self.labda * z)
             )
             return (
-                (-self.sf_prefactor * np.log(self.labda) * pqq_reg(z, self.constants))
+                (-self.sf_prefactor * np.log(self.labda) * pqq_reg(z))
                 + CF
                 * (
                     self.sf_prefactor * hq_reg
@@ -79,7 +81,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
                 (
                     -self.sf_prefactor
                     * np.log(self.labda)
-                    * (pqq_pd(z, self.constants) / (1 - z))
+                    * (pqq_pd(z) / (1 - z))
                 )
                 + CF
                 * (
@@ -115,8 +117,8 @@ class PartonicChannelHeavy(pc.PartonicChannel):
                     -self.sf_prefactor
                     * np.log(self.labda)
                     * (
-                        pqq_delta(x, self.constants)
-                        - pqq_pd(x, self.constants) * b1_int
+                        pqq_delta(x)
+                        - pqq_pd(x) * b1_int
                     )
                 )
                 + CF
@@ -138,26 +140,26 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         as_norm = self.sf_prefactor
 
         def reg(z):
-            return split.pqq_reg(z, self.constants) * as_norm
+            return split.pqq_reg(z) * as_norm
 
         return rsl_from_distr_coeffs(
             reg,
-            as_norm * split.pqq_delta(0, self.constants),
-            as_norm * split.pqq_pd(0, self.constants),
+            as_norm * split.pqq_delta(0),
+            as_norm * split.pqq_pd(0),
         )
 
     def _NLO_fact_g(self):
         as_norm = self.sf_prefactor
 
         def reg(z):
-            return split.pqg(z, self.constants) * as_norm
+            return split.pqg(z) * as_norm
 
         return reg
 
     def h_g(self, z, cs):
         c0 = (
             self.sf_prefactor
-            * split.pqg(z, self.constants)
+            * split.pqg(z)
             * (2 * np.log(1 - z) - np.log(1 - self.labda * z) - np.log(z))
         )
         cs.insert(0, c0)

@@ -21,12 +21,14 @@ They are:
 """
 
 import copy
+import logging
 
 import numpy as np
 
 from . import distribution_vec as conv
 from .esf_result import ESFResult
 
+logger = logging.getLogger(__name__)
 
 class EvaluatedStructureFunction:
     """
@@ -105,6 +107,11 @@ class EvaluatedStructureFunction:
                 self._x, self._Q2, self._SF.M2hq
             )
 
+        logger.debug("Init %s",self)
+
+    def __repr__(self):
+        return "%s(x=%f,Q2=%f)"%(self._SF.obs_name,self._x,self._Q2)
+
     def _compute_local(self):
         """
             Here is where the local caching is actually implemented: if the
@@ -118,6 +125,7 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         # run
+        logger.debug("Compute %s",self)
         for comp_cls in self.partonic_channels:
             comp = comp_cls(self)
             (
@@ -217,7 +225,7 @@ class EvaluatedStructureFunctionLight(EvaluatedStructureFunction):
     """
 
     def __init__(self, SF, kinematics, nf=3):  # 3 = u+d+s
-        super(EvaluatedStructureFunctionLight, self).__init__(SF, kinematics)
+        super().__init__(SF, kinematics)
         # expose number of flavours
         self.nf = nf
 
@@ -246,7 +254,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
     """
 
     def __init__(self, SF, kinematics, force_local=False):
-        super(EvaluatedStructureFunctionHeavy, self).__init__(SF, kinematics)
+        super().__init__(SF, kinematics)
         self._force_local = force_local
 
     def get_result(self):
@@ -261,6 +269,8 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         if self._force_local or nf < nhq:
             self._compute_local()
         else:
+            scheme = self._SF.threshold.scheme
+            logger.debug("Apply '%s' to %s",scheme,self)
             # compute zero-mass part
             obs_name = self._SF.obs_name
             # TODO maybe we can cache the heavy light any how - for the moment we can't because of
@@ -278,7 +288,6 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             # FONLL-A corresponds to (strict) APFEL
             # FONLL-A' reduces to the ZM-VFNS scheme if above the next threshold (which would
             # numerically happen anyway)
-            scheme = self._SF.threshold.scheme
             if (scheme == "FONLL-A" and nf >= nhq) or (
                 scheme == "FONLL-A'" and nf == nhq
             ):

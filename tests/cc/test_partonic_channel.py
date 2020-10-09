@@ -9,7 +9,6 @@ M2hq = 1.0
 
 class MockSF:
     def __init__(self):
-        self.constants = None
         self.M2hq = M2hq
 
 

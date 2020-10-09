@@ -76,7 +76,7 @@ class F2heavyGluonAA(F2heavyGluonVV):
                     coefficient functions
         """
 
-        VV = super(F2heavyGluonAA, self).NLO()
+        VV = super().NLO()
 
         def cg(z, VV=VV):
             if self.is_below_threshold(z):

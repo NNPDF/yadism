@@ -19,7 +19,7 @@ l = "l"
 
 class NavigatorApp(mode_selector.ModeSelector):
     def __init__(self, mode):
-        super(NavigatorApp, self).__init__(mode)
+        super().__init__(mode)
         self.theories = tm.TableManager(self.idb.table("theories"))
         self.observable = tm.TableManager(self.idb.table("observable"))
         self.apfel_cache = tm.TableManager(self.idb.table("apfel_cache"))
@@ -28,7 +28,7 @@ class NavigatorApp(mode_selector.ModeSelector):
 
     def change_mode(self, mode):
         """Change mode"""
-        super(NavigatorApp, self).__init__(mode)
+        super().__init__(mode)
 
     def get_all_theories(self):
         """Retrieve all theories from db."""

@@ -9,7 +9,7 @@ class DFdict(dict):
     """
 
     def __init__(self, *args):
-        super(DFdict, self).__init__(*args)
+        super().__init__(*args)
         self.msgs = []
 
     def print(self, *msgs, sep=" ", end="\n"):
@@ -24,7 +24,7 @@ class DFdict(dict):
     def __setitem__(self, key, value):
         self.print(value)
         self.print()
-        super(DFdict, self).__setitem__(key, value)
+        super().__setitem__(key, value)
 
     def __repr__(self):
         return "".join([str(x) for x in self.msgs])
