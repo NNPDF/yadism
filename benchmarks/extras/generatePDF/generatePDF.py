@@ -52,7 +52,10 @@ def dump_pdf(name, xgrid, Q2grid, pids, pdf_table):
 def dump_info(name, description, pids):
     # collect data
 
-    data = dict(description=description, pids=pids,)
+    data = dict(
+        description=description,
+        pids=pids,
+    )
 
     # ===========
     # apply template
@@ -73,7 +76,7 @@ def uonly():
 
     # make PDF.dat
     xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = d = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
     u = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
@@ -92,7 +95,7 @@ def conly():
 
     # make PDF.dat
     xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-4, -3, -2, -1, 1, 2, 3, 4, 21]
     antic = antis = antiu = antid = d = u = s = g = [
         0.0 for x in xgrid for Q2 in Q2grid
@@ -115,7 +118,7 @@ def uonly_dense():
     xgrid = np.unique(
         np.concatenate([np.logspace(-9, 0, 100), np.linspace(0.8, 1.0, 100)])
     )
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = d = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
     u = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
@@ -135,7 +138,7 @@ def gonly():
     # make PDF.dat
 
     xgrid = np.logspace(-9, 0, 100)
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = d = u = s = [0.0 for x in xgrid for Q2 in Q2grid]
     g = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
@@ -155,7 +158,7 @@ def toy_gonly():
     # make PDF.dat
 
     xgrid = np.logspace(-9, 0, 100)
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = d = u = s = [0.0 for x in xgrid for Q2 in Q2grid]
     N_g = 1.7e0
@@ -177,7 +180,7 @@ def donly():
 
     # make PDF.dat
     xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = u = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
     d = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
@@ -197,7 +200,7 @@ def toy_donly():
     # make PDF.dat
 
     xgrid = np.logspace(-9, 0, 100)
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = g = u = s = [0.0 for x in xgrid for Q2 in Q2grid]
     N_dv = 1.7e0
@@ -226,7 +229,7 @@ def antidonly():
 
     # make PDF.dat
     xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = d = u = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
     antid = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
@@ -245,7 +248,7 @@ def sonly():
 
     # make PDF.dat
     xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = d = u = g = [0.0 for x in xgrid for Q2 in Q2grid]
     s = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
@@ -265,7 +268,7 @@ def toy_sonly():
     # make PDF.dat
 
     xgrid = np.logspace(-9, 0, 100)
-    Q2grid = np.logspace(0.3, 5, 20)
+    Q2grid = np.geomspace(0.4, 5e4, 25)
     pids = [-3, -2, -1, 1, 2, 3, 21]
     antis = antiu = antid = g = d = u = [0.0 for x in xgrid for Q2 in Q2grid]
     N_db = 0.1939875e0
