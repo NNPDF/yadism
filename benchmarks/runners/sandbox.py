@@ -29,9 +29,9 @@ def generate_observables():
     # light_kin.extend([dict(x=0.85, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
     obs_list = [
         "F2light",
-        "F2charm",
+        # "F2charm",
         # "F2bottom",
-        "F2total",
+        # "F2total",
         # "FLlight",
         # "FLcharm",
         # "FLbottom",
