@@ -52,9 +52,7 @@ class F3asyQuark(pc.PartonicChannelAsy):
             return split.pqq_reg(z) * as_norm
 
         return rsl_from_distr_coeffs(
-            reg,
-            as_norm * split.pqq_delta(0),
-            as_norm * split.pqq_pd(0),
+            reg, as_norm * split.pqq_delta(0), as_norm * split.pqq_pd(0),
         )
 
 

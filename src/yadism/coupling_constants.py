@@ -5,6 +5,7 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
+
 class CouplingConstants:
     """
         Defines the coupling constants between the QCD particles and the EW particles
@@ -37,7 +38,7 @@ class CouplingConstants:
         for pid in [12, 14, 16]:
             self.weak_isospin_3[pid] = 1 / 2
         self.log()
-        
+
     def log(self):
         """Write current configuration to log"""
         logger.info(self.theory_config)
@@ -343,7 +344,7 @@ class CKM2Matrix:
         # TODO maybe raise warning if non-unitarian
 
     def __repr__(self):
-        return "CKM("+str(self.m).replace("\n","")+")"
+        return "CKM(" + str(self.m).replace("\n", "") + ")"
 
     def __getitem__(self, key):
         """

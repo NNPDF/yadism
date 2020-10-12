@@ -30,6 +30,7 @@ from .esf_result import ESFResult
 
 logger = logging.getLogger(__name__)
 
+
 class EvaluatedStructureFunction:
     """
         The actual Structure Function implementation.
@@ -107,10 +108,10 @@ class EvaluatedStructureFunction:
                 self._x, self._Q2, self._SF.M2hq
             )
 
-        logger.debug("Init %s",self)
+        logger.debug("Init %s", self)
 
     def __repr__(self):
-        return "%s(x=%f,Q2=%f)"%(self._SF.obs_name,self._x,self._Q2)
+        return "%s(x=%f,Q2=%f)" % (self._SF.obs_name, self._x, self._Q2)
 
     def _compute_local(self):
         """
@@ -125,7 +126,7 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         # run
-        logger.debug("Compute %s",self)
+        logger.debug("Compute %s", self)
         for comp_cls in self.partonic_channels:
             comp = comp_cls(self)
             (
@@ -270,7 +271,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             self._compute_local()
         else:
             scheme = self._SF.threshold.scheme
-            logger.debug("Apply '%s' to %s",scheme,self)
+            logger.debug("Apply '%s' to %s", scheme, self)
             # compute zero-mass part
             obs_name = self._SF.obs_name
             # TODO maybe we can cache the heavy light any how - for the moment we can't because of

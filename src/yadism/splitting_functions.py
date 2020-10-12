@@ -23,6 +23,7 @@ The reference for LO splitting functions is :cite:`pink-book`.
 
 from eko import constants
 
+
 def pqq_reg(x):
     """
         The expression of the regular part of :math:`P_{qq}` splitting function.

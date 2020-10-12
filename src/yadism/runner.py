@@ -17,6 +17,7 @@ from typing import Any
 import time
 import inspect
 import logging
+import io
 
 import rich
 import rich.align
@@ -38,6 +39,7 @@ from .coupling_constants import CouplingConstants
 
 log.setup()
 logger = logging.getLogger(__name__)
+
 
 class Runner:
     """
@@ -153,8 +155,12 @@ class Runner:
             obj.load(self._observables.get(name, []))
             self.observable_instances[name] = obj
 
-        # stdout
-        self.console = rich.console.Console()
+        # output console
+        if log.silent_mode:
+            file = io.StringIO()
+        else:
+            file = None
+        self.console = rich.console.Console(file=file)
         # =================
         # Initialize output
         # =================
@@ -188,22 +194,25 @@ class Runner:
 
         # precomputing the plan of calculation
         precomputed_plan = {}
+        printable_plan = []
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
                 precomputed_plan[name] = obs
+                printable_plan.append(f"- {name} at {len(self._observables[name])} pts")
 
         self.console.print(rich.markdown.Markdown("## Plan"))
-        printable_plan = "\n".join([f"- {obs}" for obs in precomputed_plan])
-        self.console.print(rich.markdown.Markdown(printable_plan))
+        self.console.print(rich.markdown.Markdown("\n".join(printable_plan)))
 
         # running the calculation
         self.console.print(rich.markdown.Markdown("## Calculation"))
         self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
-        # for name, obs in rich.progress.track(
-        # precomputed_plan.items(), description="computing...", transient=True
-        # ):
-        for name, obs in precomputed_plan.items():
+        for name, obs in rich.progress.track(
+            precomputed_plan.items(),
+            description="computing...",
+            transient=True,
+            console=self.console,
+        ):
             self._output[name] = obs.get_output()
         end = time.time()
         diff = end - start

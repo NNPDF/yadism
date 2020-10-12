@@ -57,10 +57,7 @@ class F3heavyGluon(pccc.PartonicChannelHeavy):
             c4 = 2
             return (
                 (
-                    (
-                        split.pqg(z)
-                        * (-self.l_labda(z) - np.log(self.labda))
-                    )
+                    (split.pqg(z) * (-self.l_labda(z) - np.log(self.labda)))
                     + self.h_g(z, [c1, c2, c3, c4])
                 )
                 * self.labda

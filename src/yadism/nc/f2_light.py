@@ -106,9 +106,7 @@ class F2lightQuark(pc.PartonicChannelLight):
             return split.pqq_reg(z) * as_norm
 
         return rsl_from_distr_coeffs(
-            reg,
-            as_norm * split.pqq_delta(0),
-            as_norm * split.pqq_pd(0),
+            reg, as_norm * split.pqq_delta(0), as_norm * split.pqq_pd(0),
         )
 
 
@@ -145,10 +143,7 @@ class F2lightGluon(pc.PartonicChannelLight):
                 2  # TODO: to be understood
                 * 2
                 * nf
-                * (
-                    split.pqg(z) * (np.log((1 - z) / z) - 4)
-                    + 3 * constants.TR
-                )
+                * (split.pqg(z) * (np.log((1 - z) / z) - 4) + 3 * constants.TR)
             )
 
         return reg

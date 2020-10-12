@@ -14,6 +14,7 @@ from .cc import partonic_channels_cc, weights_cc, convolution_point_cc
 
 logger = logging.getLogger(__name__)
 
+
 class StructureFunction:
     """
         Represents an abstract structure function.

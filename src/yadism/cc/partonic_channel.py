@@ -78,11 +78,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         def sing(z, b1=b1, b3=b3, CF=CF, pqq_pd=split.pqq_pd):
             hq_sing = 2 * ((2 * np.log(1 - z) - np.log(1 - self.labda * z)) / (1 - z))
             return (
-                (
-                    -self.sf_prefactor
-                    * np.log(self.labda)
-                    * (pqq_pd(z) / (1 - z))
-                )
+                (-self.sf_prefactor * np.log(self.labda) * (pqq_pd(z) / (1 - z)))
                 + CF
                 * (
                     self.sf_prefactor * hq_sing
@@ -116,10 +112,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
                 (
                     -self.sf_prefactor
                     * np.log(self.labda)
-                    * (
-                        pqq_delta(x)
-                        - pqq_pd(x) * b1_int
-                    )
+                    * (pqq_delta(x) - pqq_pd(x) * b1_int)
                 )
                 + CF
                 * (
@@ -143,9 +136,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
             return split.pqq_reg(z) * as_norm
 
         return rsl_from_distr_coeffs(
-            reg,
-            as_norm * split.pqq_delta(0),
-            as_norm * split.pqq_pd(0),
+            reg, as_norm * split.pqq_delta(0), as_norm * split.pqq_pd(0),
         )
 
     def _NLO_fact_g(self):
