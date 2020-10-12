@@ -10,4 +10,4 @@ pandas
 pygit2
 semver
 #
-benchmarks/
+-e benchmarks/
