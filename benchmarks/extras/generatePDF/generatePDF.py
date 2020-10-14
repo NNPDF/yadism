@@ -52,10 +52,7 @@ def dump_pdf(name, xgrid, Q2grid, pids, pdf_table):
 def dump_info(name, description, pids):
     # collect data
 
-    data = dict(
-        description=description,
-        pids=pids,
-    )
+    data = dict(description=description, pids=pids,)
 
     # ===========
     # apply template

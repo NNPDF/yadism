@@ -3,27 +3,30 @@ import inspect
 import IPython
 from traitlets.config.loader import Config
 
-from .navigator import NavigatorApp, t, o, l
+from .navigator import NavigatorApp, t, o, l, compare_dicts
 
 
 def yelp(*args):
     """
-        Help function (renamed to avoid clash of names) - short cut: h.
+    Help function (renamed to avoid clash of names) - short cut: h.
     """
     if len(args) == 0:
         print(
             f"""Welcome to yadism benchmark skript!
-Available short cuts (variables):
-    t = "{t}" -> "theor[y|ies]"
-    o = "{o}" -> "observable[s]"
-    l = "{l}" -> "log[s]"
-Available functions (selected list):
-    h - this help
-    m - change mode
-    g - getter
-    ls - listing (reduced information)
-    p - printing (using ls)
-    diff - subtractig logs"""
+Available variables:
+    t = "{t}" -> query theories
+    o = "{o}" -> query observables
+    l = "{l}" -> query logs
+Available functions:
+    h() - this help
+    m(str) - change mode
+    g(tbl,id) - getter
+    ls(tbl) - listing table with reduced informations
+    dfl(id) - log as DataFrame
+    diff(id,id) - subtractig logs
+    truncate_logs() - clear log table
+    simlogs(id) - find similar logs
+"""
         )
     elif len(args) == 1:
         return help(*args)
@@ -36,25 +39,14 @@ h = yelp
 app = NavigatorApp("sandbox")
 
 
-def change_mode(*args):
+def m(*args):
     global app
     return app.change_mode(*args)
 
 
-m = change_mode
-
-
-def get(*args):
+def g(*args):
     global app
     return app.get(*args)
-
-
-g = get
-
-
-def p(*args):
-    global app
-    return app.print(*args)
 
 
 def ls(*args):
@@ -67,17 +59,19 @@ def dfl(*args):
     return app.get_log_DFdict(*args)
 
 
-def subtract_tables(*args):
+def diff(*args):
     global app
     return app.subtract_tables(*args)
-
-
-diff = subtract_tables
 
 
 def truncate_logs():
     global app
     return app.logs.truncate()
+
+
+def simlogs(*args):
+    global app
+    return app.list_all_sim_logs(*args)
 
 
 def launch_navigator():

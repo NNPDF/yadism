@@ -28,16 +28,16 @@ def generate_observables():
     light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     # light_kin.extend([dict(x=0.85, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
     obs_list = [
-        #"F2light",
+        # "F2light",
         # "F2charm",
         # "F2bottom",
         # "F2total",
         # "FLlight",
         # "FLcharm",
         # "FLbottom",
-         "F3light",
-         "F3charm",
-         "F3bottom",
+        "F3light",
+        "F3charm",
+        "F3bottom",
     ]
     cards = []
     card = copy.deepcopy(defaults)
@@ -80,8 +80,8 @@ class Sandbox:
             1,
             ["conly"],
             {
-                "XIR": self.db.theory_query.XIR == .5,
-                #"XIF": self.db.theory_query.XIF == 2
+                "XIR": self.db.theory_query.XIR == 0.5,
+                # "XIF": self.db.theory_query.XIF == 2
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "FNS": self.db.theory_query.FNS == "",
                 # "TMC": self.db.theory_query.TMC == 1,
@@ -92,7 +92,7 @@ class Sandbox:
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    # generate_observables()
     sand = Sandbox()
-    #sand.run_LO()
+    # sand.run_LO()
     sand.run_NLO()

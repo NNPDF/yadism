@@ -1,5 +1,3 @@
-from pprint import pprint
-
 import numpy as np
 import pandas as pd
 from tinydb import TinyDB
@@ -18,22 +16,55 @@ l = "l"
 
 
 class NavigatorApp(mode_selector.ModeSelector):
+    """
+    Navigator base class holding all elementry operations.
+
+    Parameters
+    ----------
+        mode : string
+            mode identifier
+    """
+
     def __init__(self, mode):
         super().__init__(mode)
         self.theories = tm.TableManager(self.idb.table("theories"))
-        self.observable = tm.TableManager(self.idb.table("observable"))
+        self.observables = tm.TableManager(self.idb.table("observables"))
         self.apfel_cache = tm.TableManager(self.idb.table("apfel_cache"))
         self.qcdnum_cache = tm.TableManager(self.idb.table("qcdnum_cache"))
         self.logs = tm.TableManager(self.odb.table("logs"))
 
     def change_mode(self, mode):
-        """Change mode"""
+        """
+        Change mode
+        
+        Parameters
+        ----------
+            mode : string
+                mode identifier
+        """
         super().__init__(mode)
 
-    def get_all_theories(self):
-        """Retrieve all theories from db."""
-        # collect
-        return self.idb.table("theories").all()
+    def tm(self, table):
+        """
+        Get corresponding TableManager
+        
+        Parameters
+        ----------
+            table : string
+                table identifier
+
+        Returns
+        -------
+            tm : yadmark.table_manager.TableManager
+                corresponding TableManager
+        """
+        if table == t:
+            return self.theories
+        if table == o:
+            return self.observables
+        if table == l:
+            return self.logs
+        raise ValueError(f"Unknown table {table}")
 
     def get(self, table, doc_id=None):
         """
@@ -45,341 +76,234 @@ class NavigatorApp(mode_selector.ModeSelector):
                 table name to query: short cut or singular for one document or plural for all
             doc_id :
                 if given, retrieve single document
+
+        Returns
+        -------
+            df : pandas.DataFrame
+                created frame
         """
-        r = None
         # list all
         if doc_id is None:
-            if self._is_theory(table):
-                r = self.get_all_theories()
-            elif self._is_obs(table):
-                r = self.get_all_observables()
-            elif self._is_log(table):
-                r = self.get_all_logs()
-            else:
-                print(f"Unkown table: {table}")
-        else:  # list one
-            if self._is_theory(table, False):
-                r = self.get_theory(doc_id)
-            elif self._is_obs(table, False):
-                r = self.get_observable(doc_id)
-            elif self._is_log(table, False):
-                r = self.get_log(doc_id)
-            else:
-                print(f"Unkown table: {table}")
-        return r
+            return self.tm(table).all()
+        return self.tm(table).get(doc_id)
 
     def list_all_theories(self):
-        """Collect important information of all theories."""
+        """
+        Collect important information of all theories.
+
+        Returns
+        -------
+            df : pandas.DataFrame
+                created frame
+        """
         # collect
-        theories = self.get_all_theories()
+        theories = self.get(t)
         data = []
-        for t in theories:
-            obj = {"doc_id": t.doc_id}
-            for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS"]:
-                obj[f] = t[f]
-            dt = unstr_datetime(t["_modify_time"])
+        for theo in theories:
+            obj = {"doc_id": theo.doc_id}
+            for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS", "DAMP"]:
+                obj[f] = theo[f]
+            dt = unstr_datetime(theo["_modify_time"])
             obj["modified"] = human_dates(dt)
             data.append(obj)
         # output
         df = pd.DataFrame(data)
         return df
 
-    def print_all_theories(self):
-        """Print overview of theories."""
-        l = self.list_all_theories()
-        print(l)
-
-    # one theory
-    def get_theory(self, doc_id):
-        """
-            Retrieve an theory.
-
-            Parameters
-            ----------
-                doc_id : int
-                    document identifier
-        """
-        return self.idb.table("theories").get(doc_id=doc_id)
-
-    def pprint_theory(self, doc_id):
-        """
-            Pretty print a theory.
-
-            Parameters
-            ----------
-                doc_id : int
-                    document identifier
-        """
-        t = self.get_theory(doc_id)
-        pprint(t, sort_dicts=False)
-
-    def get_all_observables(self):
-        """Retrieve all observables from db."""
-        return self.idb.table("observables").all()
-
     def list_all_observables(self):
-        """Collect important information of all observables."""
+        """
+        Collect important information of all observables.
+
+        Returns
+        -------
+            df : pandas.DataFrame
+                created frame
+        """
         # collect
-        obs = self.get_all_observables()
+        obs = self.get(o)
         data = []
-        for o in obs:
-            obj = {"doc_id": o.doc_id}
-            if "PTO" in o:
-                obj["PTO"] = o["PTO"]
-            xgrid = o["interpolation_xgrid"]
+        for ob in obs:
+            obj = {"doc_id": ob.doc_id}
+            if "PTO" in ob:
+                obj["PTO"] = ob["PTO"]
+            xgrid = ob["interpolation_xgrid"]
             obj[
                 "xgrid"
-            ] = f"{len(xgrid)}pts: {'log' if o['interpolation_is_log'] else 'x'}^{o['interpolation_polynomial_degree']}"
-            obj["curr"] = o["prDIS"]
+            ] = f"{len(xgrid)}pts: {'log' if ob['interpolation_is_log'] else 'x'}^{ob['interpolation_polynomial_degree']}"
+            obj["curr"] = ob["prDIS"]
             proj_map = {
                 "electron": "e-",
                 "positron": "e+",
                 "neutrino": "ν",
                 "antineutrino": "ν~",
             }
-            obj["proj"] = proj_map[o["projectile"]]
-            obj["pol"] = o["PolarizationDIS"]
+            obj["proj"] = proj_map[ob["projectile"]]
+            obj["pol"] = ob["PolarizationDIS"]
             sfs = 0
             esfs = 0
-            for sf in o:
+            for sf in ob:
                 # quick fix
                 if not on.ObservableName.is_valid(sf):
                     continue
                 sfs += 1
-                esfs += len(o[sf])
+                esfs += len(ob[sf])
             obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
-            dt = unstr_datetime(o["_modify_time"])
+            dt = unstr_datetime(ob["_modify_time"])
             obj["modified"] = human_dates(dt)
             data.append(obj)
         # output
         df = pd.DataFrame(data)
         return df
 
-    def print_all_observables(self):
-        """Print overview of observables."""
-        l = self.list_all_observables()
-        print(l)
-
-    # one observable
-    def get_observable(self, doc_id):
+    def list_all_sim_logs(self, ref_log_or_id):
         """
-            Retrieve an observable.
+        Search logs which are similar to the one given, i.e., same theory and/or same observable.
 
-            Parameters
-            ----------
-                doc_id : int
-                    document identifier
+        Parameters
+        ----------
+            ref_log_or_id : dict or int
+                if int doc_id of log to be loaded
+
+        Returns
+        -------
+            df : pandas.DataFrame
+                created frame
         """
-        return self.idb.table("observables").get(doc_id=doc_id)
+        if isinstance(ref_log_or_id, int):
+            ref_log = self.get(l, ref_log_or_id)
+        else:
+            ref_log = ref_log_or_id
+        rel_logs = []
+        all_logs = self.get(l)
+        for lg in all_logs:
+            if (
+                "_theory_doc_id" in ref_log
+                and lg["_theory_doc_id"] != ref_log["_theory_doc_id"]
+            ):
+                continue
+            if (
+                "_observables_doc_id" in ref_log
+                and lg["_observables_doc_id"] != ref_log["_observables_doc_id"]
+            ):
+                continue
+            rel_logs.append(lg)
+        return self.list_all_logs(rel_logs)
 
-    def pprint_observable(self, doc_id):
+    def list_all_logs(self, logs=None):
         """
-            Pretty print an observable.
+        Collect important information of all logs
+        
+        Parameters
+        ----------
+            logs : list or None
+                if None plot all
 
-            Parameters
-            ----------
-                doc_id : int
-                    document identifier
+        Returns
+        -------
+            df : pandas.DataFrame
+                created frame
         """
-        t = self.get_observable(doc_id)
-        pprint(t, sort_dicts=False)
-
-    def get_all_logs(self):
-        """Retrieve all logs from db."""
         # collect
-        return self.odb.table("logs").all()
-
-    def list_all_logs(self):
-        """Collect important information of all logs."""
-        # collect
-        logs = self.get_all_logs()
+        if logs is None:
+            logs = self.get(l)
         data = []
-        for l in logs:
-            obj = {"doc_id": l.doc_id}
+        for lg in logs:
+            obj = {"doc_id": lg.doc_id}
             sfs = 0
             esfs = 0
-            for sf in l:
+            ext = ""
+            for sf in lg:
                 if not on.ObservableName.is_valid(sf):
                     continue
                 sfs += 1
-                esfs += len(l[sf])
-            crash = l.get("_crash", None)
+                esfs += len(lg[sf])
+                for ext_prgs in ["APFEL", "QCDNUM", "regression"]:
+                    if ext_prgs in lg[sf][0]:
+                        ext = ext_prgs
+            crash = lg.get("_crash", None)
             if crash is None:
                 obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
             else:
-                obj[
-                    "structure_functions"
-                ] = crash
-            for f in [
-                "_theory_doc_id",
-                "_observables_doc_id",
-                "_creation_time",
-                "_pdf",
-            ]:
-                if f in l.keys():
-                    obj[f.split("_")[1]] = l[f]
-            dt = unstr_datetime(obj["creation"])
-            obj["creation"] = human_dates(dt)
+                obj["structure_functions"] = crash
+            obj["theory"] = lg["_theory_doc_id"]
+            obj["obs"] = lg["_observables_doc_id"]
+            obj["ext"] = ext
+            if "_pdf" in lg:
+                obj["pdf"] = lg["_pdf"]
+            if "_creation_time" in lg:
+                dt = unstr_datetime(lg["_creation_time"])
+                obj["created"] = human_dates(dt)
             data.append(obj)
         # output
         df = pd.DataFrame(data)
         return df
 
-    def print_all_logs(self):
-        """Print overview of log."""
-        l = self.list_all_logs()
-        print(l)
-
-    # one observable
-    def get_log(self, doc_id):
-        """
-            Retrieve a log.
-
-            Parameters
-            ----------
-                doc_id : int
-                    document identifier
-
-            Returns
-            -------
-                log : dict
-                    document
-        """
-        return self.odb.table("logs").get(doc_id=doc_id)
-
-    def truncate_logs(self):
-        """Truncate all logs"""
-        if input("Purge all logs? [y/n]") != "y":
-            print("Doing nothing.")
-            return
-        return self.odb.table("logs").truncate()
-
     def get_log_DFdict(self, doc_id):
         """
-            Load all structure functions in log as DataFrame
+        Load all structure functions in log as DataFrame
 
-            Parameters
-            ----------
-                doc_id : int
-                    document identifier
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
 
-            Returns
-            -------
-                log : list(pd.DataFrame)
-                    DataFrames
+        Returns
+        -------
+            log : DFdict
+                DataFrames
         """
-        l = self.get_log(doc_id)
+        log = self.get(l, doc_id)
         dfd = DFdict()
-        for k in l:
-            # TODO
-            if k[0] != "F":
+        for sf in log:
+            if not on.ObservableName.is_valid(sf):
                 continue
-            dfd.print(f"{k} with theory={l['_theory_doc_id']} using {l['_pdf']}")
-            dfd[k] = pd.DataFrame(l[k])
+            dfd.print(
+                f"{sf} with theory={log['_theory_doc_id']}, obs={log['_observables_doc_id']} using {log['_pdf']}"
+            )
+            dfd[sf] = pd.DataFrame(log[sf])
         return dfd
-
-    def pprint_log(self, doc_id):
-        """
-            Pretty print a log.
-
-            Parameters
-            ----------
-                doc_id : int
-                    document identifier
-        """
-        t = self.get_log(doc_id)
-        pprint(t, sort_dicts=False)
-
-    def _is_theory(self, table, plural=True):
-        """wrapper to activate theory"""
-        if table == t:
-            return True
-        if plural:
-            return table == "theories"
-        return table == "theory"
-
-    def _is_obs(self, table, plural=True):
-        """wrapper to activate observables"""
-        if table == o:
-            return True
-        if plural:
-            return table == "observables"
-        return table == "observable"
-
-    def _is_log(self, table, plural=True):
-        """wrapper to activate logs"""
-        if table == l:
-            return True
-        if plural:
-            return table == "logs"
-        return table == "log"
 
     def list_all(self, table):
         """
-            List wrapper.
+        List wrapper.
 
-            Parameters
-            ----------
-                table : str
-                    table name to query: short cut or plural
+        Parameters
+        ----------
+            table : str
+                table name to query: short cut or plural
+
+        Returns
+        -------
+            df : pandas.DataFrame
+                created frame
         """
-        print(self._is_theory(table))
-        if self._is_theory(table):
+        if table == t:
             return self.list_all_theories()
-        elif self._is_obs(table):
+        elif table == o:
             return self.list_all_observables()
-        elif self._is_log(table):
+        elif table == l:
             return self.list_all_logs()
         else:
             print(f"Unkown table: {table}")
             return []
 
-    def print(self, table, doc_id=None):
-        """
-            Print wrapper.
-
-            Parameters
-            ----------
-                table : str
-                    table name to query: short cut or singular for one document or plural for list
-                doc_id :
-                    if given, print single document
-        """
-        # list all
-        if doc_id is None:
-            if self._is_theory(table):
-                self.print_all_theories()
-            elif self._is_obs(table):
-                self.print_all_observables()
-            elif self._is_log(table):
-                self.print_all_logs()
-            else:
-                print(f"Unkown table: {table}")
-        else:  # list one
-            if self._is_theory(table, False):
-                self.pprint_theory(doc_id)
-            elif self._is_obs(table, False):
-                self.pprint_observable(doc_id)
-            elif self._is_log(table, False):
-                self.pprint_log(doc_id)
-            else:
-                print(f"Unkown table: {table}")
-
     def subtract_tables(self, dfd1, dfd2):
         """
-            Subtract results in the second table from the first one,
-            properly propagate the integration error and recompute the relative
-            error on the subtracted results.
+        Subtract results in the second table from the first one,
+        properly propagate the integration error and recompute the relative
+        error on the subtracted results.
 
-            Parameters
-            ----------
-            file1 :
-                path for csv file with the table to subtract from
-            file2 :
-                path for csv file with the table to be subtracted
-            output_f :
-                path for csv file to store the result
+        Parameters
+        ----------
+            dfd1 : dict or int
+                if int the doc_id of the log to be loaded
+            dfd2 : dict or int
+                if int the doc_id of the log to be loaded
 
+        Returns
+        -------
+            diffout : DFdict
+                created frames
         """
 
         diffout = DFdict()
@@ -389,13 +313,13 @@ class NavigatorApp(mode_selector.ModeSelector):
         ids = []
         for dfd in [dfd1, dfd2]:
             if isinstance(dfd, int):
-                logs.append(self.get_log(dfd))
+                logs.append(self.get(l, dfd))
                 ids.append(dfd)
             elif isinstance(dfd, DFdict):
                 logs.append(dfd.to_document())
                 ids.append("not-an-id")
             else:
-                raise ("subtract_tables: DFList not recognized!")
+                raise ValueError("subtract_tables: DFList not recognized!")
         log1, log2 = logs
         id1, id2 = ids
 
@@ -491,22 +415,32 @@ class NavigatorApp(mode_selector.ModeSelector):
 
         return tab_joint
 
-    def compare_dicts(self, d1, d2, exclude_underscored=False):
-        """
-            Check which entries of the two dictionaries are different, and output
-            the values.
-        """
-        kw = 20  # keys print width
-        fw = 30  # values print width0
-        print("┌", "─" * (kw + 2), "┬", "─" * (fw * 2 + 1 + 2), "┐", sep="")
-        for k in d1.keys() | d2.keys():
-            if exclude_underscored and k[0] == "_":
-                continue
 
-            if k not in d1:
-                print(f"│ {k:<{kw}} │ {None:>{fw}} {d2[k]:>{fw}} │")
-            elif k not in d2:
-                print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {None:>{fw}} │")
-            elif d1[k] != d2[k]:
-                print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {d2[k]:>{fw}} │")
-        print("└", "─" * (kw + 2), "┴", "─" * (fw * 2 + 1 + 2), "┘", sep="")
+def compare_dicts(d1, d2, exclude_underscored=False):
+    """
+    Check which entries of the two dictionaries are different, and output
+    the values.
+
+    Parameters
+    ----------
+        d1 : dict
+            first dict
+        d2 : dict
+            second dict
+        exclude_underscored : bool
+            skip keys prefixed with _?
+    """
+    kw = 20  # keys print width
+    fw = 30  # values print width
+    print("┌", "─" * (kw + 2), "┬", "─" * (fw * 2 + 1 + 2), "┐", sep="")
+    for k in d1.keys() | d2.keys():
+        if exclude_underscored and k[0] == "_":
+            continue
+
+        if k not in d1:
+            print(f"│ {k:<{kw}} │ {None:>{fw}} {d2[k]:>{fw}} │")
+        elif k not in d2:
+            print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {None:>{fw}} │")
+        elif d1[k] != d2[k]:
+            print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {d2[k]:>{fw}} │")
+    print("└", "─" * (kw + 2), "┴", "─" * (fw * 2 + 1 + 2), "┘", sep="")
