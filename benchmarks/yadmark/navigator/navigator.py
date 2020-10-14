@@ -209,7 +209,7 @@ class NavigatorApp(mode_selector.ModeSelector):
             else:
                 obj[
                     "structure_functions"
-                ] = f"{crash} for {l['_crash_sf']} at {l['_crash_kin']}"
+                ] = crash
             for f in [
                 "_theory_doc_id",
                 "_observables_doc_id",

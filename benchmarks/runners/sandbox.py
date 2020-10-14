@@ -25,19 +25,19 @@ def generate_observables():
     )
     # light_kin.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
     # light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 40, 10).tolist()])
-    light_kin.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     # light_kin.extend([dict(x=0.85, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
     obs_list = [
-        "F2light",
+        #"F2light",
         # "F2charm",
         # "F2bottom",
         # "F2total",
         # "FLlight",
         # "FLcharm",
         # "FLbottom",
-        # "F3light",
-        # "F3charm",
-        # "F3bottom",
+         "F3light",
+         "F3charm",
+         "F3bottom",
     ]
     cards = []
     card = copy.deepcopy(defaults)
@@ -78,14 +78,14 @@ class Sandbox:
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["ToyLH"],
+            ["conly"],
             {
-                #"XIR": self.db.theory_query.XIR == 1,
+                "XIR": self.db.theory_query.XIR == .5,
                 #"XIF": self.db.theory_query.XIF == 2
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "FNS": self.db.theory_query.FNS == "",
                 # "TMC": self.db.theory_query.TMC == 1,
-                "FNS": self.db.theory_query.FNS == "FONLL-A",
+                # "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
             },
         )
@@ -94,5 +94,5 @@ class Sandbox:
 if __name__ == "__main__":
     #generate_observables()
     sand = Sandbox()
-    sand.run_LO()
+    #sand.run_LO()
     sand.run_NLO()

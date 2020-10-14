@@ -4,6 +4,8 @@
 
 import pytest
 
+import numpy as np
+
 from yadmark.benchmark.db_interface import DBInterface
 
 
@@ -42,6 +44,24 @@ class ApfelBenchmark:
         return self.db.run_external(PTO, pdfs, theory_update, obs_query)
 
 
+def plain_assert_external(theory, obs, sf, yad):
+    if (
+        sf == "FLbottom"
+        and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
+    ):
+        # APFEL has a discreization in Q2/m2
+        return dict(abs=2e-6)
+    if obs["prDIS"] == "CC":
+        if sf[2:] == "charm" and yad["x"] > 0.75:
+            return dict(abs=2e-6) # grid border
+        if sf[2:] == "top" and yad["Q2"] < 150:
+            return dict(abs=1e-4) # production threshold
+        if sf == "F3total" and (yad["Q2"] < 7 or 500 < yad["Q2"] < 1000):
+            # we have a change in sign (from + to - at small Q2 and back to + at large)
+            # F3light is > 0, but F3charm < 0
+            return dict(abs=2e-4)
+    return None
+
 @pytest.mark.quick_check
 @pytest.mark.commit_check
 class BenchmarkPlain(ApfelBenchmark):
@@ -51,21 +71,8 @@ class BenchmarkPlain(ApfelBenchmark):
         return self.run_external(0, ["ToyLH"], obs_update={"prDIS": None})
 
     def benchmark_NLO(self):
-        def my_assert_external(theory, obs, sf, yad):
-            if (
-                sf == "FLbottom"
-                and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
-            ):
-                return dict(abs=2e-6)
-            elif obs["prDIS"] == "CC":
-                if sf[2:] == "charm" and yad["x"] > 0.75:
-                    return dict(abs=2e-6)
-                if sf[2:] == "top" and yad["Q2"] < 150:
-                    return dict(abs=1e-4)
-            return None
-
         return self.run_external(
-            1, ["ToyLH"], obs_update={"prDIS": None}, assert_external=my_assert_external
+            1, ["ToyLH"], obs_update={"prDIS": None}, assert_external=plain_assert_external
         )
 
 
@@ -85,19 +92,6 @@ class BenchmarkProjectile(ApfelBenchmark):
         )
 
     def benchmark_NLO(self):
-        def my_assert_external(theory, obs, sf, yad):
-            if (
-                sf == "FLbottom"
-                and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
-            ):
-                return dict(abs=2e-6)
-            elif obs["prDIS"] == "CC":
-                if sf[2:] == "charm" and yad["x"] > 0.75:
-                    return dict(abs=2e-6)
-                if sf[2:] == "top" and yad["Q2"] < 150:
-                    return dict(abs=1e-4)
-            return None
-
         return self.run_external(
             1,
             ["ToyLH"],
@@ -106,7 +100,7 @@ class BenchmarkProjectile(ApfelBenchmark):
                 "projectile": None,
                 "PolarizationDIS": None,
             },
-            assert_external=my_assert_external,
+            assert_external=plain_assert_external,
         )
 
 
@@ -120,8 +114,26 @@ class BenchmarkScaleVariations(ApfelBenchmark):
         )
 
     def benchmark_NLO(self):
+        def sv_assert_external(theory, obs, sf, yad):
+            if np.isclose(theory["XIF"],1) and np.isclose(theory["XIR"],1):
+                return plain_assert_external(theory,obs,sf,yad)
+            if theory["XIF"] < 1 and theory["XIR"] < 1:
+                if (
+                    sf == "FLbottom"
+                    and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
+                ):
+                    # APFEL has a discreization in Q2/m2
+                    return dict(abs=1e-5)
+                if obs["prDIS"] == "CC":
+                    if sf[2:] == "top" and yad["Q2"] < 160:
+                        return dict(abs=2e-4) # production threshold
+                    if sf == "F3total" and yad["Q2"] < 7:
+                        # still F3light is > 0, but F3charm < 0
+                        return dict(rel=0.015)
+            return None
+
         return self.run_external(
-            1, ["CT14llo_NF3"], {"XIR": None, "XIF": None}, {"prDIS": None}
+            1, ["CT14llo_NF3"], {"XIR": None, "XIF": None}, {"prDIS": None}, assert_external=sv_assert_external
         )
 
 
