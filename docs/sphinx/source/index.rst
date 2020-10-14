@@ -38,8 +38,6 @@ The implemented structure functions are :math:`F_2,~F_L,~F_3` for the following
    yadism.rst
    tutorials/index.rst
 
-   zzz-refs.rst
-
 In these :underlined:`documents` you can find the reference for all *yadism* API and internals.
 
 .. toctree::
@@ -53,6 +51,8 @@ In these :underlined:`documents` you can find the reference for all *yadism* API
    theory/processes.rst
    theory/scale-variations.rst
    theory/TMC.rst
+
+   zzz-refs.rst
 
 And here there is some *physics documentation*.
 
@@ -73,19 +73,6 @@ structure.
 
 These tools have been developed alongside `yadism`, in order to automatize tests
 and improve the quality of code (less bugs, more readable... hopefully...).
-
-Current tools:
-
-- benchmark db suite
-  - db generating scripts
-  - navigator
-- benchmark runner
-  - currently in `benchmarks/conftest.py`
-- actual tests/benchmarks
-  - unit tests
-  - regression tests
-  - benchmark (against APFEL)
-- third-party tools
 
 ---------
 

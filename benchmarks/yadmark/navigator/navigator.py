@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from tinydb import TinyDB
 from human_dates import human_dates
 
 from yadism import observable_name as on
@@ -36,7 +35,7 @@ class NavigatorApp(mode_selector.ModeSelector):
     def change_mode(self, mode):
         """
         Change mode
-        
+
         Parameters
         ----------
             mode : string
@@ -47,7 +46,7 @@ class NavigatorApp(mode_selector.ModeSelector):
     def tm(self, table):
         """
         Get corresponding TableManager
-        
+
         Parameters
         ----------
             table : string
@@ -127,9 +126,11 @@ class NavigatorApp(mode_selector.ModeSelector):
             if "PTO" in ob:
                 obj["PTO"] = ob["PTO"]
             xgrid = ob["interpolation_xgrid"]
-            obj[
-                "xgrid"
-            ] = f"{len(xgrid)}pts: {'log' if ob['interpolation_is_log'] else 'x'}^{ob['interpolation_polynomial_degree']}"
+            obj["xgrid"] = (
+                f"{len(xgrid)}pts: "
+                + f"{'log' if ob['interpolation_is_log'] else 'x'}"
+                + f"^{ob['interpolation_polynomial_degree']}"
+            )
             obj["curr"] = ob["prDIS"]
             proj_map = {
                 "electron": "e-",
@@ -192,7 +193,7 @@ class NavigatorApp(mode_selector.ModeSelector):
     def list_all_logs(self, logs=None):
         """
         Collect important information of all logs
-        
+
         Parameters
         ----------
             logs : list or None
@@ -258,7 +259,9 @@ class NavigatorApp(mode_selector.ModeSelector):
             if not on.ObservableName.is_valid(sf):
                 continue
             dfd.print(
-                f"{sf} with theory={log['_theory_doc_id']}, obs={log['_observables_doc_id']} using {log['_pdf']}"
+                f"{sf} with theory={log['_theory_doc_id']}, "
+                + f"obs={log['_observables_doc_id']} "
+                + f"using {log['_pdf']}"
             )
             dfd[sf] = pd.DataFrame(log[sf])
         return dfd
@@ -320,8 +323,8 @@ class NavigatorApp(mode_selector.ModeSelector):
                 ids.append("not-an-id")
             else:
                 raise ValueError("subtract_tables: DFList not recognized!")
-        log1, log2 = logs
-        id1, id2 = ids
+        log1, log2 = logs[0], logs[1]
+        id1, id2 = ids[0], ids[1]
 
         # print head
         msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
@@ -365,7 +368,7 @@ class NavigatorApp(mode_selector.ModeSelector):
             table_out["yadism_error"] += table1["yadism_error"]
 
             # compute relative error
-            def rel_err(row):
+            def rel_err(row,tout_ext=tout_ext):
                 if row[tout_ext] == 0.0:
                     if row["yadism"] == 0.0:
                         return 0.0
