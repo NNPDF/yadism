@@ -166,6 +166,16 @@ html_context = {
 #
 # html_sidebars = {}
 
+# -- Options for HTML mathjax ------------------------------------------------
+mathjax_config = {
+    "extensions": ["tex2jax.js"],
+    "jax": ["input/TeX", "output/HTML-CSS"],
+    "loader": {"load": ["[tex]/color", "[tex]/physics"]},
+    "tex": {
+        "packages": {"[+]": ["base", "color", "physics"]},
+    },
+}
+
 # -- Options for HTML output -------------------------------------------------
 
 napoleon_google_docstring = False
@@ -221,7 +231,15 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "yadism-documentation", "yadism Documentation", [author], 1,)]
+man_pages = [
+    (
+        master_doc,
+        "yadism-documentation",
+        "yadism Documentation",
+        [author],
+        1,
+    )
+]
 
 
 # -- Options for Texinfo output ----------------------------------------------
