@@ -1,11 +1,13 @@
 import pathlib
 import argparse
+import shutil
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 from jinja2 import Environment, FileSystemLoader
 import lhapdf
+from .. import toyLH
 
 # ==========
 # globals
@@ -13,7 +15,7 @@ import lhapdf
 
 
 here = pathlib.Path(__file__).parent.absolute()
-env = Environment(loader=FileSystemLoader(str(here / "templatePDF")))
+env = Environment(loader=FileSystemLoader(str(here)))
 
 
 def stringify(ls, fmt="%.6e"):
@@ -47,7 +49,7 @@ def dump_pdf(name, xgrid, Q2grid, pids, pdf_table):
 
     templatePDF = env.get_template("templatePDF.dat")
     stream = templatePDF.stream(data)
-    stream.dump(str(here / "PDFs" / name / f"{name}_0000.dat"))
+    stream.dump(str(pathlib.Path(name) / f"{name}_0000.dat"))
 
 
 def dump_info(name, description, pids):
@@ -60,7 +62,7 @@ def dump_info(name, description, pids):
 
     templatePDF = env.get_template("templatePDF.info")
     stream = templatePDF.stream(data)
-    stream.dump(str(here / "PDFs" / name / f"{name}.info"))
+    stream.dump(str(pathlib.Path(name) / f"{name}.info"))
 
 
 # ==========
@@ -75,8 +77,8 @@ def make_set(name, active_pids, lhapdf_like=None):
             max_nf = q
     pids_out = list(range(-max_nf,0)) + list(range(1,max_nf+1)) + [21]
     # generate actual grids
-    xgrid = np.geomspace(1e-9, 1, 100)
-    Q2grid = np.geomspace(0.4, 5e4, 25)
+    xgrid = np.geomspace(1e-9, 1, 240)
+    Q2grid = np.geomspace(1.3, 1e5, 35)
     pdf_table = []
     # determine callable
     if lhapdf_like is None:
@@ -90,42 +92,12 @@ def make_set(name, active_pids, lhapdf_like=None):
         else:
             pdf_table.append([0.0 for x in xgrid for Q2 in Q2grid])
     # write to output
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-    dump_pdf(name, xgrid, Q2grid, pids_out, pdf_table)
+    pathlib.Path(name).mkdir(exist_ok=True)
+    dump_pdf(name, xgrid, Q2grid, pids_out, np.array(pdf_table).T)
 
     # make PDF.info
     description = f"'{name} PDFset, for debug purpose'"
     dump_info(name, description, pids_out)
-
-
-
-def toy_sonly():
-    name = "toy_sonly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-
-    xgrid = np.logspace(-9, 0, 100)
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = antid = g = d = u = [0.0 for x in xgrid for Q2 in Q2grid]
-    N_db = 0.1939875e0
-    adb = -0.1e0
-    bdb = 6e0
-    fs = 0.2e0
-    s = [
-        fs * (N_db * x ** adb * (1e0 - x) ** bdb) * (2e0 - x)
-        for x in xgrid
-        for Q2 in Q2grid
-    ]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'strange quark only PDFset from toyLH, for debug purpose'"
-    dump_info(name, description, pids)
-
 
 def check(pdfset, pid):
     pdf = lhapdf.mkPDF(pdfset, 0)
@@ -161,28 +133,41 @@ def generate_pdf():
         help="active pids",
         nargs="+"
     )
+    ap.add_argument(
+        "-i",
+        "--install",
+        action="store_true",
+        help="install into LHAPDF"
+    )
     args = ap.parse_args()
     print(args)
-    if "" == args.from_pdf_set:
+    # find callable
+    if args.from_pdf_set == "":
         pdf_set = None
+    elif args.from_pdf_set == "toyLH":
+        pdf_set = toyLH.mkPDF("toyLH",0)
     else:
-        pdf_set = None
-    return make_set(args.name, args.pids, pdf_set)
+        pdf_set = lhapdf.mkPDF(args.from_pdf_set)
+    # create
+    make_set(args.name, args.pids, pdf_set)
+    # install
+    if args.install:
+        _install_pdf(args.name)
 
+def install_pdf():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "name",
+        type=str,
+        help="pdf name",
+    )
+    args = ap.parse_args()
+    _install_pdf(args.name)
 
-if __name__ == "__main__":
-    generate_pdf()
-    #sbaronly()
-    # donly()
-    # toy_donly()
-    # dbaronly()
-    # toy_donly()
-    # uonly()
-    # uonly_dense()
-    # sonly()
-    # toy_sonly()
-    # toy_gonly()
-    # gonly()
-    # check("uonly", 2)
-    # check("uonly-dense", 2)
-    # check("gonly", 21)
+def _install_pdf(name):
+    print(f"install_pdf {name}")
+    target = pathlib.Path(lhapdf.paths()[0])
+    src = pathlib.Path(name)
+    if not src.exists():
+        raise FileExistsError(src)
+    shutil.move(str(src), str(target))
