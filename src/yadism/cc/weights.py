@@ -10,7 +10,7 @@ Brief proof of @F3-sign@ for singlet and non-singlet combinations
 
 projectile = e+ -> rest = 1
 - sign = -1
-- weight[2] is not set (i.e. 0) 
+- weight[2] is not set (i.e. 0)
 - weight[-2] = -w
 
 projectile = e- -> rest = 0

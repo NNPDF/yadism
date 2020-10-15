@@ -1,4 +1,5 @@
 import pathlib
+import argparse
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -66,196 +67,36 @@ def dump_info(name, description, pids):
 # PDFs
 # ==========
 
-
-def uonly():
-    name = "uonly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-    xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
+def make_set(name, active_pids, lhapdf_like=None):
+    # check flavors
+    max_nf = 3
+    for q in range(4,6+1):
+        if q in active_pids or -q in active_pids:
+            max_nf = q
+    pids_out = list(range(-max_nf,0)) + list(range(1,max_nf+1)) + [21]
+    # generate actual grids
+    xgrid = np.geomspace(1e-9, 1, 100)
     Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = antid = d = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
-    u = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
+    pdf_table = []
+    # determine callable
+    if lhapdf_like is None:
+        pdf_callable = lambda pid,x,Q2: (1.0 - x) * x
+    else:
+        pdf_callable = lhapdf_like.xfxQ2
+    # iterate partons
+    for pid in pids_out:
+        if pid in active_pids:
+            pdf_table.append([pdf_callable(pid,x,Q2) for x in xgrid for Q2 in Q2grid])
+        else:
+            pdf_table.append([0.0 for x in xgrid for Q2 in Q2grid])
+    # write to output
+    (here / "PDFs" / name).mkdir(exist_ok=True)
+    dump_pdf(name, xgrid, Q2grid, pids_out, pdf_table)
 
     # make PDF.info
-    description = "'up quark only PDFset, for debug purpose'"
-    dump_info(name, description, pids)
+    description = f"'{name} PDFset, for debug purpose'"
+    dump_info(name, description, pids_out)
 
-
-def conly():
-    name = "conly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-    xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-4, -3, -2, -1, 1, 2, 3, 4, 21]
-    antic = antis = antiu = antid = d = u = s = g = [
-        0.0 for x in xgrid for Q2 in Q2grid
-    ]
-    c = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
-    pdf_table = np.array([antic, antis, antiu, antid, d, u, s, c, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'charm quark only PDFset, for debug purpose'"
-    dump_info(name, description, pids)
-
-
-def uonly_dense():
-    name = "uonly-dense"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-    xgrid = np.unique(
-        np.concatenate([np.logspace(-9, 0, 100), np.linspace(0.8, 1.0, 100)])
-    )
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = antid = d = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
-    u = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'up quark only PDFset, for debug purpose, denser in high x'"
-    dump_info(name, description, pids)
-
-
-def gonly():
-    name = "gonly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-
-    xgrid = np.logspace(-9, 0, 100)
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = antid = d = u = s = [0.0 for x in xgrid for Q2 in Q2grid]
-    g = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'gluon only PDFset, for debug purpose'"
-    dump_info(name, description, pids)
-
-
-def toy_gonly():
-    name = "toy_gonly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-
-    xgrid = np.logspace(-9, 0, 100)
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = antid = d = u = s = [0.0 for x in xgrid for Q2 in Q2grid]
-    N_g = 1.7e0
-    ag = -0.1e0
-    bg = 5e0
-    g = [N_g * x ** ag * (1e0 - x) ** bg for x in xgrid for Q2 in Q2grid]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'gluon only PDFset from toyLH, for debug purpose'"
-    dump_info(name, description, pids)
-
-
-def donly():
-    name = "donly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-    xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = antid = u = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
-    d = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'down quark only PDFset, for debug purpose'"
-    dump_info(name, description, pids)
-
-
-def toy_donly():
-    name = "toy_donly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-
-    xgrid = np.logspace(-9, 0, 100)
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = antid = g = u = s = [0.0 for x in xgrid for Q2 in Q2grid]
-    N_dv = 1.7e0
-    adv = -0.1e0
-    bdv = 5e0
-    N_db = 0.1939875e0
-    adb = -0.1e0
-    bdb = 6e0
-    d = [
-        N_dv * x ** adv * (1e0 - x) ** bdv + N_db * x ** adb * (1e0 - x) ** bdb
-        for x in xgrid
-        for Q2 in Q2grid
-    ]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'down quark only PDFset from toyLH, for debug purpose'"
-    dump_info(name, description, pids)
-
-
-def antidonly():
-    name = "antidonly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-    xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = d = u = s = g = [0.0 for x in xgrid for Q2 in Q2grid]
-    antid = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'antidown quark only PDFset, for debug purpose'"
-    dump_info(name, description, pids)
-
-
-def sonly():
-    name = "sonly"
-    (here / "PDFs" / name).mkdir(exist_ok=True)
-
-    # make PDF.dat
-    xgrid = np.unique(np.concatenate([np.logspace(-9, 0, 100)]))
-    Q2grid = np.geomspace(0.4, 5e4, 25)
-    pids = [-3, -2, -1, 1, 2, 3, 21]
-    antis = antiu = antid = d = u = g = [0.0 for x in xgrid for Q2 in Q2grid]
-    s = [(1.0 - x) * x for x in xgrid for Q2 in Q2grid]
-    pdf_table = np.array([antis, antiu, antid, d, u, s, g]).T
-    # pdf_table = np.vstack([np.array(pdf_table_Q2).T for i in range(len(Q2grid))])
-    dump_pdf(name, xgrid, Q2grid, pids, pdf_table)
-
-    # make PDF.info
-    description = "'strange quark only PDFset, for debug purpose'"
-    dump_info(name, description, pids)
 
 
 def toy_sonly():
@@ -301,17 +142,47 @@ def check(pdfset, pid):
     plt.show()
 
 
+def generate_pdf():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "name",
+        type=str,
+        help="pdf name",
+    )
+    ap.add_argument(
+        "-p",
+        "--from-pdf-set",
+        type=str,
+        help="parent pdf set",
+    )
+    ap.add_argument(
+        "pids",
+        type=int,
+        help="active pids",
+        nargs="+"
+    )
+    args = ap.parse_args()
+    print(args)
+    if "" == args.from_pdf_set:
+        pdf_set = None
+    else:
+        pdf_set = None
+    return make_set(args.name, args.pids, pdf_set)
+
+
 if __name__ == "__main__":
-    donly()
-    toy_donly()
-    antidonly()
-    toy_donly()
-    uonly()
-    uonly_dense()
-    sonly()
-    toy_sonly()
-    toy_gonly()
-    gonly()
+    generate_pdf()
+    #sbaronly()
+    # donly()
+    # toy_donly()
+    # dbaronly()
+    # toy_donly()
+    # uonly()
+    # uonly_dense()
+    # sonly()
+    # toy_sonly()
+    # toy_gonly()
+    # gonly()
     # check("uonly", 2)
     # check("uonly-dense", 2)
     # check("gonly", 21)

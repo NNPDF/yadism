@@ -19,14 +19,15 @@ def generate_observables():
     # xgrid = np.array(defaults["interpolation_xgrid"]).copy()
     # defaults["interpolation_xgrid"] = np.geomspace(0.1, 1, 40).tolist()
     light_kin = []
-    light_kin.extend(
-        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
-        # np.linspace(1e-3, 1, 50)
-    )
+    # light_kin.extend(
+    #     [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
+    #     # np.linspace(1e-3, 1, 50)
+    # )
     # light_kin.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
     # light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 40, 10).tolist()])
-    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
-    # light_kin.extend([dict(x=0.85, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
+    light_kin.extend([dict(x=0.00051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
+    #light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
+    #light_kin.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     obs_list = [
         # "F2light",
         # "F2charm",
@@ -35,9 +36,9 @@ def generate_observables():
         # "FLlight",
         # "FLcharm",
         # "FLbottom",
-        "F3light",
+        # "F3light",
         "F3charm",
-        "F3bottom",
+        # "F3bottom",
     ]
     cards = []
     card = copy.deepcopy(defaults)
@@ -78,9 +79,9 @@ class Sandbox:
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["conly"],
+            ["CT14llo_NF3"],
             {
-                "XIR": self.db.theory_query.XIR == 0.5,
+                #"XIR": self.db.theory_query.XIR == .5,
                 # "XIF": self.db.theory_query.XIF == 2
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "FNS": self.db.theory_query.FNS == "",
@@ -92,7 +93,7 @@ class Sandbox:
 
 
 if __name__ == "__main__":
-    # generate_observables()
+    generate_observables()
     sand = Sandbox()
     # sand.run_LO()
     sand.run_NLO()
