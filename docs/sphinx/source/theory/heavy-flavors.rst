@@ -31,21 +31,32 @@ The main reference is :cite:`gluck-ccheavy`.
       {\color{purple}V_{td}} & {\color{purple}V_{ts}} & {\color{purple}V_{tb}}
    \end{pmatrix}
 
-actual definition of coefficient functions weights in :math:`F_2`:
+actual definition of coefficient functions weights in :math:`F_2` (with an
+initial neutrino, :math:`\nu`):
 
 .. math::
    \begin{array}{rcl}
-      F_2^{\nu,p} &=& 2x\Big\{ C_{2,q}\otimes\Big[\left(|V_{ud}|^2+|V_{cd}|^2+|V_{td}|^2\right)d\\
-                  &+& \left(|V_{ud}|^2+|V_{us}|^2+|V_{ub}|^2\right)\overline{u}\\
-                  &+& \left(|V_{us}|^2+|V_{cs}|^2+|V_{ts}|^2\right)s\\
-                  &+& \left(|V_{cd}|^2+|V_{cs}|^2+|V_{cb}|^2\right)\overline{c}\\
-                  &+& \left(|V_{ub}|^2+|V_{cb}|^2+|V_{tb}|^2\right)b\\
-                  &+& \left(|V_{td}|^2+|V_{ts}|^2+|V_{tb}|^2\right)\overline{t}\\
+      F_2^{\nu,p} &=& 2x\Big\{C_{2,q}\otimes
+                  \Big[\left(|{\color{red}V_{ud}}|^2+|{\color{blue}V_{cd}}|^2+|{\color{purple}V_{td}}|^2\right)d\\
+                  &+&
+                  \left(|{\color{red}V_{ud}}|^2+|{\color{red}V_{us}}|^2+|{\color{green}V_{ub}}|^2\right)\overline{u}\\
+                  &+&
+                  \left(|{\color{red}V_{us}}|^2+|{\color{blue}V_{cs}}|^2+|{\color{purple}V_{ts}}|^2\right)s\\
+                  &+&
+                  \left(|{\color{blue}V_{cd}}|^2+|{\color{blue}V_{cs}}|^2+|{\color{green}V_{cb}}|^2\right)\overline{c}\\
+                  &+&
+                  \left(|{\color{green}V_{ub}}|^2+|{\color{green}V_{cb}}|^2+|{\color{purple}V_{tb}}|^2\right)b\\
+                  &+&
+                  \left(|{\color{purple}V_{td}}|^2+|{\color{purple}V_{ts}}|^2+|{\color{purple}V_{tb}}|^2\right)\overline{t}\Big]\\
                   &+& c^{CC}_g(N_f)C_{2,q}\otimes g\Big\}
    \end{array}
 
+and in :math:`F_2^{charm}`:
+
 .. math::
-   \abs{\phi}
+   {\color{blue} F_{2,c}^{\color{black} \nu,p}} &=& 2x\Big\{C_{2,q}\otimes\Big[|{\color{blue}V_{cd}}|^2(d+\overline{c}) +
+         |{\color{blue}V_{cs}}|^2 (s+\overline{c})\Big]\\
+         &+& 2\left(|{\color{blue}V_{cd}}|^2+|{\color{blue}V_{cs}}|^2\right)C_{2,g}\otimes g\Big\}\\
 
 .. todo:: write about normalization in Eq. 2
 

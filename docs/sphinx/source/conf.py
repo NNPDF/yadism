@@ -167,6 +167,13 @@ html_context = {
 # html_sidebars = {}
 
 # -- Options for HTML mathjax ------------------------------------------------
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+
+mathjax_options = {
+    "config": "TeX-AMS-MML_HTMLorMML",
+    # "integrity": "sha256-QGbnX1xmeSwuEoIuUL3sa4ybs3Egp921kZfRsb87N+Q=",
+}
+
 mathjax_config = {
     "extensions": ["tex2jax.js"],
     "jax": ["input/TeX", "output/HTML-CSS"],
