@@ -16,7 +16,7 @@ class ApfelBenchmark:
 
     def _db(self, assert_external=None):
         """init DB connection"""
-        #assert_external = False
+        # assert_external = False
         self.db = DBInterface("APFEL", assert_external=assert_external)
         return self.db
 
@@ -131,7 +131,11 @@ class BenchmarkScaleVariations(ApfelBenchmark):
                     if sf == "F3total" and yad["Q2"] < 7:
                         # still F3light is > 0, but F3charm < 0
                         return dict(rel=0.015)
-                    if sf == "F3charm" and 50 < yad["Q2"] < 1e6 and 2e-3 < yad["x"] <.5e-3:
+                    if (
+                        sf == "F3charm"
+                        and 50 < yad["Q2"] < 1e6
+                        and 2e-3 < yad["x"] < 0.5e-3
+                    ):
                         # there is a cancelation between sbar and g going on:
                         # each of the channels is O(1) with O(1e-3) accuracy
                         return dict(abs=2e-3)
@@ -145,33 +149,49 @@ class BenchmarkScaleVariations(ApfelBenchmark):
             assert_external=sv_assert_external,
         )
 
+
 def tmc_assert_external(_theory, _obs, sf, yad):
-    if sf == "F2light" and yad["x"] > .9:
+    if sf == "F2light" and yad["x"] > 0.9:
         return dict(abs=1e-5)
     return None
+
 
 @pytest.mark.commit_check
 class BenchmarkTMC(ApfelBenchmark):
     """Add Target Mass Corrections"""
 
     def benchmark_LO(self):
-        return self.run_external(0, ["ToyLH"], {"TMC": self._db().theory_query.TMC == 1},assert_external=tmc_assert_external)
+        return self.run_external(
+            0,
+            ["ToyLH"],
+            {"TMC": self._db().theory_query.TMC == 1},
+            assert_external=tmc_assert_external,
+        )
 
     def benchmark_NLO(self):
-        return self.run_external(1, ["ToyLH"], {"TMC": self._db().theory_query.TMC == 1})
+        return self.run_external(
+            1, ["ToyLH"], {"TMC": self._db().theory_query.TMC == 1}
+        )
 
 
 class BenchmarkFNS(ApfelBenchmark):
     """Flavor Number Schemes"""
 
     def benchmark_LO(self):
-        return self.run_external(0, ["CT14llo_NF6"], {"FNS": ~(self._db().theory_query.FNS.search("FONLL-")), "NfFF": None})
+        return self.run_external(
+            0,
+            ["CT14llo_NF6"],
+            {"FNS": ~(self._db().theory_query.FNS.search("FONLL-")), "NfFF": None},
+        )
 
     def _benchmark_NLO_FFNS(self):
         return self.run_external(
             1,
             ["CT14llo_NF6"],
-            {"FNS": self._db().theory_query.FNS == "FFNS", "NfFF": None},
+            {
+                "FNS": self._db().theory_query.FNS == "FFNS",
+                "NfFF": self._db().theory_query.NfFF != 3,
+            },
         )
 
     def _benchmark_NLO_ZM_VFNS(self):

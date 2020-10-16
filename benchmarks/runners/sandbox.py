@@ -25,7 +25,7 @@ def generate_observables():
     # )
     # light_kin.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
     light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
-    #light_kin.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
+    # light_kin.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
     # light_kin = [dict(x=0.001,Q2=1e5)]
     # light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
     # light_kin.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
@@ -96,5 +96,5 @@ class Sandbox:
 if __name__ == "__main__":
     generate_observables()
     sand = Sandbox()
-    #sand.run_LO()
+    # sand.run_LO()
     sand.run_NLO()
