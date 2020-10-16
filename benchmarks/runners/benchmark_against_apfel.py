@@ -131,6 +131,10 @@ class BenchmarkScaleVariations(ApfelBenchmark):
                     if sf == "F3total" and yad["Q2"] < 7:
                         # still F3light is > 0, but F3charm < 0
                         return dict(rel=0.015)
+                    if sf == "F3charm" and 50 < yad["Q2"] < 1e6 and 2e-3 < yad["x"] <.5e-3:
+                        # there is a cancelation between sbar and g going on:
+                        # each of the channels is O(1) with O(1e-3) accuracy
+                        return dict(abs=2e-3)
             return None
 
         return self.run_external(
