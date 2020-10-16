@@ -368,7 +368,7 @@ class NavigatorApp(mode_selector.ModeSelector):
             table_out["yadism_error"] += table1["yadism_error"]
 
             # compute relative error
-            def rel_err(row,tout_ext=tout_ext):
+            def rel_err(row, tout_ext=tout_ext):
                 if row[tout_ext] == 0.0:
                     if row["yadism"] == 0.0:
                         return 0.0
