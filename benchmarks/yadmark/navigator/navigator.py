@@ -41,7 +41,7 @@ class NavigatorApp(mode_selector.ModeSelector):
             mode : string
                 mode identifier
         """
-        super().__init__(mode)
+        self.__init__(mode)
 
     def tm(self, table):
         """
