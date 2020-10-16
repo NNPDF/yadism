@@ -152,7 +152,7 @@ class BenchmarkScaleVariations(ApfelBenchmark):
 
 def tmc_assert_external(_theory, _obs, sf, yad):
     if sf == "F2light" and yad["x"] > 0.9:
-        return dict(abs=1e-5)
+        return dict(abs=2e-5)
     return None
 
 
