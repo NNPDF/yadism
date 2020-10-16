@@ -131,15 +131,18 @@ class NavigatorApp(mode_selector.ModeSelector):
                 + f"{'log' if ob['interpolation_is_log'] else 'x'}"
                 + f"^{ob['interpolation_polynomial_degree']}"
             )
-            obj["curr"] = ob["prDIS"]
-            proj_map = {
-                "electron": "e-",
-                "positron": "e+",
-                "neutrino": "ν",
-                "antineutrino": "ν~",
-            }
-            obj["proj"] = proj_map[ob["projectile"]]
-            obj["pol"] = ob["PolarizationDIS"]
+            if "prDIS" in ob:
+                obj["curr"] = ob["prDIS"]
+            if "projectile" in ob:
+                proj_map = {
+                    "electron": "e-",
+                    "positron": "e+",
+                    "neutrino": "ν",
+                    "antineutrino": "ν~",
+                }
+                obj["proj"] = proj_map[ob["projectile"]]
+            if "PolarizationDIS" in ob:
+                obj["pol"] = ob["PolarizationDIS"]
             sfs = 0
             esfs = 0
             for sf in ob:

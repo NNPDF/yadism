@@ -145,23 +145,27 @@ class BenchmarkScaleVariations(ApfelBenchmark):
             assert_external=sv_assert_external,
         )
 
+def tmc_assert_external(_theory, _obs, sf, yad):
+    if sf == "F2light" and yad["x"] > .9:
+        return dict(abs=1e-5)
+    return None
 
 @pytest.mark.commit_check
 class BenchmarkTMC(ApfelBenchmark):
     """Add Target Mass Corrections"""
 
     def benchmark_LO(self):
-        return self.run_external(0, ["ToyLH"], {"TMC": None})
+        return self.run_external(0, ["ToyLH"], {"TMC": self._db().theory_query.TMC == 1},assert_external=tmc_assert_external)
 
     def benchmark_NLO(self):
-        return self.run_external(1, ["ToyLH"], {"TMC": None})
+        return self.run_external(1, ["ToyLH"], {"TMC": self._db().theory_query.TMC == 1})
 
 
 class BenchmarkFNS(ApfelBenchmark):
     """Flavor Number Schemes"""
 
     def benchmark_LO(self):
-        return self.run_external(0, ["CT14llo_NF6"], {"FNS": None, "NfFF": None})
+        return self.run_external(0, ["CT14llo_NF6"], {"FNS": ~(self._db().theory_query.FNS.search("FONLL-")), "NfFF": None})
 
     def _benchmark_NLO_FFNS(self):
         return self.run_external(

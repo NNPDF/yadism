@@ -42,7 +42,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 "PTO": [0, 1],
                 "XIR": [0.5, 1.0, 2.0],
                 "XIF": [0.5, 1.0, 2.0],
-                "TMC": [0, 1, 2, 3],
+                "TMC": [0, 1],
                 "NfFF": [3, 4, 5],
                 "FNS": ["FFNS", "ZM-VFNS", "FONLL-A"],
                 "DAMP": [0, 1],
