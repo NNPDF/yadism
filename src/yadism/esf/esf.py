@@ -288,7 +288,7 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
             # F2c in this way)
             # FONLL-A corresponds to (strict) APFEL
             # FONLL-A' reduces to the ZM-VFNS scheme if above the next threshold (which would
-            # numerically happen anyway)
+            # numerically happen anyway, but only at very large Q2)
             if (scheme == "FONLL-A" and nf >= nhq) or (
                 scheme == "FONLL-A'" and nf == nhq
             ):

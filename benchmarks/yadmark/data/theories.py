@@ -54,7 +54,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
             "XIF": [0.5, 1.0, 2.0],
             "TMC": [0, 1, 2, 3],
             "NfFF": [3, 4, 5],
-            "FNS": ["FFNS", "ZM-VFNS", "FONLL-A"],
+            "FNS": ["FFNS", "ZM-VFNS", "FONLL-A", "FONLL-A'"],
             "DAMP": [0, 1],
         }
 
