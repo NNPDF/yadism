@@ -66,7 +66,12 @@ def setup_package():
             "Topic :: Scientific/Engineering",
             "Topic :: Scientific/Engineering :: Physics",
         ],
-        install_requires=["eko<0.6", "numpy", "scipy", "rich",],
+        install_requires=[
+            "eko<0.6",
+            "numpy",
+            "scipy",
+            "rich",
+        ],
         python_requires=">=3.7",
     )
 
