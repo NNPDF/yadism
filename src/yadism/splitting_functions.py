@@ -21,86 +21,86 @@ The reference for LO splitting functions is :cite:`pink-book`.
 
 """
 
+import numpy as np
+
 from eko import constants
 
 
-def pqq_reg(x):
+def pqq_reg(z):
     """
-        The expression of the regular part of :math:`P_{qq}` splitting function.
+    The expression of the regular part of :math:`P_{qq}` splitting function.
 
-        |ref| implements :eqref:`4.94`, :cite:`pink-book`.
+    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
 
-        Parameters
-        ----------
-        x : float
+    Parameters
+    ----------
+        z : float
             momentum fraction
 
-        Returns
-        -------
+    Returns
+    -------
         float
-            the regular bit of pqq splitting function @ :py:`x`
+            the regular bit of pqq splitting function @ :py:`z`
 
     """
-    return -constants.CF * (1 + x)
+    return -2.0 * constants.CF * (1.0 + z)
 
 
-def pqq_delta(_x):
+def pqq_local(x):
     r"""
-        The coefficient of the Dirac-:math:`\delta(1-x)` part of :math:`P_{qq}`
-        splitting function.
+    The expression of the local part of :math:`P_{qq}` splitting function.
 
-        |ref| implements :eqref:`4.94`, :cite:`pink-book`.
+    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
 
-        Parameters
-        ----------
+    Parameters
+    ----------
         x : float
             momentum fraction
 
-        Returns
-        -------
+    Returns
+    -------
         float
-            the delta bit of pqq splitting function @ :py:`x`
+            the locacl bit of pqq splitting function @ :py:`x`
 
     """
-    return (3 / 2) * constants.CF
+    return constants.CF * (3.0 + 4.0 * np.log(1.0 - x))
 
 
-def pqq_pd(_x):
+def pqq_sing(z):
     """
-        The coefficient of the :math:`1/(1-x)_+` part of :math:`P_{qq}`
-        splitting function.
+    The expression of the singular part of :math:`P_{qq}` splitting function.
 
-        |ref| implements :eqref:`4.94`, :cite:`pink-book`.
+    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
 
-        Parameters
-        ----------
-        x : float
+    Parameters
+    ----------
+        z : float
             momentum fraction
 
-        Returns
-        -------
+    Returns
+    -------
         float
-            the *omx* bit of pqq splitting function @ :py:`x`
+            the singular bit of pqq splitting function @ :py:`z`
 
     """
-    return 2 * constants.CF
+    return 4.0 * constants.CF / (1.0 - z)
 
 
-def pqg(x):
+def pqg(z):
     """
-        The expression of :math:`P_{qg}` splitting function.
+    The expression of :math:`P_{qg}` splitting function.
 
-        |ref| implements :eqref:`4.94`, :cite:`pegasus`.
+    |ref| implements :eqref:`4.94`, :cite:`pegasus`.
 
-        Parameters
-        ----------
-        x : float
+    Parameters
+    ----------
+        z : float
             momentum fraction
 
-        Returns
-        -------
+    Returns
+    -------
         float
-            the pqg splitting function @ :py:`x`
+            the pqg splitting function @ :py:`z`
 
     """
-    return 2.0 * constants.TR * (x ** 2 + (1.0 - x) ** 2)
+    return 2.0 * constants.TR * (z ** 2 + (1.0 - z) ** 2)
