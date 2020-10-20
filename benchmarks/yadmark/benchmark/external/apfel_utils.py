@@ -72,9 +72,13 @@ def load_apfel(theory, observables, pdf="ToyLH"):
         raise RuntimeError("Error: Unrecognised HQMASS")
 
     # Heavy Quark schemes
-    apfel.SetMassScheme(theory.get("FNS"))
+    fns = theory.get("FNS")
+    # treat FONLL-A' as FONLL-A since the former is only an explicit limit (Q2->oo) of the later
+    if fns == "FONLL-A'":
+        fns = "FONLL-A"
+    apfel.SetMassScheme(fns)
     apfel.EnableDampingFONLL(theory.get("DAMP"))
-    if theory.get("FNS") == "FFNS":
+    if fns == "FFNS":
         apfel.SetFFNS(theory.get("NfFF"))
         apfel.SetMassScheme("FFNS%d" % theory.get("NfFF"))
     else:

@@ -34,9 +34,10 @@ class F2asyGluonVV(pc.PartonicChannelAsy):
         """
 
         def cg(z, L=self.L):
-            return 4.0 * (
-                split.pqg(z) * (L + np.log((1 - z) / z))
-                + constants.TR * (-1 + 8 * z * (1 - z))
+            as_norm = 2.0
+            return as_norm * (
+                split.pqg(z) * (L + np.log((1.0 - z) / z))
+                + 2.0 * constants.TR * (-1.0 + 8.0 * z * (1.0 - z))
             )
 
         return cg

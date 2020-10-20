@@ -60,12 +60,12 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         b3 = self.sf_prefactor / 2
         as_norm = 2
 
-        def reg(z, b1=b1, b2=b2, CF=CF, pqq_reg=split.pqq_reg):
+        def reg(z, b1=b1, b2=b2, CF=CF):
             hq_reg = -(1 + z ** 2) * np.log(z) / (1 - z) - (1 + z) * (
                 2 * np.log(1 - z) - np.log(1 - self.labda * z)
             )
             return (
-                (-self.sf_prefactor * np.log(self.labda) * pqq_reg(z))
+                (-self.sf_prefactor * np.log(self.labda) * (split.pqq_reg(z) / 2.0))
                 + CF
                 * (
                     self.sf_prefactor * hq_reg
@@ -75,10 +75,10 @@ class PartonicChannelHeavy(pc.PartonicChannel):
                 )
             ) * as_norm
 
-        def sing(z, b1=b1, b3=b3, CF=CF, pqq_pd=split.pqq_pd):
+        def sing(z, b1=b1, b3=b3, CF=CF):
             hq_sing = 2 * ((2 * np.log(1 - z) - np.log(1 - self.labda * z)) / (1 - z))
             return (
-                (-self.sf_prefactor * np.log(self.labda) * (pqq_pd(z) / (1 - z)))
+                (-self.sf_prefactor * np.log(self.labda) * (split.pqq_sing(z) / 2))
                 + CF
                 * (
                     self.sf_prefactor * hq_sing
@@ -88,32 +88,26 @@ class PartonicChannelHeavy(pc.PartonicChannel):
                 )
             ) * as_norm
 
-        def local(
-            x, a=a, b1=b1, b3=b3, CF=CF, pqq_pd=split.pqq_pd, pqq_delta=split.pqq_delta
-        ):
-            log_pd_int = -np.log(1 - x) ** 2 / 2
+        def local(x, a=a, b1=b1, b3=b3, CF=CF):
+            log_pd_int = -np.log(1 - x) ** 2 / 2.0
             hq_loc = -(
-                4
-                + 1 / (2 * self.labda)
-                + np.pi ** 2 / 3  # see erratum
-                + (1 + 3 * self.labda) / (2 * self.labda) * self.ka
-            ) - 2 * (2 * log_pd_int - self.r_integral(x))
+                4.0
+                + 1.0 / (2.0 * self.labda)
+                + np.pi ** 2 / 3.0  # see erratum
+                + (1.0 + 3.0 * self.labda) / (2.0 * self.labda) * self.ka
+            ) - 2.0 * (2.0 * log_pd_int - self.r_integral(x))
 
-            b1_int = -np.log(1 - x)
+            b1_int = -np.log(1.0 - x)
 
-            b2_int = -np.log(1 - x * self.labda) / self.labda
+            b2_int = -np.log(1.0 - x * self.labda) / self.labda
 
             b3_int = (
-                -((x * (-1 + self.labda)) / (self.labda * (-1 + x * self.labda)))
-                - np.log(1 - self.labda * x) / self.labda ** 2
+                -((x * (-1.0 + self.labda)) / (self.labda * (-1.0 + x * self.labda)))
+                - np.log(1.0 - self.labda * x) / self.labda ** 2
             )
 
             return (
-                (
-                    -self.sf_prefactor
-                    * np.log(self.labda)
-                    * (pqq_delta(x) - pqq_pd(x) * b1_int)
-                )
+                (-self.sf_prefactor * np.log(self.labda) * (split.pqq_local(x) / 2.0))
                 + CF
                 * (
                     self.sf_prefactor * hq_loc
@@ -130,28 +124,32 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         return 0, 0, self.sf_prefactor
 
     def _NLO_fact_q(self):
-        as_norm = self.sf_prefactor
+        as_norm = 2.0
 
         def reg(z):
-            return split.pqq_reg(z) * as_norm
+            return (split.pqq_reg(z) / 2.0) * as_norm * self.sf_prefactor
 
-        return rsl_from_distr_coeffs(
-            reg, as_norm * split.pqq_delta(0), as_norm * split.pqq_pd(0),
-        )
+        def sing(z):
+            return (split.pqq_sing(z) / 2.0) * as_norm * self.sf_prefactor
+
+        def local(x):
+            return (split.pqq_local(x) / 2.0) * as_norm * self.sf_prefactor
+
+        return reg, sing, local
 
     def _NLO_fact_g(self):
-        as_norm = self.sf_prefactor
+        as_norm = 2.0
 
         def reg(z):
-            return split.pqg(z) * as_norm
+            return (split.pqg(z) / 2.0) * as_norm * self.sf_prefactor
 
         return reg
 
     def h_g(self, z, cs):
         c0 = (
             self.sf_prefactor
-            * split.pqg(z)
-            * (2 * np.log(1 - z) - np.log(1 - self.labda * z) - np.log(z))
+            * (split.pqg(z) / 2.0)
+            * (2.0 * np.log(1 - z) - np.log(1 - self.labda * z) - np.log(z))
         )
         cs.insert(0, c0)
         return (

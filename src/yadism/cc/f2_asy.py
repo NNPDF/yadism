@@ -28,19 +28,24 @@ class F2asyQuark(pc.PartonicChannelAsy):
     def NLO(self):
         CF = constants.CF
         as_norm = 2.0
+        zeta_2 = np.pi ** 2 / 6.0
 
         def reg(z):
             return (
-                -CF * (1.0 + z ** 2) / (1.0 - z) * np.log(z)
-                - CF * (1.0 + z) * np.log(1.0 - z)
-                + CF * (3.0 + 2.0 * z)
-            ) * as_norm
+                CF
+                * (
+                    -(1.0 + z ** 2) / (1.0 - z) * np.log(z)
+                    - (1.0 + z) * np.log(1.0 - z)
+                    + (3.0 + 2.0 * z)
+                )
+                * as_norm
+            )
 
-        delta = -CF * (9.0 / 2.0 + np.pi ** 2 / 3.0) * as_norm
+        delta = -CF * (9.0 / 2.0 + 2.0 * zeta_2) * as_norm
 
         omz_pd = -CF * 3.0 / 2.0 * as_norm
 
-        log_pd = 2 * CF * as_norm
+        log_pd = 2.0 * CF * as_norm
 
         return rsl_from_distr_coeffs(reg, delta, omz_pd, log_pd)
 
@@ -48,9 +53,15 @@ class F2asyQuark(pc.PartonicChannelAsy):
         as_norm = 2.0
 
         def reg(z):
-            return split.pqq_reg(z) * as_norm
+            return (split.pqq_reg(z) / 2.0) * as_norm
 
-        return rsl_from_distr_coeffs(reg, split.pqq_delta(0), split.pqq_pd(0))
+        def sing(z):
+            return (split.pqq_sing(z) / 2.0) * as_norm
+
+        def local(x):
+            return (split.pqq_local(x) / 2.0) * as_norm
+
+        return reg, sing, local
 
 
 class F2asyGluon(pc.PartonicChannelAsy):
@@ -65,7 +76,7 @@ class F2asyGluon(pc.PartonicChannelAsy):
 
         def reg(z, L=self.L):
             return (
-                split.pqg(z) * (2.0 * np.log((1.0 - z) / z) + L)
+                (split.pqg(z) / 2.0) * (2.0 * np.log((1.0 - z) / z) + L)
                 + 8.0 * z * (1.0 - z)
                 - 1.0
             ) * as_norm
@@ -76,6 +87,6 @@ class F2asyGluon(pc.PartonicChannelAsy):
         as_norm = 2.0
 
         def reg(z):
-            return split.pqg(z) * as_norm
+            return split.pqg(z) / 2.0 * as_norm
 
         return reg
