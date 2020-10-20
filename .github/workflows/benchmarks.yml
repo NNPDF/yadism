@@ -16,11 +16,11 @@ jobs:
   APFEL:
     runs-on: ubuntu-latest
     strategy:
-#      max-parallel: 2
+      max-parallel: 2
       matrix:
-        python-version: [3.8]
+        python-version: [3.8, 3.9]
       fail-fast: false
-            
+
     steps:
       - name: Configure git-lfs to ignore most files
         run: |
@@ -48,7 +48,7 @@ jobs:
       - name: Test yadism
         run: |
           # run tests
-          pytest -m commit_check benchmarks/benchmark_against_apfel.py
+          pytest -m commit_check benchmarks/runners/benchmark_against_*.py
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

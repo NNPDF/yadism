@@ -5,9 +5,14 @@ Defines the :py:class:`StructureFunction` class.
 .. todo::
     refer to the sf-esf overview
 """
+import logging
 
-from .structure_functions import ESFmap
-from .structure_functions.tmc import ESFTMCmap
+from .esf import ESFmap
+from .tmc import ESFTMCmap
+from .nc import partonic_channels_em, partonic_channels_nc, weights_nc
+from .cc import partonic_channels_cc, weights_cc, convolution_point_cc
+
+logger = logging.getLogger(__name__)
 
 
 class StructureFunction:
@@ -32,17 +37,17 @@ class StructureFunction:
                 theory dictionary containing all needed parameters
     """
 
-    def __init__(self, obs_name, runner=None, *, eko_components, theory_params):
+    def __init__(
+        self, obs_name, runner=None, *, eko_components, theory_params, obs_params
+    ):
         # internal managers
         self.obs_name = obs_name
-        self.__ESF = ESFmap[obs_name.name] if theory_params["TMC"] == 0 else ESFTMCmap[obs_name.kind]
         self.__runner = runner
         self.__ESFs = []
         self.__ESFcache = {}
         # TODO wrap managers and parameters as single attributes
         # external managers
         self.interpolator = eko_components["interpolator"]
-        self.constants = eko_components["constants"]
         self.threshold = eko_components["threshold"]
         self.strong_coupling = eko_components["alpha_s"]
         self.coupling_constants = eko_components["coupling_constants"]
@@ -55,6 +60,29 @@ class StructureFunction:
         self.M2target = theory_params["M2target"]
         self.FONLL_damping = theory_params["FONLL_damping"]
         self.damping_powers = theory_params["damping_powers"]
+        self.obs_params = obs_params
+
+        if not self.obs_name.is_composed:
+            # load partonic channels and weights
+            partonic_channels = partonic_channels_em
+            process = self.obs_params["process"]
+            self.weights = weights_nc
+            self.convolution_point = lambda x, *args: x
+            if process == "NC":
+                partonic_channels = partonic_channels_nc
+            elif process == "CC":
+                partonic_channels = partonic_channels_cc
+                self.weights = weights_cc
+                self.convolution_point = convolution_point_cc[
+                    self.obs_name.flavor_family
+                ]
+            self.partonic_channels = partonic_channels[
+                self.obs_name.apply_flavor_family().name
+            ]
+        logger.debug("Init %s", self)
+
+    def __repr__(self):
+        return self.obs_name.name
 
     def load(self, kinematic_configs):
         """
@@ -68,13 +96,11 @@ class StructureFunction:
         self.__ESFs = []
         # iterate F* configurations
         for kinematics in kinematic_configs:
-            self.__ESFs.append(
-                self.__ESF(self, kinematics)
-            )  # TODO delegate this to get_esf?
+            self.__ESFs.append(self.get_esf(self.obs_name, kinematics, use_raw=False))
 
     def get_esf(self, obs_name, kinematics, *args, use_raw=True, force_local=False):
         """
-            Returns a *raw* :py:class:`EvaluatedStructureFunction` instance.
+            Returns a :py:class:`EvaluatedStructureFunction` instance.
 
             This wrappers allows
 
@@ -102,24 +128,25 @@ class StructureFunction:
         """
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
-            obj = ESFmap[obs_name.name](self, kinematics, force_local=True)
+            obj = ESFmap[obs_name.flavor_family](self, kinematics, force_local=True)
             return obj
         # else we're happy to cache
         # is it us or do we need to delegate?
         if obs_name == self.obs_name:
             # convert to tuple
             key = list(kinematics.values())
-            key.append(use_raw)
+            use_tmc_if_available = not use_raw and self.TMC != 0
+            key.append(use_tmc_if_available)
             key = tuple(key)
             # TODO how to incorporate args?
             # search
             try:
                 return self.__ESFcache[key]
             except KeyError:
-                if not use_raw and self.TMC != 0:
-                    obj = ESFTMCmap[obs_name.kind]
+                if use_tmc_if_available:
+                    obj = ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
-                    obj = ESFmap[obs_name.name](self, kinematics, *args)
+                    obj = ESFmap[obs_name.flavor_family](self, kinematics, *args)
                 self.__ESFcache[key] = obj
                 return obj
         else:

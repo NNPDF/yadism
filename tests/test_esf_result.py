@@ -4,7 +4,7 @@ import copy
 import numpy as np
 import pytest
 
-from yadism.structure_functions.esf_result import ESFResult
+from yadism.esf.esf_result import ESFResult
 
 
 class MockPDFgonly:

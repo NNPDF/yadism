@@ -12,6 +12,25 @@ Yadism documentation
 `yadism` is a wonderful package for computing |DIS| observables replacing the
 corresponding one inside |APFEL|.
 
+Features
+~~~~~~~~
+
+**Features** already implemented include:
+
+- |LO| structure functions
+- |NLO| structure functions
+
+  1. scale variations
+  2. target mass corrections
+  3. flavor number schemes
+
+The implemented structure functions are :math:`F_2,~F_L,~F_3` for the following
+|DIS| processes:
+
+- |EM|
+- |NC|
+- |CC|
+
 .. toctree::
    :maxdepth: 1
    :caption: Package Reference
@@ -19,23 +38,7 @@ corresponding one inside |APFEL|.
    yadism.rst
    tutorials/index.rst
 
-   zzz-refs.rst
-
 In these :underlined:`documents` you can find the reference for all *yadism* API and internals.
-
-**Features** already implemented include:
-
-- |LO| structure functions (|EM|)
-- |NLO| structure functions (|EM|)
-- |NLO| scale variations
-- |NLO| target mass corrections
-  
-  - almost completed, coming soon
-
-- |NLO| flavor number schemes
-
-  - |FFNS| and |ZM-VFNS| only
-
 
 .. toctree::
    :maxdepth: 1
@@ -43,9 +46,13 @@ In these :underlined:`documents` you can find the reference for all *yadism* API
 
    theory/DIS-intro.rst
    theory/coeff-funcs.rst 
+   theory/light-flavors.rst
    theory/heavy-flavors.rst
+   theory/processes.rst
    theory/scale-variations.rst
    theory/TMC.rst
+
+   zzz-refs.rst
 
 And here there is some *physics documentation*.
 
@@ -57,26 +64,15 @@ structure.
    :maxdepth: 1
    :caption: Dev Tools
 
-   dev-tools/db-suite.rst
-   dev-tools/benchmark-runner.rst
    dev-tools/tests.rst
+   dev-tools/db-suite.rst
+   dev-tools/yadmark.rst
+   dev-tools/extras.rst
    dev-tools/third-party.rst
+   dev-tools/code-todos.rst
 
 These tools have been developed alongside `yadism`, in order to automatize tests
 and improve the quality of code (less bugs, more readable... hopefully...).
-
-Current tools:
-
-- benchmark db suite
-  - db generating scripts
-  - navigator
-- benchmark runner
-  - currently in `benchmarks/conftest.py`
-- actual tests/benchmarks
-  - unit tests
-  - regression tests
-  - benchmark (against APFEL)
-- third-party tools
 
 ---------
 

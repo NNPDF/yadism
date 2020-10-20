@@ -15,17 +15,30 @@ There are two ways of using ``yadism``:
 """
 from typing import Any
 import time
+import inspect
+import logging
+import io
+
+import rich
+import rich.align
+import rich.panel
+import rich.box
+import rich.progress
+import rich.markdown
+import rich.console
 
 from eko.interpolation import InterpolatorDispatcher
-from eko.constants import Constants
 from eko import thresholds
 from eko import strong_coupling
 
+from . import observable_name
+from . import log
 from .output import Output
 from .sf import StructureFunction as SF
-from .structure_functions import ESFmap
 from .coupling_constants import CouplingConstants
-from . import observable_name
+
+log.setup()
+logger = logging.getLogger(__name__)
 
 
 class Runner:
@@ -52,6 +65,24 @@ class Runner:
 
     """
 
+    banner = rich.align.Align(
+        rich.panel.Panel.fit(
+            inspect.cleandoc(
+                r"""  __     __       _ _
+                     \ \   / /      | (_)
+                      \ \_/ /_ _  __| |_ ___ _ __ ___
+                       \   / _` |/ _` | / __| '_ ` _ \
+                        | | (_| | (_| | \__ \ | | | | |
+                        |_|\__,_|\__,_|_|___/_| |_| |_|
+                """
+            ),
+            rich.box.SQUARE,
+            padding=1,
+            style="magenta",
+        ),
+        "center",
+    )
+
     def __init__(self, theory: dict, observables: dict):
         # ============
         # Store inputs
@@ -62,17 +93,14 @@ class Runner:
         # ===========================
         # Setup eko stuff
         # ===========================
-        self.interpolator = InterpolatorDispatcher.from_dict(
-            observables, mode_N=False, numba_it=False
-        )
-        self.constants = Constants()
+        self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory, self.threshold, self.constants
+            theory, self.threshold,
         )
 
         # Non-eko theory
-        self.coupling_constants = CouplingConstants.from_dict(theory)
+        self.coupling_constants = CouplingConstants.from_dict(theory, observables)
         self.xiF = theory["XIF"]
 
         # ==============================
@@ -80,7 +108,6 @@ class Runner:
         # ==============================
         eko_components = dict(
             interpolator=self.interpolator,
-            constants=self.constants,
             threshold=self.threshold,
             alpha_s=self.strong_coupling,
             coupling_constants=self.coupling_constants,
@@ -106,10 +133,11 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
+        obs_params = dict(process=observables.get("prDIS", "EM"))
 
         self.observable_instances = {}
-        for name in ESFmap:
-            obs_name = observable_name.ObservableName(name)
+        for obs_name in observable_name.ObservableName.all():
+            name = obs_name.name
             lab = obs_name.mass_label
             if lab is not None:
                 theory_params["M2hq"] = theory[lab] ** 2
@@ -120,12 +148,19 @@ class Runner:
                 runner=self,
                 eko_components=eko_components,
                 theory_params=theory_params,
+                obs_params=obs_params,
             )
 
             # read kinematics
             obj.load(self._observables.get(name, []))
             self.observable_instances[name] = obj
 
+        # output console
+        if log.silent_mode:
+            file = io.StringIO()
+        else:
+            file = None
+        self.console = rich.console.Console(file=file)
         # =================
         # Initialize output
         # =================
@@ -155,15 +190,33 @@ class Runner:
                 * docs
                 * get_output pipeline
         """
-        # TODO move to log and make more readable
-        print("yadism took off! please stay tuned ...")
-        start = time.time()
+        self.console.print(self.banner)
+
+        # precomputing the plan of calculation
+        precomputed_plan = {}
+        printable_plan = []
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
-                self._output[name] = obs.get_output()
+                precomputed_plan[name] = obs
+                printable_plan.append(f"- {name} at {len(self._observables[name])} pts")
+
+        self.console.print(rich.markdown.Markdown("## Plan"))
+        self.console.print(rich.markdown.Markdown("\n".join(printable_plan)))
+
+        # running the calculation
+        self.console.print(rich.markdown.Markdown("## Calculation"))
+        self.console.print("yadism took off! please stay tuned ...")
+        start = time.time()
+        for name, obs in rich.progress.track(
+            precomputed_plan.items(),
+            description="computing...",
+            transient=True,
+            console=self.console,
+        ):
+            self._output[name] = obs.get_output()
         end = time.time()
         diff = end - start
-        print(f"took {diff:.2f} s")
+        self.console.print(f"[cyan]took {diff:.2f} s")
 
         return self._output
 

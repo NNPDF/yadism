@@ -3,13 +3,18 @@ Unit Tests
 
 Unit tests are provided to test all the components of the package isolated.
 
-If needed some structures are mocked to be able to run piece of codes the
-depend on the presence of something else.
+Strategy
+--------
 
-The setup for each test is kept always minimal, trying to reduce each test to
-its atomic components.
 
-Even the error raising is tested, to ensure its consistency.
+Minimal
+   The setup for each test is kept always minimal, trying to reduce each test to
+   its atomic components.
+Mocking
+   If needed some structures are mocked to be able to run piece of codes the
+   depend on the presence of something else.
+Errors
+   Even the error raising is tested, to ensure its consistency.
 
 Coverage
 --------
