@@ -34,10 +34,10 @@ def generate_observables():
         "F2charm",
         # "F2bottom",
         # "F2total",
-        # "FLlight",
-        # "FLcharm",
+        "FLlight",
+        "FLcharm",
         # "FLbottom",
-        # "F3light",
+        "F3light",
         "F3charm",
         # "F3bottom",
     ]
@@ -80,7 +80,7 @@ class Sandbox:
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["gonly"],
+            ["gonly", "uonly"],
             {
                 # "XIR": self.db.theory_query.XIR == 0.5,
                 "XIF": self.db.theory_query.XIF == 0.5,

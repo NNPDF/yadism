@@ -90,7 +90,7 @@ def pqg(x):
     """
         The expression of :math:`P_{qg}` splitting function.
 
-        |ref| implements :eqref:`4.94`, :cite:`pink-book`.
+        |ref| implements :eqref:`4.94`, :cite:`pegasus`.
 
         Parameters
         ----------
@@ -103,4 +103,4 @@ def pqg(x):
             the pqg splitting function @ :py:`x`
 
     """
-    return constants.TR * (x ** 2 + (1 - x) ** 2)
+    return 2.0 * constants.TR * (x ** 2 + (1.0 - x) ** 2)

@@ -100,7 +100,7 @@ class F2lightQuark(pc.PartonicChannelLight):
 
         """
 
-        as_norm = 1.0
+        as_norm = 2.0
 
         def reg(z):
             return split.pqq_reg(z) * as_norm
@@ -140,10 +140,14 @@ class F2lightGluon(pc.PartonicChannelLight):
 
         def reg(z, nf=self.nf):
             return (
-                2  # TODO: to be understood
-                * 2
-                * nf
-                * (split.pqg(z) * (np.log((1 - z) / z) - 4) + 3 * constants.TR)
+                nf
+                * (
+                    (2.0 - 4.0 * z * (1.0 - z)) * np.log((1.0 - z) / z)
+                    - 2.0
+                    + 16.0 * z * (1.0 - z)
+                )
+                * 2.0
+                * constants.TR
             )
 
         return reg
@@ -168,6 +172,6 @@ class F2lightGluon(pc.PartonicChannelLight):
         """
 
         def cg(z, nf=self.nf):
-            return 2 * nf * split.pqg(z)
+            return 2.0 * nf * split.pqg(z)
 
         return cg

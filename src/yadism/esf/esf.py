@@ -168,8 +168,7 @@ class EvaluatedStructureFunction:
             a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
             d_vec += a_s * (
                 conv.DistributionVec(comp["NLO"]())
-                + 2  # TODO: to be understood
-                * (-np.log(self._SF.xiF ** 2))
+                + (-np.log(self._SF.xiF ** 2))
                 * conv.DistributionVec(comp["NLO_fact"]())
             )
 

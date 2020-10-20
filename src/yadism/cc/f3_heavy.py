@@ -50,6 +50,8 @@ class F3heavyGluon(pccc.PartonicChannelHeavy):
     label = "g"
 
     def NLO(self):
+        as_norm = 2.0
+
         def reg(z):
             c1 = 2.0 * (1.0 - self.labda)
             c2 = 0
@@ -57,19 +59,19 @@ class F3heavyGluon(pccc.PartonicChannelHeavy):
             c4 = 2
             return (
                 (
-                    (split.pqg(z) * (-self.l_labda(z) - np.log(self.labda)))
+                    (split.pqg(z) / 2.0 * (-self.l_labda(z) - np.log(self.labda)))
                     + self.h_g(z, [c1, c2, c3, c4])
                 )
                 * self.labda
-                * 2
+                * as_norm
             )
 
         return reg
 
     def NLO_fact(self):
-        as_norm = self.labda
+        as_norm = 2.0
 
         def reg(z):
-            return split.pqg(z) * as_norm
+            return (split.pqg(z) / 2.0) * as_norm * self.labda
 
         return reg

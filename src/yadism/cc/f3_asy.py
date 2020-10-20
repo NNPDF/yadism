@@ -50,6 +50,7 @@ class F3asyQuark(pc.PartonicChannelAsy):
 
         def reg(z):
             return split.pqq_reg(z) * as_norm
+
         return rsl_from_distr_coeffs(
             reg, as_norm * split.pqq_delta(0), as_norm * split.pqq_pd(0),
         )
@@ -66,14 +67,14 @@ class F3asyGluon(pc.PartonicChannelAsy):
         as_norm = 2.0
 
         def reg(z, L=self.L):
-            return -split.pqg(z) * L * as_norm
+            return -(split.pqg(z) / 2.0) * L * as_norm
 
         return reg
 
     def NLO_fact(self):
-        as_norm = 1.0 # TODO clashes with the 2 in esf
+        as_norm = 2.0
 
         def reg(z):
-            return split.pqg(z) * as_norm
+            return (split.pqg(z) / 2.0) * as_norm
 
         return reg

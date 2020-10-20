@@ -130,28 +130,30 @@ class PartonicChannelHeavy(pc.PartonicChannel):
         return 0, 0, self.sf_prefactor
 
     def _NLO_fact_q(self):
-        as_norm = self.sf_prefactor
+        as_norm = 2.0
 
         def reg(z):
-            return split.pqq_reg(z) * as_norm
+            return split.pqq_reg(z) * as_norm * self.sf_prefactor
 
         return rsl_from_distr_coeffs(
-            reg, as_norm * split.pqq_delta(0), as_norm * split.pqq_pd(0),
+            reg,
+            as_norm * split.pqq_delta(0) * self.sf_prefactor,
+            as_norm * split.pqq_pd(0) * self.sf_prefactor,
         )
 
     def _NLO_fact_g(self):
-        as_norm = self.sf_prefactor
+        as_norm = 2.0
 
         def reg(z):
-            return split.pqg(z) * as_norm
+            return (split.pqg(z) / 2.0) * as_norm * self.sf_prefactor
 
         return reg
 
     def h_g(self, z, cs):
         c0 = (
             self.sf_prefactor
-            * split.pqg(z)
-            * (2 * np.log(1 - z) - np.log(1 - self.labda * z) - np.log(z))
+            * (split.pqg(z) / 2.0)
+            * (2.0 * np.log(1 - z) - np.log(1 - self.labda * z) - np.log(z))
         )
         cs.insert(0, c0)
         return (
