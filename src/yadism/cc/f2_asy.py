@@ -28,6 +28,7 @@ class F2asyQuark(pc.PartonicChannelAsy):
     def NLO(self):
         CF = constants.CF
         as_norm = 2.0
+        zeta_2 = np.pi ** 2 / 6.0
 
         def reg(z):
             return (
@@ -40,7 +41,7 @@ class F2asyQuark(pc.PartonicChannelAsy):
                 * as_norm
             )
 
-        delta = -CF * (9.0 / 2.0 + np.pi ** 2 / 3.0) * as_norm
+        delta = -CF * (9.0 / 2.0 + 2.0 * zeta_2) * as_norm
 
         omz_pd = -CF * 3.0 / 2.0 * as_norm
 

@@ -62,7 +62,7 @@ class F2lightQuark(pc.PartonicChannelLight):
 
         """
         CF = constants.CF
-        zeta_2 = np.pi ** 2 / 6
+        zeta_2 = np.pi ** 2 / 6.0
 
         def reg(z, CF=CF):
             # fmt: off

@@ -80,7 +80,7 @@ class Sandbox:
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["CT14llo_NF3-sbaronly"],
+            ["sbaronly"],
             {
                 # "XIR": self.db.theory_query.XIR == 0.5,
                 "XIF": self.db.theory_query.XIF == 0.5,
@@ -94,7 +94,7 @@ class Sandbox:
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    # generate_observables()
     sand = Sandbox()
     # sand.run_LO()
     sand.run_NLO()
