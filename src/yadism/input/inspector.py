@@ -2,9 +2,10 @@
 """
 The purpose of this module is to provide a runner that implements the semantics
 for the input restrictions defined in the following files:
-    * ``domains.yaml``: in which all the domains restrictions are defined
-    * ``cross_constraints.yaml``: in which further restrictions are defined,
-        each one involving more than one input field
+
+* ``domains.yaml``: in which all the domains restrictions are defined
+* ``cross_constraints.yaml``: in which further restrictions are defined,
+    each one involving more than one input field
 """
 
 import pathlib
@@ -30,17 +31,14 @@ class Inspector:
 
     Each **default** applied will issue a specific warning.
 
+    Parameters
+    ----------
+    user_inputs : dict
+        inputs from user to inspect and validate
+
     """
 
     def __init__(self, user_inputs):
-        """Short summary.
-
-        Returns
-        -------
-        type
-            Description of returned object.
-
-        """
         self.user_inputs = user_inputs
 
         domain_file = here / "domains.yaml"
@@ -51,17 +49,14 @@ class Inspector:
         with open(cross_constraints_file, "r") as file:
             self.cross_constraints = yaml.safe_load(file)
 
-        defaults_file = here / "defaults.yaml"
-        with open(defaults_file, "r") as file:
-            self.defaults = yaml.safe_load(file)
+        # defaults_file = here / "defaults.yaml"
+        # with open(defaults_file, "r") as file:
+        # self.defaults = yaml.safe_load(file)
 
     def check_domains(self):
-        """Short summary.
-
-        Returns
-        -------
-        type
-            Description of returned object.
+        """
+        Iterate over single field constraints (i.e. domains' definitions) and
+        immediately raise an error if any input is found outside the boundaries.
 
         """
 
@@ -74,32 +69,32 @@ class Inspector:
 
             # check value provided by user
             try:
+                # retroeve the checker from available checkers and value from
+                # user input, apply the first on the latter
                 name = dom_def["known_as"] if "known_as" in dom_def else dom_def["name"]
                 checker.check_value(value=self.user_inputs[name])
             except KeyError:
-                # TODO:
-                # check if a default exists, if not raise a proper error
-                pass
+                # TODO: distinguish between theory and observables inputs
+                raise ValueError(
+                    f"Missing value for '{dom_def['known_as']}' in the input {'theory'} runcard"
+                )
 
     def check_cross_constraints(self):
-        """Short summary.
-
-        Returns
-        -------
-        type
-            Description of returned object.
+        """
+        Iterate over multiple fields constraints (i.e. cross-constraints) and
+        immediately raise an error if any input is found outside the boundaries.
 
         """
         pass
 
-    def apply_default(self, missing_yields_error=True):
-        """Apply default for missing required arguments"""
+    # def apply_default(self, missing_yields_error=True):
+    # """Apply default for missing required arguments"""
 
-        for default in self.defaults["simple-defaults"]:
-            default_manager = constraints.DefaultManager(default)
-            self.user_inputs = default_manager(self.user_inputs, missing_yields_error)
+    # for default in self.defaults["simple-defaults"]:
+    # default_manager = constraints.DefaultManager(default)
+    # self.user_inputs = default_manager(self.user_inputs, missing_yields_error)
 
     def perform_all_checks(self):
         self.check_domains()
         self.check_cross_constraints()
-        self.apply_default()
+        # self.apply_default()

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import abc
-import warnings
 
 import numpy as np
 
@@ -153,32 +152,3 @@ type_class_map = {
 
 class CrossConstraint(abc.ABC):
     pass
-
-
-# ┌──────────┐
-# │ Defaults │
-# └──────────┘
-
-
-class DefaultManager:
-    def __init__(self, default_rule):
-        self.default = default_rule
-
-    def __call__(self, user_inputs, missing_yields_error=True):
-        var_name = self.default["involve"]
-        if var_name in user_inputs:
-            return user_inputs
-
-        if self.default["default"] is None:
-            import rich
-
-            rich.print(f"[cyan]{var_name}")
-            if missing_yields_error:
-                raise errors.DefaultError(self.default)
-        else:
-            msg = f"""The following default is being applied:
-                {self.default["involve"]} = {self.default["default"]}"""
-            warnings.warn(msg, errors.DefaultWarning)
-            user_inputs[var_name] = self.default["default"]
-
-        return user_inputs

@@ -10,7 +10,8 @@
 # the following is a list of objects (dicts) each one containing the following
 # fields
 #
-# - name: is the name associate to the variable
+# - name: is the descriptive name associated to the variable
+# - knwon_as: is the actual identifier (key) associated in the runcard
 # - description: description of the variable and its domain
 # - type:
 #     define variable type, and its default domain (where applicable), available
@@ -27,11 +28,39 @@
 #     'domain' field
 #
 
+- name: PerturbativeOrder
+  known_as: PTO
+  description: >
+    DIS perturbative order (in the strong coupling expansion)
+  type: integer
+  domain:
+    - 0 <= PTO <= 1
+
+# Strong Coupling
+# ---------------
+
+- name: alpha_s
+  known_as: alphas
+  description: >
+    Strong coupling reference value at the reference scale  `Qref`
+  type: real
+  domain:
+    - alphas > 0
+
+- name: Qref
+  known_as: Qref
+  description: >
+    Reference energy scale (in GeV) at wich the value of `alphas` is provided
+  type: real
+  domain:
+    - Qref > 0
+
 # Scale Variations
+# ----------------
 - name: KrenQ
   known_as: XIR
   description: >
-    Renormalization scale ratio (APFEL choice: 1, ours: no default)
+    Renormalization scale ratio
   type: real
   domain:
     - XIR > 0
@@ -39,14 +68,14 @@
 - name: KfacQ
   known_as: XIF
   description: >
-    Factorization scale ratio (APFEL choice: 1, ours: no default)
+    Factorization scale ratio
   domain:
     - XIF > 0
 
 #- name: DynScVar
 #  known_as: DynScVar
 #  description: >
-#    Dynamical Scale Variations (APFEL choice: False, ours: currently not in use)
+#    Dynamical Scale Variations
 #
 #- name: ScVarProc
 #  description: >
@@ -61,27 +90,28 @@
 - name: TargetMassCorrections
   known_as: TMC
   description: >
-    Target Mass Corrections (APFEL choice: False, ours: no default)
+    Target Mass Corrections kind (0: absent, 1: APFEL, 2: approximate, 3: exact)
   type: integer
-  metavar: tmc
   domain:
-    - 0 <= tmc <= 3
+    - 0 <= TMC <= 3
 
 - name: MProton
   known_as: MP
   description: >
-    Mass of the Proton (APFEL choice: 0.938272046, ours: no default)
+    Mass of the Proton
   type: real
-  metavar: mp
   domain:
-    - mp > 0
+    - MP > 0
 
-# Heavy Quarks Scheme
-# -------------------
-- name: MassScheme
+# Heavy Quarks
+# ------------
+
+# FNS
+# ~~~
+- name: FlavorNumberScheme
   known_as: FNS
   description: >
-    Heavy quark flavor number scheme (APFEL choice: ZM-VFNS, ours: no default)
+    Heavy quark flavor number scheme
   type: enum
   domain:
     - ZM-VFNS
@@ -112,7 +142,7 @@
 - name: DampingFONLL
   known_as: DAMP
   description: >
-    Damping FONLL (APFEL choice: True, ours: no default)
+    Damping FONLL
   type: integer
   metavar: damp
   domain:
@@ -126,13 +156,99 @@
   domain:
     - True
 
+- name: CharmThresholdRatio
+  known_as: kcThr
+  description: >
+    Ratio between the charm threshold for VFNS and the specified value for
+    charm mass `mc`
+  type: real
+  domain:
+    - kcThr > 0
+
+- name: BottomThresholdRatio
+  known_as: kbThr
+  description: >
+    Ratio between the bottom threshold for VFNS and the specified value for
+    bottom mass `mb`
+  type: real
+  domain:
+    - kbThr > 0
+
+- name: TopThresholdRatio
+  known_as: ktThr
+  description: >
+    Ratio between the top threshold for VFNS and the specified value for top
+    mass `mt`
+  type: real
+  domain:
+    - ktThr > 0
+
+# Masses
+# ~~~~~~
+- name: MassScheme
+  known_as: HQ
+  description: >
+    Heavy quark masses scheme
+  type: enum
+  domain:
+    - POLE
+    - MSbar
+
+- name: CharmMass
+  known_as: mc
+  description: >
+    Mass of the c quark
+  type: real
+  domain:
+    - mc > 0
+
+- name: CharmRefScale
+  known_as: Qmc
+  description: >
+    Reference scale for the specified `mc` value (`MSbar` mass scheme)
+  type: real
+  domain:
+    - Qmc > 0
+
+- name: BottomMass
+  known_as: mb
+  description: >
+    Mass of the b quark
+  type: real
+  domain:
+    - mb > 0
+
+- name: BottomRefScale
+  known_as: Qmb
+  description: >
+    Reference scale for the specified `mb` value (`MSbar` mass scheme)
+  type: real
+  domain:
+    - Qmb > 0
+
+- name: TopMass
+  known_as: mt
+  description: >
+    Mass of the t quark
+  type: real
+  domain:
+    - mt > 0
+
+- name: TopRefScale
+  known_as: Qmt
+  description: >
+    Reference scale for the specified `mt` value (`MSbar` mass scheme)
+  type: real
+  domain:
+    - Qmt > 0
+
 # Intrinsic Charm
 # ---------------
 # TODO: convert to boolean?
 - name: IntrinsicCharm
   known_as: IC
   description: >
-    Damping FONLL (APFEL choice: IC, ours: currently not in use)
+    Damping FONLL
   type: integer
   metavar: ic
   domain:
@@ -143,16 +259,33 @@
 - name: ZMass
   known_as: MZ
   description: >
-    Mass of the Z vector boson (APFEL choice: 91.1876, ours: no default)
+    Mass of the Z vector boson
   type: real
   metavar: mz
   domain:
     - mz > 0
 
+- name: WMass
+  known_as: MW
+  description: >
+    Mass of the W vector bosons
+  type: real
+  metavar: mw
+  domain:
+    - mw > 0
+
+- name: GFermi
+  known_as: FG
+  description: >
+    Fermi constant
+  type: real
+  domain:
+    - GF > 0
+
 - name: Sin2ThetaW
   known_as: SIN2TW
   description: >
-    Sin squared of theta weak (APFEL choice: 0.23126, ours: no default)
+    Sin squared of theta weak
   type: real
   metavar: s2w
   domain:
@@ -161,8 +294,7 @@
 - name: CKM
   known_as: CKM
   description: >
-    CKM Matrix (APFEL choice: "0.97428 0.22530 0.003470 0.22520 0.97345
-    0.041000 0.00862 0.04030 0.999152", ours: no default)
+    Cabibbo Kobayashi Maskawa matrix
   type: any
   domain:
     - True
@@ -170,24 +302,10 @@
 # TODO: should also be positive?
 - name: DeltaR
   description: >
-    propagator correction
-
-    WARNING: The propagator correction cannot be equal to one
-    --> SetPropagatorCorrection(0d0)
+    Propagator correction
   type: real
   domain:
     - DeltaR != 1.
-
-#- name: EWCouplings
-#  known_as: EWCouplings
-#  description: >
-#    ElectroWeak Couplings (APFEL choice: (0., 0., 0., 0.), ours: currently
-#    not in use)
-#
-#- name: SFNLOQED
-#  known_as: SFNLOQED
-#  description: >
-#    SFNLOQED (APFEL choice: True, ours: currently not in use)
 
 # Weights
 # -------
