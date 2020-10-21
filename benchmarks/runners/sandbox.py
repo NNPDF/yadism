@@ -96,5 +96,5 @@ class Sandbox:
 if __name__ == "__main__":
     # generate_observables()
     sand = Sandbox()
-    # sand.run_LO()
-    sand.run_NLO()
+    sand.run_LO()
+    # sand.run_NLO()

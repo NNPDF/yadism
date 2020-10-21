@@ -31,6 +31,7 @@ from eko.interpolation import InterpolatorDispatcher
 from eko import thresholds
 from eko import strong_coupling
 
+from .input import inspector
 from . import observable_name
 from . import log
 from .output import Output
@@ -43,25 +44,25 @@ logger = logging.getLogger(__name__)
 
 class Runner:
     """
-        Wrapper to compute a process
+    Wrapper to compute a process
 
-        Parameters
-        ----------
-        theory : dict
-            Dictionary with the theory parameters for the evolution (currently
-            including PDFSet and DIS process indication).
-        observables : dict
-            DIS parameters: process description, kinematic specification for the
-            requested output.
+    Parameters
+    ----------
+    theory : dict
+        Dictionary with the theory parameters for the evolution (currently
+        including PDFSet and DIS process indication).
+    observables : dict
+        DIS parameters: process description, kinematic specification for the
+        requested output.
 
-        Notes
-        -----
-        For a full description of the content of `theory` and `dis_observables`
-        dictionaries read ??.
+    Notes
+    -----
+    For a full description of the content of `theory` and `dis_observables`
+    dictionaries read ??.
 
-        .. todo::
-            * reference on theory template
-            * detailed description of dis_observables entries
+    .. todo::
+        * reference on theory template
+        * detailed description of dis_observables entries
 
     """
 
@@ -84,19 +85,26 @@ class Runner:
     )
 
     def __init__(self, theory: dict, observables: dict):
-        # ============
+        # ==============================
+        # Validate inputs
+        # ==============================
+        insp = inspector.Inspector(theory, observables)
+        insp.perform_all_checks()
+
+        # ==============================
         # Store inputs
-        # ============
+        # ==============================
         self._theory = theory
         self._observables = observables
 
-        # ===========================
-        # Setup eko stuff
-        # ===========================
+        # ==============================
+        # Setup eko stuffs
+        # ==============================
         self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory, self.threshold,
+            theory,
+            self.threshold,
         )
 
         # Non-eko theory
@@ -161,34 +169,34 @@ class Runner:
         else:
             file = None
         self.console = rich.console.Console(file=file)
-        # =================
+        # ==============================
         # Initialize output
-        # =================
+        # ==============================
         self._output = Output()
         self._output["xgrid"] = self.interpolator.xgrid_raw.tolist()
         self._output["xiF"] = self.xiF
 
     def get_output(self) -> Output:
         """
-            Compute coefficient functions grid for requested kinematic points.
+        Compute coefficient functions grid for requested kinematic points.
 
 
-            .. admonition:: Implementation Note
+        .. admonition:: Implementation Note
 
-                get_output pipeline
+            get_output pipeline
 
-            Returns
-            -------
-            :obj:`Output`
-                output object, it will store the coefficient functions grid
-                (flavour, interpolation-index) for each requested kinematic
-                point (x, Q2)
+        Returns
+        -------
+        :obj:`Output`
+            output object, it will store the coefficient functions grid
+            (flavour, interpolation-index) for each requested kinematic
+            point (x, Q2)
 
 
-            .. todo::
+        .. todo::
 
-                * docs
-                * get_output pipeline
+            * docs
+            * get_output pipeline
         """
         self.console.print(self.banner)
 

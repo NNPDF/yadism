@@ -57,7 +57,7 @@ def setup_package():
         url="https://github.com/N3PDF/yadism",
         package_dir={"": "src"},
         packages=find_packages("src"),
-        package_data={"": [], "tests": ["*"]},
+        package_data={"yadism": ["input/*.yaml"]},
         zip_safe=False,
         classifiers=[
             "Operating System :: Unix",
