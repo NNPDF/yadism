@@ -14,11 +14,9 @@ import logging
 import yaml
 
 from . import constraints
-from .. import log
 
 here = pathlib.Path(__file__).parent
 
-log.setup()
 logger = logging.getLogger(__name__)
 
 
