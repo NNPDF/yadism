@@ -9,12 +9,17 @@ for the input restrictions defined in the following files:
 """
 
 import pathlib
+import logging
 
 import yaml
 
 from . import constraints
+from .. import log
 
 here = pathlib.Path(__file__).parent
+
+log.setup()
+logger = logging.getLogger(__name__)
 
 
 # ╔═══════════╗
@@ -33,13 +38,16 @@ class Inspector:
 
     Parameters
     ----------
-    user_inputs : dict
-        inputs from user to inspect and validate
+    theory_runcard : dict
+        theory inputs from user to inspect and validate
+    observables_runcard : dict
+        observables inputs from user to inspect and validate
 
     """
 
-    def __init__(self, user_inputs):
-        self.user_inputs = user_inputs
+    def __init__(self, theory_runcard, observables_runcard):
+        self.theory = theory_runcard
+        self.observables = observables_runcard
 
         domain_file = here / "domains.yaml"
         with open(domain_file, "r") as file:
@@ -72,11 +80,13 @@ class Inspector:
                 # retroeve the checker from available checkers and value from
                 # user input, apply the first on the latter
                 name = dom_def["known_as"] if "known_as" in dom_def else dom_def["name"]
-                checker.check_value(value=self.user_inputs[name])
+                checker.check_value(
+                    value=self.__getattribute__(dom_def["runcard"])[name]
+                )
             except KeyError:
                 # TODO: distinguish between theory and observables inputs
                 raise ValueError(
-                    f"Missing value for '{dom_def['known_as']}' in the input {'theory'} runcard"
+                    f"Missing value for '{dom_def['known_as']}' in the input {dom_def['runcard']} runcard"
                 )
 
     def check_cross_constraints(self):
@@ -92,9 +102,11 @@ class Inspector:
 
     # for default in self.defaults["simple-defaults"]:
     # default_manager = constraints.DefaultManager(default)
-    # self.user_inputs = default_manager(self.user_inputs, missing_yields_error)
+    # self.theory = default_manager(self.theory, missing_yields_error)
 
     def perform_all_checks(self):
+        logger.info("Inspecting runcards...")
         self.check_domains()
         self.check_cross_constraints()
         # self.apply_default()
+        logger.info("Inspection completed: success ✓")

@@ -40,6 +40,37 @@ class Argument(abc.ABC):
         pass
 
 
+class StringArgument(Argument):
+    """Argument definition for ``string`` type.
+
+    ``string`` is the argument type for a generic string, and no other check is
+    performed other than verifying that it is loaded just as a plain string and
+    not any other kind, that should be managed by a more specific `Argument`
+    checker.
+    """
+
+    def check_value(self, *, value):
+        """Checks if `value` is actually a bare string.
+
+        Raises
+        ------
+        DomainError
+            If `value` is not in the domain of the ``type``.
+        """
+
+        if not isinstance(value, str):
+            self._raise_error(value)
+
+    def _raise_error(self, value):
+        """Wrapper for DomainError, pretty print `domain`.
+
+        No domain rule supported, if needed please choose a more specific
+        argument type.
+        """
+        self.domain = ""
+        raise errors.DomainError(value=value, **self.__dict__)
+
+
 class EnumArgument(Argument):
     """Argument definition for ``enum`` type.
 
@@ -95,7 +126,7 @@ class RealArgument(Argument):
         try:
             var_name = self.metavar
         except AttributeError:
-            var_name = self.name
+            var_name = self.known_as
 
         # NOTE: the value is the only thing user provided, so it will be parsed
         # before to make sure it's nothing else than a float: with this check
@@ -139,10 +170,10 @@ class IntegerArgument(RealArgument):
 
 
 type_class_map = {
+    "string": StringArgument,
     "enum": EnumArgument,
     "real": RealArgument,
     "integer": IntegerArgument,
-    "any": None,
 }
 
 # ┌───────────────────────────┐
