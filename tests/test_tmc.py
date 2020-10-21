@@ -23,8 +23,14 @@ class MockESF:  # return init arguments
                 "x": 0,
                 "Q2": 0,
                 "weights": dict(q={1: 1}, g={21: 1}),
-                "values": {"q": np.array(self._q), "g": np.array(self._g),},
-                "errors": {"q": np.zeros(len(self._q)), "g": np.zeros(len(self._g)),},
+                "values": {
+                    "q": np.array(self._q),
+                    "g": np.array(self._g),
+                },
+                "errors": {
+                    "q": np.zeros(len(self._q)),
+                    "g": np.zeros(len(self._g)),
+                },
             }
         )
 
@@ -51,7 +57,7 @@ class TestTMC:
         class MockSF:
             obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
             def get_esf(self, _name, kinematics):
                 # this means F2(x>.6) = 0
@@ -90,7 +96,7 @@ class TestTMC:
         class MockSF:
             obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
             def get_esf(self, _name, kinematics):
                 # this means F2 = pdf
@@ -154,7 +160,7 @@ class TestTMC:
         class MockSF:
             obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
             def get_esf(self, _name, kinematics):
                 pass
