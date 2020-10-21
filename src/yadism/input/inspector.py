@@ -72,9 +72,6 @@ class Inspector:
             # load checker with domain definition
             checker = constraints.type_class_map[dom_def["type"]](**dom_def)
 
-            if checker is None:
-                continue
-
             # check value provided by user
             try:
                 # retroeve the checker from available checkers and value from
@@ -84,7 +81,6 @@ class Inspector:
                     value=self.__getattribute__(dom_def["runcard"])[name]
                 )
             except KeyError:
-                # TODO: distinguish between theory and observables inputs
                 raise ValueError(
                     f"Missing value for '{dom_def['known_as']}' in the input {dom_def['runcard']} runcard"
                 )

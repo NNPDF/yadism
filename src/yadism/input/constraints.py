@@ -67,7 +67,7 @@ class StringArgument(Argument):
         No domain rule supported, if needed please choose a more specific
         argument type.
         """
-        self.domain = ""
+        self.domain_ = ""
         raise errors.DomainError(value=value, **self.__dict__)
 
 
@@ -101,7 +101,7 @@ class EnumArgument(Argument):
         The domain is formatted as a dashed list.
         """
         dom = list(map(str, self.domain))
-        self.domain = "- " + "\n- ".join(dom)
+        self.domain_ = "- " + "\n- ".join(dom)
         raise errors.DomainError(value=value, **self.__dict__)
 
 
@@ -150,7 +150,7 @@ class RealArgument(Argument):
         The domain is formatted as a dashed list of rules.
         """
         dom = list(map(str, self.domain))
-        self.domain = "- " + "\n- ".join(dom)
+        self.domain_ = "- " + "\n- ".join(dom)
         raise errors.DomainError(value=value, **self.__dict__)
 
 
@@ -163,10 +163,6 @@ class IntegerArgument(RealArgument):
         if np.abs(value - value_int) > 1e-5:
             self._raise_error(value)
         super(IntegerArgument, self).check_value(value=value_int)
-
-    def _raise_error(self, value):
-        self.domain.insert(0, "INTEGER")
-        super(IntegerArgument, self)._raise_error(value=value)
 
 
 type_class_map = {

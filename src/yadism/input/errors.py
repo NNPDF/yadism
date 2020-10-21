@@ -22,16 +22,18 @@ class DomainError(ValueError):
     """
 
     def __init__(
-        self, *, name, description, type, known_as, value, domain="", **kwargs
+        self, *, name, description, type, known_as, value, domain_="", **kwargs
     ):
         """Generates the error message to be included in the Traceback.
 
         It formats the provided fields in a single string, and stores it as
         first element of ``args`` attribute.
         """
-        self.name = known_as
+        self.name = name
+        self.known_as = known_as
         msg = f"""Following argument outside the domain:
-               name: {known_as}
+               name: {name}
+               known_as: {known_as}
                description:
                DESCRIPTION
                type: {type}
@@ -39,7 +41,7 @@ class DomainError(ValueError):
                DOMAIN
                value provided: {value}
                """
-        domain = "\t" + re.sub("\n", "\n\t\t", domain)
+        domain = "\t" + re.sub("\n", "\n\t\t", domain_)
         description = "\n\t\t".join(
             textwrap.wrap(description.strip(), 66, break_long_words=False)
         )
@@ -71,9 +73,7 @@ class DefaultError(ValueError):
     """Missing argument for field without default"""
 
     def __init__(self, default):
-        """Generate the error message to be reported.
-
-        """
+        """Generate the error message to be reported."""
         self.name = default["name"]
         msg = f"Missing default for the variable `{default['involve']}`"
         self.args = (msg,)
@@ -83,8 +83,6 @@ class DefaultWarning(RuntimeWarning):
     """Warn the user that a default is being applied"""
 
     def __init__(self, msg):
-        """Generate the error message to be reported.
-
-        """
+        """Generate the error message to be reported."""
 
         self.args = (msg,)

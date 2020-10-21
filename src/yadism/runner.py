@@ -85,18 +85,21 @@ class Runner:
     )
 
     def __init__(self, theory: dict, observables: dict):
+        # ==============================
+        # Validate inputs
+        # ==============================
         insp = inspector.Inspector(theory, observables)
         insp.perform_all_checks()
 
-        # ============
+        # ==============================
         # Store inputs
-        # ============
+        # ==============================
         self._theory = theory
         self._observables = observables
 
-        # ===========================
-        # Setup eko stuff
-        # ===========================
+        # ==============================
+        # Setup eko stuffs
+        # ==============================
         self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
@@ -166,9 +169,9 @@ class Runner:
         else:
             file = None
         self.console = rich.console.Console(file=file)
-        # =================
+        # ==============================
         # Initialize output
-        # =================
+        # ==============================
         self._output = Output()
         self._output["xgrid"] = self.interpolator.xgrid_raw.tolist()
         self._output["xiF"] = self.xiF
