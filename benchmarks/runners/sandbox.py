@@ -87,7 +87,7 @@ class Sandbox:
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "FNS": self.db.theory_query.FNS == "",
                 # "TMC": self.db.theory_query.TMC == 1,
-                "FNS": self.db.theory_query.FNS == "FONLL-A",
+                # "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
             },
         )
@@ -96,5 +96,5 @@ class Sandbox:
 if __name__ == "__main__":
     # generate_observables()
     sand = Sandbox()
-    sand.run_LO()
-    # sand.run_NLO()
+    # sand.run_LO()
+    sand.run_NLO()
