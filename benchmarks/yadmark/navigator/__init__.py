@@ -74,6 +74,10 @@ def simlogs(*args):
     return app.list_all_sim_logs(*args)
 
 
+def cmpt(id1, id2):
+    return compare_dicts(g(t, id1), g(t, id2))
+
+
 def launch_navigator():
     c = Config()
     banner = """

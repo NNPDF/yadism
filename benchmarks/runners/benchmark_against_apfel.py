@@ -144,15 +144,27 @@ class BenchmarkScaleVariations(ApfelBenchmark):
         return self.run_external(
             1,
             ["CT14llo_NF3"],
-            {"XIR": None, "XIF": None},
+            {
+                "XIR": ~(self._db().theory_query.XIR == 0.7),
+                "XIF": ~(self._db().theory_query.XIF == 0.7),
+            },
             {"prDIS": None},
             assert_external=sv_assert_external,
         )
 
 
-def tmc_assert_external(_theory, _obs, sf, yad):
-    if sf == "F2light" and yad["x"] > 0.9:
-        return dict(abs=2e-5)
+def tmc_assert_external(theory, _obs, sf, yad):
+    # turning point (maybe again a cancelation of channels?)
+    if sf in ["F2light", "F2total"] and yad["x"] > 0.9:
+        return dict(abs=1e-4)
+    # same as in plain
+    if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
+        # APFEL has a discreization in Q2/m2
+        return dict(abs=1e-5)
+    # FL TMC is broken in APFEL
+    # https://github.com/scarrazza/apfel/issues/23
+    if sf[:2] == "FL" and yad["x"] > 0.3:
+        return dict(abs=1e-2)
     return None
 
 
@@ -170,7 +182,10 @@ class BenchmarkTMC(ApfelBenchmark):
 
     def benchmark_NLO(self):
         return self.run_external(
-            1, ["ToyLH"], {"TMC": self._db().theory_query.TMC == 1}
+            1,
+            ["ToyLH"],
+            {"TMC": self._db().theory_query.TMC == 1},
+            assert_external=tmc_assert_external,
         )
 
 
@@ -185,6 +200,11 @@ class BenchmarkFNS(ApfelBenchmark):
         )
 
     def benchmark_NLO_FFNS(self):
+        def ffns_assert(theory, obs, sf, yad):
+            if theory["NfFF"] < 5:
+                return plain_assert_external(theory, obs, sf, yad)
+            return None
+
         return self.run_external(
             1,
             ["CT14llo_NF6"],
@@ -192,6 +212,7 @@ class BenchmarkFNS(ApfelBenchmark):
                 "FNS": self._db().theory_query.FNS == "FFNS",
                 "NfFF": self._db().theory_query.NfFF != 3,
             },
+            assert_external=ffns_assert,
         )
 
     def benchmark_NLO_ZM_VFNS(self):
