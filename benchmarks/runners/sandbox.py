@@ -33,6 +33,7 @@ def generate_observables():
         "F2light",
         "F2charm",
         "F2bottom",
+        "F2top",
         # "F2total",
         "FLlight",
         "FLcharm",
@@ -86,7 +87,7 @@ class Sandbox:
                 # "XIF": self.db.theory_query.XIF == 0.5,
                 # "NfFF": self.db.theory_query.NfFF == 5,
                 # "TMC": self.db.theory_query.TMC == 1,
-                "FNS": self.db.theory_query.FNS == "ZM-VFNS",
+                "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
             },
         )

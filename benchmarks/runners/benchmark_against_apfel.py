@@ -208,6 +208,9 @@ class BenchmarkFNS(ApfelBenchmark):
         def ffns_assert(theory, obs, sf, yad):
             if theory["NfFF"] < 5:
                 return plain_assert_external(theory, obs, sf, yad)
+            # TODO https://github.com/N3PDF/yadism/wiki/2020_05_28-F2charm-FFNS4-low-Q2-non-zero
+            if theory["NfFF"] == 5 and sf[2:] == "bottom" and yad["Q2"] < theory["mb"] ** 2:
+                return False
             return None
 
         return self.run_external(
