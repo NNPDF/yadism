@@ -47,7 +47,7 @@ class ApfelBenchmark:
 def plain_assert_external(theory, obs, sf, yad):
     if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
         # APFEL has a discreization in Q2/m2
-        return dict(abs=2e-6)
+        return dict(abs=5e-6)
     if obs["prDIS"] == "CC":
         if sf[2:] == "charm" and yad["x"] > 0.75:
             return dict(abs=2e-6)  # grid border
@@ -135,7 +135,7 @@ class BenchmarkScaleVariations(ApfelBenchmark):
                 if (
                     sf == "F3charm"
                     and 45 < yad["Q2"] < 1e6
-                    and 2e-3 < yad["x"] < 0.5e-3
+                    and 0.5e-3 < yad["x"] < 2e-3
                 ):
                     # there is a cancelation between sbar and g going on:
                     # each of the channels is O(1) with O(1e-3) accuracy
