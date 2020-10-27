@@ -78,6 +78,14 @@ def cmpt(id1, id2):
     return compare_dicts(g(t, id1), g(t, id2))
 
 
+def check_dfdl(id_):
+    dfd = dfl(id_)
+    for n, df in dfd.items():
+        for l in df.iloc:
+            if abs(l["rel_err[%]"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
+                print(n, l, sep="\n")
+
+
 def launch_navigator():
     c = Config()
     banner = """

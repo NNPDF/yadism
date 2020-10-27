@@ -450,10 +450,3 @@ def compare_dicts(d1, d2, exclude_underscored=False):
         elif d1[k] != d2[k]:
             print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {d2[k]:>{fw}} │")
     print("└", "─" * (kw + 2), "┴", "─" * (fw * 2 + 1 + 2), "┘", sep="")
-
-
-def check_dfd(dfd):
-    for n, df in dfd.items():
-        for l in df.iloc:
-            if abs(l["rel_err[%]"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
-                print(n, l, sep="\n")

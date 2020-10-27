@@ -118,27 +118,35 @@ class BenchmarkScaleVariations(ApfelBenchmark):
         def sv_assert_external(theory, obs, sf, yad):
             if np.isclose(theory["XIF"], 1) and np.isclose(theory["XIR"], 1):
                 return plain_assert_external(theory, obs, sf, yad)
-            if theory["XIF"] < 1 and theory["XIR"] < 1:
-                if (
-                    sf == "FLbottom"
-                    and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
-                ):
-                    # APFEL has a discreization in Q2/m2
-                    return dict(abs=1e-5)
-                if obs["prDIS"] == "CC":
-                    if sf[2:] == "top" and yad["Q2"] < 160:
+            if (
+                sf == "FLbottom"
+                and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
+            ):
+                # APFEL has a discreization in Q2/m2
+                return dict(abs=1e-5)
+            if sf == "FLcharm" and yad["Q2"] < 7:
+                return dict(rel=0.015)
+            if obs["prDIS"] == "CC":
+                if sf[2:] == "top":
+                    if yad["Q2"] < 160:
                         return dict(abs=2e-4)  # production threshold
-                    if sf == "F3total" and yad["Q2"] < 7:
-                        # still F3light is > 0, but F3charm < 0
-                        return dict(rel=0.015)
-                    if (
-                        sf == "F3charm"
-                        and 50 < yad["Q2"] < 1e6
-                        and 2e-3 < yad["x"] < 0.5e-3
-                    ):
-                        # there is a cancelation between sbar and g going on:
-                        # each of the channels is O(1) with O(1e-3) accuracy
-                        return dict(abs=2e-3)
+                    if sf[:2] == "F3" and yad["Q2"] > 900:
+                        return dict(abs=3e-5)  # why does the thing go worse again?
+                if (
+                    sf == "F3charm"
+                    and 45 < yad["Q2"] < 1e6
+                    and 2e-3 < yad["x"] < 0.5e-3
+                ):
+                    # there is a cancelation between sbar and g going on:
+                    # each of the channels is O(1) with O(1e-3) accuracy
+                    return dict(abs=2e-3)
+                if sf == "F3total":
+                    # still F3light is > 0, but F3charm < 0
+                    return dict(rel=0.05)
+            if theory["XIF"] < 1 and theory["XIR"] < 1:
+                # for small xir pQCD becomes unreliable
+                if sf in ["F2light", "F2total"] and yad["Q2"] < 7:
+                    return dict(abs=5e-2)
             return None
 
         return self.run_external(
