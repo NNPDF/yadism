@@ -36,14 +36,7 @@ class TestInit:
             [1.0, 1.0, 1.0, 1.0],
             [lambda x: 1, lambda x: 1, 1, lambda x: 1],
             [1, 1, lambda x: 1, 1],
-            [
-                [
-                    1,
-                    1,
-                    1,
-                    1,
-                ]
-            ],
+            [[1, 1, 1, 1,]],
             [[1, 1, 1, lambda x: 1]],
             [[lambda x: 1, 1, 1, 1]],
         ]

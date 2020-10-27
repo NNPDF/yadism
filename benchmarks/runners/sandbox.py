@@ -20,11 +20,11 @@ def generate_observables():
     # defaults["interpolation_xgrid"] = np.geomspace(0.1, 1, 40).tolist()
     light_kin = []
     light_kin.extend(
-        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][:6]]
+        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
         # np.linspace(1e-3, 1, 50)
     )
     # light_kin.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
-    # light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
+    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
     # light_kin.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
     # light_kin = [dict(x=0.001,Q2=1e5)]
     # light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
@@ -32,20 +32,20 @@ def generate_observables():
     obs_list = [
         "F2light",
         "F2charm",
-        # "F2bottom",
+        "F2bottom",
         # "F2total",
         "FLlight",
         "FLcharm",
         # "FLbottom",
-        "F3light",
-        "F3charm",
+        # "F3light",
+        # "F3charm",
         # "F3bottom",
     ]
     cards = []
     card = copy.deepcopy(defaults)
     # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
     # print(card)
-    card["prDIS"] = "CC"
+    card["prDIS"] = "EM"
     # card["PropagatorCorrection"] = .999
     # card["ProjectileDIS"] = "antineutrino"
     # card["PolarizationDIS"] = 0.5
@@ -80,14 +80,13 @@ class Sandbox:
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["CT14llo_NF3"],
+            ["CT14llo_NF6"],
             {
-                "XIR": self.db.theory_query.XIR == 0.5,
-                "XIF": self.db.theory_query.XIF == 0.5,
-                # "NfFF": self.db.theory_query.NfFF == 4,
-                # "FNS": self.db.theory_query.FNS == "",
+                # "XIR": self.db.theory_query.XIR == 0.5,
+                # "XIF": self.db.theory_query.XIF == 0.5,
+                # "NfFF": self.db.theory_query.NfFF == 5,
                 # "TMC": self.db.theory_query.TMC == 1,
-                # "FNS": self.db.theory_query.FNS == "FONLL-A",
+                "FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 # "DAMP": self.db.theory_query.DAMP == 1,
             },
         )

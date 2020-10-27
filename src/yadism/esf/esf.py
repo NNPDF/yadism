@@ -264,12 +264,14 @@ class EvaluatedStructureFunctionHeavy(EvaluatedStructureFunction):
         """
         nhq = self._SF.obs_name.hqnumber
         # get our local active number of flavors
+        scheme = self._SF.threshold.scheme
         nf = self._SF.threshold.get_areas(self._Q2 * self._SF.xiF ** 2)[-1].nf
         # use local only? i.e. by force or because we (Q2) are below our threshold (name)
         if self._force_local or nf < nhq:
-            self._compute_local()
+            # skip for ZM-VFNS -> return 0
+            if scheme != "ZM-VFNS":
+                self._compute_local()
         else:
-            scheme = self._SF.threshold.scheme
             logger.debug("Apply '%s' to %s", scheme, self)
             # compute zero-mass part
             obs_name = self._SF.obs_name

@@ -139,7 +139,7 @@ class BenchmarkScaleVariations(ApfelBenchmark):
                 ):
                     # there is a cancelation between sbar and g going on:
                     # each of the channels is O(1) with O(1e-3) accuracy
-                    return dict(abs=2e-3)
+                    return dict(abs=5e-3)
                 if sf == "F3total":
                     # still F3light is > 0, but F3charm < 0
                     return dict(rel=0.05)
@@ -152,10 +152,7 @@ class BenchmarkScaleVariations(ApfelBenchmark):
         return self.run_external(
             1,
             ["CT14llo_NF3"],
-            {
-                "XIR": ~(self._db().theory_query.XIR == 0.7),
-                "XIF": ~(self._db().theory_query.XIF == 0.7),
-            },
+            {"XIR": None, "XIF": None,},
             {"prDIS": None},
             assert_external=sv_assert_external,
         )
@@ -241,6 +238,9 @@ if __name__ == "__main__":
     # plain.benchmark_LO()
     # plain.benchmark_NLO()
 
-    proj = BenchmarkProjectile()
-    proj.benchmark_LO()
+    # proj = BenchmarkProjectile()
+    # proj.benchmark_LO()
     # proj.benchmark_NLO()
+
+    fns = BenchmarkFNS()
+    fns.benchmark_NLO_FONLL()

@@ -23,14 +23,8 @@ class MockESF:  # return init arguments
                 "x": 0,
                 "Q2": 0,
                 "weights": dict(q={1: 1}, g={21: 1}),
-                "values": {
-                    "q": np.array(self._q),
-                    "g": np.array(self._g),
-                },
-                "errors": {
-                    "q": np.zeros(len(self._q)),
-                    "g": np.zeros(len(self._g)),
-                },
+                "values": {"q": np.array(self._q), "g": np.array(self._g),},
+                "errors": {"q": np.zeros(len(self._q)), "g": np.zeros(len(self._g)),},
             }
         )
 

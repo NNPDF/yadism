@@ -5,7 +5,6 @@ import pytest
 import yadism.splitting_functions as split
 
 
-
 # class TestSplittingLO:
 #     def test_pqq(self):
 #         assert split.pqq_reg(-1, MockConstants()) == 0

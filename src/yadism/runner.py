@@ -103,8 +103,7 @@ class Runner:
         self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory,
-            self.threshold,
+            theory, self.threshold,
         )
 
         # Non-eko theory
