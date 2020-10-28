@@ -104,6 +104,38 @@ class BenchmarkProjectile(ApfelBenchmark):
             assert_external=plain_assert_external,
         )
 
+def sv_assert_external(theory, obs, sf, yad):
+    if np.isclose(theory["XIF"], 1) and np.isclose(theory["XIR"], 1):
+        return plain_assert_external(theory, obs, sf, yad)
+    if (
+        sf == "FLbottom"
+        and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
+    ):
+        # APFEL has a discreization in Q2/m2
+        return dict(abs=1e-5)
+    if sf == "FLcharm" and yad["Q2"] < 7:
+        return dict(rel=0.015)
+    if obs["prDIS"] == "CC":
+        if sf[2:] == "top":
+            if yad["Q2"] < 160:
+                return dict(abs=2e-4)  # production threshold
+            if sf[:2] == "F3" and yad["Q2"] > 900:
+                return dict(abs=3e-5)  # why does the thing go worse again?
+        if (
+            sf == "F3charm"
+            and 0.5e-3 < yad["x"] < 2e-3
+        ):
+            # there is a cancelation between sbar and g going on:
+            # each of the channels is O(1) with O(1e-3) accuracy
+            return dict(abs=5e-3)
+        if sf == "F3total":
+            # still F3light is > 0, but F3charm < 0
+            return dict(rel=0.05)
+    if theory["XIF"] < 1 and theory["XIR"] < 1:
+        # for small xir pQCD becomes unreliable
+        if sf in ["F2light", "F2total"] and yad["Q2"] < 7:
+            return dict(abs=5e-2)
+    return None
 
 @pytest.mark.commit_check
 class BenchmarkScaleVariations(ApfelBenchmark):
@@ -115,40 +147,6 @@ class BenchmarkScaleVariations(ApfelBenchmark):
         )
 
     def benchmark_NLO(self):
-        def sv_assert_external(theory, obs, sf, yad):
-            if np.isclose(theory["XIF"], 1) and np.isclose(theory["XIR"], 1):
-                return plain_assert_external(theory, obs, sf, yad)
-            if (
-                sf == "FLbottom"
-                and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
-            ):
-                # APFEL has a discreization in Q2/m2
-                return dict(abs=1e-5)
-            if sf == "FLcharm" and yad["Q2"] < 7:
-                return dict(rel=0.015)
-            if obs["prDIS"] == "CC":
-                if sf[2:] == "top":
-                    if yad["Q2"] < 160:
-                        return dict(abs=2e-4)  # production threshold
-                    if sf[:2] == "F3" and yad["Q2"] > 900:
-                        return dict(abs=3e-5)  # why does the thing go worse again?
-                if (
-                    sf == "F3charm"
-                    and 45 < yad["Q2"] < 1e6
-                    and 0.5e-3 < yad["x"] < 2e-3
-                ):
-                    # there is a cancelation between sbar and g going on:
-                    # each of the channels is O(1) with O(1e-3) accuracy
-                    return dict(abs=5e-3)
-                if sf == "F3total":
-                    # still F3light is > 0, but F3charm < 0
-                    return dict(rel=0.05)
-            if theory["XIF"] < 1 and theory["XIR"] < 1:
-                # for small xir pQCD becomes unreliable
-                if sf in ["F2light", "F2total"] and yad["Q2"] < 7:
-                    return dict(abs=5e-2)
-            return None
-
         return self.run_external(
             1,
             ["CT14llo_NF3"],
@@ -209,7 +207,7 @@ class BenchmarkFNS(ApfelBenchmark):
             if theory["NfFF"] < 5:
                 return plain_assert_external(theory, obs, sf, yad)
             # TODO https://github.com/N3PDF/yadism/wiki/2020_05_28-F2charm-FFNS4-low-Q2-non-zero
-            if theory["NfFF"] == 5 and sf[2:] == "bottom" and yad["Q2"] < theory["mb"] ** 2:
+            if theory["NfFF"] == 5 and sf[2:] in ["bottom", "total"] and yad["Q2"] < theory["mb"] ** 2:
                 return False
             return None
 
@@ -245,5 +243,8 @@ if __name__ == "__main__":
     # proj.benchmark_LO()
     # proj.benchmark_NLO()
 
-    fns = BenchmarkFNS()
-    fns.benchmark_NLO_FONLL()
+    sv = BenchmarkScaleVariations()
+    sv.benchmark_NLO()
+
+    # fns = BenchmarkFNS()
+    # fns.benchmark_NLO_FONLL()

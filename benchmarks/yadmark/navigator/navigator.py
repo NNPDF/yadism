@@ -215,15 +215,11 @@ class NavigatorApp(mode_selector.ModeSelector):
             obj = {"doc_id": lg.doc_id}
             sfs = 0
             esfs = 0
-            ext = ""
             for sf in lg:
                 if not on.ObservableName.is_valid(sf):
                     continue
                 sfs += 1
                 esfs += len(lg[sf])
-                for ext_prgs in ["APFEL", "QCDNUM", "regression"]:
-                    if ext_prgs in lg[sf][0]:
-                        ext = ext_prgs
             crash = lg.get("_crash", None)
             if crash is None:
                 obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
@@ -231,7 +227,6 @@ class NavigatorApp(mode_selector.ModeSelector):
                 obj["structure_functions"] = crash
             obj["theory"] = lg["_theory_doc_id"]
             obj["obs"] = lg["_observables_doc_id"]
-            obj["ext"] = ext
             if "_pdf" in lg:
                 obj["pdf"] = lg["_pdf"]
             if "_creation_time" in lg:

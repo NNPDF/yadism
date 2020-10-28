@@ -3,6 +3,8 @@ import inspect
 import IPython
 from traitlets.config.loader import Config
 
+from yadism import observable_name as on
+
 from .navigator import NavigatorApp, t, o, l, compare_dicts
 
 
@@ -84,6 +86,18 @@ def check_dfdl(id_):
         for l in df.iloc:
             if abs(l["rel_err[%]"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
                 print(n, l, sep="\n")
+
+def crashedfl(id_):
+    dfd = g(l, id_)
+    if "_crash" not in dfd:
+        raise ValueError("log didn't crash!")
+    cdfd = {}
+    for sf in dfd:
+        if on.ObservableName.is_valid(sf):
+            cdfd[sf] = f"{len(dfd[sf])} points"
+        else:
+            cdfd[sf] = dfd[sf]
+    return cdfd
 
 
 def launch_navigator():
