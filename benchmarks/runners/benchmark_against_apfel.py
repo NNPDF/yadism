@@ -227,10 +227,19 @@ class BenchmarkFNS(ApfelBenchmark):
         )
 
     def benchmark_NLO_FONLL(self):
+        def fonll_assert(theory, obs, sf, yad):
+            if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
+                # APFEL has a discreization in Q2/m2
+                return dict(abs=5e-6)
+            if sf == "FLcharm" and yad["Q2"] < 7 and theory["DAMP"] == 1:
+                return dict(abs=2e-5)
+            return None
+
         return self.run_external(
             1,
             ["CT14llo_NF6"],
             {"FNS": self._db().theory_query.FNS == "FONLL-A", "DAMP": None},
+            assert_external=fonll_assert
         )
 
 
@@ -243,8 +252,8 @@ if __name__ == "__main__":
     # proj.benchmark_LO()
     # proj.benchmark_NLO()
 
-    sv = BenchmarkScaleVariations()
-    sv.benchmark_NLO()
+    # sv = BenchmarkScaleVariations()
+    # sv.benchmark_NLO()
 
-    # fns = BenchmarkFNS()
-    # fns.benchmark_NLO_FONLL()
+    fns = BenchmarkFNS()
+    fns.benchmark_NLO_FONLL()
