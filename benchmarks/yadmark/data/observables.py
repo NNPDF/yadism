@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-import argparse
 import copy
 
 import numpy as np
 
-from .. import mode_selector
-from ..utils import str_datetime
-from . import power_set
+from banana.data import power_set
+from banana.data.card_generator import OCardGenerator
 
 
 def regression_cards(defaults):
@@ -163,40 +160,15 @@ def external_cards_apfel(defaults):
             cards.append(copy.copy(c))
     return cards
 
+class ObservablesGenerator(OCardGenerator):
 
-class ObservablesGenerator(mode_selector.ModeSelector):
-    """
-        Compile all theories to compare against
+    table_name = "observables"
 
-        Parameters
-        ----------
-            mode : str
-                active mode
-    """
-
-    def get_observables(self):
-        """
-            Collect all runcards
-
-            Returns
-            -------
-                observables : list(dict)
-                    list of runcards
-        """
-        # default interpolation setup
-        interpolation_xgrid = np.unique(
-            np.concatenate([np.geomspace(1e-4, 0.15, 20), np.linspace(0.15, 1.0, 12)])
-        )
-        interpolation_polynomial_degree = 4
-        interpolation_is_log = True
-        defaults = dict(
-            interpolation_xgrid=interpolation_xgrid.tolist(),
-            interpolation_polynomial_degree=interpolation_polynomial_degree,
-            interpolation_is_log=interpolation_is_log,
-            prDIS="EM",
+    def get_all_o(self, defaults):
+        defaults.update(dict(prDIS="EM",
             projectile="electron",
             PolarizationDIS=0,
-        )
+        ))
         cards = []
         # use only a small set in regression
         if self.mode == "regression":
@@ -209,42 +181,3 @@ class ObservablesGenerator(mode_selector.ModeSelector):
             # sandbox -> don't do anything; its cards are managed there
             cards.extend([copy.deepcopy(defaults)])
         return cards
-
-    def write_observables(self, observables):
-        """Insert all observables"""
-        observables_table = self.idb.table("observables")
-        observables_table.truncate()
-        for obs in observables:
-            obs["_modify_time"] = str_datetime(datetime.now())
-        print(f"writing {len(observables)} cards to {self.input_name}")
-        observables_table.insert_multiple(observables)
-
-    def fill(self):
-        """Fill table in DB"""
-        # check intention
-        if self.mode != "sandbox":
-            ask = input(f"Do you want to refill the {self.mode} observables? [y/n]")
-            if ask != "y":
-                print("Nothing done.")
-                return
-        # load db
-        observables = self.get_observables()
-        # clear and refill
-        self.write_observables(observables)
-
-
-def run_parser():
-    # setup
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
-        "--mode",
-        choices=["APFEL", "QCDNUM", "regression", "sandbox"],
-        help="input DB to fill",
-    )
-    # do it
-    args = ap.parse_args()
-    if args.mode is None:
-        ap.print_help()
-        return
-    og = ObservablesGenerator(args.mode)
-    og.fill()

@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-import itertools
+from banana.data import theories
+from .. import banana_cfg
+from . import observables
 
+generate_theories = theories.TheoriesGenerator.get_run_parser(banana_cfg.banana_cfg)
 
-def power_set(inp):
-    """
-    Thank you: https://stackoverflow.com/questions/5228158/
-    """
-    return [
-        dict(zip(inp.keys(), values)) for values in itertools.product(*inp.values())
-    ]
+generate_observables = observables.ObservablesGenerator.get_run_parser(banana_cfg.banana_cfg)
