@@ -36,7 +36,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 "NfFF": [3, 4, 5],
                 "FNS": ["FFNS", "ZM-VFNS"],
             }
-        # we're aiming for a APFEL replacement, so they appread naturally together
+        # we're aiming for a APFEL replacement, so they appear naturally together
         if self.mode in ["APFEL", "regression"]:
             return {
                 "PTO": [0, 1],

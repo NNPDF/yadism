@@ -1,0 +1,44 @@
+data_dir: data
+modes:
+  - APFEL:
+    - external: APFEL
+    - input_db: apfel.json
+    - theories:
+      - PTO: [0, 1]
+      - XIR: [0.5, 1.0, 2.0]
+      - XIF: [0.5, 1.0, 2.0]
+      - TMC: [0, 1]
+      - NfFF: [3, 4, 5]
+      - FNS: ["FFNS", "ZM-VFNS", "FONLL-A"]
+      - DAMP: [0, 1]
+  - regression: # we're aiming for a APFEL replacement, so regression and APFEL appear naturally together
+    - external: yadism
+    - input_db: regression.json
+    - theories:
+      - PTO: [0, 1]
+      - XIR: [0.5, 1.0, 2.0]
+      - XIF: [0.5, 1.0, 2.0]
+      - TMC: [0, 1]
+      - NfFF: [3, 4, 5]
+      - FNS: ["FFNS", "ZM-VFNS", "FONLL-A"]
+      - DAMP: [0, 1]
+  - QCDNUM:
+    - external: QCDNUM
+    - input_db: qcdnum.json
+    - theories:
+      - PTO: [0, 1]
+      - XIR: [0.5, 1.0, 2.0]
+      - XIF: [0.5, 1.0, 2.0]
+      - NfFF: [3, 4, 5]
+      - FNS: ["FFNS", "ZM-VFNS"] # no FONLL-A here
+  - sandbox:
+    - external: null
+    - input_db: sandbox.json
+    - theories:
+      - PTO: [0, 1]
+      - XIR: [0.5, 0.7, 1.0, 2.0]
+      - XIF: [0.5, 0.7, 1.0, 2.0]
+      - TMC: [0, 1, 2, 3]
+      - NfFF: [3, 4, 5]
+      - FNS: ["FFNS", "ZM-VFNS", "FONLL-A", "FONLL-A'"] # add new FNS
+      - DAMP: [0, 1]
