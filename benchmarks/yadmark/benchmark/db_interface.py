@@ -18,8 +18,7 @@ import rich.markdown
 from yadism.runner import Runner
 from yadism import observable_name
 
-from .. import toyLH
-from .. import utils
+from banana import toyLH, utils
 from .. import mode_selector
 from . import external
 

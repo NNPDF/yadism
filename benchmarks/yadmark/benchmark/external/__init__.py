@@ -3,7 +3,7 @@ from datetime import datetime
 
 import tinydb
 
-from ...utils import str_datetime, unstr_datetime
+from banana.utils import str_datetime, unstr_datetime
 
 
 def get_external_data(theory, observables, pdf, cache_table, cb_compute_data):
@@ -49,14 +49,14 @@ def get_external_data(theory, observables, pdf, cache_table, cb_compute_data):
     # check is updated
     if tab is not None:
         theory_changed = unstr_datetime(
-            theory["_modify_time"]
-        )  # pylint:disable=protected-access
+            theory["_created"]
+        )
         obs_changed = unstr_datetime(
-            observables["_modify_time"]
-        )  # pylint:disable=protected-access
+            observables["_created"]
+        )
         tab_changed = unstr_datetime(
             tab["_creation_time"]
-        )  # pylint:disable=protected-access
+        )
         if (theory_changed - tab_changed).total_seconds() > 0 or (
             obs_changed - tab_changed
         ).total_seconds() > 0:

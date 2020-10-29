@@ -15,7 +15,7 @@ from yadmark.data import observables
 
 def generate_observables():
     og = observables.ObservablesGenerator("sandbox")
-    defaults = og.get_observables()[0]
+    defaults = og.get_all()[0]
     # xgrid = np.array(defaults["interpolation_xgrid"]).copy()
     # defaults["interpolation_xgrid"] = np.geomspace(0.1, 1, 40).tolist()
     light_kin = []
@@ -54,7 +54,7 @@ def generate_observables():
     for obs in obs_list:
         card[obs] = light_kin
     cards.append(card)
-    og.write_observables(cards)
+    og.write(cards)
 
 
 class Sandbox:
