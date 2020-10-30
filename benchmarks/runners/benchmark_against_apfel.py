@@ -45,8 +45,10 @@ class ApfelBenchmark:
 
 
 def plain_assert_external(theory, obs, sf, yad):
+    # APFEL has a discretization in Q2/m2
+    if sf == "FLcharm" and yad["Q2"] < 1.5*theory["mc"] ** 2:
+        return dict(abs=3e-5)
     if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
-        # APFEL has a discreization in Q2/m2
         return dict(abs=5e-6)
     if obs["prDIS"] == "CC":
         if sf[2:] == "charm" and yad["x"] > 0.75:
