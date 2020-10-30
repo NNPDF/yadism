@@ -227,7 +227,7 @@ class BenchmarkFNS(ApfelBenchmark):
         )
 
     def benchmark_NLO_FONLL(self):
-        def fonll_assert(theory, obs, sf, yad):
+        def fonll_assert(theory, _obs, sf, yad):
             if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
                 # APFEL has a discreization in Q2/m2
                 return dict(abs=5e-6)
