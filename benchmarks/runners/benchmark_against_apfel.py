@@ -228,6 +228,7 @@ class BenchmarkFNS(ApfelBenchmark):
             1, ["CT14llo_NF6"], {"FNS": self._db().theory_query.FNS == "ZM-VFNS"}
         )
 
+    @pytest.mark.fonll
     def benchmark_NLO_FONLL(self):
         def fonll_assert(theory, _obs, sf, yad):
             if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
