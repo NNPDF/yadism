@@ -125,7 +125,7 @@ def sv_assert_external(theory, obs, sf, yad):
                 return dict(abs=3e-5)  # why does the thing go worse again?
         if (
             sf == "F3charm"
-            and 0.5e-3 < yad["x"] < 2e-3
+            and yad["x"] < 2e-3
         ):
             # there is a cancelation between sbar and g going on:
             # each of the channels is O(1) with O(1e-3) accuracy
