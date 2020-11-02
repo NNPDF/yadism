@@ -55,10 +55,10 @@ def plain_assert_external(theory, obs, sf, yad):
             return dict(abs=2e-6)  # grid border
         if sf[2:] == "top" and yad["Q2"] < 150:
             return dict(abs=1e-4)  # production threshold
-        if sf == "F3total" and (yad["Q2"] < 7 or 500 < yad["Q2"] < 1000):
+        if sf == "F3total":
             # we have a change in sign (from + to - at small Q2 and back to + at large)
             # F3light is > 0, but F3charm < 0
-            return dict(abs=2e-4)
+            return dict(rel=0.03)
     return None
 
 
