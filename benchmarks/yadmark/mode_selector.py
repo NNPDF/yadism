@@ -16,4 +16,5 @@ class ModeSelector(mode_selector.ModeSelector):
     """
 
     def __init__(self, mode, external=None):
-        super().__init__(banana_cfg.banana_cfg,mode, external)
+        super().__init__(banana_cfg.banana_cfg,mode)
+        self.external = external

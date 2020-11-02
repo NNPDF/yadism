@@ -15,10 +15,11 @@ import rich.panel
 import rich.progress
 import rich.markdown
 
+from banana import toyLH
+
 from yadism.runner import Runner
 from yadism import observable_name
 
-from banana import toyLH, utils
 from .. import mode_selector
 from . import external
 
@@ -116,7 +117,7 @@ class DBInterface(mode_selector.ModeSelector):
         runner = Runner(theory, obs)
         out = runner.get_output()
         # add metadata to log record
-        out["_creation_time"] = utils.str_datetime(datetime.datetime.now())
+        out["_creation_time"] = datetime.datetime.now().isoformat
         out["_theory_doc_id"] = theory.doc_id
         out["_observables_doc_id"] = obs.doc_id
         # check existence
@@ -330,7 +331,7 @@ class DBInterface(mode_selector.ModeSelector):
             f"comparing for theory=[b]{theory.doc_id}[/b] and "
             f"obs=[b]{observables.doc_id}[/b] ..."
         )
-        log_tab["_creation_time"] = utils.str_datetime(datetime.datetime.now())
+        log_tab["_creation_time"] = datetime.datetime.now().isoformat()
         log_tab["_theory_doc_id"] = theory.doc_id
         log_tab["_observables_doc_id"] = observables.doc_id
         if isinstance(yad_tab, Exception):
