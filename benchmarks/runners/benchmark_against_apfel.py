@@ -79,7 +79,7 @@ class BenchmarkPlain(ApfelBenchmark):
         )
 
 
-@pytest.mark.skip#TODO commit_check
+@pytest.mark.commit_check
 class BenchmarkProjectile(ApfelBenchmark):
     """The most basic checks"""
 
@@ -132,7 +132,7 @@ def sv_assert_external(theory, obs, sf, yad):
             return dict(abs=5e-3)
         if sf == "F3total":
             # still F3light is > 0, but F3charm < 0
-            return dict(rel=0.05)
+            return dict(rel=0.1)
     if theory["XIF"] < 1 or theory["XIR"] < 1:
         # for small xir pQCD becomes unreliable
         if sf in ["F2light", "F2total"] and yad["Q2"] < 7:
@@ -173,7 +173,7 @@ def tmc_assert_external(theory, _obs, sf, yad):
     return None
 
 
-@pytest.mark.skip#TODO commit_check
+@pytest.mark.commit_check
 class BenchmarkTMC(ApfelBenchmark):
     """Add Target Mass Corrections"""
 
@@ -228,6 +228,7 @@ class BenchmarkFNS(ApfelBenchmark):
             1, ["CT14llo_NF6"], {"FNS": self._db().theory_query.FNS == "ZM-VFNS"}
         )
 
+    @pytest.mark.skip
     @pytest.mark.fonll
     def benchmark_NLO_FONLL(self):
         def fonll_assert(theory, _obs, sf, yad):
