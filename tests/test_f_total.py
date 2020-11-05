@@ -2,8 +2,8 @@
 import copy
 
 from yadism import observable_name
-from yadism.structure_functions import f_total
-from yadism.structure_functions import esf_result
+from yadism.esf import f_total
+from yadism.esf import esf_result
 
 
 class MockInterpolator:

@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 toyLHPDFs from APFEL:
---------------------
+---------------------
 This routine returns the toyLH PDFs at the intitial scale
 which is supposed to be Q = sqrt(2) GeV.
 """
 
+import atexit
 
-def toyLHPDFs(id, x):
+
+def toyLHPDFs(pid, x):  # pylint: disable=too-many-locals
     N_uv = 5.107200e0
     auv = 0.8e0
     buv = 3e0
@@ -37,7 +39,7 @@ def toyLHPDFs(id, x):
     xpdf = {i: 0 for i in range(-6, 7)}
 
     if x > 1e0:
-        return
+        return 0.0
 
     xpdf[3] = xs
     xpdf[2] = xuv + xubar
@@ -47,17 +49,19 @@ def toyLHPDFs(id, x):
     xpdf[-2] = xubar
     xpdf[-3] = xsbar
 
-    return xpdf[id]
+    return xpdf[pid]
 
 
 class toyPDFSet:
+    """Fake PDF set"""
+
     name = "ToyLH"
 
 
 class toyPDF:
-    """Imitates lhapdf.PDF."""
+    """Imitates lhapdf"""
 
-    def xfxQ2(self, id, x, Q2):
+    def xfxQ2(self, pid, x, _Q2):
         """Get the PDF xf(x) value at (x,q2) for the given PID.
 
         Parameters
@@ -65,7 +69,7 @@ class toyPDF:
 
         Parameters
         ----------
-        id : int
+        pid : int
             PDG parton ID.
         x : float
             Momentum fraction.
@@ -79,14 +83,14 @@ class toyPDF:
 
         """
 
-        return toyLHPDFs(id, x)
+        return toyLHPDFs(pid, x)
 
-    def xfxQ(self, id, x, Q):
+    def xfxQ(self, pid, x, _Q):
         """Get the PDF xf(x) value at (x,q) for the given PID.
 
         Parameters
         ----------
-        id : int
+        pid : int
             PDG parton ID.
         x : float
             Momentum fraction.
@@ -100,13 +104,13 @@ class toyPDF:
 
         """
 
-        return toyLHPDFs(id, x)
+        return toyLHPDFs(pid, x)
 
     def alphasQ(self, q):
         "Return alpha_s at q"
-        return 0.35
+        return self.alphasQ2(q ** 2)
 
-    def alphasQ2(self, q2):
+    def alphasQ2(self, _q2):
         "Return alpha_s at q2"
         return 0.35
 
@@ -114,8 +118,12 @@ class toyPDF:
         "Return the corresponding PDFSet"
         return toyPDFSet()
 
+    def hasFlavor(self, pid):
+        """Contains a pdf for pid?"""
+        return pid in [21] + list(range(-6, 6 + 1))
 
-def mkPDF(setname, member):
+
+def mkPDF(_setname, _member):
     """Factory functions for making single PDF members.
 
     Create a new PDF with the given PDF set name and member ID.
@@ -137,28 +145,10 @@ def mkPDF(setname, member):
     return toyPDF()
 
 
-# -----------------------
-
-import atexit
-
-
 def ciao():
-    """Print at exit.
-    """
+    """Print at exit."""
     print(
-        """\nThanks for using toyPDF. Please make sure to close the door.
-
-             ,gggg,
-           ,88""'Y8b,
-          d8"     `Y8
-         d8'   8b  d8  gg
-        ,8I    "Y88P'  ""
-        I8'            gg     ,gggg,gg    ,ggggg,
-        d8             88    dP"  "Y8I   dP"  "Y8ggg
-        Y8,            88   i8'    ,8I  i8'    ,8I
-        `Yba,,_____, _,88,_,d8,   ,d8b,,d8,   ,d8'
-          `"Y8888888 8P""Y8P"Y8888P"`Y8P"Y8888P"
-      """
+        """\nThanks for using toyPDF. Please make sure to close the door.\n"""
         + "\t" * 7
         + "__Alessandro"
     )

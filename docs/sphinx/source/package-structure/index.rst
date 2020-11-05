@@ -13,6 +13,7 @@ A brief outline can instead be found in the :doc:`introductive page
    :maxdepth: 2
 
    runner
+   input
    SF
    ESF
    TMC

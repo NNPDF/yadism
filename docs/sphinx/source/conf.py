@@ -18,16 +18,21 @@ import pathlib
 
 from recommonmark.transform import AutoStructify
 
+import yadism.version
+
 # -- Project information -----------------------------------------------------
 
 project = "yadism"
-copyright = "2019, the N3PDF team"  # pylint: disable=redefined-builtin
+copyright = "2019-2020, the N3PDF team"  # pylint: disable=redefined-builtin
 author = "N3PDF team"
 
 # The short X.Y version
-version = "0.3"
+version = yadism.version.short_version
+if not yadism.version.is_released:
+    version = "develop"
+
 # The full version, including alpha/beta/rc tags
-release = "0.3.3"
+release = yadism.version.full_version
 
 # -- General configuration ---------------------------------------------------
 
@@ -105,7 +110,8 @@ rst_prolog = "\n".join([open(x).read() for x in os.scandir(shared)])
 #
 html_theme = "sphinx_rtd_theme"
 
-html_logo = "../../logo/logo-docs.png"
+html_logo = "../../_assets/logo/logo-docs.png"
+html_favicon = "../../_assets/logo/logo-favicon-32x32.png"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -148,7 +154,7 @@ html_context = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ["_static"]
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -159,6 +165,23 @@ html_static_path = ["_static"]
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
+
+# -- Options for HTML mathjax ------------------------------------------------
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+
+mathjax_options = {
+    "config": "TeX-AMS-MML_HTMLorMML",
+    # "integrity": "sha256-QGbnX1xmeSwuEoIuUL3sa4ybs3Egp921kZfRsb87N+Q=",
+}
+
+mathjax_config = {
+    "extensions": ["tex2jax.js"],
+    "jax": ["input/TeX", "output/HTML-CSS"],
+    "loader": {"load": ["[tex]/color", "[tex]/physics"]},
+    "tex": {
+        "packages": {"[+]": ["base", "color", "physics"]},
+    },
+}
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -204,7 +227,7 @@ latex_documents = [
     (
         master_doc,
         "yadismDocumentation.tex",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         "N3PDF team",
         "manual",
     ),
@@ -219,7 +242,7 @@ man_pages = [
     (
         master_doc,
         "yadism-documentation",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         [author],
         1,
     )
@@ -235,7 +258,7 @@ texinfo_documents = [
     (
         master_doc,
         "yadismDocumentation",
-        "yadism Documentation Documentation",
+        "yadism Documentation",
         author,
         "yadismDocumentation",
         "One line description of project.",

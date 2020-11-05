@@ -1,0 +1,149 @@
+# Cross argument constraints
+# --------------------------
+#
+# In this file are stored the cross constraints on the input arguments values.
+#
+# Syntax
+# ------
+#
+# the following is a list of objects (dicts) each one containing the following
+# fields
+#
+# - name: (optional)
+#     a name for the rule, acts as a short description and ID
+# - involve: list of arguments involved
+# - description:
+#     strring or list of strings: description of the rule and why is needed,
+#     also available as a list to refer separetely to each rule
+# - rules: list of constraints on the set of arguments declared in involve
+# - hints: (optional)
+#     hint or list of hints raised to the user with the exception
+#     if only one supplied it applies to all the rules, otherwise if a list is
+#     provided each element referred the rule in the same position (hints should
+#     be less than or equal to the number of rules)
+# - metavars: (optional)
+#     the name is used to represent the variable in the rules specified in the
+#     'rules' field
+#     list or dict: in the first case they are bound to arguments in the same
+#     order they are listed in 'involve' field, if a dict the values are bound
+#     to arguments declared in the keys
+#
+# Note
+# ----
+#
+# The rationale of having more rules in the same element is to be able to group
+# rules in sections of similar or related ones (because they involve the same
+# arguments but not only).
+
+- name: Renormalization - Factorization scales ratio
+  involve:
+    - krenQ
+    - kfacQ
+    - ScVarProc
+  description: >
+    *
+    *     Additional settings
+    *
+    krenQ = kfacQ = 1
+
+    in this case there is no fallback, but instead is doing something (call
+    SetRenFacRatio, i.e. sets an internal parameter in a common block)
+
+    furthermore:
+
+    ScVarProc = 1 --> SetRenFacRatio(1.)
+  rules:
+
+# TimeLike
+
+- name: TimeLike restrictions
+  involve:
+    - TimeLike
+    - MassScheme
+    - TMC
+    - ProjectileDIS
+    - PolarizationDIS
+    - TargetDIS
+    - ProcessDIS
+  description:
+    - >
+      WARNING: Computation of the SIA structure functions available only in the
+      ZM-VFNS.
+    - >
+      WARNING: Computation of the SIA structure functions with target mass
+      corrections unavailable.
+    - >
+      WARNING: Computation of the SIA structure functions possible only using
+      electrons projectiles.
+    - >
+      WARNING: Computation of the SIA structure functions possible only for
+      unpolarized beams
+    - >
+      WARNING: Computation of the SIA structure functions possible only using
+      protons targets
+    - >
+      WARNING: Computation of the SIA structure functions not available for CC
+      processes
+  rules:
+    - TimeLike and MassScheme == 'ZM-VNFS'
+    - TimeLike and not TMC
+    - TimeLike and ProjectileDIS == 'electron'
+    - TimeLike and PolarizationDIS == 0
+    - TimeLike and TargetDIS == 'proton'
+    - TimeLike and ProcessDIS != 'CC'
+  hints:
+    - ... setting ZM-VFNS - SetMassScheme("ZM-VFNS")
+    - ... switching off TMCs - EnableTargetMassCorrections(.false.)
+    - ... setting 'electron' projectile - SetProjectileDIS("electron")
+    - ... setting polarization to zero - SetPolarizationDIS(0d0)
+    - ... setting 'proton' targets - SetTargetDIS("proton")
+    - ... setting EM process - SetProcessDIS("EM")
+
+# Polarized
+
+- name: Polarized restrictions
+  involve:
+    - Polarized
+    - MassScheme
+    - TMC
+    - ipt
+  description:
+    - >
+      WARNING: Computation of polarized structure functions available only in
+      the ZM-VFNS
+    - >
+      WARNING: Computation of polarized structure functions with target mass
+      corrections unavailable
+    - >
+      WARNING: Computation of polarized structure functions not available at
+      NNLO accuracy
+  rules:
+    - Polarized and MassScheme == 'ZM-VNFS'
+    - Polarized and not TMC
+    - Polarized and ipt < 2
+  hints:
+    - ... setting ZM-VFNS - SetMassScheme("ZM-VFNS")
+    - ... switching off TMCs - EnableTargetMassCorrections(.false.)
+    - ... setting NLO accuracy - SetPerturbativeOrder(1)
+
+# IntrinsicCharm
+
+- name: Intrinsic Charm
+  involve:
+    - IntrinsicCharm
+    - Nf_FF
+  description: >
+    WARNING: Intrinsic charm enabled ... the number of light flavours in the
+    massive sector will be forced to be equal to three
+  rules:
+    - IntrinsicCharm and Nf_FF == 3
+  hints:
+    - ... setting Nf_FF - Nf_FF == 3
+
+# c         if(DampingFONLL)then
+# c            write(6,*) achar(27)//"[33m"//
+# c     1           "WARNING: If the intrinsic charm is enabled no FONLL",
+# c     2           " damping will be applied to the charm componet"
+# c            write(6,*) "         "
+# c     1              //achar(27)//"[0m"
+# c         endif

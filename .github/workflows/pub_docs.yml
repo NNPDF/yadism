@@ -4,14 +4,17 @@ on:
   push:
     branches:
       - master
+      - develop
+    tags:
+      - "*"
 
 jobs:
   deploy-ghpages:
     runs-on: ubuntu-latest
     strategy:
-#      max-parallel: 2
+      #max-parallel: 3
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
       fail-fast: false
 
     steps:
@@ -19,13 +22,17 @@ jobs:
         uses: actions/checkout@v2
         with:
           persist-credentials: false
-          token: ${{ secrets.ALE_DIS_PAT }}
+          token: ${{ github.token }}
           submodules: "true"
+      - name: Set up Node 🧶
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: "12"
       - name: Set up Python ${{ matrix.python-version }} 🐍
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package and build docs 📦
+      - name: Install package 📦
         run: |
           # install pip
           python -m pip install --upgrade pip
@@ -35,11 +42,42 @@ jobs:
         run: |
           pip install -r doc_requirements.txt
           sudo apt-get install graphviz
-          cd docs/sphinx/
+          cd docs/home-page
+          yarn
+          make
+          cd ../sphinx/
           make html
+      - name: Save files 💾
+        run: |
+          cd docs
+          mv sphinx/build/html ~
+          mv home-page/build ~/home-page
+          mv _assets ~
+      - name: Prepare deployment ⌛
+        run: |
+          # fetch all branches
+          git fetch --depth=1
+          git checkout gh-pages
+          github_ref="${{ github.ref }}"
+          dest_dir=$(echo $github_ref | rev | cut -d "/" -f 1 | rev)
+          if [ "$dest_dir" = "master" ]; then
+            dest_dir="stable"
+          fi
+          rm -rf js
+          mv ~/home-page/* .
+          rm -rf _assets
+          mv ~/_assets .
+          rm -rf $dest_dir
+          mv ~/html $dest_dir
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        #uses: JamesIves/github-pages-deploy-action@releases/v3
+        #with:
+        #ACCESS_TOKEN: ${{ github.token }}
+        #BRANCH: gh-pages # The branch the action should deploy to.
+        #FOLDER: "docs/sphinx/build/html" # The folder the action should deploy.
+        uses: EndBug/add-and-commit@v4.4.0
         with:
-          ACCESS_TOKEN: ${{ secrets.ALE_DIS_PAT }}
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: "docs/sphinx/build/html" # The folder the action should deploy.
+          message: "Currently deploying: ${{ github.ref }}"
+          ref: "gh-pages"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

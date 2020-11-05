@@ -3,8 +3,8 @@ import numpy as np
 import pytest
 
 from yadism import observable_name
-import yadism.structure_functions.tmc as TMC
-from yadism.structure_functions.esf_result import ESFResult
+import yadism.tmc as TMC
+from yadism.esf.esf_result import ESFResult
 
 from eko.interpolation import InterpolatorDispatcher
 
@@ -43,14 +43,15 @@ class MockTMC(TMC.EvaluatedStructureFunctionTMC):
 
 @pytest.mark.quick_check
 class TestTMC:
-    @pytest.mark.eko
+    # @pytest.mark.eko
+    @pytest.mark.skip
     def test_convolute_F2_empty(self):
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
             obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
             def get_esf(self, _name, kinematics):
                 # this means F2(x>.6) = 0
@@ -81,14 +82,15 @@ class TestTMC:
         res = obj._h2()
         is0(res)
 
-    @pytest.mark.eko
+    # @pytest.mark.eko
+    @pytest.mark.skip
     def test_convolute_F2_delta(self):
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
             obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
             def get_esf(self, _name, kinematics):
                 # this means F2 = pdf
@@ -152,7 +154,7 @@ class TestTMC:
         class MockSF:
             obs_name = observable_name.ObservableName("F2light")
             M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False, False)
+            interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
             def get_esf(self, _name, kinematics):
                 pass

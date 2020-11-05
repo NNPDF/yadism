@@ -7,7 +7,7 @@ Output
     docs
 """
 
-from .structure_functions.esf_result import ESFResult
+from .esf.esf_result import ESFResult
 
 
 class Output(dict):
@@ -32,4 +32,7 @@ class Output(dict):
         return ret
 
     def dump(self):
+        pass
+
+    def load(self):
         pass

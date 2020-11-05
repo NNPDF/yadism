@@ -16,6 +16,8 @@ There are two ways of using ``yadism``:
 from typing import Any
 import time
 import inspect
+import logging
+import io
 
 import rich
 import rich.align
@@ -23,51 +25,54 @@ import rich.panel
 import rich.box
 import rich.progress
 import rich.markdown
+import rich.console
 
 from eko.interpolation import InterpolatorDispatcher
-from eko.constants import Constants
 from eko import thresholds
 from eko import strong_coupling
 
+from .input import inspector
+from . import observable_name
+from . import log
 from .output import Output
 from .sf import StructureFunction as SF
-from .structure_functions import ESFmap
 from .coupling_constants import CouplingConstants
-from . import observable_name
+
+log.setup()
+logger = logging.getLogger(__name__)
 
 
 class Runner:
     """
-        Wrapper to compute a process
+    Wrapper to compute a process
 
-        Parameters
-        ----------
-        theory : dict
-            Dictionary with the theory parameters for the evolution (currently
-            including PDFSet and DIS process indication).
-        observables : dict
-            DIS parameters: process description, kinematic specification for the
-            requested output.
+    Parameters
+    ----------
+    theory : dict
+        Dictionary with the theory parameters for the evolution (currently
+        including PDFSet and DIS process indication).
+    observables : dict
+        DIS parameters: process description, kinematic specification for the
+        requested output.
 
-        Notes
-        -----
-        For a full description of the content of `theory` and `dis_observables`
-        dictionaries read ??.
+    Notes
+    -----
+    For a full description of the content of `theory` and `dis_observables`
+    dictionaries read ??.
 
-        .. todo::
-            * reference on theory template
-            * detailed description of dis_observables entries
+    .. todo::
+        * reference on theory template
+        * detailed description of dis_observables entries
 
     """
 
     banner = rich.align.Align(
         rich.panel.Panel.fit(
             inspect.cleandoc(
-                """
-                     __     __       _ _
+                r"""  __     __       _ _
                      \ \   / /      | (_)
                       \ \_/ /_ _  __| |_ ___ _ __ ___
-                       \   / _` |/ _` | / __| '_ ` _ \ 
+                       \   / _` |/ _` | / __| '_ ` _ \
                         | | (_| | (_| | \__ \ | | | | |
                         |_|\__,_|\__,_|_|___/_| |_| |_|
                 """
@@ -80,22 +85,25 @@ class Runner:
     )
 
     def __init__(self, theory: dict, observables: dict):
-        # ============
+        # ==============================
+        # Validate inputs
+        # ==============================
+        insp = inspector.Inspector(theory, observables)
+        insp.perform_all_checks()
+
+        # ==============================
         # Store inputs
-        # ============
+        # ==============================
         self._theory = theory
         self._observables = observables
 
-        # ===========================
-        # Setup eko stuff
-        # ===========================
-        self.interpolator = InterpolatorDispatcher.from_dict(
-            observables, mode_N=False, numba_it=False
-        )
-        self.constants = Constants()
+        # ==============================
+        # Setup eko stuffs
+        # ==============================
+        self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory, self.threshold, self.constants
+            theory, self.threshold,
         )
 
         # Non-eko theory
@@ -107,7 +115,6 @@ class Runner:
         # ==============================
         eko_components = dict(
             interpolator=self.interpolator,
-            constants=self.constants,
             threshold=self.threshold,
             alpha_s=self.strong_coupling,
             coupling_constants=self.coupling_constants,
@@ -133,9 +140,7 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
-        obs_params = dict(
-            process=observables.get("prDIS", "EM")
-        )
+        obs_params = dict(process=observables.get("prDIS", "EM"))
 
         self.observable_instances = {}
         for obs_name in observable_name.ObservableName.all():
@@ -150,66 +155,75 @@ class Runner:
                 runner=self,
                 eko_components=eko_components,
                 theory_params=theory_params,
-                obs_params=obs_params
+                obs_params=obs_params,
             )
 
             # read kinematics
             obj.load(self._observables.get(name, []))
             self.observable_instances[name] = obj
 
-        # =================
+        # output console
+        if log.silent_mode:
+            file = io.StringIO()
+        else:
+            file = None
+        self.console = rich.console.Console(file=file)
+        # ==============================
         # Initialize output
-        # =================
+        # ==============================
         self._output = Output()
         self._output["xgrid"] = self.interpolator.xgrid_raw.tolist()
         self._output["xiF"] = self.xiF
 
     def get_output(self) -> Output:
         """
-            Compute coefficient functions grid for requested kinematic points.
+        Compute coefficient functions grid for requested kinematic points.
 
 
-            .. admonition:: Implementation Note
+        .. admonition:: Implementation Note
 
-                get_output pipeline
+            get_output pipeline
 
-            Returns
-            -------
-            :obj:`Output`
-                output object, it will store the coefficient functions grid
-                (flavour, interpolation-index) for each requested kinematic
-                point (x, Q2)
+        Returns
+        -------
+        :obj:`Output`
+            output object, it will store the coefficient functions grid
+            (flavour, interpolation-index) for each requested kinematic
+            point (x, Q2)
 
 
-            .. todo::
+        .. todo::
 
-                * docs
-                * get_output pipeline
+            * docs
+            * get_output pipeline
         """
-        rich.print(self.banner)
+        self.console.print(self.banner)
 
         # precomputing the plan of calculation
         precomputed_plan = {}
+        printable_plan = []
         for name, obs in self.observable_instances.items():
             if name in self._observables.keys():
                 precomputed_plan[name] = obs
+                printable_plan.append(f"- {name} at {len(self._observables[name])} pts")
 
-        rich.print(rich.markdown.Markdown("## Plan"))
-        printable_plan = "\n".join([f"- {obs}" for obs in precomputed_plan])
-        rich.print(rich.markdown.Markdown(printable_plan))
+        self.console.print(rich.markdown.Markdown("## Plan"))
+        self.console.print(rich.markdown.Markdown("\n".join(printable_plan)))
 
         # running the calculation
-        rich.print(rich.markdown.Markdown("## Calculation"))
-        print("yadism took off! please stay tuned ...")
-        # TODO move to log and make more readable
+        self.console.print(rich.markdown.Markdown("## Calculation"))
+        self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
         for name, obs in rich.progress.track(
-            precomputed_plan.items(), description="computing...", transient=True
+            precomputed_plan.items(),
+            description="computing...",
+            transient=True,
+            console=self.console,
         ):
             self._output[name] = obs.get_output()
         end = time.time()
         diff = end - start
-        rich.print(f"[cyan]took {diff:.2f} s")
+        self.console.print(f"[cyan]took {diff:.2f} s")
 
         return self._output
 

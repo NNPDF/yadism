@@ -1,0 +1,132 @@
+@import "node_modules/bulma/sass/utilities/_all.sass";
+@import "node_modules/bulma/sass/helpers/color.sass";
+@import "node_modules/bulma/sass/grid/_all.sass";
+@import "node_modules/bulma/sass/elements/button.sass";
+@import "node_modules/bulma/sass/components/dropdown.sass";
+@import url("https://fonts.googleapis.com/css2?family=Grandstander:ital,wght@0,200;0,500;0,900;1,200;1,500;1,900&display=swap");
+
+// General
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  text-align: center;
+  font-family: "Grandstander", cursive;
+  font-weight: 200;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #fff0d440;
+}
+
+#home-page {
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+// ┌─────────────┐
+// │flex defaults│
+// └─────────────┘
+
+.home-column {
+  @extend .columns;
+
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.column-item {
+  @extend .column;
+
+  flex-grow: 0;
+}
+
+.home-row {
+  @extend .columns;
+
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.row-item {
+  @extend .column;
+
+  flex-grow: 0;
+}
+
+//
+// ┌────────┐
+// │elements│
+// └────────┘
+
+// top-bottom rows
+
+.external-logo {
+  width: 13em;
+  margin: 2em 3em;
+}
+
+#top-row .item,
+#bottom-row .item {
+  flex-grow: 1;
+
+  &.spacer {
+    flex-grow: 1000;
+  }
+}
+
+.signature {
+  margin: 0 2em;
+  flex-basis: 20em;
+}
+
+// central-matter
+
+#central-matter {
+  justify-content: center;
+}
+
+#title {
+  font-size: 5em;
+  font-weight: 500;
+
+  margin: 0;
+}
+
+#main-logo {
+  width: 30%;
+
+  @media screen and (max-width: 2em) {
+    width: 3em;
+  }
+  @media screen and (min-width: 20em) {
+    width: 7em;
+  }
+}
+
+.version-row {
+  @extend .home-row;
+  justify-content: center;
+}
+
+.docs-version {
+  @extend .item;
+  @extend .button;
+  //border-width: 2;
+  margin: 1em;
+}
+
+.dropdown {
+  margin: 2em;
+}
+
+#cm-bottom-spacer {
+  flex-basis: 7em;
+  flex-shrink: 10;
+}
