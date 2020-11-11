@@ -1,4 +1,8 @@
 data_dir: data
+input_tables:
+ - theories
+ - observables
+ - cache
 modes:
   APFEL:
     external: APFEL

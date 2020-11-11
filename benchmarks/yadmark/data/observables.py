@@ -164,7 +164,7 @@ class ObservablesGenerator(OCardGenerator):
 
     table_name = "observables"
 
-    def get_all_o(self, defaults):
+    def get_all(self, defaults):
         defaults.update(dict(prDIS="EM",
             projectile="electron",
             PolarizationDIS=0,
