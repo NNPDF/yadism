@@ -174,9 +174,9 @@ class EvaluatedStructureFunction:
 
         # iterate all polynomials
         for polynomial_f in self._SF.interpolator:
-            cv, ecv = d_vec.convolution(self.convolution_point, polynomial_f)
-            ls.append(cv)
-            els.append(ecv)
+            c, e = d_vec.convolution(self.convolution_point, polynomial_f)
+            ls.append(c)
+            els.append(e)
 
         return np.array(ls), np.array(els)
 

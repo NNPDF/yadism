@@ -18,6 +18,7 @@ import time
 import inspect
 import logging
 import io
+import copy
 
 import rich
 import rich.align
@@ -225,22 +226,9 @@ class Runner:
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")
 
-        return self._output
+        return copy.deepcopy(self._output)
 
-    def __call__(self, pdfs: Any) -> dict:
-        """
-        Returns
-        -------
-        dict
-            dictionary with all computed processes
-
-        .. todo::
-            docs
-        """
-
-        return self.get_output().apply_pdf(pdfs)
-
-    def apply(self, pdfs: Any) -> dict:
+    def apply_pdf(self, pdfs: Any) -> dict:
         """
         Alias for the `__call__` method.
 
@@ -248,7 +236,7 @@ class Runner:
             - implement
             - docs
         """
-        return self(pdfs)
+        return self.get_output().apply_pdf(pdfs)
 
     def clear(self) -> None:
         """
