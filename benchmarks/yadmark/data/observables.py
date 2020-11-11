@@ -4,7 +4,7 @@ import copy
 import numpy as np
 
 from banana.data import power_set
-from banana.data.card_generator import OCardGenerator
+from banana.data.card_generator import CardGenerator
 
 
 def regression_cards(defaults):
@@ -160,7 +160,7 @@ def external_cards_apfel(defaults):
             cards.append(copy.copy(c))
     return cards
 
-class ObservablesGenerator(OCardGenerator):
+class ObservablesGenerator(CardGenerator):
 
     table_name = "observables"
 

@@ -75,39 +75,39 @@ class NavigatorApp(navigator.NavigatorApp):
     #     df = pd.DataFrame(data)
     #     return df
 
-    # def list_all_sim_logs(self, ref_log_or_id):
-    #     """
-    #     Search logs which are similar to the one given, i.e., same theory and/or same observable.
+    def list_all_sim_logs(self, ref_log_or_id):
+        """
+        Search logs which are similar to the one given, i.e., same theory and/or same observable.
 
-    #     Parameters
-    #     ----------
-    #         ref_log_or_id : dict or int
-    #             if int doc_id of log to be loaded
+        Parameters
+        ----------
+            ref_log_or_id : dict or int
+                if int doc_id of log to be loaded
 
-    #     Returns
-    #     -------
-    #         df : pandas.DataFrame
-    #             created frame
-    #     """
-    #     if isinstance(ref_log_or_id, int):
-    #         ref_log = self.get(l, ref_log_or_id)
-    #     else:
-    #         ref_log = ref_log_or_id
-    #     rel_logs = []
-    #     all_logs = self.get(l)
-    #     for lg in all_logs:
-    #         if (
-    #             "_theory_doc_id" in ref_log
-    #             and lg["_theory_doc_id"] != ref_log["_theory_doc_id"]
-    #         ):
-    #             continue
-    #         if (
-    #             "_observables_doc_id" in ref_log
-    #             and lg["_observables_doc_id"] != ref_log["_observables_doc_id"]
-    #         ):
-    #             continue
-    #         rel_logs.append(lg)
-    #     return self.list_all_logs(rel_logs)
+        Returns
+        -------
+            df : pandas.DataFrame
+                created frame
+        """
+        if isinstance(ref_log_or_id, int):
+            ref_log = self.get(navigator.l, ref_log_or_id)
+        else:
+            ref_log = ref_log_or_id
+        rel_logs = []
+        all_logs = self.get(navigator.l)
+        for lg in all_logs:
+            if (
+                "_theory_doc_id" in ref_log
+                and lg["_theory_doc_id"] != ref_log["_theory_doc_id"]
+            ):
+                continue
+            if (
+                "_observables_doc_id" in ref_log
+                and lg["_observables_doc_id"] != ref_log["_observables_doc_id"]
+            ):
+                continue
+            rel_logs.append(lg)
+        return self.list_all(navigator.l, rel_logs)
 
     # def list_all_logs(self, logs=None):
     #     """
@@ -179,30 +179,6 @@ class NavigatorApp(navigator.NavigatorApp):
     #         )
     #         dfd[sf] = pd.DataFrame(log[sf])
     #     return dfd
-
-    # def list_all(self, table):
-    #     """
-    #     List wrapper.
-
-    #     Parameters
-    #     ----------
-    #         table : str
-    #             table name to query: short cut or plural
-
-    #     Returns
-    #     -------
-    #         df : pandas.DataFrame
-    #             created frame
-    #     """
-    #     if table == t:
-    #         return self.list_all_theories()
-    #     elif table == o:
-    #         return self.list_all_observables()
-    #     elif table == l:
-    #         return self.list_all_logs()
-    #     else:
-    #         print(f"Unkown table: {table}")
-    #         return []
 
     # def subtract_tables(self, dfd1, dfd2):
     #     """
