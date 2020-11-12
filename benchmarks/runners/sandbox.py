@@ -46,7 +46,7 @@ def generate_observables():
     card = copy.deepcopy(defaults)
     # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
     # print(card)
-    card["prDIS"] = "EM"
+    card["prDIS"] = "CC"
     # card["PropagatorCorrection"] = .999
     # card["ProjectileDIS"] = "antineutrino"
     # card["PolarizationDIS"] = 0.5
@@ -96,5 +96,5 @@ class Sandbox:
 if __name__ == "__main__":
     # generate_observables()
     sand = Sandbox()
-    # sand.run_LO()
+    sand.run_LO()
     sand.run_NLO()

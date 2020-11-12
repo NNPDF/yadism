@@ -2,6 +2,8 @@
 
 import copy
 
+from .. import partonic_channel as pc
+
 from .f2_light import F2lightQuark, F2lightGluon
 from .fl_light import FLlightQuark, FLlightGluon
 from .f3_light import F3lightQuark
@@ -34,7 +36,6 @@ partonic_channels_nc["F3heavy"].extend([F3heavyQuarkVA])
 partonic_channels_nc["F2asy"].extend([F2asyGluonAA])
 partonic_channels_nc["FLasy"].extend([FLasyGluonAA])
 partonic_channels_nc["F3asy"].extend([F3asyQuarkVA])
-
 
 def weights_nc(obs_name, coupling_constants, Q2):
     if obs_name.flavor == "light":
