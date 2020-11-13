@@ -8,21 +8,21 @@ def compute_qcdnum_data(
     theory, observables, pdf
 ):  #  pylint: disable=too-many-statements,too-many-branches,too-many-locals
     """
-        Run QCDNUM to compute observables.
+    Run QCDNUM to compute observables.
 
-        Parameters
-        ----------
-            theory : dict
-                theory runcard
-            observables : dict
-                observables runcard
-            pdf : Any
-                PDF object (LHAPDF like)
+    Parameters
+    ----------
+        theory : dict
+            theory runcard
+        observables : dict
+            observables runcard
+        pdf : Any
+            PDF object (LHAPDF like)
 
-        Returns
-        -------
-            num_tab : dict
-                QCDNUM numbers
+    Returns
+    -------
+        num_tab : dict
+            QCDNUM numbers
     """
     import QCDNUM  # pylint:disable=import-outside-toplevel
 

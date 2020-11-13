@@ -27,7 +27,12 @@ class QCDNUMBenchmark:
                 PTO > 0
             ):  # by default we're running in FFNS3, so we can use the big runcard
                 obs_query &= self.db.obs_query.F2charm.exists()
-        return self.db.run_external(PTO, pdfs, theory_update, obs_query,)
+        return self.db.run_external(
+            PTO,
+            pdfs,
+            theory_update,
+            obs_query,
+        )
 
 
 @pytest.mark.quick_check

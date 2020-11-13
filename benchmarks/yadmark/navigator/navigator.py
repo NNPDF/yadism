@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
-from banana import navigator
+import numpy as np
+import pandas as pd
 
-class NavigatorApp(navigator.NavigatorApp):
+from banana import navigator as bnav
+from banana.navigator import dfdict
+
+from yadism import observable_name as on
+
+
+class NavigatorApp(bnav.navigator.NavigatorApp):
     """
     Navigator base class holding all elementry operations.
 
@@ -15,65 +22,86 @@ class NavigatorApp(navigator.NavigatorApp):
 
     def fill_theories(self, theo, obj):
         """
-        Collect important information of all theories.
+        Collect important information of the theory record.
 
-        Returns
-        -------
-            df : pandas.DataFrame
-                created frame
+        Parameters
+        ----------
+            theo : dict
+                database record
+            obj : dict
+                to be updated pandas record
         """
         for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS", "DAMP"]:
             obj[f] = theo[f]
 
-    # def list_all_observables(self):
-    #     """
-    #     Collect important information of all observables.
+    def fill_observables(self, ob, obj):
+        """
+        Collect important information of the observable record.
 
-    #     Returns
-    #     -------
-    #         df : pandas.DataFrame
-    #             created frame
-    #     """
-    #     # collect
-    #     obs = self.get(o)
-    #     data = []
-    #     for ob in obs:
-    #         obj = {"doc_id": ob.doc_id}
-    #         if "PTO" in ob:
-    #             obj["PTO"] = ob["PTO"]
-    #         xgrid = ob["interpolation_xgrid"]
-    #         obj["xgrid"] = (
-    #             f"{len(xgrid)}pts: "
-    #             + f"{'log' if ob['interpolation_is_log'] else 'x'}"
-    #             + f"^{ob['interpolation_polynomial_degree']}"
-    #         )
-    #         if "prDIS" in ob:
-    #             obj["curr"] = ob["prDIS"]
-    #         if "projectile" in ob:
-    #             proj_map = {
-    #                 "electron": "e-",
-    #                 "positron": "e+",
-    #                 "neutrino": "ν",
-    #                 "antineutrino": "ν~",
-    #             }
-    #             obj["proj"] = proj_map[ob["projectile"]]
-    #         if "PolarizationDIS" in ob:
-    #             obj["pol"] = ob["PolarizationDIS"]
-    #         sfs = 0
-    #         esfs = 0
-    #         for sf in ob:
-    #             # quick fix
-    #             if not on.ObservableName.is_valid(sf):
-    #                 continue
-    #             sfs += 1
-    #             esfs += len(ob[sf])
-    #         obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
-    #         dt = datetime.fromisoformat(ob["_created"])
-    #         obj["created"] = human_dates(dt)
-    #         data.append(obj)
-    #     # output
-    #     df = pd.DataFrame(data)
-    #     return df
+        Parameters
+        ----------
+            theo : dict
+                database record
+            obj : dict
+                to be updated pandas record
+        """
+        if "PTO" in ob:
+            obj["PTO"] = ob["PTO"]
+        xgrid = ob["interpolation_xgrid"]
+        obj["xgrid"] = (
+            f"{len(xgrid)}pts: "
+            + f"{'log' if ob['interpolation_is_log'] else 'x'}"
+            + f"^{ob['interpolation_polynomial_degree']}"
+        )
+        if "prDIS" in ob:
+            obj["curr"] = ob["prDIS"]
+        if "projectile" in ob:
+            proj_map = {
+                "electron": "e-",
+                "positron": "e+",
+                "neutrino": "ν",
+                "antineutrino": "ν~",
+            }
+            obj["proj"] = proj_map[ob["projectile"]]
+        if "PolarizationDIS" in ob:
+            obj["pol"] = ob["PolarizationDIS"]
+        sfs = 0
+        esfs = 0
+        for sf in ob:
+            # quick fix
+            if not on.ObservableName.is_valid(sf):
+                continue
+            sfs += 1
+            esfs += len(ob[sf])
+        obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
+
+    def fill_logs(self, lg, obj):
+        """
+        Collect important information of the log record.
+
+        Parameters
+        ----------
+            lg : dict
+                database record
+            obj : dict
+                to be updated pandas record
+        """
+        sfs = 0
+        esfs = 0
+        for sf in lg:
+            if not on.ObservableName.is_valid(sf):
+                continue
+            sfs += 1
+            esfs += len(lg[sf])
+        crash = lg.get("_crash", None)
+        if crash is None:
+            obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
+        else:
+            obj["structure_functions"] = crash
+        obj["theory"] = lg["_theory_doc_id"]
+        obj["obs"] = lg["_observables_doc_id"]
+        if "_pdf" in lg:
+            obj["pdf"] = lg["_pdf"]
 
     def list_all_sim_logs(self, ref_log_or_id):
         """
@@ -82,7 +110,7 @@ class NavigatorApp(navigator.NavigatorApp):
         Parameters
         ----------
             ref_log_or_id : dict or int
-                if int doc_id of log to be loaded
+                if it is a int it's the doc_id of log to be loaded else it has to be the log itself
 
         Returns
         -------
@@ -90,11 +118,11 @@ class NavigatorApp(navigator.NavigatorApp):
                 created frame
         """
         if isinstance(ref_log_or_id, int):
-            ref_log = self.get(navigator.l, ref_log_or_id)
+            ref_log = self.get(bnav.l, ref_log_or_id)
         else:
             ref_log = ref_log_or_id
         rel_logs = []
-        all_logs = self.get(navigator.l)
+        all_logs = self.get(bnav.l)
         for lg in all_logs:
             if (
                 "_theory_doc_id" in ref_log
@@ -107,172 +135,169 @@ class NavigatorApp(navigator.NavigatorApp):
             ):
                 continue
             rel_logs.append(lg)
-        return self.list_all(navigator.l, rel_logs)
+        return self.list_all(bnav.l, rel_logs)
 
-    # def list_all_logs(self, logs=None):
-    #     """
-    #     Collect important information of all logs
+    def log_as_DFdict(self, doc_id):
+        """
+        Load all structure functions in log as DataFrame
 
-    #     Parameters
-    #     ----------
-    #         logs : list or None
-    #             if None plot all
+        Parameters
+        ----------
+            doc_id : int
+                document identifier
 
-    #     Returns
-    #     -------
-    #         df : pandas.DataFrame
-    #             created frame
-    #     """
-    #     # collect
-    #     if logs is None:
-    #         logs = self.get(l)
-    #     data = []
-    #     for lg in logs:
-    #         obj = {"doc_id": lg.doc_id}
-    #         sfs = 0
-    #         esfs = 0
-    #         for sf in lg:
-    #             if not on.ObservableName.is_valid(sf):
-    #                 continue
-    #             sfs += 1
-    #             esfs += len(lg[sf])
-    #         crash = lg.get("_crash", None)
-    #         if crash is None:
-    #             obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
-    #         else:
-    #             obj["structure_functions"] = crash
-    #         obj["theory"] = lg["_theory_doc_id"]
-    #         obj["obs"] = lg["_observables_doc_id"]
-    #         if "_pdf" in lg:
-    #             obj["pdf"] = lg["_pdf"]
-    #         if "_creation_time" in lg:
-    #             dt = datetime.fromisoformat(lg["_creation_time"])
-    #             obj["created"] = human_dates(dt)
-    #         data.append(obj)
-    #     # output
-    #     df = pd.DataFrame(data)
-    #     return df
+        Returns
+        -------
+            log : DFdict
+                DataFrames
+        """
+        log = self.get(bnav.l, doc_id)
+        dfd = dfdict.DFdict()
+        for sf in log:
+            if not on.ObservableName.is_valid(sf):
+                continue
+            dfd.print(
+                f"{sf} with theory={log['_theory_doc_id']}, "
+                + f"obs={log['_observables_doc_id']} "
+                + f"using {log['_pdf']}"
+            )
+            dfd[sf] = pd.DataFrame(log[sf])
+        return dfd
 
-    # def get_log_DFdict(self, doc_id):
-    #     """
-    #     Load all structure functions in log as DataFrame
+    def subtract_tables(self, dfd1, dfd2):
+        """
+        Subtract results in the second table from the first one,
+        properly propagate the integration error and recompute the relative
+        error on the subtracted results.
 
-    #     Parameters
-    #     ----------
-    #         doc_id : int
-    #             document identifier
+        Parameters
+        ----------
+            dfd1 : dict or int
+                if int the doc_id of the log to be loaded
+            dfd2 : dict or int
+                if int the doc_id of the log to be loaded
 
-    #     Returns
-    #     -------
-    #         log : DFdict
-    #             DataFrames
-    #     """
-    #     log = self.get(l, doc_id)
-    #     dfd = DFdict()
-    #     for sf in log:
-    #         if not on.ObservableName.is_valid(sf):
-    #             continue
-    #         dfd.print(
-    #             f"{sf} with theory={log['_theory_doc_id']}, "
-    #             + f"obs={log['_observables_doc_id']} "
-    #             + f"using {log['_pdf']}"
-    #         )
-    #         dfd[sf] = pd.DataFrame(log[sf])
-    #     return dfd
+        Returns
+        -------
+            diffout : DFdict
+                created frames
+        """
 
-    # def subtract_tables(self, dfd1, dfd2):
-    #     """
-    #     Subtract results in the second table from the first one,
-    #     properly propagate the integration error and recompute the relative
-    #     error on the subtracted results.
+        diffout = dfdict.DFdict()
 
-    #     Parameters
-    #     ----------
-    #         dfd1 : dict or int
-    #             if int the doc_id of the log to be loaded
-    #         dfd2 : dict or int
-    #             if int the doc_id of the log to be loaded
+        # load json documents
+        logs = []
+        ids = []
+        for dfd in [dfd1, dfd2]:
+            if isinstance(dfd, int):
+                logs.append(self.get(bnav.l, dfd))
+                ids.append(dfd)
+            elif isinstance(dfd, dfdict.DFdict):
+                logs.append(dfd.to_document())
+                ids.append("not-an-id")
+            else:
+                raise ValueError("subtract_tables: DFdict not recognized!")
+        log1, log2 = logs[0], logs[1]
+        id1, id2 = ids[0], ids[1]
 
-    #     Returns
-    #     -------
-    #         diffout : DFdict
-    #             created frames
-    #     """
+        # print head
+        msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
+        diffout.print(msg, "=" * len(msg), sep="\n")
+        diffout.print()
 
-    #     diffout = DFdict()
+        if log1 is None:
+            raise ValueError(f"Log id:{id1} not found")
+        if log2 is None:
+            raise ValueError(f"Log id:{id2} not found")
 
-    #     # load json documents
-    #     logs = []
-    #     ids = []
-    #     for dfd in [dfd1, dfd2]:
-    #         if isinstance(dfd, int):
-    #             logs.append(self.get(l, dfd))
-    #             ids.append(dfd)
-    #         elif isinstance(dfd, DFdict):
-    #             logs.append(dfd.to_document())
-    #             ids.append("not-an-id")
-    #         else:
-    #             raise ValueError("subtract_tables: DFList not recognized!")
-    #     log1, log2 = logs[0], logs[1]
-    #     id1, id2 = ids[0], ids[1]
+        # iterate observables
+        for obs in log1.keys():
+            if obs[0] == "_":
+                continue
+            if obs not in log2:
+                print(f"{obs}: not matching in log2")
+                continue
 
-    #     # print head
-    #     msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
-    #     diffout.print(msg, "=" * len(msg), sep="\n")
-    #     diffout.print()
+            # load observable tables
+            table1 = pd.DataFrame(log1[obs])
+            table2 = pd.DataFrame(log2[obs])
+            table_out = table2.copy()
 
-    #     if log1 is None:
-    #         raise ValueError(f"Log id:{id1} not found")
-    #     if log2 is None:
-    #         raise ValueError(f"Log id:{id2} not found")
+            # check for compatible kinematics
+            if any([any(table1[y] != table2[y]) for y in ["x", "Q2"]]):
+                raise ValueError("Cannot compare tables with different (x, Q2)")
 
-    #     # iterate observables
-    #     for obs in log1.keys():
-    #         if obs[0] == "_":
-    #             continue
-    #         if obs not in log2:
-    #             print(f"{obs}: not matching in log2")
-    #             continue
+            # subtract and propagate
+            known_col_set = set(["x", "Q2", "yadism", "yadism_error", "rel_err[%]"])
+            t1_ext = list(set(table1.keys()) - known_col_set)[0]
+            t2_ext = list(set(table2.keys()) - known_col_set)[0]
+            if t1_ext == t2_ext:
+                tout_ext = t1_ext
+            else:
+                tout_ext = f"{t2_ext}-{t1_ext}"
+            table_out.rename(columns={t2_ext: tout_ext}, inplace=True)
+            table_out[tout_ext] = table2[t2_ext] - table1[t1_ext]
+            # subtract our values
+            table_out["yadism"] -= table1["yadism"]
+            table_out["yadism_error"] += table1["yadism_error"]
 
-    #         # load observable tables
-    #         table1 = pd.DataFrame(log1[obs])
-    #         table2 = pd.DataFrame(log2[obs])
-    #         table_out = table2.copy()
+            # compute relative error
+            def rel_err(row, tout_ext=tout_ext):
+                if row[tout_ext] == 0.0:
+                    if row["yadism"] == 0.0:
+                        return 0.0
+                    return np.nan
+                else:
+                    return (row["yadism"] / row[tout_ext] - 1.0) * 100
 
-    #         # check for compatible kinematics
-    #         if any([any(table1[y] != table2[y]) for y in ["x", "Q2"]]):
-    #             raise ValueError("Cannot compare tables with different (x, Q2)")
+            table_out["rel_err[%]"] = table_out.apply(rel_err, axis=1)
 
-    #         # subtract and propagate
-    #         known_col_set = set(["x", "Q2", "yadism", "yadism_error", "rel_err[%]"])
-    #         t1_ext = list(set(table1.keys()) - known_col_set)[0]
-    #         t2_ext = list(set(table2.keys()) - known_col_set)[0]
-    #         if t1_ext == t2_ext:
-    #             tout_ext = t1_ext
-    #         else:
-    #             tout_ext = f"{t2_ext}-{t1_ext}"
-    #         table_out.rename(columns={t2_ext: tout_ext}, inplace=True)
-    #         table_out[tout_ext] = table2[t2_ext] - table1[t1_ext]
-    #         # subtract our values
-    #         table_out["yadism"] -= table1["yadism"]
-    #         table_out["yadism_error"] += table1["yadism_error"]
+            # dump results' table
+            diffout.print(obs, "-" * len(obs), sep="\n")
+            diffout[obs] = table_out
 
-    #         # compute relative error
-    #         def rel_err(row, tout_ext=tout_ext):
-    #             if row[tout_ext] == 0.0:
-    #                 if row["yadism"] == 0.0:
-    #                     return 0.0
-    #                 return np.nan
-    #             else:
-    #                 return (row["yadism"] / row[tout_ext] - 1.0) * 100
+        return diffout
 
-    #         table_out["rel_err[%]"] = table_out.apply(rel_err, axis=1)
+    def check_log(self, doc_id):
+        """
+        Check if the log passed the default assertions
 
-    #         # dump results' table
-    #         diffout.print(obs, "-" * len(obs), sep="\n")
-    #         diffout[obs] = table_out
+        Paramters
+        ---------
+            doc_id : int
+                log identifier
+        """
+        # TODO determine external, improve output
+        dfd = self.log_as_DFdict(doc_id)
+        for n, df in dfd.items():
+            for l in df.iloc:
+                if abs(l["rel_err[%]"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
+                    print(n, l, sep="\n")
 
-    #     return diffout
+    def crashed_log(self, doc_id):
+        """
+        Check if the log passed the default assertions
+
+        Paramters
+        ---------
+            doc_id : int
+                log identifier
+
+        Returns
+        -------
+            cdfd : dict
+                log without kinematics
+        """
+        dfd = self.get(bnav.l, doc_id)
+        if "_crash" not in dfd:
+            raise ValueError("log didn't crash!")
+        cdfd = {}
+        for sf in dfd:
+            if on.ObservableName.is_valid(sf):
+                cdfd[sf] = f"{len(dfd[sf])} points"
+            else:
+                cdfd[sf] = dfd[sf]
+        return cdfd
 
     # def join(self, id1, id2):
     #     tabs = []
@@ -285,7 +310,7 @@ class NavigatorApp(navigator.NavigatorApp):
     #         tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
     #         exts += [
     #             tabs1[i].columns.drop(["x", "Q2"])[0]
-    #         ]  # + suffixes[i]] # TODO the suffixes are not working as expected
+    #         ]  # + suffixes[i]] # to do: the suffixes are not working as expected
 
     #     def rel_err(row):
     #         ref = row[exts[0]]

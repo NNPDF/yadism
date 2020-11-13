@@ -3,6 +3,7 @@ import copy
 
 import numpy as np
 
+from eko import interpolation
 from banana.data import power_set
 from banana.data.card_generator import CardGenerator
 
@@ -160,15 +161,20 @@ def external_cards_apfel(defaults):
             cards.append(copy.copy(c))
     return cards
 
+
 class ObservablesGenerator(CardGenerator):
 
     table_name = "observables"
 
-    def get_all(self, defaults):
-        defaults.update(dict(prDIS="EM",
+    def get_all(self):
+        defaults = dict(
+            interpolation_xgrid=interpolation.make_grid(30, 20).tolist(),
+            interpolation_polynomial_degree=4,
+            interpolation_is_log=True,
+            prDIS="EM",
             projectile="electron",
             PolarizationDIS=0,
-        ))
+        )
         cards = []
         # use only a small set in regression
         if self.mode == "regression":

@@ -11,10 +11,11 @@ from yadmark.benchmark.db_interface import (
 )
 
 from yadmark.data import observables
+from yadmark import banana_cfg
 
 
 def generate_observables():
-    og = observables.ObservablesGenerator("sandbox")
+    og = observables.ObservablesGenerator(banana_cfg.banana_cfg, "sandbox")
     defaults = og.get_all()[0]
     # xgrid = np.array(defaults["interpolation_xgrid"]).copy()
     # defaults["interpolation_xgrid"] = np.geomspace(0.1, 1, 40).tolist()
@@ -87,7 +88,7 @@ class Sandbox:
                 # "XIF": self.db.theory_query.XIF == 0.5,
                 # "NfFF": self.db.theory_query.NfFF == 5,
                 # "TMC": self.db.theory_query.TMC == 1,
-                "FNS": self.db.theory_query.FNS == "FONLL-A",
+                # "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
             },
         )
@@ -96,5 +97,5 @@ class Sandbox:
 if __name__ == "__main__":
     # generate_observables()
     sand = Sandbox()
-    # sand.run_LO()
-    sand.run_NLO()
+    sand.run_LO()
+    # sand.run_NLO()
