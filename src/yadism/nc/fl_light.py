@@ -16,9 +16,9 @@ from eko import constants
 from .. import partonic_channel as pc
 
 
-class FLlightQuark(pc.PartonicChannelLight):
+class FLlightNonSinglet(pc.PartonicChannelLight):
     """
-        Computes light quark channel of FLlight
+        Computes light quark non-singlet channel of FLlight
     """
 
     label = "q"
