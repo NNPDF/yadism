@@ -2,7 +2,7 @@
 
 import copy
 
-from .f2_light import F2lightQuark, F2lightGluon
+from .f2_light import F2lightNonSinglet, F2lightGluon
 from .fl_light import FLlightQuark, FLlightGluon
 from .f3_light import F3lightQuark
 from .f2_heavy import F2heavyGluonVV, F2heavyGluonAA
@@ -15,7 +15,7 @@ from .f3_asy import F3asyQuarkVA
 from .weights import weights_light, weights_heavy
 
 partonic_channels_em = {
-    "F2light": [F2lightQuark, F2lightGluon],
+    "F2light": [F2lightNonSinglet, F2lightGluon],
     "FLlight": [FLlightQuark, FLlightGluon],
     "F3light": [F3lightQuark],
     "F2heavy": [F2heavyGluonVV],

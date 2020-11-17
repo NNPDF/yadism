@@ -20,12 +20,12 @@ from .. import partonic_channel as pc
 from ..esf import rsl_from_distr_coeffs
 
 
-class F2lightQuark(pc.PartonicChannelLight):
+class F2lightNonSinglet(pc.PartonicChannelLight):
     """
-        Computes the light quark channel of  F2light
+        Computes the light quark non-singlet channel of  F2light
     """
 
-    label = "q"
+    label = "ns"
 
     @staticmethod
     def LO():
