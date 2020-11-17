@@ -84,6 +84,7 @@ In these :underlined:`documents` you can find the reference for all *yadism* API
    :caption: Theory
 
    theory/DIS-intro.rst
+   theory/structure-functions.rst
    theory/coeff-funcs.rst 
    theory/light-flavors.rst
    theory/heavy-flavors.rst
