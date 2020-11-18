@@ -1,15 +1,64 @@
+Coefficient Functions
+=====================
+
+Overview of coefficient functions structure
+-------------------------------------------
+
+The main categories for coefficients the same of :doc:`structure-functions`, i.e.:
+
+- the **process** (EM/NC/CC)
+- the **kind** (F2/L/3)
+- the **heavyness** involved (light/charm/bottom/top/total)
+- but there is a new one: the **channel** (ns/ps/g), and it is related to the
+  incoming parton:
+  - if the |EW| boson it is coupling to a *quark* line connected to the incoming
+    one, than each PDF it's contributing proportionally to his charge (e.g.:
+    electric charge for the photon); this is called **non-singlet (ns)**
+  - otherwise the line to which the |EW| boson is coupling it will be detached
+    from the incoming  by *gluonic* lines, and the gluon is flavor blind, so
+    all the charges are summed and all the PDF are contributing the same way;
+    this is called **pure singlet (ps)**
+  - eventually: if a *gluon* is entering all the quarks will couple to the |EW|
+    boson (if no further restrictions are imposed by the observable, e.g.
+    F2charm), as in the singlet case, and so the charges are summed over; this
+    is called the **gluon (g)** (because *it is* the gluon...)
+  - the **parity structure** (vectorial-vectorial/axial-axial/vectorial-axial),
+    it is relevant only for the NC, and should be taken into account
+
+These options set the overall structure of the coefficient functions, and it is
+reported in the following tables, just considering that the mass corrections
+for all the  flavors (charm/bottom/top) share the same functional form for the
+coefficient and a further category (the massless limit of the heavy) is needed
+for variable flavor scheme like FONLL.
+
+.. csv-table:: NC coefficients
+   :file: ./nc-coeffs.csv
+   :delim: space
+   :header-rows: 1
+   :stub-columns: 1
+   :align: center
+
+
+.. csv-table:: CC coefficients
+   :file: ./cc-coeffs.csv
+   :delim: space
+   :header-rows: 1
+   :stub-columns: 1
+   :align: center
+
 Coefficient Functions Calculation
-=================================
+---------------------------------
 
 
 Convolution Integral
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 How we recast convolution in an integration in [0,1] (where plus distributions
 are properly defined) plus some addends.
 
+
 Convolution to Integration
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""
 
 .. math::
 
@@ -42,7 +91,7 @@ And explicitly for a product of distributions:
 
 
 Regular - Singular - Local (RSL)
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A generic coefficient function will allow for three ingredients:
 
@@ -75,8 +124,9 @@ deserve special care:
    distribution contribution to the *singular*, while the second to the *local*
    part of the integration
 
+
 Integral Details
-----------------
+~~~~~~~~~~~~~~~~
 
 - if area does not overlap it's set to 0 and integral skip
 - we are using `scipy.quad`
