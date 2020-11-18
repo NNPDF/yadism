@@ -21,9 +21,12 @@ def weights_heavy(nhq, coupling_constants, Q2, kind):
         weight_aa = coupling_constants.get_weight(nhq, Q2, kind, "A")
         weights = {"gVV": {21: weight_vv}, "gAA": {21: weight_aa}}
     else:
+        # NLO heavy = NNLO DIS
         weights = {"qVA": {}}
         for q in range(1, nhq):
             w = coupling_constants.get_weight(q, Q2, kind)
             weights["qVA"][q] = w
             weights["qVA"][-q] = -w
     return weights
+
+# TODO def weights_heavy_intrinsic(nhq, coupling_constants, Q2, kind, intrinsic)

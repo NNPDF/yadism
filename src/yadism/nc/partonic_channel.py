@@ -37,9 +37,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
                 f : callable
                     output
         """
-        # s_h = self.ESF._Q2 * (1 - self.ESF._x) / self.ESF._x
-        # if s_h <= 4 * self.ESF._SF.M2hq:
-        if self.is_below_threshold(self.ESF._x):
+        if self.is_below_threshold(self.ESF._x):  # pylint: disable=protected-access
             return lambda: 0
         return f
 
@@ -61,5 +59,5 @@ class PartonicChannelHeavy(pc.PartonicChannel):
             .. todo::
                 use threshold on shat or using FH's zmax?
         """
-        shat = self.ESF._Q2 * (1 - z) / z
-        return shat <= 4 * self.ESF._SF.M2hq
+        shat = self.ESF._Q2 * (1 - z) / z  # pylint: disable=protected-access
+        return shat <= 4 * self.ESF._SF.M2hq  # pylint: disable=protected-access

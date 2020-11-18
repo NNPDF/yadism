@@ -104,9 +104,6 @@ class EvaluatedStructureFunction:
         if not self._SF.obs_name.is_composed:
             self.partonic_channels = self._SF.partonic_channels
             self.weights = self._SF.weights
-            self.convolution_point = self._SF.convolution_point(
-                self._x, self._Q2, self._SF.M2hq
-            )
 
         logger.debug("Init %s", self)
 
@@ -133,8 +130,6 @@ class EvaluatedStructureFunction:
                 self._res.values[comp.label],
                 self._res.errors[comp.label],
             ) = self._compute_component(comp)
-        # add the factor x from the LHS
-        self._res *= self.convolution_point
         # setup weights
         self._res.weights = self.weights(
             self._SF.obs_name, self._SF.coupling_constants, self._Q2
@@ -162,6 +157,8 @@ class EvaluatedStructureFunction:
         ls = []
         els = []
 
+        # compute convolution point
+        convolution_point = comp.convolution_point()
         # combine orders
         d_vec = conv.DistributionVec(comp["LO"]())
         if self._SF.pto > 0:
@@ -174,7 +171,9 @@ class EvaluatedStructureFunction:
 
         # iterate all polynomials
         for polynomial_f in self._SF.interpolator:
-            c, e = d_vec.convolution(self.convolution_point, polynomial_f)
+            c, e = d_vec.convolution(convolution_point, polynomial_f)
+            # add the factor x from the LHS
+            c, e = c*convolution_point, e*convolution_point
             ls.append(c)
             els.append(e)
 

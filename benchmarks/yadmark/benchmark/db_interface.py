@@ -213,7 +213,7 @@ class DBInterface(mode_selector.ModeSelector):
                         print(f"{pdf_name} installed.")
                     pdf = lhapdf.mkPDF(pdf_name, 0)
                 # get our data
-                yad_tab = runner.apply(pdf)
+                yad_tab = runner.apply_pdf(pdf)
                 # get external data
                 if self.external == "APFEL":
                     from .external import (  # pylint:disable=import-error,import-outside-toplevel

@@ -2,6 +2,8 @@
 
 import copy
 
+from .. import partonic_channel as pc
+
 from .f2_light import F2lightQuark, F2lightGluon
 from .fl_light import FLlightQuark, FLlightGluon
 from .f3_light import F3lightQuark
@@ -24,11 +26,4 @@ partonic_channels_cc = {
     "F2asy": [F2asyQuark, F2asyGluon],
     "FLasy": [FLasyQuark, FLasyGluon],
     "F3asy": [F3asyQuark, F3asyGluon],
-}
-
-
-convolution_point_cc = {
-    "light": lambda x, *args: x,
-    "heavy": lambda x, Q2, m2hq: x * (1 + m2hq / Q2),
-    "asy": lambda x, *args: x,
 }

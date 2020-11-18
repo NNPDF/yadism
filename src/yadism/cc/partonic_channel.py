@@ -27,14 +27,20 @@ class PartonicChannelHeavy(pc.PartonicChannel):
     def __init__(self, *args):
         super().__init__(*args)
         # common variables
-        self.labda = 1 / (1 + self.ESF._SF.M2hq / self.ESF._Q2)
+        self.labda = 1. / (1. + self.ESF._SF.M2hq / self.ESF._Q2)
         self.x = self.ESF._x
-        self.ka = 1 / self.labda * (1 - self.labda) * np.log(1 - self.labda)
+        self.ka = 1. / self.labda * (1. - self.labda) * np.log(1. - self.labda)
         self.l_labda = lambda z, labda=self.labda: np.log(
-            (1 - labda * z) / (1 - labda) / z
+            (1. - labda * z) / (1. - labda) / z
         )
         # normalization helper
-        self.sf_prefactor = 1
+        self.sf_prefactor = 1.
+
+    def convolution_point(self):
+        """
+        Convolution point
+        """
+        return self.x / self.labda
 
     def r_integral(self, x):
         r"""
