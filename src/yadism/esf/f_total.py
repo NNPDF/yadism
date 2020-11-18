@@ -31,20 +31,20 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
         kin = {"x": self._x, "Q2": self._Q2}
         logger.debug("Collect %s", self)
         # light component
-        res_light = self._SF.get_esf(
-            self._SF.obs_name.apply_flavor("light"), kin, use_raw=False
+        res_light = self.sf.get_esf(
+            self.sf.obs_name.apply_flavor("light"), kin, use_raw=False
         ).get_result()
         # charm component
-        res_charm = self._SF.get_esf(
-            self._SF.obs_name.apply_flavor("charm"), kin, use_raw=False
+        res_charm = self.sf.get_esf(
+            self.sf.obs_name.apply_flavor("charm"), kin, use_raw=False
         ).get_result()
         # bottom component
-        res_bottom = self._SF.get_esf(
-            self._SF.obs_name.apply_flavor("bottom"), kin, use_raw=False
+        res_bottom = self.sf.get_esf(
+            self.sf.obs_name.apply_flavor("bottom"), kin, use_raw=False
         ).get_result()
         # top component
-        res_top = self._SF.get_esf(
-            self._SF.obs_name.apply_flavor("top"), kin, use_raw=False
+        res_top = self.sf.get_esf(
+            self.sf.obs_name.apply_flavor("top"), kin, use_raw=False
         ).get_result()
         # rename and add
         return (
@@ -57,10 +57,10 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
     @property
     def components(self):
         raise NotImplementedError(
-            f"{self._SF.obs_name.name}: this method should never be called!"
+            f"{self.sf.obs_name.name}: this method should never be called!"
         )
 
     def _compute_weights(self):
         raise NotImplementedError(
-            f"{self._SF.obs_name.name}: this method should never be called!"
+            f"{self.sf.obs_name.name}: this method should never be called!"
         )

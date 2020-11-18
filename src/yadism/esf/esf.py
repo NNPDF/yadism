@@ -95,20 +95,20 @@ class EvaluatedStructureFunction:
         if x < min(SF.interpolator.xgrid_raw):
             raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
 
-        self._SF = SF
-        self._x = x
-        self._Q2 = kinematics["Q2"]
-        self._res = ESFResult(x=self._x, Q2=self._Q2)
+        self.sf = SF
+        self.x = x
+        self.Q2 = kinematics["Q2"]
+        self._res = ESFResult(x=self.x, Q2=self.Q2)
         self._computed = False
 
-        if not self._SF.obs_name.is_composed:
-            self.partonic_channels = self._SF.partonic_channels
-            self.weights = self._SF.weights
+        if not self.sf.obs_name.is_composed:
+            self.partonic_channels = self.sf.partonic_channels
+            self.weights = self.sf.weights
 
         logger.debug("Init %s", self)
 
     def __repr__(self):
-        return "%s(x=%f,Q2=%f)" % (self._SF.obs_name, self._x, self._Q2)
+        return "%s(x=%f,Q2=%f)" % (self.sf.obs_name, self.x, self.Q2)
 
     def _compute_local(self):
         """
@@ -132,7 +132,7 @@ class EvaluatedStructureFunction:
             ) = self._compute_component(comp)
         # setup weights
         self._res.weights = self.weights(
-            self._SF.obs_name, self._SF.coupling_constants, self._Q2
+            self.sf.obs_name, self.sf.coupling_constants, self.Q2
         )
 
     def _compute_component(self, comp):
@@ -161,16 +161,16 @@ class EvaluatedStructureFunction:
         convolution_point = comp.convolution_point()
         # combine orders
         d_vec = conv.DistributionVec(comp["LO"]())
-        if self._SF.pto > 0:
-            a_s = self._SF.strong_coupling.a_s(self._Q2 * self._SF.xiR ** 2)
+        if self.sf.pto > 0:
+            a_s = self.sf.strong_coupling.a_s(self.Q2 * self.sf.xiR ** 2)
             d_vec += a_s * (
                 conv.DistributionVec(comp["NLO"]())
-                + (-np.log(self._SF.xiF ** 2))
+                + (-np.log(self.sf.xiF ** 2))
                 * conv.DistributionVec(comp["NLO_fact"]())
             )
 
         # iterate all polynomials
-        for polynomial_f in self._SF.interpolator:
+        for polynomial_f in self.sf.interpolator:
             c, e = d_vec.convolution(convolution_point, polynomial_f)
             # add the factor x from the LHS
             c, e = c*convolution_point, e*convolution_point
