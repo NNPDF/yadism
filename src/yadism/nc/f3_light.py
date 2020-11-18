@@ -12,9 +12,9 @@ from eko import constants
 from . import f2_light
 
 
-class F3lightQuark(f2_light.F2lightQuark):
+class F3lightNonSinglet(f2_light.F2lightNonSinglet):
     """
-        Computes light quark channel of FLlight
+        Computes light quark non-singlet channel of FLlight
     """
 
     def NLO(self):
