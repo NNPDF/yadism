@@ -2,8 +2,10 @@
 
 import copy
 
-from .f2_light import F2lightNonSinglet, F2lightGluon
-from .fl_light import FLlightNonSinglet, FLlightGluon
+from .. import partonic_channel as pc
+
+from .f2_light import F2lightNonSinglet, F2lightGluon, F2lightSinglet
+from .fl_light import FLlightNonSinglet, FLlightGluon, FLlightSinglet
 from .f3_light import F3lightNonSinglet
 from .f2_heavy import F2heavyGluonVV, F2heavyGluonAA
 from .fl_heavy import FLheavyGluonVV, FLheavyGluonAA
@@ -17,6 +19,7 @@ coefficient_functions = {
         "light": {
             "ns": F2lightNonSinglet,
             "g": F2lightGluon,
+            "s": F2lightSinglet,
         },
         "heavy": {
             "gVV": F2heavyGluonVV,
@@ -30,6 +33,7 @@ coefficient_functions = {
         "light": {
             "ns": FLlightNonSinglet,
             "g": FLlightGluon,
+            "s": FLlightSinglet,
         },
         "heavy": {
             "gVV": FLheavyGluonVV,
@@ -42,23 +46,15 @@ coefficient_functions = {
     "F3": {
         "light": {
             "ns": F3lightNonSinglet,
-            "g": None,
+            "g": pc.EmptyPartonicChannel,
+            "s": pc.EmptyPartonicChannel,
         },
         "heavy": {
-            "gVV": None,
-            "gAA": None,
+            "gVV": pc.EmptyPartonicChannel,
+            "gAA": pc.EmptyPartonicChannel,
         },
         "asy": {
-            "gVV": None,
+            "gVV": pc.EmptyPartonicChannel,
         }
     }
 }
-
-
-# def weights_nc(obs_name, coupling_constants, Q2):
-#     if obs_name.flavor == "light":
-#         return weights_light(range(1, 3 + 1), coupling_constants, Q2, obs_name.kind)
-#     elif obs_name.flavor_family == "light":
-#         # so it's heavylight
-#         return weights_light([obs_name.hqnumber], coupling_constants, Q2, obs_name.kind)
-#     return weights_heavy(obs_name.hqnumber, coupling_constants, Q2, obs_name.kind)

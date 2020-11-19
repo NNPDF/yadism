@@ -3,12 +3,50 @@
 Define :py:class:`DistributionVec` and its API, that are used to represent
 distributions object in the coefficient function definition and calculation.
 """
-import copy
 
 import numpy as np
 import scipy.integrate
 
 from eko.interpolation import BasisFunction
+
+
+def rsl_from_distr_coeffs(regular, delta, *coeffs):
+    """
+    Compute the RSL structure form the coefficients of the distributions
+
+    Parameters
+    ----------
+        regular : callable
+            regular piece (passed unchanged)
+        delta : float
+            coefficient of the Dirac-delta function
+        coeffs: list(float)
+            coefficients of the plus-distributions with increasing power of log
+
+    Returns
+    -------
+        regular : callable
+            regular part
+        singular : callable
+            singular part
+        local : callable
+            local part
+    """
+    def singular(z, coeffs=coeffs):
+        log_ = np.log(1 - z)
+        res = 0
+        for k, coeff in enumerate(coeffs):
+            res += coeff * 1 / (1 - z) * log_ ** k
+        return res
+
+    def local(x, coeffs=coeffs):
+        log_ = np.log(1 - x)
+        res = 0
+        for k, coeff in enumerate(coeffs):
+            res += coeff * log_ ** (k + 1) / (k + 1)
+        return res + delta
+
+    return regular, singular, local
 
 
 class DistributionVec:

@@ -27,7 +27,7 @@ class Output(dict):
             ret[obs] = []
             for kin in self[obs]:
                 ret[obs].append(
-                    ESFResult.from_dict(kin).apply_pdf(self["xgrid"], self["xiF"], pdfs)
+                    ESFResult.from_dict(kin).apply_pdf(pdfs, self["pids"], self["xgrid"], self["xiF"])
                 )
         return ret
 

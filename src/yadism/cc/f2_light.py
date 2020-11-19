@@ -7,7 +7,7 @@ light quark flavours.
 from .. import nc
 
 
-class F2lightQuark(nc.f2_light.F2lightQuark):
+class F2lightQuark(nc.f2_light.F2lightNonSinglet):
     """
         Computes the light quark channel of  F2light
     """

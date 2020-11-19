@@ -28,7 +28,7 @@ class EvaluatedStructureFunctionFtotal(esf.EvaluatedStructureFunction):
                     joined elements
         """
         # final object
-        kin = {"x": self._x, "Q2": self._Q2}
+        kin = {"x": self.x, "Q2": self.Q2}
         logger.debug("Collect %s", self)
         # light component
         res_light = self.sf.get_esf(

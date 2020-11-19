@@ -16,14 +16,48 @@ from .f3_asy import F3asyQuark, F3asyGluon
 
 from .weights import weights as weights_cc
 
-partonic_channels_cc = {
-    "F2light": [F2lightQuark, F2lightGluon],
-    "FLlight": [FLlightQuark, FLlightGluon],
-    "F3light": [F3lightQuark],
-    "F2heavy": [F2heavyQuark, F2heavyGluon],
-    "FLheavy": [FLheavyQuark, FLheavyGluon],
-    "F3heavy": [F3heavyQuark, F3heavyGluon],
-    "F2asy": [F2asyQuark, F2asyGluon],
-    "FLasy": [FLasyQuark, FLasyGluon],
-    "F3asy": [F3asyQuark, F3asyGluon],
+
+coefficient_functions = {
+    "F2": {
+        "light": {
+            "q": F2lightQuark,
+            "g": F2lightGluon,
+        },
+        "heavy": {
+            "q": F2heavyQuark,
+            "g": F2heavyGluon,
+        },
+        "asy": {
+            "q": F2asyQuark,
+            "g": F2asyGluon,
+        }
+    },
+    "FL": {
+        "light": {
+            "q": FLasyQuark,
+            "g": FLasyGluon,
+        },
+        "heavy": {
+            "q": FLasyQuark,
+            "g": FLasyGluon,
+        },
+        "asy": {
+            "q": FLasyQuark,
+            "g": FLasyGluon,
+        }
+    },
+    "F3": {
+        "light": {
+            "q": F3lightQuark,
+            "g": pc.EmptyPartonicChannel,
+        },
+        "heavy": {
+            "q": F3heavyQuark,
+            "g": F3heavyGluon,
+        },
+        "asy": {
+            "q": F3asyQuark,
+            "g": F3asyGluon,
+        }
+    }
 }

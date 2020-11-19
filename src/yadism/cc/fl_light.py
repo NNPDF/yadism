@@ -7,7 +7,7 @@ light quark flavours.
 from .. import nc
 
 
-class FLlightQuark(nc.fl_light.FLlightQuark):
+class FLlightQuark(nc.fl_light.FLlightNonSinglet):
     """
         Computes the light quark channel of  FLlight
     """

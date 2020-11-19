@@ -31,6 +31,7 @@ import rich.console
 from eko.interpolation import InterpolatorDispatcher
 from eko import thresholds
 from eko import strong_coupling
+from eko import basis_rotation as br
 
 from .input import inspector
 from . import observable_name
@@ -173,6 +174,7 @@ class Runner:
         # Initialize output
         # ==============================
         self._output = Output()
+        self._output["pids"] = br.flavor_basis_pids
         self._output["xgrid"] = self.interpolator.xgrid_raw.tolist()
         self._output["xiF"] = self.xiF
 

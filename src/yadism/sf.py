@@ -9,8 +9,6 @@ import logging
 
 from .esf import ESFmap
 from .tmc import ESFTMCmap
-from .nc import partonic_channels_em, partonic_channels_nc, weights_nc
-from .cc import partonic_channels_cc, weights_cc
 
 logger = logging.getLogger(__name__)
 
@@ -62,19 +60,6 @@ class StructureFunction:
         self.damping_powers = theory_params["damping_powers"]
         self.obs_params = obs_params
 
-        if not self.obs_name.is_composed:
-            # load partonic channels and weights
-            partonic_channels = partonic_channels_em
-            process = self.obs_params["process"]
-            self.weights = weights_nc
-            if process == "NC":
-                partonic_channels = partonic_channels_nc
-            elif process == "CC":
-                partonic_channels = partonic_channels_cc
-                self.weights = weights_cc
-            self.partonic_channels = partonic_channels[
-                self.obs_name.apply_flavor_family().name
-            ]
         logger.debug("Init %s", self)
 
     def __repr__(self):

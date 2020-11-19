@@ -25,8 +25,11 @@ import logging
 
 import numpy as np
 
+from eko import basis_rotation as br
+
 from . import distribution_vec as conv
 from .esf_result import ESFResult
+from .. import cf_combiner
 
 logger = logging.getLogger(__name__)
 
@@ -98,19 +101,15 @@ class EvaluatedStructureFunction:
         self.sf = SF
         self.x = x
         self.Q2 = kinematics["Q2"]
-        self._res = ESFResult(x=self.x, Q2=self.Q2)
+        self.res = ESFResult(self.x, self.Q2, len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid))
         self._computed = False
-
-        if not self.sf.obs_name.is_composed:
-            self.partonic_channels = self.sf.partonic_channels
-            self.weights = self.sf.weights
 
         logger.debug("Init %s", self)
 
     def __repr__(self):
         return "%s(x=%f,Q2=%f)" % (self.sf.obs_name, self.x, self.Q2)
 
-    def _compute_local(self):
+    def compute_local(self):
         """
             Here is where the local caching is actually implemented: if the
             coefficient functions are already computed don't do nothing,
@@ -122,37 +121,36 @@ class EvaluatedStructureFunction:
         # something to do?
         if self._computed:
             return
+        cfc = cf_combiner.CoefficientFunctionsCombiner(self)
         # run
         logger.debug("Compute %s", self)
-        for comp_cls in self.partonic_channels:
-            comp = comp_cls(self)
-            (
-                self._res.values[comp.label],
-                self._res.errors[comp.label],
-            ) = self._compute_component(comp)
-        # setup weights
-        self._res.weights = self.weights(
-            self.sf.obs_name, self.sf.coupling_constants, self.Q2
-        )
+        for cfe in cfc.collect_elems():
+            (r,e) = self.compute_coefficient_function(cfe.coeff)
+            # blow up to flavor space
+            for pid, w in cfe.partons.items():
+                pos = br.flavor_basis_pids.index(pid)
+                self.res.values[pos] += w * r
+                self.res.errors[pos] += w * e
 
-    def _compute_component(self, comp):
+    def compute_coefficient_function(self, comp):
         """
-            Perform coefficient function calculation for a single flavour,
-            combining orders, compute the convolution through
-            :py:meth:`DistributionVec.convolution` iterating over *basis
-            functions* and take care of scale variations.
+        Perform coefficient function calculation for a single stack of
+        coefficient functions,
+        combining orders, compute the convolution through
+        :meth:`DistributionVec.convolution` iterating over *basis
+        functions* and take care of scale variations.
 
-            Parameters
-            ----------
-            f_LO : callable, or sequence of callables
-                implements LO coefficient function
-            f_NLO : callable, or sequence of callables
-                implements NLO coefficient function
-            f_NLO_fact : callable, or sequence of callables
-                implements NLO factorization scheme contribution
+        Parameters
+        ----------
+        comp : yadism.partonic_channel.PartonicChannel
+            Coefficient function to be computed
 
-            .. todo::
-                reference needed for factorization scheme
+        Returns
+        -------
+            ls : list(float)
+                values
+            els : list(float)
+                errors
         """
         ls = []
         els = []
@@ -179,7 +177,7 @@ class EvaluatedStructureFunction:
 
         return np.array(ls), np.array(els)
 
-    def get_result(self):
+    def getresult(self):
         """
             Compute actual result
 
@@ -188,9 +186,9 @@ class EvaluatedStructureFunction:
             res : ESFResult
                 result
         """
-        self._compute_local()
+        self.compute_local()
 
-        return copy.deepcopy(self._res)
+        return copy.deepcopy(self.res)
 
     def get_output(self) -> dict:
         """
@@ -214,4 +212,4 @@ class EvaluatedStructureFunction:
                 - `errors`: a :py:meth:`numpy.array` with the integration errors
 
         """
-        return self.get_result().get_raw()
+        return self.getresult().get_raw()

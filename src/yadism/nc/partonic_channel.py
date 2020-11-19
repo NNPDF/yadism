@@ -12,10 +12,10 @@ class PartonicChannelHeavy(pc.PartonicChannel):
     def __init__(self, *args):
         super().__init__(*args)
         # FH - Vogt comparison prefactor
-        self._FHprefactor = self.ESF._Q2 / (np.pi * self.ESF.sf.M2hq)
+        self._FHprefactor = self.ESF.Q2 / (np.pi * self.ESF.sf.M2hq)
 
         # common variables
-        self._rho_q = -4 * self.ESF.sf.M2hq / self.ESF._Q2
+        self._rho_q = -4 * self.ESF.sf.M2hq / self.ESF.Q2
         self._rho = lambda z: -self._rho_q * z / (1 - z)
         self._rho_p = lambda z: -self._rho_q * z
 
@@ -37,7 +37,7 @@ class PartonicChannelHeavy(pc.PartonicChannel):
                 f : callable
                     output
         """
-        if self.is_below_threshold(self.ESF._x):  # pylint: disable=protected-access
+        if self.is_below_threshold(self.ESF.x):
             return lambda: 0
         return f
 
@@ -59,5 +59,5 @@ class PartonicChannelHeavy(pc.PartonicChannel):
             .. todo::
                 use threshold on shat or using FH's zmax?
         """
-        shat = self.ESF._Q2 * (1 - z) / z  # pylint: disable=protected-access
+        shat = self.ESF.Q2 * (1 - z) / z  # pylint: disable=protected-access
         return shat <= 4 * self.ESF.sf.M2hq  # pylint: disable=protected-access

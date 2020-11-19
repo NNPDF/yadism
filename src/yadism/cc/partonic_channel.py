@@ -5,7 +5,7 @@ from eko import constants
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
-from ..esf import rsl_from_distr_coeffs
+from ..esf.distribution_vec import rsl_from_distr_coeffs
 
 
 class PartonicChannelHeavy(pc.PartonicChannel):
@@ -27,8 +27,8 @@ class PartonicChannelHeavy(pc.PartonicChannel):
     def __init__(self, *args):
         super().__init__(*args)
         # common variables
-        self.labda = 1. / (1. + self.ESF.sf.M2hq / self.ESF._Q2)
-        self.x = self.ESF._x
+        self.labda = 1. / (1. + self.ESF.sf.M2hq / self.ESF.Q2)
+        self.x = self.ESF.x
         self.ka = 1. / self.labda * (1. - self.labda) * np.log(1. - self.labda)
         self.l_labda = lambda z, labda=self.labda: np.log(
             (1. - labda * z) / (1. - labda) / z

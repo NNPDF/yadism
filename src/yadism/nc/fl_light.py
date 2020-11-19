@@ -76,3 +76,6 @@ class FLlightGluon(pc.PartonicChannelLight):
             return nf * constants.TR * 16 * z * (1.0 - z)
 
         return cg
+
+class FLlightSinglet(pc.PartonicChannelLight):
+    pass

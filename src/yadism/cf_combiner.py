@@ -37,33 +37,118 @@ F2charm in FONLL in EM:
 from . import nc
 from . import cc
 
+class CoefficientFunctionElement():
+    def __init__(self, partons, coeff):
+        self.partons = partons
+        self.coeff = coeff
+
+
 class CoefficientFunctionsCombiner():
+    """
+    Do the matching between coefficient functions and partons with their approptiate coupling
+    strength.
+
+    Parameters
+    ----------
+        esf : EvaluateStructureFunction
+            current ESF
+    """
 
     def __init__(self, esf):
         self.esf = esf
-        self.kind = esf.sf.obs_name.kind
-        self.flavor = esf.sf.obs_name.flavor
+        self.obs_name = esf.sf.obs_name
         self.process = esf.sf.obs_params["process"]
         self.nf = esf.sf.threshold.get_areas(esf.Q2 * esf.sf.xiF ** 2)[-1].nf
+        self.cfs = self.select_coefficient_functions(self.process, self.obs_name.kind)
+
+    def generate_light(self, nf):
+        """
+        Collect the light coefficient functions
+
+        Parameters
+        ----------
+            nf : int
+                number of light flavors
+
+        Returns
+        -------
+            elems : list(CoefficientFunctionElement)
+                list of elements
+        """
+        # quark couplings
+        tot_ch_sq = 0
+        ns_partons = {}
+        pids = range(1, nf+1)
+        for q in pids:
+            w = self.esf.sf.coupling_constants.get_weight(q, self.esf.Q2, self.obs_name.kind)
+            ns_partons[q] = w
+            ns_partons[-q] = w if self.obs_name.kind != "F3" else -w
+            tot_ch_sq += w
+        ns = CoefficientFunctionElement(ns_partons, self.cfs["light"]["ns"](self.esf,nf=nf))
+        # gluon coupling = charge average (omitting the *2/2)
+        ch_av = tot_ch_sq / len(pids)
+        g = CoefficientFunctionElement({21: ch_av},self.cfs["light"]["g"](self.esf,nf=nf))
+        # same for singlet
+        s_partons = {q: ch_av for q in ns_partons}
+        s = CoefficientFunctionElement(s_partons, self.cfs["light"]["s"](self.esf,nf=nf))
+        return (ns, g, s)
 
     @staticmethod
     def select_coefficient_functions(dis_currrent, kind):
-        if dis_currrent == "NC":
-            cfs = nc.coefficient_functions
-        else:
+        """
+        Collect all necessary coefficient functions
+
+        Parameters
+        ----------
+            dis_current : str
+                exchanged electro-weak boson
+            kind : str
+                structure function
+
+        Returns
+        -------
+            cfs : dict
+                mapping of coefficient functions
+        """
+        if dis_currrent == "CC":
             cfs = cc.coefficient_functions
+        else:
+            cfs = nc.coefficient_functions
         return cfs[kind]
 
     def collect_ffns(self):
-        cfs = self.select_coefficient_functions(self.process, self.kind)
+        """
+        Collect the coefficient functions in the FFNS
+
+        Returns
+        -------
+            elems : list(dict)
+                all participants
+        """
         elems = []
-        if self.flavor == "light":
-            pass
+        # light is trivial
+        if self.obs_name.flavor in ["light", "total"]:
+            elems.extend(self.generate_light(self.nf))
+        # add heavy
+        if self.obs_name.flavor_family in ["heavy", "total"]:
+            # there is only *one* finite mass available, i.e. the next one
+            if self.obs_name.flavor_family == "heavy" and self.obs_name.hqnumber != self.nf + 1:
+                raise ValueError(f"{self.obs_name} is not available in FFNS with nl={self.nf}")
+            nhq = self.nf + 1 # this way it will also work for total
+            # add contributions
+            weight_vv = self.esf.sf.coupling_constants.get_weight(nhq, self.esf.Q2, self.obs_name.kind, "V")
+            weight_aa = self.esf.sf.coupling_constants.get_weight(nhq, self.esf.Q2, self.obs_name.kind, "A")
+            gVV = CoefficientFunctionElement({21: weight_vv}, self.cfs["heavy"]["gVV"](self.esf))
+            gAA = CoefficientFunctionElement({21: weight_aa}, self.cfs["heavy"]["gAA"](self.esf))
+            elems.extend((gVV, gAA))
         return elems
+
+    def collect_fonll(self):
+        if self.obs_name.flavor_family in ["heavy", "total"]:
+            pass
 
     def collect_elems(self):
         if self.esf.sf.threshold.scheme == "FFNS":
             full = self.collect_ffns()
         # drop all elements that have 0 weight
-        #filter(full)
         return full
