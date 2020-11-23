@@ -36,35 +36,35 @@ from .esf.esf_result import ESFResult
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
     r"""
-        This is an abstract class, made to serve the machinery to the inheriting
-        classes. In particular here are defined:
+    This is an abstract class, made to serve the machinery to the inheriting
+    classes. In particular here are defined:
 
-            - shifted kinematics :math:`\xi` and other aux variables
-              (:math:`\mu` and :math:`\rho`, see :cite:`tmc-iranian`)
-            - integration layout and two common integrals of structure
-              functions, :math:`h_2` and :math:`g_2` (see :cite:`tmc-review`)
-            - an interface for picking up the chosen formulas between:
+        - shifted kinematics :math:`\xi` and other aux variables
+          (:math:`\mu` and :math:`\rho`, see :cite:`tmc-iranian`)
+        - integration layout and two common integrals of structure
+          functions, :math:`h_2` and :math:`g_2` (see :cite:`tmc-review`)
+        - an interface for picking up the chosen formulas between:
 
-                1. *APFEL*
-                2. *approximate*
-                3. *exact*
+            1. *APFEL*
+            2. *approximate*
+            3. *exact*
 
-              (see :cite:`tmc-iranian`)
+          (see :cite:`tmc-iranian`)
 
-        Parameters
-        ----------
-        SF : StructureFunction
-            the interface object representing the structure function kind he
-            belongs to
-        kinematics : dict
-            requested kinematic point
+    Parameters
+    ----------
+    SF : StructureFunction
+        the interface object representing the structure function kind he
+        belongs to
+    kinematics : dict
+        requested kinematic point
 
     """
 
     def __init__(self, SF, kinematics):
         """
-            Just store the input and compute some auxiliary variables, no
-            integration performed here.
+        Just store the input and compute some auxiliary variables, no
+        integration performed here.
 
         """
         self.sf = SF
@@ -80,69 +80,69 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
     @abc.abstractmethod
     def _get_result_APFEL(self):
         """
-            This method is defined by subclasses to provide the implementation
-            of TMC calculation according to the same formula used by APFEL, see
-            :cite:`nnpdf-1.0`
+        This method is defined by subclasses to provide the implementation
+        of TMC calculation according to the same formula used by APFEL, see
+        :cite:`nnpdf-1.0`
 
-            .. todo::
+        .. todo::
 
-                - APFEL TMC reference missing
+            - APFEL TMC reference missing
 
         """
 
     @abc.abstractmethod
     def _get_result_approx(self):
         """
-            This method is defined by subclasses to provide the implementation
-            of TMC calculation according to the approximate formula defined in
-            :eqref:`4` in :cite:`tmc-iranian`, and already presented in
-            :cite:`tmc-review`.
+        This method is defined by subclasses to provide the implementation
+        of TMC calculation according to the approximate formula defined in
+        :eqref:`4` in :cite:`tmc-iranian`, and already presented in
+        :cite:`tmc-review`.
 
-            The convenience of this formula is that the integration is
-            approximate by a simple evaluation of the integrand in a suitable
-            point, so the evaluation of the full expression is much faster
-            (because integration yields an array of evaluations, ranging from 1
-            to the `xgrid` length).
-            Despite the approximation the formula is quite in a good agreement
-            with the exact one (for comparison see :cite:`tmc-review`).
+        The convenience of this formula is that the integration is
+        approximate by a simple evaluation of the integrand in a suitable
+        point, so the evaluation of the full expression is much faster
+        (because integration yields an array of evaluations, ranging from 1
+        to the `xgrid` length).
+        Despite the approximation the formula is quite in a good agreement
+        with the exact one (for comparison see :cite:`tmc-review`).
 
         """
 
     @abc.abstractmethod
     def _get_result_exact(self):
         """
-            This method is defined by subclasses to provide the implementation
-            of TMC calculation according to the exact formula defined in
-            :eqref:`2` in :cite:`tmc-iranian`, and already presented in
-            :cite:`tmc-review` and older literature like :cite:`tmc-georgi`.
+        This method is defined by subclasses to provide the implementation
+        of TMC calculation according to the exact formula defined in
+        :eqref:`2` in :cite:`tmc-iranian`, and already presented in
+        :cite:`tmc-review` and older literature like :cite:`tmc-georgi`.
 
-            Note
-            ----
-            This method will always involve an integration (and more than one
-            according to the structure function). If this is to expensive check
-            :py:meth:`_get_result_approx`.
+        Note
+        ----
+        This method will always involve an integration (and more than one
+        according to the structure function). If this is to expensive check
+        :py:meth:`_get_result_approx`.
 
         """
 
     def get_result(self):
         """
-            This is the interfaces provided to get the evaluation of the TMC
-            corrected structure function.
+        This is the interfaces provided to get the evaluation of the TMC
+        corrected structure function.
 
-            The kinematics is set to be the requested one, as it should (and not
-            the shifted one used in evaluation of expression terms).
+        The kinematics is set to be the requested one, as it should (and not
+        the shifted one used in evaluation of expression terms).
 
-            Returns
-            -------
-            out : ESFResult
-                an object that stores the details and result of the calculation
+        Returns
+        -------
+        out : ESFResult
+            an object that stores the details and result of the calculation
 
-            Note
-            ----
-            Another interfaces is provided, :py:meth:`get_output`, that makes
-            use of this one, so results of the two are consistent, but simply
-            output in a different format (see :py:class:`ESFResult`, and its
-            :py:meth:`ESFResult.get_raw` method).
+        Note
+        ----
+        Another interfaces is provided, :py:meth:`get_output`, that makes
+        use of this one, so results of the two are consistent, but simply
+        output in a different format (see :py:class:`ESFResult`, and its
+        :py:meth:`ESFResult.get_raw` method).
 
         """
         if self.sf.TMC == 0:  # no TMC
@@ -166,19 +166,19 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
     def get_output(self):
         """
-            This is the interfaces provided to get the evaluation of the TMC
-            corrected structure function.
+        This is the interfaces provided to get the evaluation of the TMC
+        corrected structure function.
 
-            The kinematics is set to be the requested one, as it should (and not
-            the shifted one used in evaluation of expression terms).
+        The kinematics is set to be the requested one, as it should (and not
+        the shifted one used in evaluation of expression terms).
 
-            This method is the sibling of :py:meth:`get_result`, providing a
-            :py:class:`dict` as output, instead of an object.
+        This method is the sibling of :py:meth:`get_result`, providing a
+        :py:class:`dict` as output, instead of an object.
 
-            Returns
-            -------
-            out : dict
-                an dictionary that stores the details and result of the calculation
+        Returns
+        -------
+        out : dict
+            an dictionary that stores the details and result of the calculation
 
         """
         return self.get_result().get_raw()
@@ -297,17 +297,17 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     """
-        This function implements the actual formula for target mass corrections
-        of F2, for all the three (+1) kinds described in the parent class
-        :py:class:`EvaluatedStructureFunctionTMC`.
+    This function implements the actual formula for target mass corrections
+    of F2, for all the three (+1) kinds described in the parent class
+    :py:class:`EvaluatedStructureFunctionTMC`.
 
-        Parameters
-        ----------
-        SF : StructureFunction
-            the interface object representing the structure function kind he
-            belongs to
-        kinematics : dict
-            requested kinematic point
+    Parameters
+    ----------
+    SF : StructureFunction
+        the interface object representing the structure function kind he
+        belongs to
+    kinematics : dict
+        requested kinematic point
 
     """
 
@@ -324,18 +324,14 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         )
 
         # collect F2
-        F2out = self.sf.get_esf(
-            self.sf.obs_name, self._shifted_kinematics
-        ).get_result()
+        F2out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # join
         return approx_prefactor * F2out
 
     def _get_result_APFEL(self):
         # return self._get_result_APFEL_strict()
         # collect F2
-        F2out = self.sf.get_esf(
-            self.sf.obs_name, self._shifted_kinematics
-        ).get_result()
+        F2out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute integral
         h2out = self._h2()
 
@@ -345,9 +341,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     def _get_result_exact(self):
         factor_g2 = 12.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 5
         # collect F2
-        F2out = self.sf.get_esf(
-            self.sf.obs_name, self._shifted_kinematics
-        ).get_result()
+        F2out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute raw integral
         h2out = self._h2()
         # compute nested integral
@@ -397,17 +391,17 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
 
 class ESFTMC_FL(EvaluatedStructureFunctionTMC):
     """
-        This function implements the actual formula for target mass corrections
-        of FL, for all the three (+1) kinds described in the parent class
-        :py:class:`EvaluatedStructureFunctionTMC`.
+    This function implements the actual formula for target mass corrections
+    of FL, for all the three (+1) kinds described in the parent class
+    :py:class:`EvaluatedStructureFunctionTMC`.
 
-        Parameters
-        ----------
-        SF : StructureFunction
-            the interface object representing the structure function kind he
-            belongs to
-        kinematics : dict
-            requested kinematic point
+    Parameters
+    ----------
+    SF : StructureFunction
+        the interface object representing the structure function kind he
+        belongs to
+    kinematics : dict
+        requested kinematic point
 
     """
 
@@ -428,9 +422,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         # fmt: on
 
         # collect structure functions at shifted kinematics
-        FLout = self.sf.get_esf(
-            self.sf.obs_name, self._shifted_kinematics
-        ).get_result()
+        FLout = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         F2out = self.sf.get_esf(
             self.sf.obs_name.apply_kind("F2"), self._shifted_kinematics
         ).get_result()
@@ -440,9 +432,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
 
     def _get_result_APFEL(self):
         # collect F2
-        FLout = self.sf.get_esf(
-            self.sf.obs_name, self._shifted_kinematics
-        ).get_result()
+        FLout = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute integral
         h2out = self._h2()
 
@@ -452,9 +442,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
     def _get_result_exact(self):
         factor_g2 = 8.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 3
         # collect F2
-        FLout = self.sf.get_esf(
-            self.sf.obs_name, self._shifted_kinematics
-        ).get_result()
+        FLout = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute raw integral
         h2out = self._h2()
         # compute nested integral
@@ -468,17 +456,17 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
 
 class ESFTMC_F3(EvaluatedStructureFunctionTMC):
     """
-        This function implements the actual formula for target mass corrections
-        of F3, for all the three (+1) kinds described in the parent class
-        :py:class:`EvaluatedStructureFunctionTMC`.
+    This function implements the actual formula for target mass corrections
+    of F3, for all the three (+1) kinds described in the parent class
+    :py:class:`EvaluatedStructureFunctionTMC`.
 
-        Parameters
-        ----------
-        SF : StructureFunction
-            the interface object representing the structure function kind he
-            belongs to
-        kinematics : dict
-            requested kinematic point
+    Parameters
+    ----------
+    SF : StructureFunction
+        the interface object representing the structure function kind he
+        belongs to
+    kinematics : dict
+        requested kinematic point
 
     """
 
@@ -498,9 +486,7 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
         )
 
         # collect F3
-        F3out = self.sf.get_esf(
-            self.sf.obs_name, self._shifted_kinematics
-        ).get_result()
+        F3out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # join
         return approx_prefactor * F3out
 
@@ -533,9 +519,7 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
 
     def _get_result_exact(self):
         # collect F3
-        F3out = self.sf.get_esf(
-            self.sf.obs_name, self._shifted_kinematics
-        ).get_result()
+        F3out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute integral
         h3out = self._h3()
 

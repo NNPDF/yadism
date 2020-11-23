@@ -29,4 +29,5 @@ def weights_heavy(nhq, coupling_constants, Q2, kind):
             weights["qVA"][-q] = -w
     return weights
 
+
 # TODO def weights_heavy_intrinsic(nhq, coupling_constants, Q2, kind, intrinsic)

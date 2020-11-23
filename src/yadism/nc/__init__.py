@@ -27,7 +27,7 @@ coefficient_functions = {
         },
         "asy": {
             "gVV": F2asyGluonVV,
-        }
+        },
     },
     "FL": {
         "light": {
@@ -41,7 +41,7 @@ coefficient_functions = {
         },
         "asy": {
             "gVV": FLasyGluonVV,
-        }
+        },
     },
     "F3": {
         "light": {
@@ -55,6 +55,6 @@ coefficient_functions = {
         },
         "asy": {
             "gVV": pc.EmptyPartonicChannel,
-        }
-    }
+        },
+    },
 }

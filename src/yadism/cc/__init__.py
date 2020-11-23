@@ -30,7 +30,7 @@ coefficient_functions = {
         "asy": {
             "q": F2asyQuark,
             "g": F2asyGluon,
-        }
+        },
     },
     "FL": {
         "light": {
@@ -44,7 +44,7 @@ coefficient_functions = {
         "asy": {
             "q": FLasyQuark,
             "g": FLasyGluon,
-        }
+        },
     },
     "F3": {
         "light": {
@@ -58,6 +58,6 @@ coefficient_functions = {
         "asy": {
             "q": F3asyQuark,
             "g": F3asyGluon,
-        }
-    }
+        },
+    },
 }

@@ -18,7 +18,7 @@ from ..esf.distribution_vec import rsl_from_distr_coeffs
 
 class F3asyQuark(pc.PartonicChannelAsy):
     """
-        Computes the gluon channel of the asymptotic limit of F3heavy.
+    Computes the gluon channel of the asymptotic limit of F3heavy.
     """
 
     label = "q"
@@ -66,7 +66,7 @@ class F3asyQuark(pc.PartonicChannelAsy):
 
 class F3asyGluon(pc.PartonicChannelAsy):
     """
-        Computes the gluon channel of the asymptotic limit of F3heavy.
+    Computes the gluon channel of the asymptotic limit of F3heavy.
     """
 
     label = "g"

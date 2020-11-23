@@ -14,12 +14,12 @@ flavors = external_flavors + flavor_families
 
 class ObservableName:
     """
-        Wrapper to observable names to easy split them into two parts.
+    Wrapper to observable names to easy split them into two parts.
 
-        Parameters
-        ----------
-            name : str
-                full observable name
+    Parameters
+    ----------
+        name : str
+            full observable name
     """
 
     def __init__(self, name):
@@ -41,28 +41,28 @@ class ObservableName:
 
     def apply_kind(self, kind):
         """
-            Create new object with given kind and our flavor
+        Create new object with given kind and our flavor
 
-            Parameters
-            ----------
-                kind : str
-                    new kind
+        Parameters
+        ----------
+            kind : str
+                new kind
 
-            Returns
-            -------
-                apply_kind : type(self)
-                    new kind and our flavor
+        Returns
+        -------
+            apply_kind : type(self)
+                new kind and our flavor
         """
         return type(self)(kind + self.flavor)
 
     def apply_asy(self):
         """
-            Computes the asymptotic heavy correspondend.
+        Computes the asymptotic heavy correspondend.
 
-            Returns
-            -------
-                apply_asy : type(self)
-                    asymptotic heavy correspondend
+        Returns
+        -------
+            apply_asy : type(self)
+                asymptotic heavy correspondend
         """
         if self.flavor not in heavys:
             raise ValueError(f"observable is not heavy! [{self}]")
@@ -74,29 +74,29 @@ class ObservableName:
 
     def apply_flavor(self, flavor):
         """
-            Create new object with given flavor and our kind
+        Create new object with given flavor and our kind
 
-            Parameters
-            ----------
-                flavor : str
-                    new flavor
+        Parameters
+        ----------
+            flavor : str
+                new flavor
 
-            Returns
-            -------
-                apply_flavor : type(self)
-                    our kind and new flavor
+        Returns
+        -------
+            apply_flavor : type(self)
+                our kind and new flavor
         """
         return type(self)(self.kind + flavor)
 
     @property
     def is_heavy(self):
         """
-            Is it a heavy flavor?
+        Is it a heavy flavor?
 
-            Returns
-            -------
-                is_heavy : bool
-                    is a heavy flavor?
+        Returns
+        -------
+            is_heavy : bool
+                is a heavy flavor?
         """
         return not self.flavor == "light"
 
@@ -133,12 +133,12 @@ class ObservableName:
 
     def apply_flavor_family(self):
         """
-            Return name with abstract flavor family name
+        Return name with abstract flavor family name
 
-            Returns
-            -------
-                apply_flavor_family : type(self)
-                    new ObservableName
+        Returns
+        -------
+            apply_flavor_family : type(self)
+                new ObservableName
         """
         return self.apply_flavor(self.flavor_family)
 
@@ -163,17 +163,17 @@ class ObservableName:
     @classmethod
     def has_heavies(cls, names):
         """
-            Are there any heavy objects in names?
+        Are there any heavy objects in names?
 
-            Parameters
-            ----------
-                names : list(str)
-                    names to check
+        Parameters
+        ----------
+            names : list(str)
+                names to check
 
-            Returns
-            -------
-                has_heavies : bool
-                    are there heavy obs in names?
+        Returns
+        -------
+            has_heavies : bool
+                are there heavy obs in names?
         """
         for n in names:
             if not cls.is_valid(n):
@@ -186,17 +186,17 @@ class ObservableName:
     @classmethod
     def has_lights(cls, names):
         """
-            Are there any light objects in names?
+        Are there any light objects in names?
 
-            Parameters
-            ----------
-                names : list(str)
-                    names to check
+        Parameters
+        ----------
+            names : list(str)
+                names to check
 
-            Returns
-            -------
-                has_lights : bool
-                    are there light obs in names?
+        Returns
+        -------
+            has_lights : bool
+                are there light obs in names?
         """
         for n in names:
             if not cls.is_valid(n):
@@ -217,12 +217,12 @@ class ObservableName:
     @classmethod
     def is_valid(cls, name):
         """
-            Tests whether the name is a valid observable name
+        Tests whether the name is a valid observable name
 
-            Returns
-            -------
-                is_valid : bool
-                    is valid name?
+        Returns
+        -------
+            is_valid : bool
+                is valid name?
         """
         try:
             cls(name)
@@ -233,12 +233,12 @@ class ObservableName:
     @classmethod
     def all(cls):
         """
-            Iterates all valid (external) names.
+        Iterates all valid (external) names.
 
-            Yields
-            ------
-                all : cls
-                    ObservableName
+        Yields
+        ------
+            all : cls
+                ObservableName
         """
         for kind in kinds:
             if kind == fake_kind:

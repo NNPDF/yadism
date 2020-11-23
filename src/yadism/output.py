@@ -12,8 +12,8 @@ from .esf.esf_result import ESFResult
 
 class Output(dict):
     """
-        .. todo::
-            docs
+    .. todo::
+        docs
     """
 
     def apply_pdf(self, pdfs):
@@ -27,7 +27,9 @@ class Output(dict):
             ret[obs] = []
             for kin in self[obs]:
                 ret[obs].append(
-                    ESFResult.from_dict(kin).apply_pdf(pdfs, self["pids"], self["xgrid"], self["xiF"])
+                    ESFResult.from_dict(kin).apply_pdf(
+                        pdfs, self["pids"], self["xgrid"], self["xiF"]
+                    )
                 )
         return ret
 

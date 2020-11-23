@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class CouplingConstants:
     """
-        Defines the coupling constants between the QCD particles and the EW particles
+    Defines the coupling constants between the QCD particles and the EW particles
     """
 
     def __init__(self, theory_config, obs_config):
@@ -53,19 +53,19 @@ class CouplingConstants:
 
     def leptonic_coupling(self, mode, kind):
         """
-            Computes the coupling of the boson to the lepton
+        Computes the coupling of the boson to the lepton
 
-            Parameters
-            ----------
-                mode : str
-                    scattered bosons
-                kind : str
-                    observable kind to distinguish parity violating and parity conserving couplings
+        Parameters
+        ----------
+            mode : str
+                scattered bosons
+            kind : str
+                observable kind to distinguish parity violating and parity conserving couplings
 
-            Returns
-            -------
-                leptonic_coupling : float
-                    leptonic coupling
+        Returns
+        -------
+            leptonic_coupling : float
+                leptonic coupling
         """
         # for CC the polarisation are NOT part of the structure functions, but are accounted for on
         # the cross section level. In order to have a true-trivial LO coeficient function, return here 2.
@@ -116,26 +116,26 @@ class CouplingConstants:
         self, mode, kind, pid, quark_coupling_type=None, cc_flavor=None
     ):
         """
-            Computes the coupling of the boson to the parton
+        Computes the coupling of the boson to the parton
 
-            Parameters
-            ----------
-                mode : str
-                    scattered bosons
-                kind : str
-                    observable kind to distinguish parity violating and parity conserving couplings
-                pid : int
-                    parton identifier
-                quark_coupling_type : str
-                    flag to distinguish for heavy quarks between vectorial and axial-vectorial
-                    coupling
-                cc_flavor : str
-                    observable flavor to determine the heavy flavour couplings in F3
+        Parameters
+        ----------
+            mode : str
+                scattered bosons
+            kind : str
+                observable kind to distinguish parity violating and parity conserving couplings
+            pid : int
+                parton identifier
+            quark_coupling_type : str
+                flag to distinguish for heavy quarks between vectorial and axial-vectorial
+                coupling
+            cc_flavor : str
+                observable flavor to determine the heavy flavour couplings in F3
 
-            Returns
-            -------
-                hadronic_coupling : float
-                    hadronic coupling
+        Returns
+        -------
+            hadronic_coupling : float
+                hadronic coupling
         """
         # for quarks only the flavor does matter
         pid = abs(pid)
@@ -176,19 +176,19 @@ class CouplingConstants:
 
     def propagator_factor(self, mode, Q2):
         """
-            Propagator correction to account for different bosons (:math:`\\eta` in PDG)
+        Propagator correction to account for different bosons (:math:`\\eta` in PDG)
 
-            Parameters
-            ----------
-                mode : str
-                    scattered bosons
-                Q2 : float
-                    virtuality of the process
+        Parameters
+        ----------
+            mode : str
+                scattered bosons
+            Q2 : float
+                virtuality of the process
 
-            Returns
-            -------
-                propagator_factor : float
-                    propagator shift
+        Returns
+        -------
+            propagator_factor : float
+                propagator shift
         """
         if mode == "phph":
             return 1
@@ -213,29 +213,29 @@ class CouplingConstants:
 
     def get_weight(self, pid, Q2, kind, quark_coupling_type=None, cc_flavor=None):
         """
-            Compute the weight for the pid contributions to the structure function.
+        Compute the weight for the pid contributions to the structure function.
 
-            Combine the charges, both on the leptonic side and the hadronic side, as well
-            as propagator changes and/or corrections.
+        Combine the charges, both on the leptonic side and the hadronic side, as well
+        as propagator changes and/or corrections.
 
-            Parameters
-            ----------
-                pid : int
-                    particle identifier
-                Q2 : float
-                    DIS virtuality
-                kind : str
-                    observable kind to distinguish parity violating and parity conserving couplings
-                quark_coupling_type : str
-                    flag to distinguish for heavy quarks between vectorial and axial-vectorial
-                    coupling
-                cc_flavor : str
-                    observable flavor to determine the heavy flavour couplings in F3
+        Parameters
+        ----------
+            pid : int
+                particle identifier
+            Q2 : float
+                DIS virtuality
+            kind : str
+                observable kind to distinguish parity violating and parity conserving couplings
+            quark_coupling_type : str
+                flag to distinguish for heavy quarks between vectorial and axial-vectorial
+                coupling
+            cc_flavor : str
+                observable flavor to determine the heavy flavour couplings in F3
 
-            Returns
-            -------
-                w : float
-                    weight
+        Returns
+        -------
+            w : float
+                weight
         """
         w_phph = (
             self.leptonic_coupling("phph", kind)
@@ -271,19 +271,19 @@ class CouplingConstants:
     @classmethod
     def from_dict(cls, theory, observables):
         """
-            Creates the object from the theory dictionary
+        Creates the object from the theory dictionary
 
-            Parameters
-            ----------
-                theory : dict
-                    theory dictionary
-                observables : dict
-                    observables dictionary
+        Parameters
+        ----------
+            theory : dict
+                theory dictionary
+            observables : dict
+                observables dictionary
 
-            Returns
-            -------
-                o : CouplingConstants
-                    created object
+        Returns
+        -------
+            o : CouplingConstants
+                created object
         """
         theory_config = {
             "MZ2": theory.get("MZ", 91.1876) ** 2,  # defaults to the PDG2020 value
@@ -326,12 +326,12 @@ class CouplingConstants:
 
 class CKM2Matrix:
     """
-        Wrapper for the CKM matrix
+    Wrapper for the CKM matrix
 
-        Parameters
-        ----------
-            elems : list(float)
-                squared elements in row order
+    Parameters
+    ----------
+        elems : list(float)
+            squared elements in row order
     """
 
     flav_rows = ["u", "c", "t"]
@@ -348,17 +348,17 @@ class CKM2Matrix:
 
     def __getitem__(self, key):
         """
-            Allows pid and strings as key
+        Allows pid and strings as key
 
-            Parameters
-            ----------
-                key :
-                    input key
+        Parameters
+        ----------
+            key :
+                input key
 
-            Returns
-            -------
-                item :
-                    element(s)
+        Returns
+        -------
+            item :
+                element(s)
         """
         nkey = []
         if not isinstance(key, tuple):
@@ -378,17 +378,17 @@ class CKM2Matrix:
 
     def __call__(self, pid):
         """
-            Get column and row depending on pid
+        Get column and row depending on pid
 
-            Parameters
-            ----------
-                pid : int
-                    particle identifier
+        Parameters
+        ----------
+            pid : int
+                particle identifier
 
-            Returns
-            -------
-                elems : list(float)
-                    row or column
+        Returns
+        -------
+            elems : list(float)
+                row or column
         """
         if pid % 2 == 0:
             return self[pid]
@@ -396,17 +396,17 @@ class CKM2Matrix:
 
     def masked(self, flavor):
         """
-            Apply a mask according to the flavor
+        Apply a mask according to the flavor
 
-            Parameters
-            ----------
-                flavor : str
-                    flavor type
+        Parameters
+        ----------
+            flavor : str
+                flavor type
 
-            Returns
-            -------
-                matrix : CKMMatrix
-                    masked matrix
+        Returns
+        -------
+            matrix : CKMMatrix
+                masked matrix
         """
         if flavor == "light":
             op = np.array([[1, 1, 0], [0, 0, 0], [0, 0, 0]])
@@ -423,18 +423,18 @@ class CKM2Matrix:
     @classmethod
     def from_str(cls, theory_string):
         """
-            Create the object from a string representation
+        Create the object from a string representation
 
-            Parameters
-            ----------
-                theory_string : str
-                    all elements rowwise in a string
+        Parameters
+        ----------
+            theory_string : str
+                all elements rowwise in a string
 
 
-            Returns
-            -------
-                m : CKMMatrix
-                    created object
+        Returns
+        -------
+            m : CKMMatrix
+                created object
         """
         elems = theory_string.split(" ")
         return cls(np.power(np.array(elems, dtype=np.float), 2))

@@ -14,20 +14,20 @@ from .. import partonic_channel as pc
 
 class FLasyGluonVV(pc.PartonicChannelAsy):
     """
-        Computes the gluon channel of the asymptotic limit of FLheavy.
+    Computes the gluon channel of the asymptotic limit of FLheavy.
     """
 
     label = "gVV"
 
     def NLO(self):
         """
-            Returns
-            -------
-                sequence of callables
-                    coefficient functions
+        Returns
+        -------
+            sequence of callables
+                coefficient functions
 
-            .. todo::
-                docs
+        .. todo::
+            docs
         """
 
         def cg(z):
@@ -38,7 +38,7 @@ class FLasyGluonVV(pc.PartonicChannelAsy):
 
 class FLasyGluonAA(FLasyGluonVV):
     """
-        Computes the gluon channel of the asymptotic limit of FLheavy.
+    Computes the gluon channel of the asymptotic limit of FLheavy.
     """
 
     label = "gAA"

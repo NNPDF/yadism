@@ -14,20 +14,20 @@ from . import f2_light
 
 class F3lightNonSinglet(f2_light.F2lightNonSinglet):
     """
-        Computes light quark non-singlet channel of FLlight
+    Computes light quark non-singlet channel of FLlight
     """
 
     def NLO(self):
         """
-            Computes the quark singlet part of the next to leading order F3
-            structure function.
+        Computes the quark singlet part of the next to leading order F3
+        structure function.
 
-            |ref| implements :eqref:`155`, :cite:`moch-f3nc`.
+        |ref| implements :eqref:`155`, :cite:`moch-f3nc`.
 
-            Returns
-            -------
-                sequence of callables
-                    coefficient functions
+        Returns
+        -------
+            sequence of callables
+                coefficient functions
 
         """
         CF = constants.CF

@@ -166,22 +166,22 @@ def external_cards_apfel(defaults):
 
 class ObservablesGenerator(mode_selector.ModeSelector):
     """
-        Compile all theories to compare against
+    Compile all theories to compare against
 
-        Parameters
-        ----------
-            mode : str
-                active mode
+    Parameters
+    ----------
+        mode : str
+            active mode
     """
 
     def get_observables(self):
         """
-            Collect all runcards
+        Collect all runcards
 
-            Returns
-            -------
-                observables : list(dict)
-                    list of runcards
+        Returns
+        -------
+            observables : list(dict)
+                list of runcards
         """
         # default interpolation setup
         interpolation_xgrid = np.unique(

@@ -105,7 +105,8 @@ class Runner:
         self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
         self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory, self.threshold,
+            theory,
+            self.threshold,
         )
 
         # Non-eko theory
@@ -136,7 +137,7 @@ class Runner:
             pto=theory["PTO"],
             xiR=theory["XIR"],
             xiF=self.xiF,
-            M2hq=None,
+            m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
             M2target=theory["MP"] ** 2,
             FONLL_damping=FONLL_damping,
@@ -147,9 +148,6 @@ class Runner:
         self.observable_instances = {}
         for obs_name in observable_name.ObservableName.all():
             name = obs_name.name
-            lab = obs_name.mass_label
-            if lab is not None:
-                theory_params["M2hq"] = theory[lab] ** 2
 
             # initialize an SF instance for each possible structure function
             obj = SF(
