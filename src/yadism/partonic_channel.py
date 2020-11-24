@@ -57,7 +57,8 @@ class PartonicChannel(dict):
 
 
 class EmptyPartonicChannel(PartonicChannel):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args)
 
 
 class PartonicChannelLight(PartonicChannel):

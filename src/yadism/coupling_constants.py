@@ -113,7 +113,7 @@ class CouplingConstants:
         raise ValueError(f"Unknown mode: {mode}")
 
     def hadronic_coupling(
-        self, mode, kind, pid, quark_coupling_type=None, cc_flavor=None
+        self, mode, kind, pid, quark_coupling_type=None, cc_mask=None
     ):
         """
         Computes the coupling of the boson to the parton
@@ -129,7 +129,7 @@ class CouplingConstants:
             quark_coupling_type : str
                 flag to distinguish for heavy quarks between vectorial and axial-vectorial
                 coupling
-            cc_flavor : str
+            cc_mask : str
                 observable flavor to determine the heavy flavour couplings in F3
 
         Returns
@@ -170,7 +170,7 @@ class CouplingConstants:
             else:
                 return 2 * gqv * gqa
         elif mode == "WW":
-            return np.sum(self.theory_config["CKM"].masked(cc_flavor)(pid))
+            return np.sum(self.theory_config["CKM"].masked(cc_mask)(pid))
 
         raise ValueError(f"Unknown mode: {mode}")
 
@@ -211,7 +211,7 @@ class CouplingConstants:
             return eta_W
         raise ValueError(f"Unknown mode: {mode}")
 
-    def get_weight(self, pid, Q2, kind, quark_coupling_type=None, cc_flavor=None):
+    def get_weight(self, pid, Q2, kind, quark_coupling_type=None, cc_mask=None):
         """
         Compute the weight for the pid contributions to the structure function.
 
@@ -229,7 +229,7 @@ class CouplingConstants:
             quark_coupling_type : str
                 flag to distinguish for heavy quarks between vectorial and axial-vectorial
                 coupling
-            cc_flavor : str
+            cc_mask : str
                 observable flavor to determine the heavy flavour couplings in F3
 
         Returns
@@ -264,7 +264,7 @@ class CouplingConstants:
         # CC = W
         if self.obs_config["process"] == "CC":
             return self.leptonic_coupling("WW", kind) * self.hadronic_coupling(
-                "WW", kind, pid, cc_flavor=cc_flavor
+                "WW", kind, pid, cc_mask=cc_mask
             )
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
@@ -394,30 +394,29 @@ class CKM2Matrix:
             return self[pid]
         return self[:, pid]
 
-    def masked(self, flavor):
+    def masked(self, flavors):
         """
         Apply a mask according to the flavor
 
         Parameters
         ----------
-            flavor : str
-                flavor type
+            flavors : str
+                participating flavors as single characters
 
         Returns
         -------
             matrix : CKMMatrix
                 masked matrix
         """
-        if flavor == "light":
-            op = np.array([[1, 1, 0], [0, 0, 0], [0, 0, 0]])
-        elif flavor == "charm":
-            op = np.array([[0, 0, 0], [1, 1, 0], [0, 0, 0]])
-        elif flavor == "bottom":
-            op = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
-        elif flavor == "top":
-            op = np.array([[0, 0, 0], [0, 0, 0], [1, 1, 1]])
-        else:
-            raise ValueError(f"Unknown flavor {flavor}")
+        op = np.zeros((3, 3))
+        if "dus" in flavors:
+            op += np.array([[1, 1, 0], [0, 0, 0], [0, 0, 0]])
+        if "c" in flavors:
+            op += np.array([[0, 0, 0], [1, 1, 0], [0, 0, 0]])
+        if "b" in flavors:
+            op += np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
+        if "t" in flavors:
+            op += np.array([[0, 0, 0], [0, 0, 0], [1, 1, 1]])
         return type(self)(self.m * op)
 
     @classmethod

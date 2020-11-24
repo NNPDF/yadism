@@ -34,14 +34,8 @@ F2charm in FONLL in EM:
 
 """
 
-from . import nc
-from . import cc
-
-
-class CoefficientFunctionElement:
-    def __init__(self, partons, coeff):
-        self.partons = partons
-        self.coeff = coeff
+from .nc import kernels as nc_kernels
+from .cc import kernels as cc_kernels
 
 
 class CoefficientFunctionsCombiner:
@@ -58,72 +52,11 @@ class CoefficientFunctionsCombiner:
     def __init__(self, esf):
         self.esf = esf
         self.obs_name = esf.sf.obs_name
-        self.process = esf.sf.obs_params["process"]
-        self.nf = esf.sf.threshold.get_areas(esf.Q2 * esf.sf.xiF ** 2)[-1].nf
-        self.cfs = self.select_coefficient_functions(self.process, self.obs_name.kind)
-
-    def generate_light(self, nf):
-        """
-        Collect the light coefficient functions
-
-        Parameters
-        ----------
-            nf : int
-                number of light flavors
-
-        Returns
-        -------
-            elems : list(CoefficientFunctionElement)
-                list of elements
-        """
-        # quark couplings
-        tot_ch_sq = 0
-        ns_partons = {}
-        pids = range(1, nf + 1)
-        for q in pids:
-            w = self.esf.sf.coupling_constants.get_weight(
-                q, self.esf.Q2, self.obs_name.kind
-            )
-            ns_partons[q] = w
-            ns_partons[-q] = w if self.obs_name.kind != "F3" else -w
-            tot_ch_sq += w
-        ns = CoefficientFunctionElement(
-            ns_partons, self.cfs["light"]["ns"](self.esf, nf=nf)
-        )
-        # gluon coupling = charge average (omitting the *2/2)
-        ch_av = tot_ch_sq / len(pids)
-        g = CoefficientFunctionElement(
-            {21: ch_av}, self.cfs["light"]["g"](self.esf, nf=nf)
-        )
-        # same for singlet
-        s_partons = {q: ch_av for q in ns_partons}
-        s = CoefficientFunctionElement(
-            s_partons, self.cfs["light"]["s"](self.esf, nf=nf)
-        )
-        return (ns, g, s)
-
-    @staticmethod
-    def select_coefficient_functions(dis_currrent, kind):
-        """
-        Collect all necessary coefficient functions
-
-        Parameters
-        ----------
-            dis_current : str
-                exchanged electro-weak boson
-            kind : str
-                structure function
-
-        Returns
-        -------
-            cfs : dict
-                mapping of coefficient functions
-        """
-        if dis_currrent == "CC":
-            cfs = cc.coefficient_functions
+        if esf.sf.obs_params["process"] == "CC":
+            self.kernels = cc_kernels
         else:
-            cfs = nc.coefficient_functions
-        return cfs[kind]
+            self.kernels = nc_kernels
+        self.nf = esf.sf.threshold.get_areas(esf.Q2 * esf.sf.xiF ** 2)[-1].nf
 
     def collect_ffns(self):
         """
@@ -135,10 +68,8 @@ class CoefficientFunctionsCombiner:
                 all participants
         """
         elems = []
-        # light is trivial
         if self.obs_name.flavor in ["light", "total"]:
-            elems.extend(self.generate_light(self.nf))
-        # add heavy
+            elems.extend(self.kernels.generate_light(self.esf, self.nf))
         if self.obs_name.flavor_family in ["heavy", "total"]:
             # there is only *one* finite mass available, i.e. the next one
             if (
@@ -148,24 +79,7 @@ class CoefficientFunctionsCombiner:
                 raise ValueError(
                     f"{self.obs_name} is not available in FFNS with nl={self.nf}"
                 )
-            nhq = self.nf + 1  # this way it will also work for total
-            m2hq = self.esf.sf.m2hq[nhq - 4]
-            # add contributions
-            weight_vv = self.esf.sf.coupling_constants.get_weight(
-                nhq, self.esf.Q2, self.obs_name.kind, "V"
-            )
-            weight_aa = self.esf.sf.coupling_constants.get_weight(
-                nhq, self.esf.Q2, self.obs_name.kind, "A"
-            )
-            gVV = CoefficientFunctionElement(
-                {21: weight_vv}, self.cfs["heavy"]["gVV"](self.esf, m2hq=m2hq)
-            )
-            gAA = CoefficientFunctionElement(
-                {21: weight_aa}, self.cfs["heavy"]["gAA"](self.esf, m2hq=m2hq)
-            )
-            # if self.obs_name.flavor == "bottom":
-            # import pdb; pdb.set_trace()
-            elems.extend((gVV, gAA))
+            elems.extend(self.kernels.generate_heavy(self.esf, self.nf))
         return elems
 
     def collect_fonll(self):

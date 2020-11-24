@@ -7,7 +7,7 @@ Defines the :py:class:`StructureFunction` class.
 """
 import logging
 
-from .esf import ESFmap
+from .esf import esf
 from .tmc import ESFTMCmap
 
 logger = logging.getLogger(__name__)
@@ -109,7 +109,7 @@ class StructureFunction:
         """
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
-            obj = ESFmap[obs_name.flavor_family](self, kinematics, force_local=True)
+            obj = esf.EvaluatedStructureFunction(self, kinematics, force_local=True)
             return obj
         # else we're happy to cache
         # is it us or do we need to delegate?
@@ -127,7 +127,7 @@ class StructureFunction:
                 if use_tmc_if_available:
                     obj = ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
-                    obj = ESFmap[obs_name.flavor_family](self, kinematics, *args)
+                    obj = esf.EvaluatedStructureFunction(self, kinematics, *args)
                 self.__ESFcache[key] = obj
                 return obj
         else:
