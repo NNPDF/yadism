@@ -183,3 +183,11 @@ def weights(coupling_constants, Q2, kind, cc_mask, nf):
         tot_ch_sq *= -1
     weights["g"][21] = tot_ch_sq / norm / 2
     return weights
+
+
+def generate_light_fonll_diff(_esf, _nf):
+    return ()
+
+
+def generate_heavy_fonll_diff(esf, nf):
+    return ()

@@ -64,9 +64,7 @@ class CoefficientFunctionsCombiner:
             elems.extend(self.kernels.generate_light(self.esf, self.nf))
         # heavy is not allowed
         if self.obs_name.flavor_family in ["heavy"]:
-            raise ValueError(
-                f"{self.obs_name} is not available in ZM-VFNS"
-            )
+            raise ValueError(f"{self.obs_name} is not available in ZM-VFNS")
         return elems
 
     def collect_fonll(self):
@@ -79,8 +77,16 @@ class CoefficientFunctionsCombiner:
                 all participants
         """
         elems = []
+        nl = self.esf.sf.threshold.min_nf
+        # light is *everything* up to nf and not only u+d+s
+        if self.obs_name.flavor in ["light", "total"]:
+            elems.extend(self.kernels.generate_light(self.esf, nl))
+            # add F^d
+            elems.extend(self.kernels.generate_light_fonll_diff(self.esf, nl))
         if self.obs_name.flavor_family in ["heavy", "total"]:
-            pass
+            elems.extend(self.kernels.generate_heavy(self.esf, nl))
+            # add F^d
+            elems.extend(self.kernels.generate_heavy_fonll_diff(self.esf, nl))
         return elems
 
     def collect_elems(self):
@@ -96,5 +102,7 @@ class CoefficientFunctionsCombiner:
             full = self.collect_ffns()
         elif self.esf.sf.threshold.scheme == "ZM-VFNS":
             full = self.collect_zmvfns()
+        elif self.esf.sf.threshold.scheme in ["FONLL-A"]:
+            full = self.collect_fonll()
         # drop all elements that have 0 weight
         return full

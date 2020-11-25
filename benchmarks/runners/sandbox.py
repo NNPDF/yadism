@@ -31,24 +31,24 @@ def generate_observables():
     # light_kin.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     obs_list = [
         "F2light",
-        #"F2charm",
+        "F2charm",
         #"F2bottom",
         # "F2top",
         "F2total",
-        "FLlight",
-        # "FLcharm",
+        #"FLlight",
+        #"FLcharm",
         #"FLbottom",
-        "FLtotal",
-        "F3light",
+        #"FLtotal",
+        #"F3light",
         # "F3charm",
         #"F3bottom",
-        "F3total",
+        #"F3total",
     ]
     cards = []
     card = copy.deepcopy(defaults)
     # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
     # print(card)
-    card["prDIS"] = "CC"
+    card["prDIS"] = "NC"
     # card["PropagatorCorrection"] = .999
     # card["ProjectileDIS"] = "antineutrino"
     # card["PolarizationDIS"] = 0.5
@@ -74,7 +74,7 @@ class Sandbox:
             0,
             ["CT14llo_NF6"],
             {
-                "FNS": self.db.theory_query.FNS == "ZM-VFNS",
+                # "FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "TMC": self.db.theory_query.TMC == 0,
                 # "DAMP": self.db.theory_query.DAMP == 0,
@@ -84,14 +84,14 @@ class Sandbox:
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["CT14llo_NF6"],
+            ["gonly"],
             {
                 # "XIR": self.db.theory_query.XIR == 0.5,
-                # "NfFF": self.db.theory_query.NfFF == 4,
+                "NfFF": self.db.theory_query.NfFF == 4,
                 # "XIF": self.db.theory_query.XIF == 0.5,
                 # "NfFF": self.db.theory_query.NfFF == 5,
                 # "TMC": self.db.theory_query.TMC == 1,
-                "FNS": self.db.theory_query.FNS == "ZM-VFNS",
+                "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
             },
         )
@@ -100,5 +100,5 @@ class Sandbox:
 if __name__ == "__main__":
     generate_observables()
     sand = Sandbox()
-    sand.run_LO()
+    # sand.run_LO()
     sand.run_NLO()

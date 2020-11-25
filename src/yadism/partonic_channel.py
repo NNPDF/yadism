@@ -68,9 +68,9 @@ class PartonicChannelLight(PartonicChannel):
 
 
 class PartonicChannelAsy(PartonicChannel):
-    def __init__(self, *args, m2hq):
-        super().__init__(*args)
-        self.L = np.log(self.ESF.Q2 / m2hq)  # pylint: disable=protected-access
+    def __init__(self, esf, m2hq):
+        super().__init__(esf)
+        self.L = np.log(esf.Q2 / m2hq)
 
 
 class PartonicChannelAsyIntrinsic(PartonicChannel):

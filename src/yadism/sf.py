@@ -109,7 +109,7 @@ class StructureFunction:
         """
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
-            obj = esf.EvaluatedStructureFunction(self, kinematics, force_local=True)
+            obj = esf.EvaluatedStructureFunction(self, kinematics)
             return obj
         # else we're happy to cache
         # is it us or do we need to delegate?
