@@ -60,6 +60,9 @@
 .. |TMC| replace::
    :abbr:`TMC (Target Mass Corrections)`
 
+.. |FNS| replace::
+   :abbr:`FNS (Flavor Number Scheme)`
+
 .. |FFNS| replace::
    :abbr:`FFNS (Fixed Flavor Number Scheme)`
 

@@ -1,38 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-F2total in ZM-VFNS
-[{
-    couplings: {1: 1/9, 2: 4/9},
-    coeff: F2lightNonSinglet
-},
-]
-
-F2charm in FONLL in EM:
-[{ # eq. 90
-    couplings: {21: 1},
-    coeff: F2heavyGluonVV(Q2, nf=nl,m=mc)
-},{
-    couplings: {1: 1, 2: 1, 3: 1, -1: 1, -2: 1, -3: 1},
-    coeff: F2heavySingletVV(Q2, nf=nl,m=mc)
-}, { # eq. 91
-    couplings: {21: -1},
-    coeff: F2asyGluonVV(Q2, nf=nl,m=mc)
-},{
-    couplings: {1: 1, 2: 1, 3: 1, -1: 1, -2: 1, -3: 1},
-    coeff: F2AsySingletVV(Q2, nf=nl,m=mc)
-}, { # eq. 92
-    couplings: {1: 1/9, 2: 4/9, 3: 1/9, 4: 4/9, ...},
-    coeff: F2lightNonSinglet(nf=nl+1)
-}, {
-    couplings: {1: 1/9, 2: 4/9, 3: 1/9, 4: 4/9, ...},
-    coeff: F2lightSinglet(nf=nl+1)
-}, {
-    couplings: {21: 1},
-    coeff: F2lightGluon(nf=nl+1)
-}
-]
-
-"""
 
 from .nc import kernels as nc_kernels
 from .cc import kernels as cc_kernels
@@ -40,7 +6,7 @@ from .cc import kernels as cc_kernels
 
 class CoefficientFunctionsCombiner:
     """
-    Do the matching between coefficient functions and partons with their approptiate coupling
+    Does the matching between coefficient functions and partons with their approptiate coupling
     strength.
 
     Parameters
@@ -60,14 +26,15 @@ class CoefficientFunctionsCombiner:
 
     def collect_ffns(self):
         """
-        Collect the coefficient functions in the FFNS
+        Collects all kernels in the |FFNS|.
 
         Returns
         -------
-            elems : list(dict)
+            elems : list(yadism.kernels.Kernel)
                 all participants
         """
         elems = []
+        # light is *everything* up to nf and not only u+d+s
         if self.obs_name.flavor in ["light", "total"]:
             elems.extend(self.kernels.generate_light(self.esf, self.nf))
         if self.obs_name.flavor_family in ["heavy", "total"]:
@@ -82,12 +49,52 @@ class CoefficientFunctionsCombiner:
             elems.extend(self.kernels.generate_heavy(self.esf, self.nf))
         return elems
 
+    def collect_zmvfns(self):
+        """
+        Collects all kernels for |ZM-VFNS|.
+
+        Returns
+        -------
+            elems : list(yadism.kernels.Kernel)
+                all participants
+        """
+        elems = []
+        # light is *everything* up to nf and not only u+d+s
+        if self.obs_name.flavor in ["light", "total"]:
+            elems.extend(self.kernels.generate_light(self.esf, self.nf))
+        # heavy is not allowed
+        if self.obs_name.flavor_family in ["heavy"]:
+            raise ValueError(
+                f"{self.obs_name} is not available in ZM-VFNS"
+            )
+        return elems
+
     def collect_fonll(self):
+        """
+        Collects all kernels for FONLL.
+
+        Returns
+        -------
+            elems : list(yadism.kernels.Kernel)
+                all participants
+        """
+        elems = []
         if self.obs_name.flavor_family in ["heavy", "total"]:
             pass
+        return elems
 
     def collect_elems(self):
+        """
+        Collects all kernels according to the |FNS|.
+
+        Returns
+        -------
+            elems : list(yadism.kernels.Kernel)
+                all participants
+        """
         if self.esf.sf.threshold.scheme == "FFNS":
             full = self.collect_ffns()
+        elif self.esf.sf.threshold.scheme == "ZM-VFNS":
+            full = self.collect_zmvfns()
         # drop all elements that have 0 weight
         return full

@@ -1,4 +1,39 @@
 # -*- coding: utf-8 -*-
+"""
+F2total in ZM-VFNS
+[{
+    couplings: {1: 1/9, 2: 4/9},
+    coeff: F2lightNonSinglet
+},
+]
+
+F2charm in FONLL in EM:
+[{ # eq. 90
+    couplings: {21: 1},
+    coeff: F2heavyGluonVV(Q2, nf=nl,m=mc)
+},{
+    couplings: {1: 1, 2: 1, 3: 1, -1: 1, -2: 1, -3: 1},
+    coeff: F2heavySingletVV(Q2, nf=nl,m=mc)
+}, { # eq. 91
+    couplings: {21: -1},
+    coeff: F2asyGluonVV(Q2, nf=nl,m=mc)
+},{
+    couplings: {1: 1, 2: 1, 3: 1, -1: 1, -2: 1, -3: 1},
+    coeff: F2AsySingletVV(Q2, nf=nl,m=mc)
+}, { # eq. 92
+    couplings: {1: 1/9, 2: 4/9, 3: 1/9, 4: 4/9, ...},
+    coeff: F2lightNonSinglet(nf=nl+1)
+}, {
+    couplings: {1: 1/9, 2: 4/9, 3: 1/9, 4: 4/9, ...},
+    coeff: F2lightSinglet(nf=nl+1)
+}, {
+    couplings: {21: 1},
+    coeff: F2lightGluon(nf=nl+1)
+}
+]
+
+"""
+
 from .. import partonic_channel as pc
 from .. import kernels
 
