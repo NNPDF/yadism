@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import copy
 import numbers
 
 import numpy as np
@@ -47,75 +46,6 @@ class ESFResult:
         new_output.values = np.array(input_dict["values"])
         new_output.errors = np.array(input_dict["errors"])
         return new_output
-
-    # def __add__(self, other):
-    #     res = copy.deepcopy(self)
-    #     res.__iadd__(other)
-    #     return res
-
-    # def __iadd__(self, other):
-    #     # if isinstance(other, ESFResult):
-    #     # else:
-    #     # raise ValueError("ESFResult can only be summed with another ESFResult
-
-    #     # iterate other as we're fine with ourselves as we are
-    #     for k in other.values:
-    #         if k in self.values:  # it was present before, so try to add it
-    #             if other.weights[k] != self.weights[k]:
-    #                 raise ValueError("Weights are not compatible")
-    #             self.values[k] += other.values[k]
-    #             self.errors[k] += other.errors[k]
-    #         else:  # truly new, so truly add it
-    #             self.weights[k] = other.weights[k]
-    #             self.values[k] = other.values[k]
-    #             self.errors[k] = other.errors[k]
-    #     return self
-
-    # def __neg__(self):
-    #     res = copy.deepcopy(self)
-    #     for k, v in self.values.items():
-    #         res.values[k] = -v
-    #     return res
-
-    # def __sub__(self, other):
-    #     return self.__add__(other.__neg__())
-
-    # def __isub__(self, other):
-    #     return self.__iadd__(other.__neg__())
-
-    # def __mul__(self, other):
-    #     res = copy.deepcopy(self)
-    #     res.__imul__(other)
-    #     return res
-
-    # def __rmul__(self, other):
-    #     return self.__mul__(other)
-
-    # def __imul__(self, other):
-    #     if isinstance(other, numbers.Number):
-    #         for k in self.values:
-    #             self.values[k] *= other
-    #             self.errors[k] *= other
-    #     elif len(other) == 2:
-    #         # assuming is a number with an error
-    #         # note that the error has to be asigned first, as it needs the old value!
-    #         for k in self.values:
-    #             self.errors[k] = np.abs(other[1] * self.values[k]) + np.abs(
-    #                 other[0] * self.errors[k]
-    #             )
-    #             self.values[k] *= other[0]
-    #     else:
-    #         raise ValueError(
-    #             "ESFResult can only be multiplied by a number, or number with an error"
-    #         )
-
-    #     return self
-
-    # def __truediv__(self, other):
-    #     return self.__mul__(1.0 / other)
-
-    # def __itruediv__(self, other):
-    #     return self.__imul__(1.0 / other)
 
     def apply_pdf(self, lhapdf_like, pids, xgrid, xiF):
         r"""
