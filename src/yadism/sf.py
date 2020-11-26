@@ -136,17 +136,17 @@ class StructureFunction:
                 obs_name, kinematics, *args
             )
 
-    def get_output(self):
+    def get_result(self):
         """
-        Collects the output from all childrens.
+        Collects the results from all childrens.
 
         Returns
         -------
-            output : list(dict)
+            output : list(ESFResult)
                 all children outputs
         """
         output = []
         for esf in self.__ESFs:
-            output.append(esf.get_output())
+            output.append(esf.get_result())
 
         return output

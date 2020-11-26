@@ -172,11 +172,11 @@ class Runner:
         # Initialize output
         # ==============================
         self._output = Output()
+        self._output.update(self.interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
-        self._output["xgrid"] = self.interpolator.xgrid_raw.tolist()
         self._output["xiF"] = self.xiF
 
-    def get_output(self) -> Output:
+    def get_result(self, raw=False):
         """
         Compute coefficient functions grid for requested kinematic points.
 
@@ -221,12 +221,18 @@ class Runner:
             transient=True,
             console=self.console,
         ):
-            self._output[name] = obs.get_output()
+            self._output[name] = obs.get_result()
         end = time.time()
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")
 
-        return copy.deepcopy(self._output)
+        out = copy.deepcopy(self._output)
+        if raw:
+            out = out.get_raw()
+        return out
+
+    def get_output(self):
+        return self.get_result(True)
 
     def apply_pdf(self, pdfs: Any) -> dict:
         """
@@ -236,7 +242,7 @@ class Runner:
             - implement
             - docs
         """
-        return self.get_output().apply_pdf(pdfs)
+        return self.get_result().apply_pdf(pdfs)
 
     def clear(self) -> None:
         """

@@ -190,27 +190,3 @@ class EvaluatedStructureFunction:
         self.compute_local()
 
         return copy.deepcopy(self.res)
-
-    def get_output(self) -> dict:
-        """
-        Returns the output for this instance.
-
-        In particular it returns the convolution of the coefficient function
-        for the selected observable and the array of basis functions, so the
-        result will be an array itself, running over the interpolation grid.
-
-        Caching is provided as explained in the class description (see
-        :py:class:`EvaluatedStructureFunction`).
-
-        Returns
-        -------
-        dict
-            a collection of the output arrays with the following structure:
-
-            - `x`: the input momentum fraction
-            - `Q2`: the input process scale
-            - `values`: a :py:meth:`numpy.array` for the coefficient functions
-            - `errors`: a :py:meth:`numpy.array` with the integration errors
-
-        """
-        return self.get_result().get_raw()
