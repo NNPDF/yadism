@@ -8,6 +8,7 @@ Output
 """
 
 import numpy as np
+import pandas as pd
 import yaml
 
 from .esf.esf_result import ESFResult
@@ -22,7 +23,7 @@ class Output(dict):
 
     def apply_pdf(self, pdfs):
         # iterate
-        ret: dict = {}
+        ret = PDFOutput()
         for obs in self:
             if not on.ObservableName.is_valid(obs):
                 continue
@@ -50,11 +51,7 @@ class Output(dict):
         """
         out = {}
         # dump raw elements
-        for f in [
-            "interpolation_polynomial_degree",
-            "interpolation_is_log",
-            "xiF"
-        ]:
+        for f in ["interpolation_polynomial_degree", "interpolation_is_log", "xiF"]:
             out[f] = self[f]
         out["pids"] = list(self["pids"])
         # make raw lists
@@ -131,7 +128,7 @@ class Output(dict):
                 continue
             if obj[obs] is None:
                 continue
-            for j,kin in enumerate(obj[obs]):
+            for j, kin in enumerate(obj[obs]):
                 obj[obs][j] = ESFResult.from_dict(kin)
         return cls(obj)
 
@@ -152,5 +149,35 @@ class Output(dict):
         """
         obj = None
         with open(filename) as o:
-            obj = Output.load_yaml(o)
+            obj = cls.load_yaml(o)
         return obj
+
+
+class PDFOutput(Output):
+    def get_raw(self):
+        out = {}
+        for obs in self:
+            if self[obs] is None:
+                continue
+            out[obs] = []
+            for kin in self[obs]:
+                out[obs].append({k: float(v) for k, v in kin.items()})
+        return out
+
+    @classmethod
+    def load_yaml(cls, stream):
+        obj = yaml.safe_load(stream)
+        return cls(obj)
+
+    @property
+    def tables(self):
+        tables = {}
+        for k, v in self.items():
+            tables[k] = pd.DataFrame(v)
+
+        return tables
+
+    def dump_tables_to_file(self, filename):
+        with open(filename, "w") as f:
+            for name, table in self.tables.items():
+                f.write("\n".join([name, str(table), "\n"]))
