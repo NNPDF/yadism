@@ -21,7 +21,7 @@ out = yadism.run_yadism(theory, obs)
 out.dump_yaml_to_file(data / "pineappl_sample.yaml")
 
 # apply uonly pdf
-pdf_set = lhapdf.mkPDF("CT14llo_NF6",0)
+pdf_set = lhapdf.mkPDF("CT14llo_NF6", 0)
 pdf_out = out.apply_pdf(pdf_set)
 pdf_out.dump_yaml_to_file(data / "pineappl_sample_CT14llo_NF6_0000.yaml")
 
@@ -35,6 +35,7 @@ def list_pdfs(lhapdf_like, pids, Q2, xiF, xgrid):
             continue
         pdfs[j] = np.array([lhapdf_like.xfxQ2(pid, z, muF2) / z for z in xgrid])
     return pdfs
+
 
 # first_esf = out["F2total"][0]
 # first_pdfs = list_pdfs(pdf_set,out["pids"],first_esf.Q2, out["xiF"], out["interpolation_xgrid"])

@@ -47,8 +47,8 @@ def generate_observables():
     cards = []
     card = copy.deepcopy(defaults)
     # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
-    #card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
-    #card["interpolation_is_log"] = False
+    # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
+    # card["interpolation_is_log"] = False
     # print(card)
     card["prDIS"] = "CC"
     # card["PropagatorCorrection"] = .999
@@ -100,7 +100,7 @@ class Sandbox:
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    # generate_observables()
     sand = Sandbox()
     # sand.run_LO()
     sand.run_NLO()

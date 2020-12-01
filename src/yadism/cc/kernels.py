@@ -196,7 +196,7 @@ def generate_heavy_fonll_diff(esf, nl):
     nhq = nl + 1
     m2hq = esf.sf.m2hq[nhq - 4]
     # add light contributions
-    w = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nhq - 1], nl+1)
+    w = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nhq - 1], nl + 1)
     elems = (
         kernels.Kernel(w["q"], cfs["light"]["q"](esf, nf=nl + 1)),
         kernels.Kernel(

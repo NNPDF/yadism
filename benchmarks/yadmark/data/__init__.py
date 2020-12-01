@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import itertools
 
+
 def power_set(inp):
     """
     Thank you: https://stackoverflow.com/questions/5228158/
