@@ -26,19 +26,19 @@ pdf_out = out.apply_pdf(pdf_set)
 pdf_out.dump_yaml_to_file(data / "pineappl_sample_CT14llo_NF6_0000.yaml")
 
 # debug first element
-# def list_pdfs(lhapdf_like, pids, Q2, xiF, xgrid):
-#     # factorization scale
-#     muF2 = Q2 * xiF ** 2
-#     pdfs = np.zeros((len(pids), len(xgrid)))
-#     for j, pid in enumerate(pids):
-#         if not lhapdf_like.hasFlavor(pid):
-#             continue
-#         pdfs[j] = np.array([lhapdf_like.xfxQ2(pid, z, muF2) / z for z in xgrid])
-#     return pdfs
+def list_pdfs(lhapdf_like, pids, Q2, xiF, xgrid):
+    # factorization scale
+    muF2 = Q2 * xiF ** 2
+    pdfs = np.zeros((len(pids), len(xgrid)))
+    for j, pid in enumerate(pids):
+        if not lhapdf_like.hasFlavor(pid):
+            continue
+        pdfs[j] = np.array([lhapdf_like.xfxQ2(pid, z, muF2) / z for z in xgrid])
+    return pdfs
 
 # first_esf = out["F2total"][0]
 # first_pdfs = list_pdfs(pdf_set,out["pids"],first_esf.Q2, out["xiF"], out["interpolation_xgrid"])
-# u_idx = out["pids"].index(2)
+# u_idx = out["pids"].index(1)
 # # store debug information
 # debug_first = {
 #     "x": out["interpolation_xgrid"].tolist(),
