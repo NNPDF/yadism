@@ -22,7 +22,7 @@ class CoefficientFunctionsCombiner:
             self.kernels = cc_kernels
         else:
             self.kernels = nc_kernels
-        self.nf = esf.sf.threshold.get_areas(esf.Q2 * esf.sf.xiF ** 2)[-1].nf
+        self.nf = esf.sf.threshold.path(esf.Q2 * esf.sf.xiF ** 2)[-1].nf
 
     def collect_ffns(self):
         """
@@ -98,11 +98,11 @@ class CoefficientFunctionsCombiner:
             elems : list(yadism.kernels.Kernel)
                 all participants
         """
-        if self.esf.sf.threshold.scheme == "FFNS":
+        if self.esf.sf.scheme == "FFNS":
             full = self.collect_ffns()
-        elif self.esf.sf.threshold.scheme == "ZM-VFNS":
+        elif self.esf.sf.scheme == "ZM-VFNS":
             full = self.collect_zmvfns()
-        elif self.esf.sf.threshold.scheme in ["FONLL-A"]:
+        elif self.esf.sf.scheme in ["FONLL-A"]:
             full = self.collect_fonll()
         # drop all elements that have 0 weight
         return full

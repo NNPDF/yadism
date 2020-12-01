@@ -103,7 +103,7 @@ class Runner:
         # Setup eko stuffs
         # ==============================
         self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
-        self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
+        self.threshold = thresholds.ThresholdsAtlas.from_dict(theory)
         self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
             theory,
             self.threshold,
@@ -136,6 +136,7 @@ class Runner:
         theory_params = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
+            scheme=theory["FNS"],
             xiF=self.xiF,
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
