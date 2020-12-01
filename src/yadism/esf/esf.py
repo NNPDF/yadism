@@ -133,6 +133,7 @@ class EvaluatedStructureFunction:
                 pos = br.flavor_basis_pids.index(pid)
                 self.res.values[pos] += w * res
                 self.res.errors[pos] += w * err
+        self._computed = True
 
     def compute_coefficient_function(self, comp):
         """

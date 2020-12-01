@@ -54,6 +54,7 @@ class StructureFunction:
         self.xiR = theory_params["xiR"]
         self.xiF = theory_params["xiF"]
         self.scheme = theory_params["scheme"]
+        self.nf_ff = theory_params["nf_ff"]
         self.m2hq = theory_params["m2hq"]
         self.TMC = theory_params["TMC"]
         self.M2target = theory_params["M2target"]

@@ -33,7 +33,7 @@ from eko import thresholds
 from eko import strong_coupling
 from eko import basis_rotation as br
 
-from .input import inspector
+from .input import inspector, compatibility
 from . import observable_name
 from . import log
 from .output import Output
@@ -102,12 +102,10 @@ class Runner:
         # ==============================
         # Setup eko stuffs
         # ==============================
+        new_theory = compatibility.update(theory)
         self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
-        self.threshold = thresholds.ThresholdsAtlas.from_dict(theory)
-        self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory,
-            self.threshold,
-        )
+        self.threshold = thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS")
+        self.strong_coupling = strong_coupling.StrongCoupling.from_dict(new_theory)
 
         # Non-eko theory
         self.coupling_constants = CouplingConstants.from_dict(theory, observables)
@@ -136,8 +134,9 @@ class Runner:
         theory_params = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
-            scheme=theory["FNS"],
             xiF=self.xiF,
+            scheme=theory["FNS"],
+            nf_ff=theory["NfFF"],
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
             M2target=theory["MP"] ** 2,

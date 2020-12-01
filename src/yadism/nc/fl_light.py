@@ -62,14 +62,6 @@ class FLlightGluon(pc.PartonicChannelLight):
         -------
             sequence of callables
                 coefficient functions
-
-
-        .. todo::
-            - 2 * n_f here and in gluon_1_fact is coming from momentum sum
-              rule q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} forall i}, so
-              the 2 * n_f is needed to compensate for all the number of flavours
-              plus antiflavours in which the gluon can go.
-
         """
 
         def cg(z, nf=self.nf):

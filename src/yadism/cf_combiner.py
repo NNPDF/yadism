@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 
 from .nc import kernels as nc_kernels
 from .cc import kernels as cc_kernels
@@ -22,7 +23,7 @@ class CoefficientFunctionsCombiner:
             self.kernels = cc_kernels
         else:
             self.kernels = nc_kernels
-        self.nf = esf.sf.threshold.path(esf.Q2 * esf.sf.xiF ** 2)[-1].nf
+        self.nf = esf.sf.threshold.nf(esf.Q2 * esf.sf.xiF ** 2)
 
     def collect_ffns(self):
         """
@@ -77,17 +78,48 @@ class CoefficientFunctionsCombiner:
                 all participants
         """
         elems = []
-        nl = self.esf.sf.threshold.min_nf
-        # light is *everything* up to nf and not only u+d+s
+        # above the *next* threshold use ZM-VFNS
+        nl = self.esf.sf.nf_ff - 1
+        if nl + 1 < self.nf:
+            return self.collect_zmvfns()
+
         if self.obs_name.flavor in ["light", "total"]:
             elems.extend(self.kernels.generate_light(self.esf, nl))
             # add F^d
-            elems.extend(self.kernels.generate_light_fonll_diff(self.esf, nl))
+            # elems.extend(self.damp_elems(nl, self.kernels.generate_light_fonll_diff(self.esf, nl)))
         if self.obs_name.flavor_family in ["heavy", "total"]:
             elems.extend(self.kernels.generate_heavy(self.esf, nl))
             # add F^d
-            elems.extend(self.kernels.generate_heavy_fonll_diff(self.esf, nl))
+            elems.extend(
+                self.damp_elems(
+                    nl, self.kernels.generate_heavy_fonll_diff(self.esf, nl)
+                )
+            )
         return elems
+
+    def damp_elems(self, nl, elems):
+        """
+        Damp FONLL difference contributions if necessary.
+
+        Parameters
+        ----------
+            nl : int
+                number of *light* flavors
+            elems : list(Kernel)
+                kernels to be modified
+
+        Returns
+        -------
+            elems : list(Kernel)
+                modified kernels
+        """
+        if not self.esf.sf.FONLL_damping:
+            return elems
+        nhq = nl + 1
+        m2hq = self.esf.sf.m2hq[nhq - 4]
+        power = self.esf.sf.damping_powers[nhq - 3]
+        damp = np.power(1.0 - m2hq / self.esf.Q2, power)
+        return (damp * e for e in elems)
 
     def collect_elems(self):
         """

@@ -82,6 +82,8 @@ coefficient_functions = {
     },
 }
 
+flavors = "duscbt"
+
 
 def generate_light(esf, nf):
     """
@@ -101,7 +103,6 @@ def generate_light(esf, nf):
     """
     kind = esf.sf.obs_name.kind
     cfs = coefficient_functions[kind]
-    flavors = "duscbt"
     w = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[:nf], nf)
     return (
         kernels.Kernel(w["q"], cfs["light"]["q"](esf, nf=nf)),
@@ -127,11 +128,9 @@ def generate_heavy(esf, nf):
     """
     kind = esf.sf.obs_name.kind
     cfs = coefficient_functions[kind]
-    flavors = "duscbt"
     nhq = nf + 1
     m2hq = esf.sf.m2hq[nhq - 4]
     w = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nf], nf)
-    # import pdb; pdb.set_trace()
     return (
         kernels.Kernel(w["q"], cfs["heavy"]["q"](esf, m2hq=m2hq)),
         kernels.Kernel(w["g"], cfs["heavy"]["g"](esf, m2hq=m2hq)),
@@ -170,13 +169,15 @@ def weights(coupling_constants, Q2, kind, cc_mask, nf):
     # quark couplings
     tot_ch_sq = 0
     norm = len(cc_mask)
-    # iterate
+    # iterate: include the heavy quark itself, since it can run in the singlet sector diagrams
     for q in range(1, nf + 2):
         sign = 1 if q % 2 == rest else -1
         w = coupling_constants.get_weight(q, Q2, kind, cc_mask=cc_mask)
-        # @F3-sign@
+        # the heavy quark can *NOT* be in the input
         if q <= nf:
+            # @F3-sign@
             weights["q"][sign * q] = w if kind != "F3" else sign * w
+        # but it contributes to the average
         tot_ch_sq += w
     # gluon coupling = charge sum
     if rest == 0 and kind == "F3":
@@ -189,5 +190,20 @@ def generate_light_fonll_diff(_esf, _nf):
     return ()
 
 
-def generate_heavy_fonll_diff(esf, nf):
-    return ()
+def generate_heavy_fonll_diff(esf, nl):
+    kind = esf.sf.obs_name.kind
+    cfs = coefficient_functions[kind]
+    nhq = nl + 1
+    m2hq = esf.sf.m2hq[nhq - 4]
+    # add light contributions
+    w = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nhq - 1], nl+1)
+    elems = (
+        kernels.Kernel(w["q"], cfs["light"]["q"](esf, nf=nl + 1)),
+        kernels.Kernel(
+            {21: w["g"][21] / (nl + 1.0)}, cfs["light"]["g"](esf, nf=nl + 1)
+        ),
+    )
+    # # add asymptotic contributions
+    asy_q = -kernels.Kernel(w["q"], cfs["asy"]["q"](esf, m2hq=m2hq))
+    asy_g = -kernels.Kernel(w["g"], cfs["asy"]["g"](esf, m2hq=m2hq))
+    return (*elems, asy_q, asy_g)

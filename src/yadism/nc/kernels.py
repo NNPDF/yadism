@@ -33,8 +33,6 @@ F2charm in FONLL in EM:
 ]
 
 """
-import numpy as np
-
 from .. import partonic_channel as pc
 from .. import kernels
 
@@ -131,7 +129,7 @@ def weights_light(coupling_constants, Q2, kind, nf):
         ns_partons[-q] = w if kind != "F3" else -w
         tot_ch_sq += w
     # gluon coupling = charge average (omitting the *2/2)
-    ch_av = tot_ch_sq / len(pids)
+    ch_av = tot_ch_sq / len(pids) if kind != "F3" else 0.0
     # same for singlet
     s_partons = {q: ch_av for q in ns_partons}
     return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons}
@@ -178,18 +176,11 @@ def weights_heavy(coupling_constants, Q2, kind, nf):
 
 
 def generate_light_fonll_diff(esf, nl):
-    # add damping
-    damp = 1
-    if esf.sf.FONLL_damping:
-        nhq = nl + 1
-        m2hq = esf.sf.m2hq[nhq - 4]
-        power = esf.sf.damping_powers[nhq - 3]
-        damp = np.power(1.0 - m2hq / esf.Q2, power)
     # add light contributions
     high = generate_light(esf, nl + 1)
-    high = [damp * e for e in high]
     asy = generate_light(esf, nl)
-    asy = [-damp * e for e in asy]
+    asy = [-e for e in asy]
+    # add damping
     return (*high, *asy)
 
 
@@ -198,20 +189,23 @@ def generate_heavy_fonll_diff(esf, nl):
     cfs = coefficient_functions[kind]
     nhq = nl + 1
     m2hq = esf.sf.m2hq[nhq - 4]
-    # add damping
-    damp = 1
-    if esf.sf.FONLL_damping:
-        power = esf.sf.damping_powers[nhq - 3]
-        damp = np.power(1.0 - m2hq / esf.Q2, power)
     # add light contributions
-    elems = generate_light(esf, nl + 1)
-    elems = [damp * e for e in elems]
+    ns_partons = {}
+    w = esf.sf.coupling_constants.get_weight(nhq, esf.Q2, esf.sf.obs_name.kind)
+    ns_partons[nhq] = w
+    ns_partons[-nhq] = w if kind != "F3" else -w
+    ch_av = w / (nl + 1.0) if kind != "F3" else 0.0
+    s_partons = {}
+    for pid in range(1, nl + 1):
+        s_partons[pid] = ch_av
+        s_partons[-pid] = ch_av
+    elems = (
+        kernels.Kernel(ns_partons, cfs["light"]["ns"](esf, nf=nl + 1)),
+        kernels.Kernel({21: ch_av}, cfs["light"]["g"](esf, nf=nl + 1)),
+        kernels.Kernel(s_partons, cfs["light"]["s"](esf, nf=nl + 1)),
+    )
     # add asymptotic contributions
     asy_weights = weights_heavy(esf.sf.coupling_constants, esf.Q2, kind, nl)
-    asy_gVV = -damp * kernels.Kernel(
-        asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq)
-    )
-    asy_gAA = -damp * kernels.Kernel(
-        asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq)
-    )
+    asy_gVV = -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq))
+    asy_gAA = -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq))
     return (*elems, asy_gVV, asy_gAA)
