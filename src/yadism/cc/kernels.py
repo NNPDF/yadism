@@ -196,14 +196,15 @@ def generate_heavy_fonll_diff(esf, nl):
     nhq = nl + 1
     m2hq = esf.sf.m2hq[nhq - 4]
     # add light contributions
-    w = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nhq - 1], nl + 1)
+    wl = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nhq - 1], nl + 1)
     elems = (
-        kernels.Kernel(w["q"], cfs["light"]["q"](esf, nf=nl + 1)),
+        kernels.Kernel(wl["q"], cfs["light"]["q"](esf, nf=nl + 1)),
         kernels.Kernel(
-            {21: w["g"][21] / (nl + 1.0)}, cfs["light"]["g"](esf, nf=nl + 1)
+            {21: wl["g"][21] / (nl + 1.0)}, cfs["light"]["g"](esf, nf=nl + 1)
         ),
     )
-    # # add asymptotic contributions
-    asy_q = -kernels.Kernel(w["q"], cfs["asy"]["q"](esf, m2hq=m2hq))
-    asy_g = -kernels.Kernel(w["g"], cfs["asy"]["g"](esf, m2hq=m2hq))
+    # add asymptotic contributions
+    wa = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nhq - 1], nl)
+    asy_q = -kernels.Kernel(wa["q"], cfs["asy"]["q"](esf, m2hq=m2hq))
+    asy_g = -kernels.Kernel(wa["g"], cfs["asy"]["g"](esf, m2hq=m2hq))
     return (*elems, asy_q, asy_g)

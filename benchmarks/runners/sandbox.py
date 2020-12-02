@@ -86,7 +86,7 @@ class Sandbox:
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["conly"],
+            ["CT14llo_NF6"],
             {
                 # "XIR": self.db.theory_query.XIR == 0.5,
                 "NfFF": self.db.theory_query.NfFF == 4,
