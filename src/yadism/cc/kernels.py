@@ -170,7 +170,7 @@ def weights(coupling_constants, Q2, kind, cc_mask, nf):
     tot_ch_sq = 0
     norm = len(cc_mask)
     # iterate: include the heavy quark itself, since it can run in the singlet sector diagrams
-    for q in range(1, nf + 2):
+    for q in range(1, min(nf + 2, 6 + 1)):
         sign = 1 if q % 2 == rest else -1
         w = coupling_constants.get_weight(q, Q2, kind, cc_mask=cc_mask)
         # the heavy quark can *NOT* be in the input

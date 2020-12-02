@@ -23,7 +23,7 @@ class CoefficientFunctionsCombiner:
             self.kernels = cc_kernels
         else:
             self.kernels = nc_kernels
-        self.nf = esf.sf.threshold.nf(esf.Q2 * esf.sf.xiF ** 2)
+        self.nf = esf.sf.threshold.nf(esf.Q2 * esf.sf.xiF ** 2) # TODO decide whether Q2 or muF2 is the correct thing
 
     def collect_ffns(self):
         """
@@ -118,7 +118,10 @@ class CoefficientFunctionsCombiner:
         nhq = nl + 1
         m2hq = self.esf.sf.m2hq[nhq - 4]
         power = self.esf.sf.damping_powers[nhq - 3]
-        damp = np.power(1.0 - m2hq / self.esf.Q2, power)
+        if self.esf.Q2 > m2hq:
+            damp = np.power(1.0 - m2hq / self.esf.Q2, power)
+        else:
+            damp = 0.
         return (damp * e for e in elems)
 
     def collect_elems(self):

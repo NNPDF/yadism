@@ -50,7 +50,7 @@ def generate_observables():
     # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
     # card["interpolation_is_log"] = False
     # print(card)
-    card["prDIS"] = "CC"
+    card["prDIS"] = "NC"
     # card["PropagatorCorrection"] = .999
     # card["ProjectileDIS"] = "antineutrino"
     # card["PolarizationDIS"] = 0.5
@@ -88,10 +88,9 @@ class Sandbox:
             1,
             ["CT14llo_NF6"],
             {
-                # "XIR": self.db.theory_query.XIR == 0.5,
+                # "XIR": self.db.theory_query.XIR == 2,
                 "NfFF": self.db.theory_query.NfFF == 4,
-                # "XIF": self.db.theory_query.XIF == 0.5,
-                # "NfFF": self.db.theory_query.NfFF == 5,
+                # "XIF": self.db.theory_query.XIF == .7,
                 # "TMC": self.db.theory_query.TMC == 1,
                 "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
@@ -100,7 +99,7 @@ class Sandbox:
 
 
 if __name__ == "__main__":
-    # generate_observables()
+    #generate_observables()
     sand = Sandbox()
-    # sand.run_LO()
+    #sand.run_LO()
     sand.run_NLO()
