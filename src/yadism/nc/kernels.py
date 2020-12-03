@@ -176,12 +176,32 @@ def weights_heavy(coupling_constants, Q2, kind, nf):
 
 
 def generate_light_fonll_diff(esf, nl):
-    # add light contributions
-    high = generate_light(esf, nl + 1)
-    asy = generate_light(esf, nl)
-    asy = [-e for e in asy]
-    # add damping
-    return (*high, *asy)
+    """
+    Collect the light diff coefficient functions for FONLL.
+
+    Following :eqref:`95` of :cite:`forte-fonll` we have to collect the
+    contributions of the *incoming* would-be-heavy quarks to the light
+    structure function, where light means only non-heavy charges are active.
+    So the incoming line can *not* be the one coupling to the photon, i.e. we
+    are left with the singlet-like contributions.
+
+    Parameters
+    ----------
+        esf : EvaluatedStructureFunction
+            kinematic point
+        nf : int
+            number of light flavors
+
+    Returns
+    -------
+        elems : list(yadism.kernels.Kernel)
+            list of elements
+    """
+    kind = esf.sf.obs_name.kind
+    cfs = coefficient_functions[kind]
+    light = weights_light(esf.sf.coupling_constants, esf.Q2, kind, nl+1)
+    s_w = {nl+1:light["s"][nl+1], -(nl+1):light["s"][-(nl+1)]}
+    return (kernels.Kernel(s_w, cfs["light"]["s"](esf, nf=nl+1)),)
 
 
 def generate_heavy_fonll_diff(esf, nl):

@@ -186,7 +186,25 @@ def weights(coupling_constants, Q2, kind, cc_mask, nf):
     return weights
 
 
-def generate_light_fonll_diff(_esf, _nf):
+def generate_light_fonll_diff(_esf, _nl):
+    """
+    Collect the light diff coefficient functions for FONLL.
+
+    See :meth:`yadism.nc.kernels.generate_light_fonll_diff` on
+    why we need the singlet part (which here is 0 up to |NLO|).
+
+    Parameters
+    ----------
+        esf : EvaluatedStructureFunction
+            kinematic point
+        nf : int
+            number of light flavors
+
+    Returns
+    -------
+        elems : list(yadism.kernels.Kernel)
+            list of elements
+    """
     return ()
 
 

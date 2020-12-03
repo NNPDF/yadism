@@ -30,16 +30,16 @@ def generate_observables():
     # light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
     # light_kin.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     obs_list = [
-        # "F2light",
+        "F2light",
         "F2charm",
         # "F2bottom",
         # "F2top",
         "F2total",
-        # "FLlight",
+        "FLlight",
         "FLcharm",
         # "FLbottom",
         "FLtotal",
-        # "F3light",
+        "F3light",
         "F3charm",
         # "F3bottom",
         "F3total",
@@ -99,7 +99,7 @@ class Sandbox:
 
 
 if __name__ == "__main__":
-    #generate_observables()
+    # generate_observables()
     sand = Sandbox()
     #sand.run_LO()
     sand.run_NLO()

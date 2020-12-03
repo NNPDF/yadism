@@ -86,7 +86,7 @@ class CoefficientFunctionsCombiner:
         if self.obs_name.flavor in ["light", "total"]:
             elems.extend(self.kernels.generate_light(self.esf, nl))
             # add F^d
-            # elems.extend(self.damp_elems(nl, self.kernels.generate_light_fonll_diff(self.esf, nl)))
+            elems.extend(self.damp_elems(nl, self.kernels.generate_light_fonll_diff(self.esf, nl)))
         if self.obs_name.flavor_family in ["heavy", "total"]:
             elems.extend(self.kernels.generate_heavy(self.esf, nl))
             # add F^d
