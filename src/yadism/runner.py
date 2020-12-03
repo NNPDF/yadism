@@ -31,8 +31,9 @@ import rich.console
 from eko.interpolation import InterpolatorDispatcher
 from eko import thresholds
 from eko import strong_coupling
+from eko import basis_rotation as br
 
-from .input import inspector
+from .input import inspector, compatibility
 from . import observable_name
 from . import log
 from .output import Output
@@ -101,11 +102,10 @@ class Runner:
         # ==============================
         # Setup eko stuffs
         # ==============================
+        new_theory = compatibility.update(theory)
         self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
-        self.threshold = thresholds.ThresholdsConfig.from_dict(theory)
-        self.strong_coupling = strong_coupling.StrongCoupling.from_dict(
-            theory, self.threshold,
-        )
+        self.threshold = thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS")
+        self.strong_coupling = strong_coupling.StrongCoupling.from_dict(new_theory)
 
         # Non-eko theory
         self.coupling_constants = CouplingConstants.from_dict(theory, observables)
@@ -135,7 +135,9 @@ class Runner:
             pto=theory["PTO"],
             xiR=theory["XIR"],
             xiF=self.xiF,
-            M2hq=None,
+            scheme=theory["FNS"],
+            nf_ff=theory["NfFF"],
+            m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
             M2target=theory["MP"] ** 2,
             FONLL_damping=FONLL_damping,
@@ -146,9 +148,6 @@ class Runner:
         self.observable_instances = {}
         for obs_name in observable_name.ObservableName.all():
             name = obs_name.name
-            lab = obs_name.mass_label
-            if lab is not None:
-                theory_params["M2hq"] = theory[lab] ** 2
 
             # initialize an SF instance for each possible structure function
             obj = SF(
@@ -173,10 +172,11 @@ class Runner:
         # Initialize output
         # ==============================
         self._output = Output()
-        self._output["xgrid"] = self.interpolator.xgrid_raw.tolist()
+        self._output.update(self.interpolator.to_dict())
+        self._output["pids"] = br.flavor_basis_pids
         self._output["xiF"] = self.xiF
 
-    def get_output(self) -> Output:
+    def get_result(self, raw=False):
         """
         Compute coefficient functions grid for requested kinematic points.
 
@@ -221,12 +221,18 @@ class Runner:
             transient=True,
             console=self.console,
         ):
-            self._output[name] = obs.get_output()
+            self._output[name] = obs.get_result()
         end = time.time()
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")
 
-        return copy.deepcopy(self._output)
+        out = copy.deepcopy(self._output)
+        if raw:
+            out = out.get_raw()
+        return out
+
+    def get_output(self):
+        return self.get_result(True)
 
     def apply_pdf(self, pdfs: Any) -> dict:
         """
@@ -236,7 +242,7 @@ class Runner:
             - implement
             - docs
         """
-        return self.get_output().apply_pdf(pdfs)
+        return self.get_result().apply_pdf(pdfs)
 
     def clear(self) -> None:
         """

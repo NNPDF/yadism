@@ -17,20 +17,20 @@ from .. import partonic_channel as pc
 
 class F2asyGluonVV(pc.PartonicChannelAsy):
     """
-        Computes the gluon channel of the asymptotic limit of F2heavy.
+    Computes the gluon channel of the asymptotic limit of F2heavy.
     """
 
     label = "gVV"
 
     def NLO(self):
         """
-            Returns
-            -------
-                sequence of callables
-                    coefficient functions
+        Returns
+        -------
+            sequence of callables
+                coefficient functions
 
-            .. todo::
-                docs
+        .. todo::
+            docs
         """
 
         def cg(z, L=self.L):

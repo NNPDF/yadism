@@ -14,7 +14,7 @@ class MockSF:
 
 class MockESF:
     def __init__(self, x, q2):
-        self._SF = MockSF()
+        self.sf = MockSF()
         self._x = x
         self._Q2 = q2
 

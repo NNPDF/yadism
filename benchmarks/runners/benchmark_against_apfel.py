@@ -46,7 +46,7 @@ class ApfelBenchmark:
 
 def plain_assert_external(theory, obs, sf, yad):
     # APFEL has a discretization in Q2/m2
-    if sf == "FLcharm" and yad["Q2"] < 1.5*theory["mc"] ** 2:
+    if sf == "FLcharm" and yad["Q2"] < 1.5 * theory["mc"] ** 2:
         return dict(abs=3e-5)
     if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
         return dict(abs=5e-6)
@@ -106,13 +106,11 @@ class BenchmarkProjectile(ApfelBenchmark):
             assert_external=plain_assert_external,
         )
 
+
 def sv_assert_external(theory, obs, sf, yad):
     if np.isclose(theory["XIF"], 1) and np.isclose(theory["XIR"], 1):
         return plain_assert_external(theory, obs, sf, yad)
-    if (
-        sf == "FLbottom"
-        and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
-    ):
+    if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
         # APFEL has a discreization in Q2/m2
         return dict(abs=1e-5)
     if sf == "FLcharm" and yad["Q2"] < 7:
@@ -123,10 +121,7 @@ def sv_assert_external(theory, obs, sf, yad):
                 return dict(abs=2e-4)  # production threshold
             if sf[:2] == "F3" and yad["Q2"] > 900:
                 return dict(abs=3e-5)  # why does the thing go worse again?
-        if (
-            sf == "F3charm"
-            and yad["x"] < 2e-3
-        ):
+        if sf == "F3charm" and yad["x"] < 2e-3:
             # there is a cancelation between sbar and g going on:
             # each of the channels is O(1) with O(1e-3) accuracy
             return dict(abs=5e-3)
@@ -138,6 +133,7 @@ def sv_assert_external(theory, obs, sf, yad):
         if sf in ["F2light", "F2total"] and yad["Q2"] < 7:
             return dict(abs=5e-2)
     return None
+
 
 @pytest.mark.commit_check
 class BenchmarkScaleVariations(ApfelBenchmark):
@@ -152,7 +148,10 @@ class BenchmarkScaleVariations(ApfelBenchmark):
         return self.run_external(
             1,
             ["CT14llo_NF3"],
-            {"XIR": None, "XIF": None,},
+            {
+                "XIR": None,
+                "XIF": None,
+            },
             {"prDIS": None},
             assert_external=sv_assert_external,
         )
@@ -209,7 +208,11 @@ class BenchmarkFNS(ApfelBenchmark):
             if theory["NfFF"] < 5:
                 return plain_assert_external(theory, obs, sf, yad)
             # TODO https://github.com/N3PDF/yadism/wiki/2020_05_28-F2charm-FFNS4-low-Q2-non-zero
-            if theory["NfFF"] == 5 and sf[2:] in ["bottom", "total"] and yad["Q2"] < theory["mb"] ** 2:
+            if (
+                theory["NfFF"] == 5
+                and sf[2:] in ["bottom", "total"]
+                and yad["Q2"] < theory["mb"] ** 2
+            ):
                 return False
             return None
 
@@ -232,7 +235,10 @@ class BenchmarkFNS(ApfelBenchmark):
     @pytest.mark.fonll
     def benchmark_NLO_FONLL(self):
         def fonll_assert(theory, _obs, sf, yad):
-            if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
+            if (
+                sf == "FLbottom"
+                and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
+            ):
                 # APFEL has a discreization in Q2/m2
                 return dict(abs=5e-6)
             if sf == "FLcharm" and yad["Q2"] < 7 and theory["DAMP"] == 1:
@@ -243,7 +249,7 @@ class BenchmarkFNS(ApfelBenchmark):
             1,
             ["CT14llo_NF6"],
             {"FNS": self._db().theory_query.FNS == "FONLL-A", "DAMP": None},
-            assert_external=fonll_assert
+            assert_external=fonll_assert,
         )
 
 

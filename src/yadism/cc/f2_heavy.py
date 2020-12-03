@@ -12,7 +12,7 @@ from .. import splitting_functions as split
 
 class F2heavyQuark(pccc.PartonicChannelHeavy):
     """
-        Computes the quark heavy quark channel of F2heavy
+    Computes the quark heavy quark channel of F2heavy
     """
 
     label = "q"
@@ -33,7 +33,7 @@ class F2heavyQuark(pccc.PartonicChannelHeavy):
 
 class F2heavyGluon(pccc.PartonicChannelHeavy):
     """
-        Computes the gluon heavy quark channel of F2heavy
+    Computes the gluon heavy quark channel of F2heavy
     """
 
     label = "g"

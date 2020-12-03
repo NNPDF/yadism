@@ -5,17 +5,17 @@ import numpy as np
 
 def load_apfel(theory, observables, pdf="ToyLH"):
     """
-        Set APFEL parameter from ``theory`` dictionary.
+    Set APFEL parameter from ``theory`` dictionary.
 
-        Parameters
-        ----------
-        theory : dict
-            theory and process parameters
+    Parameters
+    ----------
+    theory : dict
+        theory and process parameters
 
-        Returns
-        -------
-        module
-            loaded apfel wrapper
+    Returns
+    -------
+    module
+        loaded apfel wrapper
     """
     import apfel  # pylint:disable=import-outside-toplevel
 
@@ -127,7 +127,7 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     # apfel.SetGridParameters(3, 50, 3, 8e-1)
 
     # set APFEL grid to ours
-    #if platform.node() in ["FHe19b", "topolinia-arch"]:
+    # if platform.node() in ["FHe19b", "topolinia-arch"]:
     apfel.SetNumberOfGrids(1)
     # create a 'double *' using swig wrapper
     yad_xgrid = observables["interpolation_xgrid"]
@@ -157,21 +157,21 @@ def load_apfel(theory, observables, pdf="ToyLH"):
 
 def compute_apfel_data(theory, observables, pdf):
     """
-        Run APFEL to compute observables.
+    Run APFEL to compute observables.
 
-        Parameters
-        ----------
-            theory : dict
-                theory runcard
-            observables : dict
-                observables runcard
-            pdf : Any
-                PDF object (LHAPDF like)
+    Parameters
+    ----------
+        theory : dict
+            theory runcard
+        observables : dict
+            observables runcard
+        pdf : Any
+            PDF object (LHAPDF like)
 
-        Returns
-        -------
-            apf_tab : dict
-                AFPEL numbers
+    Returns
+    -------
+        apf_tab : dict
+            AFPEL numbers
     """
     # setup APFEL
     apfel = load_apfel(theory, observables, pdf.set().name)

@@ -5,43 +5,48 @@ from eko import constants
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
-from ..esf import rsl_from_distr_coeffs
 
 
 class PartonicChannelHeavy(pc.PartonicChannel):
     r"""
-        Heavy partonic coefficient functions that respect hadronic and partonic
-        thresholds.
+    Heavy partonic coefficient functions that respect hadronic and partonic
+    thresholds.
 
-        The main reference used is: :cite:`gluck-ccheavy`.
+    The main reference used is: :cite:`gluck-ccheavy`.
 
-        From above we see that partonic coefficient functions have to be multiplied
-        by different factors for the different structure functions. In order to keep
-        track of this we use the :attr:`sf_prefactor` attribute. Coefficients
-        that to not explicitly depend on the structure function kind are mulitplied
-        by this factor (:math:`B_{3,i}` and the explicit factorization bits).
-        For all the other the factors have to be applied explicitly: e.g.
-        :math:`A_L = A_2 - \lambda A_1`.
+    From above we see that partonic coefficient functions have to be multiplied
+    by different factors for the different structure functions. In order to keep
+    track of this we use the :attr:`sf_prefactor` attribute. Coefficients
+    that to not explicitly depend on the structure function kind are mulitplied
+    by this factor (:math:`B_{3,i}` and the explicit factorization bits).
+    For all the other the factors have to be applied explicitly: e.g.
+    :math:`A_L = A_2 - \lambda A_1`.
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args, m2hq):
         super().__init__(*args)
         # common variables
-        self.labda = 1 / (1 + self.ESF._SF.M2hq / self.ESF._Q2)
-        self.x = self.ESF._x
-        self.ka = 1 / self.labda * (1 - self.labda) * np.log(1 - self.labda)
+        self.labda = 1.0 / (1.0 + m2hq / self.ESF.Q2)
+        self.x = self.ESF.x
+        self.ka = 1.0 / self.labda * (1.0 - self.labda) * np.log(1.0 - self.labda)
         self.l_labda = lambda z, labda=self.labda: np.log(
-            (1 - labda * z) / (1 - labda) / z
+            (1.0 - labda * z) / (1.0 - labda) / z
         )
         # normalization helper
-        self.sf_prefactor = 1
+        self.sf_prefactor = 1.0
+
+    def convolution_point(self):
+        """
+        Convolution point
+        """
+        return self.x / self.labda
 
     def r_integral(self, x):
         r"""
-            -Power(Pi,2)/6. + Li2(\[Lambda]) + Li2((1 - \[Lambda])/(1 -
-            x*\[Lambda])) + ln(1 - \[Lambda])*ln(\[Lambda]) - ln(1 - x)*ln(1 -
-            x*\[Lambda]) - ln(\[Lambda])*ln(1 - x*\[Lambda]) + Power(ln(1 -
-            x*\[Lambda]),2)/2.
+        -Power(Pi,2)/6. + Li2(\[Lambda]) + Li2((1 - \[Lambda])/(1 -
+        x*\[Lambda])) + ln(1 - \[Lambda])*ln(\[Lambda]) - ln(1 - x)*ln(1 -
+        x*\[Lambda]) - ln(\[Lambda])*ln(1 - x*\[Lambda]) + Power(ln(1 -
+        x*\[Lambda]),2)/2.
         """
         labda = self.labda
         return (
