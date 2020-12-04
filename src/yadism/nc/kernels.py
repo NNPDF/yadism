@@ -43,6 +43,8 @@ from .f2_heavy import F2heavyGluonVV, F2heavyGluonAA
 from .fl_heavy import FLheavyGluonVV, FLheavyGluonAA
 from .f2_asy import F2asyGluonVV, F2asyGluonAA
 from .fl_asy import FLasyGluonVV, FLasyGluonAA
+from .f2_intrinsic import F2IntrinsicSp
+from .f3_intrinsic import F3IntrinsicRp
 
 coefficient_functions = {
     "F2": {
@@ -58,6 +60,9 @@ coefficient_functions = {
         "asy": {
             "gVV": F2asyGluonVV,
             "gAA": F2asyGluonAA,
+        },
+        "intrinsic": {
+            "Sp": F2IntrinsicSp
         },
     },
     "FL": {
@@ -88,6 +93,9 @@ coefficient_functions = {
         "asy": {
             "gVV": pc.EmptyPartonicChannel,
             "gAA": pc.EmptyPartonicChannel,
+        },
+        "intrinsic": {
+            "Rp": F3IntrinsicRp
         },
     },
 }
@@ -229,3 +237,14 @@ def generate_heavy_fonll_diff(esf, nl):
     asy_gVV = -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq))
     asy_gAA = -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq))
     return (*elems, asy_gVV, asy_gAA)
+
+def generate_intrinsic(esf, ihq):
+    kind = esf.sf.obs_name.kind
+    cfs = coefficient_functions[kind]
+    wV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, esf.sf.obs_name.kind, quark_coupling_type="V")
+    m2hq = esf.sf.m2hq[ihq - 4]
+    if kind == "F3":
+        return (kernels.Kernel({ihq: wV, (-ihq): -wV},cfs["intrinsic"]["Rp"](esf, m1sq=m2hq,m2sq=m2hq)),)
+    wA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, esf.sf.obs_name.kind, quark_coupling_type="A")
+    wp = wV + wA
+    return (kernels.Kernel({ihq: wp, (-ihq): wp},cfs["intrinsic"]["Sp"](esf, m1sq=m2hq,m2sq=m2hq)),)

@@ -48,6 +48,9 @@ class CoefficientFunctionsCombiner:
                     f"{self.obs_name} is not available in FFNS with nl={self.nf}"
                 )
             elems.extend(self.kernels.generate_heavy(self.esf, self.nf))
+            ihq = self.nf +1
+            if ihq in self.esf.sf.intrinsic_range:
+                elems.extend(self.kernels.generate_intrinsic(self.esf, ihq))
         return elems
 
     def collect_zmvfns(self):

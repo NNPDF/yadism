@@ -69,6 +69,7 @@ class DBInterface(mode_selector.ModeSelector):
             "FNS": self.theory_query.FNS == "FFNS",
             "DAMP": self.theory_query.DAMP == 0,
             "TMC": self.theory_query.TMC == 0,
+            "IC": self.theory_query.IC == 0,
         }
 
     def _load_input_from_queries(self, theory_query, obs_query):

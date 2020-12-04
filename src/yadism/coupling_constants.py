@@ -168,7 +168,7 @@ class CouplingConstants:
                     g2q = gqa ** 2
                 return g2q
             else:
-                return 2 * gqv * gqa
+                return 2. * gqv * gqa
         elif mode == "WW":
             return np.sum(self.theory_config["CKM"].masked(cc_mask)(pid))
 

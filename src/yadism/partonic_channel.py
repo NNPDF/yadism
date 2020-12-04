@@ -89,7 +89,7 @@ class PartonicChannelAsyIntrinsic(PartonicChannel):
     def convolution_point(self):
         return (
             self.ESF.x / 2.0 * (self.sigma_pm + self.delta) / self.Q2
-        )  # pylint: disable=protected-access
+        )
 
 
 class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):

@@ -36,6 +36,8 @@ from .f3_heavy import F3heavyQuark, F3heavyGluon
 from .f2_asy import F2asyQuark, F2asyGluon
 from .fl_asy import FLasyQuark, FLasyGluon
 from .f3_asy import F3asyQuark, F3asyGluon
+from .f2_intrinsic import F2IntrinsicSp
+from .f3_intrinsic import F3IntrinsicRp
 
 coefficient_functions = {
     "F2": {
@@ -50,6 +52,9 @@ coefficient_functions = {
         "asy": {
             "q": F2asyQuark,
             "g": F2asyGluon,
+        },
+        "intrinsic": {
+            "Sp": F2IntrinsicSp
         },
     },
     "FL": {
@@ -78,6 +83,9 @@ coefficient_functions = {
         "asy": {
             "q": F3asyQuark,
             "g": F3asyGluon,
+        },
+        "intrinsic": {
+            "Rp": F3IntrinsicRp
         },
     },
 }
@@ -226,3 +234,12 @@ def generate_heavy_fonll_diff(esf, nl):
     asy_q = -kernels.Kernel(wa["q"], cfs["asy"]["q"](esf, m2hq=m2hq))
     asy_g = -kernels.Kernel(wa["g"], cfs["asy"]["g"](esf, m2hq=m2hq))
     return (*elems, asy_q, asy_g)
+
+def generate_intrinsic(esf, ihq):
+    kind = esf.sf.obs_name.kind
+    cfs = coefficient_functions[kind]
+    w = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], ihq)
+    m2hq = esf.sf.m2hq[ihq - 4]
+    if kind == "F3":
+        return (kernels.Kernel(w["q"],cfs["intrinsic"]["Rp"](esf, m1sq=m2hq,m2sq=0.)),)
+    return (kernels.Kernel(w["q"],cfs["intrinsic"]["Sp"](esf, m1sq=m2hq,m2sq=0.)),)
