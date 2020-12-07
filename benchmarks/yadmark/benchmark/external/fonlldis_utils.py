@@ -36,17 +36,19 @@ def compute_FONLLdis_data( theory, observables, pdf):
 
     if scheme.endswith('A'): 
         scheme='A'
-        iord=theory["PTO"]
-        iford=theory["PTO"]-1
-        if iford < 0: raise Exception("FONLL-A at LO can not be computed!")
+        #iord=theory["PTO"]
+        iord=2 
+        iford=1
     elif scheme.endswith('B'): 
         scheme='B'
-        iord=theory["PTO"]
-        iford=theory["PTO"]
+        #iord=theory["PTO"]
+        iord=2
+        iford=2
     elif scheme.endswith('C'): 
         scheme='C'
-        iord=theory["PTO"]+1
-        iford=theory["PTO"]
+        #iord=theory["PTO"]
+        iord=3
+        iford=2
 
 
     # Constant values 
@@ -63,14 +65,17 @@ def compute_FONLLdis_data( theory, observables, pdf):
 
 
     # TODO:
-    # 1) check if this initialization is working for toyLH
+    # 1) check if this is compatible with yadism toyLH
 
     # Init PDF
     iwhichpdf = 1.
     #if pdf.name == "ToyLH":
     if pdf == "ToyLH":
         iwhichpdf = 0.
-        LHAPDFfile = "toyLH_NLO.grid"
+        if theory["PTO"] == 0 :
+            LHAPDFfile = "toyLH_LO.grid"
+        else:
+            LHAPDFfile = "toyLH_NLO.grid"
         FONLLdis.initnnpdfwrap(LHAPDFfile)
 
     else:
@@ -134,19 +139,20 @@ def compute_FONLLdis_data( theory, observables, pdf):
                 else:
                     raise NotImplementedError(f"kind {obs_name.name} is not implemented!")
 
-            # Plain FONLL
-            print( fczm, flzm, fcmm, fcm0)
-            ffonll = ( fczm - fcm0 + fcmm ) + flzm 
+            if theory["DAMP"] == 0 :
+                # Plain FONLL
+                ffonll = ( fczm - fcm0 + fcmm ) + flzm 
             
-            # FONLL with threshold damping
-            threshold = 0.
-            if math.sqrt( q2 ) >= mc:
-                threshold =  ( 1. - mc ** 2 / q2 ) ** 2 
+            else :
+                # FONLL with threshold damping
+                threshold = 0.
+                if math.sqrt( q2 ) >= mc:
+                    threshold =  ( 1. - mc ** 2 / q2 ) ** 2 
 
-            ffonll_thres = ( fczm - fcm0 ) * threshold + fcmm + flzm
+                ffonll = ( fczm - fcm0 ) * threshold + fcmm + flzm
 
             #output tab  
-            out.append(dict(x=x, Q2=q2, value=ffonll, value_thres=ffonll_thres))
+            out.append(dict(x=x, Q2=q2, value=ffonll ) )
 
         num_tab[obs] = out   
 
