@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
+# fmt = off
 # Compare the results with APFEL's
 import copy
 
@@ -36,7 +37,7 @@ def generate_observables():
         # "F2top",
         # "F2total",
         # "FLlight",
-        # "FLcharm",
+        "FLcharm",
         # "FLbottom",
         # "FLtotal",
         # "F3light",
@@ -74,21 +75,20 @@ class Sandbox:
     def run_LO(self):
         return self._db(False).run_external(
             0,
-            ["CT14llo_NF6"],
+            ["conly"],
             {
                 # "FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "TMC": self.db.theory_query.TMC == 0,
                 # "DAMP": self.db.theory_query.DAMP == 0,
-                "IC": self.db.theory_query.IC
-                == 1,
+                "IC": self.db.theory_query.IC == 1,
             },
         )
 
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["conly"],
+            ["CT14llo_NF6-conly"],
             {
                 # "XIR": self.db.theory_query.XIR == 2,
                 "NfFF": self.db.theory_query.NfFF == 4,

@@ -44,6 +44,7 @@ from .fl_heavy import FLheavyGluonVV, FLheavyGluonAA
 from .f2_asy import F2asyGluonVV, F2asyGluonAA
 from .fl_asy import FLasyGluonVV, FLasyGluonAA
 from .f2_intrinsic import F2IntrinsicSp
+from .fl_intrinsic import FLIntrinsicSp, FLIntrinsicSm
 from .f3_intrinsic import F3IntrinsicRp
 
 coefficient_functions = {
@@ -61,7 +62,7 @@ coefficient_functions = {
             "gVV": F2asyGluonVV,
             "gAA": F2asyGluonAA,
         },
-        "intrinsic": {"Sp": F2IntrinsicSp},
+        "intrinsic": {"Sp": F2IntrinsicSp, "Sm": pc.EmptyPartonicChannel},
     },
     "FL": {
         "light": {
@@ -77,6 +78,7 @@ coefficient_functions = {
             "gVV": FLasyGluonVV,
             "gAA": FLasyGluonAA,
         },
+        "intrinsic": {"Sp": FLIntrinsicSp, "Sm": FLIntrinsicSm},
     },
     "F3": {
         "light": {
@@ -92,7 +94,10 @@ coefficient_functions = {
             "gVV": pc.EmptyPartonicChannel,
             "gAA": pc.EmptyPartonicChannel,
         },
-        "intrinsic": {"Rp": F3IntrinsicRp},
+        "intrinsic": {
+            "Rp": F3IntrinsicRp,
+            "Rm": pc.EmptyPartonicChannel,
+        },
     },
 }
 
@@ -248,13 +253,21 @@ def generate_intrinsic(esf, ihq):
                 {ihq: wV, (-ihq): -wV},
                 cfs["intrinsic"]["Rp"](esf, m1sq=m2hq, m2sq=m2hq),
             ),
+            # kernels.Kernel(
+            #     {ihq: wV, (-ihq): -wV},
+            #     cfs["intrinsic"]["Rp"](esf, m1sq=m2hq, m2sq=m2hq),
+            # ),
         )
     wA = esf.sf.coupling_constants.get_weight(
         ihq, esf.Q2, esf.sf.obs_name.kind, quark_coupling_type="A"
     )
     wp = wV + wA
+    wm = wV - wA
     return (
         kernels.Kernel(
             {ihq: wp, (-ihq): wp}, cfs["intrinsic"]["Sp"](esf, m1sq=m2hq, m2sq=m2hq)
+        ),
+        kernels.Kernel(
+            {ihq: wm, (-ihq): wm}, cfs["intrinsic"]["Sm"](esf, m1sq=m2hq, m2sq=m2hq)
         ),
     )

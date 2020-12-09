@@ -37,6 +37,7 @@ from .f2_asy import F2asyQuark, F2asyGluon
 from .fl_asy import FLasyQuark, FLasyGluon
 from .f3_asy import F3asyQuark, F3asyGluon
 from .f2_intrinsic import F2IntrinsicSp
+from .fl_intrinsic import FLIntrinsicSp, FLIntrinsicSm
 from .f3_intrinsic import F3IntrinsicRp
 
 coefficient_functions = {
@@ -53,7 +54,7 @@ coefficient_functions = {
             "q": F2asyQuark,
             "g": F2asyGluon,
         },
-        "intrinsic": {"Sp": F2IntrinsicSp},
+        "intrinsic": {"Sp": F2IntrinsicSp, "Sm": pc.EmptyPartonicChannel},
     },
     "FL": {
         "light": {
@@ -68,6 +69,7 @@ coefficient_functions = {
             "q": FLasyQuark,
             "g": FLasyGluon,
         },
+        "intrinsic": {"Sp": FLIntrinsicSp, "Sm": FLIntrinsicSm},
     },
     "F3": {
         "light": {
@@ -82,7 +84,10 @@ coefficient_functions = {
             "q": F3asyQuark,
             "g": F3asyGluon,
         },
-        "intrinsic": {"Rp": F3IntrinsicRp},
+        "intrinsic": {
+            "Rp": F3IntrinsicRp,
+            "Rm": pc.EmptyPartonicChannel,
+        },
     },
 }
 
@@ -241,4 +246,7 @@ def generate_intrinsic(esf, ihq):
         return (
             kernels.Kernel(w["q"], cfs["intrinsic"]["Rp"](esf, m1sq=m2hq, m2sq=0.0)),
         )
-    return (kernels.Kernel(w["q"], cfs["intrinsic"]["Sp"](esf, m1sq=m2hq, m2sq=0.0)),)
+    return (
+        kernels.Kernel(w["q"], cfs["intrinsic"]["Sp"](esf, m1sq=m2hq, m2sq=0.0)),
+        kernels.Kernel(w["q"], cfs["intrinsic"]["Sm"](esf, m1sq=m2hq, m2sq=0.0)),
+    )
