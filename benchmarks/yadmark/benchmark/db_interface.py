@@ -239,6 +239,20 @@ class DBInterface(mode_selector.ModeSelector):
                         self.idb.table("qcdnum_cache"),
                         qcdnum_utils.compute_qcdnum_data,
                     )
+
+                elif self.external == "FONLLdis":
+                    from .external import (  # pylint:disable=import-error,import-outside-toplevel
+                        fonlldis_utils,
+                    )
+
+                    ext_tab = external.get_external_data(
+                        theory,
+                        obs,
+                        pdf,
+                        self.idb.table("fonlldis_cache"),
+                        fonlldis_utils.compute_fonlldis_data,
+                    )
+                
                 else:
                     raise ValueError(f"Unknown external {self.external}")
 

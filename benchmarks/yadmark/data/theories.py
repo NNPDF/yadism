@@ -36,6 +36,16 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 "NfFF": [3, 4, 5],
                 "FNS": ["FFNS", "ZM-VFNS"],
             }
+        # FONLLdis has only limited options
+        if self.mode == "FONLLdis":
+            return {
+                "PTO": [0, 1],
+                "FNS": ["FONLL-A"],
+                "DAMP": [0,1]
+                #"XIR": [0.5, 1.0, 2.0],
+                #"XIF": [0.5, 1.0, 2.0],
+                #"NfFF": [3, 4, 5],
+            }
         # we're aiming for a APFEL replacement, so they appread naturally together
         if self.mode in ["APFEL", "regression"]:
             return {
@@ -97,7 +107,7 @@ def run_parser():
     ap = argparse.ArgumentParser()
     ap.add_argument(
         "--mode",
-        choices=["APFEL", "QCDNUM", "regression", "sandbox"],
+        choices=["APFEL", "QCDNUM", "regression", "sandbox", "FONLLdis"],
         default="sandbox",
         help="input DB to fill",
     )

@@ -40,5 +40,7 @@ class ModeSelector:
             return "apfel-input.json"
         if self.mode == "QCDNUM":
             return "qcdnum-input.json"
+        if self.mode == "FONLLdis":
+            return "fonlldis-input.json"
         # sandbox
         return "input.json"

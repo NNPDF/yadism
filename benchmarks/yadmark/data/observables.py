@@ -103,6 +103,47 @@ def external_cards_qcdnum(defaults):
         cards.append(c)
     return cards
 
+def external_cards_fonlldis(defaults):
+    """
+    Collect FONLLdis run cards
+
+    Parameters
+    ----------
+        defaults : dict
+            default setup
+
+    Returns
+    -------
+        cards : list(dict)
+            list of cards
+    """
+    # fixed Q2 and fixed x
+    light_kin = []
+    light_kin.extend(
+        [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
+    )
+    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+    cards = []
+    # LO runcard - only F2light is non-zero
+    lo_card = copy.deepcopy(defaults)
+    lo_card["PTO"] = 0
+    lo_card["F2light"] = copy.copy(light_kin)
+    cards.append(lo_card)
+    # NLO runcard
+    nlo_card = copy.deepcopy(defaults)
+    nlo_card["PTO"] = 1
+    obs_lists = [
+        "F2total",
+        "F2charm",
+        "FLtotal",
+        "FLcharm"
+    ]
+    for obs_list in obs_lists:
+        c = copy.deepcopy(nlo_card)
+        for obs in obs_list:
+            c[obs] = copy.copy(light_kin)  # for now take same kinematics
+        cards.append(c)
+    return cards
 
 def external_cards_apfel(defaults):
     """
@@ -238,7 +279,7 @@ def run_parser():
     ap = argparse.ArgumentParser()
     ap.add_argument(
         "--mode",
-        choices=["APFEL", "QCDNUM", "regression", "sandbox"],
+        choices=["APFEL", "QCDNUM", "regression", "sandbox", "FONLLdis"],
         help="input DB to fill",
     )
     # do it
