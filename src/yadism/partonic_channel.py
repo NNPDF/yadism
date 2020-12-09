@@ -87,9 +87,7 @@ class PartonicChannelAsyIntrinsic(PartonicChannel):
         return np.sqrt(a ** 2 + b ** 2 + c ** 2 - 2 * (a * b + b * c + c * a))
 
     def convolution_point(self):
-        return (
-            self.ESF.x / 2.0 * (self.sigma_pm + self.delta) / self.Q2
-        )
+        return self.ESF.x / 2.0 * (self.sigma_pm + self.delta) / self.Q2
 
 
 class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
