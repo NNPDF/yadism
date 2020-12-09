@@ -95,3 +95,19 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
         super().__init__(ESF, m1sq, m2sq)
         self.sigma_pp = self.Q2 + self.m2sq + self.m1sq
         self.sigma_mp = self.Q2 - self.m2sq + self.m1sq
+
+    def init_vars(self, z):
+        self.s1hat = (
+            (1.0 - z)
+            * ((self.delta - self.sigma_pm) * z + self.delta + self.sigma_pm)
+            / 2.0
+            / z
+        )
+        self.deltap = self.kinematic_delta(self.m1sq, self.s1hat + self.m2sq, -self.Q2)
+        self.L_xi = np.log(
+            (self.sigma_pp + self.s1hat - self.deltap)
+            / (self.sigma_pp + self.s1hat + self.deltap)
+        )
+        self.I_xi = (self.s1hat + 2 * self.m2sq) / self.s1hat ** 2 + (
+            self.s1hat + self.m2sq
+        ) / self.deltap / self.s1hat ** 2 * self.sigma_pp * self.L_xi
