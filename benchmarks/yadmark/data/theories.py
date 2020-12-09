@@ -17,12 +17,12 @@ here = pathlib.Path(__file__).parent
 
 class TheoriesGenerator(mode_selector.ModeSelector):
     """
-        Compile all theories to compare against
+    Compile all theories to compare against
 
-        Parameters
-        ----------
-            mode : str
-                active mode
+    Parameters
+    ----------
+        mode : str
+            active mode
     """
 
     def get_matrix(self):
@@ -36,21 +36,24 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 "NfFF": [3, 4, 5],
                 "FNS": ["FFNS", "ZM-VFNS"],
             }
-        # FONLLdis has only limited options
         if self.mode == "FONLLdis":
             return {
-                "PTO": [0, 1],
+                "PTO": [1],
+                "XIR": [1.0],
+                "XIF": [1.0],
+                "NfFF": [4],
                 "FNS": ["FONLL-A"],
-                "DAMP": [0,1]
-                #"XIR": [0.5, 1.0, 2.0],
-                #"XIF": [0.5, 1.0, 2.0],
-                #"NfFF": [3, 4, 5],
+                "DAMP": [0, 1],
             }
         # we're aiming for a APFEL replacement, so they appread naturally together
         if self.mode in ["APFEL", "regression"]:
             return {
                 "PTO": [0, 1],
-                "XIR": [0.5, 1.0, 2.0,],
+                "XIR": [
+                    0.5,
+                    1.0,
+                    2.0,
+                ],
                 "XIF": [0.5, 1.0, 2.0],
                 "TMC": [0, 1],
                 "NfFF": [3, 4, 5],

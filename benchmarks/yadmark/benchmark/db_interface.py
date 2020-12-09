@@ -26,14 +26,14 @@ from . import external
 
 class QueryFieldsEqual(tinydb.queries.QueryInstance):
     """
-        Tests that two fields of the document are equal to each other
+    Tests that two fields of the document are equal to each other
 
-        Parameters
-        ----------
-            field_a : str
-                first field
-            field_b : str
-                second field
+    Parameters
+    ----------
+        field_a : str
+            first field
+        field_b : str
+            second field
     """
 
     def __init__(self, field_a, field_b):
@@ -45,14 +45,14 @@ class QueryFieldsEqual(tinydb.queries.QueryInstance):
 
 class DBInterface(mode_selector.ModeSelector):
     """
-        Interface to access DB
+    Interface to access DB
 
-        Parameters
-        ----------
-            external : str
-                program to compare to
-            db_name : str
-                database name (relative to data/ directory)
+    Parameters
+    ----------
+        external : str
+            program to compare to
+        db_name : str
+            database name (relative to data/ directory)
     """
 
     def __init__(self, mode, external=None, assert_external=None):
@@ -213,7 +213,7 @@ class DBInterface(mode_selector.ModeSelector):
                         print(f"{pdf_name} installed.")
                     pdf = lhapdf.mkPDF(pdf_name, 0)
                 # get our data
-                yad_tab = runner.apply(pdf)
+                yad_tab = runner.apply_pdf(pdf)
                 # get external data
                 if self.external == "APFEL":
                     from .external import (  # pylint:disable=import-error,import-outside-toplevel
@@ -252,7 +252,7 @@ class DBInterface(mode_selector.ModeSelector):
                         self.idb.table("fonlldis_cache"),
                         fonlldis_utils.compute_fonlldis_data,
                     )
-                
+
                 else:
                     raise ValueError(f"Unknown external {self.external}")
 
@@ -406,13 +406,13 @@ class DBInterface(mode_selector.ModeSelector):
 
     def _log(self, log_tab):
         """
-            Dump comparison table.
+        Dump comparison table.
 
-            Parameters
-            ----------
-            log_tab :
-                dict of lists of dicts, to be printed and saved in multiple csv
-                files
+        Parameters
+        ----------
+        log_tab :
+            dict of lists of dicts, to be printed and saved in multiple csv
+            files
         """
 
         # store the log of results
