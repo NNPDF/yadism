@@ -48,3 +48,52 @@ f3hat = """16d0 / Delp2 * ( - 2d0 * Del2 * Rplus * Ixi
      4     + 2d0 * m22 * Spm ) - ( s1h - Smp ) * ( s1h + Spp ) / 2d0
      5     / ( s1h + m22 ) + ( s1h + m22 ) / Delp / s1h * ( - s1h2
      6     + 4d0 * ( m12 * Smp - Del2 ) - 3d0 * s1h * Spm ) * Lxi ) )"""
+
+N1 = """( Splus * Spp - 2d0 * m1 * m2 * Sminus ) / 2d0 /  Del"""
+
+N2 = """2d0 * Splus * Del / Delp2"""
+
+N3 = """2d0 * Rplus / Delp"""
+
+M1 = """(Splus * Spp - 2*m1*m2*Sminus)/(2*Del)"""
+
+M2 = """Splus * Del * x / (Q2IC)"""
+
+M3 = """2 * Rplus"""
+
+I1 = """dlog( ( Spp + Del ) / ( Spp - Del ) ) / Del"""
+
+Cplus = """2d0 * m1 * m2 * I1"""
+
+C1m = """- ( Spm * I1 + dlog( m12 / m22 ) ) / Q2IC"""
+
+C1p = """- ( Smp * I1 - dlog( m12 / m22 ) ) / Q2IC"""
+
+CRm = """( Del2 / 2d0 / Q2IC
+     1     + Spp * ( 1d0 + dlog( Q2IC / Del ) ) ) * I1
+     2     + ( m22 - m12 ) / 2d0 / Q2IC * dlog( m12 / m22 )
+     3     - dlog( Q2IC / m12 ) - dlog( Q2IC / m22 ) - 4d0
+     4     + Spp / Del * ( 
+     5     + dlog( dabs( ( Del - Spm ) / 2d0 / Q2IC ) )**2 / 2d0
+     6     + dlog( dabs( ( Del - Smp ) / 2d0 / Q2IC ) )**2 / 2d0
+     7     - dlog( dabs( ( Del + Spm ) / 2d0 / Q2IC ) )**2 / 2d0
+     8     - dlog( dabs( ( Del + Smp ) / 2d0 / Q2IC ) )**2 / 2d0
+     9     - ddilog( ( Del - Spm ) / 2d0 / Del )
+     1     - ddilog( ( Del - Smp ) / 2d0 / Del )
+     2     + ddilog( ( Del + Spm ) / 2d0 / Del )
+     3     + ddilog( ( Del + Smp ) / 2d0 / Del ) )"""
+
+S = """2d0 + Spp / Del * ( Del * I1
+     1     + ddilog( 2d0 * Del / ( Del - Spp ) )
+     2     - ddilog( 2d0 * Del / ( Del + Spp ) ) )
+     3     + dlog( Del2 / m22 / Q2IC ) * ( - 2d0 + Spp * I1 )"""
+
+V1 = """CRm
+     1     + ( Sminus * Spp - 2d0 * Splus * m1 * m2 )
+     2     / ( Splus * Spp - 2d0 * Sminus * m1 * m2 ) * Cplus"""
+
+V2 = """CRm + ( m12 * C1p + m22 * C1m ) / 2d0
+     1     + Sminus / Splus * ( Cplus + m1 * m2 / 2d0
+     2     * ( C1p + C1m ) )"""
+
+V3 = """CRm + Rminus / Rplus * Cplus"""
