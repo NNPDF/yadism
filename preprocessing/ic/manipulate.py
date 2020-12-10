@@ -6,9 +6,33 @@ translate = {
     2: "Two",
     3: "Three",
 }
+"""Translation as MMa doesn't like numbers in names"""
 
 
-def init_vars(runner, kind, fhat, M, N):
+def init_kind_vars(runner, kind, fhat, M, N, V):
+    r"""
+    Init all variables that depend on the observable kind.
+
+    Parameters
+    ----------
+        runner : MmaRunner
+            Mathematica instance
+        kind : str
+            observable kind
+        fhat : str
+            MMa expression for :math:`\hat f_k`
+        M : str
+            MMa expression for the ratio between :math:`F_k` and :math:`\mathcal F_k`
+        N : str
+            MMa expression for :math:`N_k`
+        V : str
+            MMa expression for :math:`V_k`
+
+    Returns
+    -------
+        ex : str
+            MMa expression - should be empty!
+    """
     fhat = mma.prepare(fhat)
     M = mma.prepare(M)
     N = mma.prepare(N)
@@ -16,17 +40,52 @@ def init_vars(runner, kind, fhat, M, N):
     code_vars = f"""f{kind}hat = {fhat};
     m{kind} = {M};
     n{kind} = {N};
-    f{kind}hatJoined = (m{kind} / n{kind} * f{kind}hat) (*/. {{x -> xBj}}*);
+    v{kind} = {V};
+    f{kind}hatJoined = (m{kind} / n{kind} * f{kind}hat) /. {{x -> xBj, Del->delta}};
+    v{kind}Joind = m{kind} * v{kind};
     """
     return runner.send(code_vars)
 
 
 def join_fl(runner):
-    code_fhat = """fLhatJoined = f2hatJoined - 2*x*f1hatJoined;"""
-    return runner.send(code_fhat)
+    """
+    Define expressions for :math:`F_L = F_2 - 2xF_1`.
+
+    Parameters
+    ----------
+        runner : MmaRunner
+            Mathematica instance
+
+    Returns
+    -------
+        ex : str
+            MMa expression - should be empty!
+    """
+    code = f"""
+    fLhatJoined = f{translate[2]}hatJoined - 2*x*f{translate[1]}hatJoined;
+    vLJoined = v{translate[2]}Joined - 2*x*v{translate[1]}Joined;
+    """
+    return runner.send(code)
 
 
 def parse_reg(runner, kind, Spm):
+    """
+    Select a coupling coefficient and print the regular part
+
+    Parameters
+    ----------
+        runner : MmaRunner
+            Mathematica instance
+        kind : str
+            observable kind
+        Spm : str
+            coupling coefficient
+
+    Returns
+    -------
+        ex : str
+            MMa expression
+    """
     kind = translate[kind]
     code_fhat = f"""
     f{kind}coeff{Spm} = Coefficient[f{kind}hatJoined, {Spm}];
@@ -36,6 +95,24 @@ def parse_reg(runner, kind, Spm):
 
 
 def parse_soft(runner, kind, Spm):
+    """
+    Select a coupling coefficient and print the soft part,
+    i.e. the z->1 limit of the regular part
+
+    Parameters
+    ----------
+        runner : MmaRunner
+            Mathematica instance
+        kind : str
+            observable kind
+        Spm : str
+            coupling coefficient
+
+    Returns
+    -------
+        ex : str
+            MMa expression
+    """
     kind = translate[kind]
     code_hcoeff = f"""
     Print@Module[{{gcoeff}},
@@ -49,6 +126,19 @@ def parse_soft(runner, kind, Spm):
 
 
 def post_process(res):
+    """
+    Rewrite expressions to the external part.
+
+    Parameters
+    ----------
+        res : str
+            input expression
+
+    Returns
+    -------
+        res : str
+            improved expression
+    """
     # replace all variables
     res = res.replace("m12", "pc.m1sq").replace("m22", "pc.m2sq")
     res = (
@@ -56,7 +146,7 @@ def post_process(res):
         .replace("Spm", "pc.sigma_pm")
         .replace("Smp", "pc.sigma_mp")
     )
-    res = res.replace("Del", "pc.delta")
+    res = res.replace("Delp", "pc.deltap").replace("delta", "pc.delta")
     res = (
         res.replace("Lxi", "pc.L_xi")
         .replace("Ixi", "pc.I_xi")

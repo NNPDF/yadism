@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+This contains all the Fortran expressions needed for IC as given by APFEL.
+"""
 
 f2hat = """16d0 / Delp**4 * ( - 2d0 * Del**4 * Splus * Ixi
      1     + 2d0 * m1 * m2 * Sminus * ( ( ( s1h + m22 ) / Delp )
