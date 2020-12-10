@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from . import mma
 
+# Translation table as MMa doesn't like numbers in names
 translate = {
     1: "One",
     2: "Two",
     3: "Three",
 }
-"""Translation as MMa doesn't like numbers in names"""
 
 
 def init_kind_vars(runner, kind, fhat, M, N, V):
@@ -36,13 +36,14 @@ def init_kind_vars(runner, kind, fhat, M, N, V):
     fhat = mma.prepare(fhat)
     M = mma.prepare(M)
     N = mma.prepare(N)
+    V = mma.prepare(V)
     kind = translate[kind]
     code_vars = f"""f{kind}hat = {fhat};
     m{kind} = {M};
     n{kind} = {N};
     v{kind} = {V};
     f{kind}hatJoined = (m{kind} / n{kind} * f{kind}hat) /. {{x -> xBj, Del->delta}};
-    v{kind}Joind = m{kind} * v{kind};
+    v{kind}Joined = m{kind} * v{kind} /. {{x -> xBj, Del->delta}};
     """
     return runner.send(code_vars)
 
@@ -91,6 +92,31 @@ def parse_reg(runner, kind, Spm):
     f{kind}coeff{Spm} = Coefficient[f{kind}hatJoined, {Spm}];
     f{kind}coeff{Spm} = f{kind}coeff{Spm} /. {{Ixi->(s1h+2m22)/(s1h^2) + (s1h+m22)/(Delp*s1h^2)*Spp*Lxi}};
     Print@FortranForm@Collect[f{kind}coeff{Spm},{{Lxi}}, FullSimplify];"""
+    return runner.send(code_fhat)
+
+
+def parse_virt(runner, kind, Spm):
+    """
+    Select a coupling coefficient and print the virtual part.
+
+    Parameters
+    ----------
+        runner : MmaRunner
+            Mathematica instance
+        kind : str
+            observable kind
+        Spm : str
+            coupling coefficient
+
+    Returns
+    -------
+        ex : str
+            MMa expression
+    """
+    kind = translate[kind]
+    code_fhat = f"""
+    v{kind}coeff{Spm} = Coefficient[v{kind}Joined, {Spm}];
+    Print@FortranForm@Collect[v{kind}coeff{Spm},{{Lxi}}, FullSimplify];"""
     return runner.send(code_fhat)
 
 

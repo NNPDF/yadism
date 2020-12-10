@@ -9,7 +9,7 @@ def writeall(p, res):
     """
     Thread worker.
 
-    Reads from the stdout of the subprocess until this is closed or an `@` is
+    Reads from the stdout of the subprocess until it is closed or an `@` is
     encountered.
 
     Parameters
@@ -49,6 +49,8 @@ class MmaRunner:
             code : str
                 executed code
         """
+        # reading needs to be on a seperate stream - idea from here:
+        # https://stackoverflow.com/questions/19880190/interactive-input-output-using-python/53312631#53312631
         stream = io.StringIO()
         writer = threading.Thread(target=writeall, args=(self.p, stream))
         writer.start()
