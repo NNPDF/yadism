@@ -103,6 +103,7 @@ def external_cards_qcdnum(defaults):
         cards.append(c)
     return cards
 
+
 def external_cards_fonlldis(defaults):
     """
     Collect FONLLdis run cards
@@ -124,19 +125,16 @@ def external_cards_fonlldis(defaults):
     )
     light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     cards = []
-    # LO runcard - only F2light is non-zero
-    lo_card = copy.deepcopy(defaults)
-    lo_card["PTO"] = 0
-    lo_card["F2light"] = copy.copy(light_kin)
-    cards.append(lo_card)
     # NLO runcard
     nlo_card = copy.deepcopy(defaults)
     nlo_card["PTO"] = 1
     obs_lists = [
-        "F2total",
-        "F2charm",
-        "FLtotal",
-        "FLcharm"
+        [
+            "F2total",
+            "F2charm",
+            "FLtotal",
+            "FLcharm",
+        ]
     ]
     for obs_list in obs_lists:
         c = copy.deepcopy(nlo_card)
@@ -144,6 +142,7 @@ def external_cards_fonlldis(defaults):
             c[obs] = copy.copy(light_kin)  # for now take same kinematics
         cards.append(c)
     return cards
+
 
 def external_cards_apfel(defaults):
     """
@@ -207,22 +206,22 @@ def external_cards_apfel(defaults):
 
 class ObservablesGenerator(mode_selector.ModeSelector):
     """
-        Compile all theories to compare against
+    Compile all theories to compare against
 
-        Parameters
-        ----------
-            mode : str
-                active mode
+    Parameters
+    ----------
+        mode : str
+            active mode
     """
 
     def get_observables(self):
         """
-            Collect all runcards
+        Collect all runcards
 
-            Returns
-            -------
-                observables : list(dict)
-                    list of runcards
+        Returns
+        -------
+            observables : list(dict)
+                list of runcards
         """
         # default interpolation setup
         interpolation_xgrid = np.unique(
@@ -246,6 +245,8 @@ class ObservablesGenerator(mode_selector.ModeSelector):
             cards.extend(external_cards_apfel(defaults))
         elif self.mode == "QCDNUM":
             cards.extend(external_cards_qcdnum(defaults))
+        elif self.mode == "FONLLdis":
+            cards.extend(external_cards_fonlldis(defaults))
         elif self.mode == "sandbox":
             # sandbox -> don't do anything; its cards are managed there
             cards.extend([copy.deepcopy(defaults)])

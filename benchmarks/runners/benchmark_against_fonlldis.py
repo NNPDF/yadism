@@ -4,6 +4,8 @@
 
 import pytest
 from yadmark.benchmark.db_interface import DBInterface, QueryFieldsEqual
+from yadmark.data import observables
+from yadmark.data import theories
 
 
 class FONLLdisBenchmark:
@@ -20,38 +22,38 @@ class FONLLdisBenchmark:
         self, PTO, pdfs, theory_update=None, obs_query=None, assert_external=None
     ):
         """Query for PTO also in obs by default"""
-        self._db(assert_external)
-        if obs_query is None:
-            obs_query = self.db.obs_query.PTO == PTO
-            if (
-                PTO > 0
-            ):  # by default we're running in FFNS3, so we can use the big runcard
-                obs_query &= self.db.obs_query.F2charm.exists()
-        return self.db.run_external(PTO, pdfs, theory_update, obs_query,)
+        self._db(False)
+        return self.db.run_external(PTO, pdfs, theory_update)
 
 
 @pytest.mark.quick_check
-@pytest.mark.commit_check
 class BenchmarkPlain(FONLLdisBenchmark):
     """The most basic checks"""
 
     def benchmark_NLO(self):
         return self.run_external(
-            1, 
+            1,
             ["CT14llo_NF4"],
-            {"FNS": ~(self._db().theory_query.FNS == "FONLL-A")})
+            {
+                "FNS": self._db().theory_query.FNS == "FONLL-A",
+                "NfFF": self._db().theory_query.NfFF == 4,
+            },
+        )
+
 
 class BenchmarkThreshold(FONLLdisBenchmark):
     """FONLL with threshold damping"""
 
     def benchmark_NLO(self):
         return self.run_external(
-            1, 
-            ["ToyLH"],
+            1,
+            ["CT14llo_NF4"],
             {
-                "FNS": ~(self._db().theory_query.FNS == "FONLL-A"),
-                "DAMP": self.db.theory_query.DAMP == 1
-            })
+                "FNS": self._db().theory_query.FNS == "FONLL-A",
+                "NfFF": self._db().theory_query.NfFF == 4,
+                "DAMP": self.db.theory_query.DAMP == 1,
+            },
+        )
 
 
 if __name__ == "__main__":

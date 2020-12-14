@@ -3,19 +3,19 @@ import pathlib
 
 import tinydb
 
-here = pathlib.Path(__file__).parent.absolute()
+here = pathlib.Path().parent.absolute()
 
 
 class ModeSelector:
     """
-        Handle the mode-related stuff
+    Handle the mode-related stuff
 
-        Parameters
-        ----------
-            mode : str
-                active mode
-            external : str
-                external program name to compare to if in sandbox mode
+    Parameters
+    ----------
+        mode : str
+            active mode
+        external : str
+            external program name to compare to if in sandbox mode
     """
 
     def __init__(self, mode, external=None):
