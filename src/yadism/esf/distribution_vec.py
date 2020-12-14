@@ -3,15 +3,6 @@
 Defines :py:class:`DistributionVec` and its API, that are used to represent
 distribution objects in the coefficient function definition and calculation.
 
-How to compute the RSL representation of a function
-===================================================
-
-To facilitate the integration of coefficient functions we use the regular-
-singluar-local (RSL) representation. This representation can be obtain by
-the following prescriptions: coefficient function can contain three different
-type of elements: Dirac delta distributions, plus distributions and regular
-functions (such as "raw" logarithms, polynomials, dilogarithms, etc.).
-
 """
 
 import numpy as np
