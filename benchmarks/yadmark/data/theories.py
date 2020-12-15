@@ -36,6 +36,14 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 "NfFF": [3, 4, 5],
                 "FNS": ["FFNS", "ZM-VFNS"],
             }
+        if self.mode == "xspace_bench":
+            return {
+                "PTO": [0, 1],
+                "XIR": [1.0],
+                "XIF": [1.0],
+                "NfFF": [4],
+                "FNS": ["FFNS", "ZM-VFNS", "FFN0"],
+            }
         if self.mode == "FONLLdis":
             return {
                 "PTO": [1],
@@ -110,7 +118,7 @@ def run_parser():
     ap = argparse.ArgumentParser()
     ap.add_argument(
         "--mode",
-        choices=["APFEL", "QCDNUM", "regression", "sandbox", "FONLLdis"],
+        choices=["APFEL", "QCDNUM", "regression", "sandbox", "FONLLdis", "xspace_bench"],
         default="sandbox",
         help="input DB to fill",
     )

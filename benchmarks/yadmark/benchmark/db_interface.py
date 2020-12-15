@@ -252,6 +252,19 @@ class DBInterface(mode_selector.ModeSelector):
                         self.idb.table("fonlldis_cache"),
                         fonlldis_utils.compute_fonlldis_data,
                     )
+                
+                elif self.external == "xspace_bench":
+                    from .external import (  # pylint:disable=import-error,import-outside-toplevel
+                        xspace_bench_utils,
+                    )
+
+                    ext_tab = external.get_external_data(
+                        theory,
+                        obs,
+                        pdf,
+                        self.idb.table("xspace_bench_cache"),
+                        xspace_bench_utils.compute_xspace_bench_data,
+                    )
 
                 else:
                     raise ValueError(f"Unknown external {self.external}")
