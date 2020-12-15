@@ -46,8 +46,8 @@ for variable flavor scheme like FONLL.
    :stub-columns: 1
    :align: center
 
-Coefficient Functions Calculation
----------------------------------
+Distributions
+-------------
 
 
 Convolution Integral
@@ -124,12 +124,3 @@ deserve special care:
    distribution contribution to the *singular*, while the second to the *local*
    part of the integration
 
-
-Integral Details
-~~~~~~~~~~~~~~~~
-
-- if area does not overlap it's set to 0 and integral skip
-- we are using `scipy.quad`
-- precision can be set
-- some areas specification are passed to quad
-- the extremes are cut a little, to regulate integration behavior
