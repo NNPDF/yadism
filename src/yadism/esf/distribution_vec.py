@@ -335,7 +335,7 @@ class DistributionVec:
                 for area in pdf_func.areas:
                     area_borders.extend([area.xmin, area.xmax])
                 area_borders = np.unique(area_borders)
-                if pdf_func._mode_log: #pylint: disable=protected-access
+                if pdf_func._mode_log:  # pylint: disable=protected-access
                     area_borders = np.exp(area_borders)
                 breakpoints = x / area_borders
                 z_min = x

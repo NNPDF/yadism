@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import re
 import subprocess
 import threading
 import io
@@ -65,30 +64,3 @@ class MmaRunner:
     def close(self):
         """Close the interactive terminal, by sending the `Exit[]` command."""
         self.send("Exit[];")
-
-
-def prepare(fform):
-    """
-    Translate Fortran expressions to Mathematica.
-
-    - remove line markers
-    - remove float marker
-    - remove inline squaring
-
-    Parameters
-    ----------
-        fform : str
-            Fortran expression
-
-    Returns
-    -------
-        mform : str
-            equivalent Mathematica expression
-    """
-    fform = re.sub("\n *\\d", "", fform)
-    fform = fform.replace("d0", "")
-    fform = fform.replace("s1h2", "s1h**2")
-    fform = fform.replace("Del2", "Del**2")
-    fform = fform.replace("Delp2", "Delp**2")
-    fform = fform.replace("**", "^")
-    return fform

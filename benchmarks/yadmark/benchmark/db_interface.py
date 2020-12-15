@@ -221,6 +221,8 @@ class DBInterface(mode_selector.ModeSelector):
                         apfel_utils,
                     )
 
+                    print(yad_tab)
+                    raise ValueError("APFEL is currently not able to run")
                     ext_tab = external.get_external_data(
                         theory,
                         obs,

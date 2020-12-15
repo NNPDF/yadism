@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from . import mma
+import re
 
 # Translation table as MMa doesn't like numbers in names
 translate = {
@@ -7,6 +7,34 @@ translate = {
     2: "Two",
     3: "Three",
 }
+
+
+def prepare(fform, mma_mode=True):
+    """
+    Translate Fortran expressions to Mathematica.
+
+    - remove line markers
+    - remove float marker
+    - remove inline squaring
+
+    Parameters
+    ----------
+        fform : str
+            Fortran expression
+
+    Returns
+    -------
+        mform : str
+            equivalent Mathematica expression
+    """
+    fform = re.sub("\n *\\d", "", fform)
+    fform = fform.replace("d0", "")
+    fform = fform.replace("s1h2", "s1h**2")
+    fform = fform.replace("Del2", "Del**2")
+    fform = fform.replace("Delp2", "Delp**2")
+    if mma_mode:
+        fform = fform.replace("**", "^")
+    return fform
 
 
 def init_kind_vars(runner, kind, fhat, M, N, V):
@@ -33,17 +61,17 @@ def init_kind_vars(runner, kind, fhat, M, N, V):
         ex : str
             MMa expression - should be empty!
     """
-    fhat = mma.prepare(fhat)
-    M = mma.prepare(M)
-    N = mma.prepare(N)
-    V = mma.prepare(V)
+    fhat = prepare(fhat)
+    M = prepare(M)
+    N = prepare(N)
+    V = prepare(V)
     kind = translate[kind]
     code_vars = f"""f{kind}hat = {fhat};
     m{kind} = {M};
     n{kind} = {N};
     v{kind} = {V};
-    f{kind}hatJoined = (m{kind} / n{kind} * f{kind}hat) /. {{x -> xBj, Del->delta}};
-    v{kind}Joined = m{kind} * v{kind} /. {{x -> xBj, Del->delta}};
+    f{kind}hatJoined = (m{kind} / n{kind} * f{kind}hat);
+    v{kind}Joined = m{kind} * v{kind};
     """
     return runner.send(code_vars)
 
@@ -91,7 +119,7 @@ def parse_reg(runner, kind, Spm):
     code_fhat = f"""
     f{kind}coeff{Spm} = Coefficient[f{kind}hatJoined, {Spm}];
     f{kind}coeff{Spm} = f{kind}coeff{Spm} /. {{Ixi->(s1h+2m22)/(s1h^2) + (s1h+m22)/(Delp*s1h^2)*Spp*Lxi}};
-    Print@FortranForm@Collect[f{kind}coeff{Spm},{{Lxi}}, FullSimplify];"""
+    Print@FortranForm@Collect[f{kind}coeff{Spm}/. {{x -> xBj, Del->delta}},{{Lxi}}, FullSimplify];"""
     return runner.send(code_fhat)
 
 
@@ -116,7 +144,7 @@ def parse_virt(runner, kind, Spm):
     kind = translate[kind]
     code_fhat = f"""
     v{kind}coeff{Spm} = Coefficient[v{kind}Joined, {Spm}];
-    Print@FortranForm@Collect[v{kind}coeff{Spm},{{Lxi}}, FullSimplify];"""
+    Print@FortranForm@Collect[v{kind}coeff{Spm}/. {{x -> xBj, Del->delta}},{{Lxi}}, FullSimplify];"""
     return runner.send(code_fhat)
 
 
@@ -146,7 +174,7 @@ def parse_soft(runner, kind, Spm):
         gcoeff = gcoeff /. {{s1h -> zeroAt1 * s1hreg}};
         hcoeff = Limit[gcoeff,zeroAt1->0];
         hcoeff = hcoeff /. {{Delp -> Del, Lxi -> Lxisoft, s1hreg -> Del}};
-        FortranForm@Collect[hcoeff,{{Lxi}},FullSimplify]
+        FortranForm@Collect[hcoeff/. {{x -> xBj, Del->delta}},{{Lxi}},FullSimplify]
     ];"""
     return runner.send(code_hcoeff)
 
@@ -172,12 +200,28 @@ def post_process(res):
         .replace("Spm", "pc.sigma_pm")
         .replace("Smp", "pc.sigma_mp")
     )
-    res = res.replace("Delp", "pc.deltap").replace("delta", "pc.delta")
+    res = (
+        res.replace("delta", "pc.delta")
+        .replace("Delp", "pc.deltap")
+        .replace("Del", "pc.delta")
+    )
     res = (
         res.replace("Lxi", "pc.L_xi")
         .replace("Ixi", "pc.I_xi")
         .replace("s1h", "pc.s1hat")
     )
-    res = res.replace("Q2IC", "pc.ESF.Q2").replace("xBj", "pc.ESF.x")
-    res = res.replace("m1*m2", "np.sqrt(pc.m1sq * pc.m2sq)")
+    res = res.replace("Q2IC", "pc.Q2").replace("xBj", "pc.x")
+    # res = res.replace("m1*m2", "np.sqrt(pc.m1sq * pc.m2sq)").replace("m1 * m2", "np.sqrt(pc.m1sq * pc.m2sq)")
+    res = re.sub(r"m1\s*\*\s*m2", "np.sqrt(pc.m1sq * pc.m2sq)", res)
+    res = (
+        res.replace("dlog", "np.log").replace("dabs", "np.abs").replace("ddilog", "li2")
+    )
+    res = (
+        res.replace("CRm", "pc.CRm")
+        .replace("C1m", "pc.C1m")
+        .replace("C1p", "pc.C1p")
+        .replace("Cplus", "pc.Cplus")
+        .replace("I1", "pc.I1")
+    )
+    res = re.sub("\\s+", " ", res)
     return res
