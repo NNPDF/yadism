@@ -71,7 +71,7 @@ def compute_fonlldis_data(theory, observables, pdf):
     pdf_name = pdf.set().name
     if pdf_name == "ToyLH":
         raise Warning("yadmark ToyLH not equal to FONLLdis ToyLH")
-        iwhichpdf = 0.0
+        iwhichpdf = 0
         if theory["PTO"] == 0:
             LHAPDFfile = "toyLH_LO.grid"
         else:
@@ -125,7 +125,8 @@ def compute_fonlldis_data(theory, observables, pdf):
                     xs.append(kin["x"])
 
             # Init QCDNUM
-            FONLLdis.zmstf(mc2, mb2, mt2, alpharef, q2ref, q2, pto, iwhichpdf)
+            yad_as = sc.a_s(q2)
+            FONLLdis.zmstf(mc2, mb2, mt2, yad_as * 4. *np.pi, q2, q2, pto, iwhichpdf)
 
             # TODO: is asfunc imported correctly ??
             # Get alphas
@@ -141,7 +142,6 @@ def compute_fonlldis_data(theory, observables, pdf):
                 fcm0 = 0.0
 
                 if x != 1.0:
-
                     # Massive part
                     ## this light stuff is just for debug 
                     if obs_name.flavor != "light":
@@ -190,6 +190,7 @@ def compute_fonlldis_data(theory, observables, pdf):
 
         num_tab[obs] = out
 
+    # clean up FONLLdis cache files
     os.system("rm -rf *.wgt")
 
     return num_tab

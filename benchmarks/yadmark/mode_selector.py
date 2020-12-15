@@ -3,7 +3,7 @@ import pathlib
 
 import tinydb
 
-here = pathlib.Path().parent.absolute()
+here = pathlib.Path(__file__).parent.absolute()
 
 
 class ModeSelector:
