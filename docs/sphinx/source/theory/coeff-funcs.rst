@@ -49,12 +49,27 @@ for variable flavor scheme like FONLL.
 Distributions
 -------------
 
+To obtain a physical observable one has to convolute the coefficient functions with the |PDF|
 
-Convolution Integral
-~~~~~~~~~~~~~~~~~~~~
+.. math ::
+    \sigma = \sum_j f_j \otimes c_j = \sum_j \int\limits_x^1 \frac {dz}{z} f_j(x/z) c_j(z)
 
-How we recast convolution in an integration in [0,1] (where plus distributions
-are properly defined) plus some addends.
+
+A generic coefficient function will allow for three ingredients:
+
+- Regular functions that are well behaving, i.e. integrable, for all :math:`z \in (0,1]`
+- Dirac-delta distributions: :math:`\delta(1-z)`
+- Plus distributions: :math:`\left[f(z)\right]_+` which are defined by
+
+.. math ::
+  \int\limits_0^1 \dz g(z) \left[f(z)\right]_+ = \int\limits_0^1 \left(g(z) - g(1)\right)f(z)
+
+The "plused" function can be a generic function, but in practice will almost always be :math:`\log^k(1-x)/(1-x)`.
+The "plused" function has to be regular at :math:`z=0`.
+
+In order to do the convolution in a generic way we adopt the Regular-Singular-Local scheme (RSL):
+i.e. we categorize them by their behavior under the convolution interal. This is needed because of the mismatch in the
+definitions of the convolution and the plus prescription.
 
 
 Convolution to Integration
@@ -92,13 +107,6 @@ And explicitly for a product of distributions:
 
 Regular - Singular - Local (RSL)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A generic coefficient function will allow for three ingredients:
-
-- regular functions
-- :math:`delta(1-x)` distributions
-- :math:`\left[f(x)\right]_+` distributions (where the function inside can be a
-  generic function, but it will always be :math:`\log^k(1-x)/(1-x)` in practice)
 
 The first one can be integrated by ordinary methods, but the other two will
 deserve special care:
