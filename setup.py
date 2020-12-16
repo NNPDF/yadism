@@ -83,6 +83,7 @@ def setup_package():
             "eko<0.6",
             "numpy",
             "scipy",
+            "pandas",
             "rich",
         ],
         python_requires=">=3.7",
