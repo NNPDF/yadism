@@ -6,3 +6,5 @@ _build/
 source/dev-tools/code-todos.rst
 # Ignore auto generated module references (benchmark package)
 source/dev-tools/yadmark
+# Ignore generated sphinx-bibtex file
+source/bibtex.json
