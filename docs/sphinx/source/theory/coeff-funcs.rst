@@ -11,6 +11,7 @@ The main categories for coefficients the same of :doc:`structure-functions`, i.e
 - the **heavyness** involved (light/charm/bottom/top/total)
 - but there is a new one: the **channel** (ns/ps/g), and it is related to the
   incoming parton:
+
   - if the |EW| boson it is coupling to a *quark* line connected to the incoming
     one, than each PDF it's contributing proportionally to his charge (e.g.:
     electric charge for the photon); this is called **non-singlet (ns)**
@@ -59,17 +60,23 @@ A generic coefficient function will allow for three ingredients:
 
 - Regular functions that are well behaving, i.e. integrable, for all :math:`z \in (0,1]`
 - Dirac-delta distributions: :math:`\delta(1-z)`
-- Plus distributions: :math:`\left[f(z)\right]_+` which are defined by
+- Plus distributions: :math:`\left[g(z)\right]_+` which are defined by
 
 .. math ::
-  \int\limits_0^1 \dz g(z) \left[f(z)\right]_+ = \int\limits_0^1 \left(g(z) - g(1)\right)f(z)
+  \int\limits_0^1 \!dz\, f(z) \left[g(z)\right]_+ = \int\limits_0^1\!dz\, \left(f(z) - f(1)\right)g(z)
 
 The "plused" function can be a generic function, but in practice will almost always be :math:`\log^k(1-x)/(1-x)`.
 The "plused" function has to be regular at :math:`z=0`.
 
-In order to do the convolution in a generic way we adopt the Regular-Singular-Local scheme (RSL):
-i.e. we categorize them by their behavior under the convolution interal. This is needed because of the mismatch in the
-definitions of the convolution and the plus prescription.
+In order to do the convolution in a generic way we adopt the |RSL| scheme:
+i.e. we categorize them by their behavior under the convolution interal. This is needed because
+of the mismatch in the definitions of the convolution and the plus prescription.
+Any coefficient function :math:`c(z)` can be written in the following way:
+
+.. math ::
+  f \otimes c = \int\limits_x^1 \! \frac{dz}{z} \, f(x/z) c^R(z) + \int\limits_x^1 \! dz \, \left(\frac{f(x/z)}{z} - f(x)\right) c^S(z) + f(x) c^L(x)
+
+
 
 
 Convolution to Integration

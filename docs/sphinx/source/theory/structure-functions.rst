@@ -34,6 +34,7 @@ derived from the |SM| just setting to 0 some of its bare couplings.
   one associated to the structure function chosen) and all the others *heavy*
   infinitely massive, switching to 0 all the charges that do not involve the
   chosen heavy quark
+
   - in |NC| this means that only the *charm* charge is kept
   - in |CC| this means that :math:`V_{cd}` and :math:`V_{cs}` are kept, but e.g.
     there is no contribution by :math:`V_{cb}`, because currently bottom is

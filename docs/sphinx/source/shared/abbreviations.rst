@@ -11,6 +11,9 @@
 .. |EW| replace::
    :abbr:`EW (ElectroWeak)`
 
+.. |PDF| replace::
+   :abbr:`PDF (Parton Distribution Functions(s))`
+
 .. ---------
    processes
    ---------
@@ -66,8 +69,14 @@
 .. |FFNS| replace::
    :abbr:`FFNS (Fixed Flavor Number Scheme)`
 
+.. |VFNS| replace::
+   :abbr:`VFNS (Variable Flavor Number Scheme)`
+
 .. |ZM-VFNS| replace::
    :abbr:`ZM-VFNS (Zero Mass - Variable Flavor Number Scheme)`
+
+.. |RSL| replace::
+   :abbr:`RSL (Regular - Singular - Local)`
 
 .. ----------------
    cross references
