@@ -2,11 +2,7 @@
 import re
 
 # Translation table as MMa doesn't like numbers in names
-translate = {
-    1: "One",
-    2: "Two",
-    3: "Three",
-}
+translate = {1: "One", 2: "Two", 3: "Three", "L": "L"}
 
 
 def prepare(fform, mma_mode=True):
@@ -21,6 +17,8 @@ def prepare(fform, mma_mode=True):
     ----------
         fform : str
             Fortran expression
+        mma_mode : bool
+            replace ** with ^ as is suitable in MMa?
 
     Returns
     -------
@@ -144,7 +142,8 @@ def parse_virt(runner, kind, Spm):
     kind = translate[kind]
     code_fhat = f"""
     v{kind}coeff{Spm} = Coefficient[v{kind}Joined, {Spm}];
-    Print@FortranForm@Collect[v{kind}coeff{Spm}/. {{x -> xBj, Del->delta}},{{Lxi}}, FullSimplify];"""
+    Print@FortranForm@Collect[v{kind}coeff{Spm}/. {{x -> xBj, Del->delta}},{{Lxi}}, FullSimplify];
+    """
     return runner.send(code_fhat)
 
 
@@ -211,7 +210,6 @@ def post_process(res):
         .replace("s1h", "pc.s1hat")
     )
     res = res.replace("Q2IC", "pc.Q2").replace("xBj", "pc.x")
-    # res = res.replace("m1*m2", "np.sqrt(pc.m1sq * pc.m2sq)").replace("m1 * m2", "np.sqrt(pc.m1sq * pc.m2sq)")
     res = re.sub(r"m1\s*\*\s*m2", "np.sqrt(pc.m1sq * pc.m2sq)", res)
     res = (
         res.replace("dlog", "np.log").replace("dabs", "np.abs").replace("ddilog", "li2")
