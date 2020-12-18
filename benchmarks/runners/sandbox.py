@@ -23,8 +23,8 @@ def generate_observables():
     #     [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
     #     # np.linspace(1e-3, 1, 50)
     # )
-    # light_kin.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
-    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 90, 10).tolist()])
+    light_kin.extend([dict(x=x, Q2=90) for x in np.linspace(0.008, 0.99, 10).tolist()])
+    light_kin.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(2, 90, 10).tolist()])
     # light_kin.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
     # light_kin = [dict(x=0.001,Q2=1e5)]
     # light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
@@ -32,15 +32,15 @@ def generate_observables():
     obs_list = [
         "F2light",
         "F2charm",
-        "F2bottom",
-        #"F2top",
-        "F2total",
+        # "F2bottom",
+        # "F2top",
+        # "F2total",
         "FLlight",
         "FLcharm",
-        "FLbottom",
+        # "FLbottom",
         "F3light",
         "F3charm",
-        "F3bottom",
+        # "F3bottom",
     ]
     cards = []
     card = copy.deepcopy(defaults)
@@ -64,7 +64,9 @@ class Sandbox:
 
     def _db(self, assert_external=None):
         """init DB connection"""
-        self.db = DBInterface("sandbox", "xspace_bench", assert_external=assert_external)
+        self.db = DBInterface(
+            "sandbox", "xspace_bench", assert_external=assert_external
+        )
         return self.db
 
     def run_LO(self):
@@ -87,9 +89,10 @@ class Sandbox:
                 # "XIF": self.db.theory_query.XIF == 0.5,
                 "NfFF": self.db.theory_query.NfFF == 4,
                 # "TMC": self.db.theory_query.TMC == 1,
-                #"FNS": self.db.theory_query.FNS == "FONLL-A",
-                "FNS": self.db.theory_query.FNS == "FFNS",
-                "DAMP": self.db.theory_query.DAMP == 0,
+                # "FNS": self.db.theory_query.FNS == "ZM-VFNS",
+                # "FNS": self.db.theory_query.FNS == "FFNS",
+                "FNS": self.db.theory_query.FNS == "FONLL-A",
+                "DAMP": self.db.theory_query.DAMP == 1,
             },
         )
 

@@ -55,7 +55,10 @@ def dump_pdf(name, xgrid, Q2grid, pids, pdf_table):
 def dump_info(name, description, pids):
     # collect data
 
-    data = dict(description=description, pids=pids,)
+    data = dict(
+        description=description,
+        pids=pids,
+    )
 
     # ===========
     # apply template
@@ -150,10 +153,15 @@ def make_filter_pdf(name, active_pids, pdf_name):
 def generate_pdf():
     ap = argparse.ArgumentParser()
     ap.add_argument(
-        "name", type=str, help="pdf name",
+        "name",
+        type=str,
+        help="pdf name",
     )
     ap.add_argument(
-        "-p", "--from-pdf-set", type=str, help="parent pdf set",
+        "-p",
+        "--from-pdf-set",
+        type=str,
+        help="parent pdf set",
     )
     ap.add_argument("pids", type=int, help="active pids", nargs="+")
     ap.add_argument("-i", "--install", action="store_true", help="install into LHAPDF")
@@ -178,7 +186,9 @@ def generate_pdf():
 def install_pdf():
     ap = argparse.ArgumentParser()
     ap.add_argument(
-        "name", type=str, help="pdf name",
+        "name",
+        type=str,
+        help="pdf name",
     )
     args = ap.parse_args()
     _install_pdf(args.name)

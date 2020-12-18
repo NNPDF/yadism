@@ -252,7 +252,7 @@ class DBInterface(mode_selector.ModeSelector):
                         self.idb.table("fonlldis_cache"),
                         fonlldis_utils.compute_fonlldis_data,
                     )
-                
+
                 elif self.external == "xspace_bench":
                     from .external import (  # pylint:disable=import-error,import-outside-toplevel
                         xspace_bench_utils,

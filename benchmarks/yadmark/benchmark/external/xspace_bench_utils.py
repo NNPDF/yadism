@@ -27,16 +27,9 @@ def compute_xspace_bench_data(theory, observables, pdf):
             xspace_bench numbers
     """
     import xspace_bench
+    import eko.thresholds as thr
+    import eko.strong_coupling as eko_sc
     import numpy as np
-
-    # select scheme
-    scheme = theory["FNS"]
-
-    # TODO: scheme names are correct ??
-    if scheme == "ZM-VFNS": scheme = "ZMVN"
-
-    if scheme != "ZMVN" and scheme != "FFNS" and scheme != "FFN0" and scheme != "GMVN":
-        raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
 
     # Available targets: PROTON, NEUTRON, ISOSCALAR, IRON
     target = "PROTON"
@@ -58,6 +51,49 @@ def compute_xspace_bench_data(theory, observables, pdf):
     if pdf_name == "ToyLH":
         raise Warning("yadmark ToyLH not equal to xspace_bench ToyLH")
         pdf_name = "toyLH_NLO.LHgrid"
+
+    # Constant values
+    q_thr = []
+    q_thr.append(theory["mc"])
+    q_thr.append(theory["mb"])
+    q_thr.append(theory["mt"])
+    mz = theory["MZ"]
+    mw = theory["MW"]
+    sw = theory["SIN2TW"]
+    gf = theory["GF"]
+
+    ckm = theory["CKM"].split(" ")
+    ckm = [float(item) for item in ckm]
+
+    alpharef = theory["alphas"]
+    q2ref = theory["Qref"] ** 2
+    thr_list = [m ** 2 for m in q_thr]
+
+    # select scheme
+    scheme = theory["FNS"]
+
+    if scheme == "ZM-VFNS":
+        thrholder = thr.ThresholdsConfig(q2ref, scheme, threshold_list=thr_list)
+        scheme = "ZMVN"
+
+    elif scheme == "FFNS":
+        thrholder = thr.ThresholdsConfig(q2ref, scheme, nf=theory["NfFF"])
+
+    elif scheme == "FONLL-A":
+        thrholder = thr.ThresholdsConfig(q2ref, scheme, threshold_list=thr_list)
+        if theory["DAMP"] != 1:
+            raise NotImplementedError("FONLL-A only with damping in xspace_bench")
+        scheme = "GMVN"
+
+    elif scheme == "FONLL-A'":
+        thrholder = thr.ThresholdsConfig(q2ref, scheme, threshold_list=thr_list)
+        if theory["DAMP"] != 1:
+            raise NotImplementedError("FONLL-A' only with damping in xspace_bench")
+        scheme = "FFN0"
+    else:
+        raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
+
+    sc = eko_sc.StrongCoupling(alpharef, q2ref, thrholder, order=pto)
 
     num_tab = {}
     # loop over functions
@@ -81,7 +117,11 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
             # get the x corresponding to q2
             xs = []
+
+            alphas = sc.a_s(q2) * 4.0 * np.pi
+            y = 0.5
             f = 0.0
+
             for kin in observables[obs]:
                 if kin["Q2"] == q2:
                     xs.append(kin["x"])
@@ -90,33 +130,77 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
                 res = []
 
-                # TODO:
-                # 1) remove Rapidity ? do we need to integrate ?
-                # 2) fix alpharef, don't want from the pdf, edit fortran?!?
-                y = 0.5
-
-                res = xspace_bench.dis_xsec(
-                    x, q2, y, proc, scheme, pto, pdf_name, target, proj
-                )
+                # TODO, FIX NC AND EM
+                if proc == "NC" or proc == "EM":
+                    res = xspace_bench.nc_dis(
+                        x,
+                        q2,
+                        y,
+                        proc,
+                        scheme,
+                        pto,
+                        pdf_name,
+                        target,
+                        proj,
+                        mz,
+                        sw,
+                        alphas,
+                        q_thr,
+                    )
+                elif proc == "CC":
+                    res = xspace_bench.cc_dis(
+                        x,
+                        q2,
+                        y,
+                        scheme,
+                        pto,
+                        pdf_name,
+                        target,
+                        proj,
+                        gf,
+                        mw,
+                        ckm,
+                        alphas,
+                        q_thr,
+                    )
+                else:
+                    raise NotImplementedError(
+                        f"{proc} is not implemented in xspace_bench "
+                    )
 
                 if obs_name.kind == "F2":
-                    if obs_name.flavor == "light": f = res[0][0]
-                    if obs_name.flavor == "charm": f = res[0][1]
-                    if obs_name.flavor == "bottom": f = res[0][2]
-                    if obs_name.flavor == "top": f = res[0][3]
-                    if obs_name.flavor == "total": f = res[0][4]
+                    if obs_name.flavor == "light":
+                        f = res[0][0]
+                    if obs_name.flavor == "charm":
+                        f = res[0][1]
+                    if obs_name.flavor == "bottom":
+                        f = res[0][2]
+                    if obs_name.flavor == "top":
+                        f = res[0][3]
+                    if obs_name.flavor == "total":
+                        f = res[0][4]
                 elif obs_name.kind == "F3":
-                    if obs_name.flavor == "light": f = res[1][0]
-                    if obs_name.flavor == "charm": f = res[1][1]
-                    if obs_name.flavor == "bottom": f = res[1][2]
-                    if obs_name.flavor == "top": f = res[1][3]
-                    if obs_name.flavor == "total": f = res[1][4]
+                    if obs_name.flavor == "light":
+                        f = -res[1][0]
+                    if obs_name.flavor == "charm":
+                        f = -res[1][1]
+                    if obs_name.flavor == "bottom":
+                        f = res[1][2]
+                    if obs_name.flavor == "top":
+                        f = -res[1][3]
+                    if obs_name.flavor == "total":
+                        f = -res[1][4]
                 elif obs_name.kind == "FL":
-                    if obs_name.flavor == "light": f = res[2][0]
-                    if obs_name.flavor == "charm": f = res[2][1]
-                    if obs_name.flavor == "bottom": f = res[2][2]
-                    if obs_name.flavor == "top": f = res[2][3]
-                    if obs_name.flavor == "total": f = res[2][4]
+                    if obs_name.flavor == "light":
+                        f = res[2][0]
+                    if obs_name.flavor == "charm":
+                        f = res[2][1]
+                    if obs_name.flavor == "bottom":
+                        f = res[2][2]
+                    if obs_name.flavor == "top":
+                        f = res[2][3]
+                    if obs_name.flavor == "total":
+                        f = res[2][4]
                 else:
                     raise NotImplementedError(
                         f"{obs_name.kind} is not implemented in xspace_bench"

@@ -107,7 +107,7 @@ def compute_fonlldis_data(theory, observables, pdf):
             if kin["Q2"] not in q2s:
                 q2s.append(kin["Q2"])
 
-        # this is for debug 
+        # this is for debug
         thresholdholder = eko.thresholds.ThresholdsConfig(
             q2ref, "FONLL-A", threshold_list=[mc2, mb2, mt2]
         )
@@ -126,13 +126,13 @@ def compute_fonlldis_data(theory, observables, pdf):
 
             # Init QCDNUM
             yad_as = sc.a_s(q2)
-            FONLLdis.zmstf(mc2, mb2, mt2, yad_as * 4. *np.pi, q2, q2, pto, iwhichpdf)
+            FONLLdis.zmstf(mc2, mb2, mt2, yad_as * 4.0 * np.pi, q2, q2, pto, iwhichpdf)
 
             # TODO: is asfunc imported correctly ??
             # Get alphas
             alphaq2 = FONLLdis.asfunc(q2)
             # alphaq2 = sc.a_s( q2 ) * 4 * np.pi
-            print( 'alphas: ', sc.a_s(q2) * 4 * np.pi, alphaq2)
+            print("alphas: ", sc.a_s(q2) * 4 * np.pi, alphaq2)
 
             for x in xs:
 
@@ -143,7 +143,7 @@ def compute_fonlldis_data(theory, observables, pdf):
 
                 if x != 1.0:
                     # Massive part
-                    ## this light stuff is just for debug 
+                    ## this light stuff is just for debug
                     if obs_name.flavor != "light":
                         fcmm = FONLLdis.f2massive(
                             x, q2, mc, alphaq2, iord, iford, obs_name.kind, " ", isin
@@ -176,7 +176,7 @@ def compute_fonlldis_data(theory, observables, pdf):
                 if theory["DAMP"] == 0:
                     # Plain FONLL
                     ffonll = (fczm - fcm0 + fcmm) + flzm
-                    print('results: ', fczm, fcmm, fcm0, ffonll, flzm)
+                    print("results: ", fczm, fcmm, fcm0, ffonll, flzm)
 
                 else:
                     # FONLL with threshold damping
