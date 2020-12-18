@@ -62,7 +62,7 @@ def setup_package():
     setup(
         name="yadism",
         version=VERSION,
-        description="Yet Another Deep Inelastic Scattering Module",
+        description="Yet Another Deep-Inelastic Scattering Module",
         long_description=long_description,
         long_description_content_type="text/markdown",
         author="A.Candido, S.Carrazza, F. Hekhorn",

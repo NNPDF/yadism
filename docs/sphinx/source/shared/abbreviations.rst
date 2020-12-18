@@ -19,7 +19,7 @@
    ---------
 
 .. |DIS| replace::
-   :abbr:`DIS (Deep Inelastic Scattering)`
+   :abbr:`DIS (Deep-Inelastic Scattering)`
 
 .. |EM| replace::
    :abbr:`EM (Electromagnetic Current)`

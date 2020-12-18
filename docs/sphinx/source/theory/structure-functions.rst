@@ -10,8 +10,6 @@ The |DIS| structure functions are organized in the following way:
 - the **heavyness**: there is always one structure function per *kind*
   available, i.e. the *total* one, but based on the *kind* definition more
   observables may be defined
-- the **process**: the coefficient functions are computed at |LO| |EW|, and they are organized
-according the |EW| boson involved.
 
 Heavyness
 ~~~~~~~~~
@@ -39,6 +37,7 @@ derived from the |SM| just setting to 0 some of its bare couplings.
   - in |CC| this means that :math:`V_{cd}` and :math:`V_{cs}` are kept, but e.g.
     there is no contribution by :math:`V_{cb}`, because currently bottom is
     considered infinitely massive
+
     - we could also define by arbitrarily assign CKM matrix elements to a single
       flavor, choosing always the heaviest, and set to 0 all the things not
       assigned to the chosen flavor, it is just an equivalent way of presenting
