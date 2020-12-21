@@ -1,15 +1,6 @@
 Processes
 =========
 
-|DIS| itself is a kind of process, but it can be mediated by different bosons,
-so for this reason we further subdivide it in 3 groups:
-
-- |EM|: the pure electromagnetic one, mediated by the photon :math:`\gamma`
-- |NC|: a superset of the previous one, where the mediator is any neutral |EW|
-  gauge boson, and so :math:`\gamma,~Z`
-- |CC|: the |EW| charged current, so when the mediator is one of
-  :math:`W_+,~W_-`
-
 Weights
 -------
 
@@ -47,24 +38,3 @@ Do we want to include also the perturbative expansion convention? (expand in
 - propagator
 - hadronic
 - factorization formula contributions
-
-
-EM
-~~
-
-- electromagnetic charges
-
-
-NC
-~~
-
-- z: vectorial-vectorial, axial-axial
-- f3: vectorial-axial
-
-
-CC
-~~
-
-- ckm
-- W+/-
-
