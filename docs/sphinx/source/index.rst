@@ -69,7 +69,6 @@ In particular:
   theory/coeff-funcs.rst 
   theory/fns.rst
   theory/scale-variations.rst
-  theory/TMC.rst
 
   zzz-refs.rst
 

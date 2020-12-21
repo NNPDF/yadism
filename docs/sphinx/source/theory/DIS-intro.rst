@@ -89,3 +89,14 @@ Do we want to include also the perturbative expansion convention? (expand in
 - propagator
 - hadronic
 - factorization formula contributions
+
+Target Mass Corrections
+-----------------------
+
+Following :cite:`tmc-review`, :cite:`tmc-iranian` we provide three options:
+
+- **exact**: is the full and involves integration
+- **approximate**: is stemming from the exact, but the strcture functions in
+  the integrand are evaluated at the bottom end
+- **APFEL**: the one used in APFEL, similar to the exact but with g2 in
+  the review (Schienbein et al.) set to 0
