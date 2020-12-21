@@ -32,21 +32,21 @@ def generate_observables():
     obs_list = [
         "F2light",
         "F2charm",
-        # "F2bottom",
+        "F2bottom",
         # "F2top",
-        # "F2total",
+        "F2total",
         "FLlight",
         "FLcharm",
-        # "FLbottom",
+        "FLbottom",
         "F3light",
         "F3charm",
-        # "F3bottom",
+        "F3bottom",
     ]
     cards = []
     card = copy.deepcopy(defaults)
     # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
     # print(card)
-    card["prDIS"] = "CC"
+    card["prDIS"] = "NC"
     # card["PropagatorCorrection"] = .999
     # card["ProjectileDIS"] = "antineutrino"
     # card["PolarizationDIS"] = 0.5
@@ -87,7 +87,7 @@ class Sandbox:
             {
                 # "XIR": self.db.theory_query.XIR == 0.5,
                 # "XIF": self.db.theory_query.XIF == 0.5,
-                "NfFF": self.db.theory_query.NfFF == 4,
+                "NfFF": self.db.theory_query.NfFF == 6,
                 # "TMC": self.db.theory_query.TMC == 1,
                 # "FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 # "FNS": self.db.theory_query.FNS == "FFNS",

@@ -85,11 +85,11 @@ def compute_xspace_bench_data(theory, observables, pdf):
             raise NotImplementedError("FONLL-A only with damping in xspace_bench")
         scheme = "GMVN"
 
-    elif scheme == "FONLL-A'":
-        thrholder = thr.ThresholdsConfig(q2ref, scheme, threshold_list=thr_list)
-        if theory["DAMP"] != 1:
-            raise NotImplementedError("FONLL-A' only with damping in xspace_bench")
-        scheme = "FFN0"
+    #    elif scheme == "FONLL-A'":
+    #        thrholder = thr.ThresholdsConfig(q2ref, scheme, threshold_list=thr_list)
+    #        if theory["DAMP"] != 1:
+    #            raise NotImplementedError("FONLL-A' only with damping in xspace_bench")
+    #        scheme = "FFN0"
     else:
         raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
 
@@ -130,7 +130,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
                 res = []
 
-                # TODO, FIX NC AND EM
                 if proc == "NC" or proc == "EM":
                     res = xspace_bench.nc_dis(
                         x,
