@@ -40,3 +40,16 @@ given set of scattering bosons:
 - Charged Current (|CC|): we only allow the :math:`W^+` *or* :math:`W^-` to be exchanged.
   The actual boson is determined by the incoming scattering lepton and charge conservation.
   As the :math:`W^\pm` are flavor changing additional care is needed in the calculation.
+
+Structure Function Kind
+-----------------------
+
+``yadism`` allows to compute three different structure functions, to which we refer to as **kind**:
+
+.. math ::
+  F_2,~ F_L = F_2 - 2xF_1,~ xF_3
+
+- to compute :math:`F_L` instead of :math:`F_1` is adventagous due to the Callan-Gross relation
+  :cite:`Callan:1969uq` :math:`F_L=0` in the naive parton model
+- Note that we compute :math:`xF_3` instead of the bare structure function to respect the native
+  scaling in the full cross section
