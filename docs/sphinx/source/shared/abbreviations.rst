@@ -12,7 +12,7 @@
    :abbr:`EW (ElectroWeak)`
 
 .. |PDF| replace::
-   :abbr:`PDF (Parton Distribution Functions(s))`
+   :abbr:`PDF (Parton Distribution Function(s))`
 
 .. ---------
    processes
