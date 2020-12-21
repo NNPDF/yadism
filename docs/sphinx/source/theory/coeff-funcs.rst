@@ -4,7 +4,7 @@ Coefficient Functions
 Overview of coefficient functions structure
 -------------------------------------------
 
-The main categories for coefficients the same of :doc:`structure-functions`, i.e.:
+The main categories for coefficients the same of Structure Functions, i.e.:
 
 - the **process** (EM/NC/CC)
 - the **kind** (F2/L/3)

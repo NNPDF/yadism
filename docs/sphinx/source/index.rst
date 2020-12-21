@@ -66,10 +66,8 @@ In particular:
   :hidden:
 
   theory/DIS-intro.rst
-  theory/structure-functions.rst
   theory/coeff-funcs.rst 
-  theory/heavy-flavors.rst
-  theory/processes.rst
+  theory/fns.rst
   theory/scale-variations.rst
   theory/TMC.rst
 

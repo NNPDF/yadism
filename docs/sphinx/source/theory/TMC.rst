@@ -5,9 +5,6 @@ Target Mass Corrections
 
 :cite:`tmc-review`, :cite:`tmc-iranian`
 
-
-
-
 -----
 
 
@@ -24,20 +21,6 @@ compute TMCs, e.g.)
 Caching: it is managed at the level of StructureFunction, while the values are
 kept at the level of ESF (so the StructureFunction is just routing the caller to
 the correct instance of ESF to ask for values)
-
-Note 1
-------
-Here is the third time that we are proliferating the SF classes to all the
-flavours and kinds (SF/ESFTMC/ESF x 2/L x light/c/b/t), but at the bottom level
-they are needed (ESF implementation are actually different for every option, so
-it makes sense to have different classes).
-The classes one level above (SF/ESFTMC) are simply shadowing the ones below in
-order to route to the correct one. The same business can be done with a `switch`
-pattern (actually `if...elif...elif...` in python), but the only difference is
-how many lines of code you are saving.
-**Proposal** for a better layout in which we don't need to explicitly shadow
-from level to level (and we don't need to route with `if` as well) are liked and
-likeòy to be accepted.
 
 Note 2 (caching)
 ----------------
