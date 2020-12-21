@@ -62,13 +62,15 @@ A generic coefficient function will allow for three ingredients:
   for all :math:`z \in (0,1]`; these typically contain polynomials, logarithms
   and dilogarithms
 - Dirac-delta distributions: :math:`\delta(1-z)`
-- Plus distributions: :math:`\left[g(z)\right]_+` which are defined by
+- Plus distributions: :math:`\left[g(z)\right]_+` which have a regulated singularity at :math:`z\to 1`
+  and are defined by
 
 .. math ::
   \int\limits_0^1 \!dz\, f(z) \left[g(z)\right]_+ = \int\limits_0^1\!dz\, \left(f(z) - f(1)\right)g(z)
 
-The "plused" function can be a generic function, but in practice will almost always be :math:`\log^k(1-x)/(1-x)`.
-The "plused" function has to be regular at :math:`z=0`.
+The "plused" function can be a generic function, but in practice will almost always be :math:`\log^k(1-z)/(1-z)`.
+The "plused" function has to be regular at :math:`z=0`. These contributions are related to soft and/or
+collinear singularities in the physical process.
 
 In order to do the convolution in a generic way we adopt the |RSL| scheme:
 i.e. we categorize them by their behavior under the convolution interal. This is needed because

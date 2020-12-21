@@ -1,35 +1,6 @@
 Flavor Number Schemes
 =====================
 
-FFNS
-----
-
-The mass corrections (heavy quark contributions) are available for a single
-mass at a time, so e.g. `yadism` it is not encoding the effect of having finite
-charm and bottom masses at the same time.
-
-The actual scheme is the following:
-
-- :math:`n_l` light flavors are active (i.e. massless quarks)
-- a **single** quark with a **finite mass** *may be* active, according to the
-  |FNS| (e.g. in ZM-VFNS it will never be such an object)
-- all the remaining flavors are considered infinitely massive, so they will
-  never contribute to anything
-
-ZM-VFNS
--------
-
-In a |VFNS| this scheme will depend on the specific value of :math:`Q^2`
-considered.
-
-FONLL
------
-
-TODO OLD STUFF
---------------
-.. todo:: rewrite this
-
-
 Heavyness
 ---------
 
@@ -65,14 +36,24 @@ derived from the |SM| just setting to 0 some of its bare couplings.
 No other observable than **Flight**, **Fheavy**, **Ftotal** (for all the
 unpolarized *kinds*) and **sigma** is provided by `yadism`.
 
+FFNS
+----
 
+The mass corrections (heavy quark contributions) are available for a single
+mass at a time, so e.g. `yadism` it is not encoding the effect of having finite
+charm and bottom masses at the same time.
 
-- References
+The actual scheme is the following:
 
-.. _heavy-nc:
+- :math:`n_l` light flavors are active (i.e. massless quarks)
+- a **single** quark with a **finite mass** *may be* active, according to the
+  |FNS| (e.g. in ZM-VFNS it will never be such an object)
+- all the remaining flavors are considered infinitely massive, so they will
+  never contribute to anything
+
 
 NC
---
+^^^
 
 The main reference is :cite:`felix-thesis`.
 
@@ -82,7 +63,7 @@ The main reference is :cite:`felix-thesis`.
 .. _heavy-cc:
 
 CC
---
+^^^
 
 The main reference is :cite:`gluck-ccheavy`.
 
@@ -126,8 +107,17 @@ and in :math:`F_2^{charm}`:
 
 .. todo:: write about normalization in Eq. 2
 
-Asymptotics for FONLL
-~~~~~~~~~~~~~~~~~~~~~
+ZM-VFNS
+-------
+
+In a |VFNS| this scheme will depend on the specific value of :math:`Q^2`
+considered.
+
+FONLL
+-----
+
+Asymptotics for CC
+^^^^^^^^^^^^^^^^^^
 .. todo :: this is simply light as it should! write it
 
 For FONLL we need the massless limit of the coefficient functions in :cite:`gluck-ccheavy`.
