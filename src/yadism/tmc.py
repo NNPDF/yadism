@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This module contain the implementation of target mass corrections (TMC). For an
-introduction about TMC and also implementation details see :ref:`tmc-page`.
+This module contain the implementation of target mass corrections (TMC).
 
 Three classes are here defined:
 
