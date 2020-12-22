@@ -68,7 +68,7 @@ def init_kind_vars(runner, kind, fhat, M, N, V):
     m{kind} = {M};
     n{kind} = {N};
     v{kind} = {V};
-    f{kind}hatJoined = (m{kind} / n{kind} * f{kind}hat);
+    f{kind}hatJoined = s1h/(8*(s1h + m22)) * (m{kind} / n{kind} * f{kind}hat);
     v{kind}Joined = m{kind} * v{kind};
     """
     return runner.send(code_vars)
@@ -95,9 +95,9 @@ def join_fl(runner):
     return runner.send(code)
 
 
-def parse_reg(runner, kind, Spm):
+def parse_raw(runner, kind, Spm):
     """
-    Select a coupling coefficient and print the regular part
+    Select a coupling coefficient and print the raw expression.
 
     Parameters
     ----------
@@ -117,7 +117,8 @@ def parse_reg(runner, kind, Spm):
     code_fhat = f"""
     f{kind}coeff{Spm} = Coefficient[f{kind}hatJoined, {Spm}];
     f{kind}coeff{Spm} = f{kind}coeff{Spm} /. {{Ixi->(s1h+2m22)/(s1h^2) + (s1h+m22)/(Delp*s1h^2)*Spp*Lxi}};
-    Print@FortranForm@Collect[f{kind}coeff{Spm}/. {{x -> xBj, Del->delta}},{{Lxi}}, FullSimplify];"""
+    Print@FortranForm@Collect[f{kind}coeff{Spm}/. {{x -> xBj, Del->delta}},{{Lxi}}, FullSimplify];
+    """
     return runner.send(code_fhat)
 
 
@@ -169,7 +170,7 @@ def parse_soft(runner, kind, Spm):
     kind = translate[kind]
     code_hcoeff = f"""
     Print@Module[{{gcoeff}},
-        gcoeff = zeroAt1 * s1h/(8*(s1h + m22)) * f{kind}coeff{Spm};
+        gcoeff = zeroAt1 * f{kind}coeff{Spm};
         gcoeff = gcoeff /. {{s1h -> zeroAt1 * s1hreg}};
         hcoeff = Limit[gcoeff,zeroAt1->0];
         hcoeff = hcoeff /. {{Delp -> Del, Lxi -> Lxisoft, s1hreg -> Del}};

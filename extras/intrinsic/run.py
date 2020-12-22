@@ -36,11 +36,11 @@ def exprs():
     exprs = {}
     for k in [2, "L"]:
         for S in ["Splus", "Sminus"]:
-            exprs[f"f{k}_{S.lower()}_reg"] = manipulate.parse_reg(r, k, S)
+            exprs[f"f{k}_{S.lower()}_raw"] = manipulate.parse_raw(r, k, S)
             exprs[f"f{k}_{S.lower()}_soft"] = manipulate.parse_soft(r, k, S)
             exprs[f"f{k}_{S.lower()}_virt"] = manipulate.parse_virt(r, k, S)
     for R in ["Rplus", "Rminus"]:
-        exprs[f"f3_{R.lower()}_reg"] = manipulate.parse_reg(r, 3, R)
+        exprs[f"f3_{R.lower()}_raw"] = manipulate.parse_raw(r, 3, R)
         exprs[f"f3_{R.lower()}_soft"] = manipulate.parse_soft(r, 3, R)
         exprs[f"f3_{R.lower()}_virt"] = manipulate.parse_virt(r, 3, R)
     r.close()

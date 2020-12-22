@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
-# fmt = off
+# fmt: off
 # Compare the results with APFEL's
 import copy
 
@@ -81,15 +81,14 @@ class Sandbox:
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "TMC": self.db.theory_query.TMC == 0,
                 # "DAMP": self.db.theory_query.DAMP == 0,
-                "IC": self.db.theory_query.IC
-                == 1,
+                "IC": (self.db.theory_query.IC == 1),
             },
         )
 
     def run_NLO(self):
         return self._db(False).run_external(
             1,
-            ["CT14llo_NF6-conly"],
+            ["CT14llo_NF6"],
             {
                 # "XIR": self.db.theory_query.XIR == 2,
                 # "NfFF": self.db.theory_query.NfFF == 4,
@@ -97,8 +96,7 @@ class Sandbox:
                 # "TMC": self.db.theory_query.TMC == 1,
                 # "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
-                "IC": self.db.theory_query.IC
-                == 1,
+                "IC": (self.db.theory_query.IC == 1),
             },
         )
 
