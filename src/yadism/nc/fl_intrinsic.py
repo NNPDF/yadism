@@ -12,6 +12,9 @@ class FLIntrinsicSp(PartonicChannelHeavyIntrinsic):
         )
         return 0, 0, factor
 
+    def NLO(self):
+        return self.mkNLO("fl", "splus")
+
 
 class FLIntrinsicSm(PartonicChannelHeavyIntrinsic):
     def LO(self):
@@ -23,3 +26,6 @@ class FLIntrinsicSm(PartonicChannelHeavyIntrinsic):
             / self.convolution_point()
         )
         return 0, 0, factor
+
+    def NLO(self):
+        return self.mkNLO("fl", "sminus")

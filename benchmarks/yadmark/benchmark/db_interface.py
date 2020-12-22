@@ -220,9 +220,9 @@ class DBInterface(mode_selector.ModeSelector):
                     from .external import (  # pylint:disable=import-error,import-outside-toplevel
                         apfel_utils,
                     )
-
-                    print(yad_tab)
-                    raise ValueError("APFEL is currently not able to run")
+                    if theory["IC"] != 0 and theory["PTO"] > 0:
+                        print(yad_tab)
+                        raise ValueError("APFEL is currently not able to run")
                     ext_tab = external.get_external_data(
                         theory,
                         obs,

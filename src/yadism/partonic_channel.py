@@ -2,7 +2,11 @@
 
 import numpy as np
 
+from eko import constants
+
 from . import ic
+
+from .esf.distribution_vec import rsl_from_distr_coeffs
 
 
 class PartonicChannel(dict):
@@ -125,3 +129,17 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
         self.I_xi = (self.s1hat + 2 * self.m2sq) / self.s1hat ** 2 + (
             self.s1hat + self.m2sq
         ) / self.deltap / self.s1hat ** 2 * self.sigma_pp * self.L_xi
+
+    def mkNLO(self, kind, RS):
+        self.init_nlo_vars()
+        norm = 2.0 * constants.CF  # 2 = as_norm
+        omx = norm * ic.__getattribute__(f"{kind}_{RS}_soft")(self)
+        delta = norm * (ic.__getattribute__(f"{kind}_{RS}_virt")(self) + self.S)
+
+        def reg(z):
+            self.init_vars(z)
+            return norm * ic.__getattribute__(f"{kind}_{RS}_raw")(self) - omx / (
+                1.0 - z
+            )
+
+        return rsl_from_distr_coeffs(reg, delta, omx)

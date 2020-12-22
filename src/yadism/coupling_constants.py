@@ -51,7 +51,7 @@ class CouplingConstants:
             - 2.0 * self.electric_charge[pid] * self.theory_config["sin2theta_weak"]
         )
 
-    def leptonic_coupling(self, mode, kind):
+    def leptonic_coupling(self, mode, quark_coupling_type):
         """
         Computes the coupling of the boson to the lepton
 
@@ -59,8 +59,8 @@ class CouplingConstants:
         ----------
             mode : str
                 scattered bosons
-            kind : str
-                observable kind to distinguish parity violating and parity conserving couplings
+            quark_coupling_type : str
+                (axial-)vectorial/(axial-)vectorial coupling
 
         Returns
         -------
@@ -86,12 +86,12 @@ class CouplingConstants:
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]
         # switch mode
         if mode == "phph":
-            if kind != "F3":
+            if quark_coupling_type in ["VV", "AA"]:
                 return self.electric_charge[abs(projectile_pid)] ** 2
             else:
                 return 0
         elif mode == "phZ":
-            if kind != "F3":
+            if quark_coupling_type in ["VV", "AA"]:
                 return self.electric_charge[abs(projectile_pid)] * (
                     projectile_v + pol * projectile_a
                 )
@@ -100,7 +100,7 @@ class CouplingConstants:
                     projectile_a + pol * projectile_v
                 )
         elif mode == "ZZ":
-            if kind != "F3":
+            if quark_coupling_type in ["VV", "AA"]:
                 return (
                     projectile_v ** 2
                     + projectile_a ** 2
@@ -112,9 +112,7 @@ class CouplingConstants:
                 )
         raise ValueError(f"Unknown mode: {mode}")
 
-    def hadronic_coupling(
-        self, mode, kind, pid, quark_coupling_type=None, cc_mask=None
-    ):
+    def hadronic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
         """
         Computes the coupling of the boson to the parton
 
@@ -122,8 +120,6 @@ class CouplingConstants:
         ----------
             mode : str
                 scattered bosons
-            kind : str
-                observable kind to distinguish parity violating and parity conserving couplings
             pid : int
                 parton identifier
             quark_coupling_type : str
@@ -139,39 +135,23 @@ class CouplingConstants:
         """
         # for quarks only the flavor does matter
         pid = abs(pid)
+        if mode == "WW":
+            return np.sum(self.theory_config["CKM"].masked(cc_mask)(pid))
         # load couplings
-        eq = self.electric_charge[pid]
-        # axial coupling of the photon to the quark is not there of course
-        if quark_coupling_type == "A":
-            eq = 0
-        gqv = self.vectorial_coupling(pid)
-        gqa = self.weak_isospin_3[pid]
+        qph = {
+            "V": self.electric_charge[pid],
+            "A": 0,  # axial coupling of the photon to the quark is not there of course
+        }
+        qZ = {"V": self.vectorial_coupling(pid), "A": self.weak_isospin_3[pid]}
+        first = quark_coupling_type[0]
+        second = quark_coupling_type[1]
         # switch mode
         if mode == "phph":
-            if kind != "F3":
-                return eq ** 2
-            else:
-                return 0
+            return qph[first] * qph[second]
         elif mode == "phZ":
-            if kind != "F3":
-                return eq * gqv
-            else:
-                return eq * gqa
+            return qph[first] * qZ[second]
         elif mode == "ZZ":
-            if kind != "F3":
-                g2q = gqv ** 2 + gqa ** 2
-                # in heavy quark structure functions the two coefficient functions for the
-                # vectorial and axial-vectorial coupling are NOT the same (unlinke in the massless case)
-                if quark_coupling_type == "V":
-                    g2q = gqv ** 2
-                elif quark_coupling_type == "A":
-                    g2q = gqa ** 2
-                return g2q
-            else:
-                return 2.0 * gqv * gqa
-        elif mode == "WW":
-            return np.sum(self.theory_config["CKM"].masked(cc_mask)(pid))
-
+            return qZ[first] * qZ[second]
         raise ValueError(f"Unknown mode: {mode}")
 
     def propagator_factor(self, mode, Q2):
@@ -211,7 +191,7 @@ class CouplingConstants:
             return eta_W
         raise ValueError(f"Unknown mode: {mode}")
 
-    def get_weight(self, pid, Q2, kind, quark_coupling_type=None, cc_mask=None):
+    def get_weight(self, pid, Q2, quark_coupling_type, cc_mask=None):
         """
         Compute the weight for the pid contributions to the structure function.
 
@@ -224,8 +204,6 @@ class CouplingConstants:
                 particle identifier
             Q2 : float
                 DIS virtuality
-            kind : str
-                observable kind to distinguish parity violating and parity conserving couplings
             quark_coupling_type : str
                 flag to distinguish for heavy quarks between vectorial and axial-vectorial
                 coupling
@@ -237,10 +215,15 @@ class CouplingConstants:
             w : float
                 weight
         """
+        # CC = WW
+        if self.obs_config["process"] == "CC":
+            return self.leptonic_coupling(
+                "WW", quark_coupling_type
+            ) * self.hadronic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
         w_phph = (
-            self.leptonic_coupling("phph", kind)
+            self.leptonic_coupling("phph", quark_coupling_type)
             * self.propagator_factor("phph", Q2)
-            * self.hadronic_coupling("phph", kind, pid, quark_coupling_type)
+            * self.hadronic_coupling("phph", pid, quark_coupling_type)
         )
         # pure photon exchane
         if self.obs_config["process"] == "EM":
@@ -250,22 +233,17 @@ class CouplingConstants:
             # photon-Z interference
             w_phZ = (
                 2
-                * self.leptonic_coupling("phZ", kind)
+                * self.leptonic_coupling("phZ", quark_coupling_type)
                 * self.propagator_factor("phZ", Q2)
-                * self.hadronic_coupling("phZ", kind, pid, quark_coupling_type)
+                * self.hadronic_coupling("phZ", pid, quark_coupling_type)
             )
             # true Z contributions
             w_ZZ = (
-                self.leptonic_coupling("ZZ", kind)
+                self.leptonic_coupling("ZZ", quark_coupling_type)
                 * self.propagator_factor("ZZ", Q2)
-                * self.hadronic_coupling("ZZ", kind, pid, quark_coupling_type)
+                * self.hadronic_coupling("ZZ", pid, quark_coupling_type)
             )
             return w_phph + w_phZ + w_ZZ
-        # CC = W
-        if self.obs_config["process"] == "CC":
-            return self.leptonic_coupling("WW", kind) * self.hadronic_coupling(
-                "WW", kind, pid, cc_mask=cc_mask
-            )
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod

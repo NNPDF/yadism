@@ -148,5 +148,5 @@ class CoefficientFunctionsCombiner:
             full = self.collect_zmvfns()
         elif self.esf.sf.scheme in ["FONLL-A"]:
             full = self.collect_fonll()
-        # drop all elements that have 0 weight
+        # TODO drop all elements that have 0 weight
         return full

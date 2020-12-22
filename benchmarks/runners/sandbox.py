@@ -32,16 +32,16 @@ def generate_observables():
     # light_kin.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     obs_list = [
         "F2light",
-        "F2charm",
+        #"F2charm",
         # "F2bottom",
         # "F2top",
-        "F2total",
+        #"F2total",
         # "FLlight",
-        "FLcharm",
+        #"FLcharm",
         # "FLbottom",
         # "FLtotal",
         # "F3light",
-        "F3charm",
+        #"F3charm",
         # "F3bottom",
         # "F3total",
     ]
@@ -81,7 +81,7 @@ class Sandbox:
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "TMC": self.db.theory_query.TMC == 0,
                 # "DAMP": self.db.theory_query.DAMP == 0,
-                "IC": (self.db.theory_query.IC == 1),
+                # "IC": (self.db.theory_query.IC == 1),
             },
         )
 
@@ -96,7 +96,7 @@ class Sandbox:
                 # "TMC": self.db.theory_query.TMC == 1,
                 # "FNS": self.db.theory_query.FNS == "FONLL-A",
                 # "DAMP": self.db.theory_query.DAMP == 1,
-                "IC": (self.db.theory_query.IC == 1),
+                # "IC": (self.db.theory_query.IC == 1),
             },
         )
 
@@ -104,5 +104,5 @@ class Sandbox:
 if __name__ == "__main__":
     generate_observables()
     sand = Sandbox()
-    # sand.run_LO()
+    sand.run_LO()
     sand.run_NLO()

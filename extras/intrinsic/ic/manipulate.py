@@ -68,8 +68,8 @@ def init_kind_vars(runner, kind, fhat, M, N, V):
     m{kind} = {M};
     n{kind} = {N};
     v{kind} = {V};
-    f{kind}hatJoined = s1h/(8*(s1h + m22)) * (m{kind} / n{kind} * f{kind}hat);
-    v{kind}Joined = m{kind} * v{kind};
+    f{kind}hatJoined = s1h/(8*(s1h + m22)) * Expand[m{kind} / n{kind}] * f{kind}hat;
+    v{kind}Joined = Simplify[m{kind} * v{kind}];
     """
     return runner.send(code_vars)
 

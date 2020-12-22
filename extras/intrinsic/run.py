@@ -34,11 +34,11 @@ def exprs():
     manipulate.join_fl(r)
     # compute MMa elements
     exprs = {}
-    for k in [2, "L"]:
+    for k in [1, 2, "L"]:
         for S in ["Splus", "Sminus"]:
-            exprs[f"f{k}_{S.lower()}_raw"] = manipulate.parse_raw(r, k, S)
-            exprs[f"f{k}_{S.lower()}_soft"] = manipulate.parse_soft(r, k, S)
-            exprs[f"f{k}_{S.lower()}_virt"] = manipulate.parse_virt(r, k, S)
+            exprs[f"f{str(k).lower()}_{S.lower()}_raw"] = manipulate.parse_raw(r, k, S)
+            exprs[f"f{str(k).lower()}_{S.lower()}_soft"] = manipulate.parse_soft(r, k, S)
+            exprs[f"f{str(k).lower()}_{S.lower()}_virt"] = manipulate.parse_virt(r, k, S)
     for R in ["Rplus", "Rminus"]:
         exprs[f"f3_{R.lower()}_raw"] = manipulate.parse_raw(r, 3, R)
         exprs[f"f3_{R.lower()}_soft"] = manipulate.parse_soft(r, 3, R)

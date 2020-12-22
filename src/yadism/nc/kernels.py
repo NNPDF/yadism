@@ -15,7 +15,7 @@ from .f2_asy import F2asyGluonVV, F2asyGluonAA
 from .fl_asy import FLasyGluonVV, FLasyGluonAA
 from .f2_intrinsic import F2IntrinsicSp
 from .fl_intrinsic import FLIntrinsicSp, FLIntrinsicSm
-from .f3_intrinsic import F3IntrinsicRp
+from .f3_intrinsic import F3IntrinsicRp, F3IntrinsicRm
 
 coefficient_functions = {
     "F2": {
@@ -66,7 +66,7 @@ coefficient_functions = {
         },
         "intrinsic": {
             "Rp": F3IntrinsicRp,
-            "Rm": pc.EmptyPartonicChannel,
+            "Rm": F3IntrinsicRm,
         },
     },
 }
@@ -103,7 +103,14 @@ def weights_light(coupling_constants, Q2, kind, nf):
     ns_partons = {}
     pids = range(1, nf + 1)
     for q in pids:
-        w = coupling_constants.get_weight(q, Q2, kind)
+        if kind != "F3":
+            w = coupling_constants.get_weight(
+                q, Q2, "VV"
+            ) + coupling_constants.get_weight(q, Q2, "AA")
+        else:
+            w = coupling_constants.get_weight(
+                q, Q2, "VA"
+            ) + coupling_constants.get_weight(q, Q2, "AV")
         ns_partons[q] = w
         ns_partons[-q] = w if kind != "F3" else -w
         tot_ch_sq += w
@@ -141,10 +148,10 @@ def generate_heavy(esf, nf):
     return (gVV, gAA)
 
 
-def weights_heavy(coupling_constants, Q2, kind, nf):
+def weights_heavy(coupling_constants, Q2, _kind, nf):
     nhq = nf + 1
-    weight_vv = coupling_constants.get_weight(nhq, Q2, kind, "V")
-    weight_aa = coupling_constants.get_weight(nhq, Q2, kind, "A")
+    weight_vv = coupling_constants.get_weight(nhq, Q2, "VV")
+    weight_aa = coupling_constants.get_weight(nhq, Q2, "AA")
     # if kind == "F3":
     # weights = {"qVA": {}}
     #     for q in range(1, nhq):
@@ -190,7 +197,15 @@ def generate_heavy_fonll_diff(esf, nl):
     m2hq = esf.sf.m2hq[nhq - 4]
     # add light contributions
     ns_partons = {}
-    w = esf.sf.coupling_constants.get_weight(nhq, esf.Q2, esf.sf.obs_name.kind)
+    if kind != "F3":
+        w = esf.sf.coupling_constants.get_weight(
+            nhq, esf.Q2, "VV"
+        ) + esf.sf.coupling_constants.get_weight(nhq, esf.Q2, "AA")
+    else:
+        w = esf.sf.coupling_constants.get_weight(
+            nhq, esf.Q2, "VA"
+        ) + esf.sf.coupling_constants.get_weight(nhq, esf.Q2, "AV")
+
     ns_partons[nhq] = w
     ns_partons[-nhq] = w if kind != "F3" else -w
     ch_av = w / (nl + 1.0) if kind != "F3" else 0.0
@@ -213,26 +228,26 @@ def generate_heavy_fonll_diff(esf, nl):
 def generate_intrinsic(esf, ihq):
     kind = esf.sf.obs_name.kind
     cfs = coefficient_functions[kind]
-    wV = esf.sf.coupling_constants.get_weight(
-        ihq, esf.Q2, esf.sf.obs_name.kind, quark_coupling_type="V"
-    )
     m2hq = esf.sf.m2hq[ihq - 4]
     if kind == "F3":
+        wVA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VA")
+        wAV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+        wp = wVA + wAV
+        wm = wVA - wAV
         return (
             kernels.Kernel(
-                {ihq: wV, (-ihq): -wV},
+                {ihq: wp, (-ihq): -wp},
                 cfs["intrinsic"]["Rp"](esf, m1sq=m2hq, m2sq=m2hq),
             ),
-            # kernels.Kernel(
-            #     {ihq: wV, (-ihq): -wV},
-            #     cfs["intrinsic"]["Rp"](esf, m1sq=m2hq, m2sq=m2hq),
-            # ),
+            kernels.Kernel(
+                {ihq: wm, (-ihq): -wm},
+                cfs["intrinsic"]["Rm"](esf, m1sq=m2hq, m2sq=m2hq),
+            ),
         )
-    wA = esf.sf.coupling_constants.get_weight(
-        ihq, esf.Q2, esf.sf.obs_name.kind, quark_coupling_type="A"
-    )
-    wp = wV + wA
-    wm = wV - wA
+    wVV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VV")
+    wAA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+    wp = wVV + wAA
+    wm = wVV - wAA
     return (
         kernels.Kernel(
             {ihq: wp, (-ihq): wp}, cfs["intrinsic"]["Sp"](esf, m1sq=m2hq, m2sq=m2hq)
