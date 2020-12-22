@@ -13,12 +13,20 @@ the cross section can be split into a *leptonic* and an *hadronic* part.
 In *addition* on the hadronic part **QCD Factorization** ensures that the structure
 functions can be split into an perturbative hard matix element and a non-perturbative |PDF|.
 
-As said, for the notation we're following :cite:`Zyla:2020zbs`.
+In the following we will explain how to connect the top-level observables and the
+low-level ingredients using the notation of :cite:`Zyla:2020zbs`.
 
 DIS Factorization
 -----------------
 
-We write for the fully inclusive cross section
+The fully inclusive |DIS| cross section is given by
+
+.. math ::
+    \frac{d\sigma^i}{dx dy} = \frac{2\pi y \alpha^2}{Q^4} \sum_j \eta_j^i L^{\mu\nu}_j W_{\mu\nu}^j
+
+where :math:`i = \{\text{NC}, \text{CC}\}` corresponds to the |NC| or |CC| processes, respectively.
+
+Inserting the leptonic and the hadronic tensor we can write
 
 .. math ::
     \frac{d\sigma^i}{dx dy} = \frac{4\pi \alpha^2}{x y Q^2} \eta^i \left\{
@@ -27,8 +35,7 @@ We write for the fully inclusive cross section
     \pm \left(y - \frac {y^2}{2} \right) x F_3^i
     \right\}
 
-where :math:`i = \{NC, CC\}` corresponds to the |NC| or |CC| processes, respectively,
-and the :math:`-` sign in front of :math:`F_3` is taken for an incoming :math:`e^+`
+where the :math:`-` sign in front of :math:`F_3` is taken for an incoming :math:`e^+`
 or :math:`\bar \nu` and the :math:`+` sign for an incoming :math:`e^-` or :math:`\nu`.
 
 - leptonic
