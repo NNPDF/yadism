@@ -58,12 +58,3 @@ class TestOutput:
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
 
-    def test_dump(self):
-        out = yadism.output.Output()
-
-        out.dump()
-
-    def test_load(self):
-        out = yadism.output.Output()
-
-        out.load()
