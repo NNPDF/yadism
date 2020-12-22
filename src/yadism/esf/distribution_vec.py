@@ -187,7 +187,7 @@ class DistributionVec:
             elif callable(self.regular):
                 result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2)
             else:
-                result_args.append(c1 + c2)
+                result_args.append(other + self.regular)
             result_args.append(self.singular)
             result_args.append(self.local)
 
