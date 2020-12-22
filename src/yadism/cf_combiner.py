@@ -99,11 +99,20 @@ class CoefficientFunctionsCombiner:
         if self.obs_name.flavor_family in ["heavy", "total"]:
             elems.extend(self.kernels.generate_heavy(self.esf, nl))
             # add F^d
-            elems.extend(
-                self.damp_elems(
-                    nl, self.kernels.generate_heavy_fonll_diff(self.esf, nl)
+            ihq = nl + 1
+            # TODO we restrict to NLO for the moment
+            if ihq in self.esf.sf.intrinsic_range:
+                elems.extend(
+                    self.damp_elems(
+                        nl, self.kernels.generate_heavy_fonll_intrinsic_diff(self.esf, nl)
+                    )
                 )
-            )
+            else:
+                elems.extend(
+                    self.damp_elems(
+                        nl, self.kernels.generate_heavy_fonll_diff(self.esf, nl)
+                    )
+                )
         return elems
 
     def damp_elems(self, nl, elems):
