@@ -240,19 +240,6 @@ class DBInterface(mode_selector.ModeSelector):
                         qcdnum_utils.compute_qcdnum_data,
                     )
 
-                elif self.external == "FONLLdis":
-                    from .external import (  # pylint:disable=import-error,import-outside-toplevel
-                        fonlldis_utils,
-                    )
-
-                    ext_tab = external.get_external_data(
-                        theory,
-                        obs,
-                        pdf,
-                        self.idb.table("fonlldis_cache"),
-                        fonlldis_utils.compute_fonlldis_data,
-                    )
-
                 elif self.external == "xspace_bench":
                     from .external import (  # pylint:disable=import-error,import-outside-toplevel
                         xspace_bench_utils,

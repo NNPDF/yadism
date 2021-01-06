@@ -44,15 +44,6 @@ class TheoriesGenerator(mode_selector.ModeSelector):
                 "NfFF": [4, 5, 6],
                 "FNS": ["FFNS", "ZM-VFNS", "FONLL-A"],
             }
-        if self.mode == "FONLLdis":
-            return {
-                "PTO": [1],
-                "XIR": [1.0],
-                "XIF": [1.0],
-                "NfFF": [4],
-                "FNS": ["FONLL-A"],
-                "DAMP": [0, 1],
-            }
         # we're aiming for a APFEL replacement, so they appread naturally together
         if self.mode in ["APFEL", "regression"]:
             return {
@@ -123,7 +114,6 @@ def run_parser():
             "QCDNUM",
             "regression",
             "sandbox",
-            "FONLLdis",
             "xspace_bench",
         ],
         default="sandbox",

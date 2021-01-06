@@ -30,7 +30,6 @@ class NavigatorApp(mode_selector.ModeSelector):
         self.observables = tm.TableManager(self.idb.table("observables"))
         self.apfel_cache = tm.TableManager(self.idb.table("apfel_cache"))
         self.qcdnum_cache = tm.TableManager(self.idb.table("qcdnum_cache"))
-        self.fonlldis_cache = tm.TableManager(self.idb.table("fonlldis_cache"))
         self.xspace_bench_cache = tm.TableManager(self.idb.table("xspace_bench_cache"))
         self.logs = tm.TableManager(self.odb.table("logs"))
 
