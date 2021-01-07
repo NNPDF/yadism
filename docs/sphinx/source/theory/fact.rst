@@ -19,12 +19,22 @@ low-level ingredients using the notation of :cite:`Zyla:2020zbs`.
 DIS Factorization
 -----------------
 
-The fully inclusive |DIS| cross section is given by
+The fully inclusive |DIS| cross section :math:`\sigma` is given by
 
 .. math ::
-    \frac{d\sigma^i}{dx dy} = \frac{2\pi y \alpha^2}{Q^4} \sum_j \eta_j^i L^{\mu\nu}_j W_{\mu\nu}^j
+    \frac{d\sigma^i}{dx dy} = \frac{2\pi y \alpha^2}{Q^4} \sum_j \eta_j L^{\mu\nu}_j W_{\mu\nu}^j
 
 where :math:`i = \{\text{NC}, \text{CC}\}` corresponds to the |NC| or |CC| processes, respectively.
+For |NC| processes, the summation is over :math:`j=\{\gamma,\gamma Z,Z\}`,
+whereas for |CC| interactions there is only W exchange :math:`j=\{W\}`.
+The normalization factors :math:`\eta_j` denote the ratios of the corresponding propagators and
+couplings to the photon propagator and coupling squared:
+
+.. math ::
+    \eta_\gamma &= 1\\
+    \eta_{\gamma Z} &= \frac{4\sin^2(\theta_w)}{1 - \sin^2(\theta_w)} \cdot \frac{Q^2}{Q^2 + M_Z^2}\\
+    \eta_{Z} &= \eta_{\gamma Z}^2\\
+    \eta_W &= \left(\frac{\eta_{\gamma Z}}{2} \frac{1 + Q^2/M_Z^2}{1 + Q^2/M_W^2}\right)^2
 
 Inserting the leptonic and the hadronic tensor we can write
 
