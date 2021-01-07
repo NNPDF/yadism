@@ -112,7 +112,7 @@ class CouplingConstants:
                 )
         raise ValueError(f"Unknown mode: {mode}")
 
-    def hadronic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
+    def partonic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
         """
         Computes the coupling of the boson to the parton
 
@@ -130,8 +130,8 @@ class CouplingConstants:
 
         Returns
         -------
-            hadronic_coupling : float
-                hadronic coupling
+            partonic_coupling : float
+                partonic coupling
         """
         # for quarks only the flavor does matter
         pid = abs(pid)
@@ -219,11 +219,11 @@ class CouplingConstants:
         if self.obs_config["process"] == "CC":
             return self.leptonic_coupling(
                 "WW", quark_coupling_type
-            ) * self.hadronic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
+            ) * self.partonic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
         w_phph = (
             self.leptonic_coupling("phph", quark_coupling_type)
             * self.propagator_factor("phph", Q2)
-            * self.hadronic_coupling("phph", pid, quark_coupling_type)
+            * self.partonic_coupling("phph", pid, quark_coupling_type)
         )
         # pure photon exchane
         if self.obs_config["process"] == "EM":
@@ -235,13 +235,13 @@ class CouplingConstants:
                 2
                 * self.leptonic_coupling("phZ", quark_coupling_type)
                 * self.propagator_factor("phZ", Q2)
-                * self.hadronic_coupling("phZ", pid, quark_coupling_type)
+                * self.partonic_coupling("phZ", pid, quark_coupling_type)
             )
             # true Z contributions
             w_ZZ = (
                 self.leptonic_coupling("ZZ", quark_coupling_type)
                 * self.propagator_factor("ZZ", Q2)
-                * self.hadronic_coupling("ZZ", pid, quark_coupling_type)
+                * self.partonic_coupling("ZZ", pid, quark_coupling_type)
             )
             return w_phph + w_phZ + w_ZZ
         raise ValueError(f"Unknown process: {self.obs_config['process']}")

@@ -10,7 +10,7 @@ Factorization
 We refer to Factorization as the universal property that the |DIS| cross section
 can be factored into different parts: **DIS Factorization** ensures that
 the cross section can be split into a *leptonic* and an *hadronic* part.
-In *addition* on the hadronic part **QCD Factorization** ensures that the structure
+In *addition* on the hadronic part **Collinear Factorization** ensures that the structure
 functions can be split into an perturbative hard matix element and a non-perturbative |PDF|.
 
 In the following we will explain how to connect the top-level observables and the
@@ -52,8 +52,6 @@ with :math:`g_V^e = -\frac 1 2 + 2\sin^2(\theta_w)` and :math:`g_A^e = -\frac 1 
 and axial-vectorial coupling between the Z boson and the lepton with charge :math:`e=\pm 1` and
 helicity :math:`\lambda=\pm 1`.
 
-Implementation: :meth:`~yadism.coupling_constants.CouplingConstants.leptonic_coupling`
-
 The hadronic tensor is given by:
 
 .. math ::
@@ -80,28 +78,42 @@ interferences between different bosons. The structure functions are given by
 
 .. math ::
     F_k^{CC} &= F_k^W\\
-    F_k^{NC} &= F_k^{\gamma\gamma} - (g_V^e \pm \lambda g_A^e) \eta_{\gamma Z} F_k^{\gamma Z} + ((g_V^e)^2 + (g_A^e)^2  \pm 2 \lambda g_V^e g_A^e) \eta_{ZZ} F_k^{ZZ}~,~ k\in\{1,2,L\} \\
-    x F_3^{NC} &= -(g_A^e \pm g_V^e) \eta_{\gamma Z} x F_3^{\gamma Z} + (2g_V^e g_A^e \pm \lambda((g_V^e)^2 + (g_A^e)^2) x F_3^{ZZ}
+    F_k^{NC} &= F_k^{\gamma\gamma} - (g_V^e \pm \lambda g_A^e) \eta_{\gamma Z} F_k^{\gamma Z} + \left((g_V^e)^2 + (g_A^e)^2  \pm 2 \lambda g_V^e g_A^e \right) \eta_{ZZ} F_k^{ZZ}~,~ k\in\{1,2,L\} \\
+    x F_3^{NC} &= -(g_A^e \pm g_V^e) \eta_{\gamma Z} x F_3^{\gamma Z} + \left(2g_V^e g_A^e \pm \lambda((g_V^e)^2 + (g_A^e)^2)\right) x F_3^{ZZ}
 
-QCD Factorization
------------------
+Implementation: :meth:`~yadism.coupling_constants.CouplingConstants.leptonic_coupling`
+
+Collinear Factorization
+-----------------------
 
 Using the collinear factorization theorem of |DIS| :cite:`Collins:1989gx` we can write any
 hadronic structure function :math:`F_k` in terms of |PDF| :math:`f_j(\xi,\mu_F^2)` and
-partonic structure functions :math:`\mathcal F_{j,k}` using convolution
+partonic structure functions :math:`\mathcal F_{j,k}(z, Q^2,\mu_F^2,\mu_R^2)` using a convolution
+over the first argument:
 
 .. math ::
-    F_k(x,Q^2,\mu_F^2,\mu_R^2) = \sum_{p} f_p(\mu_F^2) \otimes \mathcal F_{k,p}(Q^2,\mu_F^2,\mu_R^2)
+    F_k^{bb'}(x,Q^2,\mu_F^2,\mu_R^2) = \sum_{p} f_p(\mu_F^2) \otimes \mathcal F_{k,p}^{bb'}(Q^2,\mu_F^2,\mu_R^2)
 
-where the sum runs over all contributing partons :math:`p\in\{g,q,\bar q\}`.
+where the sum runs over all contributing partons :math:`p\in\{g,q,\bar q\}`. In the following we will
+assume that a quark :math:`\hat q` is hit by the boson. Note that this is *independent* of the incoming
+parton :math:`p`.
 
 Using |pQCD| we expand the partonic structure functions in powers of the strong coupling
 :math:`a_s(\mu_R^2) = \frac{\alpha_s(\mu_R^2)}{4\pi}`:
 
 .. math ::
-    \mathcal F_{k,p}(z, Q^2,\mu_F^2,\mu_R^2) = \sum_{l=0} a_s^l(\mu_R^2) \mathcal F_{k,p}^{(l)}(z, Q^2,\mu_F^2,\mu_R^2)
+    \mathcal F_{k,p}^{bb'}(z, Q^2,\mu_F^2,\mu_R^2) = \sum_{l=0} a_s^l(\mu_R^2) \mathcal F_{k,p}^{bb',(l)}(z, Q^2,\mu_F^2,\mu_R^2)
 
 Note that these two equations have to be checked for every reference as lots of different
 normalization are used in practice.
 
-- hadronic
+Similar to the splitting on the leptonic side we have to split on the partonic side again:
+
+.. math ::
+    \mathcal F_{k,p}^{bb'} &= g_{\hat q,b}^V g_{\hat q,b'}^V \mathcal F_{k,p}^{VV} + g_{\hat q,b}^A g_{\hat q,b'}^A \mathcal F_{k,p}^{AA}~,~ k\in\{1,2,L\} \\
+    \mathcal F_{3,p}^{bb'} &= g_{\hat q,b}^V g_{\hat q,b'}^A \mathcal F_{3,p}^{VA}
+
+Implementation: :meth:`~yadism.coupling_constants.CouplingConstants.partonic_coupling`
+
+The dependence on the factorization scale :math:`\mu_F^2` and renormalization scale :math:`\mu_R^2`
+is discussed :doc:`here </theory/scale-variations>`.
