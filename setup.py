@@ -80,7 +80,7 @@ def setup_package():
             "Topic :: Scientific/Engineering :: Physics",
         ],
         install_requires=[
-            "eko<0.6",
+            "eko<0.7",
             "numpy",
             "scipy",
             "pandas",

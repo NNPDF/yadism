@@ -17,6 +17,9 @@
 .. |pQCD| replace::
    :abbr:`pQCD (perturbative Quantum Chromo Dynamics)`
 
+.. |RGE| replace::
+   :abbr:`RGE (Renormalization Group Equation)`
+
 .. ---------
    processes
    ---------
