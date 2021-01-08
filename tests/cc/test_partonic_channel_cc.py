@@ -15,8 +15,8 @@ class MockSF:
 class MockESF:
     def __init__(self, x, q2):
         self.sf = MockSF()
-        self._x = x
-        self._Q2 = q2
+        self.x = x
+        self.Q2 = q2
 
 
 class TestPartonicChannel:
@@ -27,6 +27,6 @@ class TestPartonicChannel:
 
         for Q2 in np.geomspace(1, 100, 3):
             for x in np.geomspace(1e-3, 0.99, 4):
-                pch = PartonicChannelHeavy(MockESF(x, Q2))
+                pch = PartonicChannelHeavy(MockESF(x, Q2), m2hq=M2hq)
                 res, err = scipy.integrate.quad(r_kernel, 0, x, args=(Q2,))
                 assert pytest.approx(pch.r_integral(x), 1e-8, err) == res

@@ -2,7 +2,7 @@
 import copy
 
 from yadism import observable_name
-from yadism.esf import f_total
+#from yadism.esf import f_total
 from yadism.esf import esf_result
 
 
@@ -45,16 +45,16 @@ class MockSF:
         return MockESF(esf_result.ESFResult.from_dict(src))
 
 
-class TestFtotal:
-    def test_combine(self):
-        sf = MockSF()
-        o = f_total.EvaluatedStructureFunctionFtotal(sf, {"x": 0.1, "Q2": 10})
-        res = o.get_result()
-        # check ingredients
-        assert tuple(res.values.keys()) == ("q_total_light", "q_total_charm")
-        assert res.values["q_total_light"] == [1]
-        assert res.values["q_total_charm"] == [2]
-        # check apply pdf
-        out = res.apply_pdf([1], 1.0, MockPDFdonly())
-        assert out["result"] == 1 * 1 * 1 + 1 * 2 * 2
-        assert out["error"] == 0
+#class TestFtotal:
+#    def test_combine(self):
+#        sf = MockSF()
+#        o = f_total.EvaluatedStructureFunctionFtotal(sf, {"x": 0.1, "Q2": 10})
+#        res = o.get_result()
+#        # check ingredients
+#        assert tuple(res.values.keys()) == ("q_total_light", "q_total_charm")
+#        assert res.values["q_total_light"] == [1]
+#        assert res.values["q_total_charm"] == [2]
+#        # check apply pdf
+#        out = res.apply_pdf([1], 1.0, MockPDFdonly())
+#        assert out["result"] == 1 * 1 * 1 + 1 * 2 * 2
+#        assert out["error"] == 0

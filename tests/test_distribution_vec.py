@@ -197,7 +197,7 @@ class TestConvnd:
         for x, y in zip(xs, res):
             assert (
                 pytest.approx(y, 1 / 1000.0)
-                == conv.DistributionVec(coeff).convolution(x, f)[0]
+                == conv.DistributionVec(*coeff).convolution(x, f)[0] 
             )
 
     @staticmethod
@@ -237,8 +237,7 @@ class TestConvnd:
             for x in xs:
                 self.against_known(x, *test)
 
-    # TODO: fix this 
-    @pytest.mark.skip
+    #@pytest.mark.skip
     def test_pd(self):
         # format: 3-lists
         # - f: pdf function
@@ -246,18 +245,17 @@ class TestConvnd:
         # - res: results from Mathematica
         known_tests = [
             [lambda x: 1, lambda x: 1, lambda y: np.log((1 - y) / y)],
-            [lambda x: 1, lambda x: x, lambda y: np.log(1 - y)],
+            [lambda x: 1, lambda x: x, lambda y: np.log(1 - y) ],
         ]
 
         xs = [0.2, 0.4, 0.6, 0.8]
 
         for test in known_tests:
             # insert missing 0s in coeff func
-            test[1] = [lambda x: 0, lambda x: 0, test[1]]
+            test[1] = [lambda x: 0, lambda x: 0, test[2]]
             for x in xs:
                 self.against_known(x, *test)
 
-    # TODO: fix this
     @pytest.mark.skip
     def test_log_pd(self):
         # format: 3-lists
@@ -267,7 +265,7 @@ class TestConvnd:
         known_tests = [
             [
                 lambda x: 1,
-                lambda x: 1,
+                lambda y: 1,
                 np.array([-1.40903, -1.06518, -0.497553, 0.725006]),
             ]
         ]
@@ -276,7 +274,7 @@ class TestConvnd:
 
         for test in known_tests:
             # insert missing 0s in coeff func
-            test[1] = [lambda x: 0, lambda x: 0, lambda x: 0, test[1]]
+            test[1] = [lambda x: 0, lambda x: 0,  lambda x: 0, test[1]]
             self.against_known_grid(xs, *test)
 
     def test_symmetric_conv(self):

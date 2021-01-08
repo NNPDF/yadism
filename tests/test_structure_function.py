@@ -3,7 +3,7 @@ import pytest
 
 from yadism import observable_name
 from yadism.sf import StructureFunction
-from yadism.esf import ESFmap
+from yadism.esf import esf
 
 
 class MockRunner:
@@ -18,6 +18,7 @@ class MockDict:
     def __getitem__(self, key):
         if key == "interpolator":
             a = MockObj()
+            a.xgrid = [0.2, 0.6, 1.0]
             a.xgrid_raw = [0.2, 0.6, 1.0]
             return a
         if key == "alpha_s":
@@ -59,7 +60,7 @@ class TestStructureFunction:
             # test mapping to self
             assert len(sf._StructureFunction__ESFcache) == 0
             obj = sf.get_esf(obs_name, {"x": 0.5, "Q2": 1})
-            assert isinstance(obj, ESFmap[obs_name.flavor_family])
+#            assert isinstance(obj, ESFmap[obs_name.flavor_family])
             # check creation
             assert len(sf._StructureFunction__ESFcache) == 1
             assert list(sf._StructureFunction__ESFcache.values())[0] == obj
