@@ -11,12 +11,21 @@
 .. |EW| replace::
    :abbr:`EW (ElectroWeak)`
 
+.. |PDF| replace::
+   :abbr:`PDF (Parton Distribution Function(s))`
+
+.. |pQCD| replace::
+   :abbr:`pQCD (perturbative Quantum Chromo Dynamics)`
+
+.. |RGE| replace::
+   :abbr:`RGE (Renormalization Group Equation)`
+
 .. ---------
    processes
    ---------
 
 .. |DIS| replace::
-   :abbr:`DIS (Deep Inelastic Scattering)`
+   :abbr:`DIS (Deep-Inelastic Scattering)`
 
 .. |EM| replace::
    :abbr:`EM (Electromagnetic Current)`
@@ -35,13 +44,13 @@
    :abbr:`LO (Leading Order)`
 
 .. |NLO| replace::
-   :abbr:`NLO (Next to Leading Order)`
+   :abbr:`NLO (Next-to-Leading Order)`
 
 .. |NNLO| replace::
-   :abbr:`NNLO (Next to Next to Leading Order)`
+   :abbr:`NNLO (Next-to-Next-to-Leading Order)`
 
 .. |N3LO| replace::
-   :abbr:`N3LO (Next to Next to Next to Leading Order)`
+   :abbr:`N3LO (Next-to-Next-to-Next-to-Leading Order)`
 
 .. -------
    objects
@@ -66,8 +75,14 @@
 .. |FFNS| replace::
    :abbr:`FFNS (Fixed Flavor Number Scheme)`
 
+.. |VFNS| replace::
+   :abbr:`VFNS (Variable Flavor Number Scheme)`
+
 .. |ZM-VFNS| replace::
    :abbr:`ZM-VFNS (Zero Mass - Variable Flavor Number Scheme)`
+
+.. |RSL| replace::
+   :abbr:`RSL (Regular - Singular - Local)`
 
 .. ----------------
    cross references

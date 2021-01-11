@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Define :py:class:`DistributionVec` and its API, that are used to represent
-distributions object in the coefficient function definition and calculation.
+Defines :py:class:`DistributionVec` and its API, that are used to represent
+distribution objects in the coefficient function definition and calculation.
+
 """
 
 import numpy as np
@@ -52,34 +53,16 @@ def rsl_from_distr_coeffs(regular, delta, *coeffs):
 
 class DistributionVec:
     r"""
-    :py:class:`DistributionVec` is an object that encodes the structure of a
-    distribution, as opposed to a regular function. It consists of an array of
-    functions, considered as coefficients of the following distributions basis:
-
-    - *regular*: the regular part is the coefficient of 1, so it is the pure
-      function component
-    - *delta*: it is the coefficient of the Dirac delta function :math:`\delta(1-x)`
-    - *omx*: it is the coefficient of the distribution :math:`1/(1-x)_+`
-    - *logomx*: it is the coefficient of the distribution :math:`(\log(x)/(1-x))_+`
-
-    Note
-    ----
-    Unstable: it is going to change, maybe in more directions:
-
-    - collecting all the plus distributions in a single one, so limiting the vector
-      size to be 3
-    - (potential) from an array of functions to an array of numbers, using a
-      canonical representation (it is always possible to swap all the functional
-      part in the regular)
+    Encodes the structure of a distribution, as opposed to a regular function.
 
     Parameters
     ----------
     regular : number or callable
-        regular
+        regular part
     singular : number or callable
-        delta (default: None)
+        singular part
     local : number or callable
-        omx (default: None)
+        local part
     """
 
     eps_integration_border = 1e-10
@@ -352,7 +335,7 @@ class DistributionVec:
                 for area in pdf_func.areas:
                     area_borders.extend([area.xmin, area.xmax])
                 area_borders = np.unique(area_borders)
-                if pdf_func._mode_log:
+                if pdf_func._mode_log:  # pylint: disable=protected-access
                     area_borders = np.exp(area_borders)
                 breakpoints = x / area_borders
                 z_min = x

@@ -27,9 +27,6 @@ Different definition of |SF|
 Due to a different definition |SF| in |APFEL| (and so `yadism`) and |QCDNUM| is
 not possible to compare all the structure functions in all the schemes.
 
-In particular |APFEL|/`yadism` definition of |SF| is based on the coupling to
-the photon (or |DIS| boson in general), cf. :doc:`../theory/light-flavors` and
-:doc:`../theory/heavy-flavors`.
 
 On the other hand |QCDNUM| is using a different definition of the |SF| that is
 not matching the other one and from which it is not possible to recover the

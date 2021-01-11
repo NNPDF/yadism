@@ -1,23 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Provides splitting functions definition for coefficient functions calculation.
+Provides the Altarelli-Parisi splitting functions.
 
-The coefficient functions are defined in :eqref:`4.87`, :cite:`pink-book`, and
-they are organized in:
+The splitting functions are defined by :eqref:`4.90`, :cite:`pink-book` and
+they are organized by the outgoing and incoming particle.
 
-- qq
-- qg
-- gq
-- gg
-
-according to the partons (entering the hard process - coming from the proton).
-
-Furthermore they are organized according to their distribution structure, for
-which see :py:mod:`convolution`.
+Furthermore they are organized according to their
+:mod:`distribution structure <yadism.esf.distribution_vec>`.
 
 The reference for LO splitting functions is :cite:`pink-book`.
-
-.. todo:: rewrite pqq in RSL fashion
 
 """
 
@@ -28,19 +19,19 @@ from eko import constants
 
 def pqq_reg(z):
     """
-    The expression of the regular part of :math:`P_{qq}` splitting function.
+    Regular part of :math:`P_{qq}` splitting function.
 
     |ref| implements :eqref:`4.94`, :cite:`pink-book`.
 
     Parameters
     ----------
         z : float
-            momentum fraction
+            partonic momentum fraction
 
     Returns
     -------
         float
-            the regular bit of pqq splitting function @ :py:`z`
+            the regular bit of quark-quark splitting function :math:`P_{qq}^R(z)`
 
     """
     return -2.0 * constants.CF * (1.0 + z)
@@ -48,19 +39,19 @@ def pqq_reg(z):
 
 def pqq_local(x):
     r"""
-    The expression of the local part of :math:`P_{qq}` splitting function.
+    Local part of :math:`P_{qq}` splitting function.
 
     |ref| implements :eqref:`4.94`, :cite:`pink-book`.
 
     Parameters
     ----------
         x : float
-            momentum fraction
+            hadronic momentum fraction
 
     Returns
     -------
         float
-            the locacl bit of pqq splitting function @ :py:`x`
+            the local bit of quark-quark splitting function :math:`P_{qq}^L(x)`
 
     """
     return constants.CF * (3.0 + 4.0 * np.log(1.0 - x))
@@ -68,19 +59,19 @@ def pqq_local(x):
 
 def pqq_sing(z):
     """
-    The expression of the singular part of :math:`P_{qq}` splitting function.
+    Singular part of :math:`P_{qq}` splitting function.
 
     |ref| implements :eqref:`4.94`, :cite:`pink-book`.
 
     Parameters
     ----------
         z : float
-            momentum fraction
+            partonic momentum fraction
 
     Returns
     -------
         float
-            the singular bit of pqq splitting function @ :py:`z`
+            the singular bit the quark-quark splitting function :math:`P_{qq}^S(z)`
 
     """
     return 4.0 * constants.CF / (1.0 - z)
@@ -88,19 +79,19 @@ def pqq_sing(z):
 
 def pqg(z):
     """
-    The expression of :math:`P_{qg}` splitting function.
+    (Regular) :math:`P_{qg}` splitting function.
 
-    |ref| implements :eqref:`4.94`, :cite:`pegasus`.
+    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
 
     Parameters
     ----------
         z : float
-            momentum fraction
+            partonic momentum fraction
 
     Returns
     -------
         float
-            the pqg splitting function @ :py:`z`
+            the quark-gluon splitting function :math:`P_{qg}(z)`
 
     """
     return 2.0 * constants.TR * (z ** 2 + (1.0 - z) ** 2)
