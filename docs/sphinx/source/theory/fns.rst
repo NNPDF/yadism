@@ -39,6 +39,19 @@ unpolarized *kinds*) and **sigma** is provided by `yadism`.
 FFNS
 ----
 
+- **Flight** corresponds to the interaction of purely light partons, i.e. the
+  coefficient functions may only be a function of :math:`z,Q2` and eventually
+  unphysical scales; in especially they may *NOT* depend on any quark mass.
+  This definition is consistent with
+  :cite:`vogt-f2nc,vogt-flnc,moch-f3nc,vogt-f2lcc,vogt-f3cc`, |QCDNUM|, but is not consistent
+  with |APFEL|. The number of light quarks :math:`n_l` is arbitrary but fixed and can
+  range between 3 and 5.
+  
+- **Ftotal** is *NOT* the sum of **Flight** and **Fheavy**, but contains additional terms
+  **Fmissing** such as the Compton diagrams in :cite:`felix-thesis`.
+
+
+
 The mass corrections (heavy quark contributions) are available for a single
 mass at a time, so e.g. `yadism` it is not encoding the effect of having finite
 charm and bottom masses at the same time.
@@ -46,8 +59,7 @@ charm and bottom masses at the same time.
 The actual scheme is the following:
 
 - :math:`n_l` light flavors are active (i.e. massless quarks)
-- a **single** quark with a **finite mass** *may be* active, according to the
-  |FNS| (e.g. in ZM-VFNS it will never be such an object)
+- a **single** quark with a **finite mass** *may be* active, 
 - all the remaining flavors are considered infinitely massive, so they will
   never contribute to anything
 
