@@ -1,11 +1,24 @@
 # -*- coding: utf-8 -*-
+import pathlib
+
+import pygit2
 from setuptools import setup, find_packages
+
+repo_path = pathlib.Path(__file__).absolute().parent
+repo = pygit2.Repository(repo_path)
+
+# determine ids of tagged commits
+tags_commit_sha = [
+    repo.resolve_refish("/".join(r.split("/")[2:]))[0].id
+    for r in repo.references
+    if "/tags/" in r
+]
 
 # write version on the fly - inspired by numpy
 MAJOR = 0
-MINOR = 3
-MICRO = 3
-ISRELEASED = False
+MINOR = 4
+MICRO = 0
+ISRELEASED = "main" in repo.head.name or repo.head.target in tags_commit_sha
 SHORT_VERSION = "%d.%d" % (MAJOR, MINOR)
 VERSION = "%d.%d.%d" % (MAJOR, MINOR, MICRO)
 
@@ -49,7 +62,7 @@ def setup_package():
     setup(
         name="yadism",
         version=VERSION,
-        description="Yet Another Deep Inelastic Scattering Module",
+        description="Yet Another Deep-Inelastic Scattering Module",
         long_description=long_description,
         long_description_content_type="text/markdown",
         author="A.Candido, S.Carrazza, F. Hekhorn",
@@ -67,9 +80,10 @@ def setup_package():
             "Topic :: Scientific/Engineering :: Physics",
         ],
         install_requires=[
-            "eko<0.6",
+            "eko<0.7",
             "numpy",
             "scipy",
+            "pandas",
             "rich",
         ],
         python_requires=">=3.7",

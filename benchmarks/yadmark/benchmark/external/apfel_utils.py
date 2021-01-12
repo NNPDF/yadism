@@ -127,19 +127,19 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     # apfel.SetGridParameters(3, 50, 3, 8e-1)
 
     # set APFEL grid to ours
-    if platform.node() in ["FHe19b", "topolinia-arch"]:
-        apfel.SetNumberOfGrids(1)
-        # create a 'double *' using swig wrapper
-        yad_xgrid = observables["interpolation_xgrid"]
-        xgrid = apfel.new_doubles(len(yad_xgrid))
+    # if platform.node() in ["FHe19b", "topolinia-arch"]:
+    apfel.SetNumberOfGrids(1)
+    # create a 'double *' using swig wrapper
+    yad_xgrid = observables["interpolation_xgrid"]
+    xgrid = apfel.new_doubles(len(yad_xgrid))
 
-        # fill the xgrid with
-        for j, x in enumerate(yad_xgrid):
-            apfel.doubles_setitem(xgrid, j, x)
+    # fill the xgrid with
+    for j, x in enumerate(yad_xgrid):
+        apfel.doubles_setitem(xgrid, j, x)
 
-        yad_deg = observables["interpolation_polynomial_degree"]
-        # 1 = gridnumber
-        apfel.SetExternalGrid(1, len(yad_xgrid) - 1, yad_deg, xgrid)
+    yad_deg = observables["interpolation_polynomial_degree"]
+    # 1 = gridnumber
+    apfel.SetExternalGrid(1, len(yad_xgrid) - 1, yad_deg, xgrid)
 
     # set DIS params
     apfel.SetPDFSet(pdf)

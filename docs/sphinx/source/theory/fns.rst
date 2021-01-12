@@ -1,12 +1,71 @@
-Heavy Flavors
-=============
+Flavor Number Schemes
+=====================
 
-- References
+Heavyness
+---------
 
-.. _heavy-nc:
+There is always a lot of ways to define physical observables, e.g. tagging the
+outgoing state and imposing kinematics cuts.
+
+We are not going to use any definition based on the outgoing state, since they
+are prone to be theoretically unsafe, if not properly designed.
+
+The way we are defining new observables it is just considering new theories,
+derived from the |SM| just setting to 0 some of its bare couplings.
+
+- **Flight**: it is defined as the original structure function (e.g.
+  :math:`F_2`) for the theory in which all the *light* quarks are massless, and
+  all the *heavy* ones are infinitely massive, such that they are never
+  contributing to the diagrams
+- **Fheavy**: it is defined for a given flavor, e.g. *Fcharm*, just keeping
+  all the *light* quark massless, a finite mass for a single heavy quark (the
+  one associated to the structure function chosen) and all the others *heavy*
+  infinitely massive, switching to 0 all the charges that do not involve the
+  chosen heavy quark
+
+  - in |NC| this means that only the *charm* charge is kept
+  - in |CC| this means that :math:`V_{cd}` and :math:`V_{cs}` are kept, but e.g.
+    there is no contribution by :math:`V_{cb}`, because currently bottom is
+    considered infinitely massive
+
+    - we could also define by arbitrarily assign CKM matrix elements to a single
+      flavor, choosing always the heaviest, and set to 0 all the things not
+      assigned to the chosen flavor, it is just an equivalent way of presenting
+      it
+
+No other observable than **Flight**, **Fheavy**, **Ftotal** (for all the
+unpolarized *kinds*) and **sigma** is provided by `yadism`.
+
+FFNS
+----
+
+- **Flight** corresponds to the interaction of purely light partons, i.e. the
+  coefficient functions may only be a function of :math:`z,Q2` and eventually
+  unphysical scales; in especially they may *NOT* depend on any quark mass.
+  This definition is consistent with
+  :cite:`vogt-f2nc,vogt-flnc,moch-f3nc,vogt-f2lcc,vogt-f3cc`, |QCDNUM|, but is not consistent
+  with |APFEL|. The number of light quarks :math:`n_l` is arbitrary but fixed and can
+  range between 3 and 5.
+  
+- **Ftotal** is *NOT* the sum of **Flight** and **Fheavy**, but contains additional terms
+  **Fmissing** such as the Compton diagrams in :cite:`felix-thesis`.
+
+
+
+The mass corrections (heavy quark contributions) are available for a single
+mass at a time, so e.g. `yadism` it is not encoding the effect of having finite
+charm and bottom masses at the same time.
+
+The actual scheme is the following:
+
+- :math:`n_l` light flavors are active (i.e. massless quarks)
+- a **single** quark with a **finite mass** *may be* active, 
+- all the remaining flavors are considered infinitely massive, so they will
+  never contribute to anything
+
 
 NC
---
+^^^
 
 The main reference is :cite:`felix-thesis`.
 
@@ -16,7 +75,7 @@ The main reference is :cite:`felix-thesis`.
 .. _heavy-cc:
 
 CC
---
+^^^
 
 The main reference is :cite:`gluck-ccheavy`.
 
@@ -60,8 +119,18 @@ and in :math:`F_2^{charm}`:
 
 .. todo:: write about normalization in Eq. 2
 
-Asymptotics for FONLL
-~~~~~~~~~~~~~~~~~~~~~
+ZM-VFNS
+-------
+
+In a |VFNS| this scheme will depend on the specific value of :math:`Q^2`
+considered.
+
+FONLL
+-----
+
+Asymptotics for CC
+^^^^^^^^^^^^^^^^^^
+.. todo :: this is simply light as it should! write it
 
 For FONLL we need the massless limit of the coefficient functions in :cite:`gluck-ccheavy`.
 We obtain :math:`\lambda\to 1, \xi \to x` and
@@ -124,16 +193,3 @@ For :math:`F_L = F_2 - 2xF_1` we obtain:
                 &= \left(C_{1,2}^{asy} - C_{1,1}^{asy}\right) z(1-z) + \left(C_{2,2}^{asy} - C_{2,1}^{asy}\right)\\
                 &= 4z(1-z)
 
-
-Flavor Number Schemes
----------------------
-
-- FFNS
-- ZM-VFNS
-
-.. _asymptotic:
-
-FONLL
-~~~~~
-  
-- Damping

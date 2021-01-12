@@ -17,31 +17,31 @@ from eko import constants
 
 from .. import splitting_functions as split
 from .. import partonic_channel as pc
-from ..esf import rsl_from_distr_coeffs
+from ..esf.distribution_vec import rsl_from_distr_coeffs
 
 
-class F2lightQuark(pc.PartonicChannelLight):
+class F2lightNonSinglet(pc.PartonicChannelLight):
     """
-        Computes the light quark channel of  F2light
+    Computes the light quark non-singlet channel of  F2light
     """
 
-    label = "q"
+    label = "ns"
 
     @staticmethod
     def LO():
         """
-            Computes the quark singlet part of the leading order F2 structure function.
+        Computes the quark singlet part of the leading order F2 structure function.
 
-            This is the only contribution at all present in the LO, consisting
-            in the simplest coefficient function possible (a delta, that makes
-            the structure function completely proportional to the incoming PDF).
+        This is the only contribution at all present in the LO, consisting
+        in the simplest coefficient function possible (a delta, that makes
+        the structure function completely proportional to the incoming PDF).
 
-            |ref| implements :eqref:`4.2`, :cite:`vogt-f2nc`.
+        |ref| implements :eqref:`4.2`, :cite:`vogt-f2nc`.
 
-            Returns
-            -------
-                sequence of callables
-                coefficient functions
+        Returns
+        -------
+            sequence of callables
+            coefficient functions
 
         """
 
@@ -50,15 +50,15 @@ class F2lightQuark(pc.PartonicChannelLight):
 
     def NLO(self):
         """
-            Computes the quark singlet part of the next to leading order F2
-            structure function.
+        Computes the quark singlet part of the next to leading order F2
+        structure function.
 
-            |ref| implements :eqref:`4.3`, :cite:`vogt-f2nc`.
+        |ref| implements :eqref:`4.3`, :cite:`vogt-f2nc`.
 
-            Returns
-            -------
-                sequence of callables
-                coefficient functions
+        Returns
+        -------
+            sequence of callables
+            coefficient functions
 
         """
         CF = constants.CF
@@ -83,20 +83,20 @@ class F2lightQuark(pc.PartonicChannelLight):
 
     def NLO_fact(self):
         """
-            Computes the quark singlet contribution to the next to leading
-            order F2 structure function coming from the factorization scheme.
+        Computes the quark singlet contribution to the next to leading
+        order F2 structure function coming from the factorization scheme.
 
-            |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
+        |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
 
-            Returns
-            -------
-                sequence of callables
-                coefficient functions
+        Returns
+        -------
+            sequence of callables
+            coefficient functions
 
-            Note
-            ----
-                Check the theory reference for details on
-                :doc:`../theory/scale-variations`
+        Note
+        ----
+            Check the theory reference for details on
+            :doc:`../theory/scale-variations`
 
         """
 
@@ -105,29 +105,29 @@ class F2lightQuark(pc.PartonicChannelLight):
 
 class F2lightGluon(pc.PartonicChannelLight):
     """
-        Computes the gluon channel of  F2light
+    Computes the gluon channel of  F2light
     """
 
     label = "g"
 
     def NLO(self):
         """
-            Computes the gluon part of the next to leading order F2 structure
-            function.
+        Computes the gluon part of the next to leading order F2 structure
+        function.
 
-            |ref| implements :eqref:`4.4`, :cite:`vogt-f2nc`.
+        |ref| implements :eqref:`4.4`, :cite:`vogt-f2nc`.
 
-            Returns
-            -------
-                sequence of callables
-                    coefficient functions
+        Returns
+        -------
+            sequence of callables
+                coefficient functions
 
 
-            .. todo::
-                - 2 * n_f here and in gluon_1_fact is coming from momentum sum
-                  rule q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} forall i}, so
-                  the 2 * n_f is needed to compensate for all the number of flavours
-                  plus antiflavours in which the gluon can go.
+        .. todo::
+            - 2 * n_f here and in gluon_1_fact is coming from momentum sum
+              rule q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} forall i}, so
+              the 2 * n_f is needed to compensate for all the number of flavours
+              plus antiflavours in which the gluon can go.
 
         """
 
@@ -146,20 +146,20 @@ class F2lightGluon(pc.PartonicChannelLight):
 
     def NLO_fact(self):
         """
-            Computes the gluon contribution to the next to leading order F2
-            structure function coming from the factorization scheme.
+        Computes the gluon contribution to the next to leading order F2
+        structure function coming from the factorization scheme.
 
-            |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
+        |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
 
-            Returns
-            -------
-                sequence of callables
-                coefficient functions
+        Returns
+        -------
+            sequence of callables
+            coefficient functions
 
-            Note
-            ----
-                Check the theory reference for details on
-                :doc:`../theory/scale-variations`
+        Note
+        ----
+            Check the theory reference for details on
+            :doc:`../theory/scale-variations`
 
         """
 
@@ -167,3 +167,7 @@ class F2lightGluon(pc.PartonicChannelLight):
             return 2.0 * nf * split.pqg(z)
 
         return cg
+
+
+class F2lightSinglet(pc.PartonicChannelLight):
+    pass

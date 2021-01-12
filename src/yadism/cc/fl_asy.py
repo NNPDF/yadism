@@ -13,7 +13,7 @@ from .. import partonic_channel as pc
 
 class FLasyQuark(pc.PartonicChannelAsy):
     """
-        Computes the quark channel of the asymptotic limit of FLheavy.
+    Computes the quark channel of the asymptotic limit of FLheavy.
     """
 
     label = "q"
@@ -30,7 +30,7 @@ class FLasyQuark(pc.PartonicChannelAsy):
 
 class FLasyGluon(pc.PartonicChannelAsy):
     """
-        Computes the gluon channel of the asymptotic limit of FLheavy.
+    Computes the gluon channel of the asymptotic limit of FLheavy.
     """
 
     label = "g"

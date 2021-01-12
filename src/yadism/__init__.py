@@ -4,9 +4,10 @@
     docs
 """
 from .runner import Runner
+from .output import Output
 
 
-def run_yadism(theory: dict, observables: dict) -> Runner:
+def run_yadism(theory: dict, observables: dict):
     """
     .. todo::
         - decide the purpose
@@ -14,4 +15,4 @@ def run_yadism(theory: dict, observables: dict) -> Runner:
         - docs
     """
     runner = Runner(theory, observables)
-    return runner.get_output()
+    return runner.get_result()

@@ -1,0 +1,24 @@
+[build-system]
+requires = ['setuptools >= 40.9.0', 'wheel', 'pygit2']
+build-backend = 'setuptools.build_meta'
+
+[tool.pytest.ini_options]
+#norecursedirs = benchmarks/aux
+testpaths = ['tests/', 'benchmarks/runners/']
+python_files = ['test_*.py', 'benchmark_*.py', 'regression.py']
+python_classes = ['Test*', 'Benchmark*']
+python_functions = ['test_*', 'benchmark_*']
+addopts = [
+  '--cov=yadism',
+  '--cov-report=html',
+  '--cov-report=xml',
+  '--strict-markers',
+]
+markers = [
+  'quick_check: marks test/benchmark for quick',
+  'commit_check: marks test/benchmark to be run at each commit',
+  'full: marks test/benchmark to be run only with the full-suite',
+  'regression: marks regression tests',
+  'eko: marks eko related tests (InterpolatorDispatcher)',
+  'fonll: FONLL',
+]

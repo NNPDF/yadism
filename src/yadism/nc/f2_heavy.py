@@ -14,22 +14,22 @@ from . import partonic_channel as pcnc
 
 class F2heavyGluonVV(pcnc.PartonicChannelHeavy):
     """
-        Computes the gluon channel of F2heavy.
+    Computes the gluon channel of F2heavy.
     """
 
     label = "gVV"
 
     def NLO(self):
         """
-            Computes the gluon part of the next to leading order F2 structure
-            function.
+        Computes the gluon part of the next to leading order F2 structure
+        function.
 
-            |ref| implements :eqref:`D.1`, :cite:`felix-thesis`.
+        |ref| implements :eqref:`D.1`, :cite:`felix-thesis`.
 
-            Returns
-            -------
-                sequence of callables
-                    coefficient functions
+        Returns
+        -------
+            sequence of callables
+                coefficient functions
         """
 
         def cg(z):
@@ -58,22 +58,22 @@ class F2heavyGluonVV(pcnc.PartonicChannelHeavy):
 
 class F2heavyGluonAA(F2heavyGluonVV):
     """
-        Computes the gluon channel of F2heavy.
+    Computes the gluon channel of F2heavy.
     """
 
     label = "gAA"
 
     def NLO(self):
         """
-            Computes the gluon part of the next to leading order F2 structure
-            function.
+        Computes the gluon part of the next to leading order F2 structure
+        function.
 
-            |ref| implements :eqref:`D.4`, :cite:`felix-thesis`.
+        |ref| implements :eqref:`D.4`, :cite:`felix-thesis`.
 
-            Returns
-            -------
-                sequence of callables
-                    coefficient functions
+        Returns
+        -------
+            sequence of callables
+                coefficient functions
         """
 
         VV = super().NLO()

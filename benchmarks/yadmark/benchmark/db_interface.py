@@ -69,6 +69,7 @@ class DBInterface(mode_selector.ModeSelector):
             "FNS": self.theory_query.FNS == "FFNS",
             "DAMP": self.theory_query.DAMP == 0,
             "TMC": self.theory_query.TMC == 0,
+            "IC": self.theory_query.IC == 0,
         }
 
     def _load_input_from_queries(self, theory_query, obs_query):
@@ -213,13 +214,15 @@ class DBInterface(mode_selector.ModeSelector):
                         print(f"{pdf_name} installed.")
                     pdf = lhapdf.mkPDF(pdf_name, 0)
                 # get our data
-                yad_tab = runner.apply(pdf)
+                yad_tab = runner.apply_pdf(pdf)
                 # get external data
                 if self.external == "APFEL":
                     from .external import (  # pylint:disable=import-error,import-outside-toplevel
                         apfel_utils,
                     )
-
+                    if theory["IC"] != 0 and theory["PTO"] > 0:
+                        print(yad_tab)
+                        raise ValueError("APFEL is currently not able to run")
                     ext_tab = external.get_external_data(
                         theory,
                         obs,

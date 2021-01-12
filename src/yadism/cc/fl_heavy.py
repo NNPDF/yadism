@@ -12,13 +12,13 @@ from .. import splitting_functions as split
 
 class FLheavyQuark(pccc.PartonicChannelHeavy):
     """
-        Computes the quark heavy quark channel of F2heavy
+    Computes the quark heavy quark channel of F2heavy
     """
 
     label = "q"
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.sf_prefactor = 1.0 - self.labda
 
     def LO(self):
@@ -39,13 +39,13 @@ class FLheavyQuark(pccc.PartonicChannelHeavy):
 
 class FLheavyGluon(pccc.PartonicChannelHeavy):
     """
-        Computes the gluon heavy quark channel of F2heavy
+    Computes the gluon heavy quark channel of F2heavy
     """
 
     label = "g"
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.sf_prefactor = 1.0 - self.labda
 
     def NLO(self):
