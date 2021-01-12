@@ -9,7 +9,7 @@ import pytest
 from yadism.input import inspector, errors
 
 
-#@pytest.mark.skip
+# @pytest.mark.skip
 class TestInspector:
     def test_domain(self):
         theory_dict = {
@@ -45,12 +45,12 @@ class TestInspector:
         }
 
         obs_dict = dict(
-            interpolation_xgrid = [0.001, 0.01, 0.1, 0.5, 1.0],
-            prDIS = "EM",
-            PolarizationDIS = 0.0,
-            projectile = "electron",
-            interpolation_is_log = 1.0,
-            interpolation_polynomial_degree = 4,
+            interpolation_xgrid=[0.001, 0.01, 0.1, 0.5, 1.0],
+            prDIS="EM",
+            PolarizationDIS=0.0,
+            projectile="electron",
+            interpolation_is_log=1.0,
+            interpolation_polynomial_degree=4,
             TargetDIS="proton",
             polDIS=0.1,
             DeltaR=0.9,
@@ -77,13 +77,12 @@ class TestInspector:
             insp = inspector.Inspector(theory_dict, runcard)
             insp.check_domains()
 
-        
-#        runcard = copy.deepcopy(obs_dict)
-#        with pytest.raises(errors.DomainError, match="polDIS"):
-#        runcard["polDIS"] = -2
-#            insp = inspector.Inspector(theory_dict,runcard)
-#            insp.check_domains()
-    
+    #        runcard = copy.deepcopy(obs_dict)
+    #        with pytest.raises(errors.DomainError, match="polDIS"):
+    #        runcard["polDIS"] = -2
+    #            insp = inspector.Inspector(theory_dict,runcard)
+    #            insp.check_domains()
+
     @pytest.mark.skip
     def test_default(self):
         runcard = {}

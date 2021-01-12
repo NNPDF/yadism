@@ -59,4 +59,4 @@ class TestInit:
             if k in o2:
                 if isinstance(o1[k], Iterable):
                     o1[k] = list(o1[k])
-                assert( np.all( o1[k] == o2[k]) )
+                assert np.all(o1[k] == o2[k])

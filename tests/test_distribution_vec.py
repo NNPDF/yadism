@@ -26,7 +26,7 @@ class TestInit:
             for x in [0.1, 0.3, 0.5, 0.9]:
                 for c in d_vec:
                     try:
-                        assert c(x) == None 
+                        assert c(x) == None
                     except:
                         assert c == None
 
@@ -36,7 +36,14 @@ class TestInit:
             [1.0, 1.0, 1.0],
             [lambda x: 1, lambda x: 1, lambda x: 1],
             [1, 1, lambda x: 1],
-            [[1, 1, 1, 1,]],
+            [
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                ]
+            ],
             [[1, 1, 1, lambda x: 1]],
             [[lambda x: 1, 1, 1, 1]],
         ]
@@ -46,7 +53,7 @@ class TestInit:
             for c in d_vec:
                 for x in [0.1, 0.3, 0.5, 0.9]:
                     try:
-                        assert c(x) == 1 
+                        assert c(x) == 1
                     except:
                         assert c == 1
 
@@ -81,7 +88,7 @@ class TestInit:
                     vi = float(v)
 
                     try:
-                        assert c(x) == vi 
+                        assert c(x) == vi
                     except:
                         assert c == vi
 
@@ -89,6 +96,15 @@ class TestInit:
 # @pytest.mark.quick_check
 # @pytest.mark.skip
 class TestSpecial:
+    def test_iter0(self):
+        vec = [lambda x: x, 1, None]
+        d_vec = conv.DistributionVec(*vec)
+
+        i = 0
+        for val in d_vec.__iter__():
+            assert vec[i] == val
+            i = i + 1
+
     def test_iter(self):
         vecs = [
             [1, 2, 3],
@@ -197,7 +213,7 @@ class TestConvnd:
         for x, y in zip(xs, res):
             assert (
                 pytest.approx(y, 1 / 1000.0)
-                == conv.DistributionVec(*coeff).convolution(x, f)[0] 
+                == conv.DistributionVec(*coeff).convolution(x, f)[0]
             )
 
     @staticmethod
@@ -221,7 +237,7 @@ class TestConvnd:
             for x in xs:
                 self.against_known(x, *test)
 
-    #@pytest.mark.skip
+    # @pytest.mark.skip
     def test_delta(self):
         # format: 3-lists
         # - f: pdf function
@@ -237,7 +253,7 @@ class TestConvnd:
             for x in xs:
                 self.against_known(x, *test)
 
-    #@pytest.mark.skip
+    # @pytest.mark.skip
     def test_pd(self):
         # format: 3-lists
         # - f: pdf function
@@ -245,7 +261,7 @@ class TestConvnd:
         # - res: results from Mathematica
         known_tests = [
             [lambda x: 1, lambda x: 1, lambda y: np.log((1 - y) / y)],
-            [lambda x: 1, lambda x: x, lambda y: np.log(1 - y) ],
+            [lambda x: 1, lambda x: x, lambda y: np.log(1 - y)],
         ]
 
         xs = [0.2, 0.4, 0.6, 0.8]
@@ -256,25 +272,29 @@ class TestConvnd:
             for x in xs:
                 self.against_known(x, *test)
 
-    @pytest.mark.skip
+    # @pytest.mark.skip
     def test_log_pd(self):
         # format: 3-lists
         # - f: pdf function
         # - coeff: coefficient function (log_pd bit only, assume the others are 0)
         # - res: results from Mathematica
+        # known_tests = [[
+        #        lambda x: 1,
+        #        lambda y: 1,
+        #        np.array([-1.40903, -1.06518, -0.497553, 0.725006]),
+        #    ]
+        # ]
         known_tests = [
-            [
-                lambda x: 1,
-                lambda y: 1,
-                np.array([-1.40903, -1.06518, -0.497553, 0.725006]),
-            ]
+            [lambda x: 1, lambda y: y, np.array([-1.40903])],
+            [lambda x: 1, lambda y: y, np.array([-1.06518])],
+            [lambda x: 1, lambda y: y, np.array([-0.497553])],
+            [lambda x: 1, lambda y: y, np.array([0.725006])],
         ]
-
         xs = [0.2, 0.4, 0.6, 0.8]
 
         for test in known_tests:
             # insert missing 0s in coeff func
-            test[1] = [lambda x: 0, lambda x: 0,  lambda x: 0, test[1]]
+            test[1] = [lambda x: 0, lambda x: 0, test[2]]
             self.against_known_grid(xs, *test)
 
     def test_symmetric_conv(self):
@@ -352,10 +372,10 @@ class TestConvnd:
                 true_res = d.convolution(x, true_bf1)
                 assert pytest.approx(res[0], 1 / 1000.0) == true_res[0]
 
+
 # @pytest.mark.quick_check
 # @pytest.mark.skip
-class TestAdd:
-
+class Test_operations:
     def test_add_d_vec(self):
         vecs = [
             [1, 2, 3],
@@ -367,7 +387,32 @@ class TestAdd:
         x = 0.5
         for vec in vecs:
             ref_d_vec = conv.DistributionVec(*(np.array(vec)))
+            sum_ = d_vec0.__add__(ref_d_vec)
+            sumi_ = d_vec0.__iadd__(ref_d_vec)
+            sumr_ = d_vec0.__radd__(ref_d_vec)
             ref_sum = conv.DistributionVec(*vec) + d_vec0
-            sum_ = d_vec0.__add__( ref_d_vec )
 
             assert ref_sum.compare(sum_, x)
+            assert ref_sum.compare(sumi_, x)
+            assert ref_sum.compare(sumr_, x)
+
+    def test_mul_d_vec(self):
+        factors = [
+            1,
+            1003,
+            4,
+        ]
+        vec0 = np.array([2837, 91283, 3897])
+        d_vec0 = conv.DistributionVec(*vec0)
+
+        x = 0.5
+        for f in factors:
+            prod_ = d_vec0.__mul__(f)
+            prodi_ = d_vec0.__imul__(f)
+            prodr_ = d_vec0.__rmul__(f)
+
+            ref_mult = conv.DistributionVec(*vec0) * f
+
+            assert ref_mult.compare(prod_, x)
+            assert ref_mult.compare(prodi_, x)
+            assert ref_mult.compare(prodr_, x)

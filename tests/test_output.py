@@ -33,8 +33,8 @@ class TestOutput:
                 kin = dict(
                     x=0.5,
                     Q2=Q2,
-                    values=[[1,0],[0,1]],
-                    errors=[[1,0],[0,1]],
+                    values=[[1, 0], [0, 1]],
+                    errors=[[1, 0], [0, 1]],
                 )
                 # plain
                 o_esf.append(kin)
@@ -63,4 +63,3 @@ class TestOutput:
                 expected_err = np.abs(a["values"][0][0]) * a["x"] * a["Q2"]
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
-
