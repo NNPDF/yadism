@@ -16,10 +16,7 @@ from yadmark.banana_cfg import banana_cfg
 class ApfelBenchmark(BenchmarkRunner):
     external = "APFEL"
     banana_cfg = banana_cfg
-    
-    # def run(self,theory_updates, observable_updates, pdfs):
-    #     print(list(theory_updates))
-    #     print(list(observable_updates))
+
 
 class BenchmarkPlain(ApfelBenchmark):
     def benchmark_lo(self):

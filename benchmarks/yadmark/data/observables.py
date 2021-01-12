@@ -33,6 +33,7 @@ default_config = {
     },
 }
 
+
 def build(observables, kinematics, update=None):
     """
     Generate all observable card updates
