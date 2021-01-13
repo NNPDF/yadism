@@ -23,7 +23,10 @@ class TestCouplingConstanst:
         assert coupl.CouplingConstants(th_d, obs_d).get_weight(1, 90, "F3") == 0
         th_d = dict(sin2theta_weak=0.5, MZ2=100)
         obs_d = dict(
-            projectilePID=11, polarization=0.0, process="NC", propagatorCorrection=0.5,
+            projectilePID=11,
+            polarization=0.0,
+            process="NC",
+            propagatorCorrection=0.5,
         )
         assert coupl.CouplingConstants(th_d, obs_d).get_weight(1, 0, "F3") == 0
 
