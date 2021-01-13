@@ -1,21 +1,44 @@
 # -*- coding: utf-8 -*-
 #
 # Compare the results with APFEL's
-
+import copy
 import pytest
 
 import numpy as np
 
-from banana.data import power_set
+from banana.data import power_set, sql
 from banana.benchmark.runner import BenchmarkRunner
 
 from yadmark.benchmark.db_interface import DBInterface
 from yadmark.data import observables
 from yadmark.banana_cfg import banana_cfg
 
-class ApfelBenchmark(BenchmarkRunner):
-    external = "APFEL"
+class Runner(BenchmarkRunner):
     banana_cfg = banana_cfg
+
+    def init_ocards(self, conn):
+        with conn:
+            conn.execute(sql.create_table("observables", observables.default_card))
+
+    def generate_ocards(self, conn, ocard_updates):
+        ts = []
+        for upd in ocard_updates:
+            t = copy.copy(observables.default_card)
+            t["uid"] = None
+            t.update(upd)
+            ts.append(dict(sorted(t.items())))
+        sql_tmpl = (
+            "INSERT INTO observables("
+            + ",".join(ts[0].keys())
+            + ") VALUES ("
+            + ",".join(list("?" * len(ts[0])))
+            + ")"
+        )
+        with conn:
+            conn.executemany(sql_tmpl, [list(t.values()) for t in ts])
+
+class ApfelBenchmark(Runner):
+    external = "APFEL"
 
 
 class BenchmarkPlain(ApfelBenchmark):
