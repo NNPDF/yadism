@@ -50,37 +50,10 @@ FFNS
 - **Ftotal** is *NOT* the sum of **Flight** and **Fheavy**, but contains additional terms
   **Fmissing** such as the Compton diagrams in :cite:`felix-thesis`.
 
-
-
-The mass corrections (heavy quark contributions) are available for a single
-mass at a time, so e.g. `yadism` it is not encoding the effect of having finite
-charm and bottom masses at the same time.
-
-The actual scheme is the following:
-
-- :math:`n_l` light flavors are active (i.e. massless quarks)
-- a **single** quark with a **finite mass** *may be* active, 
-- all the remaining flavors are considered infinitely massive, so they will
-  never contribute to anything
-
-
-NC
-^^^
-
-The main reference is :cite:`felix-thesis`.
-
-- meanings of :math:`F_2^{charm}` (c coupling to |EW| boson) (and analogously
-  for `bottom` and `top`)
-
-.. _heavy-cc:
-
-CC
-^^^
-
-The main reference is :cite:`gluck-ccheavy`.
-
-- meanings of :math:`F_2^{charm}` (the weight coming from the suitable line of
-  the CKM matrix) (and analogously for `bottom` and `top`)
+- **Fheavy** is defined by having in the Lagrangian *only* the charges that are associated to the
+  specific quark active. In |NC| this corresponds to the electric and weak charges of the quarks
+  but in |CC| the situation is bit more envolved: we devide the |CKM|-matrix into several
+  parts:
 
 .. math::
    V_{CKM} =
@@ -90,8 +63,7 @@ The main reference is :cite:`gluck-ccheavy`.
       {\color{purple}V_{td}} & {\color{purple}V_{ts}} & {\color{purple}V_{tb}}
    \end{pmatrix}
 
-actual definition of coefficient functions weights in :math:`F_2` (with an
-initial neutrino, :math:`\nu`):
+and associate the :red:`red`
 
 .. math::
    \begin{array}{rcl}

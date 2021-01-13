@@ -36,6 +36,9 @@
 .. |CC| replace::
    :abbr:`CC (Charged Current)`
 
+.. |CKM| replace::
+   :abbr:`CKM (Cabibbo-Kobayashi-Maskawa)`
+
 .. -------------------
    perturbative orders
    -------------------
