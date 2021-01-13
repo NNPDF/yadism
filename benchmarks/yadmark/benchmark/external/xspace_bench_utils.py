@@ -71,16 +71,15 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
     # select scheme
     scheme = theory["FNS"]
+    thrholder = thr.ThresholdsAtlas(thr_list, q2ref)
 
     if scheme == "ZM-VFNS":
-        thrholder = thr.ThresholdsConfig(q2ref, scheme, threshold_list=thr_list)
         scheme = "ZMVN"
 
     elif scheme == "FFNS":
-        thrholder = thr.ThresholdsConfig(q2ref, scheme, nf=theory["NfFF"])
+        pass 
 
     elif scheme == "FONLL-A":
-        thrholder = thr.ThresholdsConfig(q2ref, scheme, threshold_list=thr_list)
         if theory["DAMP"] != 1:
             raise NotImplementedError("FONLL-A only with damping in xspace_bench")
         scheme = "GMVN"
