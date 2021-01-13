@@ -4,7 +4,6 @@ Test the generation of yadism/version.py by setup.py.
 """
 import pathlib
 
-import pytest
 import pygit2
 import semver
 

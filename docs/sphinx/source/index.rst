@@ -1,13 +1,7 @@
-.. DIS documentation master file.
-
-
 ####################
 Yadism documentation
 ####################
 
-.. the following transition is only used for highlight the main title
-
----------
 
 `yadism` is a wonderful package for computing |DIS| observables replacing the
 corresponding one inside |APFEL|.
@@ -51,75 +45,44 @@ In particular:
 .. _PyPI: https://pypi.org/project/yadism/
 .. _pip: https://pip.pypa.io/en/stable/
 
-Features
-~~~~~~~~
+.. toctree::
+  :maxdepth: 1
+  :caption: Overview
+  :hidden:
 
-**Features** already implemented include:
-
-- |LO| structure functions
-- |NLO| structure functions
-
-  1. scale variations
-  2. target mass corrections
-  3. flavor number schemes
-
-The implemented structure functions are :math:`F_2,~F_L,~F_3` for the following
-|DIS| processes:
-
-- |EM|
-- |NC|
-- |CC|
+  overview/features.rst
+  overview/tutorials/index.rst
+  overview/indices.rst
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Package Reference
+  :maxdepth: 1
+  :caption: Theory
+  :hidden:
 
-   yadism.rst
-   tutorials/index.rst
+  theory/DIS-intro.rst
+  theory/fact.rst
+  theory/fns.rst
+  theory/coeff-funcs.rst 
+  theory/scale-variations.rst
 
-In these :underlined:`documents` you can find the reference for all *yadism* API and internals.
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Theory
-
-   theory/DIS-intro.rst
-   theory/structure-functions.rst
-   theory/coeff-funcs.rst 
-   theory/light-flavors.rst
-   theory/heavy-flavors.rst
-   theory/processes.rst
-   theory/scale-variations.rst
-   theory/TMC.rst
-
-   zzz-refs.rst
-
-And here there is some *physics documentation*.
-
-Some of these are trivial and will be replaced, they are here just to create a
-structure.
-
+  zzz-refs.rst
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Dev Tools
+  :maxdepth: 1
+  :caption: Implementation
+  :hidden:
 
-   dev-tools/tests.rst
-   dev-tools/db-suite.rst
-   dev-tools/yadmark.rst
-   dev-tools/extras.rst
-   dev-tools/third-party.rst
-   dev-tools/code-todos.rst
+  Overview <yadism.rst>
+  API <modules/yadism.rst>
 
-These tools have been developed alongside `yadism`, in order to automatize tests
-and improve the quality of code (less bugs, more readable... hopefully...).
+.. toctree::
+  :maxdepth: 1
+  :caption: Dev Tools
+  :hidden:
 
----------
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+  dev-tools/tests.rst
+  dev-tools/db-suite.rst
+  dev-tools/yadmark.rst
+  dev-tools/extras.rst
+  dev-tools/third-party.rst
+  dev-tools/code-todos.rst

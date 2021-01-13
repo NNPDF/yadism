@@ -131,12 +131,16 @@ class Runner:
         else:
             damping_powers = [2] * 3
         # pass theory params
+        intrinsic_range = []
+        if theory["IC"] == 1:
+            intrinsic_range.append(4)
         theory_params = dict(
             pto=theory["PTO"],
             xiR=theory["XIR"],
             xiF=self.xiF,
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
+            intrinsic_range=intrinsic_range,
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
             M2target=theory["MP"] ** 2,

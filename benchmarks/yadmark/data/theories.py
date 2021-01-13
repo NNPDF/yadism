@@ -62,6 +62,7 @@ class TheoriesGenerator(mode_selector.ModeSelector):
         # sandbox
         return {
             "PTO": [0, 1],
+            "IC": [0, 1],
             "XIR": [0.5, 0.7, 1.0, 2.0],
             "XIF": [0.5, 0.7, 1.0, 2.0],
             "TMC": [0, 1, 2, 3],

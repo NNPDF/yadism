@@ -23,7 +23,9 @@ class CoefficientFunctionsCombiner:
             self.kernels = cc_kernels
         else:
             self.kernels = nc_kernels
-        self.nf = esf.sf.threshold.nf(esf.Q2 * esf.sf.xiF ** 2) # TODO decide whether Q2 or muF2 is the correct thing
+        self.nf = esf.sf.threshold.nf(
+            esf.Q2 * esf.sf.xiF ** 2
+        )  # TODO decide whether Q2 or muF2 is the correct thing
 
     def collect_ffns(self):
         """
@@ -48,6 +50,9 @@ class CoefficientFunctionsCombiner:
                     f"{self.obs_name} is not available in FFNS with nl={self.nf}"
                 )
             elems.extend(self.kernels.generate_heavy(self.esf, self.nf))
+            ihq = self.nf + 1
+            if ihq in self.esf.sf.intrinsic_range:
+                elems.extend(self.kernels.generate_intrinsic(self.esf, ihq))
         return elems
 
     def collect_zmvfns(self):
@@ -86,7 +91,11 @@ class CoefficientFunctionsCombiner:
         if self.obs_name.flavor in ["light", "total"]:
             elems.extend(self.kernels.generate_light(self.esf, nl))
             # add F^d
-            elems.extend(self.damp_elems(nl, self.kernels.generate_light_fonll_diff(self.esf, nl)))
+            elems.extend(
+                self.damp_elems(
+                    nl, self.kernels.generate_light_fonll_diff(self.esf, nl)
+                )
+            )
         if self.obs_name.flavor_family in ["heavy", "total"]:
             elems.extend(self.kernels.generate_heavy(self.esf, nl))
             # add F^d
@@ -121,7 +130,7 @@ class CoefficientFunctionsCombiner:
         if self.esf.Q2 > m2hq:
             damp = np.power(1.0 - m2hq / self.esf.Q2, power)
         else:
-            damp = 0.
+            damp = 0.0
         return (damp * e for e in elems)
 
     def collect_elems(self):
@@ -139,5 +148,5 @@ class CoefficientFunctionsCombiner:
             full = self.collect_zmvfns()
         elif self.esf.sf.scheme in ["FONLL-A"]:
             full = self.collect_fonll()
-        # drop all elements that have 0 weight
+        # TODO drop all elements that have 0 weight
         return full

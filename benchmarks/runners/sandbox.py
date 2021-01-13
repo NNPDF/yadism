@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
+# fmt: off
 # Compare the results with APFEL's
 import copy
 
@@ -80,6 +81,7 @@ class Sandbox:
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "TMC": self.db.theory_query.TMC == 0,
                 # "DAMP": self.db.theory_query.DAMP == 0,
+                # "IC": (self.db.theory_query.IC == 1),
             },
         )
 
@@ -103,5 +105,5 @@ class Sandbox:
 if __name__ == "__main__":
     generate_observables()
     sand = Sandbox()
-    #sand.run_LO()
+    sand.run_LO()
     sand.run_NLO()

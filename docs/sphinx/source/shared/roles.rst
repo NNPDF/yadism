@@ -30,10 +30,16 @@
      span.underlined {
        text-decoration: underline;
      }
+     .red {
+       color:red;
+     }
    </style>
 
 .. role:: underlined
    :class: underlined
+
+.. role:: red
+   :class: red
 
 .. :underlined:`test`
 
@@ -52,17 +58,3 @@
 .. role:: eqref
    :class: eqref
 
-
-.. raw:: html
-
-   <style type="text/css">
-     span.eqref:before {
-       content: "Eq. (";
-     }
-     span.eqref:after {
-       content: ")";
-     }
-   </style>
-
-.. role:: eqref
-   :class: eqref

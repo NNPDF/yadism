@@ -62,6 +62,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.graphviz",
     "sphinxcontrib.bibtex",
+    "sphinxcontrib.details.directive",
     "sphinx_rtd_theme",
 ]
 
