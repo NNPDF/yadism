@@ -169,7 +169,7 @@ def generate_pdf():
     print(args)
     pathlib.Path(args.name).mkdir(exist_ok=True)
     # find callable
-    if args.from_pdf_set == "":
+    if args.from_pdf_set is None:
         pdf_set = None
         # create
         make_debug_pdf(args.name, args.pids, pdf_set)

@@ -225,7 +225,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 f"xi outside xgrid - cannot convolute starting from xi={self._xi}"
             )
         # iterate grid
-        res = ESFResult(self._xi, self._Q2)
+        res = ESFResult(self._xi, self._Q2 )  # pylint: disable=no-value-for-parameter
         d = DistributionVec(ker)
         for xj, pj in zip(self.sf.interpolator.xgrid_raw, self.sf.interpolator):
             # basis function does not contribute?
@@ -369,7 +369,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         )
         h2list = []
         for xj in self.sf.interpolator.xgrid_raw:
-            h2elem = ESFResult(len(F2list))
+            h2elem = ESFResult(len(F2list))  # pylint: disable=no-value-for-parameter
             for bk, F2k in zip(smallInterp, F2list):
                 xk = self.sf.interpolator.xgrid_raw[bk.poly_number]
                 d = DistributionVec(lambda z, xj=xj: xj / z)
@@ -377,7 +377,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
                 h2elem += d.convolution(xj, bk) * F2k / xk ** 2
             h2list.append(h2elem)
 
-        res = ESFResult(len(F2list), Q2=self._Q2)
+        res = ESFResult(len(F2list), Q2=self._Q2) # pylint: disable=no-value-for-parameter
         for bj, F2out, h2out in zip(self.sf.interpolator, F2list, h2list):
             res += bj(self._xi) * (
                 self._factor_shifted * F2out + self._factor_h2 * h2out
