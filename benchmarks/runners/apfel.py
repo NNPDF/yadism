@@ -13,29 +13,18 @@ from yadmark.benchmark.db_interface import DBInterface
 from yadmark.data import observables
 from yadmark.banana_cfg import banana_cfg
 
+
 class Runner(BenchmarkRunner):
     banana_cfg = banana_cfg
 
-    def init_ocards(self, conn):
+    @staticmethod
+    def init_ocards(conn):
         with conn:
             conn.execute(sql.create_table("observables", observables.default_card))
 
-    def generate_ocards(self, conn, ocard_updates):
-        ts = []
-        for upd in ocard_updates:
-            t = copy.copy(observables.default_card)
-            t["uid"] = None
-            t.update(upd)
-            ts.append(dict(sorted(t.items())))
-        sql_tmpl = (
-            "INSERT INTO observables("
-            + ",".join(ts[0].keys())
-            + ") VALUES ("
-            + ",".join(list("?" * len(ts[0])))
-            + ")"
-        )
-        with conn:
-            conn.executemany(sql_tmpl, [list(t.values()) for t in ts])
+    @staticmethod
+    def generate_ocards(conn, ocard_updates):
+        observables.generate(conn, ocard_updates)
 
 class ApfelBenchmark(Runner):
     external = "APFEL"
@@ -45,9 +34,10 @@ class BenchmarkPlain(ApfelBenchmark):
     def benchmark_lo(self):
         self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
 
-    def benchmark_nlo(self):
-        self.run([{"PTO": 1}], observables.build(**(observables.default_config[1])), ["ToyLH"])
+    #def benchmark_nlo(self):
+    #    self.run([{"PTO": 1}], observables.build(**(observables.default_config[1])), ["ToyLH"])
 
+@pytest.mark.skip
 class BenchmarkScaleVariations(ApfelBenchmark):
     def theory_updates(self, pto):
         sv = {

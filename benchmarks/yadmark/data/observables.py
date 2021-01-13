@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import copy
-
 import numpy as np
 
 from eko import interpolation
 
-from banana.data import power_set
+from banana.data import power_set,sql
 
 default_card = dict(
     interpolation_xgrid=interpolation.make_grid(30, 20).tolist(),
@@ -16,6 +14,7 @@ default_card = dict(
     PolarizationDIS=0,
     observables={},
 )
+default_card = dict(sorted(default_card.items()))
 
 default_kinematics = []
 default_kinematics.extend(
@@ -63,6 +62,11 @@ def build(observables, kinematics, update=None):
             cards.append(card)
     return cards
 
+
+# db interface
+def generate(conn, updates):
+    records, fields = sql.prepare_records(default_card, updates)
+    sql.insert(conn, "observables", fields, records)
 
 
 # def regression_cards(defaults):
