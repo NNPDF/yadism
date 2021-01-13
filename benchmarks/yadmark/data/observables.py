@@ -3,7 +3,7 @@ import numpy as np
 
 from eko import interpolation
 
-from banana.data import power_set,sql
+from banana.data import power_set, sql
 
 default_card = dict(
     interpolation_xgrid=interpolation.make_grid(30, 20).tolist(),
@@ -64,9 +64,10 @@ def build(observables, kinematics, update=None):
 
 
 # db interface
-def generate(conn, updates):
-    records, fields = sql.prepare_records(default_card, updates)
+def load(conn, updates):
+    raw_records, records, fields = sql.prepare_records(default_card, updates)
     sql.insert(conn, "observables", fields, records)
+    return raw_records
 
 
 # def regression_cards(defaults):

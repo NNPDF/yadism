@@ -1,30 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Compare the results with APFEL's
-import copy
+import pathlib
+
 import pytest
 
-import numpy as np
+from banana.data import power_set
 
-from banana.data import power_set, sql
-from banana.benchmark.runner import BenchmarkRunner
-
-from yadmark.benchmark.db_interface import DBInterface
+from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
-from yadmark.banana_cfg import banana_cfg
-
-
-class Runner(BenchmarkRunner):
-    banana_cfg = banana_cfg
-
-    @staticmethod
-    def init_ocards(conn):
-        with conn:
-            conn.execute(sql.create_table("observables", observables.default_card))
-
-    @staticmethod
-    def generate_ocards(conn, ocard_updates):
-        observables.generate(conn, ocard_updates)
 
 class ApfelBenchmark(Runner):
     external = "APFEL"
@@ -34,32 +18,43 @@ class BenchmarkPlain(ApfelBenchmark):
     def benchmark_lo(self):
         self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
 
-    #def benchmark_nlo(self):
+    # def benchmark_nlo(self):
     #    self.run([{"PTO": 1}], observables.build(**(observables.default_config[1])), ["ToyLH"])
+
 
 @pytest.mark.skip
 class BenchmarkScaleVariations(ApfelBenchmark):
     def theory_updates(self, pto):
-        sv = {
-            "XIR": [0.5, 1.0, 2.0],
-            "XIF": [0.5, 1.0, 2.0],
-            "PTO": [pto]
-        }
+        sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # drop plain
-        return filter(lambda c: not(c["XIR"] == 1.0 and c["XIF"] == 1.0), power_set(sv))
+        return filter(
+            lambda c: not (c["XIR"] == 1.0 and c["XIF"] == 1.0), power_set(sv)
+        )
 
     def benchmark_lo(self):
-        self.run(self.theory_updates(0), observables.build(**(observables.default_config[0])), ["ToyLH"])
+        self.run(
+            self.theory_updates(0),
+            observables.build(**(observables.default_config[0])),
+            ["ToyLH"],
+        )
 
     def benchmark_nlo(self):
-        self.run(self.theory_updates(1), observables.build(**(observables.default_config[1])), ["ToyLH"])
+        self.run(
+            self.theory_updates(1),
+            observables.build(**(observables.default_config[1])),
+            ["ToyLH"],
+        )
+
 
 if __name__ == "__main__":
+    p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
+    p.unlink(missing_ok=True)
+
     plain = BenchmarkPlain()
     plain.benchmark_lo()
 
-    #sv = BenchmarkScaleVariations()
-    #sv.benchmark_nlo()
+    # sv = BenchmarkScaleVariations()
+    # sv.benchmark_nlo()
 
 # class ApfelBenchmark:
 #     """Wrapper to apply some default settings"""
