@@ -90,7 +90,7 @@ class EvaluatedStructureFunction:
 
     def __init__(self, SF, kinematics: dict):
         x = kinematics["x"]
-        if 1 < x <= 0:
+        if 1 < x or x <= 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1]")
         if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
