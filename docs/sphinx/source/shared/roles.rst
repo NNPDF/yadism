@@ -33,6 +33,15 @@
      .red {
        color:red;
      }
+     .green {
+       color:green;
+     }
+     .blue {
+       color:blue;
+     }
+     .purple {
+       color:purple;
+     }
    </style>
 
 .. role:: underlined
@@ -40,6 +49,15 @@
 
 .. role:: red
    :class: red
+
+.. role:: green
+   :class: green
+
+.. role:: blue
+   :class: blue
+
+.. role:: purple
+   :class: purple
 
 .. :underlined:`test`
 
