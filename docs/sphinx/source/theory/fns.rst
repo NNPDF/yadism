@@ -28,9 +28,11 @@ unpolarized *kinds*).
 
 FFNS
 ----
-As the name suggests we are considering a fixed number of flavors :math:`n_f=n_l+1`
-with :math:`n_l` light flavors and 1 (and only 1) heavy flavor. The number of light
-quarks :math:`n_l` is arbitrary but fixed and can range between 3 and 5.
+As the name |FFNS| suggests we are considering a fixed number of flavors :math:`n_f=n_l+1`
+with :math:`n_l` light flavors and 1 (and only 1) heavy flavor with a finite mass :math:`m`.
+The number of light quarks :math:`n_l` is arbitrary but fixed and can range between 3 and 5.
+Except for intrinsic contributions we are *NOT* allowing the heavy (and the other non-existent)
+|PDF| to contribute.
 
 Although this is the most naive scheme, it is *NOT* consistently implement in
 some of the commonly used tools. This scheme is adequate for :math:`Q^2\sim m^2`.
@@ -68,75 +70,19 @@ and associate the :blue:`blue` couplings to the charm structure functions, :gree
 
 ZM-VFNS
 -------
+As the name |ZM-VFNS| suggests we are considering a variable number of *light* flavors :math:`n_f`
+with :math:`n_f = n_f(Q^2)`. We associate an "activation" mass :math:`m` to the heavy quarks and
+whenever :math:`Q^2 >= m^2` we consider this quark massless, otherwise infinitely massive.
 
-In a |VFNS| this scheme will depend on the specific value of :math:`Q^2`
-considered.
+This scheme is adequate for :math:`Q^2\gg m^2`.
+
+- **Fheavy** is *NOT* defined, as quark masses are either 0 or :math:`\infty`
+- **Ftotal** thus is equal to **Flight**
+- **Flight** corresponds to the interaction of the purely light partons, i.e. the
+  coefficient functions may only be a function of :math:`z,Q2` and eventually
+  unphysical scales; in especially they may *NOT* depend on any quark mass.
 
 FONLL
 -----
-
-Asymptotics for CC
-^^^^^^^^^^^^^^^^^^
-.. todo :: this is simply light as it should! write it
-
-For FONLL we need the massless limit of the coefficient functions in :cite:`gluck-ccheavy`.
-We obtain :math:`\lambda\to 1, \xi \to x` and
-
-- **light quark** channel:
-
-.. math::
-    H_i^{q,asy} &= P_{qq}(z) \ln (Q^2/\mu_F^2) + h_i^{q,asy}(z)\\
-    h_i^{q,asy} &= C_F \left[ -\left(\frac 9 2 + \frac{\pi^2}{3} \right)\delta(1-z) - \frac{1+z^2}{1-z} \ln(z) + (1+z^2)\left( \frac{\ln(1-z)}{1-z}\right)_+ \right.\\
-                &\hspace{40pt} + \left. B^{(i)}\left(\frac 1 {1-z}\right)_+  \right]
-
-with :math:`K_A \to 0` and the coefficients :math:`B^{(i)} = B_{1,i} + B_{2,i} + B_{3,i}` given by
-
-.. list-table::
-    :stub-columns: 1
-
-    * - :math:`B^{(1)}`
-      - :math:`\frac 3 2 - 3 z`
-    * - :math:`B^{(2)}`
-      - :math:`\frac 3 2 - z - 2z^2`
-    * - :math:`B^{(3)}`
-      - :math:`\frac 1 2 - z - z^2`
-
-For :math:`F_L = F_2 - 2xF_1` we obtain:
-
-.. math::
-    H_L^{q,asy} &= H_2^{q,asy} - H_1^{q,asy} \\
-                &= C_F \left(B^{(2)} - B^{(1)}\right)\left(\frac 1 {1-z}\right)_+\\
-                &= C_F \cdot 2z
-
-- **gluon** channel:
-
-.. math::
-    H_{i=1,2/3}^{g,asy} &= P_{qg}(z)\left(\pm\left(\ln((1-z)/z) + \ln(Q^2/m^2)\right) + \ln (Q^2/\mu_F^2)\right) + h_i^{g,asy}(z)\\
-    h_i^{g,asy} &= P_{qg}(z) \ln((1-z)/z) + C_{1,i}^{asy} z(1-z) + C_{2,i}^{asy}
-
-with the coefficients :math:`C_{i,j}^{asy}` given by
-
-.. list-table::
-    :header-rows: 1
-    :stub-columns: 1
-
-    * - structure function
-      - :math:`C_{1,i}^{asy}`
-      - :math:`C_{2,i}^{asy}`
-    * - :math:`F_1`
-      - :math:`4`
-      - :math:`-1`
-    * - :math:`F_2`
-      - :math:`8`
-      - :math:`-1`
-    * - :math:`F_3`
-      - :math:`0`
-      - :math:`0`
-
-For :math:`F_L = F_2 - 2xF_1` we obtain:
-
-.. math::
-    H_L^{g,asy} &= H_2^{g,asy} - H_1^{g,asy} \\
-                &= \left(C_{1,2}^{asy} - C_{1,1}^{asy}\right) z(1-z) + \left(C_{2,2}^{asy} - C_{2,1}^{asy}\right)\\
-                &= 4z(1-z)
-
+FONLL :cite:`forte-fonll` is a |GM-VFNS| that includes parts of |DGLAP| equations into the
+matching conditions.
