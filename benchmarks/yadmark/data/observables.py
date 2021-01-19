@@ -65,8 +65,10 @@ def build(observables, kinematics, update=None):
 
 # db interface
 def load(conn, updates):
+    # add hash
     raw_records, records, fields = sql.prepare_records(default_card, updates)
-    sql.insert(conn, "observables", fields, records)
+    # insert new ones
+    sql.insertnew(conn, "observables", records, fields)
     return raw_records
 
 

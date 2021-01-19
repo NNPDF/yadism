@@ -48,13 +48,13 @@ class BenchmarkScaleVariations(ApfelBenchmark):
 
 if __name__ == "__main__":
     p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
-    p.unlink(missing_ok=True)
+    #p.unlink(missing_ok=True)
 
     plain = BenchmarkPlain()
     plain.benchmark_lo()
 
-    # sv = BenchmarkScaleVariations()
-    # sv.benchmark_nlo()
+    sv = BenchmarkScaleVariations()
+    sv.benchmark_lo()
 
 # class ApfelBenchmark:
 #     """Wrapper to apply some default settings"""
