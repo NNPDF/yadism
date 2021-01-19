@@ -2,7 +2,7 @@ Flavor Number Schemes
 =====================
 
 |FNS| or Heavy Quark Matching Schemes are dealing with the ambiguity of including
-massive quark contributions to physical cross sections. There is is not a unique
+massive quark contributions to physical cross sections. There is not a unique
 prescription on how to do this and thus we implement several strategies.
 Unfortunately there is no consistent implementation of the different scheme in the
 commonly used tools and a comparison of the different outputs has to judged on a
@@ -68,6 +68,8 @@ and associate the :blue:`blue` couplings to the charm structure functions, :gree
          |{\color{blue}V_{cs}}|^2 (s+\overline{c})\Big]\\
          &+& 2\left(|{\color{blue}V_{cd}}|^2+|{\color{blue}V_{cs}}|^2\right)C_{2,g}\otimes g\Big\}\\
 
+Note that even heavier contributions are *NOT* available.
+
 ZM-VFNS
 -------
 As the name |ZM-VFNS| suggests we are considering a variable number of *light* flavors :math:`n_f`
@@ -79,10 +81,17 @@ This scheme is adequate for :math:`Q^2\gg m^2`.
 - **Fheavy** is *NOT* defined, as quark masses are either 0 or :math:`\infty`
 - **Ftotal** thus is equal to **Flight**
 - **Flight** corresponds to the interaction of the purely light partons, i.e. the
-  coefficient functions may only be a function of :math:`z,Q2` and eventually
+  coefficient functions may only be a function of :math:`z,Q^2` and eventually
   unphysical scales; in especially they may *NOT* depend on any quark mass.
 
 FONLL
 -----
 FONLL :cite:`forte-fonll` is a |GM-VFNS| that includes parts of |DGLAP| equations into the
-matching conditions.
+matching conditions. In the original paper the prescription is only presented for the charm
+contributions, but we extend it here to an arbitrary quark: in especially the ``NF_FF``
+configuration variable as to point to the *heavy* quark, i.e. ``NF_FF=4`` for the charm
+matching.
+
+The prescription defines two separate regimes, below and above the *next* heavy quark mass
+:math:`m_{n_f+1}`. For :math:`Q^2 > m_{n_f+1}^2` the |ZM-VFNS| is employed and this leads
+to an inconsistency at this :math:`m_{n_f+1}` threshold.
