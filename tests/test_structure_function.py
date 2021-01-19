@@ -42,17 +42,25 @@ class MockDict:
         if key == "TMC":
             return 0
         if key == "scheme":
-            return "FFNS"
+            try: 
+                return self.scheme
+            except AttributeError:
+                return "FFNS"
         if key == "coupling_constants":
             a = MockObj()
             a.get_weight = lambda q, q2, t: 1
             return a
         if key == "pto":
             return 1
+        if key == "nf_ff":
+            return 3
 
 
-        
-        return None
+    def __setitem__(self, key, value):
+        if key == "scheme":
+            self.scheme = value
+
+#    return None
 
 
 @pytest.mark.quick_check
@@ -137,16 +145,19 @@ class TestEvaluatedStructureFunction:
 
     def test_get_result(self):
         
-        sf = StructureFunction(
-            observable_name.ObservableName("FLlight"),
-            MockRunner(),
-            eko_components=MockDict(),
-            theory_params=MockDict(),
-            obs_params=MockDict(),
-        )
-        k = dict(x=0.3, Q2=4)
-        esf = ESF(sf, k)
-        assert (esf.get_result()).values.all() == 0.0 
+        for scheme in ["FFNS", "ZM-VFNS", "FONLL-A"]:
+            theory_params = MockDict()
+            theory_params["scheme"] = scheme
+            sf = StructureFunction(
+                observable_name.ObservableName("FLlight"),
+                MockRunner(),
+                eko_components=MockDict(),
+                theory_params=theory_params,
+                obs_params=MockDict(),
+            )
+            k = dict(x=0.3, Q2=4)
+            esf = ESF(sf, k)
+            assert (esf.get_result()).values.all() == 0.0 
 
 
         
