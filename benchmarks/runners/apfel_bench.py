@@ -10,6 +10,7 @@ from banana.data import power_set
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
 
+
 class ApfelBenchmark(Runner):
     external = "APFEL"
 
@@ -19,7 +20,11 @@ class BenchmarkPlain(ApfelBenchmark):
         self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
 
     def benchmark_nlo(self):
-        self.run([{"PTO": 1}], observables.build(**(observables.default_config[1])), ["ToyLH"])
+        self.run(
+            [{"PTO": 1}],
+            observables.build(**(observables.default_config[1])),
+            ["ToyLH"],
+        )
 
 
 @pytest.mark.skip
@@ -48,12 +53,11 @@ class BenchmarkScaleVariations(ApfelBenchmark):
 
 if __name__ == "__main__":
     p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
-    #p.unlink(missing_ok=True)
+    # p.unlink(missing_ok=True)
 
     plain = BenchmarkPlain()
     plain.benchmark_lo()
-    plain.benchmark_nlo()
-
+    # plain.benchmark_nlo()
 
     # sv = BenchmarkScaleVariations()
     # sv.benchmark_lo()
@@ -128,7 +132,7 @@ if __name__ == "__main__":
 #         )
 
 
-# @pytest.mark.skip  # TODO commit_check
+# @pytest.mark.skip # commit_check
 # class BenchmarkProjectile(ApfelBenchmark):
 #     """The most basic checks"""
 
@@ -221,7 +225,7 @@ if __name__ == "__main__":
 #     return None
 
 
-# @pytest.mark.skip  # TODO commit_check
+# @pytest.mark.skip  # commit_check
 # class BenchmarkTMC(ApfelBenchmark):
 #     """Add Target Mass Corrections"""
 
