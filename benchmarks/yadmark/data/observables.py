@@ -25,21 +25,21 @@ default_kinematics.extend(
 )
 
 default_config = {
-    0: {"observables": ["F2light"], "kinematics": default_kinematics},
+    0: {"observable_names": ["F2light"], "kinematics": default_kinematics},
     1: {
-        "observables": ["F2light", "F2total", "FLtotal", "F3total"],
+        "observable_names": ["F2light", "F2total", "FLtotal", "F3total"],
         "kinematics": default_kinematics,
     },
 }
 
 
-def build(observables, kinematics, update=None):
+def build(observable_names, kinematics, update=None):
     """
     Generate all observable card updates
 
     Parameters
     ----------
-        observables : list(str)
+        observable_names : list(str)
             observable names
         kinematics : list(dict)
             kinematics list
@@ -57,18 +57,18 @@ def build(observables, kinematics, update=None):
     for c in power_set(update):
         card = dict(observables={})
         card.update(c)
-        for obs in observables:
+        for obs in observable_names:
             card["observables"][obs] = kinematics
-            cards.append(card)
+        cards.append(card)
     return cards
 
 
 # db interface
 def load(conn, updates):
     # add hash
-    raw_records, records, fields = sql.prepare_records(default_card, updates)
+    raw_records, rf = sql.prepare_records(default_card, updates)
     # insert new ones
-    sql.insertnew(conn, "observables", records, fields)
+    sql.insertnew(conn, "observables", rf)
     return raw_records
 
 

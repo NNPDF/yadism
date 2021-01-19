@@ -18,8 +18,8 @@ class BenchmarkPlain(ApfelBenchmark):
     def benchmark_lo(self):
         self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
 
-    # def benchmark_nlo(self):
-    #    self.run([{"PTO": 1}], observables.build(**(observables.default_config[1])), ["ToyLH"])
+    def benchmark_nlo(self):
+        self.run([{"PTO": 1}], observables.build(**(observables.default_config[1])), ["ToyLH"])
 
 
 @pytest.mark.skip
@@ -52,9 +52,11 @@ if __name__ == "__main__":
 
     plain = BenchmarkPlain()
     plain.benchmark_lo()
+    plain.benchmark_nlo()
 
-    sv = BenchmarkScaleVariations()
-    sv.benchmark_lo()
+
+    # sv = BenchmarkScaleVariations()
+    # sv.benchmark_lo()
 
 # class ApfelBenchmark:
 #     """Wrapper to apply some default settings"""
