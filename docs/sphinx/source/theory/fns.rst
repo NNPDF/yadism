@@ -44,7 +44,7 @@ some of the commonly used tools. This scheme is adequate for :math:`Q^2\sim m^2`
   :cite:`vogt-f2nc,vogt-flnc,moch-f3nc,vogt-f2lcc,vogt-f3cc`, |QCDNUM|, but is not consistent
   with |APFEL|.
   
-- **Ftotal** is *NOT* the sum of **Flight** and **Fheavy**, but contains additional terms
+- **Ftotal** is *NOT* the sum of **Flight** and the single **Fheavy**, but contains additional terms
   **Fmissing** such as the Compton diagrams in :cite:`felix-thesis`.
 
 - **Fheavy** is defined by having in the Lagrangian *only* the charges that are associated to the
@@ -86,12 +86,16 @@ This scheme is adequate for :math:`Q^2\gg m^2`.
 
 FONLL
 -----
-FONLL :cite:`forte-fonll` is a |GM-VFNS| that includes parts of |DGLAP| equations into the
+FONLL :cite:`forte-fonll` is a |GM-VFNS| that includes parts of the |DGLAP| equations into the
 matching conditions. In the original paper the prescription is only presented for the charm
 contributions, but we extend it here to an arbitrary quark: in especially the ``NF_FF``
-configuration variable as to point to the *heavy* quark, i.e. ``NF_FF=4`` for the charm
+configuration variable as to point to the *heavy* quark, i.e. e.g. ``NF_FF=4`` for the charm
 matching.
 
 The prescription defines two separate regimes, below and above the *next* heavy quark mass
 :math:`m_{n_f+1}`. For :math:`Q^2 > m_{n_f+1}^2` the |ZM-VFNS| is employed and this leads
-to an inconsistency at this :math:`m_{n_f+1}` threshold.
+to an inconsistency at this :math:`m_{n_f+1}` threshold. Below this threshold a |FNS|
+with :math:`n_f` flavors is employed and in especially even below :math:`m_{n_f}`. Here
+we include explicitly the scheme change between the schemes with :math:`(n_f-1)` and :math:`n_f`
+flavors. This scheme change is related to the |DGLAP| matching conditions. Up to |NLO| this
+scheme change is however continous.
