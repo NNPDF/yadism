@@ -1,11 +1,8 @@
-import inspect
+# -*- coding: utf-8 -*-
+from banana import navigator as bnav
 
-import IPython
-from traitlets.config.loader import Config
-
-from yadism import observable_name as on
-
-from .navigator import NavigatorApp, t, o, l, compare_dicts
+from .. import banana_cfg
+from . import navigator
 
 
 def yelp(*args):
@@ -14,20 +11,17 @@ def yelp(*args):
     """
     if len(args) == 0:
         print(
-            f"""Welcome to yadism benchmark skript!
+            f"""Welcome to yadmark navigator - the yadism benchmark skript!
 Available variables:
-    t = "{t}" -> query theories
-    o = "{o}" -> query observables
-    l = "{l}" -> query logs
+    {bnav.help_vars}
+    o = "{bnav.o}" -> query observables
 Available functions:
-    h() - this help
-    m(str) - change mode
-    g(tbl,id) - getter
-    ls(tbl) - listing table with reduced informations
+    {bnav.help_fncs}
     dfl(id) - log as DataFrame
-    diff(id,id) - subtractig logs
-    truncate_logs() - clear log table
     simlogs(id) - find similar logs
+    diff(id,id) - subtractig logs
+    check_log(id) - check logs passed
+    crashed_log(id) - print crashed logs
 """
         )
     elif len(args) == 1:
@@ -37,81 +31,18 @@ Available functions:
 
 h = yelp
 
+app = navigator.NavigatorApp(banana_cfg.banana_cfg, "sandbox")
 
-app = NavigatorApp("sandbox")
+# register banana functions
+bnav.register_globals(globals(), app)
 
-
-def m(*args):
-    global app
-    return app.change_mode(*args)
-
-
-def g(*args):
-    global app
-    return app.get(*args)
-
-
-def ls(*args):
-    global app
-    return app.list_all(*args)
-
-
-def dfl(*args):
-    global app
-    return app.get_log_DFdict(*args)
-
-
-def diff(*args):
-    global app
-    return app.subtract_tables(*args)
-
-
-def truncate_logs():
-    global app
-    return app.logs.truncate()
-
-
-def simlogs(*args):
-    global app
-    return app.list_all_sim_logs(*args)
-
-
-def cmpt(id1, id2):
-    return compare_dicts(g(t, id1), g(t, id2))
-
-
-def check_dfdl(id_):
-    dfd = dfl(id_)
-    for n, df in dfd.items():
-        for l in df.iloc:
-            if abs(l["rel_err[%]"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
-                print(n, l, sep="\n")
-
-
-def crashedfl(id_):
-    dfd = g(l, id_)
-    if "_crash" not in dfd:
-        raise ValueError("log didn't crash!")
-    cdfd = {}
-    for sf in dfd:
-        if on.ObservableName.is_valid(sf):
-            cdfd[sf] = f"{len(dfd[sf])} points"
-        else:
-            cdfd[sf] = dfd[sf]
-    return cdfd
+# add my functions
+dfl = app.log_as_DFdict
+simlogs = app.list_all_sim_logs
+diff = app.subtract_tables
+check_log = app.check_log
+crashed_log = app.crashed_log
 
 
 def launch_navigator():
-    c = Config()
-    banner = """
-        Welcome to yadism benchmark skript!
-        call yelp() or h() for a brief overview.
-    """
-    c.TerminalInteractiveShell.banner2 = inspect.cleandoc(banner) + "\n" * 2
-
-    init_cmds = ["""from yadmark.navigator import *""", """from yadism import *"""]
-    args = ["--pylab"]
-    for cmd in init_cmds:
-        args.append(f"--InteractiveShellApp.exec_lines={cmd}")
-
-    IPython.start_ipython(argv=args, config=c)
+    return bnav.launch_navigator("yadism", "yadmark")

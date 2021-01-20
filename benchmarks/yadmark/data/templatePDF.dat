@@ -1,9 +1,0 @@
-{# vim: ft=jinja: -#}
-PdfType: central
-Format: lhagrid1
----
-{{ xgrid }}
-{{ Q2grid }}
-{{ pids }}
-{{ pdf_table -}}
----

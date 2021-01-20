@@ -163,7 +163,7 @@ class Runner:
             )
 
             # read kinematics
-            obj.load(self._observables.get(name, []))
+            obj.load(self._observables["observables"].get(name, []))
             self.observable_instances[name] = obj
 
         # output console
@@ -208,9 +208,11 @@ class Runner:
         precomputed_plan = {}
         printable_plan = []
         for name, obs in self.observable_instances.items():
-            if name in self._observables.keys():
+            if name in self._observables["observables"].keys():
                 precomputed_plan[name] = obs
-                printable_plan.append(f"- {name} at {len(self._observables[name])} pts")
+                printable_plan.append(
+                    f"- {name} at {len(self._observables['observables'][name])} pts"
+                )
 
         self.console.print(rich.markdown.Markdown("## Plan"))
         self.console.print(rich.markdown.Markdown("\n".join(printable_plan)))

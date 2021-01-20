@@ -3,8 +3,6 @@ from datetime import datetime
 
 import tinydb
 
-from ...utils import str_datetime, unstr_datetime
-
 
 def get_external_data(theory, observables, pdf, cache_table, cb_compute_data):
     """
@@ -48,15 +46,9 @@ def get_external_data(theory, observables, pdf, cache_table, cb_compute_data):
         raise ValueError("Cache query matched more than once.")
     # check is updated
     if tab is not None:
-        theory_changed = unstr_datetime(
-            theory["_modify_time"]
-        )  # pylint:disable=protected-access
-        obs_changed = unstr_datetime(
-            observables["_modify_time"]
-        )  # pylint:disable=protected-access
-        tab_changed = unstr_datetime(
-            tab["_creation_time"]
-        )  # pylint:disable=protected-access
+        theory_changed = datetime.fromisoformat(theory["_created"])
+        obs_changed = datetime.fromisoformat(observables["_created"])
+        tab_changed = datetime.fromisoformat(tab["_creation_time"])
         if (theory_changed - tab_changed).total_seconds() > 0 or (
             obs_changed - tab_changed
         ).total_seconds() > 0:
@@ -73,7 +65,7 @@ def get_external_data(theory, observables, pdf, cache_table, cb_compute_data):
     tab["_theory_doc_id"] = theory.doc_id
     tab["_observables_doc_id"] = observables.doc_id
     tab["_pdf"] = pdf_name
-    tab["_creation_time"] = str_datetime(datetime.now())
+    tab["_creation_time"] = datetime.now().isoformat()
     cache_table.insert(tab)
 
     return tab
