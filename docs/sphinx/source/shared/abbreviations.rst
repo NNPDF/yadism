@@ -11,6 +11,9 @@
 .. |EW| replace::
    :abbr:`EW (ElectroWeak)`
 
+.. |DGLAP| replace::
+   :abbr:`DGLAP (Dokshitzer-Gribov-Lipatov-Altarelli-Parisi)`
+   
 .. |PDF| replace::
    :abbr:`PDF (Parton Distribution Function(s))`
 
@@ -35,6 +38,9 @@
 
 .. |CC| replace::
    :abbr:`CC (Charged Current)`
+
+.. |CKM| replace::
+   :abbr:`CKM (Cabibbo-Kobayashi-Maskawa)`
 
 .. -------------------
    perturbative orders
@@ -80,6 +86,9 @@
 
 .. |ZM-VFNS| replace::
    :abbr:`ZM-VFNS (Zero Mass - Variable Flavor Number Scheme)`
+
+.. |GM-VFNS| replace::
+   :abbr:`GM-VFNS (General Mass - Variable Flavor Number Scheme)`
 
 .. |RSL| replace::
    :abbr:`RSL (Regular - Singular - Local)`

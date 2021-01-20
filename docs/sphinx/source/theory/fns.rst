@@ -1,86 +1,56 @@
 Flavor Number Schemes
 =====================
 
-Heavyness
----------
+|FNS| or Heavy Quark Matching Schemes are dealing with the ambiguity of including
+massive quark contributions to physical cross sections. There is not a unique
+prescription on how to do this and thus we implement several strategies.
+Unfortunately there is no consistent implementation of the different scheme in the
+commonly used tools and a comparison of the different outputs has to judged on a
+case by case basis.
 
-There is always a lot of ways to define physical observables, e.g. tagging the
-outgoing state and imposing kinematics cuts.
+In general we can consider two different kinematic regimes that require a different
+handling of the massive contributions: For :math:`Q^2 \sim m^2` the heavy quark should
+be treated with the full mass dependence. For :math:`Q^2 \gg m^2` however the quark
+should be considered massless, because otherwise a resummation of the occuring terms
+:math:`\ln(m^2/Q^2)` would be required.
 
-We are not going to use any definition based on the outgoing state, since they
-are prone to be theoretically unsafe, if not properly designed.
+We define *Heavyness* as the split up of the *physical total structure functions*
+into several subparts that represent the heavy quark contributions. Again this
+is not a unique prescription and there are lots of ways to define physical
+observables, e.g. tagging the outgoing state and imposing kinematics cuts.
+However, we will *not*  use any of these definition as they are prone to be theoretically
+unsafe, if not properly designed.
+Instead we are defining new observables by considering new theories,
+derived from the |SM| by just setting to 0 some of its bare couplings.
 
-The way we are defining new observables it is just considering new theories,
-derived from the |SM| just setting to 0 some of its bare couplings.
-
-- **Flight**: it is defined as the original structure function (e.g.
-  :math:`F_2`) for the theory in which all the *light* quarks are massless, and
-  all the *heavy* ones are infinitely massive, such that they are never
-  contributing to the diagrams
-- **Fheavy**: it is defined for a given flavor, e.g. *Fcharm*, just keeping
-  all the *light* quark massless, a finite mass for a single heavy quark (the
-  one associated to the structure function chosen) and all the others *heavy*
-  infinitely massive, switching to 0 all the charges that do not involve the
-  chosen heavy quark
-
-  - in |NC| this means that only the *charm* charge is kept
-  - in |CC| this means that :math:`V_{cd}` and :math:`V_{cs}` are kept, but e.g.
-    there is no contribution by :math:`V_{cb}`, because currently bottom is
-    considered infinitely massive
-
-    - we could also define by arbitrarily assign CKM matrix elements to a single
-      flavor, choosing always the heaviest, and set to 0 all the things not
-      assigned to the chosen flavor, it is just an equivalent way of presenting
-      it
-
-No other observable than **Flight**, **Fheavy**, **Ftotal** (for all the
-unpolarized *kinds*) and **sigma** is provided by `yadism`.
+We are thus providing the observables **Flight**, **Fheavy** and **Ftotal** (for all the
+unpolarized *kinds*).
 
 FFNS
 ----
+As the name |FFNS| suggests we are considering a fixed number of flavors :math:`n_f=n_l+1`
+with :math:`n_l` light flavors and 1 (and only 1) heavy flavor with a finite mass :math:`m`.
+The number of light quarks :math:`n_l` is arbitrary but fixed and can range between 3 and 5.
+Except for intrinsic contributions we are *NOT* allowing the heavy (and the other non-existent)
+|PDF| to contribute.
 
-- **Flight** corresponds to the interaction of purely light partons, i.e. the
+Although this is the most naive scheme, it is *NOT* consistently implement in
+some of the commonly used tools. This scheme is adequate for :math:`Q^2\sim m^2`.
+
+- **Flight** corresponds to the interaction of the purely light partons, i.e. the
   coefficient functions may only be a function of :math:`z,Q2` and eventually
   unphysical scales; in especially they may *NOT* depend on any quark mass.
   This definition is consistent with
   :cite:`vogt-f2nc,vogt-flnc,moch-f3nc,vogt-f2lcc,vogt-f3cc`, |QCDNUM|, but is not consistent
-  with |APFEL|. The number of light quarks :math:`n_l` is arbitrary but fixed and can
-  range between 3 and 5.
+  with |APFEL|.
   
-- **Ftotal** is *NOT* the sum of **Flight** and **Fheavy**, but contains additional terms
+- **Ftotal** is *NOT* the sum of **Flight** and the single **Fheavy**, but contains additional terms
   **Fmissing** such as the Compton diagrams in :cite:`felix-thesis`.
 
-
-
-The mass corrections (heavy quark contributions) are available for a single
-mass at a time, so e.g. `yadism` it is not encoding the effect of having finite
-charm and bottom masses at the same time.
-
-The actual scheme is the following:
-
-- :math:`n_l` light flavors are active (i.e. massless quarks)
-- a **single** quark with a **finite mass** *may be* active, 
-- all the remaining flavors are considered infinitely massive, so they will
-  never contribute to anything
-
-
-NC
-^^^
-
-The main reference is :cite:`felix-thesis`.
-
-- meanings of :math:`F_2^{charm}` (c coupling to |EW| boson) (and analogously
-  for `bottom` and `top`)
-
-.. _heavy-cc:
-
-CC
-^^^
-
-The main reference is :cite:`gluck-ccheavy`.
-
-- meanings of :math:`F_2^{charm}` (the weight coming from the suitable line of
-  the CKM matrix) (and analogously for `bottom` and `top`)
+- **Fheavy** is defined by having in the Lagrangian *only* the charges that are associated to the
+  specific quark active. In |NC| this corresponds to the electric and weak charges of the quarks
+  but in |CC| the situation is bit more envolved: we devide the |CKM|-matrix into several
+  parts:
 
 .. math::
    V_{CKM} =
@@ -90,106 +60,42 @@ The main reference is :cite:`gluck-ccheavy`.
       {\color{purple}V_{td}} & {\color{purple}V_{ts}} & {\color{purple}V_{tb}}
    \end{pmatrix}
 
-actual definition of coefficient functions weights in :math:`F_2` (with an
-initial neutrino, :math:`\nu`):
-
-.. math::
-   \begin{array}{rcl}
-      F_2^{\nu,p} &=& 2x\Big\{C_{2,q}\otimes
-                  \Big[\left(|{\color{red}V_{ud}}|^2+|{\color{blue}V_{cd}}|^2+|{\color{purple}V_{td}}|^2\right)d\\
-                  &+&
-                  \left(|{\color{red}V_{ud}}|^2+|{\color{red}V_{us}}|^2+|{\color{green}V_{ub}}|^2\right)\overline{u}\\
-                  &+&
-                  \left(|{\color{red}V_{us}}|^2+|{\color{blue}V_{cs}}|^2+|{\color{purple}V_{ts}}|^2\right)s\\
-                  &+&
-                  \left(|{\color{blue}V_{cd}}|^2+|{\color{blue}V_{cs}}|^2+|{\color{green}V_{cb}}|^2\right)\overline{c}\\
-                  &+&
-                  \left(|{\color{green}V_{ub}}|^2+|{\color{green}V_{cb}}|^2+|{\color{purple}V_{tb}}|^2\right)b\\
-                  &+&
-                  \left(|{\color{purple}V_{td}}|^2+|{\color{purple}V_{ts}}|^2+|{\color{purple}V_{tb}}|^2\right)\overline{t}\Big]\\
-                  &+& c^{CC}_g(N_f)C_{2,q}\otimes g\Big\}
-   \end{array}
-
-and in :math:`F_2^{charm}`:
+and associate the :blue:`blue` couplings to the charm structure functions, :green:`green` to bottom and
+:purple:`purple` to top. For :math:`{\color{blue} F_{2,c}^{\color{black} \nu,p}}` this in effect amounts to
 
 .. math::
    {\color{blue} F_{2,c}^{\color{black} \nu,p}} &=& 2x\Big\{C_{2,q}\otimes\Big[|{\color{blue}V_{cd}}|^2(d+\overline{c}) +
          |{\color{blue}V_{cs}}|^2 (s+\overline{c})\Big]\\
          &+& 2\left(|{\color{blue}V_{cd}}|^2+|{\color{blue}V_{cs}}|^2\right)C_{2,g}\otimes g\Big\}\\
 
-.. todo:: write about normalization in Eq. 2
+Note that even heavier contributions are *NOT* available.
 
 ZM-VFNS
 -------
+As the name |ZM-VFNS| suggests we are considering a variable number of *light* flavors :math:`n_f`
+with :math:`n_f = n_f(Q^2)`. We associate an "activation" mass :math:`m` to the heavy quarks and
+whenever :math:`Q^2 >= m^2` we consider this quark massless, otherwise infinitely massive.
 
-In a |VFNS| this scheme will depend on the specific value of :math:`Q^2`
-considered.
+This scheme is adequate for :math:`Q^2\gg m^2`.
+
+- **Fheavy** is *NOT* defined, as quark masses are either 0 or :math:`\infty`
+- **Ftotal** thus is equal to **Flight**
+- **Flight** corresponds to the interaction of the purely light partons, i.e. the
+  coefficient functions may only be a function of :math:`z,Q^2` and eventually
+  unphysical scales; in especially they may *NOT* depend on any quark mass.
 
 FONLL
 -----
+FONLL :cite:`forte-fonll` is a |GM-VFNS| that includes parts of the |DGLAP| equations into the
+matching conditions. In the original paper the prescription is only presented for the charm
+contributions, but we extend it here to an arbitrary quark: in especially the ``NF_FF``
+configuration variable as to point to the *heavy* quark, i.e. e.g. ``NF_FF=4`` for the charm
+matching.
 
-Asymptotics for CC
-^^^^^^^^^^^^^^^^^^
-.. todo :: this is simply light as it should! write it
-
-For FONLL we need the massless limit of the coefficient functions in :cite:`gluck-ccheavy`.
-We obtain :math:`\lambda\to 1, \xi \to x` and
-
-- **light quark** channel:
-
-.. math::
-    H_i^{q,asy} &= P_{qq}(z) \ln (Q^2/\mu_F^2) + h_i^{q,asy}(z)\\
-    h_i^{q,asy} &= C_F \left[ -\left(\frac 9 2 + \frac{\pi^2}{3} \right)\delta(1-z) - \frac{1+z^2}{1-z} \ln(z) + (1+z^2)\left( \frac{\ln(1-z)}{1-z}\right)_+ \right.\\
-                &\hspace{40pt} + \left. B^{(i)}\left(\frac 1 {1-z}\right)_+  \right]
-
-with :math:`K_A \to 0` and the coefficients :math:`B^{(i)} = B_{1,i} + B_{2,i} + B_{3,i}` given by
-
-.. list-table::
-    :stub-columns: 1
-
-    * - :math:`B^{(1)}`
-      - :math:`\frac 3 2 - 3 z`
-    * - :math:`B^{(2)}`
-      - :math:`\frac 3 2 - z - 2z^2`
-    * - :math:`B^{(3)}`
-      - :math:`\frac 1 2 - z - z^2`
-
-For :math:`F_L = F_2 - 2xF_1` we obtain:
-
-.. math::
-    H_L^{q,asy} &= H_2^{q,asy} - H_1^{q,asy} \\
-                &= C_F \left(B^{(2)} - B^{(1)}\right)\left(\frac 1 {1-z}\right)_+\\
-                &= C_F \cdot 2z
-
-- **gluon** channel:
-
-.. math::
-    H_{i=1,2/3}^{g,asy} &= P_{qg}(z)\left(\pm\left(\ln((1-z)/z) + \ln(Q^2/m^2)\right) + \ln (Q^2/\mu_F^2)\right) + h_i^{g,asy}(z)\\
-    h_i^{g,asy} &= P_{qg}(z) \ln((1-z)/z) + C_{1,i}^{asy} z(1-z) + C_{2,i}^{asy}
-
-with the coefficients :math:`C_{i,j}^{asy}` given by
-
-.. list-table::
-    :header-rows: 1
-    :stub-columns: 1
-
-    * - structure function
-      - :math:`C_{1,i}^{asy}`
-      - :math:`C_{2,i}^{asy}`
-    * - :math:`F_1`
-      - :math:`4`
-      - :math:`-1`
-    * - :math:`F_2`
-      - :math:`8`
-      - :math:`-1`
-    * - :math:`F_3`
-      - :math:`0`
-      - :math:`0`
-
-For :math:`F_L = F_2 - 2xF_1` we obtain:
-
-.. math::
-    H_L^{g,asy} &= H_2^{g,asy} - H_1^{g,asy} \\
-                &= \left(C_{1,2}^{asy} - C_{1,1}^{asy}\right) z(1-z) + \left(C_{2,2}^{asy} - C_{2,1}^{asy}\right)\\
-                &= 4z(1-z)
-
+The prescription defines two separate regimes, below and above the *next* heavy quark mass
+:math:`m_{n_f+1}`. For :math:`Q^2 > m_{n_f+1}^2` the |ZM-VFNS| is employed and this leads
+to an inconsistency at this :math:`m_{n_f+1}` threshold. Below this threshold a |FNS|
+with :math:`n_f` flavors is employed and in especially even below :math:`m_{n_f}`. Here
+we include explicitly the scheme change between the schemes with :math:`(n_f-1)` and :math:`n_f`
+flavors. This scheme change is related to the |DGLAP| matching conditions. Up to |NLO| this
+scheme change is however continous.
