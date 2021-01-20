@@ -24,23 +24,25 @@ def generate_observables():
     #     [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
     #     # np.linspace(1e-3, 1, 50)
     # )
-    light_kin.extend([dict(x=x, Q2=90) for x in np.geomspace(0.008, 0.99, 10).tolist()])
-    light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(2, 90, 10).tolist()])
+    light_kin.extend([dict(x=x, Q2=10) for x in np.geomspace(0.008, 0.99, 10).tolist()])
+    light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(3, 20, 10).tolist()])
     # light_kin.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
     # light_kin = [dict(x=0.001,Q2=1e4)]
     # light_kin.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
     # light_kin.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
     obs_list = [
         #"F2light",
-        "F2charm",
+        #"F2charm",
         #"F2bottom",
         # "F2top",
-        #"F2total",
+        "F2total",
         #"FLlight",
         #"FLcharm",
         #"FLbottom",
+        "FLtotal",
         #"F3charm",
-        #"F3light",
+        "F3light",
+        "F3total",
         #"F3bottom",
     ]
     cards = []
@@ -75,9 +77,9 @@ class Sandbox:
     def run_LO(self):
         return self._db(False).run_external(
             0,
-            ["conly"],
+            ["sbaronly"],
             {
-                # "FNS": self.db.theory_query.FNS == "ZM-VFNS",
+                #"FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 # "NfFF": self.db.theory_query.NfFF == 4,
                 # "TMC": self.db.theory_query.TMC == 0,
                 # "DAMP": self.db.theory_query.DAMP == 0,
@@ -87,17 +89,17 @@ class Sandbox:
 
     def run_NLO(self):
         return self._db(False).run_external(
-            0,
-            ["CT14nlo_NF6"],
+            1,
+            ["uonly","sbaronly"],
             {
                 # "XIR": self.db.theory_query.XIR == 0.5,
                 # "XIF": self.db.theory_query.XIF == 0.5,
-                "NfFF": self.db.theory_query.NfFF == 4,
                 # "TMC": self.db.theory_query.TMC == 1,
                 #"FNS": self.db.theory_query.FNS == "ZM-VFNS",
                 #"FNS": self.db.theory_query.FNS == "FFNS",
-                #"FNS": self.db.theory_query.FNS == "FONLL-A",
-                #"DAMP": self.db.theory_query.DAMP == 1,
+                "FNS": self.db.theory_query.FNS == "FONLL-A",
+                "DAMP": self.db.theory_query.DAMP == 0,
+                "NfFF": self.db.theory_query.NfFF == 4,
             },
         )
 
@@ -105,5 +107,5 @@ class Sandbox:
 if __name__ == "__main__":
     generate_observables()
     sand = Sandbox()
-    sand.run_LO()
+    #sand.run_LO()
     sand.run_NLO()

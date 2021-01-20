@@ -5,7 +5,11 @@ import math
 import os
 
 from yadism import observable_name as on
+from yadism.input import compatibility
 
+import eko.thresholds as thr
+import eko.strong_coupling as eko_sc
+import numpy as np
 
 def compute_xspace_bench_data(theory, observables, pdf):
 
@@ -27,9 +31,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
             xspace_bench numbers
     """
     import xspace_bench
-    import eko.thresholds as thr
-    import eko.strong_coupling as eko_sc
-    import numpy as np
 
     # Available targets: PROTON, NEUTRON, ISOSCALAR, IRON
     target = "PROTON"
@@ -69,30 +70,38 @@ def compute_xspace_bench_data(theory, observables, pdf):
     q2ref = theory["Qref"] ** 2
     thr_list = [m ** 2 for m in q_thr]
 
+    # FONLL damping, otherwise set to 0 
+    damp = 0
+
     # select scheme
     scheme = theory["FNS"]
-    thrholder = thr.ThresholdsAtlas(thr_list, q2ref)
+    new_theory = compatibility.update(theory)
+    thrholder = thr.ThresholdsAtlas.from_dict(new_theory, "kDIS")
 
     if scheme == "ZM-VFNS":
         scheme = "ZMVN"
 
     elif scheme == "FFNS":
-        pass 
+        if theory["NfFF"] != 3:
+            raise NotImplementedError("FFNS only with 3 light flavors in xspace_bench")
 
     elif scheme == "FONLL-A":
-        if theory["DAMP"] != 1:
-            raise NotImplementedError("FONLL-A only with damping in xspace_bench")
+        if theory["NfFF"] != 4:
+            raise NotImplementedError("FONLL-A only with 3 ( ie. NfFF=4) light flavors in xspace_bench")
+        damp = theory["DAMP"]
         scheme = "GMVN"
 
-    #    elif scheme == "FONLL-A'":
-    #        thrholder = thr.ThresholdsConfig(q2ref, scheme, threshold_list=thr_list)
-    #        if theory["DAMP"] != 1:
-    #            raise NotImplementedError("FONLL-A' only with damping in xspace_bench")
-    #        scheme = "FFN0"
+    #elif scheme == "FONLL-A'":
+    #    if theory["DAMP"] != 0:
+    #            raise NotImplementedError("FONLL-A' only with out damping in xspace_bench")
+    #    if theory["NfFF"] != 4:
+    #        raise NotImplementedError("FONLL-A only with 3 ( ie. NfFF=4) light flavors in xspace_bench")
+    #    scheme = "FFN0"
     else:
         raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
 
-    sc = eko_sc.StrongCoupling(alpharef, q2ref, thrholder, order=pto)
+
+    sc = eko_sc.StrongCoupling.from_dict(new_theory)
 
     num_tab = {}
     # loop over functions
@@ -128,8 +137,9 @@ def compute_xspace_bench_data(theory, observables, pdf):
             for x in xs:
 
                 res = []
-
+                f3_fact = -1.0
                 if proc == "NC" or proc == "EM":
+                    f3_fact = 1.0 
                     res = xspace_bench.nc_dis(
                         x,
                         q2,
@@ -144,6 +154,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         sw,
                         alphas,
                         q_thr,
+                        damp,
                     )
                 elif proc == "CC":
                     res = xspace_bench.cc_dis(
@@ -160,6 +171,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         ckm,
                         alphas,
                         q_thr,
+                        damp,
                     )
                 else:
                     raise NotImplementedError(
@@ -179,15 +191,15 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         f = res[0][4]
                 elif obs_name.kind == "F3":
                     if obs_name.flavor == "light":
-                        f = -res[1][0]
+                        f = f3_fact * res[1][0]
                     if obs_name.flavor == "charm":
-                        f = -res[1][1]
+                        f = f3_fact * res[1][1]
                     if obs_name.flavor == "bottom":
-                        f = res[1][2]
+                        f = - f3_fact * res[1][2]
                     if obs_name.flavor == "top":
-                        f = -res[1][3]
+                        f = f3_fact * res[1][3]
                     if obs_name.flavor == "total":
-                        f = -res[1][4]
+                        f = f3_fact * res[1][4]
                 elif obs_name.kind == "FL":
                     if obs_name.flavor == "light":
                         f = res[2][0]
