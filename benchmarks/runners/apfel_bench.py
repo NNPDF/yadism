@@ -29,7 +29,8 @@ class BenchmarkPlain(ApfelBenchmark):
 
 @pytest.mark.skip
 class BenchmarkScaleVariations(ApfelBenchmark):
-    def theory_updates(self, pto):
+    @staticmethod
+    def theory_updates(pto):
         sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # drop plain
         return filter(
