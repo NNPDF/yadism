@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
 # fmt: off
-# Compare the results with APFEL's
+# Our testing playground
 import copy
 
 import numpy as np
@@ -13,7 +13,7 @@ from yadmark.data import observables
 
 class Sandbox(Runner):
 
-    external = "APFEL"
+    external = "APFEL" # external comparison program
 
     @staticmethod
     def generate_observables():
@@ -55,11 +55,10 @@ class Sandbox(Runner):
         # card["PolarizationDIS"] = 0.5
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
-    def run_lo(self):
+    def run(self):
         self.run([{}], observables.build(**(self.generate_observables())), ["ToyLH"])
 
 
 if __name__ == "__main__":
     sand = Sandbox()
-    sand.run_lo()
-    # sand.run_NLO()
+    sand.run()

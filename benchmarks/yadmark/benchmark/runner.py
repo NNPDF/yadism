@@ -12,7 +12,6 @@ import yadism
 
 class Runner(BenchmarkRunner):
     banana_cfg = banana_cfg
-    external = ""
 
     @staticmethod
     def init_ocards(conn):

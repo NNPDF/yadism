@@ -12,6 +12,10 @@ from yadmark.data import observables
 
 
 class ApfelBenchmark(Runner):
+    """
+    Globally set the external program to APFEL
+    """
+
     external = "APFEL"
 
 
@@ -29,8 +33,17 @@ class BenchmarkPlain(ApfelBenchmark):
 
 @pytest.mark.skip
 class BenchmarkScaleVariations(ApfelBenchmark):
+
+    # TODO add observable generator
+    # the observables eventually need to be taylored to the used theories,
+    # i.e. configuration need to be more scattered in this this class.
+    # The physical reason is that, for XIR beeing small pQCD becomes unreliable
+    # and thus we can NOT probe as low Q2 as before.
+
     @staticmethod
     def theory_updates(pto):
+        # TODO include FNS variations
+        # again we might scatter this more among in this class
         sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # drop plain
         return filter(
