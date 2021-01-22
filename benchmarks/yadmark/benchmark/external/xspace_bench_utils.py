@@ -11,6 +11,7 @@ import eko.thresholds as thr
 import eko.strong_coupling as eko_sc
 import numpy as np
 
+
 def compute_xspace_bench_data(theory, observables, pdf):
 
     """
@@ -70,7 +71,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
     q2ref = theory["Qref"] ** 2
     thr_list = [m ** 2 for m in q_thr]
 
-    # FONLL damping, otherwise set to 0 
+    # FONLL damping, otherwise set to 0
     damp = 0
 
     # select scheme
@@ -87,19 +88,20 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
     elif scheme == "FONLL-A":
         if theory["NfFF"] != 4:
-            raise NotImplementedError("FONLL-A only with 3 ( ie. NfFF=4) light flavors in xspace_bench")
+            raise NotImplementedError(
+                "FONLL-A only with 3 ( ie. NfFF=4 ) light flavors in xspace_bench"
+            )
         damp = theory["DAMP"]
         scheme = "GMVN"
 
-    #elif scheme == "FONLL-A'":
+    # elif scheme == "FONLL-A'":
     #    if theory["DAMP"] != 0:
     #            raise NotImplementedError("FONLL-A' only with out damping in xspace_bench")
     #    if theory["NfFF"] != 4:
-    #        raise NotImplementedError("FONLL-A only with 3 ( ie. NfFF=4) light flavors in xspace_bench")
+    #        raise NotImplementedError("FONLL-A only with 3 ( ie. NfFF=4 ) light flavors in xspace_bench")
     #    scheme = "FFN0"
     else:
         raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
-
 
     sc = eko_sc.StrongCoupling.from_dict(new_theory)
 
@@ -139,7 +141,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
                 res = []
                 f3_fact = -1.0
                 if proc == "NC" or proc == "EM":
-                    f3_fact = 1.0 
+                    f3_fact = 1.0
                     res = xspace_bench.nc_dis(
                         x,
                         q2,
@@ -183,10 +185,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         f = res[0][0]
                     if obs_name.flavor == "charm":
                         f = res[0][1]
-                    if obs_name.flavor == "bottom":
-                        f = res[0][2]
-                    if obs_name.flavor == "top":
-                        f = res[0][3]
                     if obs_name.flavor == "total":
                         f = res[0][4]
                 elif obs_name.kind == "F3":
@@ -194,10 +192,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         f = f3_fact * res[1][0]
                     if obs_name.flavor == "charm":
                         f = f3_fact * res[1][1]
-                    if obs_name.flavor == "bottom":
-                        f = - f3_fact * res[1][2]
-                    if obs_name.flavor == "top":
-                        f = f3_fact * res[1][3]
                     if obs_name.flavor == "total":
                         f = f3_fact * res[1][4]
                 elif obs_name.kind == "FL":
@@ -205,10 +199,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         f = res[2][0]
                     if obs_name.flavor == "charm":
                         f = res[2][1]
-                    if obs_name.flavor == "bottom":
-                        f = res[2][2]
-                    if obs_name.flavor == "top":
-                        f = res[2][3]
                     if obs_name.flavor == "total":
                         f = res[2][4]
                 else:
