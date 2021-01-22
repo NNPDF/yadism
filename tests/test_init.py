@@ -42,6 +42,7 @@ theory_dict = {
 }
 
 obs_dict = {
+    "observables": {"F2light":[ ]},
     "interpolation_xgrid": [0.001, 0.01, 0.1, 0.5, 1.0],
     "prDIS": "EM",
     "PolarizationDIS": 0.0,
