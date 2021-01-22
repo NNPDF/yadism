@@ -55,10 +55,10 @@ class Sandbox(Runner):
         # card["PolarizationDIS"] = 0.5
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
-    def run(self):
+    def _run(self):
         self.run([{}], observables.build(**(self.generate_observables())), ["ToyLH"])
 
 
 if __name__ == "__main__":
     sand = Sandbox()
-    sand.run()
+    sand._run()

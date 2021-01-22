@@ -5,6 +5,110 @@
 # import pytest
 # from yadmark.benchmark.db_interface import DBInterface, QueryFieldsEqual
 
+import pathlib
+
+import pytest
+
+from banana.data import power_set
+
+from yadmark.benchmark.runner import Runner
+from yadmark.data import observables
+
+
+class QCDNUMBenchmark(Runner):
+    """
+    Globally set the external program to QCDNUM
+    """
+
+    external = "QCDNUM"
+
+
+class BenchmarkPlain(QCDNUMBenchmark):
+
+    """The most basic checks"""
+
+    def benchmark_lo(self):
+        self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
+
+    def benchmark_nlo(self):
+        self.run(
+            [{"PTO": 1}],
+            observables.build(**(observables.default_config[1])),
+            ["ToyLH"],
+        )
+
+
+@pytest.mark.skip
+class BenchmarkScaleVariations(QCDNUMBenchmark):
+
+    """Vary factorization and renormalization scale"""
+
+    # TODO add observable generator
+    # the observables eventually need to be taylored to the used theories,
+    # i.e. configuration need to be more scattered in this this class.
+    # The physical reason is that, for XIR beeing small pQCD becomes unreliable
+    # and thus we can NOT probe as low Q2 as before.
+
+    @staticmethod
+    def theory_updates(pto):
+        # TODO include FNS variations
+        # again we might scatter this more among in this class
+        sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
+        # drop plain
+        return filter(
+            lambda c: not (c["XIR"] == 1.0 and c["XIF"] == 1.0), power_set(sv)
+        )
+
+    def benchmark_lo(self):
+        self.run(
+            self.theory_updates(0),
+            observables.build(**(observables.default_config[0])),
+            ["ToyLH"],
+        )
+
+    def benchmark_nlo(self):
+        self.run(
+            self.theory_updates(1),
+            observables.build(**(observables.default_config[1])),
+            ["ToyLH"],
+        )
+
+@pytest.mark.skip
+class BenchmarkFNS(QCDNUMBenchmark):
+
+    """Vary Flavor Number Schemes"""
+
+    @staticmethod
+    def theory_updates(pto):
+
+        fns = {"NfFF": [3, 4, 5], "FNS": ["FFNS", "ZM-VFNS"], "PTO": [pto]}
+        # drop plain
+        return filter(
+            lambda c: not (c["FNS"] == "ZM-VNFS" and c["NfFF"] >= 4.0), power_set(sv)
+        )
+
+    def benchmark_nlo(self):
+        self.run(
+            self.theory_updates(1),
+            observables.build(**(observables.default_config[1])),
+            ["ToyLH"],
+        )
+
+
+if __name__ == "__main__":
+    #p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
+    # p.unlink(missing_ok=True)
+
+    plain = BenchmarkPlain()
+    plain.benchmark_lo()
+    # plain.benchmark_nlo()
+
+    # sv = BenchmarkScaleVariations()
+    # sv.benchmark_lo()
+
+    # fns = BenchmarkFNS()
+    # fns.benchmark_nlo()
+
 
 # class QCDNUMBenchmark:
 #     """Wrapper to apply some default settings"""
