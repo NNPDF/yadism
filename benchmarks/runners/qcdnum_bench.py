@@ -6,8 +6,9 @@
 # from yadmark.benchmark.db_interface import DBInterface, QueryFieldsEqual
 
 import pathlib
-
+import copy
 import pytest
+import numpy as np
 
 from banana.data import power_set
 
@@ -50,9 +51,27 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
     # and thus we can NOT probe as low Q2 as before.
 
     @staticmethod
+    def generate_observables():
+        defaults = copy.deepcopy(observables.default_card)
+        kinematics = []
+        kinematics.extend(
+            [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
+            # np.linspace(1e-3, 1, 50)
+        )
+        kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.08, .9, 10).tolist()])
+        kinematics.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(16, 1e3, 10).tolist()])
+        observable_names = [
+            "F2light",
+            #"F2total",
+            # "FLtotal",
+            # "F3total",
+        ]
+        update = {"prDIS": ["CC"]}
+
+        return dict(observable_names=observable_names,kinematics=kinematics,update=update)
+
+    @staticmethod
     def theory_updates(pto):
-        # TODO include FNS variations
-        # again we might scatter this more among in this class
         sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # drop plain
         return filter(
@@ -62,14 +81,14 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
     def benchmark_lo(self):
         self.run(
             self.theory_updates(0),
-            observables.build(**(observables.default_config[0])),
+            observables.build(**(self.generate_observables())),
             ["ToyLH"],
         )
 
     def benchmark_nlo(self):
         self.run(
             self.theory_updates(1),
-            observables.build(**(observables.default_config[1])),
+            observables.build(**(self.generate_observables())),
             ["ToyLH"],
         )
 
@@ -84,7 +103,7 @@ class BenchmarkFNS(QCDNUMBenchmark):
         fns = {"NfFF": [3, 4, 5], "FNS": ["FFNS", "ZM-VFNS"], "PTO": [pto]}
         # drop plain
         return filter(
-            lambda c: not (c["FNS"] == "ZM-VNFS" and c["NfFF"] >= 4.0), power_set(sv)
+            lambda c: not (c["FNS"] == "ZM-VNFS" and c["NfFF"] >= 4.0), power_set(fns)
         )
 
     def benchmark_nlo(self):
@@ -99,15 +118,15 @@ if __name__ == "__main__":
     #p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
     # p.unlink(missing_ok=True)
 
-    plain = BenchmarkPlain()
-    plain.benchmark_lo()
+    #plain = BenchmarkPlain()
+    #plain.benchmark_lo()
     # plain.benchmark_nlo()
 
-    # sv = BenchmarkScaleVariations()
-    # sv.benchmark_lo()
+    sv = BenchmarkScaleVariations()
+    sv.benchmark_nlo()
 
-    # fns = BenchmarkFNS()
-    # fns.benchmark_nlo()
+    #fns = BenchmarkFNS()
+    #fns.benchmark_nlo()
 
 
 # class QCDNUMBenchmark:
