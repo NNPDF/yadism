@@ -5,7 +5,6 @@ human_dates2
 ipython
 matplotlib
 pandas
-pygit2
-semver
+packutil
 #
 -e benchmarks/
