@@ -87,7 +87,7 @@ def compute_qcdnum_data(
     iset = 1
 
     # Try to read the ZM-weight file and create one if that fails
-    if on.ObservableName.has_lights(observables.keys()):
+    if on.ObservableName.has_lights(observables["observables"].keys()):
         zmlunw = QCDNUM.nxtlun(10)
         _nwords, ierr = QCDNUM.zmreadw(zmlunw, zmname)
         if ierr != 0:
@@ -98,7 +98,7 @@ def compute_qcdnum_data(
         QCDNUM.zswitch(iset)
 
     # Try to read the HQ-weight file and create one if that fails
-    if on.ObservableName.has_heavies(observables.keys()):
+    if on.ObservableName.has_heavies(observables["observables"].keys()):
         hqlunw = QCDNUM.nxtlun(10)
         _nwords, ierr = QCDNUM.hqreadw(hqlunw, hqname)
         if ierr != 0:
@@ -196,7 +196,7 @@ def compute_qcdnum_data(
         f_out = []
         for x, q2, f in zip(xs, q2s, fs):
             f_out.append(dict(x=x, Q2=q2, result=f))
-        num_tab[obs] = f_out
+        num_tab[obs_name] = f_out
 
     # remove QCDNUM cache files
     for f in [wname, zmname, hqname]:

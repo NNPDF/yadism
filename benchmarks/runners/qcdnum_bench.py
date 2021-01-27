@@ -72,6 +72,9 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
     @staticmethod
     def theory_updates(pto):
+        # TODO there is still a QCDNUM error: "STOP ZMSTFUN: You cant vary both Q2 and muR2 scales --> STOP"
+        # this is a limitation of QCDNUM in principle, so you have to work around it, i.e. fix Q2 and only
+        # vary muR or vice versa
         sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # drop plain
         return filter(
