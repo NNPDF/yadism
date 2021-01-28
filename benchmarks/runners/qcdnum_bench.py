@@ -44,37 +44,39 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
     """Vary factorization and renormalization scale"""
 
-    # TODO add observable generator
-    # the observables eventually need to be taylored to the used theories,
-    # i.e. configuration need to be more scattered in this this class.
-    # The physical reason is that, for XIR beeing small pQCD becomes unreliable
-    # and thus we can NOT probe as low Q2 as before.
-
     @staticmethod
-    def generate_observables():
-        defaults = copy.deepcopy(observables.default_card)
-        kinematics = []
-        kinematics.extend(
-            [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
-            # np.linspace(1e-3, 1, 50)
-        )
-        kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.08, .9, 10).tolist()])
-        kinematics.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(16, 1e3, 10).tolist()])
-        observable_names = [
-            "F2light",
-            #"F2total",
-            # "FLtotal",
-            # "F3total",
-        ]
-        update = {"prDIS": ["CC"]}
+    def observable_updates():
 
-        return dict(observable_names=observable_names,kinematics=kinematics,update=update)
+        obs_cards = []
+        updates = [
+            {"prDIS": ["CC"]},
+            {"prDIS": ["NC"]},
+        ]
+
+        for update in updates:
+            kinematics = []
+            kinematics.extend(
+                [dict(x=x, Q2=90.0) for x in np.geomspace(0.0001, 0.99, 10).tolist()]
+            )
+            observable_names = [
+                "F2total",
+                "F2light",
+                "FLtotal",
+                "FLlight",
+            ]
+            obs_card = dict(
+                observable_names=observable_names, kinematics=kinematics, update=update
+            )
+            obs_cards.extend(observables.build(**(obs_card)))
+
+        return obs_cards
 
     @staticmethod
     def theory_updates(pto):
         # TODO there is still a QCDNUM error: "STOP ZMSTFUN: You cant vary both Q2 and muR2 scales --> STOP"
         # this is a limitation of QCDNUM in principle, so you have to work around it, i.e. fix Q2 and only
         # vary muR or vice versa
+        # For the moment fix Q2.
         sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # drop plain
         return filter(
@@ -83,17 +85,14 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
     def benchmark_lo(self):
         self.run(
-            self.theory_updates(0),
-            observables.build(**(self.generate_observables())),
-            ["ToyLH"],
+            self.theory_updates(0), self.observable_updates(), ["ToyLH"],
         )
 
     def benchmark_nlo(self):
         self.run(
-            self.theory_updates(1),
-            observables.build(**(self.generate_observables())),
-            ["ToyLH"],
+            self.theory_updates(1), self.observable_updates(), ["ToyLH"],
         )
+
 
 @pytest.mark.skip
 class BenchmarkFNS(QCDNUMBenchmark):
@@ -101,35 +100,61 @@ class BenchmarkFNS(QCDNUMBenchmark):
     """Vary Flavor Number Schemes"""
 
     @staticmethod
+    def observable_updates():
+
+        # TODO: add FXbottom and FXcharm when they are available
+        obs_cards = []
+        updates = [
+            {"prDIS": ["CC"]},
+            {"prDIS": ["NC"]},
+        ]
+
+        for update in updates:
+            kinematics = []
+            kinematics.extend(
+                [dict(x=x, Q2=90.0) for x in np.geomspace(0.0001, 0.99, 10).tolist()]
+            )
+            kinematics.extend(
+                [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4.0, 1000.0, 10).tolist()]
+            )
+            observable_names = [
+                "F2total",
+                "F2light",
+                "FLtotal",
+                "FLlight",
+            ]
+            obs_card = dict(
+                observable_names=observable_names, kinematics=kinematics, update=update
+            )
+            obs_cards.extend(observables.build(**(obs_card)))
+
+        return obs_cards
+
+    @staticmethod
     def theory_updates(pto):
 
         fns = {"NfFF": [3, 4, 5], "FNS": ["FFNS", "ZM-VFNS"], "PTO": [pto]}
-        # drop plain
-        return filter(
-            lambda c: not (c["FNS"] == "ZM-VNFS" and c["NfFF"] >= 4.0), power_set(fns)
-        )
+        return power_set(fns)
 
     def benchmark_nlo(self):
         self.run(
-            self.theory_updates(1),
-            observables.build(**(observables.default_config[1])),
-            ["ToyLH"],
+            self.theory_updates(1), self.observable_updates(), ["ToyLH"],
         )
 
 
 if __name__ == "__main__":
-    #p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
+    # p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
     # p.unlink(missing_ok=True)
 
-    #plain = BenchmarkPlain()
-    #plain.benchmark_lo()
+    # plain = BenchmarkPlain()
+    # plain.benchmark_lo()
     # plain.benchmark_nlo()
 
     sv = BenchmarkScaleVariations()
-    sv.benchmark_nlo()
+    # sv.benchmark_nlo()
 
-    #fns = BenchmarkFNS()
-    #fns.benchmark_nlo()
+    fns = BenchmarkFNS()
+    fns.benchmark_nlo()
 
 
 # class QCDNUMBenchmark:

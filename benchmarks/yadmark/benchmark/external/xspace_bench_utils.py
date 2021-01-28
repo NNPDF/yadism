@@ -107,9 +107,9 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
     num_tab = {}
     # loop over functions
-    for obs_name in observables['observables']:
+    for obs_name in observables["observables"]:
 
-        #if not on.ObservableName.is_valid(obs):
+        # if not on.ObservableName.is_valid(obs):
         #    continue
 
         obs = on.ObservableName(obs_name)
@@ -134,14 +134,16 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
             for kin in observables["observables"].get(obs_name, []):
                 if kin["Q2"] == q2:
-                    # otherwise infinite loop 
-                    if kin["x"] != 1.0: 
-                        xs.append(kin["x"])
+                    xs.append(kin["x"])
 
             for x in xs:
 
                 res = []
                 f3_fact = -1.0
+                if x == 1.0:
+                    res = np.zeros((3, 5))
+                    continue
+
                 if proc == "NC" or proc == "EM":
                     f3_fact = 1.0
                     res = xspace_bench.nc_dis(
