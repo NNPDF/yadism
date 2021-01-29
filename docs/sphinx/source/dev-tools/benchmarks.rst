@@ -4,6 +4,21 @@ Benchmarks
 Benchmarks are implemented against external code, where they overlap with this
 package.
 
+.. csv-table:: Banchmarks coverage
+   :file: ./bench-coverage.csv
+   :delim: space
+   :header-rows: 1
+   :stub-columns: 1
+   :align: center
+
+.. csv-table:: Flavor Number Schemes
+   :file: ./bench-fns.csv
+   :delim: tab
+   :header-rows: 1
+   :stub-columns: 1
+   :align: center
+
+.. [#f1] Only for NfFF=4
 
 |APFEL|
 -------
