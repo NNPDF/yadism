@@ -11,7 +11,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.7, 3.8] # , 3.9] wait for numba to be available
       fail-fast: false
 
     steps:
@@ -34,8 +34,6 @@ jobs:
           # install packages needed for testing
           pip install -r test_requirements.txt
       # pass with the linter
-      #   - only for 'dis', 'eko' is a dependency (supposed to be delivered
-      #     already checked)
       - name: Lint with pylint
         run: |
           pip install pylint
