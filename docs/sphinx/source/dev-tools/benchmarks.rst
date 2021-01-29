@@ -6,7 +6,7 @@ package.
 
 .. csv-table:: Banchmarks coverage
    :file: ./bench-coverage.csv
-   :delim: space
+   :delim: tab
    :header-rows: 1
    :stub-columns: 1
    :align: center
