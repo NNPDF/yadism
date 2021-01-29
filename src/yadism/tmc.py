@@ -28,6 +28,7 @@ import abc
 import numpy as np
 
 from eko.interpolation import InterpolatorDispatcher
+from eko import basis_rotation as br
 
 from .esf.distribution_vec import DistributionVec
 from .esf.esf_result import ESFResult
@@ -67,14 +68,14 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         """
         self.sf = SF
-        self._x = kinematics["x"]
-        self._Q2 = kinematics["Q2"]
+        self.x = kinematics["x"]
+        self.Q2 = kinematics["Q2"]
         # compute variables
-        self._mu = self.sf.M2target / self._Q2
-        self._rho = np.sqrt(1 + 4 * self._x ** 2 * self._mu)  # = r = sqrt(tau)
-        self._xi = 2 * self._x / (1 + self._rho)
+        self.mu = self.sf.M2target / self.Q2
+        self.rho = np.sqrt(1 + 4 * self.x ** 2 * self.mu)  # = r = sqrt(tau)
+        self.xi = 2 * self.x / (1 + self.rho)
         # TMC are mostly determined by shifted kinematics
-        self._shifted_kinematics = {"x": self._xi, "Q2": self._Q2}
+        self._shifted_kinematics = {"x": self.xi, "Q2": self.Q2}
 
     @abc.abstractmethod
     def _get_result_APFEL(self):
@@ -158,8 +159,8 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             raise ValueError(f"Unknown TMC value {self.sf.TMC}")
 
         # ensure the correct kinematics is used after the calculations
-        out.x = self._x
-        out.Q2 = self._Q2
+        out.x = self.x
+        out.Q2 = self.Q2
 
         return out
 
@@ -220,23 +221,28 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         """
         # check domain
-        if self._xi < min(self.sf.interpolator.xgrid_raw):
+        if self.xi < min(self.sf.interpolator.xgrid_raw):
             raise ValueError(
-                f"xi outside xgrid - cannot convolute starting from xi={self._xi}"
+                f"xi outside xgrid - cannot convolute starting from xi={self.xi}"
             )
         # iterate grid
-        res = ESFResult(self._xi, self._Q2)
+        res = ESFResult(
+            self.xi,
+            self.Q2,
+            len(br.flavor_basis_pids),
+            len(self.sf.interpolator.xgrid_raw),
+        )
         d = DistributionVec(ker)
         for xj, pj in zip(self.sf.interpolator.xgrid_raw, self.sf.interpolator):
             # basis function does not contribute?
-            if pj.is_below_x(self._xi):
+            if pj.is_below_x(self.xi):
                 continue
             # compute FX matrix (j,k) (where k is wrapped inside get_result)
             FXj = self.sf.get_esf(
-                self.sf.obs_name.apply_kind(kind), {"Q2": self._Q2, "x": xj}
+                self.sf.obs_name.apply_kind(kind), {"Q2": self.Q2, "x": xj}
             ).get_result()
             # compute interpolated h integral (j)
-            h2j = d.convolution(self._xi, pj)
+            h2j = d.convolution(self.xi, pj)
             # sum along j
             res += h2j * FXj
 
@@ -265,7 +271,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total 1/z^2 we need to convolute with z/xi
         # as we get a 1/z by the measure and an evaluation of 1/xi*xi/z
-        return self._convolute_FX("F2", lambda z, xi=self._xi: 1 / xi * z)
+        return self._convolute_FX("F2", lambda z, xi=self.xi: 1 / xi * z)
 
     def _g2(self):
         r"""
@@ -313,13 +319,13 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     def __init__(self, SF, kinematics):
         super().__init__(SF, kinematics)
         # shifted prefactor is common
-        self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 3)
+        self._factor_shifted = self.x ** 2 / (self.xi ** 2 * self.rho ** 3)
         # h2 comes with a seperate factor
-        self._factor_h2 = 6.0 * self._mu * self._x ** 3 / (self._rho ** 4)
+        self._factor_h2 = 6.0 * self.mu * self.x ** 3 / (self.rho ** 4)
 
     def _get_result_approx(self):
         approx_prefactor = self._factor_shifted * (
-            1 + ((6 * self._mu * self._x * self._xi) / self._rho) * (1 - self._xi) ** 2
+            1 + ((6 * self.mu * self.x * self.xi) / self.rho) * (1 - self.xi) ** 2
         )
 
         # collect F2
@@ -338,7 +344,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         return self._factor_shifted * F2out + self._factor_h2 * h2out
 
     def _get_result_exact(self):
-        factor_g2 = 12.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 5
+        factor_g2 = 12.0 * self.mu ** 2 * self.x ** 4 / self.rho ** 5
         # collect F2
         F2out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute raw integral
@@ -358,9 +364,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         for xj in self.sf.interpolator.xgrid_raw:
             # collect support points
             F2list.append(
-                self.sf.get_esf(
-                    self.sf.obs_name, {"Q2": self._Q2, "x": xj}
-                ).get_result()
+                self.sf.get_esf(self.sf.obs_name, {"Q2": self.Q2, "x": xj}).get_result()
             )
 
         # compute integral
@@ -369,7 +373,12 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         )
         h2list = []
         for xj in self.sf.interpolator.xgrid_raw:
-            h2elem = ESFResult(len(F2list))
+            h2elem = ESFResult(
+                self.xi,
+                self.Q2,
+                len(br.flavor_basis_pids),
+                len(self.sf.interpolator.xgrid_raw),
+            )
             for bk, F2k in zip(smallInterp, F2list):
                 xk = self.sf.interpolator.xgrid_raw[bk.poly_number]
                 d = DistributionVec(lambda z, xj=xj: xj / z)
@@ -377,9 +386,14 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
                 h2elem += d.convolution(xj, bk) * F2k / xk ** 2
             h2list.append(h2elem)
 
-        res = ESFResult(len(F2list), Q2=self._Q2)
+        res = ESFResult(
+            self.xi,
+            self.Q2,
+            len(br.flavor_basis_pids),
+            len(self.sf.interpolator.xgrid_raw),
+        )
         for bj, F2out, h2out in zip(self.sf.interpolator, F2list, h2list):
-            res += bj(self._xi) * (
+            res += bj(self.xi) * (
                 self._factor_shifted * F2out + self._factor_h2 * h2out
             )
         # join
@@ -407,16 +421,16 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
     def __init__(self, SF, kinematics):
         super().__init__(SF, kinematics)
         # shifted prefactor is common
-        self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho)
+        self._factor_shifted = self.x ** 2 / (self.xi ** 2 * self.rho)
         # h2 comes with a seperate factor
-        self._factor_h2 = 4.0 * self._mu * self._x ** 3 / (self._rho ** 2)
+        self._factor_h2 = 4.0 * self.mu * self.x ** 3 / (self.rho ** 2)
 
     def _get_result_approx(self):
         # fmt: off
         approx_prefactor_F2 = self._factor_shifted * (
-            (4 * self._mu * self._x * self._xi) / self._rho * (1 - self._xi)
-            + 8 * (self._mu * self._x * self._xi / self._rho) ** 2
-                * (-np.log(self._xi) - 1 + self._xi)
+            (4 * self.mu * self.x * self.xi) / self.rho * (1 - self.xi)
+            + 8 * (self.mu * self.x * self.xi / self.rho) ** 2
+                * (-np.log(self.xi) - 1 + self.xi)
         )
         # fmt: on
 
@@ -439,7 +453,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         return self._factor_shifted * FLout + self._factor_h2 * h2out
 
     def _get_result_exact(self):
-        factor_g2 = 8.0 * self._mu ** 2 * self._x ** 4 / self._rho ** 3
+        factor_g2 = 8.0 * self.mu ** 2 * self.x ** 4 / self.rho ** 3
         # collect F2
         FLout = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute raw integral
@@ -473,15 +487,15 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
         super().__init__(SF, kinematics)
         # shifted prefactor is common
         # beware that we are dealing with xF_3(x) and so xiF_3(xi) also on the right
-        self._factor_shifted = self._x ** 2 / (self._xi ** 2 * self._rho ** 2)
+        self._factor_shifted = self.x ** 2 / (self.xi ** 2 * self.rho ** 2)
         # h3 comes with a seperate factor
-        self._factor_h3 = 2.0 * self._mu * self._x ** 3 / (self._rho ** 3)
+        self._factor_h3 = 2.0 * self.mu * self.x ** 3 / (self.rho ** 3)
 
     def _get_result_approx(self):
         approx_prefactor = self._factor_shifted * (
             1
-            - ((self._mu * self._x * self._xi) / self._rho)
-            * ((1 - self._xi) * np.log(self._xi))
+            - ((self.mu * self.x * self.xi) / self.rho)
+            * ((1 - self.xi) * np.log(self.xi))
         )
 
         # collect F3
@@ -514,7 +528,7 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
         """
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total 1/z we need to convolute with 1
-        return self._convolute_FX("F3", lambda z, xi=self._xi: 1 / xi * z)
+        return self._convolute_FX("F3", lambda z, xi=self.xi: 1 / xi * z)
 
     def _get_result_exact(self):
         # collect F3
@@ -527,7 +541,7 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL, "F3": ESFTMC_F3}
-"""dict: mapping of ESF TMC classes
+"""dict: mapping kind to ESF TMC classes
 
 This dictionary is used to redirect to the correct class from a string
 indicating the kind of the required structure function.

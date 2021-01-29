@@ -125,3 +125,7 @@
 .. |gh-act| raw:: html
 
    <a href="https://github.com/features/actions">GitHub Actions</a>
+
+.. |T| raw:: html
+
+   <span class="green">✓</span>

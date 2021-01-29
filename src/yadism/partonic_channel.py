@@ -133,13 +133,18 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
     def mkNLO(self, kind, RS):
         self.init_nlo_vars()
         norm = 2.0 * constants.CF  # 2 = as_norm
-        omx = norm * ic.__getattribute__(f"{kind}_{RS}_soft")(self)
-        delta = norm * (ic.__getattribute__(f"{kind}_{RS}_virt")(self) + self.S)
+        omx = norm * ic.__getattribute__(  # pylint: disable=no-member
+            f"{kind}_{RS}_soft"
+        )(self)
+        delta = norm * (
+            ic.__getattribute__(f"{kind}_{RS}_virt")(self)  # pylint: disable=no-member
+            + self.S
+        )
 
         def reg(z):
             self.init_vars(z)
-            return norm * ic.__getattribute__(f"{kind}_{RS}_raw")(self) - omx / (
-                1.0 - z
-            )
+            return norm * ic.__getattribute__(  # pylint: disable=no-member
+                f"{kind}_{RS}_raw"
+            )(self) - omx / (1.0 - z)
 
         return rsl_from_distr_coeffs(reg, delta, omx)
