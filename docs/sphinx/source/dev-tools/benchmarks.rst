@@ -6,42 +6,41 @@ package.
 
 .. csv-table:: Banchmarks coverage
    :file: ./bench-coverage.csv
-   :delim: tab
+   :delim: space
    :header-rows: 1
    :stub-columns: 1
    :align: center
 
 .. csv-table:: Flavor Number Schemes
    :file: ./bench-fns.csv
-   :delim: tab
+   :delim: space
    :header-rows: 1
    :stub-columns: 1
    :align: center
 
 .. [#f1] Only for NfFF=4
 
-|APFEL|
--------
+APFEL
+-----
 
-It is a tool aimed to the evolution of PDFs and DIS observables' calculation
+|APFEL| is a tool aimed to the evolution of PDFs and DIS observables' calculation
 (and FTDY as well).
 
 It has been used by the NNPDF collaboration up to NNPDF4.0
 
-|QCDNUM|
---------
+QCDNUM
+------
 
-It is a tool aimed to the evolution of PDFs and DIS observables' calculation in
+|QCDNUM| is a tool aimed to the evolution of PDFs and DIS observables' calculation in
 a restricted number of schemes.
 
 It is/has been used by the `xFitter` framework.
 
 Different definition of |SF|
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
-Due to a different definition |SF| in |APFEL| (and so `yadism`) and |QCDNUM| is
+Due to a different definition |SF| in `yadism`, |APFEL| and |QCDNUM| it is
 not possible to compare all the structure functions in all the schemes.
-
 
 On the other hand |QCDNUM| is using a different definition of the |SF| that is
 not matching the other one and from which it is not possible to recover the
