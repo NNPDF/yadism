@@ -100,3 +100,24 @@ class ESFResult:
             values=self.values.tolist(),
             errors=self.errors.tolist(),
         )
+
+    def __add__(self, other):
+        r = ESFResult(self.x, self.Q2, 0, 0)
+        r.values = self.values + other.values
+        r.errors = self.errors + other.errors
+        return r
+
+    def __mul__(self, other):
+        r = ESFResult(self.x, self.Q2, 0, 0)
+        try:
+            val = other[0]
+            err = other[1]
+        except TypeError:
+            val = other
+            err = 0
+        r.values = val * self.values
+        r.errors = val * self.errors + err * self.values
+        return r
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
