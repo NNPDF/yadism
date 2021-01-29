@@ -16,12 +16,6 @@ class MockPDFgonly:
             return x ** 2 * Q2  # it is xfxQ2! beware of the additional x
         return 0
 
-    def hasFlavor(self, pid):
-        if pid == 21:
-            return True
-        else:
-            return False
-
 
 class TestESFResult:
     def test_from_dict(self):
@@ -48,6 +42,16 @@ class TestESFResult:
         for k, v in a.items():
             assert k in dra
             assert pytest.approx(v) == dra[k]
+
+    def test_mul(self):
+        v,e = np.random.rand(2, 2, 2)
+        r = ESFResult.from_dict(dict(x=.1,Q2=10,values=v,errors=e))
+        for x in [2., (2.,0.)]:
+            rm = r*x
+            np.testing.assert_allclose(rm.values, 2. * v)
+            np.testing.assert_allclose(rm.errors, 2. * e)
+        with pytest.raises(IndexError):
+            _rm = r *(2,)
 
     def test_apply_pdf(self):
         # test Q2 values
