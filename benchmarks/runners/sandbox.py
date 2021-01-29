@@ -37,11 +37,11 @@ class Sandbox(Runner):
             # "F2bottom",
             # "F2top",
             #"F2total",
-            # "FLlight",
+            "FLlight",
             #"FLcharm",
             # "FLbottom",
             # "FLtotal",
-            # "F3light",
+            "F3light",
             #"F3charm",
             # "F3bottom",
             # "F3total",
@@ -56,7 +56,7 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def _run(self):
-        self.run([{}], observables.build(**(self.generate_observables())), ["ToyLH"])
+        self.run([{"TMC":1, "PTO": 1, "MP":10}], observables.build(**(self.generate_observables())), ["ToyLH"])
 
 
 if __name__ == "__main__":

@@ -23,6 +23,6 @@ class TestPartonicChannel:
     def test_is_below_threshold(self):
 
         for Q2 in [0.1, 1000]:
-            x = 0.5 
+            x = 0.5
             pch = PartonicChannelHeavy(MockESF(x, Q2), m2hq=M2hq)
-            assert pch.decorator( lambda: Q2 )() == np.heaviside(Q2-M2hq, Q2) * Q2
+            assert pch.decorator(lambda: Q2)() == np.heaviside(Q2 - M2hq, Q2) * Q2
