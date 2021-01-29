@@ -4,32 +4,43 @@ Benchmarks
 Benchmarks are implemented against external code, where they overlap with this
 package.
 
+.. csv-table:: Banchmarks coverage
+   :file: ./bench-coverage.csv
+   :delim: space
+   :header-rows: 1
+   :stub-columns: 1
+   :align: center
 
-|APFEL|
--------
+.. csv-table:: Flavor Number Schemes
+   :file: ./bench-fns.csv
+   :delim: space
+   :header-rows: 1
+   :stub-columns: 1
+   :align: center
 
-It is a tool aimed to the evolution of PDFs and DIS observables' calculation
+.. [#f1] Only for NfFF=4
+
+APFEL
+-----
+
+|APFEL| is a tool aimed to the evolution of PDFs and DIS observables' calculation
 (and FTDY as well).
 
 It has been used by the NNPDF collaboration up to NNPDF4.0
 
-|QCDNUM|
---------
+QCDNUM
+------
 
-It is a tool aimed to the evolution of PDFs and DIS observables' calculation in
+|QCDNUM| is a tool aimed to the evolution of PDFs and DIS observables' calculation in
 a restricted number of schemes.
 
 It is/has been used by the `xFitter` framework.
 
 Different definition of |SF|
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
-Due to a different definition |SF| in |APFEL| (and so `yadism`) and |QCDNUM| is
+Due to a different definition |SF| in `yadism`, |APFEL| and |QCDNUM| it is
 not possible to compare all the structure functions in all the schemes.
-
-In particular |APFEL|/`yadism` definition of |SF| is based on the coupling to
-the photon (or |DIS| boson in general), cf. :doc:`../theory/light-flavors` and
-:doc:`../theory/heavy-flavors`.
 
 On the other hand |QCDNUM| is using a different definition of the |SF| that is
 not matching the other one and from which it is not possible to recover the

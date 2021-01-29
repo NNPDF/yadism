@@ -15,15 +15,15 @@ from .. import splitting_functions as split
 
 class F3heavyQuark(pccc.PartonicChannelHeavy):
     """
-        Computes the light quark channel of F3heavy.
+    Computes the light quark channel of F3heavy.
 
-        :eqref:`2` of :cite:`gluck-ccheavy`
+    :eqref:`2` of :cite:`gluck-ccheavy`
     """
 
     label = "q"
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.sf_prefactor = self.labda
 
     def LO(self):
@@ -42,9 +42,9 @@ class F3heavyQuark(pccc.PartonicChannelHeavy):
 
 class F3heavyGluon(pccc.PartonicChannelHeavy):
     """
-        Computes the gluon channel of F3heavy
+    Computes the gluon channel of F3heavy
 
-        :eqref:`A5` of :cite:`gluck-ccheavy`
+    :eqref:`A5` of :cite:`gluck-ccheavy`
     """
 
     label = "g"

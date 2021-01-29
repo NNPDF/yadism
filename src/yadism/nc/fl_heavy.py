@@ -16,22 +16,22 @@ from . import partonic_channel as pcnc
 
 class FLheavyGluonVV(pcnc.PartonicChannelHeavy):
     """
-        Computes the gluon channel of FLheavy.
+    Computes the gluon channel of FLheavy.
     """
 
     label = "gVV"
 
     def NLO(self):
         """
-            Computes the gluon part of the next to leading order FL structure
-            function.
+        Computes the gluon part of the next to leading order FL structure
+        function.
 
-            |ref| implements :eqref:`D.2`, :cite:`felix-thesis`.
+        |ref| implements :eqref:`D.2`, :cite:`felix-thesis`.
 
-            Returns
-            -------
-                sequence of callables
-                    coefficient functions
+        Returns
+        -------
+            sequence of callables
+                coefficient functions
         """
         CF = constants.CF
 
@@ -51,22 +51,22 @@ class FLheavyGluonVV(pcnc.PartonicChannelHeavy):
 
 class FLheavyGluonAA(FLheavyGluonVV):
     """
-        Computes the gluon channel of FLheavy.
+    Computes the gluon channel of FLheavy.
     """
 
     label = "gAA"
 
     def NLO(self):
         """
-            Computes the gluon part of the next to leading order F2 structure
-            function.
+        Computes the gluon part of the next to leading order F2 structure
+        function.
 
-            |ref| implements :eqref:`D.5`, :cite:`felix-thesis`.
+        |ref| implements :eqref:`D.5`, :cite:`felix-thesis`.
 
-            Returns
-            -------
-                sequence of callables
-                    coefficient functions
+        Returns
+        -------
+            sequence of callables
+                coefficient functions
         """
 
         VV = super().NLO()

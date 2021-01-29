@@ -1,4 +1,4 @@
-.                   :ref:`light<light-nc>`      :ref:`heavy<heavy-nc>`      :ref:`asymptotic<asymptotic>`
+.                   light                       heavy                       asymptotic
 F2                  :cite:`vogt-f2nc`           :cite:`felix-thesis`        :cite:`forte-fonll`
 FL                  :cite:`vogt-flnc`           :cite:`felix-thesis`        :cite:`forte-fonll`
 F3                  :cite:`moch-f3nc`           :cite:`felix-thesis`        .

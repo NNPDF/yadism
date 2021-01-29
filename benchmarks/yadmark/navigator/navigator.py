@@ -1,163 +1,107 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-from human_dates import human_dates
+
+from banana import navigator as bnav
+from banana.navigator import dfdict
 
 from yadism import observable_name as on
 
-from ..utils import unstr_datetime
-from .. import mode_selector
-from .df_dict import DFdict
-from . import table_manager as tm
 
-t = "t"
-o = "o"
-l = "l"
-
-
-class NavigatorApp(mode_selector.ModeSelector):
+class NavigatorApp(bnav.navigator.NavigatorApp):
     """
     Navigator base class holding all elementry operations.
 
     Parameters
     ----------
+        cfg : dict
+            banana configuration
         mode : string
             mode identifier
     """
 
-    def __init__(self, mode):
-        super().__init__(mode)
-        self.theories = tm.TableManager(self.idb.table("theories"))
-        self.observables = tm.TableManager(self.idb.table("observables"))
-        self.apfel_cache = tm.TableManager(self.idb.table("apfel_cache"))
-        self.qcdnum_cache = tm.TableManager(self.idb.table("qcdnum_cache"))
-        self.logs = tm.TableManager(self.odb.table("logs"))
-
-    def change_mode(self, mode):
+    def fill_theories(self, theo, obj):
         """
-        Change mode
+        Collect important information of the theory record.
 
         Parameters
         ----------
-            mode : string
-                mode identifier
+            theo : dict
+                database record
+            obj : dict
+                to be updated pandas record
         """
-        self.__init__(mode)
+        for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS", "DAMP"]:
+            obj[f] = theo[f]
 
-    def tm(self, table):
+    def fill_observables(self, ob, obj):
         """
-        Get corresponding TableManager
+        Collect important information of the observable record.
 
         Parameters
         ----------
-            table : string
-                table identifier
-
-        Returns
-        -------
-            tm : yadmark.table_manager.TableManager
-                corresponding TableManager
+            theo : dict
+                database record
+            obj : dict
+                to be updated pandas record
         """
-        if table == t:
-            return self.theories
-        if table == o:
-            return self.observables
-        if table == l:
-            return self.logs
-        raise ValueError(f"Unknown table {table}")
+        if "PTO" in ob:
+            obj["PTO"] = ob["PTO"]
+        xgrid = ob["interpolation_xgrid"]
+        obj["xgrid"] = (
+            f"{len(xgrid)}pts: "
+            + f"{'log' if ob['interpolation_is_log'] else 'x'}"
+            + f"^{ob['interpolation_polynomial_degree']}"
+        )
+        if "prDIS" in ob:
+            obj["curr"] = ob["prDIS"]
+        if "projectile" in ob:
+            proj_map = {
+                "electron": "e-",
+                "positron": "e+",
+                "neutrino": "ν",
+                "antineutrino": "ν~",
+            }
+            obj["proj"] = proj_map[ob["projectile"]]
+        if "PolarizationDIS" in ob:
+            obj["pol"] = ob["PolarizationDIS"]
+        sfs = 0
+        esfs = 0
+        for sf in ob:
+            # quick fix
+            if not on.ObservableName.is_valid(sf):
+                continue
+            sfs += 1
+            esfs += len(ob[sf])
+        obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
 
-    def get(self, table, doc_id=None):
+    def fill_logs(self, lg, obj):
         """
-        Getter wrapper.
+        Collect important information of the log record.
 
         Parameters
         ----------
-            table : str
-                table name to query: short cut or singular for one document or plural for all
-            doc_id :
-                if given, retrieve single document
-
-        Returns
-        -------
-            df : pandas.DataFrame
-                created frame
+            lg : dict
+                database record
+            obj : dict
+                to be updated pandas record
         """
-        # list all
-        if doc_id is None:
-            return self.tm(table).all()
-        return self.tm(table).get(doc_id)
-
-    def list_all_theories(self):
-        """
-        Collect important information of all theories.
-
-        Returns
-        -------
-            df : pandas.DataFrame
-                created frame
-        """
-        # collect
-        theories = self.get(t)
-        data = []
-        for theo in theories:
-            obj = {"doc_id": theo.doc_id}
-            for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS", "DAMP"]:
-                obj[f] = theo[f]
-            dt = unstr_datetime(theo["_modify_time"])
-            obj["modified"] = human_dates(dt)
-            data.append(obj)
-        # output
-        df = pd.DataFrame(data)
-        return df
-
-    def list_all_observables(self):
-        """
-        Collect important information of all observables.
-
-        Returns
-        -------
-            df : pandas.DataFrame
-                created frame
-        """
-        # collect
-        obs = self.get(o)
-        data = []
-        for ob in obs:
-            obj = {"doc_id": ob.doc_id}
-            if "PTO" in ob:
-                obj["PTO"] = ob["PTO"]
-            xgrid = ob["interpolation_xgrid"]
-            obj["xgrid"] = (
-                f"{len(xgrid)}pts: "
-                + f"{'log' if ob['interpolation_is_log'] else 'x'}"
-                + f"^{ob['interpolation_polynomial_degree']}"
-            )
-            if "prDIS" in ob:
-                obj["curr"] = ob["prDIS"]
-            if "projectile" in ob:
-                proj_map = {
-                    "electron": "e-",
-                    "positron": "e+",
-                    "neutrino": "ν",
-                    "antineutrino": "ν~",
-                }
-                obj["proj"] = proj_map[ob["projectile"]]
-            if "PolarizationDIS" in ob:
-                obj["pol"] = ob["PolarizationDIS"]
-            sfs = 0
-            esfs = 0
-            for sf in ob:
-                # quick fix
-                if not on.ObservableName.is_valid(sf):
-                    continue
-                sfs += 1
-                esfs += len(ob[sf])
-            obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
-            dt = unstr_datetime(ob["_modify_time"])
-            obj["modified"] = human_dates(dt)
-            data.append(obj)
-        # output
-        df = pd.DataFrame(data)
-        return df
+        sfs = 0
+        esfs = 0
+        for sf in lg:
+            if not on.ObservableName.is_valid(sf):
+                continue
+            sfs += 1
+            esfs += len(lg[sf])
+        crash = lg.get("_crash", None)
+        if crash is None:
+            obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
+        else:
+            obj["structure_functions"] = crash
+        obj["theory"] = lg["_theory_doc_id"]
+        obj["obs"] = lg["_observables_doc_id"]
+        if "_pdf" in lg:
+            obj["pdf"] = lg["_pdf"]
 
     def list_all_sim_logs(self, ref_log_or_id):
         """
@@ -166,7 +110,7 @@ class NavigatorApp(mode_selector.ModeSelector):
         Parameters
         ----------
             ref_log_or_id : dict or int
-                if int doc_id of log to be loaded
+                if it is a int it's the doc_id of log to be loaded else it has to be the log itself
 
         Returns
         -------
@@ -174,11 +118,11 @@ class NavigatorApp(mode_selector.ModeSelector):
                 created frame
         """
         if isinstance(ref_log_or_id, int):
-            ref_log = self.get(l, ref_log_or_id)
+            ref_log = self.get(bnav.l, ref_log_or_id)
         else:
             ref_log = ref_log_or_id
         rel_logs = []
-        all_logs = self.get(l)
+        all_logs = self.get(bnav.l)
         for lg in all_logs:
             if (
                 "_theory_doc_id" in ref_log
@@ -191,53 +135,9 @@ class NavigatorApp(mode_selector.ModeSelector):
             ):
                 continue
             rel_logs.append(lg)
-        return self.list_all_logs(rel_logs)
+        return self.list_all(bnav.l, rel_logs)
 
-    def list_all_logs(self, logs=None):
-        """
-        Collect important information of all logs
-
-        Parameters
-        ----------
-            logs : list or None
-                if None plot all
-
-        Returns
-        -------
-            df : pandas.DataFrame
-                created frame
-        """
-        # collect
-        if logs is None:
-            logs = self.get(l)
-        data = []
-        for lg in logs:
-            obj = {"doc_id": lg.doc_id}
-            sfs = 0
-            esfs = 0
-            for sf in lg:
-                if not on.ObservableName.is_valid(sf):
-                    continue
-                sfs += 1
-                esfs += len(lg[sf])
-            crash = lg.get("_crash", None)
-            if crash is None:
-                obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
-            else:
-                obj["structure_functions"] = crash
-            obj["theory"] = lg["_theory_doc_id"]
-            obj["obs"] = lg["_observables_doc_id"]
-            if "_pdf" in lg:
-                obj["pdf"] = lg["_pdf"]
-            if "_creation_time" in lg:
-                dt = unstr_datetime(lg["_creation_time"])
-                obj["created"] = human_dates(dt)
-            data.append(obj)
-        # output
-        df = pd.DataFrame(data)
-        return df
-
-    def get_log_DFdict(self, doc_id):
+    def log_as_DFdict(self, doc_id):
         """
         Load all structure functions in log as DataFrame
 
@@ -251,8 +151,8 @@ class NavigatorApp(mode_selector.ModeSelector):
             log : DFdict
                 DataFrames
         """
-        log = self.get(l, doc_id)
-        dfd = DFdict()
+        log = self.get(bnav.l, doc_id)
+        dfd = dfdict.DFdict()
         for sf in log:
             if not on.ObservableName.is_valid(sf):
                 continue
@@ -263,30 +163,6 @@ class NavigatorApp(mode_selector.ModeSelector):
             )
             dfd[sf] = pd.DataFrame(log[sf])
         return dfd
-
-    def list_all(self, table):
-        """
-        List wrapper.
-
-        Parameters
-        ----------
-            table : str
-                table name to query: short cut or plural
-
-        Returns
-        -------
-            df : pandas.DataFrame
-                created frame
-        """
-        if table == t:
-            return self.list_all_theories()
-        elif table == o:
-            return self.list_all_observables()
-        elif table == l:
-            return self.list_all_logs()
-        else:
-            print(f"Unkown table: {table}")
-            return []
 
     def subtract_tables(self, dfd1, dfd2):
         """
@@ -307,20 +183,20 @@ class NavigatorApp(mode_selector.ModeSelector):
                 created frames
         """
 
-        diffout = DFdict()
+        diffout = dfdict.DFdict()
 
         # load json documents
         logs = []
         ids = []
         for dfd in [dfd1, dfd2]:
             if isinstance(dfd, int):
-                logs.append(self.get(l, dfd))
+                logs.append(self.get(bnav.l, dfd))
                 ids.append(dfd)
-            elif isinstance(dfd, DFdict):
+            elif isinstance(dfd, dfdict.DFdict):
                 logs.append(dfd.to_document())
                 ids.append("not-an-id")
             else:
-                raise ValueError("subtract_tables: DFList not recognized!")
+                raise ValueError("subtract_tables: DFdict not recognized!")
         log1, log2 = logs[0], logs[1]
         id1, id2 = ids[0], ids[1]
 
@@ -382,66 +258,77 @@ class NavigatorApp(mode_selector.ModeSelector):
 
         return diffout
 
-    def join(self, id1, id2):
-        tabs = []
-        tabs1 = []
-        exts = []
-        suffixes = (f" ({id1})", f" ({id2})")
+    def check_log(self, doc_id):
+        """
+        Check if the log passed the default assertions
 
-        for i, doc_id in enumerate([id1, id2]):
-            tabs += [self.get_log_DFdict(doc_id)[0]]
-            tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
-            exts += [
-                tabs1[i].columns.drop(["x", "Q2"])[0]
-            ]  # + suffixes[i]] # TODO the suffixes are not working as expected
+        Paramters
+        ---------
+            doc_id : int
+                log identifier
+        """
+        # TODO determine external, improve output
+        dfd = self.log_as_DFdict(doc_id)
+        for n, df in dfd.items():
+            for l in df.iloc:
+                if abs(l["rel_err[%]"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
+                    print(n, l, sep="\n")
 
-        def rel_err(row):
-            ref = row[exts[0]]
-            cmp = row[exts[1]]
-            if ref != 0:
-                return (cmp / ref - 1) * 100
+    def crashed_log(self, doc_id):
+        """
+        Check if the log passed the default assertions
+
+        Paramters
+        ---------
+            doc_id : int
+                log identifier
+
+        Returns
+        -------
+            cdfd : dict
+                log without kinematics
+        """
+        dfd = self.get(bnav.l, doc_id)
+        if "_crash" not in dfd:
+            raise ValueError("log didn't crash!")
+        cdfd = {}
+        for sf in dfd:
+            if on.ObservableName.is_valid(sf):
+                cdfd[sf] = f"{len(dfd[sf])} points"
             else:
-                return np.nan
+                cdfd[sf] = dfd[sf]
+        return cdfd
 
-        tab_joint = tabs1[0].merge(
-            tabs1[1], on=["x", "Q2"], how="outer", suffixes=suffixes
-        )
-        tab_joint["ext_rel_err [%]"] = tab_joint.apply(rel_err, axis=1)
+    # def join(self, id1, id2):
+    #     tabs = []
+    #     tabs1 = []
+    #     exts = []
+    #     suffixes = (f" ({id1})", f" ({id2})")
 
-        if all(np.isclose(tabs[0]["yadism"], tabs[1]["yadism"])):
-            tab_joint["yadism"] = tabs[0]["yadism"]
-            tab_joint["yadism_error"] = tabs[0]["yadism_error"]
-        else:
-            pass
+    #     for i, doc_id in enumerate([id1, id2]):
+    #         tabs += [self.get_log_DFdict(doc_id)[0]]
+    #         tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
+    #         exts += [
+    #             tabs1[i].columns.drop(["x", "Q2"])[0]
+    #         ]  # + suffixes[i]] # to do: the suffixes are not working as expected
 
-        return tab_joint
+    #     def rel_err(row):
+    #         ref = row[exts[0]]
+    #         cmp = row[exts[1]]
+    #         if ref != 0:
+    #             return (cmp / ref - 1) * 100
+    #         else:
+    #             return np.nan
 
+    #     tab_joint = tabs1[0].merge(
+    #         tabs1[1], on=["x", "Q2"], how="outer", suffixes=suffixes
+    #     )
+    #     tab_joint["ext_rel_err [%]"] = tab_joint.apply(rel_err, axis=1)
 
-def compare_dicts(d1, d2, exclude_underscored=False):
-    """
-    Check which entries of the two dictionaries are different, and output
-    the values.
+    #     if all(np.isclose(tabs[0]["yadism"], tabs[1]["yadism"])):
+    #         tab_joint["yadism"] = tabs[0]["yadism"]
+    #         tab_joint["yadism_error"] = tabs[0]["yadism_error"]
+    #     else:
+    #         pass
 
-    Parameters
-    ----------
-        d1 : dict
-            first dict
-        d2 : dict
-            second dict
-        exclude_underscored : bool
-            skip keys prefixed with _?
-    """
-    kw = 20  # keys print width
-    fw = 30  # values print width
-    print("┌", "─" * (kw + 2), "┬", "─" * (fw * 2 + 1 + 2), "┐", sep="")
-    for k in d1.keys() | d2.keys():
-        if exclude_underscored and k[0] == "_":
-            continue
-
-        if k not in d1:
-            print(f"│ {k:<{kw}} │ {None:>{fw}} {d2[k]:>{fw}} │")
-        elif k not in d2:
-            print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {None:>{fw}} │")
-        elif d1[k] != d2[k]:
-            print(f"│ {k:<{kw}} │ {d1[k]:>{fw}} {d2[k]:>{fw}} │")
-    print("└", "─" * (kw + 2), "┴", "─" * (fw * 2 + 1 + 2), "┘", sep="")
+    #     return tab_joint

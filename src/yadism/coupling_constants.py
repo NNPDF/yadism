@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class CouplingConstants:
     """
-        Defines the coupling constants between the QCD particles and the EW particles
+    Defines the coupling constants between the QCD particles and the EW particles
     """
 
     def __init__(self, theory_config, obs_config):
@@ -51,21 +51,21 @@ class CouplingConstants:
             - 2.0 * self.electric_charge[pid] * self.theory_config["sin2theta_weak"]
         )
 
-    def leptonic_coupling(self, mode, kind):
+    def leptonic_coupling(self, mode, quark_coupling_type):
         """
-            Computes the coupling of the boson to the lepton
+        Computes the coupling of the boson to the lepton
 
-            Parameters
-            ----------
-                mode : str
-                    scattered bosons
-                kind : str
-                    observable kind to distinguish parity violating and parity conserving couplings
+        Parameters
+        ----------
+            mode : str
+                scattered bosons
+            quark_coupling_type : str
+                (axial-)vectorial/(axial-)vectorial coupling
 
-            Returns
-            -------
-                leptonic_coupling : float
-                    leptonic coupling
+        Returns
+        -------
+            leptonic_coupling : float
+                leptonic coupling
         """
         # for CC the polarisation are NOT part of the structure functions, but are accounted for on
         # the cross section level. In order to have a true-trivial LO coeficient function, return here 2.
@@ -86,12 +86,12 @@ class CouplingConstants:
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]
         # switch mode
         if mode == "phph":
-            if kind != "F3":
+            if quark_coupling_type in ["VV", "AA"]:
                 return self.electric_charge[abs(projectile_pid)] ** 2
             else:
                 return 0
         elif mode == "phZ":
-            if kind != "F3":
+            if quark_coupling_type in ["VV", "AA"]:
                 return self.electric_charge[abs(projectile_pid)] * (
                     projectile_v + pol * projectile_a
                 )
@@ -100,7 +100,7 @@ class CouplingConstants:
                     projectile_a + pol * projectile_v
                 )
         elif mode == "ZZ":
-            if kind != "F3":
+            if quark_coupling_type in ["VV", "AA"]:
                 return (
                     projectile_v ** 2
                     + projectile_a ** 2
@@ -112,83 +112,63 @@ class CouplingConstants:
                 )
         raise ValueError(f"Unknown mode: {mode}")
 
-    def hadronic_coupling(
-        self, mode, kind, pid, quark_coupling_type=None, cc_flavor=None
-    ):
+    def partonic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
         """
-            Computes the coupling of the boson to the parton
+        Computes the coupling of the boson to the parton
 
-            Parameters
-            ----------
-                mode : str
-                    scattered bosons
-                kind : str
-                    observable kind to distinguish parity violating and parity conserving couplings
-                pid : int
-                    parton identifier
-                quark_coupling_type : str
-                    flag to distinguish for heavy quarks between vectorial and axial-vectorial
-                    coupling
-                cc_flavor : str
-                    observable flavor to determine the heavy flavour couplings in F3
+        Parameters
+        ----------
+            mode : str
+                scattered bosons
+            pid : int
+                parton identifier
+            quark_coupling_type : str
+                flag to distinguish for heavy quarks between vectorial and axial-vectorial
+                coupling
+            cc_mask : str
+                observable flavor to determine the heavy flavour couplings in F3
 
-            Returns
-            -------
-                hadronic_coupling : float
-                    hadronic coupling
+        Returns
+        -------
+            partonic_coupling : float
+                partonic coupling
         """
         # for quarks only the flavor does matter
         pid = abs(pid)
+        if mode == "WW":
+            return np.sum(self.theory_config["CKM"].masked(cc_mask)(pid))
         # load couplings
-        eq = self.electric_charge[pid]
-        # axial coupling of the photon to the quark is not there of course
-        if quark_coupling_type == "A":
-            eq = 0
-        gqv = self.vectorial_coupling(pid)
-        gqa = self.weak_isospin_3[pid]
+        qph = {
+            "V": self.electric_charge[pid],
+            "A": 0,  # axial coupling of the photon to the quark is not there of course
+        }
+        qZ = {"V": self.vectorial_coupling(pid), "A": self.weak_isospin_3[pid]}
+        first = quark_coupling_type[0]
+        second = quark_coupling_type[1]
         # switch mode
         if mode == "phph":
-            if kind != "F3":
-                return eq ** 2
-            else:
-                return 0
+            return qph[first] * qph[second]
         elif mode == "phZ":
-            if kind != "F3":
-                return eq * gqv
-            else:
-                return eq * gqa
+            return qph[first] * qZ[second]
         elif mode == "ZZ":
-            if kind != "F3":
-                g2q = gqv ** 2 + gqa ** 2
-                # in heavy quark structure functions the two coefficient functions for the
-                # vectorial and axial-vectorial coupling are NOT the same (unlinke in the massless case)
-                if quark_coupling_type == "V":
-                    g2q = gqv ** 2
-                elif quark_coupling_type == "A":
-                    g2q = gqa ** 2
-                return g2q
-            else:
-                return 2 * gqv * gqa
-        elif mode == "WW":
-            return np.sum(self.theory_config["CKM"].masked(cc_flavor)(pid))
-
+            return qZ[first] * qZ[second]
         raise ValueError(f"Unknown mode: {mode}")
 
     def propagator_factor(self, mode, Q2):
         """
-            Propagator correction to account for different bosons (:math:`\\eta` in PDG)
+        Propagator correction to account for different bosons (:math:`\\eta` in PDG)
 
-            Parameters
-            ----------
-                mode : str
-                    scattered bosons
-                Q2 : float
-                    virtuality of the process
+        Parameters
+        ----------
+            mode : str
+                scattered bosons
+            Q2 : float
+                virtuality of the process
 
-            Returns
-            -------
-                propagator_factor : float
-                    propagator shift
+        Returns
+        -------
+            propagator_factor : float
+                propagator shift
         """
         if mode == "phph":
             return 1
@@ -211,36 +191,39 @@ class CouplingConstants:
             return eta_W
         raise ValueError(f"Unknown mode: {mode}")
 
-    def get_weight(self, pid, Q2, kind, quark_coupling_type=None, cc_flavor=None):
+    def get_weight(self, pid, Q2, quark_coupling_type, cc_mask=None):
         """
-            Compute the weight for the pid contributions to the structure function.
+        Compute the weight for the pid contributions to the structure function.
 
-            Combine the charges, both on the leptonic side and the hadronic side, as well
-            as propagator changes and/or corrections.
+        Combine the charges, both on the leptonic side and the hadronic side, as well
+        as propagator changes and/or corrections.
 
-            Parameters
-            ----------
-                pid : int
-                    particle identifier
-                Q2 : float
-                    DIS virtuality
-                kind : str
-                    observable kind to distinguish parity violating and parity conserving couplings
-                quark_coupling_type : str
-                    flag to distinguish for heavy quarks between vectorial and axial-vectorial
-                    coupling
-                cc_flavor : str
-                    observable flavor to determine the heavy flavour couplings in F3
+        Parameters
+        ----------
+            pid : int
+                particle identifier
+            Q2 : float
+                DIS virtuality
+            quark_coupling_type : str
+                flag to distinguish for heavy quarks between vectorial and axial-vectorial
+                coupling
+            cc_mask : str
+                observable flavor to determine the heavy flavour couplings in F3
 
-            Returns
-            -------
-                w : float
-                    weight
+        Returns
+        -------
+            w : float
+                weight
         """
+        # CC = WW
+        if self.obs_config["process"] == "CC":
+            return self.leptonic_coupling(
+                "WW", quark_coupling_type
+            ) * self.partonic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
         w_phph = (
-            self.leptonic_coupling("phph", kind)
+            self.leptonic_coupling("phph", quark_coupling_type)
             * self.propagator_factor("phph", Q2)
-            * self.hadronic_coupling("phph", kind, pid, quark_coupling_type)
+            * self.partonic_coupling("phph", pid, quark_coupling_type)
         )
         # pure photon exchane
         if self.obs_config["process"] == "EM":
@@ -250,40 +233,35 @@ class CouplingConstants:
             # photon-Z interference
             w_phZ = (
                 2
-                * self.leptonic_coupling("phZ", kind)
+                * self.leptonic_coupling("phZ", quark_coupling_type)
                 * self.propagator_factor("phZ", Q2)
-                * self.hadronic_coupling("phZ", kind, pid, quark_coupling_type)
+                * self.partonic_coupling("phZ", pid, quark_coupling_type)
             )
             # true Z contributions
             w_ZZ = (
-                self.leptonic_coupling("ZZ", kind)
+                self.leptonic_coupling("ZZ", quark_coupling_type)
                 * self.propagator_factor("ZZ", Q2)
-                * self.hadronic_coupling("ZZ", kind, pid, quark_coupling_type)
+                * self.partonic_coupling("ZZ", pid, quark_coupling_type)
             )
             return w_phph + w_phZ + w_ZZ
-        # CC = W
-        if self.obs_config["process"] == "CC":
-            return self.leptonic_coupling("WW", kind) * self.hadronic_coupling(
-                "WW", kind, pid, cc_flavor=cc_flavor
-            )
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod
     def from_dict(cls, theory, observables):
         """
-            Creates the object from the theory dictionary
+        Creates the object from the theory dictionary
 
-            Parameters
-            ----------
-                theory : dict
-                    theory dictionary
-                observables : dict
-                    observables dictionary
+        Parameters
+        ----------
+            theory : dict
+                theory dictionary
+            observables : dict
+                observables dictionary
 
-            Returns
-            -------
-                o : CouplingConstants
-                    created object
+        Returns
+        -------
+            o : CouplingConstants
+                created object
         """
         theory_config = {
             "MZ2": theory.get("MZ", 91.1876) ** 2,  # defaults to the PDG2020 value
@@ -326,12 +304,12 @@ class CouplingConstants:
 
 class CKM2Matrix:
     """
-        Wrapper for the CKM matrix
+    Wrapper for the CKM matrix
 
-        Parameters
-        ----------
-            elems : list(float)
-                squared elements in row order
+    Parameters
+    ----------
+        elems : list(float)
+            squared elements in row order
     """
 
     flav_rows = ["u", "c", "t"]
@@ -348,17 +326,17 @@ class CKM2Matrix:
 
     def __getitem__(self, key):
         """
-            Allows pid and strings as key
+        Allows pid and strings as key
 
-            Parameters
-            ----------
-                key :
-                    input key
+        Parameters
+        ----------
+            key :
+                input key
 
-            Returns
-            -------
-                item :
-                    element(s)
+        Returns
+        -------
+            item :
+                element(s)
         """
         nkey = []
         if not isinstance(key, tuple):
@@ -378,63 +356,62 @@ class CKM2Matrix:
 
     def __call__(self, pid):
         """
-            Get column and row depending on pid
+        Get column and row depending on pid
 
-            Parameters
-            ----------
-                pid : int
-                    particle identifier
+        Parameters
+        ----------
+            pid : int
+                particle identifier
 
-            Returns
-            -------
-                elems : list(float)
-                    row or column
+        Returns
+        -------
+            elems : list(float)
+                row or column
         """
         if pid % 2 == 0:
             return self[pid]
         return self[:, pid]
 
-    def masked(self, flavor):
+    def masked(self, flavors):
         """
-            Apply a mask according to the flavor
+        Apply a mask according to the flavor
 
-            Parameters
-            ----------
-                flavor : str
-                    flavor type
+        Parameters
+        ----------
+            flavors : str
+                participating flavors as single characters
 
-            Returns
-            -------
-                matrix : CKMMatrix
-                    masked matrix
+        Returns
+        -------
+            matrix : CKMMatrix
+                masked matrix
         """
-        if flavor == "light":
-            op = np.array([[1, 1, 0], [0, 0, 0], [0, 0, 0]])
-        elif flavor == "charm":
-            op = np.array([[0, 0, 0], [1, 1, 0], [0, 0, 0]])
-        elif flavor == "bottom":
-            op = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
-        elif flavor == "top":
-            op = np.array([[0, 0, 0], [0, 0, 0], [1, 1, 1]])
-        else:
-            raise ValueError(f"Unknown flavor {flavor}")
+        op = np.zeros((3, 3))
+        if "dus" in flavors:
+            op += np.array([[1, 1, 0], [0, 0, 0], [0, 0, 0]])
+        if "c" in flavors:
+            op += np.array([[0, 0, 0], [1, 1, 0], [0, 0, 0]])
+        if "b" in flavors:
+            op += np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
+        if "t" in flavors:
+            op += np.array([[0, 0, 0], [0, 0, 0], [1, 1, 1]])
         return type(self)(self.m * op)
 
     @classmethod
     def from_str(cls, theory_string):
         """
-            Create the object from a string representation
+        Create the object from a string representation
 
-            Parameters
-            ----------
-                theory_string : str
-                    all elements rowwise in a string
+        Parameters
+        ----------
+            theory_string : str
+                all elements rowwise in a string
 
 
-            Returns
-            -------
-                m : CKMMatrix
-                    created object
+        Returns
+        -------
+            m : CKMMatrix
+                created object
         """
         elems = theory_string.split(" ")
         return cls(np.power(np.array(elems, dtype=np.float), 2))

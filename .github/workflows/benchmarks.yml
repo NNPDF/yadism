@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Configure git-lfs to ignore most files
         run: |
-          git config --global lfs.fetchinclude 'benchmarks/storage/apfel-input.json'
+          git config --global lfs.fetchinclude 'benchmarks/storage/apfel.json'
       # checkout the repo on the github runner
       - uses: actions/checkout@v2
         with:
@@ -43,12 +43,12 @@ jobs:
           # install packages needed for testing
           pip install -r test_requirements.txt
           # move db
-          mv benchmarks/storage/apfel-input.json benchmarks/data/
+          mv benchmarks/storage/apfel.json benchmarks/data/
       #  run the test with 'pytest'
       - name: Test yadism
         run: |
           # run tests
-          pytest -m commit_check benchmarks/runners/benchmark_against_*.py
+          pytest -m commit_check benchmarks/runners/apfel.py
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
