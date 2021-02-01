@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from banana import navigator as bnav
-from banana.navigator import dfdict
+from banana.data import dfdict
 
 from yadism import observable_name as on
 

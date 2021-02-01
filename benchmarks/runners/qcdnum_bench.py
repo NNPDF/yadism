@@ -73,6 +73,7 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
             ["ToyLH"],
         )
 
+
 @pytest.mark.skip
 class BenchmarkFNS(QCDNUMBenchmark):
 
@@ -96,7 +97,7 @@ class BenchmarkFNS(QCDNUMBenchmark):
 
 
 if __name__ == "__main__":
-    #p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
+    # p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
     # p.unlink(missing_ok=True)
 
     plain = BenchmarkPlain()

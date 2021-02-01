@@ -46,13 +46,14 @@ class Runner(BenchmarkRunner):
     def run_external(self, theory, observable, pdf, /):
 
         if theory["IC"] != 0 and theory["PTO"] > 0:
-                raise ValueError(f"{self.external} is currently not able to run")
+            raise ValueError(f"{self.external} is currently not able to run")
 
         if self.external == "APFEL":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 apfel_utils,
             )
-            #if theory["IC"] != 0 and theory["PTO"] > 0:
+
+            # if theory["IC"] != 0 and theory["PTO"] > 0:
             #    raise ValueError("APFEL is currently not able to run")
             return apfel_utils.compute_apfel_data(theory, observable, pdf)
 
@@ -60,6 +61,7 @@ class Runner(BenchmarkRunner):
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 qcdnum_utils,
             )
+
             return qcdnum_utils.compute_qcdnum_data(theory, observable, pdf)
 
         return {}
@@ -70,7 +72,7 @@ class Runner(BenchmarkRunner):
             if not yadism.observable_name.ObservableName.is_valid(sf):
                 continue
             esfs = []
-            
+
             for yad, oth in zip(me[sf], ext[sf]):
                 # check kinematics
                 if any([yad[k] != oth[k] for k in ["x", "Q2"]]):
