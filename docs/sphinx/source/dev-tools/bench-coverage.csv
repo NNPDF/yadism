@@ -1,7 +1,7 @@
-.                         APFEL                 QCDNUM                  xspace-bench
-projectiles               |T|                   .                       .
+"feature \\ reference"    APFEL                 QCDNUM                  xspace-bench
+projectiles               |T|                   ""                      ""
 EM                        |T|                   |T|                     |T|
-NC                        |T|                   .                       |T|
-CC                        |T|                   .                       |T|
-scale-variatons           |T|                   |T|                     .
-target-mass-corrections   |T|                   .                       .
+NC                        |T|                   ""                      |T|
+CC                        |T|                   ""                      |T|
+scale-variatons           |T|                   |T|                     ""
+target-mass-corrections   |T|                   ""                      ""
