@@ -74,7 +74,7 @@ class TestOutput:
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
 
     def test_io(self):
-        d, obs = self.fake_output()
+        d, _obs = self.fake_output()
         # create object
         o1 = output.Output(d)
         # test streams
