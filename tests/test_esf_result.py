@@ -50,8 +50,16 @@ class TestESFResult:
             rm = r*x
             np.testing.assert_allclose(rm.values, 2. * v)
             np.testing.assert_allclose(rm.errors, 2. * e)
+            rmul = x*r
+            np.testing.assert_allclose(rmul.values, 2. * v)
+            np.testing.assert_allclose(rmul.errors, 2. * e)
         with pytest.raises(IndexError):
             _rm = r *(2,)
+        
+        y = (2.,2.)
+        rm = r*y
+        np.testing.assert_allclose(rm.values, 2. * v)
+        np.testing.assert_allclose(rm.errors, 2. * (v+ e))
 
     def test_apply_pdf(self):
         # test Q2 values
