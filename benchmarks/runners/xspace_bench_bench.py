@@ -45,52 +45,75 @@ class BenchmarkFNS(xspaceBenchmark):
     """Vary Flavor Number Schemes"""
 
     @staticmethod
-    def observable_updates():
+    def observable_updates(FX):
 
-        # TODO: add FXlight FXcharm when available (not in ZM-VFNS)
         obs_cards = []
-        updates = [
-            {"prDIS": ["CC"]},
-            {"prDIS": ["NC"]},
-        ]
-
-        for update in updates:
+        for proc in FX.keys():
             kinematics = []
             kinematics.extend(
-                [dict(x=x, Q2=10.0) for x in np.geomspace(0.0001, 0.99, 10).tolist()]
+                [dict(x=x, Q2=10.0) for x in np.geomspace(0.0001, 0.90, 10).tolist()]
             )
             kinematics.extend(
                 [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4.0, 16.0, 10).tolist()]
             )
-            observable_names = [
-                "F2total",
-                "FLtotal",
-                "F3total",
-            ]
+            observable_names = FX[proc]
             obs_card = dict(
-                observable_names=observable_names, kinematics=kinematics, update=update
+                observable_names=observable_names,
+                kinematics=kinematics,
+                update={"prDIS": [proc]},
             )
             obs_cards.extend(observables.build(**(obs_card)))
 
         return obs_cards
 
-    @staticmethod
-    def theory_updates(pto):
+    def benchmark_ZM(self):
 
-        fns = {"NfFF": [3, 4, 5], "FNS": ["ZM-VFNS", "FFNS", "FONLL-A"], "PTO": [pto]}
-        return filter(
-            lambda c: not (
-                (c["NfFF"] != 4.0 and c["FNS"] == "FONLL-A")
-                or (c["NfFF"] != 3.0 and c["FNS"] == "FFNS")
-            ),
-            power_set(fns),
-        )
+        fnames = [
+            "F2total",
+            "FLtotal",
+        ]
+        FX = {
+            "CC": fnames + ["F3total"],
+            "NC": fnames,
+        }
+        fns = {"NfFF": [3, 4, 5], "FNS": ["ZM-VFNS"], "PTO": [1]}
 
-    def benchmark_nlo(self):
+        self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
 
-        self.run(
-            self.theory_updates(1), self.observable_updates(), ["ToyLHAPDF"],
-        )
+    def benchmark_FFNS(self):
+
+        fnames = [
+            "F2light",
+            "F2total",
+            "F2charm",
+            "FLlight",
+            "FLtotal",
+            "FLcharm",
+        ]
+        FX = {
+            "CC": fnames + ["F3charm", "F3total"],
+            "NC": fnames,
+        }
+        fns = {"NfFF": [3], "FNS": ["FFNS"], "PTO": [1]}
+
+        self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
+
+    def benchmark_FONLL(self):
+
+        fnames = [
+            "F2light",
+            "F2total",
+            "F2charm",
+            "FLlight",
+            "FLtotal",
+            "FLcharm",
+        ]
+        FX = {
+            "CC": fnames + ["F3charm", "F3total"],
+            "NC": fnames,
+        }
+        fns = {"NfFF": [4], "FNS": ["FONLL-A"], "PTO": [1]}
+        self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
 
 
 if __name__ == "__main__":
@@ -100,4 +123,6 @@ if __name__ == "__main__":
     # plain.benchmark_nlo()
 
     fns = BenchmarkFNS()
-    fns.benchmark_nlo()
+    fns.benchmark_ZM()
+    fns.benchmark_FFNS()
+    fns.benchmark_FONLL()
