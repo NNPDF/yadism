@@ -414,4 +414,4 @@ class CKM2Matrix:
                 created object
         """
         elems = theory_string.split(" ")
-        return cls(np.power(np.array(elems, dtype=np.float), 2))
+        return cls(np.power(np.array(elems, dtype=float), 2))
