@@ -74,7 +74,6 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
         sv = {"XIR": [0.5, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # XIR = 0.5 and XIF = 2.0 or viceversa are forbidden
         return filter(lambda c: not (c["XIR"] * c["XIF"] == 1.0), power_set(sv))
-        return power_set(sv)
 
     def benchmark_lo(self):
         self.run(
