@@ -10,8 +10,9 @@ default_card = dict(
     interpolation_polynomial_degree=4,
     interpolation_is_log=True,
     prDIS="EM",
-    projectile="electron",
+    ProjectileDIS="electron",
     PolarizationDIS=0,
+    PropagatorCorrection=0,
     observables={},
 )
 default_card = dict(sorted(default_card.items()))
