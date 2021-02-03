@@ -40,7 +40,7 @@ some of the commonly used tools. This scheme is adequate for :math:`Q^2\sim
 m^2`.
 
 - **Flight** corresponds to the interaction of the purely light partons, i.e.
-  the coefficient functions may only be a function of :math:`z,Q2` and
+  the coefficient functions may only be a function of :math:`z,Q^2` and
   eventually unphysical scales; in especially they may *NOT* depend on any
   quark mass.
   This may be consistently obtained computing contributions for a Lagrangian

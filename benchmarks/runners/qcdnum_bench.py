@@ -6,8 +6,9 @@
 # from yadmark.benchmark.db_interface import DBInterface, QueryFieldsEqual
 
 import pathlib
-
+import copy
 import pytest
+import numpy as np
 
 from banana.data import power_set
 
@@ -43,34 +44,46 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
     """Vary factorization and renormalization scale"""
 
-    # TODO add observable generator
-    # the observables eventually need to be taylored to the used theories,
-    # i.e. configuration need to be more scattered in this this class.
-    # The physical reason is that, for XIR beeing small pQCD becomes unreliable
-    # and thus we can NOT probe as low Q2 as before.
+    @staticmethod
+    def observable_updates():
+
+        kinematics = []
+        kinematics.extend(
+            [dict(x=x, Q2=90.0) for x in np.geomspace(0.0001, 0.99, 10).tolist()]
+        )
+        kinematics.extend(
+            [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4.0, 1000.0, 10).tolist()]
+        )
+        observable_names = [
+            "F2light",
+            "FLlight",
+        ]
+        obs_card = dict(
+            observable_names=observable_names,
+            kinematics=kinematics,
+            update={"prDIS": ["NC"]},
+        )
+
+        return observables.build(**(obs_card))
 
     @staticmethod
     def theory_updates(pto):
-        # TODO include FNS variations
-        # again we might scatter this more among in this class
-        sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
-        # drop plain
-        return filter(
-            lambda c: not (c["XIR"] == 1.0 and c["XIF"] == 1.0), power_set(sv)
-        )
+        # There is a QCDNUM error: "STOP ZMSTFUN: You cant vary both Q2 and muR2 scales --> STOP"
+        # this is a limitation of QCDNUM in principle, so you have to work around it, i.e. fix Q2 and only
+        # vary muR or vice versa
+        sv = {"XIR": [0.5, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
+        # XIR = 0.5 and XIF = 2.0 or viceversa are forbidden
+        return filter(lambda c: not (c["XIR"] * c["XIF"] == 1.0), power_set(sv))
 
     def benchmark_lo(self):
         self.run(
-            self.theory_updates(0),
-            observables.build(**(observables.default_config[0])),
-            ["ToyLH"],
+            self.theory_updates(0), self.observable_updates(), ["ToyLH"],
         )
 
     def benchmark_nlo(self):
+
         self.run(
-            self.theory_updates(1),
-            observables.build(**(observables.default_config[1])),
-            ["ToyLH"],
+            self.theory_updates(1), self.observable_updates(), ["ToyLH"],
         )
 
 
@@ -80,35 +93,64 @@ class BenchmarkFNS(QCDNUMBenchmark):
     """Vary Flavor Number Schemes"""
 
     @staticmethod
-    def theory_updates(pto):
+    def observable_updates(fnames):
 
-        fns = {"NfFF": [3, 4, 5], "FNS": ["FFNS", "ZM-VFNS"], "PTO": [pto]}
-        # drop plain
-        return filter(
-            lambda c: not (c["FNS"] == "ZM-VNFS" and c["NfFF"] >= 4.0), power_set(sv)
+        kinematics = []
+        kinematics.extend(
+            [dict(x=x, Q2=10.0) for x in np.geomspace(0.0001, 0.90, 10).tolist()]
+        )
+        kinematics.extend(
+            [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4.0, 1000.0, 10).tolist()]
+        )
+        observable_names = fnames
+
+        obs_card = dict(
+            observable_names=observable_names,
+            kinematics=kinematics,
+            update={"prDIS": ["NC"]},
         )
 
-    def benchmark_nlo(self):
-        self.run(
-            self.theory_updates(1),
-            observables.build(**(observables.default_config[1])),
-            ["ToyLH"],
-        )
+        return observables.build(**(obs_card))
+
+    # Can't really benchmark ZM since no FXtotal is available in QCDNUM, definitions are not matching
+    def benchmark_ZM(self):
+
+        fnames = [
+            "F2light",
+            # "FLlight",
+        ]
+        fns = {"NfFF": [3], "FNS": ["ZM-VFNS"], "PTO": [1]}
+
+        self.run(power_set(fns), self.observable_updates(fnames), ["ToyLH"])
+
+    def benchmark_FFNS(self):
+
+        heavy_fnames = [
+            {"NfFF": 3, "fnames": ["F2light", "FLlight", "F2charm", "FLcharm",]},
+            {"NfFF": 4, "fnames": ["F2bottom", "FLbottom",]},
+            # {"NfFF" :5, "fnames": ["F2top","FLtop",]},
+        ]
+
+        # loop over NfFF
+        for item in heavy_fnames:
+            fns = {"NfFF": [item["NfFF"]], "FNS": ["FFNS"], "PTO": [1]}
+            self.run(power_set(fns), self.observable_updates(item["fnames"]), ["ToyLH"])
 
 
 if __name__ == "__main__":
     # p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
     # p.unlink(missing_ok=True)
 
-    plain = BenchmarkPlain()
-    plain.benchmark_lo()
+    # plain = BenchmarkPlain()
+    # plain.benchmark_lo()
     # plain.benchmark_nlo()
 
-    # sv = BenchmarkScaleVariations()
-    # sv.benchmark_lo()
+    sv = BenchmarkScaleVariations()
+    sv.benchmark_nlo()
 
-    # fns = BenchmarkFNS()
-    # fns.benchmark_nlo()
+    fns = BenchmarkFNS()
+    fns.benchmark_ZM()
+    fns.benchmark_FFNS()
 
 
 # class QCDNUMBenchmark:
