@@ -61,7 +61,12 @@ class Runner(BenchmarkRunner):
                 qcdnum_utils,
             )
             return qcdnum_utils.compute_qcdnum_data(theory, observable, pdf)
-
+        
+        elif self.external == "xspace_bench":
+            from .external import (  # pylint:disable=import-error,import-outside-toplevel
+                xspace_bench_utils,
+            )
+            return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
         return {}
 
     def log(self, theory, ocard, pdf, me, ext, /):
@@ -70,7 +75,6 @@ class Runner(BenchmarkRunner):
             if not yadism.observable_name.ObservableName.is_valid(sf):
                 continue
             esfs = []
-            
             for yad, oth in zip(me[sf], ext[sf]):
                 # check kinematics
                 if any([yad[k] != oth[k] for k in ["x", "Q2"]]):
