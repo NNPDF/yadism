@@ -82,20 +82,15 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         """
         sfs = 0
         esfs = 0
-        for sf in lg:
-            if not on.ObservableName.is_valid(sf):
-                continue
+        for esfs_dict in lg["log"].values():
             sfs += 1
-            esfs += len(lg[sf])
+            esfs += len(esfs_dict)
         crash = lg.get("_crash", None)
         if crash is None:
             obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
         else:
             obj["structure_functions"] = crash
-        obj["theory"] = lg["_theory_doc_id"]
-        obj["obs"] = lg["_observables_doc_id"]
-        if "_pdf" in lg:
-            obj["pdf"] = lg["_pdf"]
+        obj["pdf"] = lg["pdf"]
 
     def list_all_sim_logs(self, ref_log_or_id):
         """
