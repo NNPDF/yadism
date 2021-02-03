@@ -37,7 +37,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
     target = "PROTON"
 
     # Available projectiles: electron, neutrino, positron, antineutrino
-    proj = observables["projectile"].upper()
+    proj = observables["ProjectileDIS"].upper()
 
     # Available processes: EM, CC, NC
     proc = observables["prDIS"]
