@@ -43,8 +43,8 @@ def compute_qcdnum_data(
     xmin = 0.1
     q2min = 10
     q2max = 20
-    for obs_name in observables['observables']:
-        #if not on.ObservableName.is_valid(obs):
+    for obs_name in observables["observables"]:
+        # if not on.ObservableName.is_valid(obs):
         #    continue
         obs = on.ObservableName(obs_name)
         for kin in observables["observables"].get(obs_name, []):
@@ -130,8 +130,8 @@ def compute_qcdnum_data(
     )
 
     num_tab = {}
-    for obs_name in observables['observables']:
-        #if not on.ObservableName.is_valid(obs):
+    for obs_name in observables["observables"]:
+        # if not on.ObservableName.is_valid(obs):
         #    continue
         obs = on.ObservableName(obs_name)
         kind_key = None

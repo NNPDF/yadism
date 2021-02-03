@@ -19,10 +19,10 @@ class Runner(BenchmarkRunner):
             conn.execute(sql.create_table("observables", observables.default_card))
 
     @staticmethod
-    def load_ocards(conn, observables_updates, /):
-        return observables.load(conn, observables_updates)
+    def load_ocards(conn, ocard_updates):
+        return observables.load(conn, ocard_updates)
 
-    def run_me(self, theory, observable, pdf, /):
+    def run_me(self, theory, ocard, pdf):
         """
         Run yadism
 
@@ -40,11 +40,11 @@ class Runner(BenchmarkRunner):
             out : yadism.output.Output
                 yadism output
         """
-        runner = yadism.Runner(theory, observable)
+        runner = yadism.Runner(theory, ocard)
         return runner.apply_pdf(pdf)
 
-    def run_external(self, theory, observable, pdf, /):
-
+    def run_external(self, theory, ocard, pdf):
+        observable = ocard
         if theory["IC"] != 0 and theory["PTO"] > 0:
             raise ValueError(f"{self.external} is currently not able to run")
 
@@ -63,15 +63,16 @@ class Runner(BenchmarkRunner):
             )
 
             return qcdnum_utils.compute_qcdnum_data(theory, observable, pdf)
-        
+
         elif self.external == "xspace_bench":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 xspace_bench_utils,
             )
+
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
         return {}
 
-    def log(self, theory, ocard, pdf, me, ext, /):
+    def log(self, theory, ocard, pdf, me, ext):
         log_tab = dfdict.DFdict()
         for sf in me:
             if not yadism.observable_name.ObservableName.is_valid(sf):

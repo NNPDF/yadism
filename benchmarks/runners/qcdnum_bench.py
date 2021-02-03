@@ -77,13 +77,17 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
     def benchmark_lo(self):
         self.run(
-            self.theory_updates(0), self.observable_updates(), ["ToyLH"],
+            self.theory_updates(0),
+            self.observable_updates(),
+            ["ToyLH"],
         )
 
     def benchmark_nlo(self):
 
         self.run(
-            self.theory_updates(1), self.observable_updates(), ["ToyLH"],
+            self.theory_updates(1),
+            self.observable_updates(),
+            ["ToyLH"],
         )
 
 
@@ -126,8 +130,22 @@ class BenchmarkFNS(QCDNUMBenchmark):
     def benchmark_FFNS(self):
 
         heavy_fnames = [
-            {"NfFF": 3, "fnames": ["F2light", "FLlight", "F2charm", "FLcharm",]},
-            {"NfFF": 4, "fnames": ["F2bottom", "FLbottom",]},
+            {
+                "NfFF": 3,
+                "fnames": [
+                    "F2light",
+                    "FLlight",
+                    "F2charm",
+                    "FLcharm",
+                ],
+            },
+            {
+                "NfFF": 4,
+                "fnames": [
+                    "F2bottom",
+                    "FLbottom",
+                ],
+            },
             # {"NfFF" :5, "fnames": ["F2top","FLtop",]},
         ]
 
