@@ -163,6 +163,9 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         damp,
                     )
                 elif proc == "CC":
+                    # for positron F3 has opposite sign
+                    if proj == "POSITRON" or proj == "ANTINEUTRINO":
+                        f3_fact = 1.0 
                     res = xspace_bench.cc_dis(
                         x,
                         q2,
