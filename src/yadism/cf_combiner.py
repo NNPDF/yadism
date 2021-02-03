@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import copy
+
 import numpy as np
 
 from .nc import kernels as nc_kernels
@@ -148,5 +150,12 @@ class CoefficientFunctionsCombiner:
             full = self.collect_zmvfns()
         elif self.esf.sf.scheme in ["FONLL-A"]:
             full = self.collect_fonll()
-        # TODO drop all elements that have 0 weight
+        else:
+            raise ValueError("Unknown FNS")
+
+        for i, ker in enumerate(copy.copy(full)):
+            ker.partons = {p: w for p, w in ker.partons.items() if w != 0}
+            if len(ker.partons) == 0:
+                full.remove(i)
+
         return full

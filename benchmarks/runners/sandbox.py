@@ -46,7 +46,7 @@ class Sandbox(Runner):
             # "F3bottom",
             # "F3total",
         ]
-        update = {"prDIS": ["NC"]}
+        update = {"prDIS": ["CC"]}
         # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
         # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
         # card["interpolation_is_log"] = False
