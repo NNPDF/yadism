@@ -66,7 +66,7 @@ class BenchmarkScaleVariations(ApfelBenchmark):
 
 
 if __name__ == "__main__":
-    p = f"{pathlib.Path(__file__).parents}/data/benchmark.db"
+    p = pathlib.Path(__file__).absolute().parents[1] / "data" / "benchmark.db"
     # p.unlink(missing_ok=True)
 
     plain = BenchmarkPlain()
