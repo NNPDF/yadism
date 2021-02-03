@@ -53,26 +53,20 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             + f"{'log' if ob['interpolation_is_log'] else 'x'}"
             + f"^{ob['interpolation_polynomial_degree']}"
         )
-        if "prDIS" in ob:
-            obj["curr"] = ob["prDIS"]
-        if "projectile" in ob:
-            proj_map = {
-                "electron": "e-",
-                "positron": "e+",
-                "neutrino": "ν",
-                "antineutrino": "ν~",
-            }
-            obj["proj"] = proj_map[ob["projectile"]]
-        if "PolarizationDIS" in ob:
-            obj["pol"] = ob["PolarizationDIS"]
+        obj["curr"] = ob["prDIS"]
+        proj_map = {
+            "electron": "e-",
+            "positron": "e+",
+            "neutrino": "ν",
+            "antineutrino": "ν~",
+        }
+        obj["proj"] = proj_map[ob["ProjectileDIS"]]
+        obj["pol"] = ob["PolarizationDIS"]
         sfs = 0
         esfs = 0
-        for sf in ob:
-            # quick fix
-            if not on.ObservableName.is_valid(sf):
-                continue
+        for esfs_dict in ob["observables"].values():
             sfs += 1
-            esfs += len(ob[sf])
+            esfs += len(esfs_dict)
         obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
 
     def fill_logs(self, lg, obj):

@@ -176,4 +176,4 @@ interpolation_xgrid:
 - 0.9309440808717544
 - 1
 prDIS: EM
-projectile: electron
+ProjectileDIS: electron
