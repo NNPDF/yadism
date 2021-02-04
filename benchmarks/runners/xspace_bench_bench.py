@@ -45,16 +45,25 @@ class BenchmarkFNS(xspaceBenchmark):
     """Vary Flavor Number Schemes"""
 
     @staticmethod
-    def observable_updates(FX):
+    def observable_updates(FX, q2_min=None, q2_max=None):
+
+        # Bench mark only in physical ranges
+        if q2_min == None:
+            q2_min = 4.0
+        if q2_max == None:
+            q2_max = 16.0
 
         obs_cards = []
         for proc in FX.keys():
             kinematics = []
             kinematics.extend(
-                [dict(x=x, Q2=10.0) for x in np.geomspace(0.0001, 0.90, 10).tolist()]
+                [dict(x=x, Q2=10.0) for x in np.geomspace(0.0001, 0.75, 10).tolist()]
             )
             kinematics.extend(
-                [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4.0, 16.0, 10).tolist()]
+                [
+                    dict(x=0.001, Q2=Q2)
+                    for Q2 in np.geomspace(q2_min, q2_max, 10).tolist()
+                ]
             )
             observable_names = FX[proc]
             obs_card = dict(
@@ -68,12 +77,9 @@ class BenchmarkFNS(xspaceBenchmark):
 
     def benchmark_ZM(self):
 
-        fnames = [
-            "F2total",
-            "FLtotal",
-        ]
+        fnames = ["F2total", "FLtotal", "F3total"]
         FX = {
-            "CC": fnames + ["F3total"],
+            "CC": fnames,
             "NC": fnames,
         }
         fns = {"NfFF": [3, 4, 5], "FNS": ["ZM-VFNS"], "PTO": [1]}
@@ -89,14 +95,23 @@ class BenchmarkFNS(xspaceBenchmark):
             "FLlight",
             "FLtotal",
             "FLcharm",
+            "F3light",
         ]
         FX = {
-            "CC": fnames + ["F3charm", "F3total"],
+            "CC": fnames + ["F3charm"],
             "NC": fnames,
         }
         fns = {"NfFF": [3], "FNS": ["FFNS"], "PTO": [1]}
 
         self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
+
+        # F3total should be computed separatly due to cancellations in quark contributions
+        FX = {"CC": ["F3total"]}
+        # with gonly
+        self.run(power_set(fns), self.observable_updates(FX), ["toygonly"])
+        # excluding the low q2 region.
+        q2 = 6
+        self.run(power_set(fns), self.observable_updates(FX, q2_min=q2), ["ToyLHAPDF"])
 
     def benchmark_FONLL(self):
 
@@ -107,13 +122,22 @@ class BenchmarkFNS(xspaceBenchmark):
             "FLlight",
             "FLtotal",
             "FLcharm",
+            "F3light",
         ]
         FX = {
-            "CC": fnames + ["F3charm", "F3total"],
+            "CC": fnames + ["F3charm"],
             "NC": fnames,
         }
         fns = {"NfFF": [4], "FNS": ["FONLL-A"], "PTO": [1]}
         self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
+
+        # F3total should be computed separatly due to cancellations in quark contributions (massive part)
+        FX = {"CC": ["F3total"]}
+        # with gonly
+        self.run(power_set(fns), self.observable_updates(FX), ["toygonly"])
+        # excluding the low q2 region.
+        q2 = 6
+        self.run(power_set(fns), self.observable_updates(FX, q2_min=q2), ["ToyLHAPDF"])
 
 
 if __name__ == "__main__":
