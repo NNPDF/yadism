@@ -221,12 +221,16 @@ class Runner:
         self.console.print(rich.markdown.Markdown("## Calculation"))
         self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
-        for name, obs in rich.progress.track(
-            precomputed_plan.items(),
-            description="computing...",
-            transient=True,
-            console=self.console,
-        ):
+        if log.debug:
+            tasks = precomputed_plan.items()
+        else:
+            tasks = rich.progress.track(
+                precomputed_plan.items(),
+                description="computing...",
+                transient=True,
+                console=self.console,
+            )
+        for name, obs in tasks:
             self._output[name] = obs.get_result()
         end = time.time()
         diff = end - start
