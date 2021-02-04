@@ -23,30 +23,30 @@ class Sandbox(Runner):
         kinematics = []
         kinematics.extend(
             [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
-            # np.linspace(1e-3, 1, 50)
+            #np.linspace(1e-3, 1, 50)
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
-        kinematics.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+        kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
         # kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         observable_names = [
             "F2light",
-            #"F2charm",
+            "F2charm",
             # "F2bottom",
             # "F2top",
-            #"F2total",
-            # "FLlight",
-            #"FLcharm",
+            "F2total",
+            "FLlight",
+            "FLcharm",
             # "FLbottom",
-            # "FLtotal",
-            # "F3light",
-            #"F3charm",
+            "FLtotal",
+            "F3light",
+            "F3charm",
             # "F3bottom",
-            # "F3total",
+            "F3total",
         ]
-        update = {"prDIS": ["NC"]}
+        update = {"prDIS": ["CC"]}
         # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
         # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
         # card["interpolation_is_log"] = False
@@ -56,7 +56,7 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def _run(self):
-        self.run([{}], observables.build(**(self.generate_observables())), ["ToyLH"])
+        self.run([{}], observables.build(**(self.generate_observables())), ["CT14nlo_NF4"])
 
 
 if __name__ == "__main__":

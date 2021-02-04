@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+from .partonic_channel import EmptyPartonicChannel
 from .nc import kernels as nc_kernels
 from .cc import kernels as cc_kernels
 
@@ -148,5 +149,14 @@ class CoefficientFunctionsCombiner:
             full = self.collect_zmvfns()
         elif self.esf.sf.scheme in ["FONLL-A"]:
             full = self.collect_fonll()
-        # TODO drop all elements that have 0 weight
-        return full
+        else:
+            raise ValueError("Unknown FNS")
+
+        # drop all kernels with 0 weight, or empty coeffs
+        filtered_kernels = []
+        for ker in full:
+            ker.partons = {p: w for p, w in ker.partons.items() if w != 0}
+            if len(ker.partons) > 0 and not isinstance(ker.coeff, EmptyPartonicChannel):
+                filtered_kernels.append(ker)
+
+        return filtered_kernels

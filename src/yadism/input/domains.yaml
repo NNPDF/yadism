@@ -355,7 +355,7 @@
     - -1 <= pol <= 1
 
 - name: ProjectileDIS
-  known_as: projectile
+  known_as: ProjectileDIS
   runcard: observables
   description: >
     ProjectileDIS

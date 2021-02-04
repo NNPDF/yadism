@@ -51,15 +51,15 @@ class PartonicChannel(dict):
 
     @staticmethod
     def LO():
-        return 0
+        return None
 
     @staticmethod
     def NLO():
-        return 0
+        return None
 
     @staticmethod
     def NLO_fact():
-        return 0
+        return None
 
 
 class EmptyPartonicChannel(PartonicChannel):
