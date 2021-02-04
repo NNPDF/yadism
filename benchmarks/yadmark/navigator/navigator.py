@@ -217,7 +217,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
                 raise ValueError("Cannot compare tables with different (x, Q2)")
 
             # subtract and propagate
-            known_col_set = set(["x", "Q2", "yadism", "yadism_error", "rel_err[%]"])
+            known_col_set = set(["x", "Q2", "yadism", "yadism_error", "percent_error"])
             t1_ext = list(set(table1.keys()) - known_col_set)[0]
             t2_ext = list(set(table2.keys()) - known_col_set)[0]
             if t1_ext == t2_ext:
@@ -239,7 +239,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
                 else:
                     return (row["yadism"] / row[tout_ext] - 1.0) * 100
 
-            table_out["rel_err[%]"] = table_out.apply(rel_err, axis=1)
+            table_out["percent_error"] = table_out.apply(rel_err, axis=1)
 
             # dump results' table
             diffout.print(obs, "-" * len(obs), sep="\n")
@@ -260,7 +260,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         dfd = self.log_as_DFdict(doc_id)
         for n, df in dfd.items():
             for l in df.iloc:
-                if abs(l["rel_err[%]"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
+                if abs(l["percent_error"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
                     print(n, l, sep="\n")
 
     def crashed_log(self, doc_id):
@@ -296,7 +296,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
     #     for i, doc_id in enumerate([id1, id2]):
     #         tabs += [self.get_log_DFdict(doc_id)[0]]
-    #         tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
+    #         tabs1 += [tabs[i].drop(["yadism", "yadism_error", "percent_error"], axis=1)]
     #         exts += [
     #             tabs1[i].columns.drop(["x", "Q2"])[0]
     #         ]  # + suffixes[i]] # to do: the suffixes are not working as expected

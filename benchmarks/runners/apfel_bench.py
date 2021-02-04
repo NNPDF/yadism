@@ -21,7 +21,7 @@ class ApfelBenchmark(Runner):
 
 class BenchmarkPlain(ApfelBenchmark):
     def benchmark_lo(self):
-        self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
+        self.run([{}], observables.build(**(observables.default_config[0])), ["CT14llo_NF3"])
 
     def benchmark_nlo(self):
         self.run(
