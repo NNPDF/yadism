@@ -49,7 +49,7 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
         kinematics = []
         kinematics.extend(
-            [dict(x=x, Q2=90.0) for x in np.geomspace(0.0001, 0.99, 10).tolist()]
+            [dict(x=x, Q2=90.0) for x in np.geomspace(0.0001, 0.75, 10).tolist()]
         )
         kinematics.extend(
             [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4.0, 1000.0, 10).tolist()]
@@ -57,6 +57,7 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
         observable_names = [
             "F2light",
             "FLlight",
+            "F3light",
         ]
         obs_card = dict(
             observable_names=observable_names,
@@ -73,7 +74,7 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
         # vary muR or vice versa
         sv = {"XIR": [0.5, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # XIR = 0.5 and XIF = 2.0 or viceversa are forbidden
-        return filter(lambda c: not (c["XIR"] * c["XIF"] == 1.0), power_set(sv))
+        return filter(lambda c: (c["XIR"] * c["XIF"] != 1.0), power_set(sv))
 
     def benchmark_lo(self):
         self.run(
@@ -93,14 +94,23 @@ class BenchmarkFNS(QCDNUMBenchmark):
     """Vary Flavor Number Schemes"""
 
     @staticmethod
-    def observable_updates(fnames):
+    def observable_updates(fnames, q2s=None):
+
+        if q2s == None:
+            q2min = 4.0
+            q2max = 1000.0
+            q2fix = 20
+        else:
+            q2min = q2s[0]
+            q2max = q2s[1]
+            q2fix = 0.5 * sum(q2s)
 
         kinematics = []
         kinematics.extend(
-            [dict(x=x, Q2=10.0) for x in np.geomspace(0.0001, 0.90, 10).tolist()]
+            [dict(x=x, Q2=q2fix) for x in np.geomspace(0.0001, 0.75, 10).tolist()]
         )
         kinematics.extend(
-            [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4.0, 1000.0, 10).tolist()]
+            [dict(x=0.0001, Q2=Q2) for Q2 in np.geomspace(q2min, q2max, 10).tolist()]
         )
         observable_names = fnames
 
@@ -112,29 +122,38 @@ class BenchmarkFNS(QCDNUMBenchmark):
 
         return observables.build(**(obs_card))
 
-    # Can't really benchmark ZM since no FXtotal is available in QCDNUM, definitions are not matching
     def benchmark_ZM(self):
 
         fnames = [
             "F2light",
-            # "FLlight",
+            "FLlight",
+            "F3light",
         ]
-        fns = {"NfFF": [3], "FNS": ["ZM-VFNS"], "PTO": [1]}
+        fns = {"NfFF": [3, 4, 5], "FNS": ["ZM-VFNS"], "PTO": [1]}
 
         self.run(power_set(fns), self.observable_updates(fnames), ["ToyLH"])
 
     def benchmark_FFNS(self):
 
+        light_fnames = [
+            "F2light",
+            "FLlight",
+            "F3light",
+        ]
         heavy_fnames = [
-            {"NfFF": 3, "fnames": ["F2light", "FLlight", "F2charm", "FLcharm",]},
-            {"NfFF": 4, "fnames": ["F2bottom", "FLbottom",]},
-            # {"NfFF" :5, "fnames": ["F2top","FLtop",]},
+            # {"NfFF": 3, "fnames": ["F2charm", "FLcharm",], "Q2range": [4,16]},
+            # {"NfFF": 4, "fnames": ["F2bottom", "FLbottom",], "Q2range": [22, 40]},
+            {"NfFF": 5, "fnames": ["F2top", "FLtop",], "Q2range": [90, 1000]},
         ]
 
         # loop over NfFF
         for item in heavy_fnames:
             fns = {"NfFF": [item["NfFF"]], "FNS": ["FFNS"], "PTO": [1]}
-            self.run(power_set(fns), self.observable_updates(item["fnames"]), ["ToyLH"])
+            self.run(
+                power_set(fns),
+                self.observable_updates(light_fnames + item["fnames"], item["Q2range"]),
+                ["ToyLH"],
+            )
 
 
 if __name__ == "__main__":
@@ -146,8 +165,10 @@ if __name__ == "__main__":
     # plain.benchmark_nlo()
 
     sv = BenchmarkScaleVariations()
-    sv.benchmark_nlo()
+    # sv.benchmark_nlo()
 
+    # TODO: check ZM and Ftop
+    # TODO: mix fns ans sv
     fns = BenchmarkFNS()
     fns.benchmark_ZM()
     fns.benchmark_FFNS()

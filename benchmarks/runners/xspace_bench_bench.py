@@ -128,7 +128,7 @@ class BenchmarkFNS(xspaceBenchmark):
             "CC": fnames + ["F3charm"],
             "NC": fnames,
         }
-        fns = {"NfFF": [4], "FNS": ["FONLL-A"], "PTO": [1]}
+        fns = {"NfFF": [4], "FNS": ["FONLL-A"], "PTO": [1], "DAMP": [0, 1]}
         self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
 
         # F3total should be computed separatly due to cancellations in quark contributions (massive part)
@@ -147,6 +147,6 @@ if __name__ == "__main__":
     # plain.benchmark_nlo()
 
     fns = BenchmarkFNS()
-    fns.benchmark_ZM()
-    fns.benchmark_FFNS()
+    # fns.benchmark_ZM()
+    # fns.benchmark_FFNS()
     fns.benchmark_FONLL()
