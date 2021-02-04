@@ -92,7 +92,5 @@ class Runner(BenchmarkRunner):
                 esf["percent_error"] = (f - r) / r * 100
                 esfs.append(esf)
             df = pd.DataFrame(esfs)
-            print(sf)
-            print(df)
             log_tab[sf] = df
         return log_tab
