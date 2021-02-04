@@ -21,7 +21,7 @@ class ApfelBenchmark(Runner):
 
 class BenchmarkPlain(ApfelBenchmark):
     def benchmark_lo(self):
-        self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
+        self.run([{}], observables.build(**(observables.default_config[0])), ["CT14llo_NF3"])
 
     def benchmark_nlo(self):
         self.run(
@@ -66,7 +66,7 @@ class BenchmarkScaleVariations(ApfelBenchmark):
 
 
 if __name__ == "__main__":
-    p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
+    p = pathlib.Path(__file__).absolute().parents[1] / "data" / "benchmark.db"
     # p.unlink(missing_ok=True)
 
     plain = BenchmarkPlain()

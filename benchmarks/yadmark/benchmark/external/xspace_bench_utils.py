@@ -107,18 +107,18 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
     num_tab = {}
     # loop over functions
-    for obs in observables:
+    for obs_name in observables["observables"]:
 
-        if not on.ObservableName.is_valid(obs):
-            continue
+        # if not on.ObservableName.is_valid(obs):
+        #    continue
 
-        obs_name = on.ObservableName(obs)
+        obs = on.ObservableName(obs_name)
 
         out = []
         # get all the q2
         q2s = []
 
-        for kin in observables[obs]:
+        for kin in observables["observables"].get(obs_name, []):
             if kin["Q2"] not in q2s:
                 q2s.append(kin["Q2"])
 
@@ -132,7 +132,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
             y = 0.5
             f = 0.0
 
-            for kin in observables[obs]:
+            for kin in observables["observables"].get(obs_name, []):
                 if kin["Q2"] == q2:
                     xs.append(kin["x"])
 
@@ -140,6 +140,10 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
                 res = []
                 f3_fact = -1.0
+                if x == 1.0:
+                    res = np.zeros((3, 5))
+                    continue
+
                 if proc == "NC" or proc == "EM":
                     f3_fact = 1.0
                     res = xspace_bench.nc_dis(
@@ -159,6 +163,9 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         damp,
                     )
                 elif proc == "CC":
+                    # for positron F3 has opposite sign
+                    if proj == "POSITRON" or proj == "ANTINEUTRINO":
+                        f3_fact = 1.0 
                     res = xspace_bench.cc_dis(
                         x,
                         q2,
@@ -180,33 +187,33 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         f"{proc} is not implemented in xspace_bench "
                     )
 
-                if obs_name.kind == "F2":
-                    if obs_name.flavor == "light":
+                if obs.kind == "F2":
+                    if obs.flavor == "light":
                         f = res[0][0]
-                    if obs_name.flavor == "charm":
+                    if obs.flavor == "charm":
                         f = res[0][1]
-                    if obs_name.flavor == "total":
+                    if obs.flavor == "total":
                         f = res[0][4]
-                elif obs_name.kind == "F3":
-                    if obs_name.flavor == "light":
+                elif obs.kind == "F3":
+                    if obs.flavor == "light":
                         f = f3_fact * res[1][0]
-                    if obs_name.flavor == "charm":
+                    if obs.flavor == "charm":
                         f = f3_fact * res[1][1]
-                    if obs_name.flavor == "total":
+                    if obs.flavor == "total":
                         f = f3_fact * res[1][4]
-                elif obs_name.kind == "FL":
-                    if obs_name.flavor == "light":
+                elif obs.kind == "FL":
+                    if obs.flavor == "light":
                         f = res[2][0]
-                    if obs_name.flavor == "charm":
+                    if obs.flavor == "charm":
                         f = res[2][1]
-                    if obs_name.flavor == "total":
+                    if obs.flavor == "total":
                         f = res[2][4]
                 else:
                     raise NotImplementedError(
-                        f"{obs_name.kind} is not implemented in xspace_bench"
+                        f"{obs.kind} is not implemented in xspace_bench"
                     )
-                out.append(dict(x=x, Q2=q2, value=f))
+                out.append(dict(x=x, Q2=q2, result=f))
 
-        num_tab[obs] = out
+        num_tab[obs_name] = out
 
     return num_tab

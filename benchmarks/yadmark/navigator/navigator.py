@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from banana import navigator as bnav
-from banana.navigator import dfdict
+from banana.data import dfdict
 
 from yadism import observable_name as on
 
@@ -53,26 +53,20 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             + f"{'log' if ob['interpolation_is_log'] else 'x'}"
             + f"^{ob['interpolation_polynomial_degree']}"
         )
-        if "prDIS" in ob:
-            obj["curr"] = ob["prDIS"]
-        if "projectile" in ob:
-            proj_map = {
-                "electron": "e-",
-                "positron": "e+",
-                "neutrino": "ν",
-                "antineutrino": "ν~",
-            }
-            obj["proj"] = proj_map[ob["projectile"]]
-        if "PolarizationDIS" in ob:
-            obj["pol"] = ob["PolarizationDIS"]
+        obj["curr"] = ob["prDIS"]
+        proj_map = {
+            "electron": "e-",
+            "positron": "e+",
+            "neutrino": "ν",
+            "antineutrino": "ν~",
+        }
+        obj["proj"] = proj_map[ob["ProjectileDIS"]]
+        obj["pol"] = ob["PolarizationDIS"]
         sfs = 0
         esfs = 0
-        for sf in ob:
-            # quick fix
-            if not on.ObservableName.is_valid(sf):
-                continue
+        for esfs_dict in ob["observables"].values():
             sfs += 1
-            esfs += len(ob[sf])
+            esfs += len(esfs_dict)
         obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
 
     def fill_logs(self, lg, obj):
@@ -88,20 +82,15 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         """
         sfs = 0
         esfs = 0
-        for sf in lg:
-            if not on.ObservableName.is_valid(sf):
-                continue
+        for esfs_dict in lg["log"].values():
             sfs += 1
-            esfs += len(lg[sf])
+            esfs += len(esfs_dict)
         crash = lg.get("_crash", None)
         if crash is None:
             obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
         else:
             obj["structure_functions"] = crash
-        obj["theory"] = lg["_theory_doc_id"]
-        obj["obs"] = lg["_observables_doc_id"]
-        if "_pdf" in lg:
-            obj["pdf"] = lg["_pdf"]
+        obj["pdf"] = lg["pdf"]
 
     def list_all_sim_logs(self, ref_log_or_id):
         """
@@ -228,7 +217,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
                 raise ValueError("Cannot compare tables with different (x, Q2)")
 
             # subtract and propagate
-            known_col_set = set(["x", "Q2", "yadism", "yadism_error", "rel_err[%]"])
+            known_col_set = set(["x", "Q2", "yadism", "yadism_error", "percent_error"])
             t1_ext = list(set(table1.keys()) - known_col_set)[0]
             t2_ext = list(set(table2.keys()) - known_col_set)[0]
             if t1_ext == t2_ext:
@@ -250,7 +239,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
                 else:
                     return (row["yadism"] / row[tout_ext] - 1.0) * 100
 
-            table_out["rel_err[%]"] = table_out.apply(rel_err, axis=1)
+            table_out["percent_error"] = table_out.apply(rel_err, axis=1)
 
             # dump results' table
             diffout.print(obs, "-" * len(obs), sep="\n")
@@ -271,7 +260,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         dfd = self.log_as_DFdict(doc_id)
         for n, df in dfd.items():
             for l in df.iloc:
-                if abs(l["rel_err[%]"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
+                if abs(l["percent_error"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
                     print(n, l, sep="\n")
 
     def crashed_log(self, doc_id):
@@ -307,7 +296,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
     #     for i, doc_id in enumerate([id1, id2]):
     #         tabs += [self.get_log_DFdict(doc_id)[0]]
-    #         tabs1 += [tabs[i].drop(["yadism", "yadism_error", "rel_err[%]"], axis=1)]
+    #         tabs1 += [tabs[i].drop(["yadism", "yadism_error", "percent_error"], axis=1)]
     #         exts += [
     #             tabs1[i].columns.drop(["x", "Q2"])[0]
     #         ]  # + suffixes[i]] # to do: the suffixes are not working as expected

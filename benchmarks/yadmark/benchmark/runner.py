@@ -19,10 +19,10 @@ class Runner(BenchmarkRunner):
             conn.execute(sql.create_table("observables", observables.default_card))
 
     @staticmethod
-    def load_ocards(conn, observables_updates, /):
-        return observables.load(conn, observables_updates)
+    def load_ocards(conn, ocard_updates):
+        return observables.load(conn, ocard_updates)
 
-    def run_me(self, theory, observable, pdf, /):
+    def run_me(self, theory, ocard, pdf):
         """
         Run yadism
 
@@ -40,19 +40,20 @@ class Runner(BenchmarkRunner):
             out : yadism.output.Output
                 yadism output
         """
-        runner = yadism.Runner(theory, observable)
+        runner = yadism.Runner(theory, ocard)
         return runner.apply_pdf(pdf)
 
-    def run_external(self, theory, observable, pdf, /):
-
+    def run_external(self, theory, ocard, pdf):
+        observable = ocard
         if theory["IC"] != 0 and theory["PTO"] > 0:
-                raise ValueError(f"{self.external} is currently not able to run")
+            raise ValueError(f"{self.external} is currently not able to run")
 
         if self.external == "APFEL":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 apfel_utils,
             )
-            #if theory["IC"] != 0 and theory["PTO"] > 0:
+
+            # if theory["IC"] != 0 and theory["PTO"] > 0:
             #    raise ValueError("APFEL is currently not able to run")
             return apfel_utils.compute_apfel_data(theory, observable, pdf)
 
@@ -60,17 +61,23 @@ class Runner(BenchmarkRunner):
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 qcdnum_utils,
             )
+
             return qcdnum_utils.compute_qcdnum_data(theory, observable, pdf)
 
+        elif self.external == "xspace_bench":
+            from .external import (  # pylint:disable=import-error,import-outside-toplevel
+                xspace_bench_utils,
+            )
+
+            return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
         return {}
 
-    def log(self, theory, ocard, pdf, me, ext, /):
+    def log(self, theory, ocard, pdf, me, ext):
         log_tab = dfdict.DFdict()
         for sf in me:
             if not yadism.observable_name.ObservableName.is_valid(sf):
                 continue
             esfs = []
-            
             for yad, oth in zip(me[sf], ext[sf]):
                 # check kinematics
                 if any([yad[k] != oth[k] for k in ["x", "Q2"]]):
@@ -84,5 +91,6 @@ class Runner(BenchmarkRunner):
                 esf[self.external] = r = oth["result"]
                 esf["percent_error"] = (f - r) / r * 100
                 esfs.append(esf)
-            log_tab[sf] = pd.DataFrame(esfs)
+            df = pd.DataFrame(esfs)
+            log_tab[sf] = df
         return log_tab

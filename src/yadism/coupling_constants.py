@@ -283,18 +283,18 @@ class CouplingConstants:
             theory_config["MW2"] = MW ** 2
 
         # map projectile to PID
-        projectile = observables.get("ProjectileDIS", "electron")
+        proj = observables.get("ProjectileDIS", "electron")
         projectile_pids = {
             "electron": 11,
             "positron": -11,
             "neutrino": 12,
             "antineutrino": -12,
         }
-        if projectile not in projectile_pids:
-            raise ValueError(f"Unknown projectile {projectile}")
+        if proj not in projectile_pids:
+            raise ValueError(f"Unknown projectile {proj}")
         obs_config = {
             "process": observables.get("prDIS", "EM"),
-            "projectilePID": projectile_pids[projectile],
+            "projectilePID": projectile_pids[proj],
             "polarization": observables.get("PolarizationDIS", 0),
             "propagatorCorrection": observables.get("PropagatorCorrection", 0),
         }
