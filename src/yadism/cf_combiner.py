@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-import copy
-
 import numpy as np
 
+from .partonic_channel import EmptyPartonicChannel
 from .nc import kernels as nc_kernels
 from .cc import kernels as cc_kernels
 
@@ -153,9 +152,11 @@ class CoefficientFunctionsCombiner:
         else:
             raise ValueError("Unknown FNS")
 
-        for i, ker in enumerate(copy.copy(full)):
+        # drop all kernels with 0 weight, or empty coeffs
+        filtered_kernels = []
+        for ker in full:
             ker.partons = {p: w for p, w in ker.partons.items() if w != 0}
-            if len(ker.partons) == 0:
-                full.remove(i)
+            if len(ker.partons) > 0 and not isinstance(ker.coeff, EmptyPartonicChannel):
+                filtered_kernels.append(ker)
 
-        return full
+        return filtered_kernels
