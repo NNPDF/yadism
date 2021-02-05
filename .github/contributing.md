@@ -5,6 +5,24 @@ contributions guidelines](.github/contributing.md#external-contributions)
 
 ## Internal development
 
+### Release based workflow
+
+The development it's following some conventions to improve collaboration:
+
+- the _almost_ standard [SemVer](https://semver.org/) it's adopted for versions'
+  numbers
+- the popular [git flow
+  model](https://nvie.com/posts/a-successful-git-branching-model/) it's used for
+  managing git branches
+  - in order to help you with the management consider using [`git flow`](https://github.com/petervanderdoes/gitflow-avh) CLI tool (and the corresponding [shell completion](https://github.com/petervanderdoes/git-flow-completion)), or the original version of [`git flow`](https://github.com/nvie/gitflow).
+
+#### Caveat
+
+- remember to base all the pull requests on GitHub to `develop` (and not
+  `main`/`master`)
+- while using `git flow` to merge remember to use the `-k` (keep) option, for
+  GitHub compatibility
+
 ### Installation
 
 #### Test Dependencies
@@ -63,17 +81,6 @@ The main idea is to generate the input databases customizing and running
 provided scripts, and then select with suitable queries the combinations of
 input you are interested in, and running the benchmark utility passing the
 queries as arguments.
-
-### Release based workflow
-
-Since it is appropriate to develop this code in versions (as in the way
-suggested by [SemVer](https://semver.org/)) we decided to base our workflow on
-the popular [git flow model](https://nvie.com/posts/a-successful-git-branching-model/).
-
-In order to help you with the management consider using [`git flow`](https://github.com/petervanderdoes/gitflow-avh) CLI tool (and the
-corresponding [shell
-completion](https://github.com/petervanderdoes/git-flow-completion)), or the
-original version of [`git flow`](https://github.com/nvie/gitflow).
 
 ## External contributions
 
