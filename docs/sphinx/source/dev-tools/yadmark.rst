@@ -4,8 +4,7 @@ Yadmark
 .. Important::
    
    In this section is described the design and API of the `yadmark` package.
-   The underlying infrastructure is coming from `tinydb` and `git-lfs`, and it
-   is briefly explained in :doc:`db-suite`.
+   The underlying infrastructure is coming from `tinydb` and `git-lfs`.
 
 .. toctree::
    :maxdepth: 1
