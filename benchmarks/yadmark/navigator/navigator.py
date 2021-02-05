@@ -251,8 +251,8 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         """
         Check if the log passed the default assertions
 
-        Paramters
-        ---------
+        Parameters
+        ----------
             doc_id : int
                 log identifier
         """
@@ -267,8 +267,8 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         """
         Check if the log passed the default assertions
 
-        Paramters
-        ---------
+        Parameters
+        ----------
             doc_id : int
                 log identifier
 
