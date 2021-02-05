@@ -5,6 +5,41 @@ from yadism import observable_name as on
 from yadism.coupling_constants import CouplingConstants
 
 
+# setup external PDF
+class PdfCallable:
+    """
+    Wrapper to introduce lhapdf under QCDNUM.
+
+    Parameters
+    ----------
+        pdf : lhapdf_like
+            PDF object
+    """
+    def __init__(self, pdf):
+        self.pdf = pdf
+
+    def __call__(self, ipdf, x, qmu2, first):
+        """
+        Functor function.
+
+        Parameters
+        ----------
+            ipdf : int
+                pid
+            x : float
+                momentum fraction
+            qmu2 : float
+                momentum transfer
+
+        Returns
+        -------
+            pdf(x)
+        """
+        if -6 <= ipdf <= 6:
+            a = self.pdf.xfxQ2(ipdf, x, qmu2)
+            return a
+        return 0.0
+
 def compute_qcdnum_data(
     theory, observables, pdf
 ):  #  pylint: disable=too-many-statements,too-many-branches,too-many-locals
@@ -114,20 +149,10 @@ def compute_qcdnum_data(
     brf = 0
     QCDNUM.setabr(arf, brf)
 
-    # setup external PDF
-    class PdfCallable:
-        def __init__(self, pdf):
-            self.pdf = pdf
-
-        def __call__(self, ipdf, x, qmu2, first):
-            if -6 <= ipdf <= 6:
-                a = self.pdf.xfxQ2(ipdf, x, qmu2)
-                return a
-            return 0.0
-
     # func, pdf set number, nr. extra pdfs, thershold offset
     QCDNUM.extpdf(PdfCallable(pdf), iset, 0, 0)
 
+    coupling = CouplingConstants.from_dict(theory, observables)
     num_tab = {}
     for obs_name in observables["observables"]:
         # if not on.ObservableName.is_valid(obs):
@@ -163,7 +188,6 @@ def compute_qcdnum_data(
                     xs.append(kin["x"])
             # Use yadism to get all the weights
             weights = []
-            coupling = CouplingConstants.from_dict(theory, observables)
             for pid in range(-6, 7):
                 if pid == 0:
                     pid = 21

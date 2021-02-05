@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Compare the results with QCDNUM
-
-# import pytest
-# from yadmark.benchmark.db_interface import DBInterface, QueryFieldsEqual
-
-import pathlib
-import copy
 import pytest
 import numpy as np
 
@@ -25,7 +19,6 @@ class QCDNUMBenchmark(Runner):
 
 
 class BenchmarkPlain(QCDNUMBenchmark):
-
     """The most basic checks"""
 
     def benchmark_lo(self):
@@ -41,7 +34,6 @@ class BenchmarkPlain(QCDNUMBenchmark):
 
 @pytest.mark.skip
 class BenchmarkScaleVariations(QCDNUMBenchmark):
-
     """Vary factorization and renormalization scale"""
 
     @staticmethod
@@ -70,8 +62,8 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
     @staticmethod
     def theory_updates(pto, FNS):
         # There is a QCDNUM error: "STOP ZMSTFUN: You cant vary both Q2 and muR2 scales --> STOP"
-        # this is a limitation of QCDNUM in principle, so you have to work around it, i.e. fix Q2 and only
-        # vary muR or vice versa
+        # this is a limitation of QCDNUM in principle, so you have to work around it, i.e. fix Q2
+        # and only vary muR or vice versa
 
         if FNS == 1:
             sv = {
@@ -105,13 +97,12 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
 @pytest.mark.skip
 class BenchmarkFNS(QCDNUMBenchmark):
-
     """Vary Flavor Number Schemes"""
 
     @staticmethod
     def observable_updates(fnames, q2s=None):
 
-        if q2s == None:
+        if q2s is None:
             q2min = 4.0
             q2max = 1000.0
             # note: due to the qgrid setting q2fix should be different from a mass threshold
@@ -175,9 +166,6 @@ class BenchmarkFNS(QCDNUMBenchmark):
 
 
 if __name__ == "__main__":
-    # p = pathlib.Path(__file__).parents[1] / "data" / "benchmark.db"
-    # p.unlink(missing_ok=True)
-
     # plain = BenchmarkPlain()
     # plain.benchmark_lo()
     # plain.benchmark_nlo()
