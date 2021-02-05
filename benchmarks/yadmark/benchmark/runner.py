@@ -46,13 +46,14 @@ class Runner(BenchmarkRunner):
     def run_external(self, theory, observable, pdf, /):
 
         if theory["IC"] != 0 and theory["PTO"] > 0:
-                raise ValueError(f"{self.external} is currently not able to run")
+            raise ValueError(f"{self.external} is currently not able to run")
 
         if self.external == "APFEL":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 apfel_utils,
             )
-            #if theory["IC"] != 0 and theory["PTO"] > 0:
+
+            # if theory["IC"] != 0 and theory["PTO"] > 0:
             #    raise ValueError("APFEL is currently not able to run")
             return apfel_utils.compute_apfel_data(theory, observable, pdf)
 
@@ -60,12 +61,14 @@ class Runner(BenchmarkRunner):
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 qcdnum_utils,
             )
+
             return qcdnum_utils.compute_qcdnum_data(theory, observable, pdf)
-        
+
         elif self.external == "xspace_bench":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 xspace_bench_utils,
             )
+
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
         return {}
 
@@ -75,18 +78,39 @@ class Runner(BenchmarkRunner):
             if not yadism.observable_name.ObservableName.is_valid(sf):
                 continue
             esfs = []
-            for yad, oth in zip(me[sf], ext[sf]):
-                # check kinematics
-                if any([yad[k] != oth[k] for k in ["x", "Q2"]]):
+            # for yad, oth in zip(me[sf], ext[sf]):
+            #    # check kinematics
+            #    if any([yad[k] != oth[k] for k in ["x", "Q2"]]):
+            #        raise ValueError("Sort problem: x and/or Q2 do not match.")
+            #    # add common values
+            #    esf = {}
+            #    esf["x"] = yad["x"]
+            #    esf["Q2"] = yad["Q2"]
+            #    esf["yadism"] = f = yad["result"]
+            #    esf["yadism_error"] = yad["error"]
+            #    esf[self.external] = r = oth["result"]
+            #    esf["percent_error"] = (f - r) / r * 100
+            #    esfs.append(esf)
+            # log_tab[sf] = pd.DataFrame(esfs)
+
+            # Sort the point using yadism order since yadism list can be different from ext
+            for yad in me[sf]:
+                cnt = 0
+                for oth in ext[sf]:
+                    if all([yad[k] == oth[k] for k in ["x", "Q2"]]):
+                        # add common values
+                        esf = {}
+                        esf["x"] = yad["x"]
+                        esf["Q2"] = yad["Q2"]
+                        esf["yadism"] = f = yad["result"]
+                        esf["yadism_error"] = yad["error"]
+                        esf[self.external] = r = oth["result"]
+                        esf["percent_error"] = (f - r) / r * 100
+                        esfs.append(esf)
+                        cnt = 1
+                        break
+                if cnt == 0:
                     raise ValueError("Sort problem: x and/or Q2 do not match.")
-                # add common values
-                esf = {}
-                esf["x"] = yad["x"]
-                esf["Q2"] = yad["Q2"]
-                esf["yadism"] = f = yad["result"]
-                esf["yadism_error"] = yad["error"]
-                esf[self.external] = r = oth["result"]
-                esf["percent_error"] = (f - r) / r * 100
-                esfs.append(esf)
             log_tab[sf] = pd.DataFrame(esfs)
+
         return log_tab

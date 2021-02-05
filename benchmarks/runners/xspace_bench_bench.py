@@ -147,6 +147,6 @@ if __name__ == "__main__":
     # plain.benchmark_nlo()
 
     fns = BenchmarkFNS()
-    # fns.benchmark_ZM()
-    # fns.benchmark_FFNS()
+    fns.benchmark_ZM()
+    fns.benchmark_FFNS()
     fns.benchmark_FONLL()

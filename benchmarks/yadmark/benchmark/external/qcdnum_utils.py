@@ -41,9 +41,9 @@ def compute_qcdnum_data(
     QCDNUM.setalf(theory["alphas"], theory["Qref"] ** 2)
 
     # make x and Q grids
-    xmin = 0.1
-    q2min = 10
-    q2max = 20
+    xmin = 0.00001
+    q2min = 4
+    q2max = 40
     for obs_name in observables["observables"]:
         # if not on.ObservableName.is_valid(obs):
         #    continue
@@ -59,7 +59,7 @@ def compute_qcdnum_data(
         xwarr += [1, 1]
     iosp = 3
     n_x = 289
-    n_q = 60
+    n_q = 101
     af = 1.0 / theory["XIF"] ** 2
     bf = 0.0
     QCDNUM.gxmake(
@@ -76,12 +76,14 @@ def compute_qcdnum_data(
     iqc = QCDNUM.iqfrmq(mc ** 2)
     iqb = QCDNUM.iqfrmq(mb ** 2)
     iqt = QCDNUM.iqfrmq(mt ** 2)
+
     if theory["FNS"] == "FFNS":
         nfix = theory["NfFF"]
     else:
         nfix = 0
     QCDNUM.setcbt(nfix, iqc, iqb, iqt)
 
+    print(iqc, iqb)
     # Try to read the weight file and create one if that fails
     QCDNUM.wtfile(1, wname)
 
@@ -159,7 +161,6 @@ def compute_qcdnum_data(
             for kin in observables["observables"].get(obs_name, []):
                 if kin["Q2"] == q2:
                     xs.append(kin["x"])
-
             # Use yadism to get all the weights
             weights = []
             coupling = CouplingConstants.from_dict(theory, observables)
@@ -184,7 +185,7 @@ def compute_qcdnum_data(
             if obs.flavor == "light":
                 QCDNUM.setord(1 + theory["PTO"])  # 1 = LO, ...
                 fs.extend(QCDNUM.zmstfun(kind_key, weights, xs, Q2s, 1))
-                print("2", fs)
+
             elif obs.is_raw_heavy:
                 # for HQ pto is not absolute but rather relative,
                 # i.e., 1 loop DIS here meas "LO"[QCDNUM]
@@ -203,8 +204,8 @@ def compute_qcdnum_data(
                 raise NotImplementedError(f"flavor {obs.flavor} is not implemented!")
 
             # reshuffle output
-            for x, Q2, fs in zip(xs, Q2s, fs):
-                f_out.append(dict(x=x, Q2=Q2, result=fs))
+            for x, Q2, f in zip(xs, Q2s, fs):
+                f_out.append(dict(x=x, Q2=Q2, result=f))
 
         num_tab[obs_name] = f_out
 

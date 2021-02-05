@@ -15,6 +15,7 @@ class Sandbox(Runner):
 
     external = "APFEL" # external comparison program
     external = "xspace_bench"
+    external = "QCDNUM"
 
     @staticmethod
     def generate_observables():
@@ -26,8 +27,8 @@ class Sandbox(Runner):
             #[dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
             # np.linspace(1e-3, 1, 50)
         #)
-        # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
-        kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+        #kinematics.extend([dict(x=x, Q2=10) for x in np.linspace(.001, .75, 10).tolist()])
+        kinematics.extend([dict(x=0.0001, Q2=Q2) for Q2 in np.geomspace(4, 1000, 10).tolist()])
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
@@ -38,7 +39,7 @@ class Sandbox(Runner):
             # "F2bottom",
             # "F2top",
             #"F2total",
-            # "FLlight",
+            "FLlight",
             #"FLcharm",
             # "FLbottom",
             # "FLtotal",
@@ -57,7 +58,7 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def _run(self):
-        self.run([{}], observables.build(**(self.generate_observables())), ["CT14nlo_NF4"])
+        self.run([{"PTO": 1,}], observables.build(**(self.generate_observables())), ["ToyLH"])
 
 
 if __name__ == "__main__":
