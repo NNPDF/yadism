@@ -78,20 +78,6 @@ class Runner(BenchmarkRunner):
             if not yadism.observable_name.ObservableName.is_valid(sf):
                 continue
             esfs = []
-            # for yad, oth in zip(me[sf], ext[sf]):
-            #    # check kinematics
-            #    if any([yad[k] != oth[k] for k in ["x", "Q2"]]):
-            #        raise ValueError("Sort problem: x and/or Q2 do not match.")
-            #    # add common values
-            #    esf = {}
-            #    esf["x"] = yad["x"]
-            #    esf["Q2"] = yad["Q2"]
-            #    esf["yadism"] = f = yad["result"]
-            #    esf["yadism_error"] = yad["error"]
-            #    esf[self.external] = r = oth["result"]
-            #    esf["percent_error"] = (f - r) / r * 100
-            #    esfs.append(esf)
-            # log_tab[sf] = pd.DataFrame(esfs)
 
             # Sort the point using yadism order since yadism list can be different from ext
             for yad in me[sf]:

@@ -27,7 +27,7 @@ class BenchmarkPlain(QCDNUMBenchmark):
     def benchmark_nlo(self):
         self.run(
             [{"PTO": 1}],
-            observables.build(**(observables.default_config[1])),
+            observables.build(**(observables.default_config[2])),
             ["ToyLH"],
         )
 

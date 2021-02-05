@@ -31,6 +31,10 @@ default_config = {
         "observable_names": ["F2light", "F2total", "FLtotal", "F3total"],
         "kinematics": default_kinematics,
     },
+    2: {
+        "observable_names": ["F2light", "FLlight", "F3light"],
+        "kinematics": default_kinematics,
+    },
 }
 
 

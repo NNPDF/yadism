@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Compare the results with QCDNUM
-
+import pytest
 import numpy as np
 
 from banana.data import power_set
@@ -31,7 +31,7 @@ class BenchmarkPlain(XspaceBenchmark):
             ["ToyLHAPDF"],
         )
 
-
+@pytest.mark.skip
 class BenchmarkFNS(XspaceBenchmark):
     """Vary Flavor Number Schemes"""
 
