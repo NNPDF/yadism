@@ -28,7 +28,7 @@ class BenchmarkPlain(QCDNUMBenchmark):
     def benchmark_nlo(self):
 
         fnames =  {"observable_names": ["F2light", "FLlight", "F3light"],}
-        obs =  observables.default_config[1]
+        obs =  observables.default_config[1].copy()
         obs.update(fnames)
         
         self.run(
