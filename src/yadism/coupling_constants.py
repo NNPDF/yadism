@@ -68,7 +68,8 @@ class CouplingConstants:
                 leptonic coupling
         """
         # for CC the polarisation are NOT part of the structure functions, but are accounted for on
-        # the cross section level. In order to have a true-trivial LO coeficient function, return here 2.
+        # the cross section level. In order to have a true-trivial LO coeficient function, return
+        # here 2.
         if mode == "WW":
             return 2
 
@@ -81,6 +82,8 @@ class CouplingConstants:
         ):
             pol *= -1
         # load Z coupling
+        projectile_v = 0.
+        projectile_a = 0.
         if mode in ["phZ", "ZZ"]:
             projectile_v = self.vectorial_coupling(abs(projectile_pid))
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]
@@ -264,7 +267,8 @@ class CouplingConstants:
                 created object
         """
         theory_config = {
-            "MZ2": theory.get("MZ", 91.1876) ** 2,  # TODO remove defaults to the PDG2020 value
+            "MZ2": theory.get("MZ", 91.1876)
+            ** 2,  # TODO remove defaults to the PDG2020 value
             "CKM": CKM2Matrix.from_str(
                 theory["CKM"]
             ),  # TODO remove default in https://pdg.lbl.gov/2019/reviews/rpp2019-rev-ckm-matrix.pdf Eq. 12.33
