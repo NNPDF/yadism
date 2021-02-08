@@ -28,7 +28,7 @@ default_kinematics.extend(
 default_config = {
     0: {"observable_names": ["F2light"], "kinematics": default_kinematics},
     1: {
-        "observable_names": ["F2light", "FLlight", "F3light"],
+        "observable_names": ["F2light", "F2total", "FLtotal", "F3total"],
         "kinematics": default_kinematics,
     },
 }

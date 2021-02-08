@@ -26,9 +26,14 @@ class BenchmarkPlain(QCDNUMBenchmark):
         self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
 
     def benchmark_nlo(self):
+
+        fnames =  {"observable_names": ["F2light", "FLlight", "F3light"],}
+        obs =  observables.default_config[1]
+        obs.update(fnames)
+        
         self.run(
             [{"PTO": 1}],
-            observables.build(**(observables.default_config[1])),
+            observables.build(**(obs)),
             ["ToyLH"],
         )
 
@@ -173,8 +178,8 @@ if __name__ == "__main__":
 
     # You can benchmark FNS and SV for FXlight with FNS = 1
     sv = BenchmarkScaleVariations()
-    sv.benchmark_nlo(FNS=0)
+    #sv.benchmark_nlo(FNS=0)
 
     fns = BenchmarkFNS()
-    fns.benchmark_ZM()
-    fns.benchmark_FFNS()
+    #fns.benchmark_ZM()
+    #fns.benchmark_FFNS()
