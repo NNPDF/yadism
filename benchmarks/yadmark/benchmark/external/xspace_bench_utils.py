@@ -115,9 +115,8 @@ def compute_xspace_bench_data(theory, observables, pdf):
         obs = on.ObservableName(obs_name)
 
         out = []
-        # get all the q2
         q2s = []
-
+        # get all the q2
         for kin in observables["observables"].get(obs_name, []):
             if kin["Q2"] not in q2s:
                 q2s.append(kin["Q2"])
@@ -125,13 +124,13 @@ def compute_xspace_bench_data(theory, observables, pdf):
         # loop over points
         for q2 in q2s:
 
-            # get the x corresponding to q2
             xs = []
 
             alphas = sc.a_s(q2) * 4.0 * np.pi
             y = 0.5
             f = 0.0
 
+            # get all the x corresponding to q2
             for kin in observables["observables"].get(obs_name, []):
                 if kin["Q2"] == q2:
                     xs.append(kin["x"])
@@ -142,9 +141,8 @@ def compute_xspace_bench_data(theory, observables, pdf):
                 f3_fact = -1.0
                 if x == 1.0:
                     res = np.zeros((3, 5))
-                    continue
 
-                if proc == "NC" or proc == "EM":
+                elif proc == "NC" or proc == "EM":
                     f3_fact = 1.0
                     res = xspace_bench.nc_dis(
                         x,
@@ -165,7 +163,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
                 elif proc == "CC":
                     # for positron F3 has opposite sign
                     if proj == "POSITRON" or proj == "ANTINEUTRINO":
-                        f3_fact = 1.0 
+                        f3_fact = 1.0
                     res = xspace_bench.cc_dis(
                         x,
                         q2,

@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Compare the results with QCDNUM
-
 # import pytest
-# from yadmark.benchmark.db_interface import DBInterface, QueryFieldsEqual
-
-import pathlib
-import copy
-import pytest
 import numpy as np
 
 from banana.data import power_set
@@ -16,7 +10,7 @@ from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
 
 
-class xspaceBenchmark(Runner):
+class XspaceBenchmark(Runner):
     """
     Globally set the external program to xspace_bench
     """
@@ -24,33 +18,33 @@ class xspaceBenchmark(Runner):
     external = "xspace_bench"
 
 
-class BenchmarkPlain(xspaceBenchmark):
-
+class BenchmarkPlain(XspaceBenchmark):
     """The most basic checks"""
 
     def benchmark_lo(self):
-        self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
+        self.run(
+            [{}], observables.build(**(observables.default_config[0])), ["ToyLHAPDF"]
+        )
 
     def benchmark_nlo(self):
         self.run(
             [{"PTO": 1}],
             observables.build(**(observables.default_config[1])),
-            ["ToyLH"],
+            ["ToyLHAPDF"],
         )
 
 
-@pytest.mark.skip
-class BenchmarkFNS(xspaceBenchmark):
-
+# @pytest.mark.skip
+class BenchmarkFNS(XspaceBenchmark):
     """Vary Flavor Number Schemes"""
 
     @staticmethod
     def observable_updates(FX, q2_min=None, q2_max=None):
 
         # Bench mark only in physical ranges
-        if q2_min == None:
+        if q2_min is None:
             q2_min = 4.0
-        if q2_max == None:
+        if q2_max is None:
             q2_max = 16.0
 
         obs_cards = []
@@ -128,10 +122,11 @@ class BenchmarkFNS(xspaceBenchmark):
             "CC": fnames + ["F3charm"],
             "NC": fnames,
         }
-        fns = {"NfFF": [4], "FNS": ["FONLL-A"], "PTO": [1]}
+        fns = {"NfFF": [4], "FNS": ["FONLL-A"], "PTO": [1], "DAMP": [0, 1]}
         self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
 
-        # F3total should be computed separatly due to cancellations in quark contributions (massive part)
+        # F3total should be computed separatly due to cancellations in quark contributions
+        # (massive part)
         FX = {"CC": ["F3total"]}
         # with gonly
         self.run(power_set(fns), self.observable_updates(FX), ["toygonly"])
@@ -142,9 +137,9 @@ class BenchmarkFNS(xspaceBenchmark):
 
 if __name__ == "__main__":
 
-    # plain = BenchmarkPlain()
-    # plain.benchmark_lo()
-    # plain.benchmark_nlo()
+    plain = BenchmarkPlain()
+    plain.benchmark_lo()
+    plain.benchmark_nlo()
 
     fns = BenchmarkFNS()
     fns.benchmark_ZM()
