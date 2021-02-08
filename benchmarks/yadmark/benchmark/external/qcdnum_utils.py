@@ -76,15 +76,9 @@ def compute_qcdnum_data(
     QCDNUM.setalf(theory["alphas"], theory["Qref"] ** 2)
 
     # make x and Q grids
-<<<<<<< HEAD
-    xmin = 0.1
-    q2min = 10
-    q2max = 20
-=======
     xmin = 0.00001
     q2min = 4
     q2max = 40
->>>>>>> feature/bench_runners
     for obs_name in observables["observables"]:
         # if not on.ObservableName.is_valid(obs):
         #    continue

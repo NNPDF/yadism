@@ -97,20 +97,6 @@ class Runner(BenchmarkRunner):
                         break
                 if cnt == 0:
                     raise ValueError("Sort problem: x and/or Q2 do not match.")
-<<<<<<< HEAD
-                # add common values
-                esf = {}
-                esf["x"] = yad["x"]
-                esf["Q2"] = yad["Q2"]
-                esf["yadism"] = f = yad["result"]
-                esf["yadism_error"] = yad["error"]
-                esf[self.external] = r = oth["result"]
-                esf["percent_error"] = (f - r) / r * 100
-                esfs.append(esf)
-            df = pd.DataFrame(esfs)
-            log_tab[sf] = df
-=======
             log_tab[sf] = pd.DataFrame(esfs)
 
->>>>>>> feature/bench_runners
         return log_tab

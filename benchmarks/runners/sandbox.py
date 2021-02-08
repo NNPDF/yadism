@@ -14,11 +14,8 @@ from yadmark.data import observables
 class Sandbox(Runner):
 
     external = "APFEL" # external comparison program
-<<<<<<< HEAD
-=======
     external = "xspace_bench"
     external = "QCDNUM"
->>>>>>> feature/bench_runners
 
     @staticmethod
     def generate_observables():
@@ -26,21 +23,12 @@ class Sandbox(Runner):
         # xgrid = np.array(defaults["interpolation_xgrid"]).copy()
         # defaults["interpolation_xgrid"] = np.geomspace(0.1, 1, 40).tolist()
         kinematics = []
-<<<<<<< HEAD
         kinematics.extend(
             [dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
             #np.linspace(1e-3, 1, 50)
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
         kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
-=======
-        #kinematics.extend(
-            #[dict(x=x, Q2=90.0) for x in defaults["interpolation_xgrid"][3::3]]
-            # np.linspace(1e-3, 1, 50)
-        #)
-        #kinematics.extend([dict(x=x, Q2=10) for x in np.linspace(.001, .75, 10).tolist()])
-        kinematics.extend([dict(x=0.0001, Q2=Q2) for Q2 in np.geomspace(4, 1000, 10).tolist()])
->>>>>>> feature/bench_runners
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
@@ -50,15 +38,9 @@ class Sandbox(Runner):
             "F2charm",
             # "F2bottom",
             # "F2top",
-<<<<<<< HEAD
             "F2total",
             "FLlight",
             "FLcharm",
-=======
-            #"F2total",
-            "FLlight",
-            #"FLcharm",
->>>>>>> feature/bench_runners
             # "FLbottom",
             "FLtotal",
             "F3light",
