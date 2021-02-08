@@ -264,13 +264,13 @@ class CouplingConstants:
                 created object
         """
         theory_config = {
-            "MZ2": theory.get("MZ", 91.1876) ** 2,  # defaults to the PDG2020 value
+            "MZ2": theory.get("MZ", 91.1876) ** 2,  # TODO remove defaults to the PDG2020 value
             "CKM": CKM2Matrix.from_str(
                 theory["CKM"]
-            ),  # default in https://pdg.lbl.gov/2019/reviews/rpp2019-rev-ckm-matrix.pdf Eq. 12.33
+            ),  # TODO remove default in https://pdg.lbl.gov/2019/reviews/rpp2019-rev-ckm-matrix.pdf Eq. 12.33
             "sin2theta_weak": theory.get(
                 "SIN2TW", 0.23121
-            ),  # defaults to the PDG2020 value
+            ),  # TODO remove defaults to the PDG2020 value
         }
         # set MW
         MW = theory.get("MW")

@@ -55,10 +55,6 @@ class Inspector:
         with open(cross_constraints_file, "r") as file:
             self.cross_constraints = yaml.safe_load(file)
 
-        # defaults_file = here / "defaults.yaml"
-        # with open(defaults_file, "r") as file:
-        # self.defaults = yaml.safe_load(file)
-
     def check_domains(self):
         """
         Iterate over single field constraints (i.e. domains' definitions) and
@@ -94,8 +90,6 @@ class Inspector:
     # def apply_default(self, missing_yields_error=True):
     # """Apply default for missing required arguments"""
 
-    # for default in self.defaults["simple-defaults"]:
-    # default_manager = constraints.DefaultManager(default)
     # self.theory = default_manager(self.theory, missing_yields_error)
 
     def perform_all_checks(self):
