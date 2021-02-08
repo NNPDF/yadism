@@ -15,6 +15,7 @@ class PdfCallable:
         pdf : lhapdf_like
             PDF object
     """
+
     def __init__(self, pdf):
         self.pdf = pdf
 
@@ -39,6 +40,7 @@ class PdfCallable:
             a = self.pdf.xfxQ2(ipdf, x, qmu2)
             return a
         return 0.0
+
 
 def compute_qcdnum_data(
     theory, observables, pdf

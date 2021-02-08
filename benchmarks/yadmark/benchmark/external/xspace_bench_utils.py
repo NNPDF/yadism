@@ -140,7 +140,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
                 res = []
                 f3_fact = -1.0
                 if x == 1.0:
-                    res = np.zeros((3,5))
+                    res = np.zeros((3, 5))
 
                 elif proc == "NC" or proc == "EM":
                     f3_fact = 1.0
@@ -210,7 +210,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
                     raise NotImplementedError(
                         f"{obs.kind} is not implemented in xspace_bench"
                     )
-                print(f)
                 out.append(dict(x=x, Q2=q2, result=f))
 
         num_tab[obs_name] = out

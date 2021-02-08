@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 # Compare the results with QCDNUM
-import pytest
+
+# import pytest
 import numpy as np
 
 from banana.data import power_set
@@ -27,12 +28,12 @@ class BenchmarkPlain(QCDNUMBenchmark):
     def benchmark_nlo(self):
         self.run(
             [{"PTO": 1}],
-            observables.build(**(observables.default_config[2])),
+            observables.build(**(observables.default_config[1])),
             ["ToyLH"],
         )
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 class BenchmarkScaleVariations(QCDNUMBenchmark):
     """Vary factorization and renormalization scale"""
 
@@ -95,7 +96,7 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
         )
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 class BenchmarkFNS(QCDNUMBenchmark):
     """Vary Flavor Number Schemes"""
 
@@ -166,9 +167,9 @@ class BenchmarkFNS(QCDNUMBenchmark):
 
 
 if __name__ == "__main__":
-    # plain = BenchmarkPlain()
-    # plain.benchmark_lo()
-    # plain.benchmark_nlo()
+    plain = BenchmarkPlain()
+    plain.benchmark_lo()
+    plain.benchmark_nlo()
 
     # You can benchmark FNS and SV for FXlight with FNS = 1
     sv = BenchmarkScaleVariations()

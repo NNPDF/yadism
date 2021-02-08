@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Compare the results with QCDNUM
-import pytest
+# import pytest
 import numpy as np
 
 from banana.data import power_set
@@ -22,7 +22,9 @@ class BenchmarkPlain(XspaceBenchmark):
     """The most basic checks"""
 
     def benchmark_lo(self):
-        self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLHAPDF"])
+        self.run(
+            [{}], observables.build(**(observables.default_config[0])), ["ToyLHAPDF"]
+        )
 
     def benchmark_nlo(self):
         self.run(
@@ -31,7 +33,8 @@ class BenchmarkPlain(XspaceBenchmark):
             ["ToyLHAPDF"],
         )
 
-@pytest.mark.skip
+
+# @pytest.mark.skip
 class BenchmarkFNS(XspaceBenchmark):
     """Vary Flavor Number Schemes"""
 
@@ -136,9 +139,9 @@ if __name__ == "__main__":
 
     plain = BenchmarkPlain()
     plain.benchmark_lo()
-    # plain.benchmark_nlo()
+    plain.benchmark_nlo()
 
     fns = BenchmarkFNS()
     fns.benchmark_ZM()
-    #fns.benchmark_FFNS()
-    #fns.benchmark_FONLL()
+    fns.benchmark_FFNS()
+    fns.benchmark_FONLL()
