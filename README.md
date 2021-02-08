@@ -14,7 +14,7 @@
 /github/workflow/status/N3PDF/dis/yadism
 
 use the ones provided by shields.io:
-- example: https://img.shields.io/github/workflow/status/N3PDF/dis/yadism
+- example: https://img.shields.io/github/workflow/status/N3PDF/yadism
 
 note: in order to make shields.io the repo must be public (or accessible to it in some way)
 
@@ -51,7 +51,7 @@ python setup.py install
 The documentation style of this code follows closely the [numpy documentation
 guide](https://numpydoc.readthedocs.io/en/latest/format.html).
 
-Docs available at: https://n3pdf.github.io/dis/
+Docs available at: https://n3pdf.github.io/yadism/
 
 ## Development
 
@@ -67,3 +67,4 @@ an email to the authors:
 
 - [Alessandro Candido](mailto:alessandro.candido@mi.infn.it)
 - [Felix Hekhorn](mailto:felix.hekhorn@mi.infn.it)
+- [Giacomo Magni](mailto:gmagni@nikhef.nl)

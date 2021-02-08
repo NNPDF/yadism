@@ -46,7 +46,7 @@ obs_dict = {
     "interpolation_xgrid": [0.001, 0.01, 0.1, 0.5, 1.0],
     "prDIS": "EM",
     "PolarizationDIS": 0.0,
-    "projectile": "electron",
+    "ProjectileDIS": "electron",
     "interpolation_is_log": 1.0,
     "interpolation_polynomial_degree": 4,
 }

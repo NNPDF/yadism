@@ -43,10 +43,11 @@ def compute_qcdnum_data(
     xmin = 0.1
     q2min = 10
     q2max = 20
-    for obs in observables:
-        if not on.ObservableName.is_valid(obs):
-            continue
-        for kin in observables[obs]:
+    for obs_name in observables["observables"]:
+        # if not on.ObservableName.is_valid(obs):
+        #    continue
+        obs = on.ObservableName(obs_name)
+        for kin in observables["observables"].get(obs_name, []):
             xmin = min(xmin, 0.5 * kin["x"])
             q2min = min(q2min, kin["Q2"])
             q2max = max(q2max, kin["Q2"])
@@ -86,7 +87,7 @@ def compute_qcdnum_data(
     iset = 1
 
     # Try to read the ZM-weight file and create one if that fails
-    if on.ObservableName.has_lights(observables.keys()):
+    if on.ObservableName.has_lights(observables["observables"].keys()):
         zmlunw = QCDNUM.nxtlun(10)
         _nwords, ierr = QCDNUM.zmreadw(zmlunw, zmname)
         if ierr != 0:
@@ -97,7 +98,7 @@ def compute_qcdnum_data(
         QCDNUM.zswitch(iset)
 
     # Try to read the HQ-weight file and create one if that fails
-    if on.ObservableName.has_heavies(observables.keys()):
+    if on.ObservableName.has_heavies(observables["observables"].keys()):
         hqlunw = QCDNUM.nxtlun(10)
         _nwords, ierr = QCDNUM.hqreadw(hqlunw, hqname)
         if ierr != 0:
@@ -129,29 +130,28 @@ def compute_qcdnum_data(
     )
 
     num_tab = {}
-    for obs in observables:
-        if not on.ObservableName.is_valid(obs):
-            continue
-        # select key by kind
-        obs_name = on.ObservableName(obs)
+    for obs_name in observables["observables"]:
+        # if not on.ObservableName.is_valid(obs):
+        #    continue
+        obs = on.ObservableName(obs_name)
         kind_key = None
-        if obs_name.kind == "F2":
+        if obs.kind == "F2":
             kind_key = 2
-        elif obs_name.kind == "FL":
+        elif obs.kind == "FL":
             kind_key = 1
-        # elif obs_name.name == "F3light":
+        # elif obs.name == "F3light":
         #     kind_key = 3
         else:
-            raise NotImplementedError(f"kind {obs_name.name} is not implemented!")
+            raise NotImplementedError(f"kind {obs.name} is not implemented!")
 
         # collect kins
         xs = []
         q2s = []
-        for kin in observables[obs]:
+        for kin in observables["observables"].get(obs_name, []):
             xs.append(kin["x"])
             q2s.append(kin["Q2"])
         # select fnc by flavor
-        if obs_name.flavor == "light":
+        if obs.flavor == "light":
             QCDNUM.setord(1 + theory["PTO"])  # 1 = LO, ...
             weights = (
                 np.array(
@@ -177,26 +177,26 @@ def compute_qcdnum_data(
             # for x, Q2 in zip(xs,q2s):
             #    fs.append(QCDNUM.zmstfun(kind_key, weights, [x], [Q2], 1 ))
             fs = QCDNUM.zmstfun(kind_key, weights, xs, q2s, 1)
-        elif obs_name.is_raw_heavy:
+        elif obs.is_raw_heavy:
             # for HQ pto is not absolute but rather relative,
             # i.e., 1 loop DIS here meas "LO"[QCDNUM]
             if theory["PTO"] == 0:
                 fs = [0.0] * len(xs)
             else:
                 QCDNUM.setord(theory["PTO"])  # 1 = LO, ...
-                if obs_name.flavor == "charm":
+                if obs.flavor == "charm":
                     fs = QCDNUM.hqstfun(kind_key, 1, weights, xs, q2s, 1)
-                elif obs_name.flavor == "bottom":
+                elif obs.flavor == "bottom":
                     fs = QCDNUM.hqstfun(kind_key, -2, weights, xs, q2s, 1)
-                elif obs_name.flavor == "top":
+                elif obs.flavor == "top":
                     fs = QCDNUM.hqstfun(kind_key, -3, weights, xs, q2s, 1)
         else:
-            raise NotImplementedError(f"flavor {obs_name.flavor} is not implemented!")
+            raise NotImplementedError(f"flavor {obs.flavor} is not implemented!")
         # reshuffle output
         f_out = []
         for x, q2, f in zip(xs, q2s, fs):
-            f_out.append(dict(x=x, Q2=q2, value=f))
-        num_tab[obs] = f_out
+            f_out.append(dict(x=x, Q2=q2, result=f))
+        num_tab[obs_name] = f_out
 
     # remove QCDNUM cache files
     for f in [wname, zmname, hqname]:
