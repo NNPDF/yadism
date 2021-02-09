@@ -115,16 +115,15 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         obj["pdf"] = lg["pdf"]
         obj["external"] = lg["external"]
 
-    def list_all_similar_logs(self, ref_log_or_hash):
+    def list_all_similar_logs(self, ref_hash):
         """
         Search logs which are similar to the one given, i.e., same theory and,
         same observable, and same pdfset.
 
         Parameters
         ----------
-            ref_log_or_hash : dict or hash
-                if it is a int it's the doc_hash of log to be loaded else it has
-                to be the log itself
+            ref_hash : hash
+                partial hash of the reference log
 
         Returns
         -------
@@ -138,20 +137,17 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         of them.
         """
         # obtain reference log
-        if isinstance(ref_log_or_hash, str):
-            ref_log = self.get(bnav.l, ref_log_or_hash)
-        else:
-            ref_log = ref_log_or_hash
+        ref_log = self.get(bnav.l, ref_hash)
 
         related_logs = []
         all_logs = self.get(bnav.l)
 
         for lg in all_logs:
-            if "t_hash" in ref_log and lg["t_hash"] != ref_log["t_hash"]:
+            if lg["t_hash"] != ref_log["t_hash"]:
                 continue
-            if "o_hash" in ref_log and lg["o_hash"] != ref_log["o_hash"]:
+            if lg["o_hash"] != ref_log["o_hash"]:
                 continue
-            if "pdf" in ref_log and lg["pdf"] != ref_log["pdf"]:
+            if lg["pdf"] != ref_log["pdf"]:
                 continue
             related_logs.append(lg)
 
