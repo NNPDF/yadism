@@ -63,7 +63,7 @@ def compute_qcdnum_data(
             QCDNUM numbers
     """
     if observables["prDIS"] == "CC":
-        raise ValueError("Charged current not supported in QCDNUM")
+        raise NotImplementedError("Charged current not supported in QCDNUM")
 
     import QCDNUM  # pylint:disable=import-outside-toplevel
 
