@@ -38,7 +38,7 @@ bnav.register_globals(globals(), app)
 
 # add my functions
 dfl = app.log_as_dfd
-simlogs = app.list_all_sim_logs
+simlogs = app.list_all_similar_logs
 diff = app.subtract_tables
 check_log = app.check_log
 crashed_log = app.crashed_log

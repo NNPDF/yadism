@@ -113,34 +113,49 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         else:
             obj["structure_functions"] = crash
         obj["pdf"] = lg["pdf"]
+        obj["external"] = lg["external"]
 
-    def list_all_sim_logs(self, ref_log_or_hash):
+    def list_all_similar_logs(self, ref_log_or_hash):
         """
-        Search logs which are similar to the one given, i.e., same theory and/or same observable.
+        Search logs which are similar to the one given, i.e., same theory and,
+        same observable, and same pdfset.
 
         Parameters
         ----------
             ref_log_or_hash : dict or hash
-                if it is a int it's the doc_hash of log to be loaded else it has to be the log itself
+                if it is a int it's the doc_hash of log to be loaded else it has
+                to be the log itself
 
         Returns
         -------
             df : pandas.DataFrame
                 created frame
+
+        Note
+        ----
+        The external it's not used to discriminate logs: even different
+        externals should return the same numbers, so it's relevant to keep all
+        of them.
         """
-        if isinstance(ref_log_or_hash, int):
+        # obtain reference log
+        if isinstance(ref_log_or_hash, str):
             ref_log = self.get(bnav.l, ref_log_or_hash)
         else:
             ref_log = ref_log_or_hash
-        rel_logs = []
+
+        related_logs = []
         all_logs = self.get(bnav.l)
+
         for lg in all_logs:
             if "t_hash" in ref_log and lg["t_hash"] != ref_log["t_hash"]:
                 continue
             if "o_hash" in ref_log and lg["o_hash"] != ref_log["o_hash"]:
                 continue
-            rel_logs.append(lg)
-        return self.list_all(bnav.l, rel_logs)
+            if "pdf" in ref_log and lg["pdf"] != ref_log["pdf"]:
+                continue
+            related_logs.append(lg)
+
+        return self.list_all(bnav.l, related_logs)
 
     def log_as_dfd(self, doc_hash):
         """
@@ -259,7 +274,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
         return diffout
 
-    def check_log(self, doc_hash):
+    def check_log(self, doc_hash, perc_thr=1, abs_thr=1e-6):
         """
         Check if the log passed the default assertions
 
@@ -272,8 +287,11 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         dfd = self.log_as_dfd(doc_hash)
         for n, df in dfd.items():
             for l in df.iloc:
-                if abs(l["percent_error"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
-                    print(n, l, sep="\n")
+                if (
+                    abs(l["percent_error"]) > perc_thr
+                    and abs(l["APFEL"] - l["yadism"]) > abs_thr
+                ):
+                    print(n, l, sep="\n", end="\n\n")
 
     def crashed_log(self, doc_hash):
         """
