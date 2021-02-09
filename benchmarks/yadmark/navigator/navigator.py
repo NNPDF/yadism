@@ -69,6 +69,28 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             esfs += len(esfs_dict)
         obj["structure_functions"] = f"{sfs} SF @ {esfs} points"
 
+    def fill_cache(self, cac, obj):
+        """
+        Collect important information of the cache record.
+
+        Parameters
+        ----------
+            cac : dict
+                database record
+            obj : dict
+                to be updated pandas record
+        """
+        for f in ["external", "pdf"]:
+            obj[f] = cac[f]
+
+        sfs = 0
+        esfs = 0
+        for esfs_dict in cac["result"].values():
+            sfs += 1
+            esfs += len(esfs_dict)
+
+        obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
+
     def fill_logs(self, lg, obj):
         """
         Collect important information of the log record.
@@ -91,66 +113,69 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         else:
             obj["structure_functions"] = crash
         obj["pdf"] = lg["pdf"]
+        obj["external"] = lg["external"]
 
-    def list_all_sim_logs(self, ref_log_or_id):
+    def list_all_similar_logs(self, ref_hash):
         """
-        Search logs which are similar to the one given, i.e., same theory and/or same observable.
+        Search logs which are similar to the one given, i.e., same theory and,
+        same observable, and same pdfset.
 
         Parameters
         ----------
-            ref_log_or_id : dict or int
-                if it is a int it's the doc_id of log to be loaded else it has to be the log itself
+            ref_hash : hash
+                partial hash of the reference log
 
         Returns
         -------
             df : pandas.DataFrame
                 created frame
-        """
-        if isinstance(ref_log_or_id, int):
-            ref_log = self.get(bnav.l, ref_log_or_id)
-        else:
-            ref_log = ref_log_or_id
-        rel_logs = []
-        all_logs = self.get(bnav.l)
-        for lg in all_logs:
-            if (
-                "_theory_doc_id" in ref_log
-                and lg["_theory_doc_id"] != ref_log["_theory_doc_id"]
-            ):
-                continue
-            if (
-                "_observables_doc_id" in ref_log
-                and lg["_observables_doc_id"] != ref_log["_observables_doc_id"]
-            ):
-                continue
-            rel_logs.append(lg)
-        return self.list_all(bnav.l, rel_logs)
 
-    def log_as_DFdict(self, doc_id):
+        Note
+        ----
+        The external it's not used to discriminate logs: even different
+        externals should return the same numbers, so it's relevant to keep all
+        of them.
+        """
+        # obtain reference log
+        ref_log = self.get(bnav.l, ref_hash)
+
+        related_logs = []
+        all_logs = self.get(bnav.l)
+
+        for lg in all_logs:
+            if lg["t_hash"] != ref_log["t_hash"]:
+                continue
+            if lg["o_hash"] != ref_log["o_hash"]:
+                continue
+            if lg["pdf"] != ref_log["pdf"]:
+                continue
+            related_logs.append(lg)
+
+        return self.list_all(bnav.l, related_logs)
+
+    def log_as_dfd(self, doc_hash):
         """
         Load all structure functions in log as DataFrame
 
         Parameters
         ----------
-            doc_id : int
-                document identifier
+            doc_hash : hash
+                document hash
 
         Returns
         -------
             log : DFdict
                 DataFrames
         """
-        log = self.get(bnav.l, doc_id)
+        log = self.get(bnav.l, doc_hash)
         dfd = dfdict.DFdict()
-        for sf in log:
-            if not on.ObservableName.is_valid(sf):
-                continue
+        for sf in log["log"]:
             dfd.print(
-                f"{sf} with theory={log['_theory_doc_id']}, "
-                + f"obs={log['_observables_doc_id']} "
-                + f"using {log['_pdf']}"
+                f"{sf} with theory={log['t_hash']}, "
+                + f"obs={log['o_hash']} "
+                + f"using {log['pdf']}"
             )
-            dfd[sf] = pd.DataFrame(log[sf])
+            dfd[sf] = pd.DataFrame(log["log"][sf])
         return dfd
 
     def subtract_tables(self, dfd1, dfd2):
@@ -161,10 +186,10 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
         Parameters
         ----------
-            dfd1 : dict or int
-                if int the doc_id of the log to be loaded
-            dfd2 : dict or int
-                if int the doc_id of the log to be loaded
+            dfd1 : dict or hash
+                if hash the doc_hash of the log to be loaded
+            dfd2 : dict or hash
+                if hash the doc_hash of the log to be loaded
 
         Returns
         -------
@@ -178,26 +203,24 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         logs = []
         ids = []
         for dfd in [dfd1, dfd2]:
-            if isinstance(dfd, int):
-                logs.append(self.get(bnav.l, dfd))
-                ids.append(dfd)
-            elif isinstance(dfd, dfdict.DFdict):
+            if isinstance(dfd, dfdict.DFdict):
                 logs.append(dfd.to_document())
                 ids.append("not-an-id")
             else:
-                raise ValueError("subtract_tables: DFdict not recognized!")
-        log1, log2 = logs[0], logs[1]
-        id1, id2 = ids[0], ids[1]
+                logs.append(self.log_as_dfd(dfd))
+                ids.append(dfd)
+        log1, log2 = logs
+        id1, id2 = ids
 
         # print head
-        msg = f"Subtracting id:{id1} - id:{id2}, in table 'logs'"
+        msg = f"Subtracting id: '{id1}' - id: '{id2}', in table 'logs'"
         diffout.print(msg, "=" * len(msg), sep="\n")
         diffout.print()
 
         if log1 is None:
-            raise ValueError(f"Log id:{id1} not found")
+            raise ValueError(f"Log id: '{id1}' not found")
         if log2 is None:
-            raise ValueError(f"Log id:{id2} not found")
+            raise ValueError(f"Log id: '{id2}' not found")
 
         # iterate observables
         for obs in log1.keys():
@@ -247,37 +270,40 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
         return diffout
 
-    def check_log(self, doc_id):
+    def check_log(self, doc_hash, perc_thr=1, abs_thr=1e-6):
         """
         Check if the log passed the default assertions
 
         Paramters
         ---------
-            doc_id : int
-                log identifier
+            doc_hash : hash
+                log hash
         """
         # TODO determine external, improve output
-        dfd = self.log_as_DFdict(doc_id)
+        dfd = self.log_as_dfd(doc_hash)
         for n, df in dfd.items():
             for l in df.iloc:
-                if abs(l["percent_error"]) > 1 and abs(l["APFEL"] - l["yadism"]) > 1e-6:
-                    print(n, l, sep="\n")
+                if (
+                    abs(l["percent_error"]) > perc_thr
+                    and abs(l["APFEL"] - l["yadism"]) > abs_thr
+                ):
+                    print(n, l, sep="\n", end="\n\n")
 
-    def crashed_log(self, doc_id):
+    def crashed_log(self, doc_hash):
         """
         Check if the log passed the default assertions
 
         Paramters
         ---------
-            doc_id : int
-                log identifier
+            doc_hash : hash
+                log hash
 
         Returns
         -------
             cdfd : dict
                 log without kinematics
         """
-        dfd = self.get(bnav.l, doc_id)
+        dfd = self.log_as_dfd(doc_hash)
         if "_crash" not in dfd:
             raise ValueError("log didn't crash!")
         cdfd = {}
@@ -294,8 +320,8 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
     #     exts = []
     #     suffixes = (f" ({id1})", f" ({id2})")
 
-    #     for i, doc_id in enumerate([id1, id2]):
-    #         tabs += [self.get_log_DFdict(doc_id)[0]]
+    #     for i, doc_hash in enumerate([id1, id2]):
+    #         tabs += [self.get_log_DFdict(doc_hash)[0]]
     #         tabs1 += [tabs[i].drop(["yadism", "yadism_error", "percent_error"], axis=1)]
     #         exts += [
     #             tabs1[i].columns.drop(["x", "Q2"])[0]

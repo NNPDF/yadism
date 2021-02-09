@@ -34,17 +34,17 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
         # kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         observable_names = [
-            "F2light",
-            "F2charm",
+            # "F2light",
+            # "F2charm",
             # "F2bottom",
             # "F2top",
             "F2total",
-            "FLlight",
-            "FLcharm",
+            # "FLlight",
+            # "FLcharm",
             # "FLbottom",
             "FLtotal",
-            "F3light",
-            "F3charm",
+            # "F3light",
+            # "F3charm",
             # "F3bottom",
             "F3total",
         ]
@@ -58,7 +58,8 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def _run(self):
-        self.run([{"PTO": 1,}], observables.build(**(self.generate_observables())), ["ToyLH"])
+        self.run([{"PTO": 0,}],
+                observables.build(**(self.generate_observables())), ["ToyLHAPDF"])
 
 
 if __name__ == "__main__":
