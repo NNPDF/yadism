@@ -15,6 +15,7 @@ class PdfCallable:
         pdf : lhapdf_like
             PDF object
     """
+
     def __init__(self, pdf):
         self.pdf = pdf
 
@@ -40,6 +41,7 @@ class PdfCallable:
             return a
         return 0.0
 
+
 def compute_qcdnum_data(
     theory, observables, pdf
 ):  #  pylint: disable=too-many-statements,too-many-branches,too-many-locals
@@ -60,6 +62,9 @@ def compute_qcdnum_data(
         num_tab : dict
             QCDNUM numbers
     """
+    if observables["prDIS"] == "CC":
+        raise ValueError("Charged current not supported in QCDNUM")
+
     import QCDNUM  # pylint:disable=import-outside-toplevel
 
     # remove QCDNUM cache files
