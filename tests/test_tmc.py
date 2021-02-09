@@ -127,19 +127,19 @@ class TestTMC:
 
     def test_convolute_F2_xi_of_domain(self):
         pass
-        # xg = np.array([0.2, 0.6, 1.0])
+        xg = np.array([0.2, 0.6, 1.0])
 
-        # class MockSF:
-        #     obs_name = observable_name.ObservableName("F2light")
-        #     M2target = 1.0
-        #     interpolator = InterpolatorDispatcher(xg, 1, False, False)
+        class MockSF:
+            obs_name = observable_name.ObservableName("F2light")
+            M2target = 1.0
+            interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
-        #     def get_esf(self, _name, kinematics):
-        #         pass
+            def get_esf(self, _name, kinematics):
+                 pass
 
-        # # build objects
-        # objSF = MockSF()
-        # obj = MockTMC(objSF, {"x": 0.2, "Q2": 1})
-        # # xi < x so this has to fail
-        # with pytest.raises(ValueError):
-        #     obj._h2()
+        #  build objects
+        objSF = MockSF()
+        obj = MockTMC(objSF, {"x": 0.2, "Q2": 1})
+        #  xi < x so this has to fail
+        with pytest.raises(ValueError):
+            obj._h2()
