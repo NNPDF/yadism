@@ -34,21 +34,21 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
         # kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         observable_names = [
-            # "F2light",
+            "F2light",
             # "F2charm",
             # "F2bottom",
             # "F2top",
-            "F2total",
-            # "FLlight",
+            # "F2total",
+            "FLlight",
             # "FLcharm",
             # "FLbottom",
-            "FLtotal",
-            # "F3light",
+            # "FLtotal",
+            "F3light",
             # "F3charm",
             # "F3bottom",
-            "F3total",
+            # "F3total",
         ]
-        update = {"prDIS": ["CC"]}
+        update = {"prDIS": ["NC"]}
         # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
         # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
         # card["interpolation_is_log"] = False
