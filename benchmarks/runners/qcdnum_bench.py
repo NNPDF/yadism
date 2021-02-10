@@ -27,10 +27,12 @@ class BenchmarkPlain(QCDNUMBenchmark):
 
     def benchmark_nlo(self):
 
-        fnames =  {"observable_names": ["F2light", "FLlight", "F3light"],}
-        obs =  observables.default_config[1].copy()
+        fnames = {
+            "observable_names": ["F2light", "FLlight", "F3light"],
+        }
+        obs = observables.default_config[1].copy()
         obs.update(fnames)
-        
+
         self.run(
             [{"PTO": 1}],
             observables.build(**(obs)),
@@ -91,13 +93,17 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
     def benchmark_lo(self, FNS=0):
         self.run(
-            self.theory_updates(0, FNS), self.observable_updates(), ["ToyLH"],
+            self.theory_updates(0, FNS),
+            self.observable_updates(),
+            ["ToyLH"],
         )
 
     def benchmark_nlo(self, FNS=0):
 
         self.run(
-            self.theory_updates(1, FNS), self.observable_updates(), ["ToyLH"],
+            self.theory_updates(1, FNS),
+            self.observable_updates(),
+            ["ToyLH"],
         )
 
 
@@ -154,11 +160,31 @@ class BenchmarkFNS(QCDNUMBenchmark):
             "F3light",
         ]
         heavy_fnames = [
-            {"NfFF": 3, "fnames": ["F2charm", "FLcharm",], "Q2range": [4, 16]},
-            {"NfFF": 4, "fnames": ["F2bottom", "FLbottom",], "Q2range": [22, 40]},
+            {
+                "NfFF": 3,
+                "fnames": [
+                    "F2charm",
+                    "FLcharm",
+                ],
+                "Q2range": [4, 16],
+            },
+            {
+                "NfFF": 4,
+                "fnames": [
+                    "F2bottom",
+                    "FLbottom",
+                ],
+                "Q2range": [22, 40],
+            },
             # FLtop is always really small < 10^-6, there are some numerical differences
             # {"NfFF": 5, "fnames": ["F2top", "FLtop",], "Q2range": [90, 1000]},
-            {"NfFF": 5, "fnames": ["F2top",], "Q2range": [150, 1000]},
+            {
+                "NfFF": 5,
+                "fnames": [
+                    "F2top",
+                ],
+                "Q2range": [150, 1000],
+            },
         ]
 
         # loop over NfFF

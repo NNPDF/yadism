@@ -19,18 +19,25 @@ default_card = dict(sorted(default_card.items()))
 
 default_kinematics = []
 default_kinematics.extend(
-    [dict(x=x, Q2=90.0) for x in default_card["interpolation_xgrid"][3::3]]
+    [dict(x=x, Q2=10.0) for x in default_card["interpolation_xgrid"][3::3]]
 )
 default_kinematics.extend(
-    [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()]
+    [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 22, 10).tolist()]
 )
 
 default_config = {
     0: {"observable_names": ["F2light"], "kinematics": default_kinematics},
     1: {
-        "observable_names": ["F2light", "F2total", "FLtotal", "F3total"],
+        "observable_names": ["F2light", "F2charm", "FLlight", "FLcharm", "F3light", "F3charm"],
         "kinematics": default_kinematics,
     },
+}
+
+fns_config = {
+    "ZM-VFNS": {
+        "observable_names": ["F2light", "FLlight", "F3light"],
+        "kinematics": default_kinematics,
+    }
 }
 
 

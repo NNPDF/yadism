@@ -21,7 +21,9 @@ class ApfelBenchmark(Runner):
 
 class BenchmarkPlain(ApfelBenchmark):
     def benchmark_lo(self):
-        self.run([{}], observables.build(**(observables.default_config[0])), ["CT14llo_NF3"])
+        self.run(
+            [{}], observables.build(**(observables.default_config[0])), ["CT14llo_NF3"]
+        )
 
     def benchmark_nlo(self):
         self.run(
@@ -29,6 +31,67 @@ class BenchmarkPlain(ApfelBenchmark):
             observables.build(**(observables.default_config[1])),
             ["ToyLH"],
         )
+
+
+@pytest.mark.skip  # commit_check
+class BenchmarkProjectile(ApfelBenchmark):
+    """The most basic checks"""
+
+    update = {
+        "prDIS": ["NC", "CC"],
+        "ProjectileDIS": ["electron", "positron", "neutrino", "antineutrino"],
+        "PolarizationDIS": [0.0, -0.6, 1.0],
+    }  # amounts to 2*4*3 = 24 cards
+
+    def benchmark_lo(self):
+        obs_update = observables.build(
+            **(observables.default_config[0]), update=self.update
+        )
+        self.run([{"PTO": 0}], obs_update, ["ToyLH"])
+
+    def benchmark_nlo(self):
+        obs_update = observables.build(
+            **(observables.default_config[1]), update=self.update
+        )
+        self.run([{"PTO": 1}], obs_update, ["ToyLH"])
+
+
+# def tmc_assert_external(theory, _obs, sf, yad):
+#     # turning point (maybe again a cancelation of channels?)
+#     if sf in ["F2light", "F2total"] and yad["x"] > 0.9:
+#         return dict(abs=1e-4)
+#     # same as in plain
+#     if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
+#         # APFEL has a discreization in Q2/m2
+#         return dict(abs=1e-5)
+#     # FL TMC is broken in APFEL
+#     # https://github.com/scarrazza/apfel/issues/23
+#     if sf[:2] == "FL" and yad["x"] > 0.3:
+#         return dict(abs=1e-2)
+#     return None
+
+
+@pytest.mark.skip  # commit_check
+class BenchmarkTMC(ApfelBenchmark):
+    """Add Target Mass Corrections"""
+
+    def benchmark_lo(self):
+        cfg = observables.default_config[0].copy()
+        # turning point (maybe again a cancelation of channels?)
+        # or maybe the interpolation is just breaking down
+        cfg["kinematics"] = list(filter(lambda k: k["x"] < 0.9, cfg["kinematics"]))
+        obs_updates = observables.build(**cfg,update={"prDIS": "CC"})
+        self.run([{"PTO": 0, "TMC": 1}], obs_updates, ["ToyLH"])
+
+    def benchmark_nlo(self):
+        cfg = observables.default_config[1].copy()
+        cfg["kinematics"] = list(filter(lambda k: k["x"] < 0.9, cfg["kinematics"]))
+        obs_updates = observables.build(**cfg,update={"prDIS": "CC"})
+        # FL TMC is broken in APFEL
+        # https://github.com/scarrazza/apfel/issues/23
+        small_kins = list(filter(lambda k: k["x"] < 0.2 and k["Q2"] > 4.5, cfg["kinematics"]))
+        obs_updates[0]["observables"].update({"FLlight": small_kins,"FLcharm": small_kins})
+        self.run([{"PTO": 1, "TMC": 1}], obs_updates, ["ToyLH"])
 
 
 @pytest.mark.skip
@@ -70,46 +133,11 @@ if __name__ == "__main__":
     # p.unlink(missing_ok=True)
 
     plain = BenchmarkPlain()
-    plain.benchmark_lo()
+    # plain.benchmark_lo()
     # plain.benchmark_nlo()
 
-    # sv = BenchmarkScaleVariations()
-    # sv.benchmark_lo()
-
-# class ApfelBenchmark:
-#     """Wrapper to apply some default settings"""
-
-#     db = None
-
-#     def _db(self, assert_external=None):
-#         """init DB connection"""
-#         # assert_external = False
-#         self.db = DBInterface("APFEL", assert_external=assert_external)
-#         return self.db
-
-#     def run_external(
-#         self, PTO, pdfs, theory_update=None, obs_update=None, assert_external=None
-#     ):
-#         """Query for PTO also in obs by default"""
-#         self._db(assert_external)
-#         # set some defaults
-#         obs_matrix = {
-#             "PTO": self.db.obs_query.PTO == PTO,
-#             "prDIS": self.db.obs_query.prDIS == "EM",
-#             "projectile": self.db.obs_query.projectile == "electron",
-#             "PolarizationDIS": self.db.obs_query.PolarizationDIS == 0,
-#         }
-#         # allow changes
-#         if obs_update is not None:
-#             obs_matrix.update(obs_update)
-#         # collect Query
-#         obs_query = self.db.obs_query.noop()
-#         for q in obs_matrix.values():
-#             if q is None:
-#                 continue
-#             obs_query &= q
-#         return self.db.run_external(PTO, pdfs, theory_update, obs_query)
-
+    proj = BenchmarkTMC()
+    proj.benchmark_nlo()
 
 # def plain_assert_external(theory, obs, sf, yad):
 #     # APFEL has a discretization in Q2/m2
@@ -127,51 +155,6 @@ if __name__ == "__main__":
 #             # F3light is > 0, but F3charm < 0
 #             return dict(rel=0.03)
 #     return None
-
-
-# @pytest.mark.quick_check
-# @pytest.mark.commit_check
-# class BenchmarkPlain(ApfelBenchmark):
-#     """The most basic checks"""
-
-#     def benchmark_LO(self):
-#         return self.run_external(0, ["ToyLH"], obs_update={"prDIS": None})
-
-#     def benchmark_NLO(self):
-#         return self.run_external(
-#             1,
-#             ["ToyLH"],
-#             obs_update={"prDIS": None},
-#             assert_external=plain_assert_external,
-#         )
-
-
-# @pytest.mark.skip # commit_check
-# class BenchmarkProjectile(ApfelBenchmark):
-#     """The most basic checks"""
-
-#     def benchmark_LO(self):
-#         return self.run_external(
-#             0,
-#             ["ToyLH"],
-#             obs_update={
-#                 "prDIS": self._db().obs_query.prDIS.one_of(["NC", "CC"]),
-#                 "projectile": None,
-#                 "PolarizationDIS": None,
-#             },
-#         )
-
-#     def benchmark_NLO(self):
-#         return self.run_external(
-#             1,
-#             ["ToyLH"],
-#             obs_update={
-#                 "prDIS": self._db().obs_query.prDIS.one_of(["NC", "CC"]),
-#                 "projectile": None,
-#                 "PolarizationDIS": None,
-#             },
-#             assert_external=plain_assert_external,
-#         )
 
 
 # def sv_assert_external(theory, obs, sf, yad):
@@ -221,42 +204,6 @@ if __name__ == "__main__":
 #             },
 #             {"prDIS": None},
 #             assert_external=sv_assert_external,
-#         )
-
-
-# def tmc_assert_external(theory, _obs, sf, yad):
-#     # turning point (maybe again a cancelation of channels?)
-#     if sf in ["F2light", "F2total"] and yad["x"] > 0.9:
-#         return dict(abs=1e-4)
-#     # same as in plain
-#     if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
-#         # APFEL has a discreization in Q2/m2
-#         return dict(abs=1e-5)
-#     # FL TMC is broken in APFEL
-#     # https://github.com/scarrazza/apfel/issues/23
-#     if sf[:2] == "FL" and yad["x"] > 0.3:
-#         return dict(abs=1e-2)
-#     return None
-
-
-# @pytest.mark.skip  # commit_check
-# class BenchmarkTMC(ApfelBenchmark):
-#     """Add Target Mass Corrections"""
-
-#     def benchmark_LO(self):
-#         return self.run_external(
-#             0,
-#             ["ToyLH"],
-#             {"TMC": self._db().theory_query.TMC == 1},
-#             assert_external=tmc_assert_external,
-#         )
-
-#     def benchmark_NLO(self):
-#         return self.run_external(
-#             1,
-#             ["ToyLH"],
-#             {"TMC": self._db().theory_query.TMC == 1},
-#             assert_external=tmc_assert_external,
 #         )
 
 
@@ -318,19 +265,3 @@ if __name__ == "__main__":
 #             {"FNS": self._db().theory_query.FNS == "FONLL-A", "DAMP": None},
 #             assert_external=fonll_assert,
 #         )
-
-
-# if __name__ == "__main__":
-#     # plain = BenchmarkPlain()
-#     # plain.benchmark_LO()
-#     # plain.benchmark_NLO()
-
-#     # proj = BenchmarkProjectile()
-#     # proj.benchmark_LO()
-#     # proj.benchmark_NLO()
-
-#     # sv = BenchmarkScaleVariations()
-#     # sv.benchmark_NLO()
-
-#     fns = BenchmarkFNS()
-#     fns.benchmark_NLO_FONLL()
