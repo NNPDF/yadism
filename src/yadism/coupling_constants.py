@@ -82,8 +82,8 @@ class CouplingConstants:
         ):
             pol *= -1
         # load Z coupling
-        projectile_v = 0.
-        projectile_a = 0.
+        projectile_v = 0.0
+        projectile_a = 0.0
         if mode in ["phZ", "ZZ"]:
             projectile_v = self.vectorial_coupling(abs(projectile_pid))
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]

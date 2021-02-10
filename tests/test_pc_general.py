@@ -98,10 +98,10 @@ class TestIntrisic:
 
         # non trivial LO + NLO*
         for pc in [
-            cc.f2_intrinsic.F2IntrinsicSp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0 ),
-            cc.fl_intrinsic.FLIntrinsicSp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0 ),
-            nc.fl_intrinsic.FLIntrinsicSm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0 ),
-            cc.f3_intrinsic.F3IntrinsicRp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0 ),
+            cc.f2_intrinsic.F2IntrinsicSp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            cc.fl_intrinsic.FLIntrinsicSp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            nc.fl_intrinsic.FLIntrinsicSm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            cc.f3_intrinsic.F3IntrinsicRp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
         ]:
             assert pc.LO()[0] == 0
             assert pc.LO()[1] == 0
@@ -111,8 +111,8 @@ class TestIntrisic:
 
         # LO=0
         for pc in [
-            nc.f2_intrinsic.F2IntrinsicSm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0 ),
-            nc.f3_intrinsic.F3IntrinsicRm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0 ),
+            nc.f2_intrinsic.F2IntrinsicSm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            nc.f3_intrinsic.F3IntrinsicRm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
         ]:
             assert pc.LO() is None
             for i in range(3):

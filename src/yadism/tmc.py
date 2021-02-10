@@ -137,13 +137,6 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         out : ESFResult
             an object that stores the details and result of the calculation
 
-        Note
-        ----
-        Another interfaces is provided, :py:meth:`get_output`, that makes
-        use of this one, so results of the two are consistent, but simply
-        output in a different format (see :py:class:`ESFResult`, and its
-        :py:meth:`ESFResult.get_raw` method).
-
         """
         if self.sf.TMC == 0:  # no TMC
             raise RuntimeError(
@@ -163,25 +156,6 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         out.Q2 = self.Q2
 
         return out
-
-    def get_output(self):
-        """
-        This is the interfaces provided to get the evaluation of the TMC
-        corrected structure function.
-
-        The kinematics is set to be the requested one, as it should (and not
-        the shifted one used in evaluation of expression terms).
-
-        This method is the sibling of :py:meth:`get_result`, providing a
-        :py:class:`dict` as output, instead of an object.
-
-        Returns
-        -------
-        out : dict
-            an dictionary that stores the details and result of the calculation
-
-        """
-        return self.get_result().get_raw()
 
     def _convolute_FX(self, kind, ker):
         r"""
