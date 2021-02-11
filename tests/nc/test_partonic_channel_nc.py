@@ -1,6 +1,4 @@
-import pytest
 import numpy as np
-import scipy.integrate
 
 from yadism.nc.partonic_channel import PartonicChannelHeavy
 
