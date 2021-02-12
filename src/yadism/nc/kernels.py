@@ -148,16 +148,17 @@ def generate_heavy(esf, nf):
     return (gVV, gAA)
 
 
-def weights_heavy(coupling_constants, Q2, _kind, nf):
+def weights_heavy(coupling_constants, Q2, kind, nf):
     nhq = nf + 1
-    weight_vv = coupling_constants.get_weight(nhq, Q2, "VV")
-    weight_aa = coupling_constants.get_weight(nhq, Q2, "AA")
-    # if kind == "F3":
+    if kind == "F3":
     # weights = {"qVA": {}}
     #     for q in range(1, nhq):
     #         w = coupling_constants.get_weight(q, Q2, kind)
     #         weights["nsVA"][q] = w
     #         weights["nsVA"][-q] = -w
+        return {}
+    weight_vv = coupling_constants.get_weight(nhq, Q2, "VV")
+    weight_aa = coupling_constants.get_weight(nhq, Q2, "AA")
     return {"gVV": {21: weight_vv}, "gAA": {21: weight_aa}}
 
 
@@ -220,8 +221,8 @@ def generate_heavy_fonll_diff(esf, nl):
     )
     # add asymptotic contributions
     asys = []
+    asy_weights = weights_heavy(esf.sf.coupling_constants, esf.Q2, kind, nl)
     if kind != "F3":
-        asy_weights = weights_heavy(esf.sf.coupling_constants, esf.Q2, kind, nl)
         asys = [
             -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq)),
             -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq)),
