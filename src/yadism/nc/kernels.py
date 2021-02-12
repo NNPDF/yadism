@@ -219,10 +219,14 @@ def generate_heavy_fonll_diff(esf, nl):
         kernels.Kernel(s_partons, cfs["light"]["s"](esf, nf=nl + 1)),
     )
     # add asymptotic contributions
-    asy_weights = weights_heavy(esf.sf.coupling_constants, esf.Q2, kind, nl)
-    asy_gVV = -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq))
-    asy_gAA = -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq))
-    return (*elems, asy_gVV, asy_gAA)
+    asys = []
+    if kind != "F3":
+        asy_weights = weights_heavy(esf.sf.coupling_constants, esf.Q2, kind, nl)
+        asys = [
+            -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq)),
+            -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq)),
+        ]
+    return (*elems, *asys)
 
 
 def generate_intrinsic(esf, ihq):
