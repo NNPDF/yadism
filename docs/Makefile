@@ -33,7 +33,7 @@ kill-server:
 	@# kill-server - kill running python server
 ifneq (,$(wildcard ./.server))
 	@echo "Kill server at PID:$$(cat .server)"
-	@kill $$(cat .server)
+	-@kill $$(cat .server)
 	@rm -f .server
 endif
 
