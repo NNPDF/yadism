@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 
 from yadism.nc import kernels
@@ -117,4 +116,22 @@ def test_generate_heavy_fonll_diff_pv():
         w = kernels.generate_heavy_fonll_diff(esf, nl)
         # light part + asy
         ps = [{-(nl + 1): -6, (nl + 1): 6}, {21: 0}, mkpv(nl, 0)]
+        check(ps, w)
+
+
+def test_generate_intrinsic_pc():
+    esf = MockESF("F2charm", 0.1, 10)
+    for nhq in [3, 5]:
+        w = kernels.generate_intrinsic(esf, nhq)
+        # Sp, Sm
+        ps = [{-nhq: 9, nhq: 9}, {-nhq: -7, nhq: -7}]
+        check(ps, w)
+
+
+def test_generate_intrinsic_pv():
+    esf = MockESF("F3charm", 0.1, 10)
+    for nhq in [3, 5]:
+        w = kernels.generate_intrinsic(esf, nhq)
+        # Rp, Rm
+        ps = [{-nhq: -6, nhq: 6}, {-nhq: 2, nhq: -2}]
         check(ps, w)
