@@ -2,7 +2,6 @@
 import numpy as np
 
 from eko import interpolation
-
 from banana.data import power_set, sql
 
 default_card = dict(
@@ -28,7 +27,14 @@ default_kinematics.extend(
 default_config = {
     0: {"observable_names": ["F2light"], "kinematics": default_kinematics},
     1: {
-        "observable_names": ["F2light", "F2charm", "FLlight", "FLcharm", "F3light", "F3charm"],
+        "observable_names": [
+            "F2light",
+            "F2charm",
+            "FLlight",
+            "FLcharm",
+            "F3light",
+            "F3charm",
+        ],
         "kinematics": default_kinematics,
     },
 }

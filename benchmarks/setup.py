@@ -11,7 +11,7 @@ setup(
     packages=find_packages("."),
     install_requires=[
         "rich",
-        "tinydb~=4.1",
+        "sqlalchemy",
         "banana-hep",
         "pyyaml",
     ],

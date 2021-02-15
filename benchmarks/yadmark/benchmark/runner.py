@@ -5,18 +5,14 @@ from banana.data import sql, dfdict
 from banana.benchmark.runner import BenchmarkRunner
 
 from yadmark.banana_cfg import banana_cfg
-from yadmark.data import observables
+from yadmark.data import observables, db
 
 import yadism
 
 
 class Runner(BenchmarkRunner):
     banana_cfg = banana_cfg
-
-    @staticmethod
-    def init_ocards(conn):
-        with conn:
-            conn.execute(sql.create_table("observables", observables.default_card))
+    db_base_cls = db.Base
 
     @staticmethod
     def load_ocards(conn, ocard_updates):
