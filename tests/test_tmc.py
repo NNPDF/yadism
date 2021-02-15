@@ -7,6 +7,7 @@ from eko.interpolation import InterpolatorDispatcher
 
 from yadism import observable_name
 import yadism.tmc as TMC
+from yadism.esf.esf import EvaluatedStructureFunction as ESF
 from yadism.esf.esf_result import ESFResult
 
 
@@ -31,7 +32,7 @@ class MockTMC(TMC.EvaluatedStructureFunctionTMC):
         return MockESF([3.0, 0.0, 0.0])
 
 
-class TestTMC:
+class TestAbstractTMC:
     def test_mode(self):
         class MockSF:
             M2target = 1.0
@@ -90,6 +91,9 @@ class TestTMC:
         # test h2
         res = obj._h2()  # pylint: disable=protected-access
         is0(res)
+        # test g2
+        res = obj._g2()  # pylint: disable=protected-access
+        is0(res)
 
     def test_convolute_F2_delta(self):
         xg = np.array([0.2, 0.6, 1.0])
@@ -114,9 +118,9 @@ class TestTMC:
         obj = MockTMC(objSF, {"x": 0.99, "Q2": 1})
         # convolute with constant function
         # res_const = int_xi^1 du/u 1 F2(u)
-        res_const = obj._convolute_FX(
+        res_const = obj._convolute_FX(  # pylint: disable=protected-access
             "F2", lambda x: 1
-        )  # pylint: disable=protected-access
+        )
         assert isinstance(res_const, ESFResult)
         # res_h2 = int_xi^1 du/u 1/xi*(xi/u) F2(u)  = int_xi^1 du/u 1/u F2(u)
         res_h2 = obj._h2()  # pylint: disable=protected-access
@@ -169,3 +173,30 @@ class TestTMC:
         #  xi < x so this has to fail
         with pytest.raises(ValueError):
             obj._h2()  # pylint: disable=protected-access
+
+
+# class TestFTMC:
+#     def test_f2(self):
+#         xg = np.array([0.2, 0.6, 1.0])
+
+#         class MockSF:
+#             obs_name = observable_name.ObservableName("F2light")
+#             M2target = 1.0
+#             interpolator = InterpolatorDispatcher(xg, 1, False, False)
+
+#             def __init__(self, tmc):
+#                 self.TMC = tmc
+
+#             def get_esf(self, _name, kinematics):
+#                 # this means F2 = pdf
+#                 vs = self.interpolator.get_interpolation([kinematics["x"]])
+#                 r = ESF(self, kinematics)
+#                 r.res.values = vs
+#                 return r
+
+#         # build objects
+#         objSF = MockSF(1)
+#         x=1.0
+#         Q2=10
+#         obj = TMC.ESFTMC_F2(objSF, dict(x=x,Q2=Q2))
+#         assert isinstance(obj.get_result(), ESFResult)
