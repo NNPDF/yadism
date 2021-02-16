@@ -2,7 +2,8 @@ Yadmark
 =======
 
 Here we describe the design and API of the `yadmark` package.
-The underlying infrastructure is coming from `sqlite3` and `git-lfs`.
+The underlying infrastructure is coming from `sqlite3` and `git-lfs` and it 
+is implemented in the package |banana|. 
 
 .. toctree::
    :maxdepth: 1
@@ -38,7 +39,7 @@ In the ``benchmarks/runners`` we provide a list of established benchmarks
 - ``xspace_bench_bench.py``:
 
   - it is used by the corresponding workflow to
-    run the established benchmarks against ``xspace_bench``
+    run the established benchmarks against `xspace-bench`
   - the necessary python bindings are provided by us externally
 
 Furthermore all of them are examples useful to understand how to use the

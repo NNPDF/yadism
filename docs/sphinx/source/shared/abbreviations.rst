@@ -112,6 +112,9 @@
 
    <a href="https://www.nikhef.nl/~h24/qcdnum/"><abbr title="Quantum ChromoDynamics NUM">QCDNUM</abbr></a>
 
+.. |banana| raw:: html
+
+   <a href="https://pypi.org/project/banana-hep/"><abbr title="QBenchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
 
 .. -----------
    not physics

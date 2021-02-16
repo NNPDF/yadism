@@ -13,7 +13,7 @@ class PdfCallable:
     Parameters
     ----------
         pdf : lhapdf_like
-            PDF object
+            PDF set
     """
 
     def __init__(self, pdf):
@@ -54,8 +54,8 @@ def compute_qcdnum_data(
             theory runcard
         observables : dict
             observables runcard
-        pdf : Any
-            PDF object (LHAPDF like)
+        pdf : lhapdf_like
+            PDF set
 
     Returns
     -------

@@ -11,6 +11,10 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     ----------
     theory : dict
         theory and process parameters
+    observables : dict
+        observables runcard
+    pdf : str
+        PDF name
 
     Returns
     -------
@@ -165,8 +169,8 @@ def compute_apfel_data(theory, observables, pdf):
             theory runcard
         observables : dict
             observables runcard
-        pdf : Any
-            PDF object (LHAPDF like)
+        pdf : lahapdf_like
+            PDF set
 
     Returns
     -------

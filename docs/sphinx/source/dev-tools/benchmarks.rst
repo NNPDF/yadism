@@ -37,10 +37,17 @@ a restricted number of schemes.
 
 It is/has been used by the `xFitter` framework.
 
+xspace-bench
+------------
+
+`xspace-bench` is a tool aimed to the evolution of PDFs and DIS observables' calculation for
+|NC| and |CC|, with different type of projectiles and targets. |SF| can be computed up to |NLO|, 
+and few |FNS| configurations are available, since their settings are hardcoded. 
+
 Different definition of |SF|
 ----------------------------
 
-Due to a different definition |SF| in `yadism`, |APFEL| and |QCDNUM| it is
+Due to a different definition |SF| in `yadism`, |APFEL|, |QCDNUM| and `xspace-bench` it is
 not possible to compare all the structure functions in all the schemes.
 
 .. important::
@@ -100,3 +107,23 @@ The different definition is:
   it's not defined) 
 - and so on for :math:`F_X^{bottom}` (that will include at least one bottom) and
   :math:`F_X^{top}` (that will include at least one top)
+
+Only |EM| and |NC| currents are available in |QCDNUM|. 
+
+SF in xspace-bench
+~~~~~~~~~~~~~~~~~~
+
+In `xspace-bench` |SF| are defined as follows:  
+
+- :math:`F_X^{light}` is defined by having only light quarks in the quark lines (u,d,s)
+- :math:`F_X^{charm}` is defined by having light and charm quarks in the
+  quark lines (at least one charm), given that charm is not light (otherwise
+  it's not defined) 
+- and so on for :math:`F_X^{bottom}` (that will include at least one bottom) and
+  :math:`F_X^{top}` (that will include at least one top)
+- :math:`F_X^{total}` is defined as the sum of the previous ones. 
+
+Given these definitions, benchmarks with `yadism` are possible only in the region 
+:math:`m^2_{charm} < Q^2 < m^2_{bottom}` selecting  either |ZM-VFNS| with :math:`F_X^{total}`
+or |FFNS| with NfFF=3 and FONLL with NfFF=4. 
+FONLL is implemented in the so called `scheme A` with and without damping factor.

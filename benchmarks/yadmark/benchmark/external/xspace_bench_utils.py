@@ -23,8 +23,8 @@ def compute_xspace_bench_data(theory, observables, pdf):
             theory runcard
         observables : dict
             observables runcard
-        pdf : Any
-            PDF object (LHAPDF like)
+        pdf : lhapdf_like
+            PDF set
 
     Returns
     -------
