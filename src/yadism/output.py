@@ -44,7 +44,7 @@ class Output(dict):
                         self["interpolation_xgrid"],
                         alpha_s,
                         xiR,
-                        xiF
+                        xiF,
                     )
                 )
         return ret

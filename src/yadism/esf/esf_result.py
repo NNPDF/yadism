@@ -17,19 +17,19 @@ class ESFResult:
             virtuality of the exchanged boson
     """
 
-    def __init__(self, x, Q2):
+    def __init__(self, x, Q2, orders=None):
         self.x = x
         self.Q2 = Q2
-        self.orders = {}
+        self.orders = {} if orders is None else orders
 
     @classmethod
-    def from_dict(cls, input_dict):
+    def from_document(cls, raw):
         """
         Recover element from a raw dictionary
 
         Parameters
         ----------
-            input_dict : dict
+            raw : dict
                 raw dictionary
 
         Returns
@@ -37,9 +37,9 @@ class ESFResult:
             new_output : cls
                 object representation
         """
-        new_output = cls(input_dict["x"], input_dict["Q2"], 0, 0)
-        new_output.values = np.array(input_dict["values"])
-        new_output.errors = np.array(input_dict["errors"])
+        new_output = cls(raw["x"], raw["Q2"])
+        for e in raw["orders"]:
+            new_output.orders[tuple(e["order"])] = (e["values"], e["errors"])
         return new_output
 
     def apply_pdf(self, lhapdf_like, pids, xgrid, alpha_s, xiR, xiF):
@@ -78,8 +78,10 @@ class ESFResult:
         res = 0
         err = 0
         # TODO properly define xiF log (according to pineappl combine orders)
-        for o, (v,e) in self.orders.items():
-            prefactor = ((alpha_s(np.sqrt(self.Q2)*xiR)/ (4*np.pi))**o[0]) * ((-np.log(xiF ** 2))**o[3])
+        for o, (v, e) in self.orders.items():
+            prefactor = ((alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)) ** o[0]) * (
+                (-np.log(xiF ** 2)) ** o[3]
+            )
             res += prefactor * np.einsum("aj,aj", v, pdfs)
             err += prefactor * np.einsum("aj,aj", e, pdfs)
 
@@ -94,29 +96,29 @@ class ESFResult:
             out : dict
                 output dictionary
         """
-        return dict(
-            x=self.x,
-            Q2=self.Q2,
-            values=self.values.tolist(),
-            errors=self.errors.tolist(),
-        )
+        d = dict(x=self.x, Q2=self.Q2, orders=[])
+        for o, (v, e) in self.orders.items():
+            d["orders"].append(dict(order=o, values=v, errors=e))
+        return d
 
     def __add__(self, other):
-        r = ESFResult(self.x, self.Q2, 0, 0)
-        r.values = self.values + other.values
-        r.errors = self.errors + other.errors
+        r = ESFResult(self.x, self.Q2)
+        if len(self.orders) != len(other.orders):
+            raise ValueError("Addends don't have the same PTO")
+        for o, (v, e) in self.orders.items():
+            r.orders[o] = (v + other.orders[o][0], e + other.orders[o][1])
         return r
 
     def __mul__(self, other):
-        r = ESFResult(self.x, self.Q2, 0, 0)
+        r = ESFResult(self.x, self.Q2)
         try:
             val = other[0]
             err = other[1]
         except TypeError:
             val = other
             err = 0
-        r.values = val * self.values
-        r.errors = val * self.errors + err * self.values
+        for o, (v, e) in self.orders.items():
+            r.orders[o] = (val * v, val * e + err * v)
         return r
 
     def __rmul__(self, other):

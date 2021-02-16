@@ -81,7 +81,9 @@ class EvaluatedStructureFunction:
         self.res = ESFResult(self.x, self.Q2)
         self._computed = False
         # select available partonic coefficient functions
-        self.orders = filter(lambda e: e[0] <= SF.pto,[(0,0,0,0),(1,0,0,0),(1,0,0,1)])
+        self.orders = filter(
+            lambda e: e[0] <= SF.pto, [(0, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 1)]
+        )
 
         logger.debug("Init %s", self)
 
@@ -105,13 +107,17 @@ class EvaluatedStructureFunction:
         logger.debug("Compute %s", self)
         for o in self.orders:
             # init order with 0
-            zeros = np.zeros((len(br.flavor_basis_pids),len(self.sf.interpolator.xgrid)))
+            zeros = np.zeros(
+                (len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid))
+            )
             self.res.orders[o] = (zeros, zeros.copy())
             # iterate all partonic channels
             for cfe in cfc.collect_elems():
                 # compute convolution point
                 convolution_point = cfe.coeff.convolution_point()
-                val, err = self.compute_coefficient_function(convolution_point, cfe.coeff[o]())
+                val, err = self.compute_coefficient_function(
+                    convolution_point, cfe.coeff[o]()
+                )
                 # blow up to flavor space
                 for pid, w in cfe.partons.items():
                     pos = br.flavor_basis_pids.index(pid)
@@ -131,7 +137,7 @@ class EvaluatedStructureFunction:
         ----------
         comp : yadism.partonic_channel.PartonicChannel
             Coefficient function to be computed
-            
+
         Returns
         -------
             ls : list(float)
