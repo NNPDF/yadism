@@ -15,17 +15,12 @@ class ESFResult:
             Bjorken x
         Q2 : float
             virtuality of the exchanged boson
-        len_pids : int
-            number of partons
-        len_xgrid : int
-            size of interpolation grid
     """
 
-    def __init__(self, x, Q2, len_pids, len_xgrid):
+    def __init__(self, x, Q2):
         self.x = x
         self.Q2 = Q2
-        self.values = np.zeros((len_pids, len_xgrid))
-        self.errors = self.values.copy()
+        self.orders = {}
 
     @classmethod
     def from_dict(cls, input_dict):
@@ -47,7 +42,7 @@ class ESFResult:
         new_output.errors = np.array(input_dict["errors"])
         return new_output
 
-    def apply_pdf(self, lhapdf_like, pids, xgrid, xiF):
+    def apply_pdf(self, lhapdf_like, pids, xgrid, alpha_s, xiR, xiF):
         r"""
         Compute the observable for the given PDF.
 
@@ -80,8 +75,13 @@ class ESFResult:
             pdfs[j] = np.array([lhapdf_like.xfxQ2(pid, z, muF2) / z for z in xgrid])
 
         # build
-        res = np.einsum("aj,aj", self.values, pdfs)
-        err = np.einsum("aj,aj", self.errors, pdfs)
+        res = 0
+        err = 0
+        # TODO properly define xiF log (according to pineappl combine orders)
+        for o, (v,e) in self.orders.items():
+            prefactor = ((alpha_s(np.sqrt(self.Q2)*xiR)/ (4*np.pi))**o[0]) * ((-np.log(xiF ** 2))**o[3])
+            res += prefactor * np.einsum("aj,aj", v, pdfs)
+            err += prefactor * np.einsum("aj,aj", e, pdfs)
 
         return dict(x=self.x, Q2=self.Q2, result=res, error=err)
 

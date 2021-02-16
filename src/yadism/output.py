@@ -13,7 +13,7 @@ class Output(dict):
     to PDFs and dumping to file.
     """
 
-    def apply_pdf(self, lhapdf_like):
+    def apply_pdf(self, lhapdf_like, alpha_s, xiR, xiF):
         r"""
         Compute all observables for the given PDF.
 
@@ -42,7 +42,9 @@ class Output(dict):
                         lhapdf_like,
                         self["pids"],
                         self["interpolation_xgrid"],
-                        self["xiF"],
+                        alpha_s,
+                        xiR,
+                        xiF
                     )
                 )
         return ret

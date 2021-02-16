@@ -78,10 +78,10 @@ class EvaluatedStructureFunction:
         self.sf = SF
         self.x = x
         self.Q2 = kinematics["Q2"]
-        self.res = ESFResult(
-            self.x, self.Q2, len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid)
-        )
+        self.res = ESFResult(self.x, self.Q2)
         self._computed = False
+        # select available partonic coefficient functions
+        self.orders = filter(lambda e: e[0] <= SF.pto,[(0,0,0,0),(1,0,0,0),(1,0,0,1)])
 
         logger.debug("Init %s", self)
 
@@ -103,16 +103,23 @@ class EvaluatedStructureFunction:
         cfc = cf_combiner.CoefficientFunctionsCombiner(self)
         # run
         logger.debug("Compute %s", self)
-        for cfe in cfc.collect_elems():
-            (res, err) = self.compute_coefficient_function(cfe.coeff)
-            # blow up to flavor space
-            for pid, w in cfe.partons.items():
-                pos = br.flavor_basis_pids.index(pid)
-                self.res.values[pos] += w * res
-                self.res.errors[pos] += w * err
+        for o in self.orders:
+            # init order with 0
+            zeros = np.zeros((len(br.flavor_basis_pids),len(self.sf.interpolator.xgrid)))
+            self.res.orders[o] = (zeros, zeros.copy())
+            # iterate all partonic channels
+            for cfe in cfc.collect_elems():
+                # compute convolution point
+                convolution_point = cfe.coeff.convolution_point()
+                val, err = self.compute_coefficient_function(convolution_point, cfe.coeff[o]())
+                # blow up to flavor space
+                for pid, w in cfe.partons.items():
+                    pos = br.flavor_basis_pids.index(pid)
+                    self.res.orders[o][0][pos] += w * val
+                    self.res.orders[o][1][pos] += w * err
         self._computed = True
 
-    def compute_coefficient_function(self, comp):
+    def compute_coefficient_function(self, convolution_point, cf):
         """
         Perform coefficient function calculation for a single stack of
         coefficient functions,
@@ -124,7 +131,7 @@ class EvaluatedStructureFunction:
         ----------
         comp : yadism.partonic_channel.PartonicChannel
             Coefficient function to be computed
-
+            
         Returns
         -------
             ls : list(float)
@@ -132,20 +139,16 @@ class EvaluatedStructureFunction:
             els : list(float)
                 errors
         """
+
+        # if self.sf.pto > 0:
+        #     a_s = self.sf.strong_coupling.a_s(self.Q2 * self.sf.xiR ** 2)
+        #     d_vec += a_s * (
+        #         conv.DistributionVec(comp["NLO"]())
+        #         + (-np.log(self.sf.xiF ** 2)) * conv.DistributionVec(comp["NLO_fact"]())
+        #     )
+        d_vec = conv.DistributionVec(cf)
         ls = []
         els = []
-
-        # compute convolution point
-        convolution_point = comp.convolution_point()
-        # combine orders
-        d_vec = conv.DistributionVec(comp["LO"]())
-        if self.sf.pto > 0:
-            a_s = self.sf.strong_coupling.a_s(self.Q2 * self.sf.xiR ** 2)
-            d_vec += a_s * (
-                conv.DistributionVec(comp["NLO"]())
-                + (-np.log(self.sf.xiF ** 2)) * conv.DistributionVec(comp["NLO_fact"]())
-            )
-
         # iterate all polynomials
         for polynomial_f in self.sf.interpolator:
             c, e = d_vec.convolution(convolution_point, polynomial_f)
@@ -153,7 +156,6 @@ class EvaluatedStructureFunction:
             c, e = c * convolution_point, e * convolution_point
             ls.append(c)
             els.append(e)
-
         return np.array(ls), np.array(els)
 
     def get_result(self):

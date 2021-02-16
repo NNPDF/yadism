@@ -14,8 +14,8 @@ from yadmark.data import observables
 class Sandbox(Runner):
 
     external = "APFEL" # external comparison program
-    external = "xspace_bench"
-    external = "QCDNUM"
+    #external = "xspace_bench"
+    #external = "QCDNUM"
 
     @staticmethod
     def generate_observables():
@@ -39,16 +39,16 @@ class Sandbox(Runner):
             # "F2bottom",
             # "F2top",
             # "F2total",
-            "FLlight",
+            # "FLlight",
             # "FLcharm",
             # "FLbottom",
             # "FLtotal",
-            "F3light",
+            # "F3light",
             # "F3charm",
             # "F3bottom",
             # "F3total",
         ]
-        update = {"prDIS": ["NC"]}
+        update = {"prDIS": ["EM"]}
         # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
         # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
         # card["interpolation_is_log"] = False
@@ -58,7 +58,7 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def _run(self):
-        self.run([{"PTO": 0,}],
+        self.run([{"PTO": 1,}],
                 observables.build(**(self.generate_observables())), ["ToyLHAPDF"])
 
 
