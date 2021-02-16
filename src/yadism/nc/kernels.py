@@ -151,11 +151,11 @@ def generate_heavy(esf, nf):
 def weights_heavy(coupling_constants, Q2, kind, nf):
     nhq = nf + 1
     if kind == "F3":
-    # weights = {"qVA": {}}
-    #     for q in range(1, nhq):
-    #         w = coupling_constants.get_weight(q, Q2, kind)
-    #         weights["nsVA"][q] = w
-    #         weights["nsVA"][-q] = -w
+        # weights = {"qVA": {}}
+        #     for q in range(1, nhq):
+        #         w = coupling_constants.get_weight(q, Q2, kind)
+        #         weights["nsVA"][q] = w
+        #         weights["nsVA"][-q] = -w
         return {}
     weight_vv = coupling_constants.get_weight(nhq, Q2, "VV")
     weight_aa = coupling_constants.get_weight(nhq, Q2, "AA")

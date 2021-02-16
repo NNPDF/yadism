@@ -6,9 +6,9 @@ Three classes are here defined:
 
     - :py:class:`EvaluatedStructureFunctionTMC` is the abstract class defining
       the machinery for TMC calculation
-    - :py:class:`ESFTMC_F2` and :py:class:`ESFTMC_FL` implements the previous
-      one, making use of its machinery as building blocks for the actual
-      expressions for TMC
+    - :py:class:`ESFTMC_F2`, :py:class:`ESFTMC_FL`, and :py:class:`ESFTMC_F3`
+      implements the previous one, making use of its machinery as building blocks
+      for the actual expressions for TMC
 
 The three structures presented play together the role of an intermediate block
 between the :py:class:`StructureFunction` interface (used to manage user request
@@ -27,7 +27,6 @@ import abc
 
 import numpy as np
 
-from eko.interpolation import InterpolatorDispatcher
 from eko import basis_rotation as br
 
 from .esf.distribution_vec import DistributionVec
@@ -277,7 +276,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     """
     This function implements the actual formula for target mass corrections
-    of F2, for all the three (+1) kinds described in the parent class
+    of F2, for all the three kinds described in the parent class
     :py:class:`EvaluatedStructureFunctionTMC`.
 
     Parameters
@@ -331,55 +330,11 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
             self._factor_shifted * F2out + self._factor_h2 * h2out + factor_g2 * g2out
         )
 
-    ### ----- APFEL stuffs
-    def _get_result_APFEL_strict(self):
-        # interpolate F2(xi)
-        F2list = []
-        for xj in self.sf.interpolator.xgrid_raw:
-            # collect support points
-            F2list.append(
-                self.sf.get_esf(self.sf.obs_name, {"Q2": self.Q2, "x": xj}).get_result()
-            )
-
-        # compute integral
-        smallInterp = InterpolatorDispatcher(
-            self.sf.interpolator.xgrid_raw, 1, True, False
-        )
-        h2list = []
-        for xj in self.sf.interpolator.xgrid_raw:
-            h2elem = ESFResult(
-                self.xi,
-                self.Q2,
-                len(br.flavor_basis_pids),
-                len(self.sf.interpolator.xgrid_raw),
-            )
-            for bk, F2k in zip(smallInterp, F2list):
-                xk = self.sf.interpolator.xgrid_raw[bk.poly_number]
-                d = DistributionVec(lambda z, xj=xj: xj / z)
-                d.eps_integration_abs = 1e-5
-                h2elem += d.convolution(xj, bk) * F2k / xk ** 2
-            h2list.append(h2elem)
-
-        res = ESFResult(
-            self.xi,
-            self.Q2,
-            len(br.flavor_basis_pids),
-            len(self.sf.interpolator.xgrid_raw),
-        )
-        for bj, F2out, h2out in zip(self.sf.interpolator, F2list, h2list):
-            res += bj(self.xi) * (
-                self._factor_shifted * F2out + self._factor_h2 * h2out
-            )
-        # join
-        return res
-
-    ### ----- /APFEL stuffs
-
 
 class ESFTMC_FL(EvaluatedStructureFunctionTMC):
     """
     This function implements the actual formula for target mass corrections
-    of FL, for all the three (+1) kinds described in the parent class
+    of FL, for all the three kinds described in the parent class
     :py:class:`EvaluatedStructureFunctionTMC`.
 
     Parameters
@@ -444,7 +399,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
 class ESFTMC_F3(EvaluatedStructureFunctionTMC):
     """
     This function implements the actual formula for target mass corrections
-    of F3, for all the three (+1) kinds described in the parent class
+    of F3, for all the three kinds described in the parent class
     :py:class:`EvaluatedStructureFunctionTMC`.
 
     Parameters

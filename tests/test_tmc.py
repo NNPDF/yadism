@@ -4,11 +4,14 @@ import numpy as np
 import pytest
 
 from eko.interpolation import InterpolatorDispatcher
+from eko.thresholds import ThresholdsAtlas
+from eko import basis_rotation as br
 
 from yadism import observable_name
 import yadism.tmc as TMC
 from yadism.esf.esf import EvaluatedStructureFunction as ESF
 from yadism.esf.esf_result import ESFResult
+from yadism.coupling_constants import CouplingConstants
 
 
 class MockESF:
@@ -175,28 +178,43 @@ class TestAbstractTMC:
             obj._h2()  # pylint: disable=protected-access
 
 
-# class TestFTMC:
-#     def test_f2(self):
-#         xg = np.array([0.2, 0.6, 1.0])
+def test_f(self):
+    xg = np.array([0.2, 0.6, 1.0])
+    th_d = dict(
+        sin2theta_weak=1.0,
+        CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
+    )
+    obs_d = dict(projectilePID=11, polarization=0.0, process="EM")
 
-#         class MockSF:
-#             obs_name = observable_name.ObservableName("F2light")
-#             M2target = 1.0
-#             interpolator = InterpolatorDispatcher(xg, 1, False, False)
+    class MockSF:
+        obs_name = observable_name.ObservableName("F2light")
+        M2target = 1.0
+        interpolator = InterpolatorDispatcher(xg, 1, False, False)
+        coupling_constants = CouplingConstants.from_dict(th_d, obs_d)
+        obs_params = dict(process="EM")
+        threshold = ThresholdsAtlas([4, 20])
+        xiF = 1.0
+        pto = 0
+        scheme = "FFNS"
 
-#             def __init__(self, tmc):
-#                 self.TMC = tmc
+        def __init__(self, tmc):
+            self.TMC = tmc
 
-#             def get_esf(self, _name, kinematics):
-#                 # this means F2 = pdf
-#                 vs = self.interpolator.get_interpolation([kinematics["x"]])
-#                 r = ESF(self, kinematics)
-#                 r.res.values = vs
-#                 return r
+        def get_esf(self, _name, kinematics):
+            # this means F2 = pdf
+            vs = self.interpolator.get_interpolation(
+                [kinematics["x"]] * len(br.flavor_basis_pids)
+            )
+            r = ESF(self, kinematics)
+            r.res.values = vs
+            return r
 
-#         # build objects
-#         objSF = MockSF(1)
-#         x=1.0
-#         Q2=10
-#         obj = TMC.ESFTMC_F2(objSF, dict(x=x,Q2=Q2))
-#         assert isinstance(obj.get_result(), ESFResult)
+    # build objects
+    x = 1.0
+    Q2 = 10
+    for tmc in [1, 2, 3]:
+        objSF = MockSF(tmc)
+        for cls in [TMC.ESFTMC_F2, TMC.ESFTMC_FL, TMC.ESFTMC_F3]:
+            obj = cls(objSF, dict(x=x, Q2=Q2))
+            # for the moment we can't do more than this ..
+            assert isinstance(obj.get_result(), ESFResult)
