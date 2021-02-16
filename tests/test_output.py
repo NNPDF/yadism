@@ -8,6 +8,8 @@ import pytest
 from yadism import output
 from yadism.esf import esf_result
 
+lo = (0, 0, 0, 0)
+
 
 class MockPDFgonly:
     def hasFlavor(self, pid):
@@ -25,7 +27,6 @@ class TestOutput:
         out["interpolation_xgrid"] = np.array([0.5, 1.0])
         out["interpolation_polynomial_degree"] = 1
         out["interpolation_is_log"] = True
-        out["xiF"] = 1.0
         out["pids"] = [21, 1]
         out["_ciao"] = "come va?"
 
@@ -38,11 +39,12 @@ class TestOutput:
                 kin = dict(
                     x=0.5,
                     Q2=Q2,
-                    values=np.array([[1, 0], [0, 1]]),
-                    errors=np.array([[1, 0], [0, 1]]),
+                    orders={
+                        lo: (np.array([[1, 0], [0, 1]]), np.array([[1, 0], [0, 1]]))
+                    },
                 )
                 # plain
-                o_esf.append(esf_result.ESFResult.from_dict(kin))
+                o_esf.append(esf_result.ESFResult(**kin))
 
             out[o] = o_esf
 
@@ -54,22 +56,21 @@ class TestOutput:
         outp = output.Output()
         outp.update(out)
 
-        ret = outp.apply_pdf(MockPDFgonly())
+        ret = outp.apply_pdf(MockPDFgonly(), lambda _muR: 1, 1.0, 1.0)
         for o in obs:
             for a, pra in zip(out[o], ret[o]):
-                expexted_res = a.values[0][0] * a.x * a.Q2
-                expected_err = np.abs(a.values[0][0]) * a.x * a.Q2
+                expexted_res = a.orders[lo][0][0][0] * a.x * a.Q2
+                expected_err = np.abs(a.orders[lo][0][0][0]) * a.x * a.Q2
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res
                 assert pytest.approx(pra["error"], 0, 0) == expected_err
 
         # test factorization scale variation
         for xiF in [0.5, 2.0]:
-            outp["xiF"] = xiF
 
-            ret = outp.apply_pdf(MockPDFgonly())
+            ret = outp.apply_pdf(MockPDFgonly(), lambda _muR: 1, 1.0, xiF)
             for a, pra in zip(out["F2total"], ret["F2total"]):
-                expexted_res = a.values[0][0] * a.x * a.Q2
-                expected_err = np.abs(a.values[0][0]) * a.x * a.Q2
+                expexted_res = a.orders[lo][0][0][0] * a.x * a.Q2
+                expected_err = np.abs(a.orders[lo][0][0][0]) * a.x * a.Q2
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
 

@@ -62,7 +62,7 @@ class Output(dict):
         """
         out = {}
         # dump raw elements
-        for f in ["interpolation_polynomial_degree", "interpolation_is_log", "xiF"]:
+        for f in ["interpolation_polynomial_degree", "interpolation_is_log"]:
             out[f] = self[f]
         out["pids"] = list(self["pids"])
         # make raw lists
@@ -140,7 +140,7 @@ class Output(dict):
             if obj[obs] is None:
                 continue
             for j, kin in enumerate(obj[obs]):
-                obj[obs][j] = ESFResult.from_dict(kin)
+                obj[obs][j] = ESFResult.from_document(kin)
         return cls(obj)
 
     @classmethod

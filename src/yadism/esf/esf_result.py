@@ -39,7 +39,10 @@ class ESFResult:
         """
         new_output = cls(raw["x"], raw["Q2"])
         for e in raw["orders"]:
-            new_output.orders[tuple(e["order"])] = (e["values"], e["errors"])
+            new_output.orders[tuple(e["order"])] = (
+                np.array(e["values"]),
+                np.array(e["errors"]),
+            )
         return new_output
 
     def apply_pdf(self, lhapdf_like, pids, xgrid, alpha_s, xiR, xiF):
@@ -98,15 +101,23 @@ class ESFResult:
         """
         d = dict(x=self.x, Q2=self.Q2, orders=[])
         for o, (v, e) in self.orders.items():
-            d["orders"].append(dict(order=o, values=v, errors=e))
+            d["orders"].append(
+                dict(order=list(o), values=v.tolist(), errors=e.tolist())
+            )
         return d
 
     def __add__(self, other):
         r = ESFResult(self.x, self.Q2)
-        if len(self.orders) != len(other.orders):
-            raise ValueError("Addends don't have the same PTO")
         for o, (v, e) in self.orders.items():
-            r.orders[o] = (v + other.orders[o][0], e + other.orders[o][1])
+            if o in other.orders:  # add the common stuff
+                r.orders[o] = (v + other.orders[o][0], e + other.orders[o][1])
+            else:  # add my stuff
+                r.orders[o] = (v, e)
+        for o, (v, e) in other.orders.items():
+            if o in self.orders:
+                continue
+            # add his stuff
+            r.orders[o] = (v, e)
         return r
 
     def __mul__(self, other):

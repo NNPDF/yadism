@@ -48,7 +48,9 @@ class TestESFResult:
         # they should be just the very same!
         assert ra.x == rb.x
         assert ra.Q2 == rb.Q2
-        assert pytest.approx(ra.orders) == rb.orders
+        for aa, bb in zip(ra.orders.values(), rb.orders.values()):
+            for k in [0, 1]:
+                assert pytest.approx(aa[k]) == bb[k]
 
     def test_mul(self):
         v, e = np.random.rand(2, 2, 2)
@@ -87,7 +89,7 @@ class TestESFResult:
             # plain
             ra = ESFResult(**a)
             pra = ra.apply_pdf(
-                MockPDFgonly(), [21, 1], [0.5, 1.0], lambda muR: 1.0, 1.0, 1.0
+                MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, 1.0
             )
             expexted_res = a["orders"][lo][0][0][0] * a["x"] * a["Q2"]
             expected_err = np.abs(a["orders"][lo][1][0][0]) * a["x"] * a["Q2"]
@@ -96,7 +98,7 @@ class TestESFResult:
             # test factorization scale variation
             for xiF in [0.5, 2.0]:
                 pra = ra.apply_pdf(
-                    MockPDFgonly(), [21, 1], [0.5, 1.0], lambda muR: 1.0, 1.0, xiF
+                    MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, xiF
                 )
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
@@ -106,4 +108,6 @@ class TestESFResult:
             a = dict(x=0.5, Q2="bla", orders={lo: ([[1, 0], [0, 1]], [[1, 0], [0, 1]])})
 
             ra = ESFResult(**a)
-            ra.apply_pdf(MockPDFgonly(), [21, 1], [0.5, 1.0], lambda muR: 1.0, 1.0, 1.0)
+            ra.apply_pdf(
+                MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, 1.0
+            )

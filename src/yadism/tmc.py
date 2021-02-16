@@ -27,8 +27,6 @@ import abc
 
 import numpy as np
 
-from eko import basis_rotation as br
-
 from .esf.distribution_vec import DistributionVec
 from .esf.esf_result import ESFResult
 
@@ -202,8 +200,6 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         res = ESFResult(
             self.xi,
             self.Q2,
-            len(br.flavor_basis_pids),
-            len(self.sf.interpolator.xgrid_raw),
         )
         d = DistributionVec(ker)
         for xj, pj in zip(self.sf.interpolator.xgrid_raw, self.sf.interpolator):
