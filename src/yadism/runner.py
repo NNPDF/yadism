@@ -13,7 +13,7 @@ There are two ways of using ``yadism``:
 .. todo::
     decide about ``run_dis`` and document it properly in module header
 """
-from typing import Any
+
 import time
 import inspect
 import logging

@@ -81,14 +81,14 @@ class Output(dict):
     def dump_pineappl_to_file(self, filename, obsname):
         if len(self[obsname]) <= 0:
             raise ValueError(f"no ESF {obsname}!")
-        import pineappl
+        import pineappl #pylint: disable=import-outside-toplevel
         interpolation_xgrid = self["interpolation_xgrid"]
         # interpolation_is_log = self["interpolation_is_log"]
         interpolation_polynomial_degree = self["interpolation_polynomial_degree"]
         lepton_pid = self["projectilePID"]
 
         # init pineappl objects
-        lumi_entrys = [pineappl.lumi.LumiEntry([(pid, lepton_pid, 1.0)]) for pid in self["pids"]]
+        lumi_entries = [pineappl.lumi.LumiEntry([(pid, lepton_pid, 1.0)]) for pid in self["pids"]]
         first_esf_result = self[obsname][0]
         orders = [pineappl.grid.Order(*o) for o in first_esf_result.orders]
         bins = len(self[obsname])
@@ -109,35 +109,36 @@ class Output(dict):
         extra.set_x2_order(0)
 
         grid = pineappl.grid.Grid(
-            lumi_entrys, orders, bin_limits, pineappl.subgrid.SubgridParams()
+            lumi_entries, orders, bin_limits, pineappl.subgrid.SubgridParams()
         )
         limits = []
 
+        #import pdb; pdb.set_trace()
         # add each ESF as a bin
         for bin_, obs in enumerate(self[obsname]):
-            q2 = obs.Q2
+            Q2 = obs.Q2
             x = obs.x
 
-            limits.append((q2, q2))
+            limits.append((Q2, Q2))
             limits.append((x, x))
 
             params.set_q2_bins(1)
-            params.set_q2_max(q2)
-            params.set_q2_min(q2)
+            params.set_q2_max(Q2)
+            params.set_q2_min(Q2)
             params.set_q2_order(0)
 
             for o, (v,_e) in obs.orders.items():
-                order = list(first_esf_result.orders.keys()).index(o)
+                order_index = list(first_esf_result.orders.keys()).index(o)
 
-                for lumi, values in enumerate(v):
-                    values = list(reversed(values))
+                for pid_index, pid_values in enumerate(v):
+                    pid_values = list(reversed(pid_values))
 
-                    assert len(values) == params.x_bins()
+                    assert len(pid_values) == params.x_bins()
 
-                    if any(np.array(values) != 0):
+                    if any(np.array(pid_values) != 0):
                         subgrid = pineappl.lagrange_subgrid.LagrangeSubgridV2(params, extra)
-                        subgrid.write_q2_slice(0, values)
-                        grid.set_subgrid(order, bin_, lumi, subgrid)
+                        subgrid.write_q2_slice(0, pid_values)
+                        grid.set_subgrid(order_index, bin_, pid_index, subgrid)
         # set the correct observables
         normalizations = [1.0] * bins
         remapper = pineappl.bin.BinRemapper(normalizations, limits)
