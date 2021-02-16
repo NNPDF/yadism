@@ -16,12 +16,6 @@ class MockPDFgonly:
             return x ** 2 * Q2  # it is xfxQ2! beware of the additional x
         return 0
 
-    def hasFlavor(self, pid):
-        if pid == 21:
-            return True
-        else:
-            return False
-
 
 class TestESFResult:
     def test_from_dict(self):
@@ -48,6 +42,36 @@ class TestESFResult:
         for k, v in a.items():
             assert k in dra
             assert pytest.approx(v) == dra[k]
+
+    def test_mul(self):
+        v, e = np.random.rand(2, 2, 2)
+        r = ESFResult.from_dict(dict(x=0.1, Q2=10, values=v, errors=e))
+        for x in [2.0, (2.0, 0.0)]:
+            rm = r * x
+            np.testing.assert_allclose(rm.values, 2.0 * v)
+            np.testing.assert_allclose(rm.errors, 2.0 * e)
+            rmul = x * r
+            np.testing.assert_allclose(rmul.values, 2.0 * v)
+            np.testing.assert_allclose(rmul.errors, 2.0 * e)
+        with pytest.raises(IndexError):
+            _rm = r * (2,)
+
+        y = (2.0, 2.0)
+        rm = r * y
+        np.testing.assert_allclose(rm.values, 2.0 * v)
+        np.testing.assert_allclose(rm.errors, 2.0 * (v + e))
+
+    def test_add(self):
+        va, vb, ea, eb = np.random.rand(4, 2, 2)
+        ra = ESFResult.from_dict(dict(x=0.1, Q2=10, values=va, errors=ea))
+        rb = ESFResult.from_dict(dict(x=0.1, Q2=10, values=vb, errors=eb))
+        radd = ra + rb
+        np.testing.assert_allclose(radd.values, va + vb)
+        np.testing.assert_allclose(radd.errors, ea + eb)
+        raa = ESFResult.from_dict(dict(x=0.1, Q2=10, values=va, errors=ea))
+        r2a = ra + raa
+        np.testing.assert_allclose(r2a.values, 2.0 * va)
+        np.testing.assert_allclose(r2a.errors, 2.0 * ea)
 
     def test_apply_pdf(self):
         # test Q2 values

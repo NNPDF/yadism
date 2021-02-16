@@ -1,12 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Output
-------
-
-.. todo::
-    docs
-"""
-
 import numpy as np
 import pandas as pd
 import yaml
@@ -17,11 +9,25 @@ from . import observable_name as on
 
 class Output(dict):
     """
-    .. todo::
-        docs
+    Wrapper for the output to help with application
+    to PDFs and dumping to file.
     """
 
-    def apply_pdf(self, pdfs):
+    def apply_pdf(self, lhapdf_like):
+        r"""
+        Compute all observables for the given PDF.
+
+        Parameters
+        ----------
+            lhapdf_like : object
+                object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
+                and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
+
+        Returns
+        -------
+            res : PDFOutput
+                output dictionary with all structure functions for all x, Q2, result and error
+        """
         # iterate
         ret = PDFOutput()
         for obs in self:
@@ -33,7 +39,10 @@ class Output(dict):
             for kin in self[obs]:
                 ret[obs].append(
                     kin.apply_pdf(
-                        pdfs, self["pids"], self["interpolation_xgrid"], self["xiF"]
+                        lhapdf_like,
+                        self["pids"],
+                        self["interpolation_xgrid"],
+                        self["xiF"],
                     )
                 )
         return ret
@@ -116,7 +125,7 @@ class Output(dict):
 
         Returns
         -------
-            obj : output
+            obj : cls
                 loaded object
         """
         obj = yaml.safe_load(stream)
@@ -144,7 +153,7 @@ class Output(dict):
 
         Returns
         -------
-            obj : output
+            obj : cls
                 loaded object
         """
         obj = None
@@ -154,7 +163,19 @@ class Output(dict):
 
 
 class PDFOutput(Output):
+    """
+    Wrapper for the PDF output to help with dumping to file.
+    """
+
     def get_raw(self):
+        """
+        Convert the object into a native Python dictionary
+
+        Returns
+        -------
+            out : dict
+                raw dictionary
+        """
         out = {}
         for obs in self:
             if self[obs] is None:
@@ -166,11 +187,27 @@ class PDFOutput(Output):
 
     @classmethod
     def load_yaml(cls, stream):
+        """
+        Load the object from YAML.
+
+        Parameters
+        ----------
+            stream : any
+                source stream
+
+        Returns
+        -------
+            obj : cls
+                created object
+        """
         obj = yaml.safe_load(stream)
         return cls(obj)
 
     @property
     def tables(self):
+        """
+        Convert data into a mapping structure functions -> pandas DataFrame
+        """
         tables = {}
         for k, v in self.items():
             tables[k] = pd.DataFrame(v)
@@ -178,6 +215,14 @@ class PDFOutput(Output):
         return tables
 
     def dump_tables_to_file(self, filename):
+        """
+        Write all tables to file
+
+        Parameters
+        ----------
+            filename : str
+                output file name
+        """
         with open(filename, "w") as f:
             for name, table in self.tables.items():
                 f.write("\n".join([name, str(table), "\n"]))

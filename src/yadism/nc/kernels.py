@@ -148,16 +148,17 @@ def generate_heavy(esf, nf):
     return (gVV, gAA)
 
 
-def weights_heavy(coupling_constants, Q2, _kind, nf):
+def weights_heavy(coupling_constants, Q2, kind, nf):
     nhq = nf + 1
+    if kind == "F3":
+        # weights = {"qVA": {}}
+        #     for q in range(1, nhq):
+        #         w = coupling_constants.get_weight(q, Q2, kind)
+        #         weights["nsVA"][q] = w
+        #         weights["nsVA"][-q] = -w
+        return {}
     weight_vv = coupling_constants.get_weight(nhq, Q2, "VV")
     weight_aa = coupling_constants.get_weight(nhq, Q2, "AA")
-    # if kind == "F3":
-    # weights = {"qVA": {}}
-    #     for q in range(1, nhq):
-    #         w = coupling_constants.get_weight(q, Q2, kind)
-    #         weights["nsVA"][q] = w
-    #         weights["nsVA"][-q] = -w
     return {"gVV": {21: weight_vv}, "gAA": {21: weight_aa}}
 
 
@@ -219,10 +220,14 @@ def generate_heavy_fonll_diff(esf, nl):
         kernels.Kernel(s_partons, cfs["light"]["s"](esf, nf=nl + 1)),
     )
     # add asymptotic contributions
+    asys = []
     asy_weights = weights_heavy(esf.sf.coupling_constants, esf.Q2, kind, nl)
-    asy_gVV = -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq))
-    asy_gAA = -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq))
-    return (*elems, asy_gVV, asy_gAA)
+    if kind != "F3":
+        asys = [
+            -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq)),
+            -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq)),
+        ]
+    return (*elems, *asys)
 
 
 def generate_intrinsic(esf, ihq):

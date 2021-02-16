@@ -1,23 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-This module provides the base classes that define the interface for Structure
+This module provides the base class that define the interface for Structure
 Function calculation on a given kinematic point (x, Q2) (that is why they are
 called *Evaluated*).
-They are:
-
-:py:class:`EvaluatedStructureFunction` :
-    this is a pure abstract class, that define the interface (defining the way
-    in which coefficient functions are actually encoded) and implement some
-    shared methods (like initializer and :py:meth:`get_output`, responsible also
-    for :ref:`local caching<local-caching>`.
-
-:py:class:`EvaluatedStructureFunctionLight` :
-    this class is inheriting from the former, factorizing some common procedure
-    needed for light calculation.
-
-:py:class:`EvaluatedStructureFunctionHeavy` :
-    this class is inheriting from the former, factorizing some common procedure
-    needed for heavy quark calculation, like matching schemes
 """
 
 import copy
@@ -36,9 +21,9 @@ logger = logging.getLogger(__name__)
 
 class EvaluatedStructureFunction:
     """
-    The actual Structure Function implementation.
+    A specific kinematic point for a specific structure function.
 
-    This class is the abstract class that implements the structure for all
+    This class implements the structure for all
     the coefficient functions' providers, for a single kinematic point (x,
     Q2), but all the flavours (singlet, nonsinglet, gluon).
 
@@ -50,14 +35,6 @@ class EvaluatedStructureFunction:
     consist of an array of dimension 2: one dimension corresponding to the
     interpolation grid, the other to the flavour.
 
-    Its subclasses are organized by:
-
-    - kind: `F2`, `FL`
-    - flavour: `light`, `charm`, `bottom`, `top`
-
-    and they all implement a :py:meth:`get_output` method that performs the
-    calculation (convolution included), if needed.
-
     .. _local-caching:
 
     .. admonition:: Cache
@@ -68,8 +45,8 @@ class EvaluatedStructureFunction:
         i.e.:
 
         - the first time the instance is asked for computing the result,
-          through the :py:meth:`get_output` method, it registers the result;
-        - any following call to the :py:meth:`get_output` method will make
+          through the :py:meth:`get_result` method, it registers the result;
+        - any following call to the :py:meth:`get_result` method will make
           use of the cached result, and will never recompute it.
 
         If another instance with the same attributes is asked for the result
@@ -90,7 +67,7 @@ class EvaluatedStructureFunction:
 
     def __init__(self, SF, kinematics: dict):
         x = kinematics["x"]
-        if 1 < x or x <= 0:
+        if x > 1 or x <= 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1]")
         if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")

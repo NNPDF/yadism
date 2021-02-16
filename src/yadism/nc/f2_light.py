@@ -46,7 +46,7 @@ class F2lightNonSinglet(pc.PartonicChannelLight):
         """
 
         # leading order is just a delta function
-        return 0, 0, 1
+        return 0.0, 0.0, 1.0
 
     def NLO(self):
         """
