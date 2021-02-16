@@ -78,6 +78,79 @@ class Output(dict):
                 out[obs].append(kin.get_raw())
         return out
 
+    def dump_pineappl_to_file(self, filename, obsname):
+        if len(self[obsname]) <= 0:
+            raise ValueError(f"no ESF {obsname}!")
+        import pineappl
+        interpolation_xgrid = self["interpolation_xgrid"]
+        # interpolation_is_log = self["interpolation_is_log"]
+        interpolation_polynomial_degree = self["interpolation_polynomial_degree"]
+        lepton_pid = self["projectilePID"]
+
+        # init pineappl objects
+        lumi_entrys = [pineappl.lumi.LumiEntry([(pid, lepton_pid, 1.0)]) for pid in self["pids"]]
+        first_esf_result = self[obsname][0]
+        orders = [pineappl.grid.Order(*o) for o in first_esf_result.orders]
+        bins = len(self[obsname])
+        bin_limits = list(map(float, range(0, bins + 1)))
+        # subgrid params
+        params = pineappl.subgrid.SubgridParams()
+        params.set_reweight(False)
+        params.set_x_bins(len(interpolation_xgrid))
+        params.set_x_max(interpolation_xgrid[-1])
+        params.set_x_min(interpolation_xgrid[0])
+        params.set_x_order(interpolation_polynomial_degree)
+
+        extra = pineappl.subgrid.ExtraSubgridParams()
+        extra.set_reweight2(False)
+        extra.set_x2_bins(1)
+        extra.set_x2_max(1.0)
+        extra.set_x2_min(1.0)
+        extra.set_x2_order(0)
+
+        grid = pineappl.grid.Grid(
+            lumi_entrys, orders, bin_limits, pineappl.subgrid.SubgridParams()
+        )
+        limits = []
+
+        # add each ESF as a bin
+        for bin_, obs in enumerate(self[obsname]):
+            q2 = obs.Q2
+            x = obs.x
+
+            limits.append((q2, q2))
+            limits.append((x, x))
+
+            params.set_q2_bins(1)
+            params.set_q2_max(q2)
+            params.set_q2_min(q2)
+            params.set_q2_order(0)
+
+            for o, (v,_e) in obs.orders.items():
+                order = list(first_esf_result.orders.keys()).index(o)
+
+                for lumi, values in enumerate(v):
+                    values = list(reversed(values))
+
+                    assert len(values) == params.x_bins()
+
+                    if any(np.array(values) != 0):
+                        subgrid = pineappl.lagrange_subgrid.LagrangeSubgridV2(params, extra)
+                        subgrid.write_q2_slice(0, values)
+                        grid.set_subgrid(order, bin_, lumi, subgrid)
+        # set the correct observables
+        normalizations = [1.0] * bins
+        remapper = pineappl.bin.BinRemapper(normalizations, limits)
+        grid.set_remapper(remapper)
+
+        # set the initial state PDF ids for the grid
+        grid.set_key_value("initial_state_1", "2212")
+        grid.set_key_value("initial_state_2", str(lepton_pid))
+
+        # TODO: find a way to open file in python
+        # with open(output_pineappl, "wb") as f:
+        grid.write(filename)
+
     def dump_yaml(self, stream=None):
         """
         Serialize result as YAML.
