@@ -91,14 +91,17 @@ class Output(dict):
         """
         if len(self[obsname]) <= 0:
             raise ValueError(f"no ESF {obsname}!")
-        import pineappl #pylint: disable=import-outside-toplevel
+        import pineappl  # pylint: disable=import-outside-toplevel
+
         interpolation_xgrid = self["interpolation_xgrid"]
         # interpolation_is_log = self["interpolation_is_log"]
         interpolation_polynomial_degree = self["interpolation_polynomial_degree"]
         lepton_pid = self["projectilePID"]
 
         # init pineappl objects
-        lumi_entries = [pineappl.lumi.LumiEntry([(pid, lepton_pid, 1.0)]) for pid in self["pids"]]
+        lumi_entries = [
+            pineappl.lumi.LumiEntry([(pid, lepton_pid, 1.0)]) for pid in self["pids"]
+        ]
         first_esf_result = self[obsname][0]
         orders = [pineappl.grid.Order(*o) for o in first_esf_result.orders]
         bins = len(self[obsname])
@@ -118,7 +121,7 @@ class Output(dict):
         extra.set_x2_min(1.0)
         extra.set_x2_order(0)
 
-        grid = pineappl.grid.Grid(
+        grid = pineappl.grid.Grid.create(
             lumi_entries, orders, bin_limits, pineappl.subgrid.SubgridParams()
         )
         limits = []
@@ -136,12 +139,12 @@ class Output(dict):
             params.set_q2_min(Q2)
             params.set_q2_order(0)
             # add all orders
-            for o, (v,_e) in obs.orders.items():
+            for o, (v, _e) in obs.orders.items():
                 order_index = list(first_esf_result.orders.keys()).index(o)
-                prefactor = ((1./(4.*np.pi))**o[0]) * ((-1.)**o[3])
+                prefactor = ((1.0 / (4.0 * np.pi)) ** o[0]) * ((-1.0) ** o[3])
                 # add for each pid/lumi
                 for pid_index, pid_values in enumerate(v):
-                    pid_values = list(reversed(prefactor*pid_values))
+                    pid_values = list(reversed(prefactor * pid_values))
                     # grid is empty? skip
                     if not any(np.array(pid_values) != 0):
                         continue
