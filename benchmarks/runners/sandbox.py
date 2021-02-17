@@ -113,11 +113,11 @@ class Sandbox(Runner):
         # card["PolarizationDIS"] = 0.5
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
-    def _run(self):
+    def doit(self):
         self.run([{"PTO": 1,"XIF":1/2,"XIR":1/2}],
                 observables.build(**(self.generate_observables())), ["CT14llo_NF3"])
 
 
 if __name__ == "__main__":
     sand = Sandbox()
-    sand._run()
+    sand.doit()
