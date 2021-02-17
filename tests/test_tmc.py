@@ -178,7 +178,7 @@ class TestAbstractTMC:
             obj._h2()  # pylint: disable=protected-access
 
 
-def test_f(self):
+def test_f():
     xg = np.array([0.2, 0.6, 1.0])
     th_d = dict(
         sin2theta_weak=1.0,
