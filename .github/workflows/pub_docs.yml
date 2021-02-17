@@ -38,6 +38,7 @@ jobs:
           python -m pip install --upgrade pip
           # install yadism
           pip install .
+          pip install benchmarks/
       - name: Build 🔨
         run: |
           pip install -r doc_requirements.txt
