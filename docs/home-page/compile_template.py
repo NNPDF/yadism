@@ -91,7 +91,7 @@ def tags_to_dict(tags_num):
     return versions
 
 
-versions = tags_to_dict(filter_recent_tags("0.0.0", get_tags()))
+versions = tags_to_dict(filter_recent_tags("0.4.0", get_tags()))
 
 # ==========
 # dump

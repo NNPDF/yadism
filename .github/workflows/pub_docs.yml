@@ -45,9 +45,14 @@ jobs:
           sudo apt-get install graphviz
           # the following is required by nbsphinx
           sudo apt-get install pandoc
+          # install home page dependencies
           cd docs/home-page
           yarn
+          # tags are required for the home page structure
+          git fetch --tags
+          # build the home-page
           make
+          # build sphinx for the current branch
           cd ../sphinx/
           make html
       - name: Save files 💾
@@ -60,7 +65,6 @@ jobs:
         run: |
           # fetch all branches
           git fetch --depth=1
-          git fetch --tags
           git checkout gh-pages
           github_ref="${{ github.ref }}"
           dest_dir=$(echo $github_ref | rev | cut -d "/" -f 1 | rev)
