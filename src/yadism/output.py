@@ -113,32 +113,31 @@ class Output(dict):
         )
         limits = []
 
-        #import pdb; pdb.set_trace()
         # add each ESF as a bin
         for bin_, obs in enumerate(self[obsname]):
-            Q2 = obs.Q2
             x = obs.x
+            Q2 = obs.Q2
 
-            limits.append((Q2, Q2))
             limits.append((x, x))
+            limits.append((Q2, Q2))
 
             params.set_q2_bins(1)
             params.set_q2_max(Q2)
             params.set_q2_min(Q2)
             params.set_q2_order(0)
-
+            # add all orders
             for o, (v,_e) in obs.orders.items():
                 order_index = list(first_esf_result.orders.keys()).index(o)
-
+                prefactor = ((1./(4.*np.pi))**o[0]) * ((-1.)**o[3])
+                # add for each pid/lumi
                 for pid_index, pid_values in enumerate(v):
-                    pid_values = list(reversed(pid_values))
-
-                    assert len(pid_values) == params.x_bins()
-
-                    if any(np.array(pid_values) != 0):
-                        subgrid = pineappl.lagrange_subgrid.LagrangeSubgridV2(params, extra)
-                        subgrid.write_q2_slice(0, pid_values)
-                        grid.set_subgrid(order_index, bin_, pid_index, subgrid)
+                    pid_values = list(reversed(prefactor*pid_values))
+                    # grid is empty? skip
+                    if not any(np.array(pid_values) != 0):
+                        continue
+                    subgrid = pineappl.lagrange_subgrid.LagrangeSubgridV2(params, extra)
+                    subgrid.write_q2_slice(0, pid_values)
+                    grid.set_subgrid(order_index, bin_, pid_index, subgrid)
         # set the correct observables
         normalizations = [1.0] * bins
         remapper = pineappl.bin.BinRemapper(normalizations, limits)
@@ -148,6 +147,7 @@ class Output(dict):
         grid.set_key_value("initial_state_1", "2212")
         grid.set_key_value("initial_state_2", str(lepton_pid))
 
+        # dump file
         # TODO: find a way to open file in python
         # with open(output_pineappl, "wb") as f:
         grid.write(filename)

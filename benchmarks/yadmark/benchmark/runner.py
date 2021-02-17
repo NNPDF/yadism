@@ -16,6 +16,8 @@ import yadism
 class Runner(BenchmarkRunner):
     banana_cfg = banana_cfg
 
+    alphas_from_lhapdf = False
+
     @staticmethod
     def init_ocards(conn):
         with conn:
@@ -44,8 +46,12 @@ class Runner(BenchmarkRunner):
                 yadism output
         """
         runner = yadism.Runner(theory, ocard)
-        sc = StrongCoupling.from_dict(theory)
-        alpha_s = lambda muR: sc.a_s(muR**2) * 4.*np.pi
+        if self.alphas_from_lhapdf:
+            import lhapdf # pylint:disable=import-outside-toplevel
+            alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
+        else:
+            sc = StrongCoupling.from_dict(theory)
+            alpha_s = lambda muR: sc.a_s(muR**2) * 4.*np.pi
         return runner.get_result().apply_pdf(pdf, alpha_s, theory["XIR"], theory["XIF"])
 
     def run_external(self, theory, ocard, pdf):
@@ -75,6 +81,19 @@ class Runner(BenchmarkRunner):
             )
 
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
+
+        elif self.external == "void":
+            res = {}
+            for sf,esfs in ocard["observables"].items():
+                if not yadism.observable_name.ObservableName.is_valid(sf):
+                    continue
+                void_esfs = []
+                for esf in esfs:
+                    n = esf.copy()
+                    n.update({"result": 0})
+                    void_esfs.append(n)
+                res[sf] = void_esfs
+            return res
         return {}
 
     def log(self, theory, ocard, pdf, me, ext):
