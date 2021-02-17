@@ -60,6 +60,7 @@ jobs:
         run: |
           # fetch all branches
           git fetch --depth=1
+          git fetch --tags
           git checkout gh-pages
           github_ref="${{ github.ref }}"
           dest_dir=$(echo $github_ref | rev | cut -d "/" -f 1 | rev)
