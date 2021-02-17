@@ -79,6 +79,16 @@ class Output(dict):
         return out
 
     def dump_pineappl_to_file(self, filename, obsname):
+        """
+        Write a pineappl grid to file.
+
+        Parameters
+        ----------
+            filename : str
+                output file name
+            obsname : str
+                observable to be dumped
+        """
         if len(self[obsname]) <= 0:
             raise ValueError(f"no ESF {obsname}!")
         import pineappl #pylint: disable=import-outside-toplevel

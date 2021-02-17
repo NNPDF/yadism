@@ -17,6 +17,7 @@ class Runner(BenchmarkRunner):
     banana_cfg = banana_cfg
 
     alphas_from_lhapdf = False
+    """Use the alpha_s routine provided by the Pdf?"""
 
     @staticmethod
     def init_ocards(conn):
@@ -35,17 +36,18 @@ class Runner(BenchmarkRunner):
         ----------
             theory : dict
                 theory card
-            observable : dict
+            ocard : dict
                 observable card
             pdf : lhapdf_like
                 PDF set
 
         Returns
         -------
-            out : yadism.output.Output
+            out : yadism.output.PDFOutput
                 yadism output
         """
         runner = yadism.Runner(theory, ocard)
+        # choose alpha_s source
         if self.alphas_from_lhapdf:
             import lhapdf # pylint:disable=import-outside-toplevel
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
@@ -55,6 +57,23 @@ class Runner(BenchmarkRunner):
         return runner.get_result().apply_pdf(pdf, alpha_s, theory["XIR"], theory["XIF"])
 
     def run_external(self, theory, ocard, pdf):
+        """
+        Run yadism
+
+        Parameters
+        ----------
+            theory : dict
+                theory card
+            ocard : dict
+                observable card
+            pdf : lhapdf_like
+                PDF set
+
+        Returns
+        -------
+            dict
+                external output
+        """
         observable = ocard
         if theory["IC"] != 0 and theory["PTO"] > 0:
             raise ValueError(f"{self.external} is currently not able to run")
@@ -83,6 +102,7 @@ class Runner(BenchmarkRunner):
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
 
         elif self.external == "void":
+            # set all ESF simply to 0
             res = {}
             for sf,esfs in ocard["observables"].items():
                 if not yadism.observable_name.ObservableName.is_valid(sf):
