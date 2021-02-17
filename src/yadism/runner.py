@@ -13,7 +13,7 @@ There are two ways of using ``yadism``:
 .. todo::
     decide about ``run_dis`` and document it properly in module header
 """
-from typing import Any
+
 import time
 import inspect
 import logging
@@ -178,16 +178,11 @@ class Runner:
         self._output = Output()
         self._output.update(self.interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
-        self._output["xiF"] = self.xiF
+        self._output["projectilePID"] = self.coupling_constants.obs_config["projectilePID"]
 
-    def get_result(self, raw=False):
+    def get_result(self):
         """
         Compute coefficient functions grid for requested kinematic points.
-
-
-        .. admonition:: Implementation Note
-
-            get_output pipeline
 
         Returns
         -------
@@ -196,11 +191,6 @@ class Runner:
             (flavour, interpolation-index) for each requested kinematic
             point (x, Q2)
 
-
-        .. todo::
-
-            * docs
-            * get_output pipeline
         """
         self.console.print(self.banner)
 
@@ -237,38 +227,4 @@ class Runner:
         self.console.print(f"[cyan]took {diff:.2f} s")
 
         out = copy.deepcopy(self._output)
-        if raw:
-            out = out.get_raw()
         return out
-
-    def get_output(self):
-        return self.get_result(True)
-
-    def apply_pdf(self, pdfs: Any) -> dict:
-        """
-        Alias for the `__call__` method.
-
-        .. todo::
-            - implement
-            - docs
-        """
-        return self.get_result().apply_pdf(pdfs)
-
-    def clear(self) -> None:
-        """
-        Or 'restart' or whatever
-
-        .. todo::
-            - implement
-            - docs
-        """
-
-    def dump(self) -> None:
-        """
-        If any output available ('computed') dump the current output on file
-
-        .. todo::
-            - implement
-            - docs
-        """
-        return self.get_output().dump()

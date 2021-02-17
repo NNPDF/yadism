@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 import pandas as pd
 
 from banana.data import sql, dfdict
 from banana.benchmark.runner import BenchmarkRunner
+
+from eko.strong_coupling import StrongCoupling
 
 from yadmark.banana_cfg import banana_cfg
 from yadmark.data import observables
@@ -12,6 +15,9 @@ import yadism
 
 class Runner(BenchmarkRunner):
     banana_cfg = banana_cfg
+
+    alphas_from_lhapdf = False
+    """Use the alpha_s routine provided by the Pdf?"""
 
     @staticmethod
     def init_ocards(conn):
@@ -30,20 +36,44 @@ class Runner(BenchmarkRunner):
         ----------
             theory : dict
                 theory card
-            observable : dict
+            ocard : dict
                 observable card
             pdf : lhapdf_like
                 PDF set
 
         Returns
         -------
-            out : yadism.output.Output
+            out : yadism.output.PDFOutput
                 yadism output
         """
         runner = yadism.Runner(theory, ocard)
-        return runner.apply_pdf(pdf)
+        # choose alpha_s source
+        if self.alphas_from_lhapdf:
+            import lhapdf # pylint:disable=import-outside-toplevel
+            alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
+        else:
+            sc = StrongCoupling.from_dict(theory)
+            alpha_s = lambda muR: sc.a_s(muR**2) * 4.*np.pi
+        return runner.get_result().apply_pdf(pdf, alpha_s, theory["XIR"], theory["XIF"])
 
     def run_external(self, theory, ocard, pdf):
+        """
+        Run yadism
+
+        Parameters
+        ----------
+            theory : dict
+                theory card
+            ocard : dict
+                observable card
+            pdf : lhapdf_like
+                PDF set
+
+        Returns
+        -------
+            dict
+                external output
+        """
         observable = ocard
         if theory["IC"] != 0 and theory["PTO"] > 0:
             raise ValueError(f"{self.external} is currently not able to run")
@@ -70,6 +100,20 @@ class Runner(BenchmarkRunner):
             )
 
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
+
+        elif self.external == "void":
+            # set all ESF simply to 0
+            res = {}
+            for sf,esfs in ocard["observables"].items():
+                if not yadism.observable_name.ObservableName.is_valid(sf):
+                    continue
+                void_esfs = []
+                for esf in esfs:
+                    n = esf.copy()
+                    n.update({"result": 0})
+                    void_esfs.append(n)
+                res[sf] = void_esfs
+            return res
         return {}
 
     def log(self, theory, ocard, pdf, me, ext):

@@ -55,7 +55,7 @@ obs_dict = {
 class TestInit:
     def test_run_yadism(self):
         o1 = yadism.run_yadism(theory_dict, obs_dict)
-        o2 = yadism.runner.Runner(theory_dict, obs_dict).get_output()
+        o2 = yadism.runner.Runner(theory_dict, obs_dict).get_result().get_raw()
         for k in o1:
             if k in o2:
                 if isinstance(o1[k], Iterable):

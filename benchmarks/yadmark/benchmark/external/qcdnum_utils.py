@@ -216,7 +216,7 @@ def compute_qcdnum_data(
 
             elif obs.is_raw_heavy:
                 # for HQ pto is not absolute but rather relative,
-                # i.e., 1 loop DIS here meas "LO"[QCDNUM]
+                # i.e., 1 loop DIS here meas LO[QCDNUM]
                 if theory["PTO"] == 0:
                     fs = [0.0] * len(xs)
                 else:

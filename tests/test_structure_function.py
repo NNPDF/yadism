@@ -63,7 +63,6 @@ class MockDict:
 #    return None
 
 
-@pytest.mark.quick_check
 class TestStructureFunction:
     def test_get_esf_same_name(self):
         # setup env
@@ -99,7 +98,7 @@ class TestStructureFunction:
             kins = [{"x": 0.5, "Q2": 1}, {"x": 0.5, "Q2": 2}, {"x": 0.9, "Q2": 1000}]
             sf.load(kins)
             for res in sf.get_result():
-                assert res.values.all() == 0.0
+                assert res.orders[(0, 0, 0, 0)][0].all() == 0.0
 
     def test_get_esf_outside_grid(self):
         r = MockRunner()
@@ -159,4 +158,4 @@ class TestEvaluatedStructureFunction:
             )
             k = dict(x=0.3, Q2=4)
             esf = ESF(sf, k)
-            assert (esf.get_result()).values.all() == 0.0
+            assert (esf.get_result()).orders[(0, 0, 0, 0)][0].all() == 0.0
