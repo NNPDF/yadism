@@ -78,20 +78,21 @@ def tags_to_dict(tags_num):
     versions_tmp = {}
     for tag in tags_num:
         major = tag.major
-        minor = tag.minor
         if major not in versions_tmp:
-            versions_tmp[major] = [minor]
+            versions_tmp[major] = [(tag.minor, tag.patch)]
         else:
-            versions_tmp[major].append(minor)
+            versions_tmp[major].append((tag.minor, tag.patch))
 
     versions = {}
     for major, minors in versions_tmp.items():
-        versions[major] = list(np.unique(minors))
+        minors = np.array(sorted(minors, key=lambda x: x[1], reverse=True))
+        max_patch_indices = np.unique(minors[:, 0], return_index=True)[1]
+        versions[major] = minors[max_patch_indices].tolist()
 
     return versions
 
 
-versions = tags_to_dict(filter_recent_tags("0.4.0", get_tags()))
+versions = tags_to_dict(filter_recent_tags("0.0.0", get_tags()))
 
 # ==========
 # dump
