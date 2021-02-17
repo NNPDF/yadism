@@ -6,5 +6,6 @@ ipython
 matplotlib
 pandas
 packutil
+pineappl
 #
 -e benchmarks/
