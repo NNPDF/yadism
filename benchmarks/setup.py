@@ -10,6 +10,7 @@ setup(
     # package_dir={"": "."},
     packages=find_packages("."),
     install_requires=[
+        "yadism",
         "rich",
         "sqlalchemy",
         "banana-hep",
