@@ -14,8 +14,8 @@ from yadmark.data import observables
 class Sandbox(Runner):
 
     external = "APFEL" # external comparison program
-    external = "xspace_bench"
-    external = "QCDNUM"
+    # external = "xspace_bench"
+    # external = "QCDNUM"
 
     @staticmethod
     def generate_observables():

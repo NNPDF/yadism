@@ -4,6 +4,8 @@ import numpy as np
 from eko import interpolation
 from banana.data import power_set, sql
 
+from . import db
+
 default_card = dict(
     interpolation_xgrid=interpolation.make_grid(30, 20).tolist(),
     interpolation_polynomial_degree=4,
@@ -78,15 +80,15 @@ def build(observable_names, kinematics, update=None):
 
 
 # db interface
-def load(conn, updates):
+def load(session, updates):
     """
     Load observable records from the DB.
 
     Parameters
     ----------
-        conn : sqlite3.Connection
-            DB connection
-        update : dict
+        session : sqlalchemy.session.Session
+            DB ORM session
+        updates : dict
             modifiers
 
     Returns
@@ -95,7 +97,7 @@ def load(conn, updates):
             list of records
     """
     # add hash
-    raw_records, rf = sql.prepare_records(default_card, updates)
+    raw_records, df = sql.prepare_records(default_card, updates)
     # insert new ones
-    sql.insertnew(conn, "observables", rf)
+    sql.insertnew(session, db.Observable, df)
     return raw_records
