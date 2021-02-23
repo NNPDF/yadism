@@ -7,6 +7,11 @@ from banana.data import dfdict
 
 from yadism import observable_name as on
 
+from ..data import db
+
+table_objects = bnav.table_objects
+table_objects["o"] = db.Observable
+
 
 class NavigatorApp(bnav.navigator.NavigatorApp):
     """
@@ -19,6 +24,8 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         mode : string
             mode identifier
     """
+
+    table_objects = table_objects
 
     def fill_theories(self, theo, obj):
         """
