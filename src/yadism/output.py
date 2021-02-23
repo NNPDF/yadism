@@ -3,8 +3,11 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from eko import strong_coupling
+
 from .esf.esf_result import ESFResult
 from . import observable_name as on
+from .input import compatibility
 
 
 class Output(dict):
@@ -13,7 +16,18 @@ class Output(dict):
     to PDFs and dumping to file.
     """
 
-    def apply_pdf(self, lhapdf_like, alpha_s, xiR, xiF):
+    theory = None
+
+    def apply_pdf(self, lhapdf_like):
+        return self.apply_pdf_theory(lhapdf_like, self.theory)
+
+    def apply_pdf_theory(self, lhapdf_like, theory):
+        new_theory = compatibility.update(theory)
+        sc=strong_coupling.StrongCoupling.from_dict(new_theory)
+        alpha_s = lambda muR: sc.a_s(muR**2) * 4.*np.pi
+        return self.apply_pdf_alphas_xir_xif(lhapdf_like, alpha_s, theory["XIR"], theory["XIF"])
+
+    def apply_pdf_alphas_xir_xif(self, lhapdf_like, alpha_s, xiR, xiF):
         r"""
         Compute all observables for the given PDF.
 
@@ -22,10 +36,13 @@ class Output(dict):
             lhapdf_like : object
                 object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
                 and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
+            alpha_s : callable
+                alpha_s(muR)
+                
 
         Returns
         -------
-            res : PDFOutput
+            ret : PDFOutput
                 output dictionary with all structure functions for all x, Q2, result and error
         """
         # iterate

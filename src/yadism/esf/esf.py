@@ -78,6 +78,7 @@ class EvaluatedStructureFunction:
         self.sf = SF
         self.x = x
         self.Q2 = kinematics["Q2"]
+        self.process = SF.runner.managers["coupling_constants"].obs_config["process"]
         self.res = ESFResult(self.x, self.Q2)
         self._computed = False
         # select available partonic coefficient functions
@@ -88,7 +89,7 @@ class EvaluatedStructureFunction:
         logger.debug("Init %s", self)
 
     def __repr__(self):
-        return "%s(x=%f,Q2=%f)" % (self.sf.obs_name, self.x, self.Q2)
+        return "%s_%s(x=%f,Q2=%f)" % (self.sf.obs_name, self.process, self.x, self.Q2)
 
     def compute_local(self):
         """

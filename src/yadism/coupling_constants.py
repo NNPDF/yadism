@@ -297,10 +297,10 @@ class CouplingConstants:
         if proj not in projectile_pids:
             raise ValueError(f"Unknown projectile {proj}")
         obs_config = {
-            "process": observables.get("prDIS", "EM"),
+            "process": observables["prDIS"],
             "projectilePID": projectile_pids[proj],
-            "polarization": observables.get("PolarizationDIS", 0),
-            "propagatorCorrection": observables.get("PropagatorCorrection", 0),
+            "polarization": observables["PolarizationDIS"],
+            "propagatorCorrection": observables["PropagatorCorrection"],
         }
         o = cls(theory_config, obs_config)
         return o

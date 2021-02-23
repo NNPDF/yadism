@@ -51,10 +51,8 @@ class Runner(BenchmarkRunner):
         if self.alphas_from_lhapdf:
             import lhapdf # pylint:disable=import-outside-toplevel
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
-        else:
-            sc = StrongCoupling.from_dict(theory)
-            alpha_s = lambda muR: sc.a_s(muR**2) * 4.*np.pi
-        return runner.get_result().apply_pdf(pdf, alpha_s, theory["XIR"], theory["XIF"])
+            return runner.get_result().apply_pdf_alphas_xir_xif(pdf, alpha_s, theory["XIR"], theory["XIF"])
+        return runner.get_result().apply_pdf(pdf, theory)
 
     def run_external(self, theory, ocard, pdf):
         """

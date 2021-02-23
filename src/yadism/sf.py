@@ -35,35 +35,40 @@ class StructureFunction:
             theory dictionary containing all needed parameters
     """
 
-    def __init__(
-        self, obs_name, runner=None, *, eko_components, theory_params, obs_params
-    ):
+    def __init__(       self, obs_name, runner    ):
         # internal managers
         self.obs_name = obs_name
-        self.__runner = runner
+        self.runner = runner
         self.__ESFs = []
         self.__ESFcache = {}
         # TODO wrap managers and parameters as single attributes
         # external managers
-        self.interpolator = eko_components["interpolator"]
-        self.threshold = eko_components["threshold"]
-        self.strong_coupling = eko_components["alpha_s"]
-        self.coupling_constants = eko_components["coupling_constants"]
-        # parameters
-        self.pto = theory_params["pto"]
-        self.xiR = theory_params["xiR"]
-        self.xiF = theory_params["xiF"]
-        self.scheme = theory_params["scheme"]
-        self.nf_ff = theory_params["nf_ff"]
-        self.intrinsic_range = theory_params["intrinsic_range"]
-        self.m2hq = theory_params["m2hq"]
-        self.TMC = theory_params["TMC"]
-        self.M2target = theory_params["M2target"]
-        self.FONLL_damping = theory_params["FONLL_damping"]
-        self.damping_powers = theory_params["damping_powers"]
-        self.obs_params = obs_params
+        # self.interpolator = eko_components["interpolator"]
+        # self.threshold = eko_components["threshold"]
+        # self.coupling_constants = eko_components["coupling_constants"]
+        # # parameters
+        # self.pto = theory_params["pto"]
+        # self.xiR = theory_params["xiR"]
+        # self.xiF = theory_params["xiF"]
+        # self.scheme = theory_params["scheme"]
+        # self.nf_ff = theory_params["nf_ff"]
+        # self.intrinsic_range = theory_params["intrinsic_range"]
+        # self.m2hq = theory_params["m2hq"]
+        # self.TMC = theory_params["TMC"]
+        # self.M2target = theory_params["M2target"]
+        # self.FONLL_damping = theory_params["FONLL_damping"]
+        # self.damping_powers = theory_params["damping_powers"]
 
         logger.debug("Init %s", self)
+
+    # def __getattribute__(self, name):
+    #     if name == "runner":
+    #         return self.__dict__["runner"]
+    #     if name in self.runner.managers:
+    #         return self.runner.managers[name]
+    #     if name in self.runner.theory_params:
+    #         return self.runner.theory_params[name]
+    #     return super().__getattribute__(name)
 
     def __repr__(self):
         return self.obs_name.name
@@ -135,7 +140,9 @@ class StructureFunction:
                 return obj
         else:
             # ask our parent (as always)
-            return self.__runner.observable_instances[obs_name.name].get_esf(
+            if obs_name.name not in self.runner.observable_instances:
+                self.runner.observable_instances[obs_name.name] = type(self)(obs_name, self.runner)
+            return self.runner.observable_instances[obs_name.name].get_esf(
                 obs_name, kinematics, *args
             )
 
