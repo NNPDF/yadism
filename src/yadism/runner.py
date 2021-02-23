@@ -118,7 +118,7 @@ class Runner:
         # FONLL damping powers
         FONLL_damping = bool(theory["DAMP"])
         if FONLL_damping:
-            damping_power = theory.get("DAMPPOWER", 2) # TODO remove defaults?
+            damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
             damping_power_c = theory.get("DAMPPOWERCHARM", damping_power)
             damping_power_b = theory.get("DAMPPOWERBOTTOM", damping_power)
             damping_power_t = theory.get("DAMPPOWERTOP", damping_power)
@@ -158,7 +158,7 @@ class Runner:
             if obs_name == "sigma_reduced":
                 obs = None
             else:
-                obs = SF(obs_name,self)
+                obs = SF(observable_name.ObservableName(obs_name), self)
             # read kinematics
             obs.load(kins)
             self.observable_instances[obs_name] = obs

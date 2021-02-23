@@ -23,9 +23,11 @@ class Output(dict):
 
     def apply_pdf_theory(self, lhapdf_like, theory):
         new_theory = compatibility.update(theory)
-        sc=strong_coupling.StrongCoupling.from_dict(new_theory)
-        alpha_s = lambda muR: sc.a_s(muR**2) * 4.*np.pi
-        return self.apply_pdf_alphas_xir_xif(lhapdf_like, alpha_s, theory["XIR"], theory["XIF"])
+        sc = strong_coupling.StrongCoupling.from_dict(new_theory)
+        alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
+        return self.apply_pdf_alphas_xir_xif(
+            lhapdf_like, alpha_s, theory["XIR"], theory["XIF"]
+        )
 
     def apply_pdf_alphas_xir_xif(self, lhapdf_like, alpha_s, xiR, xiF):
         r"""
@@ -38,7 +40,7 @@ class Output(dict):
                 and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
             alpha_s : callable
                 alpha_s(muR)
-                
+
 
         Returns
         -------
