@@ -2,7 +2,7 @@
 import numpy as np
 
 from eko import interpolation
-from banana.data import power_set, sql
+from banana.data import cartesian_product, sql
 
 from . import db
 
@@ -70,7 +70,7 @@ def build(observable_names, kinematics, update=None):
     cards = []
     if update is None:
         update = {}
-    for c in power_set(update):
+    for c in cartesian_product(update):
         card = dict(observables={})
         card.update(c)
         for obs in observable_names:

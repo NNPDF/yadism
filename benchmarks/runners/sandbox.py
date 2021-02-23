@@ -6,7 +6,7 @@ import copy
 
 import numpy as np
 
-from banana.data import power_set
+from banana.data import cartesian_product
 
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
