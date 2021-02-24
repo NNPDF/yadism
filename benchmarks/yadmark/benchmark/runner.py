@@ -52,7 +52,7 @@ class Runner(BenchmarkRunner):
             import lhapdf # pylint:disable=import-outside-toplevel
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
             return runner.get_result().apply_pdf_alphas_xir_xif(pdf, alpha_s, theory["XIR"], theory["XIF"])
-        return runner.get_result().apply_pdf(pdf, theory)
+        return runner.get_result().apply_pdf(pdf)
 
     def run_external(self, theory, ocard, pdf):
         """

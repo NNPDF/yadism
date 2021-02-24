@@ -21,18 +21,12 @@ class StructureFunction:
     exposed to the outside and the :py:class:`EvaluatedStructureFunction`
     which compute the actual observable.
 
-    The actual child class is determined by either `ESFmap` or, if TMC is
-    active, by `ESFTMCmap`.
-
     Parameters
     ----------
-        obs_name : .observable_name.ObservableName
+        obs_name : ObservableName
             name
-        eko_components : dict
-            managers dictionary that holds all created managers (which wrap
-            some more complicated structure)
-        theory_params : dict
-            theory dictionary containing all needed parameters
+        runner : Runner
+            parent reference
     """
 
     def __init__(self, obs_name, runner):
