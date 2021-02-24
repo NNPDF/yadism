@@ -112,9 +112,13 @@
 
    <a href="https://www.nikhef.nl/~h24/qcdnum/"><abbr title="Quantum ChromoDynamics NUM">QCDNUM</abbr></a>
 
+.. |xspace-bench| raw:: html
+
+   <a href="https://github.com/N3PDF/external/tree/master/xspace-bench"><abbr title="Xspace Benchmark">xspace-bench</abbr></a>
+
 .. |banana| raw:: html
 
-   <a href="https://pypi.org/project/banana-hep/"><abbr title="QBenchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
+   <a href="https://n3pdf.github.io/banana/stable/"><abbr title="Benchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
 
 .. -----------
    not physics

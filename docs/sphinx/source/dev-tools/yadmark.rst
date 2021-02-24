@@ -2,18 +2,20 @@ Yadmark
 =======
 
 Here we describe the design and API of the `yadmark` package.
+The specific purpose of this package is to cointain all the utils to benchmark efficiently Yadism. 
 The underlying infrastructure is coming from `sqlite3` and `git-lfs` and it 
-is implemented in the package |banana|. 
+is implemented in the package |banana|.
+To run Yadmark see the section below of the available runners. 
+Furthermore Yadmark provide also a python interpter called `navigator` to inspect the cached benchmark reuslts. 
 
 .. toctree::
    :maxdepth: 1
-   :caption: Dev Tools
 
    navigator.rst
    API <yadmark/yadmark.rst>
 
-Available Benchmarks
---------------------
+Available Runners
+-----------------
 
 In the ``benchmarks/runners`` we provide a list of established benchmarks
 
@@ -42,5 +44,5 @@ In the ``benchmarks/runners`` we provide a list of established benchmarks
     run the established benchmarks against `xspace-bench`
   - the necessary python bindings are provided by us externally
 
-Furthermore all of them are examples useful to understand how to use the
+All of them are examples useful to understand how to use the
 `yadmark` package for benchmarking.

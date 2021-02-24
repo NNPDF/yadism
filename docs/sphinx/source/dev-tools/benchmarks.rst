@@ -40,14 +40,14 @@ It is/has been used by the `xFitter` framework.
 xspace-bench
 ------------
 
-`xspace-bench` is a tool aimed to the evolution of PDFs and DIS observables' calculation for
+|xspace-bench| is a tool aimed to the evolution of PDFs and DIS observables' calculation for
 |NC| and |CC|, with different type of projectiles and targets. |SF| can be computed up to |NLO|, 
 and few |FNS| configurations are available, since their settings are hardcoded. 
 
 Different definition of |SF|
 ----------------------------
 
-Due to a different definition |SF| in `yadism`, |APFEL|, |QCDNUM| and `xspace-bench` it is
+Due to a different definition |SF| in `yadism`, |APFEL|, |QCDNUM| and |xspace-bench| it is
 not possible to compare all the structure functions in all the schemes.
 
 .. important::
@@ -113,7 +113,7 @@ Only |EM| and |NC| currents are available in |QCDNUM|.
 SF in xspace-bench
 ~~~~~~~~~~~~~~~~~~
 
-In `xspace-bench` |SF| are defined as follows:  
+In |xspace-bench| |SF| are defined as follows:  
 
 - :math:`F_X^{light}` is defined by having only light quarks in the quark lines (u,d,s)
 - :math:`F_X^{charm}` is defined by having light and charm quarks in the
