@@ -33,8 +33,8 @@ class StructureFunction:
         # internal managers
         self.obs_name = obs_name
         self.runner = runner
-        self.__ESFs = []
-        self.__ESFcache = {}
+        self.esfs = []
+        self.cache = {}
         logger.debug("Init %s", self)
 
     def __getattribute__(self, name):
@@ -57,10 +57,10 @@ class StructureFunction:
             kinematic_configs : list(dict)
                 run card input
         """
-        self.__ESFs = []
+        self.esfs = []
         # iterate F* configurations
         for kinematics in kinematic_configs:
-            self.__ESFs.append(self.get_esf(self.obs_name, kinematics, use_raw=False))
+            self.esfs.append(self.get_esf(self.obs_name, kinematics, use_raw=False))
 
     def get_esf(self, obs_name, kinematics, *args, use_raw=True, force_local=False):
         """
@@ -90,6 +90,8 @@ class StructureFunction:
             obj : EvaluatedStructureFunction
                 created object
         """
+        # TODO rethink and refactor method - only used by TMC
+        # TODO remove force_local
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
             obj = esf.EvaluatedStructureFunction(self, kinematics)
@@ -105,21 +107,17 @@ class StructureFunction:
             # TODO how to incorporate args?
             # search
             try:
-                return self.__ESFcache[key]
+                return self.cache[key]
             except KeyError:
                 if use_tmc_if_available:
                     obj = ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
                     obj = esf.EvaluatedStructureFunction(self, kinematics, *args)
-                self.__ESFcache[key] = obj
+                self.cache[key] = obj
                 return obj
         else:
             # ask our parent (as always)
-            if obs_name.name not in self.runner.observable_instances:
-                self.runner.observable_instances[obs_name.name] = type(self)(
-                    obs_name, self.runner
-                )
-            return self.runner.observable_instances[obs_name.name].get_esf(
+            return self.runner.get_sf(obs_name).get_esf(
                 obs_name, kinematics, *args
             )
 
@@ -133,7 +131,7 @@ class StructureFunction:
                 all children outputs
         """
         output = []
-        for esf in self.__ESFs:
+        for esf in self.esfs:
             output.append(esf.get_result())
 
         return output

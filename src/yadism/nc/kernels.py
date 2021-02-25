@@ -138,6 +138,8 @@ def generate_heavy(esf, nf):
             list of elements
     """
     kind = esf.sf.obs_name.kind
+    if kind == "F3":
+        return ()
     cfs = coefficient_functions[kind]
     nhq = nf + 1
     m2hq = esf.sf.m2hq[nhq - 4]

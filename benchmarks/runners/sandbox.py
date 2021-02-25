@@ -16,7 +16,7 @@ class Sandbox(Runner):
     external = "APFEL" # external comparison program
     #external = "xspace_bench"
     #external = "QCDNUM"
-    #external = "void"
+    external = "void"
 
     alphas_from_lhapdf = True
 
@@ -79,11 +79,11 @@ class Sandbox(Runner):
         kinematics = []
         kinematics.extend(
             #[dict(x=0.1,Q2=90)]
-            [dict(x=x, Q2=50.0) for x in interpolation_xgrid[::3]]
+            [dict(x=x, Q2=50.0) for x in interpolation_xgrid[::5]]
             #[dict(x=x, Q2=90.0) for x in np.linspace(1e-1, 1, 5)]
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
-        kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+        #kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
@@ -94,16 +94,17 @@ class Sandbox(Runner):
             # "F2bottom",
             # "F2top",
             # "F2total",
-            # "FLlight",
+            "FLlight",
             # "FLcharm",
             # "FLbottom",
             # "FLtotal",
-            # "F3light",
+            "F3light",
             # "F3charm",
             # "F3bottom",
             # "F3total",
+            "??light",
         ]
-        update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
+        update = {"prDIS": ["CC"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
         #update={"interpolation_xgrid":[defaults["interpolation_xgrid"]], "interpolation_polynomial_degree": [defaults["interpolation_polynomial_degree"]]}
         # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
         # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))

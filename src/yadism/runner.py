@@ -37,6 +37,7 @@ from . import observable_name
 from . import log
 from .output import Output
 from .sf import StructureFunction as SF
+from .xs import CrossSection as XS
 from .coupling_constants import CouplingConstants
 
 log.setup()
@@ -155,9 +156,10 @@ class Runner:
         #     obj.load(self._observables["observables"].get(name, []))
         #     self.observable_instances[name] = obj
         for obs_name, kins in self._observables["observables"].items():
-            if obs_name == "sigma_reduced":
-                obs = None
+            if obs_name == "??light":
+                obs = XS(observable_name.ObservableName(obs_name), self)
             else:
+                # TODO use get_sf?
                 obs = SF(observable_name.ObservableName(obs_name), self)
             # read kinematics
             obs.load(kins)
@@ -177,6 +179,14 @@ class Runner:
         self._output.update(interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
         self._output["projectilePID"] = coupling_constants.obs_config["projectilePID"]
+
+    def get_sf(self, obs_name):
+        if obs_name.name not in self.observable_instances:
+            self.observable_instances[obs_name.name] = SF(
+                obs_name, self
+            )
+        return self.observable_instances[obs_name.name]
+
 
     def get_result(self):
         """
