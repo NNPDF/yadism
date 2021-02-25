@@ -186,9 +186,9 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         dfd.print(
             textwrap.dedent(
                 f"""
-                - theory: {log['t_hash']}
-                - obs: {log['o_hash']}
-                - using PDF: {log['pdf']}\n"""
+                - theory: `{log['t_hash']}`
+                - obs: `{log['o_hash']}`
+                - using PDF: *{log['pdf']}*\n"""
             ),
             position=0,
         )
