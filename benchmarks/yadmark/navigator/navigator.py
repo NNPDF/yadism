@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import textwrap
+
 import numpy as np
 import pandas as pd
 
@@ -87,16 +89,17 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             obj : dict
                 to be updated pandas record
         """
-        for f in ["external", "pdf"]:
-            obj[f] = cac[f]
-
         sfs = 0
         esfs = 0
         for esfs_dict in cac["result"].values():
             sfs += 1
             esfs += len(esfs_dict)
-
         obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
+
+        obj["theory"] = cac["t_hash"][: self.hash_len]
+        obj["observables"] = cac["o_hash"][: self.hash_len]
+        for f in ["pdf", "external"]:
+            obj[f] = cac[f]
 
     def fill_logs(self, lg, obj):
         """
@@ -104,10 +107,10 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
         Parameters
         ----------
-            lg : dict
-                database record
-            obj : dict
-                to be updated pandas record
+        lg : dict
+            database record
+        obj : dict
+            to be updated pandas record
         """
         sfs = 0
         esfs = 0
@@ -119,6 +122,9 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
         else:
             obj["structure_functions"] = crash
+
+        obj["theory"] = lg["t_hash"][: self.hash_len]
+        obj["observables"] = lg["o_hash"][: self.hash_len]
         obj["pdf"] = lg["pdf"]
         obj["external"] = lg["external"]
 
@@ -175,14 +181,18 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
                 DataFrames
         """
         log = self.get(bnav.l, doc_hash)
-        dfd = dfdict.DFdict()
-        for sf in log["log"]:
-            dfd.print(
-                f"{sf} with theory={log['t_hash']}, "
-                + f"obs={log['o_hash']} "
-                + f"using {log['pdf']}"
-            )
-            dfd[sf] = pd.DataFrame(log["log"][sf])
+
+        dfd = log["log"]
+        dfd.print(
+            textwrap.dedent(
+                f"""
+                - theory: {log['t_hash']}
+                - obs: {log['o_hash']}
+                - using PDF: {log['pdf']}\n"""
+            ),
+            position=0,
+        )
+
         return dfd
 
     def subtract_tables(self, dfd1, dfd2):
