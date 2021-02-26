@@ -166,6 +166,41 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
         return self.list_all(bnav.l, related_logs)
 
+    def cache_as_dfd(self, doc_hash):
+        """
+        Load all structure functions in log as DataFrame
+
+        Parameters
+        ----------
+            doc_hash : hash
+                document hash
+
+        Returns
+        -------
+            log : DFdict
+                DataFrames
+        """
+        cache = self.get(bnav.c, doc_hash)
+
+        res = cache["result"]
+
+        dfd = dfdict.DFdict()
+        for k, v in res.items():
+            dfd[k] = pd.DataFrame(v)
+
+        dfd.print(
+            textwrap.dedent(
+                f"""
+                - theory: `{cache['t_hash']}`
+                - obs: `{cache['o_hash']}`
+                - using PDF: *{cache['pdf']}*\n"""
+            ),
+            position=0,
+        )
+        dfd.external = cache["external"]
+
+        return dfd
+
     def log_as_dfd(self, doc_hash):
         """
         Load all structure functions in log as DataFrame
@@ -195,6 +230,83 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
         return dfd
 
+    @staticmethod
+    def load_dfd(dfd, retrieve_method):
+        if isinstance(dfd, dfdict.DFdict):
+            log = dfd
+            id = "not-an-id"
+        else:
+            log = retrieve_method(dfd)
+            id = dfd
+
+        if log is None:
+            raise ValueError(f"Log id: '{id}' not found")
+
+        return id, log
+
+    def compare_external(self, dfd1, dfd2):
+        """
+        Compare two results in the cache.
+
+        It's taking two results from external benchmarks and compare them in a
+        single table.
+
+        Parameters
+        ----------
+        dfd1 : dict or hash
+            if hash the doc_hash of the cache to be loaded
+        dfd2 : dict or hash
+            if hash the doc_hash of the cache to be loaded
+        """
+        # load json documents
+        id1, cache1 = self.load_dfd(dfd1, self.cache_as_dfd)
+        id2, cache2 = self.load_dfd(dfd2, self.cache_as_dfd)
+
+        if cache1.external == cache2.external:
+            cache1.external = f"{cache1.external}1"
+            cache2.external = f"{cache2.external}2"
+
+        # print head
+        cache_diff = dfdict.DFdict()
+        msg = f"**Comparing** id: `{id1}` - id: `{id2}`, in table *cache*"
+        cache_diff.print(msg, "-" * len(msg), sep="\n")
+        cache_diff.print(f"- *{cache1.external}*: `{id1}`")
+        cache_diff.print(f"- *{cache2.external}*: `{id2}`")
+        cache_diff.print()
+
+        for obs in cache1.keys():
+            if obs not in cache2:
+                print(f"{obs}: not matching in log2")
+                continue
+
+            # load observable tables
+            table1 = pd.DataFrame(cache1[obs])
+            table2 = pd.DataFrame(cache2[obs])
+            table_out = table1.copy()
+
+            # check for compatible kinematics
+            if any([any(table1[y] != table2[y]) for y in ["x", "Q2"]]):
+                raise ValueError("Cannot compare tables with different (x, Q2)")
+
+            table_out.rename(columns={"result": cache1.external}, inplace=True)
+            table_out[cache2.external] = table2["result"]
+
+            # compute relative error
+            def rel_err(row, t1_ext=cache1.external, t2_ext=cache2.external):
+                if row[t2_ext] == 0.0:
+                    if row[t1_ext] == 0.0:
+                        return 0.0
+                    return np.nan
+                else:
+                    return (row[t1_ext] / row[t2_ext] - 1.0) * 100
+
+            table_out["percent_error"] = table_out.apply(rel_err, axis=1)
+
+            # dump results' table
+            cache_diff[obs] = table_out
+
+        return cache_diff
+
     def subtract_tables(self, dfd1, dfd2):
         """
         Subtract results in the second table from the first one,
@@ -213,31 +325,15 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             diffout : DFdict
                 created frames
         """
-
-        diffout = dfdict.DFdict()
-
         # load json documents
-        logs = []
-        ids = []
-        for dfd in [dfd1, dfd2]:
-            if isinstance(dfd, dfdict.DFdict):
-                logs.append(dfd.to_document())
-                ids.append("not-an-id")
-            else:
-                logs.append(self.log_as_dfd(dfd))
-                ids.append(dfd)
-        log1, log2 = logs
-        id1, id2 = ids
+        id1, log1 = self.load_dfd(dfd1, self.log_as_dfd)
+        id2, log2 = self.load_dfd(dfd2, self.log_as_dfd)
 
         # print head
-        msg = f"Subtracting id: '{id1}' - id: '{id2}', in table 'logs'"
-        diffout.print(msg, "=" * len(msg), sep="\n")
+        diffout = dfdict.DFdict()
+        msg = f"**Subtracting** id: `{id1}` - id: `{id2}`, in table *logs*"
+        diffout.print(msg, "-" * len(msg), sep="\n")
         diffout.print()
-
-        if log1 is None:
-            raise ValueError(f"Log id: '{id1}' not found")
-        if log2 is None:
-            raise ValueError(f"Log id: '{id2}' not found")
 
         # iterate observables
         for obs in log1.keys():
@@ -282,7 +378,6 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             table_out["percent_error"] = table_out.apply(rel_err, axis=1)
 
             # dump results' table
-            diffout.print(obs, "-" * len(obs), sep="\n")
             diffout[obs] = table_out
 
         return diffout

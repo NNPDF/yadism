@@ -20,6 +20,7 @@ Available functions:
     dfl(id) - log as DataFrame
     simlogs(id) - find similar logs
     diff(id,id) - subtractig logs
+    compare(id,id) - compare externals
     check_log(id) - check logs passed
     crashed_log(id) - print crashed logs
 """
@@ -40,6 +41,7 @@ bnav.register_globals(globals(), app)
 dfl = app.log_as_dfd
 simlogs = app.list_all_similar_logs
 diff = app.subtract_tables
+compare = app.compare_external
 check_log = app.check_log
 crashed_log = app.crashed_log
 

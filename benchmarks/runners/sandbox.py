@@ -58,7 +58,7 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def _run(self):
-        self.run([{"PTO": 0, "NfFF": 4}],
+        self.run([{"PTO": 1, "NfFF": 4}],
                 observables.build(**(self.generate_observables())), ["ToyLHAPDF"])
 
 def main():
