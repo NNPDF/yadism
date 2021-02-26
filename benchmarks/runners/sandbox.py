@@ -61,7 +61,9 @@ class Sandbox(Runner):
         self.run([{"PTO": 0, "NfFF": 4}],
                 observables.build(**(self.generate_observables())), ["ToyLHAPDF"])
 
-
-if __name__ == "__main__":
+def main():
     sand = Sandbox()
     sand._run()
+
+if __name__ == "__main__":
+    main()
