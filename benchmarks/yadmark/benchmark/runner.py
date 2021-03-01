@@ -2,13 +2,13 @@
 import numpy as np
 import pandas as pd
 
-from banana.data import sql, dfdict
+from banana.data import dfdict
 from banana.benchmark.runner import BenchmarkRunner
 
 from eko.strong_coupling import StrongCoupling
 
 from yadmark.banana_cfg import banana_cfg
-from yadmark.data import observables
+from yadmark.data import observables, db
 
 import yadism
 
@@ -19,10 +19,7 @@ class Runner(BenchmarkRunner):
     alphas_from_lhapdf = False
     """Use the alpha_s routine provided by the Pdf?"""
 
-    @staticmethod
-    def init_ocards(conn):
-        with conn:
-            conn.execute(sql.create_table("observables", observables.default_card))
+    db_base_cls = db.Base
 
     @staticmethod
     def load_ocards(conn, ocard_updates):

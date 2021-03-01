@@ -6,7 +6,7 @@ import copy
 
 import numpy as np
 
-from banana.data import power_set
+from banana.data import cartesian_product
 
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
@@ -118,6 +118,9 @@ class Sandbox(Runner):
                 observables.build(**(self.generate_observables())), ["CT14llo_NF3"])
 
 
-if __name__ == "__main__":
+def main():
     sand = Sandbox()
     sand.doit()
+
+if __name__ == "__main__":
+    main()

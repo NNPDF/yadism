@@ -2,8 +2,9 @@
 import numpy as np
 
 from eko import interpolation
+from banana.data import cartesian_product, sql
 
-from banana.data import power_set, sql
+from . import db
 
 default_card = dict(
     interpolation_xgrid=interpolation.make_grid(30, 20).tolist(),
@@ -28,7 +29,14 @@ default_kinematics.extend(
 default_config = {
     0: {"observable_names": ["F2light"], "kinematics": default_kinematics},
     1: {
-        "observable_names": ["F2light", "F2charm", "FLlight", "FLcharm", "F3light", "F3charm"],
+        "observable_names": [
+            "F2light",
+            "F2charm",
+            "FLlight",
+            "FLcharm",
+            "F3light",
+            "F3charm",
+        ],
         "kinematics": default_kinematics,
     },
 }
@@ -62,7 +70,7 @@ def build(observable_names, kinematics, update=None):
     cards = []
     if update is None:
         update = {}
-    for c in power_set(update):
+    for c in cartesian_product(update):
         card = dict(observables={})
         card.update(c)
         for obs in observable_names:
@@ -72,15 +80,15 @@ def build(observable_names, kinematics, update=None):
 
 
 # db interface
-def load(conn, updates):
+def load(session, updates):
     """
     Load observable records from the DB.
 
     Parameters
     ----------
-        conn : sqlite3.Connection
-            DB connection
-        update : dict
+        session : sqlalchemy.session.Session
+            DB ORM session
+        updates : dict
             modifiers
 
     Returns
@@ -89,7 +97,7 @@ def load(conn, updates):
             list of records
     """
     # add hash
-    raw_records, rf = sql.prepare_records(default_card, updates)
+    raw_records, df = sql.prepare_records(default_card, updates)
     # insert new ones
-    sql.insertnew(conn, "observables", rf)
+    sql.insertnew(session, db.Observable, df)
     return raw_records
