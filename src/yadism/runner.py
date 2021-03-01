@@ -156,11 +156,12 @@ class Runner:
         #     obj.load(self._observables["observables"].get(name, []))
         #     self.observable_instances[name] = obj
         for obs_name, kins in self._observables["observables"].items():
-            if obs_name == "??light":
-                obs = XS(observable_name.ObservableName(obs_name), self)
+            on = observable_name.ObservableName(obs_name)
+            if on.kind in observable_name.xs:
+                obs = XS(on, self)
             else:
                 # TODO use get_sf?
-                obs = SF(observable_name.ObservableName(obs_name), self)
+                obs = SF(on, self)
             # read kinematics
             obs.load(kins)
             self.observable_instances[obs_name] = obs

@@ -16,7 +16,7 @@ class Sandbox(Runner):
     external = "APFEL" # external comparison program
     #external = "xspace_bench"
     #external = "QCDNUM"
-    external = "void"
+    #external = "void"
 
     alphas_from_lhapdf = True
 
@@ -89,20 +89,20 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
         # kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         observable_names = [
-            "F2light",
-            # "F2charm",
-            # "F2bottom",
-            # "F2top",
-            # "F2total",
-            "FLlight",
-            # "FLcharm",
-            # "FLbottom",
-            # "FLtotal",
-            "F3light",
-            # "F3charm",
-            # "F3bottom",
-            # "F3total",
-            "??light",
+            "F2_light",
+            # "F2_charm",
+            # "F2_bottom",
+            # "F2_top",
+            # "F2_total",
+            "FL_light",
+            # "FL_charm",
+            # "FL_bottom",
+            # "FL_total",
+            "F3_light",
+            # "F3_charm",
+            # "F3_bottom",
+            # "F3_total",
+            #"XSreduced_total",
         ]
         update = {"prDIS": ["CC"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
         #update={"interpolation_xgrid":[defaults["interpolation_xgrid"]], "interpolation_polynomial_degree": [defaults["interpolation_polynomial_degree"]]}
@@ -115,7 +115,7 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 0}],[{"observables":{"??light":[dict(x=0.1,Q2=90,y=.1)]}}], ["CT14llo_NF3"])
+        self.run([{"PTO": 1}],[{"observables":{"XSreduced":[dict(x=0.1,Q2=90,y=.1)],"XSreduced_light":[dict(x=0.1,Q2=90,y=.1)],"XSreduced_charm":[dict(x=0.1,Q2=90,y=.1)]}}], ["CT14llo_NF3"])
         #self.run([{"PTO": 0}],
         #        observables.build(**(self.generate_observables())), ["CT14llo_NF3"])
 

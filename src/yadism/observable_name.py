@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 fake_kind = "??"
-kinds = ["F2", "FL", "F3", fake_kind]
+sfs = ["F2", "FL", "F3"]
+xs = ["XSreduced"]
+kinds = sfs + xs + [fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
 asys = [h + "asy" for h in heavys]
@@ -23,10 +25,15 @@ class ObservableName:
     """
 
     def __init__(self, name):
-        self.kind = name[:2]
+        p = name.split("_")
+        if len(p) == 1:
+            self.kind, self.flavor = p[0], "total"
+        elif len(p) == 2:
+            self.kind, self.flavor = p[0], p[1]
+        else:
+            raise ValueError(f"Unknown obsname {name}")
         if self.kind not in kinds:
             raise ValueError(f"Unknown kind {self.kind}")
-        self.flavor = name[2:]
         if self.flavor not in flavors:
             raise ValueError(f"Unknown flavor {self.flavor}")
 
