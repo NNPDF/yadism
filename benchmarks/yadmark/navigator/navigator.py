@@ -7,6 +7,11 @@ from banana.data import dfdict
 
 from yadism import observable_name as on
 
+from ..data import db
+
+table_objects = bnav.table_objects
+table_objects["o"] = db.Observable
+
 
 class NavigatorApp(bnav.navigator.NavigatorApp):
     """
@@ -19,6 +24,8 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         mode : string
             mode identifier
     """
+
+    table_objects = table_objects
 
     def fill_theories(self, theo, obj):
         """
@@ -80,16 +87,17 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             obj : dict
                 to be updated pandas record
         """
-        for f in ["external", "pdf"]:
-            obj[f] = cac[f]
-
         sfs = 0
         esfs = 0
         for esfs_dict in cac["result"].values():
             sfs += 1
             esfs += len(esfs_dict)
-
         obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
+
+        obj["theory"] = cac["t_hash"][: self.hash_len]
+        obj["observables"] = cac["o_hash"][: self.hash_len]
+        for f in ["pdf", "external"]:
+            obj[f] = cac[f]
 
     def fill_logs(self, lg, obj):
         """
@@ -97,10 +105,10 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
         Parameters
         ----------
-            lg : dict
-                database record
-            obj : dict
-                to be updated pandas record
+        lg : dict
+            database record
+        obj : dict
+            to be updated pandas record
         """
         sfs = 0
         esfs = 0
@@ -112,6 +120,9 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
         else:
             obj["structure_functions"] = crash
+
+        obj["theory"] = lg["t_hash"][: self.hash_len]
+        obj["observables"] = lg["o_hash"][: self.hash_len]
         obj["pdf"] = lg["pdf"]
         obj["external"] = lg["external"]
 
@@ -153,31 +164,6 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
 
         return self.list_all(bnav.l, related_logs)
 
-    def log_as_dfd(self, doc_hash):
-        """
-        Load all structure functions in log as DataFrame
-
-        Parameters
-        ----------
-            doc_hash : hash
-                document hash
-
-        Returns
-        -------
-            log : DFdict
-                DataFrames
-        """
-        log = self.get(bnav.l, doc_hash)
-        dfd = dfdict.DFdict()
-        for sf in log["log"]:
-            dfd.print(
-                f"{sf} with theory={log['t_hash']}, "
-                + f"obs={log['o_hash']} "
-                + f"using {log['pdf']}"
-            )
-            dfd[sf] = pd.DataFrame(log["log"][sf])
-        return dfd
-
     def subtract_tables(self, dfd1, dfd2):
         """
         Subtract results in the second table from the first one,
@@ -196,31 +182,15 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             diffout : DFdict
                 created frames
         """
-
-        diffout = dfdict.DFdict()
-
         # load json documents
-        logs = []
-        ids = []
-        for dfd in [dfd1, dfd2]:
-            if isinstance(dfd, dfdict.DFdict):
-                logs.append(dfd.to_document())
-                ids.append("not-an-id")
-            else:
-                logs.append(self.log_as_dfd(dfd))
-                ids.append(dfd)
-        log1, log2 = logs
-        id1, id2 = ids
+        id1, log1 = self.load_dfd(dfd1, self.log_as_dfd)
+        id2, log2 = self.load_dfd(dfd2, self.log_as_dfd)
 
         # print head
-        msg = f"Subtracting id: '{id1}' - id: '{id2}', in table 'logs'"
-        diffout.print(msg, "=" * len(msg), sep="\n")
+        diffout = dfdict.DFdict()
+        msg = f"**Subtracting** id: `{id1}` - id: `{id2}`, in table *logs*"
+        diffout.print(msg, "-" * len(msg), sep="\n")
         diffout.print()
-
-        if log1 is None:
-            raise ValueError(f"Log id: '{id1}' not found")
-        if log2 is None:
-            raise ValueError(f"Log id: '{id2}' not found")
 
         # iterate observables
         for obs in log1.keys():
@@ -265,7 +235,6 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             table_out["percent_error"] = table_out.apply(rel_err, axis=1)
 
             # dump results' table
-            diffout.print(obs, "-" * len(obs), sep="\n")
             diffout[obs] = table_out
 
         return diffout

@@ -20,6 +20,7 @@ Available functions:
     dfl(id) - log as DataFrame
     simlogs(id) - find similar logs
     diff(id,id) - subtractig logs
+    compare(id,id) - compare externals
     check_log(id) - check logs passed
     crashed_log(id) - print crashed logs
 """
@@ -37,7 +38,6 @@ app = navigator.NavigatorApp(banana_cfg.banana_cfg, "sandbox")
 bnav.register_globals(globals(), app)
 
 # add my functions
-dfl = app.log_as_dfd
 simlogs = app.list_all_similar_logs
 diff = app.subtract_tables
 check_log = app.check_log
