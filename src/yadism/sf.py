@@ -117,9 +117,7 @@ class StructureFunction:
                 return obj
         else:
             # ask our parent (as always)
-            return self.runner.get_sf(obs_name).get_esf(
-                obs_name, kinematics, *args
-            )
+            return self.runner.get_sf(obs_name).get_esf(obs_name, kinematics, *args)
 
     def get_result(self):
         """

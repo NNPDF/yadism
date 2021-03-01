@@ -182,11 +182,8 @@ class Runner:
 
     def get_sf(self, obs_name):
         if obs_name.name not in self.observable_instances:
-            self.observable_instances[obs_name.name] = SF(
-                obs_name, self
-            )
+            self.observable_instances[obs_name.name] = SF(obs_name, self)
         return self.observable_instances[obs_name.name]
-
 
     def get_result(self):
         """

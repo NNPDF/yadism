@@ -49,9 +49,13 @@ class Runner(BenchmarkRunner):
         runner = yadism.Runner(theory, ocard)
         # choose alpha_s source
         if self.alphas_from_lhapdf:
-            import lhapdf # pylint:disable=import-outside-toplevel
+            import lhapdf  # pylint:disable=import-outside-toplevel
+
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
-            return runner.get_result().apply_pdf_alphas_xir_xif(pdf, alpha_s, theory["XIR"], theory["XIF"])
+            alpha_qed = lambda _muR: theory["alphaqed"]
+            return runner.get_result().apply_pdf_alphas_alphaqed_xir_xif(
+                pdf, alpha_s, alpha_qed, theory["XIR"], theory["XIF"]
+            )
         return runner.get_result().apply_pdf(pdf)
 
     def run_external(self, theory, ocard, pdf):
@@ -102,7 +106,7 @@ class Runner(BenchmarkRunner):
         elif self.external == "void":
             # set all ESF simply to 0
             res = {}
-            for sf,esfs in ocard["observables"].items():
+            for sf, esfs in ocard["observables"].items():
                 if not yadism.observable_name.ObservableName.is_valid(sf):
                     continue
                 void_esfs = []

@@ -1,9 +1,9 @@
-
 import logging
 
 from .esf import exs
 
 logger = logging.getLogger(__name__)
+
 
 class CrossSection:
     """
@@ -46,7 +46,7 @@ class CrossSection:
             self.exss.append(exs.EvaluatedCrossSection(self, kinematics))
 
     def get_esf(self, obs_name, kin):
-        return self.runner.get_sf(obs_name).get_esf(obs_name, kin,use_raw=False)
+        return self.runner.get_sf(obs_name).get_esf(obs_name, kin, use_raw=False)
 
     def get_result(self):
         """

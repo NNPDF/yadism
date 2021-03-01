@@ -45,7 +45,7 @@ class ESFResult:
             )
         return new_output
 
-    def apply_pdf(self, lhapdf_like, pids, xgrid, alpha_s, xiR, xiF):
+    def apply_pdf(self, lhapdf_like, pids, xgrid, alpha_s, alpha_qed, xiR, xiF):
         r"""
         Compute the observable for the given PDF.
 
@@ -82,8 +82,11 @@ class ESFResult:
         err = 0
         # TODO properly define xiF log (according to pineappl combine orders)
         for o, (v, e) in self.orders.items():
-            prefactor = ((alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)) ** o[0]) * (
-                (-np.log(xiF ** 2)) ** o[3]
+            prefactor = (
+                ((alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)) ** o[0])
+                * ((alpha_qed(np.sqrt(self.Q2) * xiR)) ** o[1])
+                * ((np.log(xiR ** 2)) ** o[2])
+                * ((-np.log(xiF ** 2)) ** o[3])
             )
             res += prefactor * np.einsum("aj,aj", v, pdfs)
             err += prefactor * np.einsum("aj,aj", e, pdfs)
@@ -120,6 +123,12 @@ class ESFResult:
             r.orders[o] = (v, e)
         return r
 
+    def __sub__(self, other):
+        return self.__add__(-other)
+
+    def __neg__(self):
+        return self.__mul__(-1.0)
+
     def __mul__(self, other):
         r = ESFResult(self.x, self.Q2)
         try:
@@ -134,3 +143,19 @@ class ESFResult:
 
     def __rmul__(self, other):
         return self.__mul__(other)
+
+
+class EXSResult(ESFResult):
+    def __init__(self, x, Q2, y, orders=None):
+        super().__init__(x, Q2, orders)
+        self.y = y
+
+    @classmethod
+    def from_document(cls, raw):
+        sup = super().from_document(raw)
+        return cls(sup.x, sup.Q2, raw["y"], sup.orders)
+
+    def get_raw(self):
+        d = super().get_raw()
+        d["y"] = self.y
+        return d

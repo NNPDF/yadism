@@ -115,8 +115,9 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 0}],
-                observables.build(**(self.generate_observables())), ["CT14llo_NF3"])
+        self.run([{"PTO": 0}],[{"observables":{"??light":[dict(x=0.1,Q2=90,y=.1)]}}], ["CT14llo_NF3"])
+        #self.run([{"PTO": 0}],
+        #        observables.build(**(self.generate_observables())), ["CT14llo_NF3"])
 
 
 if __name__ == "__main__":

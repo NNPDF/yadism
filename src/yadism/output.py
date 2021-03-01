@@ -25,11 +25,14 @@ class Output(dict):
         new_theory = compatibility.update(theory)
         sc = strong_coupling.StrongCoupling.from_dict(new_theory)
         alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
-        return self.apply_pdf_alphas_xir_xif(
-            lhapdf_like, alpha_s, theory["XIR"], theory["XIF"]
+        alpha_qed = lambda _muR: theory["alphaqed"]
+        return self.apply_pdf_alphas_alphaqed_xir_xif(
+            lhapdf_like, alpha_s, alpha_qed, theory["XIR"], theory["XIF"]
         )
 
-    def apply_pdf_alphas_xir_xif(self, lhapdf_like, alpha_s, xiR, xiF):
+    def apply_pdf_alphas_alphaqed_xir_xif(
+        self, lhapdf_like, alpha_s, alpha_qed, xiR, xiF
+    ):
         r"""
         Compute all observables for the given PDF.
 
@@ -62,6 +65,7 @@ class Output(dict):
                         self["pids"],
                         self["interpolation_xgrid"],
                         alpha_s,
+                        alpha_qed,
                         xiR,
                         xiF,
                     )
