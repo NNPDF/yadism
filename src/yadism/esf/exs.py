@@ -21,7 +21,12 @@ class EvaluatedCrossSection:
         # eta = 1 if obs_config["process"] == "CC" else 1
         # the alpha_qed^2 part is shifted below
         # norm = 2.0 * np.pi / (y * x * Q2)
-        return np.array([1.0, -yL / yp, f3sign * ym / yp])
+        kind = self.xs.obs_name.kind
+        if kind == "XSreduced":
+            return np.array([1.0, -yL / yp, f3sign * ym / yp])
+        if kind == "XSyreduced":
+            return np.array([yp, -yL, f3sign * ym])
+        raise ValueError(f"Unknown observable kind: {kind}")
 
     def alpha_qed_power(self):
         return 0

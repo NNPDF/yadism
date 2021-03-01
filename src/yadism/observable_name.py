@@ -2,7 +2,7 @@
 
 fake_kind = "??"
 sfs = ["F2", "FL", "F3"]
-xs = ["XSreduced"]
+xs = ["XSreduced", "XSyreduced"]
 kinds = sfs + xs + [fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
