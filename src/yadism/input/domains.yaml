@@ -164,7 +164,7 @@
 #type: string
 
 - name: CharmThresholdRatio
-  known_as: kcThr
+  known_as: kcDISThr
   runcard: theory
   description: >
     Ratio between the charm threshold for VFNS and the specified value for
@@ -174,7 +174,7 @@
     - kcThr > 0
 
 - name: BottomThresholdRatio
-  known_as: kbThr
+  known_as: kbDISThr
   runcard: theory
   description: >
     Ratio between the bottom threshold for VFNS and the specified value for
@@ -184,7 +184,7 @@
     - kbThr > 0
 
 - name: TopThresholdRatio
-  known_as: ktThr
+  known_as: ktDISThr
   runcard: theory
   description: >
     Ratio between the top threshold for VFNS and the specified value for top
