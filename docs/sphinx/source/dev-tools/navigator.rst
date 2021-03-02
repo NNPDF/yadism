@@ -1,6 +1,8 @@
 Navigator
 =========
 
+This app is meant to inspect and comapre `yadism` output versus the external one.
+
 To enter in the `navigator` simply running ``navigator`` command, installed with
 the `yadmark` package.
 
@@ -12,5 +14,53 @@ Once inside the interpreter all the functions in:
 - `pylab`
 
 will be available without any prefix (they are imported in the global namespace).
-You can aslo type ``h()`` or ``yelp()`` for a brief overview. 
+You can aslo type ``h()`` or ``yelp()`` for help.
 
+.. list-table:: Available variables
+  :header-rows: 1
+
+  * - Name
+    - description
+  * - ``t``
+    - query all the stored theory cards
+  * - ``o``
+    - query all the stored observable cards
+  * - ``l``
+    - query all the logs table
+  * - ``c``
+    - query all the cached tables
+
+
+.. list-table:: Available functions
+  :header-rows: 1
+
+  * - Name
+    - Input
+    - description
+  * - ``ext(external)``
+    - :py:obj:`str`
+    - change external
+  * - ``g(tbl,id)``
+    - :py:obj:`str`, :py:obj:`hash`
+    - get all the ``tbl`` tables containing a given ``id``
+  * - ``ls(tbl)``
+    - :py:obj:`str`
+    - list all the ``tbl`` tables with reduced informations
+  * - ``dfl(id)``
+    - :py:obj:`hash`
+    - print the log as DataFrame
+  * - ``simlogs(id)``
+    - :py:obj:`hash`
+    -  find similar logs
+  * - ``diff(id, id)``
+    - :py:obj:`hash`, :py:obj:`hash`
+    - subtract the logs tables
+  * - ``comapare(id,id)``
+    - :py:obj:`hash`, :py:obj:`hash`
+    - compare externals tables 
+  * - ``check_log(id)``
+    - :py:obj:`hash`
+    - check logs passed
+  * - ``crashed_log(id)``
+    - :py:obj:`hash`
+    - print crashed logs

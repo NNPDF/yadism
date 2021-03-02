@@ -120,6 +120,10 @@
 
    <a href="https://n3pdf.github.io/banana/stable/"><abbr title="Benchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
 
+.. |lhapdf| raw:: html
+
+   <a href="https://lhapdf.hepforge.org/"><abbr title="LHAPDF">lhapdf</abbr></a>
+
 .. -----------
    not physics
    -----------
