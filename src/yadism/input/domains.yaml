@@ -171,7 +171,7 @@
     charm mass `mc`
   type: real
   domain:
-    - kcThr > 0
+    - kcDISThr > 0
 
 - name: BottomThresholdRatio
   known_as: kbDISThr
@@ -181,7 +181,7 @@
     bottom mass `mb`
   type: real
   domain:
-    - kbThr > 0
+    - kbDISThr > 0
 
 - name: TopThresholdRatio
   known_as: ktDISThr
@@ -191,7 +191,7 @@
     mass `mt`
   type: real
   domain:
-    - ktThr > 0
+    - ktDISThr > 0
 
 # Masses
 # ~~~~~~
