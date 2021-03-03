@@ -39,7 +39,7 @@ also incoming projectiles, different type of currents, SV and TMC.
    :stub-columns: 1
    :align: center
 
-å
+
 APFEL
 -----
 

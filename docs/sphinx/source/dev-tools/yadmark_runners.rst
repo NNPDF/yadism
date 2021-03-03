@@ -2,14 +2,14 @@
 Usage
 =====
 
-Yadmark mimic the same inputs needed to run `yadism`, namely a theory card, an 
-observable card and also the name of pdf set.
+Yadmark mimics the same inputs needed to run `yadism`, namely a theory card, an 
+observable card and also the name of a pdf set.
 
 Both the theory and observable card can be gnerated authomatically from a default: 
 the former with |banana|, the latter with something similar to ``generate_observable()`` provided `sandbox.py`. 
 
 In addition to run `yadmark` you need to specify the external program you would benchmark against. 
-To do so you will have to initialise a class of type ``yadmark.benchmark.runner``.
+To do so, you will have to initialise a class of type ``yadmark.benchmark.runner``.
 In the following section we describe some available `runners` which are the most useful example.
 
 The minimal setup of the input cards must contain: 

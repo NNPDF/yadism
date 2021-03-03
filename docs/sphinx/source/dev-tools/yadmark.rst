@@ -33,7 +33,7 @@ Yadmark is composed by three subpackages:
 The banana configuration is loaded from ``banana_cfg.py`` file. 
 
 To run Yadmark see the section of the available :doc:`runners<yadmark_runners>`.
-Furthermore Yadmark provide also a python interpter called :doc:`navigator<navigator>` to inspect 
+Furthermore Yadmark provides also a python interpter called :doc:`navigator<navigator>` to inspect 
 the cached benchmark reuslts. 
 
 .. toctree::
