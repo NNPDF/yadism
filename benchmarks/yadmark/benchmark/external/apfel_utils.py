@@ -206,19 +206,33 @@ def compute_apfel_data(theory, observables, pdf):
     elif observables["ProjectileDIS"] == "positron":
         l = "P"
 
+    # apfel_fkobservables = {
+    #     "XSreduced_light": f"DIS_NC{l}_L",
+    #     "XSreduced_charm": f"DIS_NC{l}_CH",
+    #     "XSreduced_bottom": f"DIS_NC{l}_BT",
+    #     "XSreduced_top": f"DIS_NC{l}_TP",
+    #     "XSreduced_total": f"DIS_NC{l}",
+    #     "XSreduced": f"DIS_NC{l}",
+    #     "XSyreduced_light": f"DIS_CC{l}_L",
+    #     "XSyreduced_charm": f"DIS_CC{l}_CH",
+    #     "XSyreduced_bottom": f"DIS_CC{l}_BT",
+    #     "XSyreduced_top": f"DIS_CC{l}_TP",
+    #     "XSyreduced_total": f"DIS_CC{l}",
+    #     "XSyreduced": f"DIS_CC{l}",
+    # }
     apfel_fkobservables = {
-        "XSreduced_light": f"DIS_NC{l}_L",
-        "XSreduced_charm": f"DIS_NC{l}_CH",
-        "XSreduced_bottom": f"DIS_NC{l}_BT",
-        "XSreduced_top": f"DIS_NC{l}_TP",
-        "XSreduced_total": f"DIS_NC{l}",
-        "XSreduced": f"DIS_NC{l}",
-        "XSyreduced_light": f"DIS_CC{l}_L",
-        "XSyreduced_charm": f"DIS_CC{l}_CH",
-        "XSyreduced_bottom": f"DIS_CC{l}_BT",
-        "XSyreduced_top": f"DIS_CC{l}_TP",
-        "XSyreduced_total": f"DIS_CC{l}",
-        "XSyreduced": f"DIS_CC{l}",
+        "XSHERANC_light": f"DIS_NC{l}_L",
+        "XSHERANC_charm": f"DIS_NC{l}_CH",
+        "XSHERANC_bottom": f"DIS_NC{l}_BT",
+        "XSHERANC_top": f"DIS_NC{l}_TP",
+        "XSHERANC_total": f"DIS_NC{l}",
+        "XSHERANC": f"DIS_NC{l}",
+        "XSHERACC_light": f"DIS_CC{l}_L",
+        "XSHERACC_charm": f"DIS_CC{l}_CH",
+        "XSHERACC_bottom": f"DIS_CC{l}_BT",
+        "XSHERACC_top": f"DIS_CC{l}_TP",
+        "XSHERACC_total": f"DIS_CC{l}",
+        "XSHERACC": f"DIS_CC{l}",
     }
 
     # compute observables with APFEL

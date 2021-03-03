@@ -3,6 +3,7 @@ import numpy as np
 from ..observable_name import ObservableName
 from .esf_result import EXSResult
 
+conv=3.893793e10 # conversion factor from GeV^-2 to 10^-38 cm^2
 
 class EvaluatedCrossSection:
     def __init__(self, xs, kin):
@@ -10,8 +11,6 @@ class EvaluatedCrossSection:
         self.kin = kin
 
     def f_coeffs(self):
-        # x = self.kin["x"]
-        # Q2 = self.kin["Q2"]
         y = self.kin["y"]
         yp = 1.0 + (1.0 - y) ** 2
         ym = 1.0 - (1.0 - y) ** 2
@@ -22,10 +21,23 @@ class EvaluatedCrossSection:
         # the alpha_qed^2 part is shifted below
         # norm = 2.0 * np.pi / (y * x * Q2)
         kind = self.xs.obs_name.kind
-        if kind == "XSreduced":
+        # if kind == "XSreduced":
+        #     return np.array([1.0, -yL / yp, f3sign * ym / yp])
+        # if kind == "XSyreduced":
+        #     return np.array([yp, -yL, f3sign * ym])
+        if kind == "XSHERANC":
             return np.array([1.0, -yL / yp, f3sign * ym / yp])
-        if kind == "XSyreduced":
-            return np.array([yp, -yL, f3sign * ym])
+        if kind == "XSHERACC":
+            return np.array([yp, -yL, f3sign * ym])/4.
+        x = self.kin["x"]
+        Q2 = self.kin["Q2"]
+        mn = np.sqrt(self.xs.runner.theory_params["M2target"])
+        m2w = self.xs.runner.theory_params["M2W"]
+        if kind == "XSCHORUSCC":
+            ypc = yp - 2. * (mn * x * y)**2 / Q2
+            norm = conv * self.xs.runner.theory_params["GF"]**2 * mn / (2. * np.pi * (1. + Q2/m2w)**2)
+            return np.array([ypc, -yL, f3sign * ym]) * norm
+        
         raise ValueError(f"Unknown observable kind: {kind}")
 
     def alpha_qed_power(self):

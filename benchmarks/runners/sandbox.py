@@ -101,8 +101,8 @@ class Sandbox(Runner):
             "F3_charm",
             # "F3_bottom",
             # "F3_total",
-            "XSyreduced_light",
-            "XSyreduced_charm",
+            "XSHERACC_light",
+            "XSHERACC_charm",
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
         update = {"prDIS": ["CC"]}
@@ -112,7 +112,7 @@ class Sandbox(Runner):
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 0}], self.generate_observables(), ["uonly"])
+        self.run([{"PTO": 0}], self.generate_observables(), ["CT14llo_NF4"])
 
 
 def main():

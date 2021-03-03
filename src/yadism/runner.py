@@ -137,6 +137,8 @@ class Runner:
             intrinsic_range=intrinsic_range,
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
+            GF=theory["GF"],
+            M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
