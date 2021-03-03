@@ -21,14 +21,14 @@ You can aslo type ``h()`` or ``yelp()`` for help.
 
   * - Name
     - description
-  * - ``t``
-    - query all the stored theory cards
-  * - ``o``
-    - query all the stored observable cards
-  * - ``l``
-    - query all the logs table
-  * - ``c``
-    - query all the cached tables
+  * - ``t``, ``"theory"``
+    -  identifier for all the stored theory cards
+  * - ``o``, ``"observable"``
+    - identifier for the stored observable cards
+  * - ``l``, ``"logs"``
+    - identifier for the logs table
+  * - ``c``, ``"cache"``
+    - identifier for the cached tables
 
 
 .. list-table:: Available functions
@@ -64,3 +64,6 @@ You can aslo type ``h()`` or ``yelp()`` for help.
   * - ``crashed_log(id)``
     - :py:obj:`hash`
     - print crashed logs
+
+Note that whenever the identifier is unique also part of the full hash or vairiable can be enough to select the corresponding items: 
+for istance to call ``dfl("fe4523")`` you can also use ``dfl("fe")`` if in your datababse there are no other hashes containing ``"fe"``. 
