@@ -13,7 +13,7 @@ There are two ways of using ``yadism``:
 .. todo::
     decide about ``run_dis`` and document it properly in module header
 """
-from typing import Any
+
 import time
 import inspect
 import logging
@@ -163,7 +163,7 @@ class Runner:
             )
 
             # read kinematics
-            obj.load(self._observables.get(name, []))
+            obj.load(self._observables["observables"].get(name, []))
             self.observable_instances[name] = obj
 
         # output console
@@ -178,16 +178,11 @@ class Runner:
         self._output = Output()
         self._output.update(self.interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
-        self._output["xiF"] = self.xiF
+        self._output["projectilePID"] = self.coupling_constants.obs_config["projectilePID"]
 
-    def get_result(self, raw=False):
+    def get_result(self):
         """
         Compute coefficient functions grid for requested kinematic points.
-
-
-        .. admonition:: Implementation Note
-
-            get_output pipeline
 
         Returns
         -------
@@ -196,11 +191,6 @@ class Runner:
             (flavour, interpolation-index) for each requested kinematic
             point (x, Q2)
 
-
-        .. todo::
-
-            * docs
-            * get_output pipeline
         """
         self.console.print(self.banner)
 
@@ -208,9 +198,11 @@ class Runner:
         precomputed_plan = {}
         printable_plan = []
         for name, obs in self.observable_instances.items():
-            if name in self._observables.keys():
+            if name in self._observables["observables"].keys():
                 precomputed_plan[name] = obs
-                printable_plan.append(f"- {name} at {len(self._observables[name])} pts")
+                printable_plan.append(
+                    f"- {name} at {len(self._observables['observables'][name])} pts"
+                )
 
         self.console.print(rich.markdown.Markdown("## Plan"))
         self.console.print(rich.markdown.Markdown("\n".join(printable_plan)))
@@ -219,50 +211,20 @@ class Runner:
         self.console.print(rich.markdown.Markdown("## Calculation"))
         self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
-        for name, obs in rich.progress.track(
-            precomputed_plan.items(),
-            description="computing...",
-            transient=True,
-            console=self.console,
-        ):
+        if log.debug:
+            tasks = precomputed_plan.items()
+        else:
+            tasks = rich.progress.track(
+                precomputed_plan.items(),
+                description="computing...",
+                transient=True,
+                console=self.console,
+            )
+        for name, obs in tasks:
             self._output[name] = obs.get_result()
         end = time.time()
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")
 
         out = copy.deepcopy(self._output)
-        if raw:
-            out = out.get_raw()
         return out
-
-    def get_output(self):
-        return self.get_result(True)
-
-    def apply_pdf(self, pdfs: Any) -> dict:
-        """
-        Alias for the `__call__` method.
-
-        .. todo::
-            - implement
-            - docs
-        """
-        return self.get_result().apply_pdf(pdfs)
-
-    def clear(self) -> None:
-        """
-        Or 'restart' or whatever
-
-        .. todo::
-            - implement
-            - docs
-        """
-
-    def dump(self) -> None:
-        """
-        If any output available ('computed') dump the current output on file
-
-        .. todo::
-            - implement
-            - docs
-        """
-        return self.get_output().dump()

@@ -102,8 +102,8 @@ class TestLeptonicHadronic:
             else:
                 assert coupl_const.leptonic_coupling("phph", "VV") != 0
 
-            assert coupl_const.hadronic_coupling("phph", 1, "VA") == 0
-            assert coupl_const.hadronic_coupling("phph", 1, "VV") != 0
+            assert coupl_const.partonic_coupling("phph", 1, "VA") == 0
+            assert coupl_const.partonic_coupling("phph", 1, "VV") != 0
 
     def test_nc_interference(self):
         th_d = dict(sin2theta_weak=1.0)
@@ -116,9 +116,9 @@ class TestLeptonicHadronic:
         assert coupl_const_em.leptonic_coupling(
             "phZ", "VA"
         ) == coupl_const_ep.leptonic_coupling("phZ", "VA")
-        assert coupl_const_em.hadronic_coupling(
+        assert coupl_const_em.partonic_coupling(
             "phZ", 1, "VA"
-        ) == coupl_const_ep.hadronic_coupling("phZ", 1, "VA")
+        ) == coupl_const_ep.partonic_coupling("phZ", 1, "VA")
 
     def test_pure_z(self):
         th_d = dict(sin2theta_weak=1.0)
@@ -131,9 +131,9 @@ class TestLeptonicHadronic:
         assert coupl_const_nu.leptonic_coupling(
             "ZZ", "VA"
         ) == coupl_const_nubar.leptonic_coupling("ZZ", "VA")
-        assert coupl_const_nu.hadronic_coupling(
+        assert coupl_const_nu.partonic_coupling(
             "ZZ", 1, "VA"
-        ) == coupl_const_nubar.hadronic_coupling("ZZ", 1, "VA")
+        ) == coupl_const_nubar.partonic_coupling("ZZ", 1, "VA")
 
     def test_unknown(self):
         th_d = dict(sin2theta_weak=1.0)
@@ -142,7 +142,7 @@ class TestLeptonicHadronic:
         with pytest.raises(ValueError, match="Unknown"):
             coupl_const.leptonic_coupling("XX", "VV")
         with pytest.raises(ValueError, match="Unknown"):
-            coupl_const.hadronic_coupling("XX", 1, "VV")
+            coupl_const.partonic_coupling("XX", 1, "VV")
 
 
 class TestPropagator:

@@ -11,8 +11,17 @@
 .. |EW| replace::
    :abbr:`EW (ElectroWeak)`
 
+.. |DGLAP| replace::
+   :abbr:`DGLAP (Dokshitzer-Gribov-Lipatov-Altarelli-Parisi)`
+   
 .. |PDF| replace::
    :abbr:`PDF (Parton Distribution Function(s))`
+
+.. |pQCD| replace::
+   :abbr:`pQCD (perturbative Quantum Chromo Dynamics)`
+
+.. |RGE| replace::
+   :abbr:`RGE (Renormalization Group Equation)`
 
 .. ---------
    processes
@@ -30,6 +39,9 @@
 .. |CC| replace::
    :abbr:`CC (Charged Current)`
 
+.. |CKM| replace::
+   :abbr:`CKM (Cabibbo-Kobayashi-Maskawa)`
+
 .. -------------------
    perturbative orders
    -------------------
@@ -38,13 +50,13 @@
    :abbr:`LO (Leading Order)`
 
 .. |NLO| replace::
-   :abbr:`NLO (Next to Leading Order)`
+   :abbr:`NLO (Next-to-Leading Order)`
 
 .. |NNLO| replace::
-   :abbr:`NNLO (Next to Next to Leading Order)`
+   :abbr:`NNLO (Next-to-Next-to-Leading Order)`
 
 .. |N3LO| replace::
-   :abbr:`N3LO (Next to Next to Next to Leading Order)`
+   :abbr:`N3LO (Next-to-Next-to-Next-to-Leading Order)`
 
 .. -------
    objects
@@ -75,6 +87,9 @@
 .. |ZM-VFNS| replace::
    :abbr:`ZM-VFNS (Zero Mass - Variable Flavor Number Scheme)`
 
+.. |GM-VFNS| replace::
+   :abbr:`GM-VFNS (General Mass - Variable Flavor Number Scheme)`
+
 .. |RSL| replace::
    :abbr:`RSL (Regular - Singular - Local)`
 
@@ -97,6 +112,13 @@
 
    <a href="https://www.nikhef.nl/~h24/qcdnum/"><abbr title="Quantum ChromoDynamics NUM">QCDNUM</abbr></a>
 
+.. |xspace-bench| raw:: html
+
+   <a href="https://github.com/N3PDF/external/tree/master/xspace-bench"><abbr title="Xspace Benchmark">xspace-bench</abbr></a>
+
+.. |banana| raw:: html
+
+   <a href="https://n3pdf.github.io/banana/stable/"><abbr title="Benchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
 
 .. -----------
    not physics
@@ -110,3 +132,7 @@
 .. |gh-act| raw:: html
 
    <a href="https://github.com/features/actions">GitHub Actions</a>
+
+.. |T| raw:: html
+
+   <span class="green">✓</span>

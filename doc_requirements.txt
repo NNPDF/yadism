@@ -3,6 +3,8 @@ sphinx
 sphinx_rtd_theme
 recommonmark
 sphinxcontrib-bibtex
+sphinxcontrib-details-directive
+nbsphinx
 Jinja2
 numpy
 pygit2

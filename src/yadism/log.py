@@ -8,6 +8,8 @@ log_to_stdout = bool(os.environ.get("YADISM_LOG_STDOUT", True))
 log_to_file = os.environ.get("YADISM_LOG_FILE")
 silent_mode = bool(os.environ.get("YADISM_SILENT_MODE", False))
 
+debug = bool(os.environ.get("DEBUG", False))
+
 module_name = __name__.split(".")[0]
 logger = logging.getLogger(module_name)
 ekologger = logging.getLogger("eko")

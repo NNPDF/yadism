@@ -41,16 +41,24 @@ given set of scattering bosons:
   The actual boson is determined by the incoming scattering lepton and charge conservation.
   As the :math:`W^\pm` are flavor changing additional care is needed in the calculation.
 
+.. _kinds def:
+
 Structure Function Kind
 -----------------------
 
 ``yadism`` allows to compute three different structure functions, to which we refer to as **kind**:
 
 .. math ::
+
   F_2,~ F_L = F_2 - 2xF_1,~ xF_3
 
 - to compute :math:`F_L` instead of :math:`F_1` is adventagous due to the Callan-Gross relation
   :cite:`Callan:1969uq` :math:`F_L=0` in the naive parton model
+
+  - notice that the :math:`F_L` definition it's not exactly the one above, but
+    it may be corrected (actually :math:`F_L` it's the object involved in
+    Callan-Gross relation, for more information see :ref:`fl corrections`)
+
 - Note that we compute :math:`xF_3` instead of the bare structure function to respect the native
   scaling in the full cross section
 
@@ -64,3 +72,15 @@ Following :cite:`tmc-review`, :cite:`tmc-iranian` we provide three options:
   the integrand are evaluated at the bottom end
 - **APFEL**: the one used in APFEL, similar to the exact but with g2 in
   the review (Schienbein et al.) set to 0
+
+.. _fl corrections:
+
+:math:`F_L` definition
+~~~~~~~~~~~~~~~~~~~~~~
+
+Also the definition of :math:`F_L` may be corrected by the presence of a proton
+mass.
+
+.. todo::
+
+   complete

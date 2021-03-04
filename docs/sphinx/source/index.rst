@@ -1,13 +1,7 @@
-.. DIS documentation master file.
-
-
 ####################
 Yadism documentation
 ####################
 
-.. the following transition is only used for highlight the main title
-
----------
 
 `yadism` is a wonderful package for computing |DIS| observables replacing the
 corresponding one inside |APFEL|.
@@ -66,9 +60,9 @@ In particular:
   :hidden:
 
   theory/DIS-intro.rst
-  theory/fact.rst 
-  theory/coeff-funcs.rst 
+  theory/fact.rst
   theory/fns.rst
+  theory/coeff-funcs.rst 
   theory/scale-variations.rst
 
   zzz-refs.rst
@@ -87,7 +81,6 @@ In particular:
   :hidden:
 
   dev-tools/tests.rst
-  dev-tools/db-suite.rst
   dev-tools/yadmark.rst
   dev-tools/extras.rst
   dev-tools/third-party.rst

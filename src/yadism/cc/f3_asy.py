@@ -24,7 +24,7 @@ class F3asyQuark(pc.PartonicChannelAsy):
     label = "q"
 
     def LO(self):
-        return 0, 0, 1
+        return 0.0, 0.0, 1.0
 
     def NLO(self):
         CF = constants.CF

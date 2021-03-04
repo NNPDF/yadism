@@ -19,7 +19,7 @@ Lifecycle
    method, and they are used (converted in some sense) into a list of |ESF|
    instances, mapped one to one on the requested kinematic configurations.
 3. Eventually you can request to perform the calculations for all the loaded
-   observables just asking for the output, through the `get_output` method
+   observables just asking for the output, through the `get_result` method
 
 Handling parameters
 -------------------

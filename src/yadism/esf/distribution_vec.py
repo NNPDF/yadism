@@ -105,6 +105,10 @@ class DistributionVec:
             self.regular = regular
             self.singular = singular
             self.local = local
+        if self.regular == 0:
+            self.regular = None
+        if self.singular == 0:
+            self.singular = None
 
     def __iter__(self):
         yield self.regular
@@ -170,7 +174,7 @@ class DistributionVec:
             elif callable(self.regular):
                 result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2)
             else:
-                result_args.append(c1 + c2)
+                result_args.append(other + self.regular)
             result_args.append(self.singular)
             result_args.append(self.local)
 
@@ -376,7 +380,7 @@ class DistributionVec:
         # actual convolution
         # ------------------
 
-        # integrate the kernel
+        # integrate the kernel, if needed
         if self.regular is None and self.singular is None:
             res, err = 0, 0
         else:

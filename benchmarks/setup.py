@@ -9,13 +9,17 @@ setup(
     description="yadism benchmark",
     # package_dir={"": "."},
     packages=find_packages("."),
-    install_requires=["rich", "tinydb"],
+    install_requires=[
+        "yadism",
+        "rich",
+        "sqlalchemy",
+        "banana-hep",
+        "pyyaml",
+    ],
     entry_points={
         "console_scripts": [
-            "generate_theories=yadmark.data.theories:run_parser",
-            "generate_observables=yadmark.data.observables:run_parser",
-            "generate_pdf=yadmark.data.generate_pdf:generate_pdf",
-            "install_pdf=yadmark.data.generate_pdf:install_pdf",
+            "generate_theories=yadmark.data:generate_theories",
+            "generate_observables=yadmark.data:generate_observables",
             "navigator=yadmark.navigator:launch_navigator",
         ],
     },

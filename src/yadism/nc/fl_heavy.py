@@ -37,7 +37,7 @@ class FLheavyGluonVV(pcnc.PartonicChannelHeavy):
 
         def cg(z):
             if self.is_below_threshold(z):
-                return 0
+                return 0.0
             # fmt: off
             return  self._FHprefactor * (
                 3 * CF / 4
@@ -73,7 +73,7 @@ class FLheavyGluonAA(FLheavyGluonVV):
 
         def cg(z, VV=VV):
             if self.is_below_threshold(z):
-                return 0
+                return 0.0
             return VV(z) - self._FHprefactor * (
                 (np.pi * self._rho_p(z) ** 3 / (2 * self._rho(z) ** 2 * self._rho_q))
                 * (

@@ -1,23 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-This module provides the base classes that define the interface for Structure
+This module provides the base class that define the interface for Structure
 Function calculation on a given kinematic point (x, Q2) (that is why they are
 called *Evaluated*).
-They are:
-
-:py:class:`EvaluatedStructureFunction` :
-    this is a pure abstract class, that define the interface (defining the way
-    in which coefficient functions are actually encoded) and implement some
-    shared methods (like initializer and :py:meth:`get_output`, responsible also
-    for :ref:`local caching<local-caching>`.
-
-:py:class:`EvaluatedStructureFunctionLight` :
-    this class is inheriting from the former, factorizing some common procedure
-    needed for light calculation.
-
-:py:class:`EvaluatedStructureFunctionHeavy` :
-    this class is inheriting from the former, factorizing some common procedure
-    needed for heavy quark calculation, like matching schemes
 """
 
 import copy
@@ -36,9 +21,9 @@ logger = logging.getLogger(__name__)
 
 class EvaluatedStructureFunction:
     """
-    The actual Structure Function implementation.
+    A specific kinematic point for a specific structure function.
 
-    This class is the abstract class that implements the structure for all
+    This class implements the structure for all
     the coefficient functions' providers, for a single kinematic point (x,
     Q2), but all the flavours (singlet, nonsinglet, gluon).
 
@@ -50,14 +35,6 @@ class EvaluatedStructureFunction:
     consist of an array of dimension 2: one dimension corresponding to the
     interpolation grid, the other to the flavour.
 
-    Its subclasses are organized by:
-
-    - kind: `F2`, `FL`
-    - flavour: `light`, `charm`, `bottom`, `top`
-
-    and they all implement a :py:meth:`get_output` method that performs the
-    calculation (convolution included), if needed.
-
     .. _local-caching:
 
     .. admonition:: Cache
@@ -68,8 +45,8 @@ class EvaluatedStructureFunction:
         i.e.:
 
         - the first time the instance is asked for computing the result,
-          through the :py:meth:`get_output` method, it registers the result;
-        - any following call to the :py:meth:`get_output` method will make
+          through the :py:meth:`get_result` method, it registers the result;
+        - any following call to the :py:meth:`get_result` method will make
           use of the cached result, and will never recompute it.
 
         If another instance with the same attributes is asked for the result
@@ -90,7 +67,7 @@ class EvaluatedStructureFunction:
 
     def __init__(self, SF, kinematics: dict):
         x = kinematics["x"]
-        if 1 < x <= 0:
+        if x > 1 or x <= 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1]")
         if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
@@ -101,10 +78,12 @@ class EvaluatedStructureFunction:
         self.sf = SF
         self.x = x
         self.Q2 = kinematics["Q2"]
-        self.res = ESFResult(
-            self.x, self.Q2, len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid)
-        )
+        self.res = ESFResult(self.x, self.Q2)
         self._computed = False
+        # select available partonic coefficient functions
+        self.orders = filter(
+            lambda e: e[0] <= SF.pto, [(0, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 1)]
+        )
 
         logger.debug("Init %s", self)
 
@@ -126,16 +105,27 @@ class EvaluatedStructureFunction:
         cfc = cf_combiner.CoefficientFunctionsCombiner(self)
         # run
         logger.debug("Compute %s", self)
-        for cfe in cfc.collect_elems():
-            (res, err) = self.compute_coefficient_function(cfe.coeff)
-            # blow up to flavor space
-            for pid, w in cfe.partons.items():
-                pos = br.flavor_basis_pids.index(pid)
-                self.res.values[pos] += w * res
-                self.res.errors[pos] += w * err
+        for o in self.orders:
+            # init order with 0
+            zeros = np.zeros(
+                (len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid))
+            )
+            self.res.orders[o] = (zeros, zeros.copy())
+            # iterate all partonic channels
+            for cfe in cfc.collect_elems():
+                # compute convolution point
+                convolution_point = cfe.coeff.convolution_point()
+                val, err = self.compute_coefficient_function(
+                    convolution_point, cfe.coeff[o]()
+                )
+                # blow up to flavor space
+                for pid, w in cfe.partons.items():
+                    pos = br.flavor_basis_pids.index(pid)
+                    self.res.orders[o][0][pos] += w * val
+                    self.res.orders[o][1][pos] += w * err
         self._computed = True
 
-    def compute_coefficient_function(self, comp):
+    def compute_coefficient_function(self, convolution_point, cf):
         """
         Perform coefficient function calculation for a single stack of
         coefficient functions,
@@ -155,20 +145,16 @@ class EvaluatedStructureFunction:
             els : list(float)
                 errors
         """
+
+        # if self.sf.pto > 0:
+        #     a_s = self.sf.strong_coupling.a_s(self.Q2 * self.sf.xiR ** 2)
+        #     d_vec += a_s * (
+        #         conv.DistributionVec(comp["NLO"]())
+        #         + (-np.log(self.sf.xiF ** 2)) * conv.DistributionVec(comp["NLO_fact"]())
+        #     )
+        d_vec = conv.DistributionVec(cf)
         ls = []
         els = []
-
-        # compute convolution point
-        convolution_point = comp.convolution_point()
-        # combine orders
-        d_vec = conv.DistributionVec(comp["LO"]())
-        if self.sf.pto > 0:
-            a_s = self.sf.strong_coupling.a_s(self.Q2 * self.sf.xiR ** 2)
-            d_vec += a_s * (
-                conv.DistributionVec(comp["NLO"]())
-                + (-np.log(self.sf.xiF ** 2)) * conv.DistributionVec(comp["NLO_fact"]())
-            )
-
         # iterate all polynomials
         for polynomial_f in self.sf.interpolator:
             c, e = d_vec.convolution(convolution_point, polynomial_f)
@@ -176,7 +162,6 @@ class EvaluatedStructureFunction:
             c, e = c * convolution_point, e * convolution_point
             ls.append(c)
             els.append(e)
-
         return np.array(ls), np.array(els)
 
     def get_result(self):

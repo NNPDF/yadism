@@ -11,6 +11,10 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     ----------
     theory : dict
         theory and process parameters
+    observables : dict
+        observables runcard
+    pdf : str
+        PDF name
 
     Returns
     -------
@@ -165,8 +169,8 @@ def compute_apfel_data(theory, observables, pdf):
             theory runcard
         observables : dict
             observables runcard
-        pdf : Any
-            PDF object (LHAPDF like)
+        pdf : lahapdf_like
+            PDF set
 
     Returns
     -------
@@ -198,13 +202,13 @@ def compute_apfel_data(theory, observables, pdf):
     # compute observables with APFEL
     apf_tab = {}
     for FX, apfel_FX in apfel_methods.items():
-        if FX not in observables:
+        if FX not in observables["observables"]:
             # if not in the runcard just skip
             continue
 
         # iterate over input kinematics
         apf_tab[FX] = []
-        for kinematics in observables.get(FX, []):
+        for kinematics in observables["observables"].get(FX, []):
             Q2 = kinematics["Q2"]
             x = kinematics["x"]
 
@@ -217,7 +221,7 @@ def compute_apfel_data(theory, observables, pdf):
             apfel.ComputeStructureFunctionsAPFEL(
                 np.sqrt(Q2) * theory["XIF"], np.sqrt(Q2)
             )
-            value = apfel_FX(x)
+            result = apfel_FX(x)
 
-            apf_tab[FX].append(dict(x=x, Q2=Q2, value=value))
+            apf_tab[FX].append(dict(x=x, Q2=Q2, result=result))
     return apf_tab

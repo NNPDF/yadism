@@ -6,205 +6,108 @@ import pytest
 
 from yadism.esf.esf_result import ESFResult
 
+lo = (0, 0, 0, 0)
+
 
 class MockPDFgonly:
+    def hasFlavor(self, pid):
+        return pid == 21
+
     def xfxQ2(self, pid, x, Q2):
         if pid == 21:
             return x ** 2 * Q2  # it is xfxQ2! beware of the additional x
         return 0
 
 
-@pytest.mark.quick_check
 class TestESFResult:
-    def test_init(self):
-        # test creation
-        for x in [0.1, 0.2]:
-            r = ESFResult(x)
-            assert r.x == x
-
-    def test_from_dict(self):
+    def test_from_document(self):
         d = dict(
             x=0.5,
             Q2=10,
-            weights=dict(q={1: 1}, g={21: 1}),
-            values=dict(q=[0, 1], g=[1, 0]),
-            errors=dict(q=[0, 0], g=[0, 0]),
+            orders=[
+                dict(
+                    order=list(lo),
+                    values=np.random.rand(2, 2),
+                    errors=np.random.rand(2, 2),
+                )
+            ],
         )
-        dt = np.float
-        r = ESFResult.from_dict(d, dt)
-        assert len(r.values["q"]) == len(d["values"]["q"])
-        assert isinstance(r.values["q"][0], dt)
-
-    def test_add_1(self):
-        a = dict(
-            x=0.5,
-            Q2=10,
-            weights=dict(q={1: 1}, g={21: 1}),
-            values=dict(q=[0, 1], g=[1, 0]),
-            errors=dict(q=[0, 0], g=[0, 0]),
-        )
-        b = dict(
-            x=0.5,
-            Q2=10,
-            weights=dict(q={1: 1}, g={21: 1}),
-            values=dict(q=[1, 0], g=[0, 1]),
-            errors=dict(q=[1, 1], g=[1, 1]),
-        )
-
-        ra = ESFResult.from_dict(a)
-        rb = ESFResult.from_dict(b)
-
-        # sum
-        rc = ra + rb
-        assert pytest.approx(rc.values["q"], 0, 0) == np.array([1, 1])
-        assert pytest.approx(rc.errors["q"], 0, 0) == np.array([1, 1])
-        assert pytest.approx(rc.values["g"], 0, 0) == np.array([1, 1])
-        assert pytest.approx(rc.errors["g"], 0, 0) == np.array([1, 1])
-
-        # subtract
-        rc1 = ra - rb
-        rc2 = copy.deepcopy(ra)
-        rc2 -= rb
-        for rc in [rc1, rc2]:
-            assert pytest.approx(rc.values["q"], 0, 0) == np.array([-1, 1])
-            assert pytest.approx(rc.errors["q"], 0, 0) == np.array([1, 1])
-            assert pytest.approx(rc.values["g"], 0, 0) == np.array([1, -1])
-            assert pytest.approx(rc.errors["g"], 0, 0) == np.array([1, 1])
-
-    def test_add_2(self):
-        rempty = ESFResult(0.5, 10)
-        a = dict(
-            x=0.5,
-            Q2=10,
-            weights=dict(q={1: 1}),
-            values=dict(q=[0, 1]),
-            errors=dict(q=[0, 1]),
-        )
-        ra = ESFResult.from_dict(a)
-        rea = rempty + ra
-        assert rea.weights["q"] == {1: 1}
-        b = dict(
-            x=0.5,
-            Q2=10,
-            weights=dict(g={21: 1}),
-            values=dict(g=[1, 0]),
-            errors=dict(g=[1, 0]),
-        )
-        rb = ESFResult.from_dict(b)
-        reab = rea + rb
-        assert reab.weights["q"] == {1: 1}
-        assert reab.weights["g"] == {21: 1}
-
-        with pytest.raises(ValueError, match="Weights"):
-            a = dict(
-                x=0.5,
-                Q2=10,
-                weights=dict(q={1: 1}),
-                values=dict(q=[0, 1]),
-                errors=dict(q=[0, 1]),
-            )
-            ra = ESFResult.from_dict(a)
-            b = dict(
-                x=0.5,
-                Q2=10,
-                weights=dict(q={2: 1}),
-                values=dict(q=[1, 0]),
-                errors=dict(q=[1, 0]),
-            )
-            rb = ESFResult.from_dict(b)
-            _ = ra + rb
-
-    def test_neg(self):
-        a = dict(
-            x=0.5,
-            Q2=10,
-            weights=dict(q={1: 1}, g={21: 1}),
-            values=dict(q=[0, 1], g=[-1, 0]),
-            errors=dict(q=[1, 0], g=[1, 0]),
-        )
-
-        ra = ESFResult.from_dict(a)
-        rc = -ra
-
-        assert pytest.approx(rc.values["q"], 0, 0) == np.array([0, -1])
-        assert pytest.approx(rc.errors["q"], 0, 0) == np.array([1, 0])
-        assert pytest.approx(rc.values["g"], 0, 0) == np.array([1, 0])
-        assert pytest.approx(rc.errors["g"], 0, 0) == np.array([1, 0])
-
-    def test_mul(self):
-        a = dict(
-            x=0.5,
-            Q2=10,
-            weights=dict(q={1: 1}, g={21: 1}),
-            values=dict(q=[0, 1], g=[-1, 0]),
-            errors=dict(q=[1, 0], g=[1, 0]),
-        )
-
-        ra = ESFResult.from_dict(a)
-        rc = ra * 2
-
-        assert pytest.approx(rc.values["q"], 0, 0) == np.array([0, 2])
-        assert pytest.approx(rc.errors["q"], 0, 0) == np.array([2, 0])
-        assert pytest.approx(rc.values["g"], 0, 0) == np.array([-2, 0])
-        assert pytest.approx(rc.errors["g"], 0, 0) == np.array([2, 0])
-
-        rc = [2, 1] * ra
-
-        assert pytest.approx(rc.values["q"], 0, 0) == np.array([0, 2])
-        assert pytest.approx(rc.errors["q"], 0, 0) == np.array([2, 1])
-        assert pytest.approx(rc.values["g"], 0, 0) == np.array([-2, 0])
-        assert pytest.approx(rc.errors["g"], 0, 0) == np.array([3, 0])
-
-        rc1 = ra / 2.0
-        rc2 = copy.deepcopy(ra)
-        rc2 /= 2
-        for rc in [rc1, rc2]:
-            assert pytest.approx(rc.values["q"], 0, 0) == np.array([0, 0.5])
-            assert pytest.approx(rc.errors["q"], 0, 0) == np.array([0.5, 0])
-            assert pytest.approx(rc.values["g"], 0, 0) == np.array([-0.5, 0])
-            assert pytest.approx(rc.errors["g"], 0, 0) == np.array([0.5, 0])
-
-        with pytest.raises(ValueError):
-            ra *= [1, 2, 3]
+        r = ESFResult.from_document(d)
+        assert len(list(r.orders.values())[0]) == len(d["orders"][0]["values"])
 
     def test_get_raw(self):
         a = dict(
             x=0.5,
             Q2=10,
-            weights=dict(q={1: 1}, g={21: 1}),
-            values=dict(q=[0, 1], g=[-1, 0]),
-            errors=dict(q=[1, 0], g=[1, 0]),
+            orders={lo: (np.random.rand(2, 2), np.random.rand(2, 2))},
         )
 
-        ra = ESFResult.from_dict(a)
+        ra = ESFResult(**a)
         dra = ra.get_raw()
+        rb = ESFResult.from_document(dra)
         # they should be just the very same!
-        assert dra == a
+        assert ra.x == rb.x
+        assert ra.Q2 == rb.Q2
+        for aa, bb in zip(ra.orders.values(), rb.orders.values()):
+            for k in [0, 1]:
+                assert pytest.approx(aa[k]) == bb[k]
+
+    def test_mul(self):
+        v, e = np.random.rand(2, 2, 2)
+        r = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (v, e)}))
+        for x in [2.0, (2.0, 0.0)]:
+            rm = r * x
+            np.testing.assert_allclose(rm.orders[lo][0], 2.0 * v)
+            np.testing.assert_allclose(rm.orders[lo][1], 2.0 * e)
+            rmul = x * r
+            np.testing.assert_allclose(rmul.orders[lo][0], 2.0 * v)
+            np.testing.assert_allclose(rmul.orders[lo][1], 2.0 * e)
+        with pytest.raises(IndexError):
+            _rm = r * (2,)
+
+        y = (2.0, 2.0)
+        rm = r * y
+        np.testing.assert_allclose(rm.orders[lo][0], 2.0 * v)
+        np.testing.assert_allclose(rm.orders[lo][1], 2.0 * (v + e))
+
+    def test_add(self):
+        va, vb, ea, eb = np.random.rand(4, 2, 2)
+        ra = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (va, ea)}))
+        rb = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (vb, eb)}))
+        radd = ra + rb
+        np.testing.assert_allclose(radd.orders[lo][0], va + vb)
+        np.testing.assert_allclose(radd.orders[lo][1], ea + eb)
+        raa = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (va, ea)}))
+        r2a = ra + raa
+        np.testing.assert_allclose(r2a.orders[lo][0], 2.0 * va)
+        np.testing.assert_allclose(r2a.orders[lo][1], 2.0 * ea)
 
     def test_apply_pdf(self):
         # test Q2 values
         for Q2 in [1, 10, 100]:
-            a = dict(
-                x=0.5,
-                Q2=Q2,
-                weights={"g": {21: 2 / 9}, "q": {}},
-                values=dict(q=[0, 1], g=[-1, 0]),
-                errors=dict(q=[1, 0], g=[1, 0]),
-            )
+            a = dict(x=0.5, Q2=Q2, orders={lo: ([[1, 0], [0, 1]], [[1, 0], [0, 1]])})
             # plain
-            ra = ESFResult.from_dict(a)
-            pra = ra.apply_pdf([0.5, 1.0], 1.0, MockPDFgonly())
-            expexted_res = a["values"]["g"][0] * a["x"] * a["Q2"] * 2 / 9
-            expected_err = np.abs(a["values"]["g"][0]) * a["x"] * a["Q2"] * 2 / 9
+            ra = ESFResult(**a)
+            pra = ra.apply_pdf(
+                MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, 1.0
+            )
+            expexted_res = a["orders"][lo][0][0][0] * a["x"] * a["Q2"]
+            expected_err = np.abs(a["orders"][lo][1][0][0]) * a["x"] * a["Q2"]
             assert pytest.approx(pra["result"], 0, 0) == expexted_res
             assert pytest.approx(pra["error"], 0, 0) == expected_err
             # test factorization scale variation
             for xiF in [0.5, 2.0]:
-                pra = ra.apply_pdf([0.5, 1.0], xiF, MockPDFgonly())
+                pra = ra.apply_pdf(
+                    MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, xiF
+                )
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
 
         # errors
         with pytest.raises(ValueError, match=r"Q2"):
-            r = ESFResult()
-            r.apply_pdf([1, 2, 3], 1, MockPDFgonly())
+            a = dict(x=0.5, Q2="bla", orders={lo: ([[1, 0], [0, 1]], [[1, 0], [0, 1]])})
+
+            ra = ESFResult(**a)
+            ra.apply_pdf(
+                MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, 1.0
+            )

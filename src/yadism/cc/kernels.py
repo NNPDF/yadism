@@ -8,12 +8,12 @@ Brief proof of @F3-sign@ for singlet and non-singlet combinations
 - q = 2 (i.e. u-quark)
 - q%2 = 2%2 = 0
 
-projectile = e+ -> rest = 1
+ProjectileDIS = e+ -> rest = 1
 - sign = -1
 - weight[2] is not set (i.e. 0)
 - weight[-2] = -w
 
-projectile = e- -> rest = 0
+ProjectileDIS = e- -> rest = 0
 - sign = 1
 - weight[2] = w
 - weight[-2] is not set

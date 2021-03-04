@@ -8,6 +8,9 @@ class Kernel:
         self.partons = partons
         self.coeff = coeff
 
+    def __repr__(self):
+        return repr({"partons": self.partons, "coeff": self.coeff})
+
     def __neg__(self):
         return self.__rmul__(-1)
 
