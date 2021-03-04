@@ -126,44 +126,6 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         obj["pdf"] = lg["pdf"]
         obj["external"] = lg["external"]
 
-    def list_all_similar_logs(self, ref_hash):
-        """
-        Search logs which are similar to the one given, i.e., same theory and,
-        same observable, and same pdfset.
-
-        Parameters
-        ----------
-            ref_hash : hash
-                partial hash of the reference log
-
-        Returns
-        -------
-            df : pandas.DataFrame
-                created frame
-
-        Note
-        ----
-        The external it's not used to discriminate logs: even different
-        externals should return the same numbers, so it's relevant to keep all
-        of them.
-        """
-        # obtain reference log
-        ref_log = self.get(bnav.l, ref_hash)
-
-        related_logs = []
-        all_logs = self.get(bnav.l)
-
-        for lg in all_logs:
-            if lg["t_hash"] != ref_log["t_hash"]:
-                continue
-            if lg["o_hash"] != ref_log["o_hash"]:
-                continue
-            if lg["pdf"] != ref_log["pdf"]:
-                continue
-            related_logs.append(lg)
-
-        return self.list_all(bnav.l, related_logs)
-
     def subtract_tables(self, dfd1, dfd2):
         """
         Subtract results in the second table from the first one,
@@ -258,30 +220,9 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
                 ):
                     print(n, l, sep="\n", end="\n\n")
 
-    def crashed_log(self, doc_hash):
-        """
-        Check if the log passed the default assertions
-
-        Paramters
-        ---------
-            doc_hash : hash
-                log hash
-
-        Returns
-        -------
-            cdfd : dict
-                log without kinematics
-        """
-        dfd = self.log_as_dfd(doc_hash)
-        if "_crash" not in dfd:
-            raise ValueError("log didn't crash!")
-        cdfd = {}
-        for sf in dfd:
-            if on.ObservableName.is_valid(sf):
-                cdfd[sf] = f"{len(dfd[sf])} points"
-            else:
-                cdfd[sf] = dfd[sf]
-        return cdfd
+    @staticmethod
+    def is_valid_physical_object(name):
+        return on.ObservableName.is_valid(name)
 
     # def join(self, id1, id2):
     #     tabs = []
