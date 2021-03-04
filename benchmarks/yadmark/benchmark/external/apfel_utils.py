@@ -205,6 +205,10 @@ def compute_apfel_data(theory, observables, pdf):
         l = "E"
     elif observables["ProjectileDIS"] == "positron":
         l = "P"
+    elif observables["ProjectileDIS"] == "neutrino":
+        l = "NU"
+    elif observables["ProjectileDIS"] == "antineutrino":
+        l = "NB"
 
     # apfel_fkobservables = {
     #     "XSreduced_light": f"DIS_NC{l}_L",
@@ -233,6 +237,11 @@ def compute_apfel_data(theory, observables, pdf):
         "XSHERACC_top": f"DIS_CC{l}_TP",
         "XSHERACC_total": f"DIS_CC{l}",
         "XSHERACC": f"DIS_CC{l}",
+        "XSCHORUSCC_light": f"DIS_S{l}_L",
+        "XSCHORUSCC_charm": f"DIS_S{l}_C",
+        "XSCHORUSCC_total": f"DIS_S{l}",
+        "XSCHORUSCC": f"DIS_S{l}",
+        "XSNUTEVCC_charm": f"DIS_DM_{l}",
     }
 
     # compute observables with APFEL
@@ -241,8 +250,11 @@ def compute_apfel_data(theory, observables, pdf):
         apf_tab[obs_name] = []
         # a cross section?
         if obs_name in apfel_fkobservables:
+            # FK calls SetProcessDIS, SetProjectileDIS and SetTargetDIS
             apfel.SetFKObservable(apfel_fkobservables[obs_name])
-        elif obs_name not in apfel_structure_functions:
+            # TODO until target is implemented in yadism revert to proton
+            apfel.SetTargetDIS("proton")
+        elif obs_name not in apfel_structure_functions:  # not a SF?
             raise ValueError(f"Unkown observable {obs_name}")
 
         # iterate over input kinematics
@@ -263,7 +275,7 @@ def compute_apfel_data(theory, observables, pdf):
             if obs_name in apfel_structure_functions:
                 result = apfel_structure_functions[obs_name](x)
             else:
-                result = apfel.FKObservables(x, Q2, kin["y"])
+                result = apfel.FKObservables(x, np.sqrt(Q2), kin["y"])
             # take over the kinematics
             r = kin.copy()
             r["result"] = result

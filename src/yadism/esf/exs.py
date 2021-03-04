@@ -3,7 +3,8 @@ import numpy as np
 from ..observable_name import ObservableName
 from .esf_result import EXSResult
 
-conv=3.893793e10 # conversion factor from GeV^-2 to 10^-38 cm^2
+conv = 3.893793e10  # conversion factor from GeV^-2 to 10^-38 cm^2
+
 
 class EvaluatedCrossSection:
     def __init__(self, xs, kin):
@@ -27,18 +28,26 @@ class EvaluatedCrossSection:
         #     return np.array([yp, -yL, f3sign * ym])
         if kind == "XSHERANC":
             return np.array([1.0, -yL / yp, f3sign * ym / yp])
+        norm = 0.0
         if kind == "XSHERACC":
-            return np.array([yp, -yL, f3sign * ym])/4.
-        x = self.kin["x"]
-        Q2 = self.kin["Q2"]
-        mn = np.sqrt(self.xs.runner.theory_params["M2target"])
-        m2w = self.xs.runner.theory_params["M2W"]
-        if kind == "XSCHORUSCC":
-            ypc = yp - 2. * (mn * x * y)**2 / Q2
-            norm = conv * self.xs.runner.theory_params["GF"]**2 * mn / (2. * np.pi * (1. + Q2/m2w)**2)
-            return np.array([ypc, -yL, f3sign * ym]) * norm
-        
-        raise ValueError(f"Unknown observable kind: {kind}")
+            norm = 1.0 / 4.0
+        else:
+            x = self.kin["x"]
+            Q2 = self.kin["Q2"]
+            mn = np.sqrt(self.xs.runner.theory_params["M2target"])
+            m2w = self.xs.runner.theory_params["M2W"]
+            yp -= 2.0 * (mn * x * y) ** 2 / Q2  # = ypc
+            # import pdb; pdb.set_trace()
+            if kind == "XSCHORUSCC":
+                norm = (
+                    conv
+                    * self.xs.runner.theory_params["GF"] ** 2
+                    * mn
+                    / (2.0 * np.pi * (1.0 + Q2 / m2w) ** 2)
+                )
+            if kind == "XSNUTEVCC":
+                norm = 100.0 / 2.0 / (1.0 + Q2 / m2w) ** 2
+        return np.array([yp, -yL, f3sign * ym]) * norm
 
     def alpha_qed_power(self):
         return 0
