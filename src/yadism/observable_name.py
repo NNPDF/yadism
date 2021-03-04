@@ -41,7 +41,7 @@ class ObservableName:
     @property
     def name(self):
         """joint name"""
-        return self.kind + self.flavor
+        return self.kind + "_"+ self.flavor
 
     def __eq__(self, other):
         """Test equality of kind and flavor"""
@@ -61,7 +61,7 @@ class ObservableName:
             apply_kind : type(self)
                 new kind and our flavor
         """
-        return type(self)(kind + self.flavor)
+        return type(self)(kind + "_" + self.flavor)
 
     def apply_asy(self):
         """
@@ -94,7 +94,7 @@ class ObservableName:
             apply_flavor : type(self)
                 our kind and new flavor
         """
-        return type(self)(self.kind + flavor)
+        return type(self)(self.kind + "_" + flavor)
 
     @property
     def is_heavy(self):
@@ -106,7 +106,7 @@ class ObservableName:
             is_heavy : bool
                 is a heavy flavor?
         """
-        return not self.flavor == "light"
+        return self.flavor != "light"
 
     @property
     def is_raw_heavy(self):
@@ -237,19 +237,3 @@ class ObservableName:
             return True
         except ValueError:
             return False
-
-    @classmethod
-    def all(cls):
-        """
-        Iterates all valid (external) names.
-
-        Yields
-        ------
-            all : cls
-                ObservableName
-        """
-        for kind in kinds:
-            if kind == fake_kind:
-                continue
-            for flav in external_flavors:
-                yield cls(kind + flav)

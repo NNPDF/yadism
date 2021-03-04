@@ -72,7 +72,7 @@ class TestStructureFunction:
         obs_params = MockDict()
 
         # becarefull about what the esf instantiation need
-        for name in ["FLlight", "F2light"]:
+        for name in ["FL_light", "F2_light"]:
             obs_name = observable_name.ObservableName(name)
             sf = StructureFunction(
                 obs_name,
@@ -106,7 +106,7 @@ class TestStructureFunction:
         theory_params = MockDict()
         obs_params = MockDict()
 
-        name = observable_name.ObservableName("FLlight")
+        name = observable_name.ObservableName("FL_light")
 
         sf = StructureFunction(
             name,
@@ -123,7 +123,7 @@ class TestEvaluatedStructureFunction:
     def test_init_repr(self):
 
         sf = StructureFunction(
-            observable_name.ObservableName("F3light"),
+            observable_name.ObservableName("F3_light"),
             MockRunner(),
             eko_components=MockDict(),
             theory_params=MockDict(),
@@ -140,7 +140,7 @@ class TestEvaluatedStructureFunction:
             try:
                 esf = ESF(sf, k)
                 assert esf.x == k["x"]
-                assert repr(esf) == "F3light(x=0.300000,Q2=4.000000)"
+                assert repr(esf) == "F3_light(x=0.300000,Q2=4.000000)"
             except ValueError:
                 continue
 
@@ -150,7 +150,7 @@ class TestEvaluatedStructureFunction:
             theory_params = MockDict()
             theory_params["scheme"] = scheme
             sf = StructureFunction(
-                observable_name.ObservableName("FLlight"),
+                observable_name.ObservableName("FL_light"),
                 MockRunner(),
                 eko_components=MockDict(),
                 theory_params=theory_params,

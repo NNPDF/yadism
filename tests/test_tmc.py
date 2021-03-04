@@ -66,7 +66,7 @@ class TestAbstractTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            obs_name = observable_name.ObservableName("F2light")
+            obs_name = observable_name.ObservableName("F2_light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
@@ -104,7 +104,7 @@ class TestAbstractTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            obs_name = observable_name.ObservableName("F2light")
+            obs_name = observable_name.ObservableName("F2_light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
@@ -165,7 +165,7 @@ class TestAbstractTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            obs_name = observable_name.ObservableName("F2light")
+            obs_name = observable_name.ObservableName("F2_light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
@@ -189,7 +189,7 @@ def test_f():
     obs_d = dict(projectilePID=11, polarization=0.0, process="EM")
 
     class MockSF:
-        obs_name = observable_name.ObservableName("F2light")
+        obs_name = observable_name.ObservableName("F2_light")
         M2target = 1.0
         interpolator = InterpolatorDispatcher(xg, 1, False, False)
         coupling_constants = CouplingConstants.from_dict(th_d, obs_d)
