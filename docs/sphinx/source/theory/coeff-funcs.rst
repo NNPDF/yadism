@@ -1,6 +1,12 @@
 Coefficient Functions
 =====================
 
+.. toctree::
+  :maxdepth: 1
+  :hidden:
+
+  intrinsic.rst
+
 Overview of coefficient functions structure
 -------------------------------------------
 
