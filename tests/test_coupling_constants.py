@@ -15,7 +15,7 @@ class TestCouplingConstanst:
         th_d = dict(sin2theta_weak=1.0)
 
         # EM
-        obs_d = dict(projectilePID=11, polarization=0.0, process="EM")
+        obs_d = dict(projectilePID=11, polarization=0.0, process="EM",propagatorCorrection=0)
         assert coupl.CouplingConstants(th_d, obs_d).get_weight(1, 90, "VA") == 0
         assert coupl.CouplingConstants(th_d, obs_d).get_weight(1, 90, "AV") == 0
         assert coupl.CouplingConstants(th_d, obs_d).get_weight(1, 90, "AA") == 0
@@ -31,12 +31,12 @@ class TestCouplingConstanst:
         assert coupl.CouplingConstants(th_d, obs_d).get_weight(1, 0, "AV") == 0
         assert coupl.CouplingConstants(th_d, obs_d).get_weight(1, 0, "AA") == 0
 
-        # CC
+        # CC - needs from_dict to convert CKM
         th_d = dict(
             sin2theta_weak=0.5,
             CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
         )
-        obs_d = dict(prDIS="CC")
+        obs_d = dict(prDIS="CC",PolarizationDIS=0.0,PropagatorCorrection=0)
         assert coupl.CouplingConstants.from_dict(th_d, obs_d).get_weight(
             1, 0, None, cc_mask="b"
         ) == coupl.CouplingConstants.from_dict(th_d, obs_d).get_weight(
@@ -50,7 +50,7 @@ class TestCouplingConstanst:
 
         # Unknown
         th_d = dict(sin2theta_weak=1.0)
-        obs_d = dict(projectilePID=11, polarization=0.0, process="XX")
+        obs_d = dict(projectilePID=11, polarization=0.0, process="XX",propagatorCorrection=0)
         with pytest.raises(ValueError, match="Unknown"):
             coupl.CouplingConstants(th_d, obs_d).get_weight(1, 90, "VV")
 
@@ -62,7 +62,7 @@ class TestCouplingConstanst:
             MZ=MZ,
             CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
         )
-        obs_d = dict()
+        obs_d = dict(PolarizationDIS=0.0, prDIS="EM",PropagatorCorrection=0)
         coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
 
         assert coupl_const.theory_config["MZ2"] == MZ ** 2
@@ -84,7 +84,7 @@ class TestLeptonicHadronic:
             sin2theta_weak=1.0,
             CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
         )
-        obs_d = dict()
+        obs_d = dict(prDIS="EM",projectilePID=11, PolarizationDIS=0.0,PropagatorCorrection=0)
         coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
 
         assert coupl_const.leptonic_coupling("WW", None) == 2
@@ -93,7 +93,7 @@ class TestLeptonicHadronic:
         th_d = dict(sin2theta_weak=1.0)
 
         for projPID in [-12, -11, 11, 12]:
-            obs_d = dict(projectilePID=projPID, polarization=0.0)
+            obs_d = dict(prDIS="EM",projectilePID=projPID, polarization=0.0,propagatorCorrection=0)
             coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
             assert coupl_const.leptonic_coupling("phph", "VA") == 0
@@ -108,9 +108,9 @@ class TestLeptonicHadronic:
     def test_nc_interference(self):
         th_d = dict(sin2theta_weak=1.0)
 
-        obs_d_em = dict(projectilePID=11, polarization=0.5)
+        obs_d_em = dict(process="EM",projectilePID=11, polarization=0.5,propagatorCorrection=0)
         coupl_const_em = coupl.CouplingConstants(th_d, obs_d_em)
-        obs_d_ep = dict(projectilePID=-11, polarization=-0.5)
+        obs_d_ep = dict(process="EM",projectilePID=-11, polarization=-0.5,propagatorCorrection=0)
         coupl_const_ep = coupl.CouplingConstants(th_d, obs_d_ep)
 
         assert coupl_const_em.leptonic_coupling(
@@ -123,9 +123,9 @@ class TestLeptonicHadronic:
     def test_pure_z(self):
         th_d = dict(sin2theta_weak=1.0)
 
-        obs_d_nu = dict(projectilePID=12, polarization=0.7)
+        obs_d_nu = dict(process="EM",projectilePID=12, polarization=0.7,propagatorCorrection=0)
         coupl_const_nu = coupl.CouplingConstants(th_d, obs_d_nu)
-        obs_d_nubar = dict(projectilePID=-12, polarization=-0.7)
+        obs_d_nubar = dict(process="EM",projectilePID=-12, polarization=-0.7,propagatorCorrection=0)
         coupl_const_nubar = coupl.CouplingConstants(th_d, obs_d_nubar)
 
         assert coupl_const_nu.leptonic_coupling(
@@ -137,7 +137,7 @@ class TestLeptonicHadronic:
 
     def test_unknown(self):
         th_d = dict(sin2theta_weak=1.0)
-        obs_d = dict(projectilePID=12, polarization=0.7)
+        obs_d = dict(process="EM",projectilePID=12, polarization=0.7,propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
         with pytest.raises(ValueError, match="Unknown"):
             coupl_const.leptonic_coupling("XX", "VV")
@@ -148,28 +148,28 @@ class TestLeptonicHadronic:
 class TestPropagator:
     def test_cc(self):
         th_d = dict(sin2theta_weak=0.5, MZ2=100, MW2=80 ** 2)
-        obs_d = dict(propagatorCorrection=0)
+        obs_d = dict(process="EM",propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
         assert coupl_const.propagator_factor("WW", 0.0) == 0.0
 
     def test_pure_em(self):
         th_d = dict(sin2theta_weak=0.5, MZ2=80, MW2=100 ** 2)
-        obs_d = dict(propagatorCorrection=0)
+        obs_d = dict(process="EM",propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
         assert coupl_const.propagator_factor("phph", 91.2) == 1.0
 
     def test_nc_interference(self):
         th_d = dict(sin2theta_weak=0.5, MZ2=100, MW2=80 ** 2)
-        obs_d = dict(propagatorCorrection=0)
+        obs_d = dict(process="EM",propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
         assert coupl_const.propagator_factor("phZ", 0.0) == 0.0
 
     def test_pure_z(self):
         th_d = dict(sin2theta_weak=0.5, MZ2=80, MW2=100 ** 2)
-        obs_d = dict(propagatorCorrection=0)
+        obs_d = dict(process="EM",propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
         assert coupl_const.propagator_factor(
@@ -178,7 +178,7 @@ class TestPropagator:
 
     def test_unknown(self):
         th_d = dict(sin2theta_weak=0.5, MZ2=91.1876)
-        obs_d = dict(propagatorCorrection=0)
+        obs_d = dict(process="EM",propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
         with pytest.raises(ValueError, match="Unknown"):
