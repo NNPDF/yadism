@@ -38,7 +38,6 @@ app = navigator.NavigatorApp(banana_cfg.banana_cfg, "sandbox")
 bnav.register_globals(globals(), app)
 
 # add my functions
-diff = app.subtract_tables
 check_log = app.check_log
 
 
