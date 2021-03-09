@@ -89,7 +89,13 @@ class TestESFResult:
             # plain
             ra = ESFResult(**a)
             pra = ra.apply_pdf(
-                MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, 1.0
+                MockPDFgonly(),
+                [21, 1],
+                [0.5, 1.0],
+                lambda _muR: 1.0,
+                lambda _muR: 1.0,
+                1.0,
+                1.0,
             )
             expexted_res = a["orders"][lo][0][0][0] * a["x"] * a["Q2"]
             expected_err = np.abs(a["orders"][lo][1][0][0]) * a["x"] * a["Q2"]
@@ -98,7 +104,13 @@ class TestESFResult:
             # test factorization scale variation
             for xiF in [0.5, 2.0]:
                 pra = ra.apply_pdf(
-                    MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, xiF
+                    MockPDFgonly(),
+                    [21, 1],
+                    [0.5, 1.0],
+                    lambda _muR: 1.0,
+                    lambda _muR: 1.0,
+                    1.0,
+                    xiF,
                 )
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
                 assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
@@ -109,5 +121,11 @@ class TestESFResult:
 
             ra = ESFResult(**a)
             ra.apply_pdf(
-                MockPDFgonly(), [21, 1], [0.5, 1.0], lambda _muR: 1.0, 1.0, 1.0
+                MockPDFgonly(),
+                [21, 1],
+                [0.5, 1.0],
+                lambda _muR: 1.0,
+                lambda _muR: 1.0,
+                1.0,
+                1.0,
             )

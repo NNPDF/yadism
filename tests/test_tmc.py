@@ -186,7 +186,12 @@ def test_f():
         sin2theta_weak=1.0,
         CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
     )
-    obs_d = dict(ProjectileDIS="electron", PolarizationDIS=0.0, prDIS="EM",PropagatorCorrection=0)
+    obs_d = dict(
+        ProjectileDIS="electron",
+        PolarizationDIS=0.0,
+        prDIS="EM",
+        PropagatorCorrection=0,
+    )
 
     class MockSF:
         obs_name = observable_name.ObservableName("F2_light")

@@ -15,7 +15,7 @@ class TestObservableName:
     def test_f2light(self):
         k = "F2"
         f = "light"
-        n = k + "_"+ f
+        n = k + "_" + f
         o = ON(n)
         assert o.kind == k
         assert o.flavor == f
