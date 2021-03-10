@@ -72,16 +72,14 @@ class Runner(BenchmarkRunner):
                 external output
         """
         observable = ocard
-        if theory["IC"] != 0 and theory["PTO"] > 0:
-            raise ValueError(f"{self.external} is currently not able to run")
 
         if self.external == "APFEL":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 apfel_utils,
             )
 
-            # if theory["IC"] != 0 and theory["PTO"] > 0:
-            #    raise ValueError("APFEL is currently not able to run")
+            if theory["IC"] != 0 and theory["PTO"] > 0:
+               raise ValueError("APFEL is currently not able to run")
             return apfel_utils.compute_apfel_data(theory, observable, pdf)
 
         elif self.external == "QCDNUM":

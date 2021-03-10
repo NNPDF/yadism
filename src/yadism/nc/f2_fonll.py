@@ -14,6 +14,8 @@ from eko import constants
 from .. import splitting_functions as split
 from .. import partonic_channel as pc
 
+from . import f2_intrinsic
+
 
 class F2asyGluonVV(pc.PartonicChannelAsy):
     """
@@ -45,3 +47,23 @@ class F2asyGluonVV(pc.PartonicChannelAsy):
 
 class F2asyGluonAA(F2asyGluonVV):
     label = "gAA"
+
+
+class F2matchingQuarkSp(pc.FMatchingQuark, f2_intrinsic.F2IntrinsicSp):
+    def NLO(self):
+        return self.mk_nlo(super().LO())
+
+
+class F2matchingQuarkSm(pc.FMatchingQuark, f2_intrinsic.F2IntrinsicSm):
+    def NLO(self):
+        return self.mk_nlo(super().LO())
+
+
+class F2matchingGluonSp(pc.FMatchingGluon, f2_intrinsic.F2IntrinsicSp):
+    def NLO(self):
+        return self.mk_nlo(super().LO())
+
+
+class F2matchingGluonSm(pc.FMatchingGluon, f2_intrinsic.F2IntrinsicSm):
+    def NLO(self):
+        return self.mk_nlo(super().LO())

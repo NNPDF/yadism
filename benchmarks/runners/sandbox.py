@@ -89,7 +89,7 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
         # kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         observable_names = [
-            "F2total",
+            "F2charm",
             # "F2charm",
             # "F2bottom",
             # "F2top",
@@ -103,7 +103,7 @@ class Sandbox(Runner):
             # "F3bottom",
             # "F3total",
         ]
-        update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
+        update = {"prDIS": ["EM"]}
         #update={"interpolation_xgrid":[defaults["interpolation_xgrid"]], "interpolation_polynomial_degree": [defaults["interpolation_polynomial_degree"]]}
         # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
         # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
@@ -114,7 +114,7 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 1,"XIF":1/2,"XIR":1/2}],
+        self.run([{"PTO": 1, "IC": 1}],
                 observables.build(**(self.generate_observables())), ["CT14llo_NF3"])
 
 

@@ -11,7 +11,14 @@ from .fl_light import FLlightNonSinglet, FLlightGluon, FLlightSinglet
 from .f3_light import F3lightNonSinglet
 from .f2_heavy import F2heavyGluonVV, F2heavyGluonAA
 from .fl_heavy import FLheavyGluonVV, FLheavyGluonAA
-from .f2_asy import F2asyGluonVV, F2asyGluonAA
+from .f2_fonll import (
+    F2asyGluonVV,
+    F2asyGluonAA,
+    F2matchingQuarkSp,
+    F2matchingQuarkSm,
+    F2matchingGluonSp,
+    F2matchingGluonSm,
+)
 from .fl_asy import FLasyGluonVV, FLasyGluonAA
 from .f2_intrinsic import F2IntrinsicSp
 from .fl_intrinsic import FLIntrinsicSp, FLIntrinsicSm
@@ -33,6 +40,12 @@ coefficient_functions = {
             "gAA": F2asyGluonAA,
         },
         "intrinsic": {"Sp": F2IntrinsicSp, "Sm": pc.EmptyPartonicChannel},
+        "matching": {
+            "qSp": F2matchingQuarkSp,
+            "qSm": F2matchingQuarkSm,
+            "gSp": F2matchingGluonSp,
+            "gSm": F2matchingGluonSm,
+        },
     },
     "FL": {
         "light": {
@@ -49,6 +62,12 @@ coefficient_functions = {
             "gAA": FLasyGluonAA,
         },
         "intrinsic": {"Sp": FLIntrinsicSp, "Sm": FLIntrinsicSm},
+        "matching": {
+            "qSp": pc.EmptyPartonicChannel,
+            "qSm": pc.EmptyPartonicChannel,
+            "gSp": pc.EmptyPartonicChannel,
+            "gSm": pc.EmptyPartonicChannel,
+        },
     },
     "F3": {
         "light": {
@@ -67,6 +86,12 @@ coefficient_functions = {
         "intrinsic": {
             "Rp": F3IntrinsicRp,
             "Rm": F3IntrinsicRm,
+        },
+        "matching": {
+            "qSp": pc.EmptyPartonicChannel,
+            "qSm": pc.EmptyPartonicChannel,
+            "gSp": pc.EmptyPartonicChannel,
+            "gSm": pc.EmptyPartonicChannel,
         },
     },
 }
@@ -259,5 +284,37 @@ def generate_intrinsic(esf, ihq):
         ),
         kernels.Kernel(
             {ihq: wm, (-ihq): wm}, cfs["intrinsic"]["Sm"](esf, m1sq=m2hq, m2sq=m2hq)
+        ),
+    )
+
+def generate_heavy_fonll_intrinsic_diff(esf, nl):
+    kind = esf.sf.obs_name.kind
+    cfs = coefficient_functions[kind]
+    ihq = nl + 1
+    m2hq = esf.sf.m2hq[ihq - 4]
+    if kind == "F3":
+        wVA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VA")
+        wAV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+        wp = wVA + wAV
+        wm = wVA - wAV
+        return (
+        )
+
+    wVV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VV")
+    wAA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+    wp = wVV + wAA
+    wm = wVV - wAA
+    return (
+        kernels.Kernel(
+            {ihq: wp, (-ihq): wp}, cfs["matching"]["qSp"](esf, m1sq=m2hq, m2sq=m2hq)
+        ),
+        kernels.Kernel(
+            {ihq: wm, (-ihq): wm}, cfs["matching"]["qSm"](esf, m1sq=m2hq, m2sq=m2hq)
+        ),
+        kernels.Kernel(
+            {21: wp}, cfs["matching"]["gSp"](esf, m1sq=m2hq, m2sq=m2hq)
+        ),
+        kernels.Kernel(
+            {21: wm}, cfs["matching"]["gSm"](esf, m1sq=m2hq, m2sq=m2hq)
         ),
     )

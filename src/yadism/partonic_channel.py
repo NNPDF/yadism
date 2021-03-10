@@ -7,6 +7,7 @@ from eko import constants
 from . import ic
 
 from .esf.distribution_vec import rsl_from_distr_coeffs
+from . import splitting_functions as split
 
 
 class PartonicChannel(dict):
@@ -148,3 +149,51 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
             )(self) - omx / (1.0 - z)
 
         return rsl_from_distr_coeffs(reg, delta, omx)
+
+
+class FMatchingQuark:
+    def LO(self):
+        return 0.
+
+    def mk_nlo(self, parent_LO):
+        _, _, icl = parent_LO
+        l = np.log(self.ESF.Q2 / self.ESF.m1sq)
+        asnorm = 2.0
+
+        def sing(z):
+            return (
+                asnorm
+                * icl
+                * constants.CF
+                * ((1.0 + z ^ 2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
+            )
+
+        # MMa: FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}]
+        def loc(x):
+            return (
+                asnorm
+                * icl
+                * constants.CF
+                * (
+                    -(x * (4.0 + l * (2.0 + x))) / 2.0
+                    + np.log(1.0 - x)
+                    * (-1.0 - 2.0 * l + x * (2.0 + x) + 2.0 * np.log(1.0 - x))
+                )
+            )
+
+        return 0, sing, loc
+
+
+class FMatchingGluon:
+    def LO(self):
+        return 0.
+
+    def mk_nlo(self, parent_LO):
+        _, _, icl = parent_LO
+        l = np.log(self.ESF.Q2 / self.ESF.m1sq)
+        asnorm = 2.0
+
+        def reg(z):
+            return -icl * 2.0 * asnorm * split.pqg(z) * l
+
+        return reg, 0, 0

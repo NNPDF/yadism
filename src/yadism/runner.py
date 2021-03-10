@@ -178,7 +178,9 @@ class Runner:
         self._output = Output()
         self._output.update(self.interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
-        self._output["projectilePID"] = self.coupling_constants.obs_config["projectilePID"]
+        self._output["projectilePID"] = self.coupling_constants.obs_config[
+            "projectilePID"
+        ]
 
     def get_result(self):
         """

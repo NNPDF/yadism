@@ -105,7 +105,8 @@ class CoefficientFunctionsCombiner:
             if ihq in self.esf.sf.intrinsic_range:
                 elems.extend(
                     self.damp_elems(
-                        nl, self.kernels.generate_heavy_fonll_intrinsic_diff(self.esf, nl)
+                        nl,
+                        self.kernels.generate_heavy_fonll_intrinsic_diff(self.esf, nl),
                     )
                 )
             else:
