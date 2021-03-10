@@ -156,6 +156,8 @@ class FMatchingQuark:
         return 0.
 
     def mk_nlo(self, parent_LO):
+        if parent_LO == 0:
+            return 0
         _, _, icl = parent_LO
         l = np.log(self.ESF.Q2 / self.ESF.m1sq)
         asnorm = 2.0
@@ -189,6 +191,8 @@ class FMatchingGluon:
         return 0.
 
     def mk_nlo(self, parent_LO):
+        if parent_LO == 0:
+            return 0
         _, _, icl = parent_LO
         l = np.log(self.ESF.Q2 / self.ESF.m1sq)
         asnorm = 2.0

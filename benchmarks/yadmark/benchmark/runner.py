@@ -112,7 +112,7 @@ class Runner(BenchmarkRunner):
             return res
         return {}
 
-    def log(self, _pdf, me, ext):
+    def log(self, t, o, _pdf, me, ext):
         log_tab = dfdict.DFdict()
         for sf in me:
             if not yadism.observable_name.ObservableName.is_valid(sf):
