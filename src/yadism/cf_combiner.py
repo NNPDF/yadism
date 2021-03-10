@@ -103,6 +103,7 @@ class CoefficientFunctionsCombiner:
             ihq = nl + 1
             # TODO we restrict to NLO for the moment
             if ihq in self.esf.sf.intrinsic_range:
+                elems.extend(self.kernels.generate_intrinsic(self.esf, ihq))
                 elems.extend(
                     self.damp_elems(
                         nl,

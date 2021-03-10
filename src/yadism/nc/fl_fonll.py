@@ -11,6 +11,8 @@ from eko import constants
 
 from .. import partonic_channel as pc
 
+from . import fl_intrinsic
+
 
 class FLasyGluonVV(pc.PartonicChannelAsy):
     """
@@ -42,3 +44,23 @@ class FLasyGluonAA(FLasyGluonVV):
     """
 
     label = "gAA"
+
+
+class FLmatchingQuarkSp(pc.FMatchingQuark):
+    def NLO(self):
+        return self.mk_nlo(fl_intrinsic.FLIntrinsicSp)
+
+
+class FLmatchingQuarkSm(pc.FMatchingQuark):
+    def NLO(self):
+        return self.mk_nlo(fl_intrinsic.FLIntrinsicSm)
+
+
+class FLmatchingGluonSp(pc.FMatchingGluon):
+    def NLO(self):
+        return self.mk_nlo(fl_intrinsic.FLIntrinsicSp)
+
+
+class FLmatchingGluonSm(pc.FMatchingGluon):
+    def NLO(self):
+        return self.mk_nlo(fl_intrinsic.FLIntrinsicSm)

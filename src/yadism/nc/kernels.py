@@ -19,7 +19,15 @@ from .f2_fonll import (
     F2matchingGluonSp,
     F2matchingGluonSm,
 )
-from .fl_asy import FLasyGluonVV, FLasyGluonAA
+from .fl_fonll import (
+    FLasyGluonVV,
+    FLasyGluonAA,
+    FLmatchingQuarkSp,
+    FLmatchingQuarkSm,
+    FLmatchingGluonSp,
+    FLmatchingGluonSm,
+)
+from .f3_fonll import F3matchingQuarkRp, F3matchingQuarkRm
 from .f2_intrinsic import F2IntrinsicSp
 from .fl_intrinsic import FLIntrinsicSp, FLIntrinsicSm
 from .f3_intrinsic import F3IntrinsicRp, F3IntrinsicRm
@@ -63,10 +71,10 @@ coefficient_functions = {
         },
         "intrinsic": {"Sp": FLIntrinsicSp, "Sm": FLIntrinsicSm},
         "matching": {
-            "qSp": pc.EmptyPartonicChannel,
-            "qSm": pc.EmptyPartonicChannel,
-            "gSp": pc.EmptyPartonicChannel,
-            "gSm": pc.EmptyPartonicChannel,
+            "qSp": FLmatchingQuarkSp,
+            "qSm": FLmatchingQuarkSm,
+            "gSp": FLmatchingGluonSp,
+            "gSm": FLmatchingGluonSm,
         },
     },
     "F3": {
@@ -88,10 +96,8 @@ coefficient_functions = {
             "Rm": F3IntrinsicRm,
         },
         "matching": {
-            "qSp": pc.EmptyPartonicChannel,
-            "qSm": pc.EmptyPartonicChannel,
-            "gSp": pc.EmptyPartonicChannel,
-            "gSm": pc.EmptyPartonicChannel,
+            "Rp": F3matchingQuarkRp,
+            "Rm": F3matchingQuarkRm,
         },
     },
 }
@@ -163,6 +169,8 @@ def generate_heavy(esf, nf):
             list of elements
     """
     kind = esf.sf.obs_name.kind
+    if kind == "F3":
+        return ()
     cfs = coefficient_functions[kind]
     nhq = nf + 1
     m2hq = esf.sf.m2hq[nhq - 4]
@@ -287,6 +295,7 @@ def generate_intrinsic(esf, ihq):
         ),
     )
 
+
 def generate_heavy_fonll_intrinsic_diff(esf, nl):
     kind = esf.sf.obs_name.kind
     cfs = coefficient_functions[kind]
@@ -298,6 +307,14 @@ def generate_heavy_fonll_intrinsic_diff(esf, nl):
         wp = wVA + wAV
         wm = wVA - wAV
         return (
+            kernels.Kernel(
+                {ihq: wp, (-ihq): -wp},
+                cfs["matching"]["Rp"](esf, m1sq=m2hq, m2sq=m2hq),
+            ),
+            kernels.Kernel(
+                {ihq: wm, (-ihq): -wm},
+                cfs["matching"]["Rm"](esf, m1sq=m2hq, m2sq=m2hq),
+            ),
         )
 
     wVV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VV")
@@ -311,10 +328,6 @@ def generate_heavy_fonll_intrinsic_diff(esf, nl):
         kernels.Kernel(
             {ihq: wm, (-ihq): wm}, cfs["matching"]["qSm"](esf, m1sq=m2hq, m2sq=m2hq)
         ),
-        kernels.Kernel(
-            {21: wp}, cfs["matching"]["gSp"](esf, m1sq=m2hq, m2sq=m2hq)
-        ),
-        kernels.Kernel(
-            {21: wm}, cfs["matching"]["gSm"](esf, m1sq=m2hq, m2sq=m2hq)
-        ),
+        kernels.Kernel({21: wp}, cfs["matching"]["gSp"](esf, m1sq=m2hq, m2sq=m2hq)),
+        kernels.Kernel({21: wm}, cfs["matching"]["gSm"](esf, m1sq=m2hq, m2sq=m2hq)),
     )

@@ -249,3 +249,8 @@ def generate_intrinsic(esf, ihq):
         kernels.Kernel(wq, cfs["intrinsic"]["Sp"](esf, m1sq=m2hq, m2sq=0.0)),
         kernels.Kernel(wq, cfs["intrinsic"]["Sm"](esf, m1sq=m2hq, m2sq=0.0)),
     )
+
+
+def generate_heavy_fonll_intrinsic_diff(esf, nl):
+    # TODO fill
+    return ()

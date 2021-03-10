@@ -151,15 +151,15 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
         return rsl_from_distr_coeffs(reg, delta, omx)
 
 
-class FMatchingQuark:
-    def LO(self):
-        return 0.
-
-    def mk_nlo(self, parent_LO):
-        if parent_LO == 0:
-            return 0
-        _, _, icl = parent_LO
-        l = np.log(self.ESF.Q2 / self.ESF.m1sq)
+class FMatchingQuark(PartonicChannelAsyIntrinsic):
+    def mk_nlo(self, intrinsic_pc):
+        obj = intrinsic_pc(self.ESF, self.m1sq, self.m2sq)
+        parent_LO = obj.LO()
+        try:
+            _, _, icl = parent_LO
+        except TypeError:
+            return parent_LO
+        l = np.log(self.Q2 / self.m1sq)
         asnorm = 2.0
 
         def sing(z):
@@ -167,7 +167,7 @@ class FMatchingQuark:
                 asnorm
                 * icl
                 * constants.CF
-                * ((1.0 + z ^ 2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
+                * ((1.0 + z ** 2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
             )
 
         # MMa: FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}]
@@ -186,15 +186,15 @@ class FMatchingQuark:
         return 0, sing, loc
 
 
-class FMatchingGluon:
-    def LO(self):
-        return 0.
-
-    def mk_nlo(self, parent_LO):
-        if parent_LO == 0:
-            return 0
-        _, _, icl = parent_LO
-        l = np.log(self.ESF.Q2 / self.ESF.m1sq)
+class FMatchingGluon(PartonicChannelAsyIntrinsic):
+    def mk_nlo(self, intrinsic_pc):
+        obj = intrinsic_pc(self.ESF, self.m1sq, self.m2sq)
+        parent_LO = obj.LO()
+        try:
+            _, _, icl = parent_LO
+        except TypeError:
+            return parent_LO
+        l = np.log(self.Q2 / self.m1sq)
         asnorm = 2.0
 
         def reg(z):
