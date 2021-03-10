@@ -121,9 +121,7 @@ class Output(dict):
         extra.set_x2_min(1.0)
         extra.set_x2_order(0)
 
-        grid = pineappl.grid.Grid.create(
-            lumi_entries, orders, bin_limits, pineappl.subgrid.SubgridParams()
-        )
+        grid = pineappl.grid.Grid.create(lumi_entries, orders, bin_limits, params)
         limits = []
 
         # add each ESF as a bin

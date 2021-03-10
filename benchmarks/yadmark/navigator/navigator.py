@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-import numpy as np
-import pandas as pd
-
 from banana import navigator as bnav
-from banana.data import dfdict
 
 from yadism import observable_name as on
 
@@ -25,6 +21,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             mode identifier
     """
 
+    myname = "yadism"
     table_objects = table_objects
 
     def fill_theories(self, theo, obj):
@@ -126,119 +123,6 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         obj["pdf"] = lg["pdf"]
         obj["external"] = lg["external"]
 
-    def list_all_similar_logs(self, ref_hash):
-        """
-        Search logs which are similar to the one given, i.e., same theory and,
-        same observable, and same pdfset.
-
-        Parameters
-        ----------
-            ref_hash : hash
-                partial hash of the reference log
-
-        Returns
-        -------
-            df : pandas.DataFrame
-                created frame
-
-        Note
-        ----
-        The external it's not used to discriminate logs: even different
-        externals should return the same numbers, so it's relevant to keep all
-        of them.
-        """
-        # obtain reference log
-        ref_log = self.get(bnav.l, ref_hash)
-
-        related_logs = []
-        all_logs = self.get(bnav.l)
-
-        for lg in all_logs:
-            if lg["t_hash"] != ref_log["t_hash"]:
-                continue
-            if lg["o_hash"] != ref_log["o_hash"]:
-                continue
-            if lg["pdf"] != ref_log["pdf"]:
-                continue
-            related_logs.append(lg)
-
-        return self.list_all(bnav.l, related_logs)
-
-    def subtract_tables(self, dfd1, dfd2):
-        """
-        Subtract results in the second table from the first one,
-        properly propagate the integration error and recompute the relative
-        error on the subtracted results.
-
-        Parameters
-        ----------
-            dfd1 : dict or hash
-                if hash the doc_hash of the log to be loaded
-            dfd2 : dict or hash
-                if hash the doc_hash of the log to be loaded
-
-        Returns
-        -------
-            diffout : DFdict
-                created frames
-        """
-        # load json documents
-        id1, log1 = self.load_dfd(dfd1, self.log_as_dfd)
-        id2, log2 = self.load_dfd(dfd2, self.log_as_dfd)
-
-        # print head
-        diffout = dfdict.DFdict()
-        msg = f"**Subtracting** id: `{id1}` - id: `{id2}`, in table *logs*"
-        diffout.print(msg, "-" * len(msg), sep="\n")
-        diffout.print()
-
-        # iterate observables
-        for obs in log1.keys():
-            if obs[0] == "_":
-                continue
-            if obs not in log2:
-                print(f"{obs}: not matching in log2")
-                continue
-
-            # load observable tables
-            table1 = pd.DataFrame(log1[obs])
-            table2 = pd.DataFrame(log2[obs])
-            table_out = table2.copy()
-
-            # check for compatible kinematics
-            if any([any(table1[y] != table2[y]) for y in ["x", "Q2"]]):
-                raise ValueError("Cannot compare tables with different (x, Q2)")
-
-            # subtract and propagate
-            known_col_set = set(["x", "Q2", "yadism", "yadism_error", "percent_error"])
-            t1_ext = list(set(table1.keys()) - known_col_set)[0]
-            t2_ext = list(set(table2.keys()) - known_col_set)[0]
-            if t1_ext == t2_ext:
-                tout_ext = t1_ext
-            else:
-                tout_ext = f"{t2_ext}-{t1_ext}"
-            table_out.rename(columns={t2_ext: tout_ext}, inplace=True)
-            table_out[tout_ext] = table2[t2_ext] - table1[t1_ext]
-            # subtract our values
-            table_out["yadism"] -= table1["yadism"]
-            table_out["yadism_error"] += table1["yadism_error"]
-
-            # compute relative error
-            def rel_err(row, tout_ext=tout_ext):
-                if row[tout_ext] == 0.0:
-                    if row["yadism"] == 0.0:
-                        return 0.0
-                    return np.nan
-                else:
-                    return (row["yadism"] / row[tout_ext] - 1.0) * 100
-
-            table_out["percent_error"] = table_out.apply(rel_err, axis=1)
-
-            # dump results' table
-            diffout[obs] = table_out
-
-        return diffout
-
     def check_log(self, doc_hash, perc_thr=1, abs_thr=1e-6):
         """
         Check if the log passed the default assertions
@@ -258,30 +142,9 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
                 ):
                     print(n, l, sep="\n", end="\n\n")
 
-    def crashed_log(self, doc_hash):
-        """
-        Check if the log passed the default assertions
-
-        Paramters
-        ---------
-            doc_hash : hash
-                log hash
-
-        Returns
-        -------
-            cdfd : dict
-                log without kinematics
-        """
-        dfd = self.log_as_dfd(doc_hash)
-        if "_crash" not in dfd:
-            raise ValueError("log didn't crash!")
-        cdfd = {}
-        for sf in dfd:
-            if on.ObservableName.is_valid(sf):
-                cdfd[sf] = f"{len(dfd[sf])} points"
-            else:
-                cdfd[sf] = dfd[sf]
-        return cdfd
+    @staticmethod
+    def is_valid_physical_object(name):
+        return on.ObservableName.is_valid(name)
 
     # def join(self, id1, id2):
     #     tabs = []

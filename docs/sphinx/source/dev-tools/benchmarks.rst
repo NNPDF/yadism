@@ -1,48 +1,12 @@
 Benchmarks
 ==========
 
-Benchmarks are implemented against external code, where they overlap with this
-package.
+Benchmarks are implemented against external code, where they overlap with `yadism`. 
+Benchmarks are implemented using an independent package called `yadmark` described
+in the relative section.
 
-.. csv-table:: Banchmarks coverage
-   :file: ./bench-coverage.csv
-   :delim: space
-   :header-rows: 1
-   :stub-columns: 1
-   :align: center
-
-.. csv-table:: Flavor Number Schemes
-   :file: ./bench-fns.csv
-   :delim: space
-   :header-rows: 1
-   :stub-columns: 1
-   :align: center
-
-.. [#f1] Only for NfFF=3
-.. [#f2] Only for charm threshold (FFNS3 to FFNS4 interpolation)
-
-APFEL
------
-
-|APFEL| is a tool aimed to the evolution of PDFs and DIS observables' calculation
-(and FTDY as well).
-
-It has been used by the NNPDF collaboration up to NNPDF4.0
-
-QCDNUM
-------
-
-|QCDNUM| is a tool aimed to the evolution of PDFs and DIS observables' calculation in
-a restricted number of schemes.
-
-It is/has been used by the `xFitter` framework.
-
-xspace-bench
-------------
-
-|xspace-bench| is a tool aimed to the evolution of PDFs and DIS observables' calculation for
-|NC| and |CC|, with different type of projectiles and targets. |SF| can be computed up to |NLO|, 
-and few |FNS| configurations are available, since their settings are hardcoded. 
+We compare `yadism` with three external tools: |APFEL|, |QCDNUM| and |xspace-bench|, 
+which are described in details below. 
 
 Different definition of |SF|
 ----------------------------
@@ -55,6 +19,34 @@ not possible to compare all the structure functions in all the schemes.
    For the actual definition of |SF| in `yadism` (which is of course |FNS|
    dependent) look at :doc:`../theory/fns` section.
 
+The following tables summarize the possible combination of benchmarks, including 
+also incoming projectiles, different type of currents, SV and TMC.
+
+.. csv-table:: Flavor Number Schemes
+   :file: ./bench-fns.csv
+   :delim: space
+   :header-rows: 1
+   :stub-columns: 1
+   :align: center
+
+.. [#f1] Only for NfFF=3
+.. [#f2] Only for charm threshold (FFNS3 to FFNS4 interpolation)
+
+.. csv-table:: Banchmarks coverage
+   :file: ./bench-coverage.csv
+   :delim: space
+   :header-rows: 1
+   :stub-columns: 1
+   :align: center
+
+
+APFEL
+-----
+
+|APFEL| is a tool aimed to the evolution of PDFs and DIS observables' calculation
+(and FTDY as well).
+
+It has been used by the NNPDF collaboration up to NNPDF4.0
 
 SF in APFEL
 ~~~~~~~~~~~
@@ -92,6 +84,13 @@ to all the |FNS| at higher orders because:
   :math:`Q^2` regimes and not for them; e.g. charm-bottom interplay may be more
   relevant then top contributions much below top production threshold
 
+QCDNUM
+------
+
+|QCDNUM| is a tool aimed to the evolution of PDFs and DIS observables' calculation in
+a restricted number of schemes.
+
+It is/has been used by the `xFitter` framework.
 
 SF in QCDNUM
 ~~~~~~~~~~~~
@@ -109,6 +108,13 @@ The different definition is:
   :math:`F_X^{top}` (that will include at least one top)
 
 Only |EM| and |NC| currents are available in |QCDNUM|. 
+
+xspace-bench
+------------
+
+|xspace-bench| is a tool aimed to the evolution of PDFs and DIS observables' calculation for
+|NC| and |CC|, with different type of projectiles and targets. |SF| can be computed up to |NLO|, 
+and few |FNS| configurations are available, since their settings are hardcoded. 
 
 SF in xspace-bench
 ~~~~~~~~~~~~~~~~~~

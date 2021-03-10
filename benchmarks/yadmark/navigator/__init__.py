@@ -38,10 +38,7 @@ app = navigator.NavigatorApp(banana_cfg.banana_cfg, "sandbox")
 bnav.register_globals(globals(), app)
 
 # add my functions
-simlogs = app.list_all_similar_logs
-diff = app.subtract_tables
 check_log = app.check_log
-crashed_log = app.crashed_log
 
 
 def launch_navigator():

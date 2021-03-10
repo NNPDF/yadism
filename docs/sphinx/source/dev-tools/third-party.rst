@@ -16,8 +16,3 @@ Powered by `pylint` static analysis reports (in our use case).
 
 Also able to merge different code coverage reports, even coming from different
 tools.
-
-...
----
-
-More tools coming soon.
