@@ -5,7 +5,7 @@ import pathlib
 
 import pytest
 
-from banana.data import power_set
+from banana.data import cartesian_product
 
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
@@ -114,7 +114,7 @@ class BenchmarkScaleVariations(ApfelBenchmark):
         sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
         # drop plain
         return filter(
-            lambda c: not (c["XIR"] == 1.0 and c["XIF"] == 1.0), power_set(sv)
+            lambda c: not (c["XIR"] == 1.0 and c["XIF"] == 1.0), cartesian_product(sv)
         )
 
     def benchmark_lo(self):
