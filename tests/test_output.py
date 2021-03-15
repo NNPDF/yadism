@@ -56,7 +56,9 @@ class TestOutput:
         outp = output.Output()
         outp.update(out)
 
-        ret = outp.apply_pdf_alphas_alphaqed_xir_xif(MockPDFgonly(), lambda _muR: 1, lambda _muR: 1, 1.0, 1.0)
+        ret = outp.apply_pdf_alphas_alphaqed_xir_xif(
+            MockPDFgonly(), lambda _muR: 1, lambda _muR: 1, 1.0, 1.0
+        )
         for o in obs:
             for a, pra in zip(out[o], ret[o]):
                 expexted_res = a.orders[lo][0][0][0] * a.x * a.Q2
@@ -67,7 +69,9 @@ class TestOutput:
         # test factorization scale variation
         for xiF in [0.5, 2.0]:
 
-            ret = outp.apply_pdf_alphas_alphaqed_xir_xif(MockPDFgonly(), lambda _muR: 1, lambda _muR: 1, 1.0, xiF)
+            ret = outp.apply_pdf_alphas_alphaqed_xir_xif(
+                MockPDFgonly(), lambda _muR: 1, lambda _muR: 1, 1.0, xiF
+            )
             for a, pra in zip(out["F2_total"], ret["F2_total"]):
                 expexted_res = a.orders[lo][0][0][0] * a.x * a.Q2
                 expected_err = np.abs(a.orders[lo][0][0][0]) * a.x * a.Q2
