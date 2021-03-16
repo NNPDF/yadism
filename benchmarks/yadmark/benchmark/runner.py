@@ -81,7 +81,7 @@ class Runner(BenchmarkRunner):
             )
 
             if theory["IC"] != 0 and theory["PTO"] > 0:
-               raise ValueError("APFEL is currently not able to run")
+                raise ValueError("APFEL is currently not able to run")
             return apfel_utils.compute_apfel_data(theory, observable, pdf)
 
         elif self.external == "QCDNUM":
