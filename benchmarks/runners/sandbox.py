@@ -15,10 +15,10 @@ class Sandbox(Runner):
 
     external = "APFEL" # external comparison program
     #external = "xspace_bench"
-    #external = "QCDNUM"
-    external = "void"
+    # external = "QCDNUM"
+    # external = "void"
 
-    alphas_from_lhapdf = True
+    #alphas_from_lhapdf = True
 
     @staticmethod
     def generate_observables():
@@ -80,7 +80,7 @@ class Sandbox(Runner):
         kinematics.extend(
             #[dict(x=0.1,Q2=90)]
             #[dict(x=x, Q2=20.0) for x in interpolation_xgrid[::3]]
-            [dict(x=x, Q2=20.0) for x in np.geomspace(1e-5, 1, 10)]
+            [dict(x=x, Q2=91.0**2) for x in np.geomspace(1e-5, 1, 10)]
             #[dict(x=x, Q2=20.0) for x in np.linspace(1e-1, 1, 10)]
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
@@ -88,23 +88,23 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
-        # kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+        kinematics.extend([dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 1e4, 10).tolist()])
         observable_names = [
             "F2charm",
             # "F2charm",
             # "F2bottom",
             # "F2top",
-            # "F2total",
-            # "FLlight",
-            "FLcharm",
+            #"F2total",
+            #"FLlight",
+            #"FLcharm",
             # "FLbottom",
             # "FLtotal",
             # "F3light",
-            "F3charm",
+            #"F3charm",
             # "F3bottom",
             # "F3total",
         ]
-        update = {"prDIS": ["NC"]}
+        update = {"prDIS": ["EM"]}
         #update={"interpolation_xgrid":[defaults["interpolation_xgrid"]], "interpolation_polynomial_degree": [defaults["interpolation_polynomial_degree"]]}
         # card["interpolation_xgrid"] = list(card["interpolation_xgrid"])
         # card["interpolation_xgrid"] = list(reversed(pineappl_zgrid))
@@ -115,8 +115,8 @@ class Sandbox(Runner):
         return dict(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4}],
-                observables.build(**(self.generate_observables())), ["conly"])
+        self.run([{"PTO": 1}],
+                observables.build(**(self.generate_observables())), ["gonly"])
 
 
 def main():

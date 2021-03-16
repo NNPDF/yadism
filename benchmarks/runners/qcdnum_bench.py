@@ -5,7 +5,7 @@
 # import pytest
 import numpy as np
 
-from banana.data import power_set
+from banana.data import cartesian_product
 
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
@@ -89,7 +89,7 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
             }
 
         # XIR = 0.5 and XIF = 2.0 or viceversa are forbidden
-        return filter(lambda c: (c["XIR"] * c["XIF"] != 1.0), power_set(sv))
+        return filter(lambda c: (c["XIR"] * c["XIF"] != 1.0), cartesian_product(sv))
 
     def benchmark_lo(self, FNS=0):
         self.run(
@@ -150,7 +150,7 @@ class BenchmarkFNS(QCDNUMBenchmark):
         ]
         fns = {"NfFF": [3, 4, 5], "FNS": ["ZM-VFNS"], "PTO": [1]}
 
-        self.run(power_set(fns), self.observable_updates(fnames), ["ToyLH"])
+        self.run(cartesian_product(fns), self.observable_updates(fnames), ["ToyLH"])
 
     def benchmark_FFNS(self):
 
@@ -191,7 +191,7 @@ class BenchmarkFNS(QCDNUMBenchmark):
         for item in heavy_fnames:
             fns = {"NfFF": [item["NfFF"]], "FNS": ["FFNS"], "PTO": [1]}
             self.run(
-                power_set(fns),
+                cartesian_product(fns),
                 self.observable_updates(light_fnames + item["fnames"], item["Q2range"]),
                 ["ToyLH"],
             )
