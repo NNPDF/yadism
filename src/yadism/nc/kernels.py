@@ -227,22 +227,21 @@ def generate_light_fonll_diff(esf, nl):
 def generate_heavy_fonll_diff(esf, nl):
     kind = esf.sf.obs_name.kind
     cfs = coefficient_functions[kind]
-    nhq = nl + 1
-    m2hq = esf.sf.m2hq[nhq - 4]
+    ihq = nl + 1
     # add light contributions
     ns_partons = {}
     if kind != "F3":
         w = esf.sf.coupling_constants.get_weight(
-            nhq, esf.Q2, "VV"
-        ) + esf.sf.coupling_constants.get_weight(nhq, esf.Q2, "AA")
+            ihq, esf.Q2, "VV"
+        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
     else:
         w = esf.sf.coupling_constants.get_weight(
-            nhq, esf.Q2, "VA"
-        ) + esf.sf.coupling_constants.get_weight(nhq, esf.Q2, "AV")
+            ihq, esf.Q2, "VA"
+        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
 
-    ns_partons[nhq] = w
-    ns_partons[-nhq] = w if kind != "F3" else -w
-    ch_av = w / (nl + 1.0) if kind != "F3" else 0.0
+    ns_partons[ihq] = w
+    ns_partons[-ihq] = w if kind != "F3" else -w
+    ch_av = w / (nl + 1) if kind != "F3" else 0.0
     s_partons = {}
     for pid in range(1, nl + 1):
         s_partons[pid] = ch_av
@@ -253,12 +252,16 @@ def generate_heavy_fonll_diff(esf, nl):
         kernels.Kernel(s_partons, cfs["light"]["s"](esf, nf=nl + 1)),
     )
     # add asymptotic contributions
+    # The matching does not necessarily happen at the quark mass
+    # m2hq = esf.sf.m2hq[ihq - 4]
+    # but will be done at the proper threshold
+    mu2hq = esf.sf.threshold.areas[ihq - 4].q2_max
     asys = []
     asy_weights = weights_heavy(esf.sf.coupling_constants, esf.Q2, kind, nl)
     if kind != "F3":
         asys = [
-            -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, m2hq=m2hq)),
-            -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, m2hq=m2hq)),
+            -kernels.Kernel(asy_weights["gVV"], cfs["asy"]["gVV"](esf, mu2hq=mu2hq)),
+            -kernels.Kernel(asy_weights["gAA"], cfs["asy"]["gAA"](esf, mu2hq=mu2hq)),
         ]
     return (*elems, *asys)
 
@@ -301,6 +304,8 @@ def generate_heavy_fonll_intrinsic_diff(esf, nl):
     cfs = coefficient_functions[kind]
     ihq = nl + 1
     m2hq = esf.sf.m2hq[ihq - 4]
+    # matching scale
+    mu2hq = esf.sf.threshold.areas[ihq - 4].q2_max
     if kind == "F3":
         wVA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VA")
         wAV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
@@ -309,25 +314,31 @@ def generate_heavy_fonll_intrinsic_diff(esf, nl):
         return (
             kernels.Kernel(
                 {ihq: wp, (-ihq): -wp},
-                cfs["matching"]["Rp"](esf, m1sq=m2hq, m2sq=m2hq),
+                cfs["matching"]["Rp"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
             kernels.Kernel(
                 {ihq: wm, (-ihq): -wm},
-                cfs["matching"]["Rm"](esf, m1sq=m2hq, m2sq=m2hq),
+                cfs["matching"]["Rm"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
         )
-
+    # add matching terms
     wVV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VV")
     wAA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
     wp = wVV + wAA
     wm = wVV - wAA
     return (
         kernels.Kernel(
-            {ihq: wp, (-ihq): wp}, cfs["matching"]["qSp"](esf, m1sq=m2hq, m2sq=m2hq)
+            {ihq: wp, (-ihq): wp},
+            cfs["matching"]["qSp"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
         kernels.Kernel(
-            {ihq: wm, (-ihq): wm}, cfs["matching"]["qSm"](esf, m1sq=m2hq, m2sq=m2hq)
+            {ihq: wm, (-ihq): wm},
+            cfs["matching"]["qSm"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
-        kernels.Kernel({21: wp}, cfs["matching"]["gSp"](esf, m1sq=m2hq, m2sq=m2hq)),
-        kernels.Kernel({21: wm}, cfs["matching"]["gSm"](esf, m1sq=m2hq, m2sq=m2hq)),
+        kernels.Kernel(
+            {21: wp}, cfs["matching"]["gSp"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq)
+        ),
+        kernels.Kernel(
+            {21: wm}, cfs["matching"]["gSm"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq)
+        ),
     )

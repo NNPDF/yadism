@@ -220,10 +220,11 @@ def generate_light_fonll_diff(_esf, _nl):
 def generate_heavy_fonll_diff(esf, nl):
     kind = esf.sf.obs_name.kind
     cfs = coefficient_functions[kind]
-    nhq = nl + 1
-    m2hq = esf.sf.m2hq[nhq - 4]
+    ihq = nl + 1
+    # threshold value
+    mu2hq = esf.sf.threshold.areas[ihq - 4].q2_max
     # add light contributions
-    wl = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nhq - 1], nl + 1)
+    wl = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nl + 1)
     elems = (
         kernels.Kernel(wl["q"], cfs["light"]["q"](esf, nf=nl + 1)),
         kernels.Kernel(
@@ -231,9 +232,9 @@ def generate_heavy_fonll_diff(esf, nl):
         ),
     )
     # add asymptotic contributions
-    wa = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[nhq - 1], nl)
-    asy_q = -kernels.Kernel(wa["q"], cfs["asy"]["q"](esf, m2hq=m2hq))
-    asy_g = -kernels.Kernel(wa["g"], cfs["asy"]["g"](esf, m2hq=m2hq))
+    wa = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nl)
+    asy_q = -kernels.Kernel(wa["q"], cfs["asy"]["q"](esf, m2hq=mu2hq))
+    asy_g = -kernels.Kernel(wa["g"], cfs["asy"]["g"](esf, m2hq=mu2hq))
     return (*elems, asy_q, asy_g)
 
 
@@ -251,6 +252,6 @@ def generate_intrinsic(esf, ihq):
     )
 
 
-def generate_heavy_fonll_intrinsic_diff(esf, nl):
+def generate_heavy_fonll_intrinsic_diff(_esf, _nl):
     # TODO fill
     return ()
