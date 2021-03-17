@@ -209,4 +209,4 @@ as it is discussed in :cite:`forte-bqZfonll`.
 
 .. todo::
 
-  add a comment on :math:`K_ij` dependency on threshold in intrinsic section
+  add a comment on :math:`K_{ij}` dependency on threshold in intrinsic section

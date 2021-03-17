@@ -90,6 +90,9 @@
 .. |GM-VFNS| replace::
    :abbr:`GM-VFNS (General Mass - Variable Flavor Number Scheme)`
 
+.. |FONLL| replace::
+   :abbr:`FONLL (Fixed Order Next to Leading Log - not true, just an historic name)`
+
 .. |RSL| replace::
    :abbr:`RSL (Regular - Singular - Local)`
 
