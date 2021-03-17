@@ -107,6 +107,13 @@ def run():
     with open(output_path, "w") as o:
         o.write(cnt)
 
+def to_mma():
+    e = exprs()
+    mma_out = here / "ic.m"
+    with open(mma_out, "w") as o:
+        for k,v in e.items():
+            o.write(f"{k} = {v};\n")
 
 if __name__ == "__main__":
-    run()
+    #run()
+    to_mma()

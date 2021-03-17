@@ -52,7 +52,11 @@ class Runner(BenchmarkRunner):
         else:
             sc = StrongCoupling.from_dict(theory)
             alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
-        return runner.get_result().apply_pdf(pdf, alpha_s, theory["XIR"], theory["XIF"])
+
+        alpha_qed = lambda _muR: theory["alphaqed"]
+        return runner.get_result().apply_pdf_alphas_alphaqed_xir_xif(
+            pdf, alpha_s, alpha_qed, theory["XIR"], theory["XIF"]
+        )
 
     def run_external(self, theory, ocard, pdf):
         """

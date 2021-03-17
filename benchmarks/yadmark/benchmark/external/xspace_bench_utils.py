@@ -1,15 +1,9 @@
-import pathlib
 import numpy as np
-import yaml
-import math
-import os
+
+import eko.strong_coupling as eko_sc
 
 from yadism import observable_name as on
 from yadism.input import compatibility
-
-import eko.thresholds as thr
-import eko.strong_coupling as eko_sc
-import numpy as np
 
 
 def compute_xspace_bench_data(theory, observables, pdf):
@@ -31,7 +25,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
         num_tab : dict
             xspace_bench numbers
     """
-    import xspace_bench
+    import xspace_bench # pylint:disable=import-outside-toplevel
 
     # Available targets: PROTON, NEUTRON, ISOSCALAR, IRON
     target = "PROTON"
@@ -52,7 +46,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
     pdf_name = pdf.set().name
     if pdf_name == "ToyLH":
         raise Warning("yadmark ToyLH not equal to xspace_bench ToyLH")
-        pdf_name = "toyLH_NLO.LHgrid"
 
     # Constant values
     q_thr = []
@@ -67,17 +60,12 @@ def compute_xspace_bench_data(theory, observables, pdf):
     ckm = theory["CKM"].split(" ")
     ckm = [float(item) for item in ckm]
 
-    alpharef = theory["alphas"]
-    q2ref = theory["Qref"] ** 2
-    thr_list = [m ** 2 for m in q_thr]
-
     # FONLL damping, otherwise set to 0
     damp = 0
 
     # select scheme
     scheme = theory["FNS"]
     new_theory = compatibility.update(theory)
-    thrholder = thr.ThresholdsAtlas.from_dict(new_theory, "kDIS")
 
     if scheme == "ZM-VFNS":
         scheme = "ZMVN"

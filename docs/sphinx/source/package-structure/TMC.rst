@@ -23,7 +23,7 @@ Since the responsibility of caching is of SF as written above we decided the
 following layout:
 
 - SF instantiate ESF or ESFTMC according to TMC flag in theory dictionary,
-  and append it to `self.__ESFs` at load time, i.e. in `self.load()` (these
+  and append it to `self.esfs` at load time, i.e. in `self.load()` (these
   are the observables to be computed)
 - when asked for output if noTMC a ESF is called and the instance is
   registered

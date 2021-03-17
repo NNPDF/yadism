@@ -27,15 +27,15 @@ default_kinematics.extend(
 )
 
 default_config = {
-    0: {"observable_names": ["F2light"], "kinematics": default_kinematics},
+    0: {"observable_names": ["F2_light"], "kinematics": default_kinematics},
     1: {
         "observable_names": [
-            "F2light",
-            "F2charm",
-            "FLlight",
-            "FLcharm",
-            "F3light",
-            "F3charm",
+            "F2_light",
+            "F2_charm",
+            "FL_light",
+            "FL_charm",
+            "F3_light",
+            "F3_charm",
         ],
         "kinematics": default_kinematics,
     },
@@ -43,7 +43,7 @@ default_config = {
 
 fns_config = {
     "ZM-VFNS": {
-        "observable_names": ["F2light", "FLlight", "F3light"],
+        "observable_names": ["F2_light", "FL_light", "F3_light"],
         "kinematics": default_kinematics,
     }
 }

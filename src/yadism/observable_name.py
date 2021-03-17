@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 fake_kind = "??"
-kinds = ["F2", "FL", "F3", fake_kind]
+sfs = ["F2", "FL", "F3"]
+# xs = ["XSreduced", "XSyreduced"]
+xs = ["XSHERANC", "XSHERACC", "XSCHORUSCC", "XSNUTEVCC"]
+kinds = sfs + xs + [fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
 asys = [h + "asy" for h in heavys]
@@ -23,17 +26,22 @@ class ObservableName:
     """
 
     def __init__(self, name):
-        self.kind = name[:2]
+        p = name.split("_")
+        if len(p) == 1:
+            self.kind, self.flavor = p[0], "total"
+        elif len(p) == 2:
+            self.kind, self.flavor = p[0], p[1]
+        else:
+            raise ValueError(f"Unknown obsname {name}")
         if self.kind not in kinds:
             raise ValueError(f"Unknown kind {self.kind}")
-        self.flavor = name[2:]
         if self.flavor not in flavors:
             raise ValueError(f"Unknown flavor {self.flavor}")
 
     @property
     def name(self):
         """joint name"""
-        return self.kind + self.flavor
+        return self.kind + "_" + self.flavor
 
     def __eq__(self, other):
         """Test equality of kind and flavor"""
@@ -53,7 +61,7 @@ class ObservableName:
             apply_kind : type(self)
                 new kind and our flavor
         """
-        return type(self)(kind + self.flavor)
+        return type(self)(kind + "_" + self.flavor)
 
     def apply_asy(self):
         """
@@ -86,7 +94,7 @@ class ObservableName:
             apply_flavor : type(self)
                 our kind and new flavor
         """
-        return type(self)(self.kind + flavor)
+        return type(self)(self.kind + "_" + flavor)
 
     @property
     def is_heavy(self):
@@ -98,7 +106,7 @@ class ObservableName:
             is_heavy : bool
                 is a heavy flavor?
         """
-        return not self.flavor == "light"
+        return self.flavor != "light"
 
     @property
     def is_raw_heavy(self):
@@ -229,19 +237,3 @@ class ObservableName:
             return True
         except ValueError:
             return False
-
-    @classmethod
-    def all(cls):
-        """
-        Iterates all valid (external) names.
-
-        Yields
-        ------
-            all : cls
-                ObservableName
-        """
-        for kind in kinds:
-            if kind == fake_kind:
-                continue
-            for flav in external_flavors:
-                yield cls(kind + flav)
