@@ -80,20 +80,20 @@ class BenchmarkTMC(ApfelBenchmark):
         # turning point (maybe again a cancelation of channels?)
         # or maybe the interpolation is just breaking down
         cfg["kinematics"] = list(filter(lambda k: k["x"] < 0.9, cfg["kinematics"]))
-        obs_updates = observables.build(**cfg, update={"prDIS": "CC"})
+        obs_updates = observables.build(**cfg, update={"prDIS": ["CC"]})
         self.run([{"PTO": 0, "TMC": 1}], obs_updates, ["ToyLH"])
 
     def benchmark_nlo(self):
         cfg = observables.default_config[1].copy()
         cfg["kinematics"] = list(filter(lambda k: k["x"] < 0.9, cfg["kinematics"]))
-        obs_updates = observables.build(**cfg, update={"prDIS": "CC"})
+        obs_updates = observables.build(**cfg, update={"prDIS": ["CC"]})
         # FL TMC is broken in APFEL
         # https://github.com/scarrazza/apfel/issues/23
         small_kins = list(
             filter(lambda k: k["x"] < 0.2 and k["Q2"] > 4.5, cfg["kinematics"])
         )
         obs_updates[0]["observables"].update(
-            {"FLlight": small_kins, "FLcharm": small_kins}
+            {"FL_light": small_kins, "FL_charm": small_kins}
         )
         self.run([{"PTO": 1, "TMC": 1}], obs_updates, ["ToyLH"])
 
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     # plain.benchmark_nlo()
 
     proj = BenchmarkTMC()
-    proj.benchmark_nlo()
+    proj.benchmark_lo()
 
 # def plain_assert_external(theory, obs, sf, yad):
 #     # APFEL has a discretization in Q2/m2

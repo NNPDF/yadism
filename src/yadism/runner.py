@@ -30,7 +30,6 @@ import rich.console
 
 from eko.interpolation import InterpolatorDispatcher
 from eko import thresholds
-from eko import strong_coupling
 from eko import basis_rotation as br
 
 from .input import inspector, compatibility
@@ -38,6 +37,7 @@ from . import observable_name
 from . import log
 from .output import Output
 from .sf import StructureFunction as SF
+from .xs import CrossSection as XS
 from .coupling_constants import CouplingConstants
 
 log.setup()
@@ -103,27 +103,23 @@ class Runner:
         # Setup eko stuffs
         # ==============================
         new_theory = compatibility.update(theory)
-        self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
-        self.threshold = thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS")
-        self.strong_coupling = strong_coupling.StrongCoupling.from_dict(new_theory)
+        interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
 
         # Non-eko theory
-        self.coupling_constants = CouplingConstants.from_dict(theory, observables)
-        self.xiF = theory["XIF"]
+        coupling_constants = CouplingConstants.from_dict(theory, observables)
 
         # ==============================
         # Initialize structure functions
         # ==============================
-        eko_components = dict(
-            interpolator=self.interpolator,
-            threshold=self.threshold,
-            alpha_s=self.strong_coupling,
-            coupling_constants=self.coupling_constants,
+        self.managers = dict(
+            interpolator=interpolator,
+            threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
+            coupling_constants=coupling_constants,
         )
         # FONLL damping powers
         FONLL_damping = bool(theory["DAMP"])
         if FONLL_damping:
-            damping_power = theory.get("DAMPPOWER", 2)
+            damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
             damping_power_c = theory.get("DAMPPOWERCHARM", damping_power)
             damping_power_b = theory.get("DAMPPOWERBOTTOM", damping_power)
             damping_power_t = theory.get("DAMPPOWERTOP", damping_power)
@@ -134,37 +130,43 @@ class Runner:
         intrinsic_range = []
         if theory["IC"] == 1:
             intrinsic_range.append(4)
-        theory_params = dict(
+        self.theory_params = dict(
             pto=theory["PTO"],
-            xiR=theory["XIR"],
-            xiF=self.xiF,
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
             intrinsic_range=intrinsic_range,
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
+            GF=theory["GF"],
+            M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
-        obs_params = dict(process=observables.get("prDIS", "EM"))
 
         self.observable_instances = {}
-        for obs_name in observable_name.ObservableName.all():
-            name = obs_name.name
+        # for obs_name in observable_name.ObservableName.all():
+        #     name = obs_name.name
 
-            # initialize an SF instance for each possible structure function
-            obj = SF(
-                obs_name,
-                runner=self,
-                eko_components=eko_components,
-                theory_params=theory_params,
-                obs_params=obs_params,
-            )
+        #     # initialize an SF instance for each possible structure function
+        #     obj = SF(
+        #         obs_name,
+        #         runner=self,
+        #     )
 
+        #     # read kinematics
+        #     obj.load(self._observables["observables"].get(name, []))
+        #     self.observable_instances[name] = obj
+        for obs_name, kins in self._observables["observables"].items():
+            on = observable_name.ObservableName(obs_name)
+            if on.kind in observable_name.xs:
+                obs = XS(on, self)
+            else:
+                # TODO use get_sf?
+                obs = SF(on, self)
             # read kinematics
-            obj.load(self._observables["observables"].get(name, []))
-            self.observable_instances[name] = obj
+            obs.load(kins)
+            self.observable_instances[obs_name] = obs
 
         # output console
         if log.silent_mode:
@@ -176,11 +178,15 @@ class Runner:
         # Initialize output
         # ==============================
         self._output = Output()
-        self._output.update(self.interpolator.to_dict())
+        self._output.theory = theory
+        self._output.update(interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
-        self._output["projectilePID"] = self.coupling_constants.obs_config[
-            "projectilePID"
-        ]
+        self._output["projectilePID"] = coupling_constants.obs_config["projectilePID"]
+
+    def get_sf(self, obs_name):
+        if obs_name.name not in self.observable_instances:
+            self.observable_instances[obs_name.name] = SF(obs_name, self)
+        return self.observable_instances[obs_name.name]
 
     def get_result(self):
         """

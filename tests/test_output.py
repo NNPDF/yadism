@@ -30,7 +30,7 @@ class TestOutput:
         out["pids"] = [21, 1]
         out["_ciao"] = "come va?"
 
-        obs = ["F2total", "FLtotal", "F3total"]
+        obs = ["F2_total", "FL_total", "F3_total"]
 
         for o in obs:
             o_esf = []
@@ -48,7 +48,7 @@ class TestOutput:
 
             out[o] = o_esf
 
-        out["F2light"] = None
+        out["F2_light"] = None
         return out, obs
 
     def test_apply_pdf(self):
@@ -56,7 +56,9 @@ class TestOutput:
         outp = output.Output()
         outp.update(out)
 
-        ret = outp.apply_pdf(MockPDFgonly(), lambda _muR: 1, 1.0, 1.0)
+        ret = outp.apply_pdf_alphas_alphaqed_xir_xif(
+            MockPDFgonly(), lambda _muR: 1, lambda _muR: 1, 1.0, 1.0
+        )
         for o in obs:
             for a, pra in zip(out[o], ret[o]):
                 expexted_res = a.orders[lo][0][0][0] * a.x * a.Q2
@@ -67,8 +69,10 @@ class TestOutput:
         # test factorization scale variation
         for xiF in [0.5, 2.0]:
 
-            ret = outp.apply_pdf(MockPDFgonly(), lambda _muR: 1, 1.0, xiF)
-            for a, pra in zip(out["F2total"], ret["F2total"]):
+            ret = outp.apply_pdf_alphas_alphaqed_xir_xif(
+                MockPDFgonly(), lambda _muR: 1, lambda _muR: 1, 1.0, xiF
+            )
+            for a, pra in zip(out["F2_total"], ret["F2_total"]):
                 expexted_res = a.orders[lo][0][0][0] * a.x * a.Q2
                 expected_err = np.abs(a.orders[lo][0][0][0]) * a.x * a.Q2
                 assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2

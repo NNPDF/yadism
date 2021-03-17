@@ -33,6 +33,9 @@ theory_dict = {
     "kcThr": 1.0,
     "kbThr": 1.0,
     "ktThr": 1.0,
+    "kcDISThr": 1.0,
+    "kbDISThr": 1.0,
+    "ktDISThr": 1.0,
     "MZ": 91.1876,
     "MW": 90.398,
     "GF": 1.1663787e-05,
@@ -42,11 +45,12 @@ theory_dict = {
 }
 
 obs_dict = {
-    "observables": {"F2light": []},
+    "observables": {"F2_light": []},
     "interpolation_xgrid": [0.001, 0.01, 0.1, 0.5, 1.0],
     "prDIS": "EM",
     "PolarizationDIS": 0.0,
     "ProjectileDIS": "electron",
+    "PropagatorCorrection": 0.0,
     "interpolation_is_log": 1.0,
     "interpolation_polynomial_degree": 4,
 }

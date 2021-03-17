@@ -66,7 +66,7 @@ class TestAbstractTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            obs_name = observable_name.ObservableName("F2light")
+            obs_name = observable_name.ObservableName("F2_light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
@@ -104,7 +104,7 @@ class TestAbstractTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            obs_name = observable_name.ObservableName("F2light")
+            obs_name = observable_name.ObservableName("F2_light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
@@ -165,7 +165,7 @@ class TestAbstractTMC:
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF:
-            obs_name = observable_name.ObservableName("F2light")
+            obs_name = observable_name.ObservableName("F2_light")
             M2target = 1.0
             interpolator = InterpolatorDispatcher(xg, 1, False, False)
 
@@ -180,24 +180,43 @@ class TestAbstractTMC:
             obj._h2()  # pylint: disable=protected-access
 
 
-def test_f():
-    xg = np.array([0.2, 0.6, 1.0])
-    th_d = dict(
-        sin2theta_weak=1.0,
-        CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
-    )
-    obs_d = dict(projectilePID=11, polarization=0.0, process="EM")
+xg = np.array([0.2, 0.6, 1.0])
+th_d = dict(
+    sin2theta_weak=1.0,
+    CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
+)
+obs_d = dict(
+    ProjectileDIS="electron",
+    PolarizationDIS=0.0,
+    prDIS="EM",
+    PropagatorCorrection=0,
+)
+interpolator = InterpolatorDispatcher(xg, 1, False, False)
+coupling_constants = CouplingConstants.from_dict(th_d, obs_d)
+threshold = ThresholdsAtlas([4, 20])
 
+
+class MockRunner:
+    managers = dict(
+        interpolator=interpolator,
+        threshold=threshold,
+        coupling_constants=coupling_constants,
+    )
+    theory_params = dict(pto=0, xiF=1, M2target=1.0, TMC=1, scheme="FFNS")
+
+
+def test_f():
     class MockSF:
-        obs_name = observable_name.ObservableName("F2light")
-        M2target = 1.0
-        interpolator = InterpolatorDispatcher(xg, 1, False, False)
-        coupling_constants = CouplingConstants.from_dict(th_d, obs_d)
-        obs_params = dict(process="EM")
-        threshold = ThresholdsAtlas([4, 20])
-        xiF = 1.0
-        pto = 0
-        scheme = "FFNS"
+        obs_name = observable_name.ObservableName("F2_light")
+        runner = MockRunner()
+
+        def __getattribute__(self, name):
+            runner = object.__getattribute__(self, "runner")
+            if name in runner.managers:
+                return runner.managers[name]
+            if name in runner.theory_params:
+                return runner.theory_params[name]
+            return super().__getattribute__(name)
 
         def __init__(self, tmc):
             self.TMC = tmc

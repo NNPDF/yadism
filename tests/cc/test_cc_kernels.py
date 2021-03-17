@@ -58,7 +58,7 @@ def check(ps, w):
 
 def test_generate_light_pc():
     for sgn in [True, False]:
-        esf = MockESF("F2light", 11 * (1 if sgn else -1), 0.1, 10)
+        esf = MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10)
         for nf in [3, 4, 5]:
             w = kernels.generate_light(esf, nf)
             norm = {3: 1, 4: 3, 5: 7}[nf]
@@ -69,7 +69,7 @@ def test_generate_light_pc():
 
 def test_generate_light_pv():
     for sgn in [True, False]:
-        esf = MockESF("F3light", 11 * (1 if sgn else -1), 0.1, 10)
+        esf = MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10)
         for nf in [3, 4, 5]:
             w = kernels.generate_light(esf, nf)
             norm = {3: 1, 4: 3, 5: 7}[nf]
@@ -83,7 +83,7 @@ def test_generate_light_pv():
 
 def test_generate_heavy_pc():
     for sgn in [True, False]:
-        esf = MockESF("F2charm", 11 * (1 if sgn else -1), 0.1, 10)
+        esf = MockESF("F2_charm", 11 * (1 if sgn else -1), 0.1, 10)
         for nf in [3, 4, 5]:
             w = kernels.generate_heavy(esf, nf)
             qnorm = {3: 2, 4: 4, 5: 8}[nf]
@@ -95,7 +95,7 @@ def test_generate_heavy_pc():
 
 def test_generate_heavy_pv():
     for sgn in [True, False]:
-        esf = MockESF("F3charm", 11 * (1 if sgn else -1), 0.1, 10)
+        esf = MockESF("F3_charm", 11 * (1 if sgn else -1), 0.1, 10)
         for nf in [3, 4, 5]:
             w = kernels.generate_heavy(esf, nf)
             qnorm = {3: 2, 4: 4, 5: 8}[nf]
@@ -108,8 +108,8 @@ def test_generate_heavy_pv():
 def test_generate_light_fonll_diff():
     for sgn in [True, False]:
         for esf in [
-            MockESF("F2light", 11 * (1 if sgn else -1), 0.1, 10),
-            MockESF("F3light", 11 * (1 if sgn else -1), 0.1, 10),
+            MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10),
+            MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10),
         ]:
             for nf in [3, 4, 5]:
                 w = kernels.generate_light_fonll_diff(esf, nf)

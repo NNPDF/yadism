@@ -1,5 +1,3 @@
-import platform
-
 import numpy as np
 
 
@@ -181,36 +179,88 @@ def compute_apfel_data(theory, observables, pdf):
     apfel = load_apfel(theory, observables, pdf.set().name)
 
     # mapping observables names to APFEL methods
-    apfel_methods = {
-        "F2light": apfel.F2light,
-        "FLlight": apfel.FLlight,
-        "F3light": apfel.F3light,
-        "F2charm": apfel.F2charm,
-        "F2bottom": apfel.F2bottom,
-        "F2top": apfel.F2top,
-        "FLcharm": apfel.FLcharm,
-        "FLbottom": apfel.FLbottom,
-        "FLtop": apfel.FLtop,
-        "F3charm": apfel.F3charm,
-        "F3bottom": apfel.F3bottom,
-        "F3top": apfel.F3top,
-        "F2total": apfel.F2total,
-        "FLtotal": apfel.FLtotal,
-        "F3total": apfel.F3total,
+    apfel_structure_functions = {
+        "F2_light": apfel.F2light,
+        "FL_light": apfel.FLlight,
+        "F3_light": apfel.F3light,
+        "F2_charm": apfel.F2charm,
+        "F2_bottom": apfel.F2bottom,
+        "F2_top": apfel.F2top,
+        "FL_charm": apfel.FLcharm,
+        "FL_bottom": apfel.FLbottom,
+        "FL_top": apfel.FLtop,
+        "F3_charm": apfel.F3charm,
+        "F3_bottom": apfel.F3bottom,
+        "F3_top": apfel.F3top,
+        "F2_total": apfel.F2total,
+        "FL_total": apfel.FLtotal,
+        "F3_total": apfel.F3total,
+        "F2": apfel.F2total,
+        "FL": apfel.FLtotal,
+        "F3": apfel.F3total,
+    }
+
+    l = ""
+    if observables["ProjectileDIS"] == "electron":
+        l = "E"
+    elif observables["ProjectileDIS"] == "positron":
+        l = "P"
+    elif observables["ProjectileDIS"] == "neutrino":
+        l = "NU"
+    elif observables["ProjectileDIS"] == "antineutrino":
+        l = "NB"
+
+    # apfel_fkobservables = {
+    #     "XSreduced_light": f"DIS_NC{l}_L",
+    #     "XSreduced_charm": f"DIS_NC{l}_CH",
+    #     "XSreduced_bottom": f"DIS_NC{l}_BT",
+    #     "XSreduced_top": f"DIS_NC{l}_TP",
+    #     "XSreduced_total": f"DIS_NC{l}",
+    #     "XSreduced": f"DIS_NC{l}",
+    #     "XSyreduced_light": f"DIS_CC{l}_L",
+    #     "XSyreduced_charm": f"DIS_CC{l}_CH",
+    #     "XSyreduced_bottom": f"DIS_CC{l}_BT",
+    #     "XSyreduced_top": f"DIS_CC{l}_TP",
+    #     "XSyreduced_total": f"DIS_CC{l}",
+    #     "XSyreduced": f"DIS_CC{l}",
+    # }
+    apfel_fkobservables = {
+        "XSHERANC_light": f"DIS_NC{l}_L",
+        "XSHERANC_charm": f"DIS_NC{l}_CH",
+        "XSHERANC_bottom": f"DIS_NC{l}_BT",
+        "XSHERANC_top": f"DIS_NC{l}_TP",
+        "XSHERANC_total": f"DIS_NC{l}",
+        "XSHERANC": f"DIS_NC{l}",
+        "XSHERACC_light": f"DIS_CC{l}_L",
+        "XSHERACC_charm": f"DIS_CC{l}_CH",
+        "XSHERACC_bottom": f"DIS_CC{l}_BT",
+        "XSHERACC_top": f"DIS_CC{l}_TP",
+        "XSHERACC_total": f"DIS_CC{l}",
+        "XSHERACC": f"DIS_CC{l}",
+        "XSCHORUSCC_light": f"DIS_S{l}_L",
+        "XSCHORUSCC_charm": f"DIS_S{l}_C",
+        "XSCHORUSCC_total": f"DIS_S{l}",
+        "XSCHORUSCC": f"DIS_S{l}",
+        "XSNUTEVCC_charm": f"DIS_DM_{l}",
     }
 
     # compute observables with APFEL
     apf_tab = {}
-    for FX, apfel_FX in apfel_methods.items():
-        if FX not in observables["observables"]:
-            # if not in the runcard just skip
-            continue
+    for obs_name, kinematics in observables["observables"].items():
+        apf_tab[obs_name] = []
+        # a cross section?
+        if obs_name in apfel_fkobservables:
+            # FK calls SetProcessDIS, SetProjectileDIS and SetTargetDIS
+            apfel.SetFKObservable(apfel_fkobservables[obs_name])
+            # TODO until target is implemented in yadism revert to proton
+            apfel.SetTargetDIS("proton")
+        elif obs_name not in apfel_structure_functions:  # not a SF?
+            raise ValueError(f"Unkown observable {obs_name}")
 
         # iterate over input kinematics
-        apf_tab[FX] = []
-        for kinematics in observables["observables"].get(FX, []):
-            Q2 = kinematics["Q2"]
-            x = kinematics["x"]
+        for kin in kinematics:
+            Q2 = kin["Q2"]
+            x = kin["x"]
 
             # disable APFEL evolution: we are interested in the pure DIS part
             #
@@ -221,7 +271,13 @@ def compute_apfel_data(theory, observables, pdf):
             apfel.ComputeStructureFunctionsAPFEL(
                 np.sqrt(Q2) * theory["XIF"], np.sqrt(Q2)
             )
-            result = apfel_FX(x)
-
-            apf_tab[FX].append(dict(x=x, Q2=Q2, result=result))
+            # compute the actual result
+            if obs_name in apfel_structure_functions:
+                result = apfel_structure_functions[obs_name](x)
+            else:
+                result = apfel.FKObservables(x, np.sqrt(Q2), kin["y"])
+            # take over the kinematics
+            r = kin.copy()
+            r["result"] = result
+            apf_tab[obs_name].append(r)
     return apf_tab

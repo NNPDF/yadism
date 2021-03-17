@@ -20,12 +20,12 @@ class CoefficientFunctionsCombiner:
     def __init__(self, esf):
         self.esf = esf
         self.obs_name = esf.sf.obs_name
-        if esf.sf.obs_params["process"] == "CC":
+        if esf.process == "CC":
             self.kernels = cc_kernels
         else:
             self.kernels = nc_kernels
         self.nf = esf.sf.threshold.nf(
-            esf.Q2 * esf.sf.xiF ** 2
+            esf.Q2
         )  # TODO decide whether Q2 or muF2 is the correct thing
 
     def collect_ffns(self):

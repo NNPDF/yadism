@@ -28,7 +28,7 @@ class BenchmarkPlain(QCDNUMBenchmark):
     def benchmark_nlo(self):
 
         fnames = {
-            "observable_names": ["F2light", "FLlight", "F3light"],
+            "observable_names": ["F2_light", "FL_light", "F3_light"],
         }
         obs = observables.default_config[1].copy()
         obs.update(fnames)
@@ -55,9 +55,9 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
             [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4.0, 1000.0, 10).tolist()]
         )
         observable_names = [
-            "F2light",
-            "FLlight",
-            "F3light",
+            "F2_light",
+            "FL_light",
+            "F3_light",
         ]
         obs_card = dict(
             observable_names=observable_names,
@@ -144,9 +144,9 @@ class BenchmarkFNS(QCDNUMBenchmark):
     def benchmark_ZM(self):
 
         fnames = [
-            "F2light",
-            "FLlight",
-            "F3light",
+            "F2_light",
+            "FL_light",
+            "F3_light",
         ]
         fns = {"NfFF": [3, 4, 5], "FNS": ["ZM-VFNS"], "PTO": [1]}
 
@@ -155,33 +155,33 @@ class BenchmarkFNS(QCDNUMBenchmark):
     def benchmark_FFNS(self):
 
         light_fnames = [
-            "F2light",
-            "FLlight",
-            "F3light",
+            "F2_light",
+            "FL_light",
+            "F3_light",
         ]
         heavy_fnames = [
             {
                 "NfFF": 3,
                 "fnames": [
-                    "F2charm",
-                    "FLcharm",
+                    "F2_charm",
+                    "FL_charm",
                 ],
                 "Q2range": [4, 16],
             },
             {
                 "NfFF": 4,
                 "fnames": [
-                    "F2bottom",
-                    "FLbottom",
+                    "F2_bottom",
+                    "FL_bottom",
                 ],
                 "Q2range": [22, 40],
             },
-            # FLtop is always really small < 10^-6, there are some numerical differences
+            # FL_top is always really small < 10^-6, there are some numerical differences
             # {"NfFF": 5, "fnames": ["F2top", "FLtop",], "Q2range": [90, 1000]},
             {
                 "NfFF": 5,
                 "fnames": [
-                    "F2top",
+                    "F2_top",
                 ],
                 "Q2range": [150, 1000],
             },
