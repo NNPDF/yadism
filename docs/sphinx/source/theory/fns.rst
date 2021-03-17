@@ -115,6 +115,10 @@ This scheme is adequate for :math:`Q^2\gg m^2`.
   coefficient functions may only be a function of :math:`z,Q^2` and eventually
   unphysical scales; in especially they may *NOT* depend on any quark mass.
 
+|ZM-VFNS| dependence on thresholds is simple, they just define the :math:`Q^2`
+patches in which :math:`n_f` is constant (and they are of course different from
+the quark masses, that are always considered to be zero or infinite).
+
 FONLL
 -----
 | FONLL :cite:`forte-fonll` is a |GM-VFNS| that includes parts of the |DGLAP| equations into the
@@ -176,3 +180,33 @@ quark threshold: :math:`Q_{thr,n_f+1}`.
   This amounts to simply make an hard cut to the original smooth decay of
   massive contributions, and to add the subsequent thresholds for the following
   massive quarks.
+
+Threshold different from heavy quark mass
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The threshold in |FONLL| plays a relevant role, since it is deciding where (in
+:math:`Q^2`) the match should happen.
+
+A typical choice is to put the threshold on top of the relevant quark mass (also
+in |ZM-VFNS|, mimicking the opening of a new channel). This is **not
+mandatory**, as the threshold is just an |FNS| parameter it can be freely
+chosen.
+
+If the threshold is then chosen *different* from the quark mass, a new scale
+ratio appears, and the expressions might depend also on this one.
+Notice that the threshold is only a parameter of |FONLL|, so it can not affect
+the |FFNS| ingredients of the scheme (which can only depend on the real quark
+masses, through massive propagators).
+Then only the massless limit (the double counting preventing bit) might include
+a threshold dependency, and in practice it will only change the relevant
+logarithm, that:
+
+- instead of being the logarithm of the ratio between the process scale and *the
+  mass*
+- is a logarithm of the ratio with *the threshold*
+
+as it is discussed in :cite:`forte-bqZfonll`.
+
+.. todo::
+
+  add a comment on :math:`K_ij` dependency on threshold in intrinsic section
