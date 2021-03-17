@@ -61,6 +61,7 @@ pineappl_xgrid = list(reversed([1,
     4.6035014748963906e-07,
     3.034304765867952e-07,
     1.9999999999999954e-07]))
+
 class Sandbox(Runner):
 
     external = "APFEL" # external comparison program

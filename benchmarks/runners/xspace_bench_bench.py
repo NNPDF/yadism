@@ -4,7 +4,7 @@
 # import pytest
 import numpy as np
 
-from banana.data import power_set
+from banana.data import cartesian_product
 
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
@@ -71,68 +71,68 @@ class BenchmarkFNS(XspaceBenchmark):
 
     def benchmark_ZM(self):
 
-        fnames = ["F2total", "FLtotal", "F3total"]
+        fnames = ["F2_total", "FL_total", "F3_total"]
         FX = {
             "CC": fnames,
             "NC": fnames,
         }
         fns = {"NfFF": [3, 4, 5], "FNS": ["ZM-VFNS"], "PTO": [1]}
 
-        self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
+        self.run(cartesian_product(fns), self.observable_updates(FX), ["ToyLHAPDF"])
 
     def benchmark_FFNS(self):
 
         fnames = [
-            "F2light",
-            "F2total",
-            "F2charm",
-            "FLlight",
-            "FLtotal",
-            "FLcharm",
-            "F3light",
+            "F2_light",
+            "F2_total",
+            "F2_charm",
+            "FL_light",
+            "FL_total",
+            "FL_charm",
+            "F3_light",
         ]
         FX = {
-            "CC": fnames + ["F3charm"],
+            "CC": fnames + ["F3_charm"],
             "NC": fnames,
         }
         fns = {"NfFF": [3], "FNS": ["FFNS"], "PTO": [1]}
 
-        self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
+        self.run(cartesian_product(fns), self.observable_updates(FX), ["ToyLHAPDF"])
 
         # F3total should be computed separatly due to cancellations in quark contributions
-        FX = {"CC": ["F3total"]}
+        FX = {"CC": ["F3_total"]}
         # with gonly
-        self.run(power_set(fns), self.observable_updates(FX), ["toygonly"])
+        self.run(cartesian_product(fns), self.observable_updates(FX), ["toygonly"])
         # excluding the low q2 region.
         q2 = 6
-        self.run(power_set(fns), self.observable_updates(FX, q2_min=q2), ["ToyLHAPDF"])
+        self.run(cartesian_product(fns), self.observable_updates(FX, q2_min=q2), ["ToyLHAPDF"])
 
     def benchmark_FONLL(self):
 
         fnames = [
-            "F2light",
-            "F2total",
-            "F2charm",
-            "FLlight",
-            "FLtotal",
-            "FLcharm",
-            "F3light",
+            "F2_light",
+            "F2_total",
+            "F2_charm",
+            "FL_light",
+            "FL_total",
+            "FL_charm",
+            "F3_light",
         ]
         FX = {
-            "CC": fnames + ["F3charm"],
+            "CC": fnames + ["F3_charm"],
             "NC": fnames,
         }
         fns = {"NfFF": [4], "FNS": ["FONLL-A"], "PTO": [1], "DAMP": [0, 1]}
-        self.run(power_set(fns), self.observable_updates(FX), ["ToyLHAPDF"])
+        self.run(cartesian_product(fns), self.observable_updates(FX), ["ToyLHAPDF"])
 
         # F3total should be computed separatly due to cancellations in quark contributions
         # (massive part)
-        FX = {"CC": ["F3total"]}
+        FX = {"CC": ["F3_total"]}
         # with gonly
-        self.run(power_set(fns), self.observable_updates(FX), ["toygonly"])
+        self.run(cartesian_product(fns), self.observable_updates(FX), ["toygonly"])
         # excluding the low q2 region.
         q2 = 6
-        self.run(power_set(fns), self.observable_updates(FX, q2_min=q2), ["ToyLHAPDF"])
+        self.run(cartesian_product(fns), self.observable_updates(FX, q2_min=q2), ["ToyLHAPDF"])
 
 
 if __name__ == "__main__":
