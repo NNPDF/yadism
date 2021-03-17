@@ -64,7 +64,7 @@ class PartonicChannel(dict):
 
 
 class EmptyPartonicChannel(PartonicChannel):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **_kwargs):
         super().__init__(*args)
 
 
@@ -75,9 +75,9 @@ class PartonicChannelLight(PartonicChannel):
 
 
 class PartonicChannelAsy(PartonicChannel):
-    def __init__(self, esf, m2hq):
+    def __init__(self, esf, mu2hq):
         super().__init__(esf)
-        self.L = np.log(esf.Q2 / m2hq)
+        self.L = np.log(esf.Q2 / mu2hq)
 
 
 class PartonicChannelAsyIntrinsic(PartonicChannel):
@@ -151,7 +151,13 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
         return rsl_from_distr_coeffs(reg, delta, omx)
 
 
-class FMatchingQuark(PartonicChannelAsyIntrinsic):
+class FMatching(PartonicChannelAsyIntrinsic):
+    def __init__(self, ESF, m1sq, m2sq, mu2hq):
+        super().__init__(ESF, m1sq, m2sq)
+        self.l = np.log(self.Q2 / mu2hq)
+
+
+class FMatchingQuark(FMatching):
     def mk_nlo(self, intrinsic_pc):
         obj = intrinsic_pc(self.ESF, self.m1sq, self.m2sq)
         parent_LO = obj.LO()
@@ -159,8 +165,8 @@ class FMatchingQuark(PartonicChannelAsyIntrinsic):
             _, _, icl = parent_LO
         except TypeError:
             return parent_LO
-        l = np.log(self.Q2 / self.m1sq)
         asnorm = 2.0
+        l = self.l
 
         def sing(z):
             return (
@@ -186,7 +192,7 @@ class FMatchingQuark(PartonicChannelAsyIntrinsic):
         return 0, sing, loc
 
 
-class FMatchingGluon(PartonicChannelAsyIntrinsic):
+class FMatchingGluon(FMatching):
     def mk_nlo(self, intrinsic_pc):
         obj = intrinsic_pc(self.ESF, self.m1sq, self.m2sq)
         parent_LO = obj.LO()
@@ -194,7 +200,7 @@ class FMatchingGluon(PartonicChannelAsyIntrinsic):
             _, _, icl = parent_LO
         except TypeError:
             return parent_LO
-        l = np.log(self.Q2 / self.m1sq)
+        l = self.l
         asnorm = 2.0
 
         def reg(z):
