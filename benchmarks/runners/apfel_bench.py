@@ -1,8 +1,22 @@
 # -*- coding: utf-8 -*-
-#
-# Compare the results with APFEL's
+"""
+Compare the results with APFEL's
+
+
+decoupled:
+- plain
+- projectile + polarization
+- propagator_correction
+- TMC
+- XS
+
+combined:
+- process + FNS(3) + SV
+- process + IC + FNS(2) + SV
+"""
 import pathlib
 
+import numpy as np
 import pytest
 
 from banana.data import cartesian_product
@@ -132,6 +146,52 @@ class BenchmarkScaleVariations(ApfelBenchmark):
         )
 
 
+
+class ApfelICBenchmark(ApfelBenchmark):
+    """
+    Globally set the external program to APFEL
+    """
+
+    def obs_updates(self, allow_cc=False):
+        kinematics = []
+        kinematics.extend([dict(x=x, Q2=10.0) for x in np.geomspace(1e-5, 1, 10)])
+        kinematics.extend(
+            [dict(x=0.1, Q2=Q2) for Q2 in np.geomspace(4, 20, 10).tolist()]
+        )
+        obs = [
+            {
+                "prDIS": "NC",
+                "observables": {f: kinematics for f in ["F2charm", "FLcharm"]},
+            },
+        ]
+        obs.append(
+            {
+                "prDIS": "CC",
+                "observables": {
+                    f: kinematics for f in ["F2charm", "FLcharm", "F3charm"]
+                },
+            }
+        )
+        return obs
+
+
+class BenchmarkICFFNS(ApfelICBenchmark):
+    def benchmark_lo(self):
+        self.run([{"IC": 1}], self.obs_updates(True), ["conly", "CT14llo_NF4"])
+
+    def benchmark_nlo(self):
+        self.run([{"PTO": 1, "IC": 1}], self.obs_updates(), ["conly", "CT14llo_NF4"])
+
+
+class BenchmarkICFONLL(ApfelICBenchmark):
+    def benchmark_nlo(self):
+        self.run(
+            [{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4}],
+            self.obs_updates(),
+            ["conly", "CT14llo_NF4"],
+        )
+
+
 if __name__ == "__main__":
     p = pathlib.Path(__file__).absolute().parents[1] / "data" / "benchmark.db"
     # p.unlink(missing_ok=True)
@@ -142,6 +202,12 @@ if __name__ == "__main__":
 
     proj = BenchmarkTMC()
     proj.benchmark_lo()
+
+    # ffns = BenchmarkICFFNS()
+    # ffns.benchmark_lo()
+    # ffns.benchmark_nlo()
+    # fonll = BenchmarkICFONLL()
+    # fonll.benchmark_nlo()
 
 # def plain_assert_external(theory, obs, sf, yad):
 #     # APFEL has a discretization in Q2/m2
