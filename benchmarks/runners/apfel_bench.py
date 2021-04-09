@@ -4,11 +4,11 @@ Compare the results with APFEL's
 
 
 decoupled:
-- plain
-- projectile + polarization
-- propagator_correction
-- TMC
-- XS
+- [v] plain
+- [v] projectile + polarization
+- [v] propagator_correction
+- [v] TMC
+- [v] XS
 
 combined:
 - process + FNS(3) + SV
@@ -34,60 +34,43 @@ class ApfelBenchmark(Runner):
 
 
 class BenchmarkPlain(ApfelBenchmark):
-    def benchmark_lo(self):
+    def benchmark_pto(self, pto):
         self.run(
-            [{}], observables.build(**(observables.default_config[0])), ["CT14llo_NF3"]
-        )
-
-    def benchmark_nlo(self):
-        self.run(
-            [{"PTO": 1}],
-            observables.build(**(observables.default_config[1])),
+            [{"PTO": pto}],
+            observables.build(**(observables.default_config[pto])),
             ["ToyLH"],
         )
 
 
-@pytest.mark.skip  # commit_check
 class BenchmarkProjectile(ApfelBenchmark):
-    """The most basic checks"""
-
     update = {
         "prDIS": ["NC", "CC"],
         "ProjectileDIS": ["electron", "positron", "neutrino", "antineutrino"],
         "PolarizationDIS": [0.0, -0.6, 1.0],
     }  # amounts to 2*4*3 = 24 cards
 
-    def benchmark_lo(self):
+    def benchmark_pto(self, pto):
         obs_update = observables.build(
-            **(observables.default_config[0]), update=self.update
+            **(observables.default_config[pto]), update=self.update
         )
-        self.run([{"PTO": 0}], obs_update, ["ToyLH"])
+        self.run([{"PTO": pto}], obs_update, ["ToyLH"])
 
-    def benchmark_nlo(self):
+
+class BenchmarkPropagatorCorrection(ApfelBenchmark):
+    update = {
+        "prDIS": ["NC", "CC"],
+        "PropagatorCorrection": [1.0, 1e3],
+    }  # amounts to 2*2 = 4 cards
+
+    def benchmark_pto(self, pto):
         obs_update = observables.build(
-            **(observables.default_config[1]), update=self.update
+            **(observables.default_config[pto]), update=self.update
         )
-        self.run([{"PTO": 1}], obs_update, ["ToyLH"])
+        self.run([{"PTO": pto}], obs_update, ["ToyLH"])
 
 
-# def tmc_assert_external(theory, _obs, sf, yad):
-#     # turning point (maybe again a cancelation of channels?)
-#     if sf in ["F2light", "F2total"] and yad["x"] > 0.9:
-#         return dict(abs=1e-4)
-#     # same as in plain
-#     if sf == "FLbottom" and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2:
-#         # APFEL has a discreization in Q2/m2
-#         return dict(abs=1e-5)
-#     # FL TMC is broken in APFEL
-#     # https://github.com/scarrazza/apfel/issues/23
-#     if sf[:2] == "FL" and yad["x"] > 0.3:
-#         return dict(abs=1e-2)
-#     return None
-
-
-@pytest.mark.skip  # commit_check
 class BenchmarkTMC(ApfelBenchmark):
-    """Add Target Mass Corrections"""
+    """Check Target Mass Corrections"""
 
     def benchmark_lo(self):
         cfg = observables.default_config[0].copy()
@@ -112,8 +95,22 @@ class BenchmarkTMC(ApfelBenchmark):
         self.run([{"PTO": 1, "TMC": 1}], obs_updates, ["ToyLH"])
 
 
+class BenchmarkXS(ApfelBenchmark):
+    """Check cross sections"""
+
+    def benchmark_pto(self, pto):
+        kins = observables.default_kinematics.copy()
+        obs_updates = observables.build(["XSHERANC"], kins, update={"prDIS": ["NC"]})
+        obs_updates.append(
+            observables.build(
+                ["XSHERACC", "XSCHORUSCC", "XSNUTEVCC"], kins, update={"prDIS": ["CC"]}
+            )
+        )
+        self.run([{"PTO": pto}], obs_updates, ["ToyLH"])
+
+
 @pytest.mark.skip
-class BenchmarkScaleVariations(ApfelBenchmark):
+class BenchmarkFlavorNumberScheme(ApfelBenchmark):
 
     # TODO add observable generator
     # the observables eventually need to be taylored to the used theories,
@@ -123,13 +120,18 @@ class BenchmarkScaleVariations(ApfelBenchmark):
 
     @staticmethod
     def theory_updates(pto):
-        # TODO include FNS variations
-        # again we might scatter this more among in this class
-        sv = {"XIR": [0.5, 1.0, 2.0], "XIF": [0.5, 1.0, 2.0], "PTO": [pto]}
-        # drop plain
-        return filter(
-            lambda c: not (c["XIR"] == 1.0 and c["XIF"] == 1.0), cartesian_product(sv)
-        )
+        sv = {
+            "XIR": [0.5, 2.0],
+            "XIF": [0.5, 2.0],
+            "PTO": [pto],
+            "FNS": ["FFNS", "ZM-VFNS"],
+        }
+        theory_updates = cartesian_product(sv)
+        # add FONLL
+        sv["FNS"] = ["FONLL"]
+        sv["NfFF"] = [4]
+        theory_updates.append(cartesian_product(sv))
+        return theory_updates
 
     def benchmark_lo(self):
         self.run(
@@ -144,7 +146,6 @@ class BenchmarkScaleVariations(ApfelBenchmark):
             observables.build(**(observables.default_config[1])),
             ["ToyLH"],
         )
-
 
 
 class ApfelICBenchmark(ApfelBenchmark):
