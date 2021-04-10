@@ -42,4 +42,5 @@ check_log = app.check_log
 
 
 def launch_navigator():
+    """CLI Entry point"""
     return bnav.launch_navigator("yadism", "yadmark")

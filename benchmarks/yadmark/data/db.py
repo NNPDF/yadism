@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import Column, Integer, Text
 
-from banana.data.db import Base, create_db
+from banana.data.db import Base
 
 
 class Observable(Base):
