@@ -119,31 +119,75 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
     # and thus we can NOT probe as low Q2 as before.
 
     @staticmethod
-    def theory_updates(pto):
+    def theory_updates_ffns(pto):
         sv = {
             "XIR": [0.5, 2.0],
             "XIF": [0.5, 2.0],
             "PTO": [pto],
-            "FNS": ["FFNS", "ZM-VFNS"],
+            "FNS": ["FFNS"],
+            "mb": 1e6,
+            "mt": 1e6,
         }
         theory_updates = cartesian_product(sv)
         # add FONLL
-        sv["FNS"] = ["FONLL"]
+        sv["FNS"] = ["FONLL-A"]
         sv["NfFF"] = [4]
         theory_updates.append(cartesian_product(sv))
         return theory_updates
 
-    def benchmark_lo(self):
+    @staticmethod
+    def obs_updates_ffns():
+        kins = []
+        kins.extend(
+            [
+                dict(x=x, Q2=10.0)
+                for x in observables.default_card["interpolation_xgrid"][3::3]
+            ]
+        )
+        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(5, 22, 10).tolist()])
+        obs_updates = observables.build(
+            ["F2total", "F2charm", "FLtotal", "FLcharm", "F3total", "F3charm"],
+            kins,
+            update={"prDIS": ["NC", "CC"]},
+        )
+        return obs_updates
+
+    @staticmethod
+    def theory_updates_zm(pto):
+        sv = {
+            "XIR": [0.5, 2.0],
+            "XIF": [0.5, 2.0],
+            "PTO": [pto],
+            "FNS": ["ZM-VFNS"],
+        }
+        return cartesian_product(sv)
+
+    @staticmethod
+    def obs_updates_zm():
+        kins = []
+        kins.extend(
+            [
+                dict(x=x, Q2=10.0)
+                for x in observables.default_card["interpolation_xgrid"][3::3]
+            ]
+        )
+        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
+        obs_updates = observables.build(
+            ["F2total", "F3total", "FLtotal"], kins, update={"prDIS": ["NC", "CC"]}
+        )
+        return obs_updates
+
+    def benchmark_ffns(self, pto):
         self.run(
-            self.theory_updates(0),
-            observables.build(**(observables.default_config[0])),
+            self.theory_updates_ffns(pto),
+            self.obs_updates_ffns(),
             ["ToyLH"],
         )
 
-    def benchmark_nlo(self):
+    def benchmark_zm(self, pto):
         self.run(
-            self.theory_updates(1),
-            observables.build(**(observables.default_config[1])),
+            self.theory_updates_zm(pto),
+            self.obs_updates_zm(),
             ["ToyLH"],
         )
 
@@ -153,7 +197,8 @@ class ApfelICBenchmark(ApfelBenchmark):
     Globally set the external program to APFEL
     """
 
-    def obs_updates(self, allow_cc=False):
+    @staticmethod
+    def obs_updates(allow_cc=False):
         kinematics = []
         kinematics.extend([dict(x=x, Q2=10.0) for x in np.geomspace(1e-5, 1, 10)])
         kinematics.extend(
@@ -165,14 +210,15 @@ class ApfelICBenchmark(ApfelBenchmark):
                 "observables": {f: kinematics for f in ["F2charm", "FLcharm"]},
             },
         ]
-        obs.append(
-            {
-                "prDIS": "CC",
-                "observables": {
-                    f: kinematics for f in ["F2charm", "FLcharm", "F3charm"]
-                },
-            }
-        )
+        if allow_cc:
+            obs.append(
+                {
+                    "prDIS": "CC",
+                    "observables": {
+                        f: kinematics for f in ["F2charm", "FLcharm", "F3charm"]
+                    },
+                }
+            )
         return obs
 
 
@@ -194,15 +240,12 @@ class BenchmarkICFONLL(ApfelICBenchmark):
 
 
 if __name__ == "__main__":
-    p = pathlib.Path(__file__).absolute().parents[1] / "data" / "benchmark.db"
-    # p.unlink(missing_ok=True)
-
     plain = BenchmarkPlain()
     # plain.benchmark_lo()
     # plain.benchmark_nlo()
 
-    proj = BenchmarkTMC()
-    proj.benchmark_lo()
+    # proj = BenchmarkTMC()
+    # proj.benchmark_lo()
 
     # ffns = BenchmarkICFFNS()
     # ffns.benchmark_lo()
@@ -255,40 +298,6 @@ if __name__ == "__main__":
 #             return dict(abs=5e-2)
 #     return None
 
-
-# @pytest.mark.commit_check
-# class BenchmarkScaleVariations(ApfelBenchmark):
-#     """Vary factorization and renormalization scale"""
-
-#     def benchmark_LO(self):
-#         return self.run_external(
-#             0, ["CT14llo_NF3"], {"XIR": None, "XIF": None}, {"prDIS": None}
-#         )
-
-#     def benchmark_NLO(self):
-#         return self.run_external(
-#             1,
-#             ["CT14llo_NF3"],
-#             {
-#                 "XIR": None,
-#                 "XIF": None,
-#             },
-#             {"prDIS": None},
-#             assert_external=sv_assert_external,
-#         )
-
-
-# class BenchmarkFNS(ApfelBenchmark):
-#     """Flavor Number Schemes"""
-
-#     def benchmark_LO(self):
-#         return self.run_external(
-#             0,
-#             ["CT14llo_NF6"],
-#             {"FNS": ~(self._db().theory_query.FNS.search("FONLL-")), "NfFF": None},
-#         )
-
-#     def benchmark_NLO_FFNS(self):
 #         def ffns_assert(theory, obs, sf, yad):
 #             if theory["NfFF"] < 5:
 #                 return plain_assert_external(theory, obs, sf, yad)
@@ -301,24 +310,6 @@ if __name__ == "__main__":
 #                 return False
 #             return None
 
-#         return self.run_external(
-#             1,
-#             ["CT14llo_NF6"],
-#             {
-#                 "FNS": self._db().theory_query.FNS == "FFNS",
-#                 "NfFF": self._db().theory_query.NfFF != 3,
-#             },
-#             assert_external=ffns_assert,
-#         )
-
-#     def benchmark_NLO_ZM_VFNS(self):
-#         return self.run_external(
-#             1, ["CT14llo_NF6"], {"FNS": self._db().theory_query.FNS == "ZM-VFNS"}
-#         )
-
-#     @pytest.mark.skip
-#     @pytest.mark.fonll
-#     def benchmark_NLO_FONLL(self):
 #         def fonll_assert(theory, _obs, sf, yad):
 #             if (
 #                 sf == "FLbottom"
@@ -329,10 +320,3 @@ if __name__ == "__main__":
 #             if sf == "FLcharm" and yad["Q2"] < 7 and theory["DAMP"] == 1:
 #                 return dict(abs=2e-5)
 #             return None
-
-#         return self.run_external(
-#             1,
-#             ["CT14llo_NF6"],
-#             {"FNS": self._db().theory_query.FNS == "FONLL-A", "DAMP": None},
-#             assert_external=fonll_assert,
-#         )
