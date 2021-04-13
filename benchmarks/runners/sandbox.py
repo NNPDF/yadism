@@ -82,19 +82,25 @@ class Sandbox(Runner):
             #[dict(x=x, Q2=50.0) for x in interpolation_xgrid[::5]]
             [dict(x=x, Q2=90.0, y=0) for x in np.geomspace(1e-4, 1, 10)]
         )
+        kinematics.extend(
+            #[dict(x=0.1,Q2=90, y=0)]
+            #[dict(x=x, Q2=50.0) for x in interpolation_xgrid[::5]]
+            [dict(x=x, Q2=1.51**2, y=0) for x in np.geomspace(1e-4, 1, 10)]
+        )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
         #kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
         kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         observable_names = [
-            "F2_light",
+            #"F2_light",
             "F2_charm",
             # "F2_bottom",
             # "F2_top",
             #"F2_total",
-            "FL_light",
+            #"FL_light",
             "FL_charm",
             # "FL_bottom",
             # "FL_total",
@@ -112,14 +118,14 @@ class Sandbox(Runner):
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
         #update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
-        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"]}
         # card["PropagatorCorrection"] = .999
         # card["ProjectileDIS"] = "antineutrino"
         # card["PolarizationDIS"] = 0.5
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 0, "IC": 1, "mc": 1.51}], self.generate_observables(), ["CT14llo_NF4"])
+        self.run([{"PTO": 0, "IC": 1, "mc": 1.51}], self.generate_observables(), ["conly"])
 
 
 def main():
