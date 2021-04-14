@@ -118,7 +118,7 @@ following way:
   contributes to all three bits:
 
 .. math ::
-  c^S(z) = g(1)h(z)\,,~ c^R(z) = (g(z)-g(1))h(z)\,,~  c^L(x) = g(1)\int_0^x\!dz\, h(z)
+  c^R(z) = (g(z)-g(1))h(z)\,,~ c^S(z) = g(1)h(z)\,,~  c^L(x) = g(1)\int_0^x\!dz\, h(z)
 
 .. details :: derivation
 
