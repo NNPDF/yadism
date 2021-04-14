@@ -23,7 +23,7 @@ def update(theory):
     new_theory = theory.copy()
     fns = theory["FNS"]
     nf = theory["NfFF"]
-    if fns not in ["FONLL-A"]: # = k in FFNS or ZM-VFNS
+    if fns not in ["FONLL-A"]:  # = k in FFNS or ZM-VFNS
         # enforce correct settings moving all thresholds to 0 or oo
         if fns == "FFNS":
             ks = [0] * (nf - 3) + [np.inf] * (6 - nf)

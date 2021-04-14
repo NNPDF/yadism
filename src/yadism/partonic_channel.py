@@ -89,13 +89,14 @@ class PartonicChannelAsyIntrinsic(PartonicChannel):
         self.m2sq = m2sq
         self.sigma_pm = self.Q2 + self.m2sq - self.m1sq
         self.delta = self.kinematic_delta(self.m1sq, self.m2sq, -self.Q2)
+        self.eta = 2.0 * self.Q2 / (self.sigma_pm + self.delta)
 
     @staticmethod
     def kinematic_delta(a, b, c):
         return np.sqrt(a ** 2 + b ** 2 + c ** 2 - 2 * (a * b + b * c + c * a))
 
     def convolution_point(self):
-        return self.x / 2.0 * (self.sigma_pm + self.delta) / self.Q2
+        return self.x / self.eta
 
 
 class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
@@ -131,15 +132,16 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
             self.s1hat + self.m2sq
         ) / self.deltap / self.s1hat ** 2 * self.sigma_pp * self.L_xi
 
-    def mkNLO(self, kind, RS):
+    def mkNLO(self, kind, RS, curly_norm=0):
         self.init_nlo_vars()
-        norm = 2.0 * constants.CF  # 2 = as_norm
+        norm = 2.0 * constants.CF * self.eta / self.x  # 2 = as_norm
         omx = norm * ic.__getattribute__(  # pylint: disable=no-member
             f"{kind}_{RS}_soft"
         )(self)
+
         delta = norm * (
             ic.__getattribute__(f"{kind}_{RS}_virt")(self)  # pylint: disable=no-member
-            + self.S
+            + curly_norm * self.S
         )
 
         def reg(z):
