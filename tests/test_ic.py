@@ -5,7 +5,7 @@ import copy
 
 import pytest
 
-from yadism import ic
+from yadism import ic, partonic_channel
 
 
 class MockObj:
@@ -36,6 +36,7 @@ def test_C1pm():
     pc.Q2 = np.random.rand()
     assert ic.C1p(pc) == ic.C1m(pc)
 
+
 def test_S():
     pc = MockObj()
     pc.sigma_pp = np.random.rand()
@@ -59,6 +60,7 @@ def test_S():
         ppc = copy.copy(pc)
         ppc.delta = ppc.sigma_pp
         ic.S(ppc)
+
 
 def test_CRm():
     pc = MockObj()
@@ -94,8 +96,10 @@ def test_CRm():
         ppc = copy.copy(pc)
         ppc.delta = ppc.sigma_mp
         assert not np.isfinite(ic.CRm(ppc))
-    # pc.sigma_pp = 0
-    # pc.m1sq = pc.m2sq
-    # pc.Q2 = pc.m2sq
-    # pc.I1 = 1.
-    # assert ic.CRm(pc) == 5./2. - 4.
+    pc.sigma_pp = 0
+    pc.Q2 = pc.m1sq = pc.m2sq
+    pc.delta = (
+        lambda a, b, c: np.sqrt(a ** 2 + b ** 2 + c ** 2 - 2 * (a * b + b * c + c * a))
+    )(pc.m1sq, pc.m2sq, -pc.Q2)
+    pc.I1 = 1.0
+    assert pytest.approx(ic.CRm(pc)) == 5.0 / 2.0 * pc.Q2 - 4.0
