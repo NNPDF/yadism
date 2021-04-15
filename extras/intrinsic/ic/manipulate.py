@@ -224,3 +224,28 @@ def post_process(res):
     )
     res = re.sub("\\s+", " ", res)
     return res
+
+
+def extract_coefficient(runner, expr, kind, Spm):
+    """
+    Select a coupling coefficient and print the raw expression.
+
+    Parameters
+    ----------
+        runner : MmaRunner
+            Mathematica instance
+        kind : str
+            observable kind
+        Spm : str
+            coupling coefficient
+
+    Returns
+    -------
+        ex : str
+            MMa expression
+    """
+    kind = translate[kind]
+    code_xcoeff = f"""
+    Print@FortranForm@Coefficient[{expr}{kind}, {Spm}];
+    """
+    return runner.send(code_xcoeff)

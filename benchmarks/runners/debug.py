@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: skip-file
 import numpy as np
 import pandas as pd
 import pdb
@@ -71,34 +72,38 @@ def analyze_fhat():
     f1hat.drop(["tag"], inplace=True, axis=1)
     f2hat = odata[odata["tag"] == "f2hat"]
     f2hat.drop(["tag"], inplace=True, axis=1)
+    f1tilde = odata[odata["tag"] == "f1tilde"]
+    f1tilde.drop(["tag"], inplace=True, axis=1)
+    f2tilde = odata[odata["tag"] == "f2tilde"]
+    f2tilde.drop(["tag"], inplace=True, axis=1)
 
     class MockESF:
         pass
 
-    esf = MockESF
+    esf = MockESF()
 
-    def yadf1hat(efhat):
+    def yadf1tilde(efhat):
         esf.x = 0.1
         esf.Q2 = efhat["Q2"]
         pc = PartonicChannelHeavyIntrinsic(esf, efhat["m1sq"], efhat["m2sq"])
         pc.init_vars(efhat["z"])
         pc.init_nlo_vars()
-        return efhat["Splus"] * ic.f1_splus_raw(pc) + efhat[
-            "Sminus"
-        ] * ic.f1_sminus_raw(pc)
+        return ic.M1Splus(pc) * efhat["Splus"] * ic.f1_splus_raw(pc) + ic.M1Sminus(
+            pc
+        ) * efhat["Sminus"] * ic.f2_sminus_raw(pc)
 
-    def yadf2hat(efhat):
+    def yadf2tilde(efhat):
         esf.x = 0.1
         esf.Q2 = efhat["Q2"]
         pc = PartonicChannelHeavyIntrinsic(esf, efhat["m1sq"], efhat["m2sq"])
         pc.init_vars(efhat["z"])
         pc.init_nlo_vars()
-        return efhat["Splus"] * ic.f2_splus_raw(pc) + efhat[
-            "Sminus"
-        ] * ic.f2_sminus_raw(pc)
+        return ic.M1Splus(pc) * efhat["Splus"] * ic.f2_splus_raw(pc) + ic.M2Sminus(
+            pc
+        ) * efhat["Sminus"] * ic.f2_sminus_raw(pc)
 
-    f1hat["yad"] = f1hat.apply(yadf1hat, axis=1)
-    f2hat["yad"] = f2hat.apply(yadf2hat, axis=1)
+    #  f1hat["yad"] = f1hat.apply(yadf1tilde, axis=1)
+    #  f2hat["yad"] = f2hat.apply(yadf2tilde, axis=1)
     f1hat.reset_index(drop=True, inplace=True)
     f2hat.reset_index(drop=True, inplace=True)
 
@@ -110,26 +115,33 @@ def analyze_fhat():
 
     def yad_ratio(n1, n2):
         assert f2hat["Q2"][n1] == f2hat["Q2"][n2]
-        f2 = f2hat["yad"]
-        f1 = f1hat["yad"]
-        return (f2[n1] / f1[n1]) / (f2[n2] / f1[n2])
+        f2z1 = yadf2tilde(f2hat.iloc[n1])
+        f1z1 = yadf1tilde(f1hat.iloc[n1])
+        f2z2 = yadf2tilde(f2hat.iloc[n2])
+        f1z2 = yadf1tilde(f1hat.iloc[n2])
+        #  return (f2[n1] / f1[n1]) / (f2[n2] / f1[n2])
+        return (f2z1 / f1z1) / (f2z2 / f1z2)
+
     def ratio(start, diff):
         n1 = start
         n2 = start + diff
-        print(f"z1: {f2hat['z'][n1]:.3e} - z2: {f2hat['z'][n2]:.3e} --- Q2: {f2hat['Q2'][n1]:.3f}")
+        print(
+            f"z1: {f2hat['z'][n1]:.3e} - z2: {f2hat['z'][n2]:.3e} --- Q2: {f2hat['Q2'][n1]:.3f}"
+        )
         print("apf:", apf_ratio(n1, n2))
         print("yad:", yad_ratio(n1, n2))
+
     start = 0
     diff = 0
     ratio(start, diff)
-    for diff in [2,4,6]:
+    for diff in [2, 4, 6]:
         print(f"\n\t--- diff {diff} scan ---")
-        for start in range(4030,10000,717):
+        for start in range(4029, 9999, 712):
             ratio(start, diff)
 
     for start in [3000, 5120, 8150]:
         print(f"\n\t--- start {start} scan ---")
-        for diff in range(1,10):
+        for diff in range(1, 10):
             ratio(start, diff)
 
     pdb.set_trace()
@@ -138,4 +150,4 @@ def analyze_fhat():
 if __name__ == "__main__":
     #  call_apfel()
     analyze_fhat()
-    #analyze_soft()
+    # analyze_soft()

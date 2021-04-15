@@ -60,7 +60,7 @@ N3 = """2d0 * Rplus / Delp"""
 
 M1 = """(Splus * Spp - 2*m1*m2*Sminus)/(2*Del)"""
 
-M2 = """Splus * Del * x / (Q2IC)"""
+M2 = """Splus * Del / (Q2IC)"""
 
 M3 = """2 * Rplus"""
 
