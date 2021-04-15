@@ -65,7 +65,7 @@ def init_kind_vars(runner, kind, fhat, M, N, V):
     V = prepare(V)
     kind = translate[kind]
     code_vars = f"""f{kind}hat = {fhat};
-    m{kind} = {M};
+    m{kind} = {M}/. {{x -> xBj, Del->delta}};
     n{kind} = {N};
     v{kind} = {V};
     f{kind}hatJoined = s1h/(8*(s1h + m22)) * Expand[m{kind} / n{kind}] * f{kind}hat;

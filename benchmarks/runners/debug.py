@@ -68,13 +68,13 @@ def analyze_fhat():
     with open(here / "fhat.txt") as of:
         odata = pd.read_csv(of, sep="\s+", header=None)
         odata.columns = ["tag", "z", "Q2", "m1sq", "m2sq", "apf", "Splus", "Sminus"]
-    f1hat = odata[odata["tag"] == "f1hat"]
+    f1hat = odata[odata["tag"] == "f1hat"].copy()
     f1hat.drop(["tag"], inplace=True, axis=1)
-    f2hat = odata[odata["tag"] == "f2hat"]
+    f2hat = odata[odata["tag"] == "f2hat"].copy()
     f2hat.drop(["tag"], inplace=True, axis=1)
-    f1tilde = odata[odata["tag"] == "f1tilde"]
+    f1tilde = odata[odata["tag"] == "f1tilde"].copy()
     f1tilde.drop(["tag"], inplace=True, axis=1)
-    f2tilde = odata[odata["tag"] == "f2tilde"]
+    f2tilde = odata[odata["tag"] == "f2tilde"].copy()
     f2tilde.drop(["tag"], inplace=True, axis=1)
 
     class MockESF:
@@ -88,9 +88,11 @@ def analyze_fhat():
         pc = PartonicChannelHeavyIntrinsic(esf, efhat["m1sq"], efhat["m2sq"])
         pc.init_vars(efhat["z"])
         pc.init_nlo_vars()
-        return ic.M1Splus(pc) * efhat["Splus"] * ic.f1_splus_raw(pc) + ic.M1Sminus(
+        return ic.f1_splus_raw(pc) / ic.M1Splus(pc) + ic.f1_sminus_raw(
             pc
-        ) * efhat["Sminus"] * ic.f2_sminus_raw(pc)
+        ) / ic.M1Sminus(
+            pc
+        )  # * efhat["Sminus"] / efhat["Splus"]
 
     def yadf2tilde(efhat):
         esf.x = 0.1
@@ -98,14 +100,14 @@ def analyze_fhat():
         pc = PartonicChannelHeavyIntrinsic(esf, efhat["m1sq"], efhat["m2sq"])
         pc.init_vars(efhat["z"])
         pc.init_nlo_vars()
-        return ic.M1Splus(pc) * efhat["Splus"] * ic.f2_splus_raw(pc) + ic.M2Sminus(
-            pc
-        ) * efhat["Sminus"] * ic.f2_sminus_raw(pc)
+        return ic.f2_splus_raw(pc) / ic.M2Splus(pc)
 
     #  f1hat["yad"] = f1hat.apply(yadf1tilde, axis=1)
     #  f2hat["yad"] = f2hat.apply(yadf2tilde, axis=1)
     f1hat.reset_index(drop=True, inplace=True)
     f2hat.reset_index(drop=True, inplace=True)
+    f1tilde.reset_index(drop=True, inplace=True)
+    f2tilde.reset_index(drop=True, inplace=True)
 
     def apf_ratio(n1, n2):
         assert f2hat["Q2"][n1] == f2hat["Q2"][n2]
@@ -144,6 +146,11 @@ def analyze_fhat():
         for diff in range(1, 10):
             ratio(start, diff)
 
+    pdb.set_trace()
+    f1tilde["yad"] = f1tilde.apply(yadf1tilde, axis=1)
+    f2tilde["yad"] = f2tilde.apply(yadf2tilde, axis=1)
+    f1tilde["ratio"] = f1tilde["yad"] / f1tilde["apf"]
+    f2tilde["ratio"] = f2tilde["yad"] / f2tilde["apf"]
     pdb.set_trace()
 
 
