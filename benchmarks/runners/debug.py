@@ -104,21 +104,33 @@ def analyze_fhat():
 
     def apf_ratio(n1, n2):
         assert f2hat["Q2"][n1] == f2hat["Q2"][n2]
-        print(
-            f"z1: {f2hat['z'][n1]:.3f} - z2: {f2hat['z'][n2]:.3f} --- Q2: {f2hat['Q2'][n1]:.3f}"
-        )
         f2 = f2hat["apf"]
         f1 = f1hat["apf"]
         return (f2[n1] / f1[n1]) / (f2[n2] / f1[n2])
 
     def yad_ratio(n1, n2):
         assert f2hat["Q2"][n1] == f2hat["Q2"][n2]
-        print(
-            f"z1: {f2hat['z'][n1]:.3f} - z2: {f2hat['z'][n2]:.3f} --- Q2: {f2hat['Q2'][n1]:.3f}"
-        )
         f2 = f2hat["yad"]
         f1 = f1hat["yad"]
         return (f2[n1] / f1[n1]) / (f2[n2] / f1[n2])
+    def ratio(start, diff):
+        n1 = start
+        n2 = start + diff
+        print(f"z1: {f2hat['z'][n1]:.3e} - z2: {f2hat['z'][n2]:.3e} --- Q2: {f2hat['Q2'][n1]:.3f}")
+        print("apf:", apf_ratio(n1, n2))
+        print("yad:", yad_ratio(n1, n2))
+    start = 0
+    diff = 0
+    ratio(start, diff)
+    for diff in [2,4,6]:
+        print(f"\n\t--- diff {diff} scan ---")
+        for start in range(4030,10000,717):
+            ratio(start, diff)
+
+    for start in [3000, 5120, 8150]:
+        print(f"\n\t--- start {start} scan ---")
+        for diff in range(1,10):
+            ratio(start, diff)
 
     pdb.set_trace()
 
