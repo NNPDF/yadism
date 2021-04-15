@@ -30,7 +30,7 @@ def call_apfel():
 
 
 def analyze_soft():
-    with open(here / "out.txt") as of:
+    with open(here / "SV.txt") as of:
         odata = pd.read_csv(of, sep="\s+", header=None)
     kins = odata[::2]
     kins.drop([0, 4, 5, 6], inplace=True, axis=1)
@@ -137,5 +137,5 @@ def analyze_fhat():
 
 if __name__ == "__main__":
     #  call_apfel()
-    # analyze_fhat()
-    analyze_soft()
+    analyze_fhat()
+    #analyze_soft()
