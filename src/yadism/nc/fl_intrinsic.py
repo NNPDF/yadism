@@ -9,7 +9,7 @@ class FLIntrinsicSp(PartonicChannelHeavyIntrinsic):
         return 0, 0, factor
 
     def NLO(self):
-        return self.mkNLO("fl", "splus")
+        return self.mkNLO("l", "splus")
 
 
 class FLIntrinsicSm(PartonicChannelHeavyIntrinsic):
@@ -18,4 +18,4 @@ class FLIntrinsicSm(PartonicChannelHeavyIntrinsic):
         return 0, 0, factor
 
     def NLO(self):
-        return self.mkNLO("fl", "sminus")
+        return self.mkNLO("l", "sminus")

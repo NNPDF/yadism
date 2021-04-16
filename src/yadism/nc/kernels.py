@@ -28,7 +28,7 @@ from .fl_fonll import (
     FLmatchingGluonSm,
 )
 from .f3_fonll import F3matchingQuarkRp, F3matchingQuarkRm
-from .f2_intrinsic import F2IntrinsicSp
+from .f2_intrinsic import F2IntrinsicSp, F2IntrinsicSm
 from .fl_intrinsic import FLIntrinsicSp, FLIntrinsicSm
 from .f3_intrinsic import F3IntrinsicRp, F3IntrinsicRm
 
@@ -47,7 +47,7 @@ coefficient_functions = {
             "gVV": F2asyGluonVV,
             "gAA": F2asyGluonAA,
         },
-        "intrinsic": {"Sp": F2IntrinsicSp, "Sm": pc.EmptyPartonicChannel},
+        "intrinsic": {"Sp": F2IntrinsicSp, "Sm": F2IntrinsicSm},
         "matching": {
             "qSp": F2matchingQuarkSp,
             "qSm": F2matchingQuarkSm,

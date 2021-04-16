@@ -132,16 +132,24 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
             self.s1hat + self.m2sq
         ) / self.deltap / self.s1hat ** 2 * self.sigma_pp * self.L_xi
 
-    def mkNLO(self, kind, RS, curly_norm=0):
+    def mkNLO(self, kind, RS):
         self.init_nlo_vars()
         norm = 2.0 * constants.CF * self.eta / self.x  # 2 = as_norm
         omx = norm * ic.__getattribute__(  # pylint: disable=no-member
-            f"{kind}_{RS}_soft"
+            f"f{kind}_{RS}_soft"
         )(self)
+        curly_norm = (
+            (
+                ic.__getattribute__(f"M2{RS}")(self)
+                - 2 * self.x * ic.__getattribute__(f"M1{RS}")(self)
+            )
+            if kind == "l"
+            else ic.__getattribute__(f"M{kind}{RS}")(self)
+        )
 
         delta = norm * (
-            ic.__getattribute__(f"{kind}_{RS}_virt")(self)  # pylint: disable=no-member
-            + curly_norm * self.S
+            ic.__getattribute__(f"f{kind}_{RS}_virt")(self)  # pylint: disable=no-member
+            + self.S * curly_norm
         )
 
         def reg(z):
@@ -150,7 +158,7 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
                 f"{kind}_{RS}_raw"
             )(self) - omx / (1.0 - z)
 
-        return rsl_from_distr_coeffs(reg, delta, omx)
+        return rsl_from_distr_coeffs(0.0, delta, 0.0)
 
 
 class FMatching(PartonicChannelAsyIntrinsic):

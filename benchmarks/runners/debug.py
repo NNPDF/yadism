@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
-import numpy as np
-import pandas as pd
 import pdb
 import pathlib
+import argparse
+
+import numpy as np
+import pandas as pd
 
 here = pathlib.Path(__file__).parent
 
@@ -48,7 +50,7 @@ def analyze_soft():
         class MockESF:
             pass
 
-        esf = MockESF
+        esf = MockESF()
         esf.x = np.nan
         esf.Q2 = e["Q2"]
 
@@ -62,6 +64,63 @@ def analyze_soft():
         CRmref = float(e["CRm"])
         if abs(pc.CRm - CRmref) > 1e-6 and abs(pc.CRm / CRmref - 1) > 1e-6:
             print("CRm", e["Q2"], e["m1sq"], e["m2sq"], pc.CRm, CRmref)
+
+
+def analyze_soft1():
+    with open(here / "SV1.txt") as of:
+        odata = pd.read_csv(of, sep="\s+", header=None)
+    soft = odata[odata[0] == "Soft"].copy()
+    soft.drop([0], inplace=True, axis=1)
+    soft.columns = ["Q2", "m1sq", "m2sq", "apf"]
+    soft.reset_index(drop=True, inplace=True)
+    virt1 = odata[odata[0] == "Virtual1"].copy()
+    virt1.drop([0], inplace=True, axis=1)
+    virt1.columns = ["Q2", "m1sq", "m2sq", "apf"]
+    virt1.reset_index(drop=True, inplace=True)
+    virt2 = odata[odata[0] == "Virtual2"].copy()
+    virt2.drop([0], inplace=True, axis=1)
+    virt2.columns = ["Q2", "m1sq", "m2sq", "apf"]
+    virt2.reset_index(drop=True, inplace=True)
+
+    class MockESF:
+        pass
+
+    def mysoft(e):
+        esf = MockESF()
+        esf.x = np.nan
+        esf.Q2 = e["Q2"]
+        pc = PartonicChannelHeavyIntrinsic(esf, e["m1sq"], e["m2sq"])
+        pc.init_nlo_vars()
+        return pc.S
+
+    def myvirt1(e):
+        esf = MockESF()
+        esf.x = 1.0
+        esf.Q2 = e["Q2"]
+        pc = PartonicChannelHeavyIntrinsic(esf, e["m1sq"], e["m2sq"])
+        pc.init_nlo_vars()
+        return (ic.f1_splus_virt(pc) + ic.f1_sminus_virt(pc)) / (
+            ic.M1Splus(pc) + ic.M1Sminus(pc)
+        )
+
+    def myvirt2(e):
+        esf = MockESF()
+        esf.x = 1.0
+        esf.Q2 = e["Q2"]
+        pc = PartonicChannelHeavyIntrinsic(esf, e["m1sq"], e["m2sq"])
+        pc.init_nlo_vars()
+        return (ic.f2_splus_virt(pc) + ic.f2_sminus_virt(pc)) / (
+            ic.M2Splus(pc) + ic.M2Sminus(pc)
+        )
+
+    soft["yad"] = soft.apply(mysoft, axis=1)
+    soft["ratio"] = soft["yad"] / soft["apf"]
+    virt1["yad"] = virt1.apply(myvirt1, axis=1)
+    virt1["ratio"] = virt1["yad"] / virt1["apf"]
+    virt2["yad"] = virt2.apply(myvirt2, axis=1)
+    virt2["ratio"] = virt2["yad"] / virt2["apf"]
+
+    __import__("pdb").set_trace()
 
 
 def analyze_fhat():
@@ -155,6 +214,20 @@ def analyze_fhat():
 
 
 if __name__ == "__main__":
-    #  call_apfel()
-    analyze_fhat()
-    # analyze_soft()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--apfel", action="store_true")
+    parser.add_argument("--hard", action="store_true")
+    parser.add_argument("--soft", action="store_true")
+    parser.add_argument("--soft1", action="store_true")
+    args = parser.parse_args()
+
+    if args.apfel:
+        call_apfel()
+    elif args.hard:
+        analyze_fhat()
+    elif args.soft:
+        analyze_soft()
+    elif args.soft1:
+        analyze_soft1()
+    else:
+        analyze_soft1()

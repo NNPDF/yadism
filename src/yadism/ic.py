@@ -81,22 +81,22 @@ def f3_rminus_soft(pc):
 def f3_rminus_virt(pc):
     return 2*pc.Cplus
 
-def M1Splus(pc):
+def M1splus(pc):
     return pc.sigma_pp/(2.*pc.delta)
 
-def M1Sminus(pc):
+def M1sminus(pc):
     return -((np.sqrt(pc.m1sq * pc.m2sq))/pc.delta)
 
-def M2Splus(pc):
+def M2splus(pc):
     return (pc.delta*pc.x)/pc.Q2
 
-def M2Sminus(pc):
+def M2sminus(pc):
     return 0
 
-def M3Rplus(pc):
+def M3rplus(pc):
     return 2
 
-def M3Rminus(pc):
+def M3rminus(pc):
     return 0
 
 def I1(pc):

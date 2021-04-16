@@ -8,9 +8,10 @@ class F2IntrinsicSp(PartonicChannelHeavyIntrinsic):
         return 0, 0, factor
 
     def NLO(self):
-        return self.mkNLO("f2", "splus", self.x * self.delta / self.Q2)
+        return self.mkNLO("2", "splus")
 
 
 class F2IntrinsicSm(PartonicChannelHeavyIntrinsic):
     def NLO(self):
-        return self.mkNLO("f2", "sminus", 0)
+        #  return 0.0
+        return self.mkNLO("2", "sminus")
