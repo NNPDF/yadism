@@ -92,8 +92,8 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
-        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
-        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+        kinematics.extend([dict(x=0.9, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 20).tolist()])
+        #  kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         observable_names = [
             #"F2_light",
             "F2_charm",
@@ -101,7 +101,7 @@ class Sandbox(Runner):
             # "F2_top",
             #"F2_total",
             #"FL_light",
-            "FL_charm",
+            #  "FL_charm",
             # "FL_bottom",
             # "FL_total",
             #  "F3_light",

@@ -155,10 +155,10 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
         def reg(z):
             self.init_vars(z)
             return norm * ic.__getattribute__(  # pylint: disable=no-member
-                f"{kind}_{RS}_raw"
+                f"f{kind}_{RS}_raw"
             )(self) - omx / (1.0 - z)
 
-        return rsl_from_distr_coeffs(0.0, delta, 0.0)
+        return rsl_from_distr_coeffs(reg, delta, omx)
 
 
 class FMatching(PartonicChannelAsyIntrinsic):
