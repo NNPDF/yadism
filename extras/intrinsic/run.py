@@ -47,11 +47,13 @@ def exprs():
         exprs[f"f3_{R.lower()}_raw"] = manipulate.parse_raw(r, 3, R)
         exprs[f"f3_{R.lower()}_soft"] = manipulate.parse_soft(r, 3, R)
         exprs[f"f3_{R.lower()}_virt"] = manipulate.parse_virt(r, 3, R)
-    for j in [1, 2]:
+    for k in [1, 2, "L"]:
         for Spm in ["Splus", "Sminus"]:
-            exprs[f"M{j}{Spm.lower()}"] = manipulate.extract_coefficient(r, "m", j, Spm)
+            exprs[f"m{str(k).lower()}_{Spm.lower()}"] = manipulate.extract_coefficient(
+                r, "m", k, Spm
+            )
     for Rpm in ["Rplus", "Rminus"]:
-        exprs[f"M3{Rpm.lower()}"] = manipulate.extract_coefficient(r, "m", 3, Rpm)
+        exprs[f"m3_{Rpm.lower()}"] = manipulate.extract_coefficient(r, "m", 3, Rpm)
     r.close()
     # add static stuff
     exprs["I1"] = manipulate.prepare(data.I1, False)

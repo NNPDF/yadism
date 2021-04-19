@@ -113,7 +113,7 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
         self.CRm = ic.CRm(self)
         self.S = ic.S(self)
         self.L_xisoft = np.log(
-            (self.sigma_pp + self.delta) / (self.sigma_pp + self.delta)
+            (self.sigma_pp - self.delta) / (self.sigma_pp + self.delta)
         )
 
     def init_vars(self, z):
@@ -138,18 +138,11 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
         omx = norm * ic.__getattribute__(  # pylint: disable=no-member
             f"f{kind}_{RS}_soft"
         )(self)
-        curly_norm = (
-            (
-                ic.__getattribute__(f"M2{RS}")(self)
-                - 2 * self.x * ic.__getattribute__(f"M1{RS}")(self)
-            )
-            if kind == "l"
-            else ic.__getattribute__(f"M{kind}{RS}")(self)
-        )
 
         delta = norm * (
             ic.__getattribute__(f"f{kind}_{RS}_virt")(self)  # pylint: disable=no-member
-            + self.S * curly_norm
+            + self.S
+            * ic.__getattribute__(f"m{kind}_{RS}")(self)  # pylint: disable=no-member
         )
 
         def reg(z):

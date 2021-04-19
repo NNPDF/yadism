@@ -100,7 +100,7 @@ def analyze_soft1():
         pc = PartonicChannelHeavyIntrinsic(esf, e["m1sq"], e["m2sq"])
         pc.init_nlo_vars()
         return (ic.f1_splus_virt(pc) + ic.f1_sminus_virt(pc)) / (
-            ic.M1Splus(pc) + ic.M1Sminus(pc)
+            ic.M1splus(pc) + ic.M1sminus(pc)
         )
 
     def myvirt2(e):
@@ -110,7 +110,7 @@ def analyze_soft1():
         pc = PartonicChannelHeavyIntrinsic(esf, e["m1sq"], e["m2sq"])
         pc.init_nlo_vars()
         return (ic.f2_splus_virt(pc) + ic.f2_sminus_virt(pc)) / (
-            ic.M2Splus(pc) + ic.M2Sminus(pc)
+            ic.M2splus(pc) + ic.M2sminus(pc)
         )
 
     soft["yad"] = soft.apply(mysoft, axis=1)
@@ -147,11 +147,9 @@ def analyze_fhat():
         pc = PartonicChannelHeavyIntrinsic(esf, efhat["m1sq"], efhat["m2sq"])
         pc.init_vars(efhat["z"])
         pc.init_nlo_vars()
-        return ic.f1_splus_raw(pc) / ic.M1Splus(pc) + ic.f1_sminus_raw(
-            pc
-        ) / ic.M1Sminus(
-            pc
-        )  # * efhat["Sminus"] / efhat["Splus"]
+        return (ic.f1_splus_raw(pc) + ic.f1_sminus_raw(pc)) / (
+            ic.M1splus(pc) + ic.M1sminus(pc)
+        )
 
     def yadf2tilde(efhat):
         esf.x = 0.1
@@ -159,7 +157,9 @@ def analyze_fhat():
         pc = PartonicChannelHeavyIntrinsic(esf, efhat["m1sq"], efhat["m2sq"])
         pc.init_vars(efhat["z"])
         pc.init_nlo_vars()
-        return ic.f2_splus_raw(pc) / ic.M2Splus(pc)
+        return (ic.f2_splus_raw(pc) + ic.f2_sminus_raw(pc)) / (
+            ic.M2splus(pc) + ic.M2sminus(pc)
+        )
 
     #  f1hat["yad"] = f1hat.apply(yadf1tilde, axis=1)
     #  f2hat["yad"] = f2hat.apply(yadf2tilde, axis=1)

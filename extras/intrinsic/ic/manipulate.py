@@ -89,8 +89,9 @@ def join_fl(runner):
             MMa expression - should be empty!
     """
     code = f"""
-    fLhatJoined = f{translate[2]}hatJoined - 2*x*f{translate[1]}hatJoined;
-    vLJoined = v{translate[2]}Joined - 2*x*v{translate[1]}Joined;
+    mL = m{translate[2]} - 2*xBj*m{translate[1]}
+    fLhatJoined = f{translate[2]}hatJoined - 2*xBj*f{translate[1]}hatJoined;
+    vLJoined = v{translate[2]}Joined - 2*xBj*v{translate[1]}Joined;
     """
     return runner.send(code)
 
