@@ -128,9 +128,6 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
             (self.sigma_pp + self.s1hat - self.deltap)
             / (self.sigma_pp + self.s1hat + self.deltap)
         )
-        self.I_xi = (self.s1hat + 2 * self.m2sq) / self.s1hat ** 2 + (
-            self.s1hat + self.m2sq
-        ) / self.deltap / self.s1hat ** 2 * self.sigma_pp * self.L_xi
 
     def mkNLO(self, kind, RS):
         self.init_nlo_vars()
@@ -141,7 +138,7 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
 
         delta = norm * (
             ic.__getattribute__(f"f{kind}_{RS}_virt")(self)  # pylint: disable=no-member
-            + self.S
+            + self.S  # add normalization between curly and upright F
             * ic.__getattribute__(f"m{kind}_{RS}")(self)  # pylint: disable=no-member
         )
 
@@ -201,12 +198,13 @@ class FMatchingGluon(FMatching):
         parent_LO = obj.LO()
         try:
             _, _, icl = parent_LO
-        except TypeError:
-            return parent_LO
+        except TypeError: # is there a local part in the parent?
+            return parent_LO # no, so it should be 0 and we can pass through
         l = self.l
-        asnorm = 2.0
-
+        # since as and p_qg appear together there is no need to put an explicit as_norm here
+        # the explicit 2 instead is coming from Eq. (B.25) of Lucas IC paper
+        # TODO add proper cite
         def reg(z):
-            return -icl * 2.0 * asnorm * split.pqg(z) * l
+            return -icl * 2.0 * split.pqg(z) * l
 
         return reg, 0, 0

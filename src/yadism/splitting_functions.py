@@ -17,26 +17,6 @@ import numpy as np
 from eko import constants
 
 
-def pqq_bare(z):
-    r"""
-    Unregularized :math:`\bar P_{qq}` splitting function.
-
-    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
-
-    Parameters
-    ----------
-        z : float
-            partonic momentum fraction
-
-    Returns
-    -------
-        float
-            the unregularized quark-quark splitting function :math:`\bar P_{qq}(z)`
-
-    """
-    return constants.CF * (1.0 + z ^ 2) / (1.0 - z)
-
-
 def pqq_reg(z):
     """
     Regular part of :math:`P_{qq}` splitting function.

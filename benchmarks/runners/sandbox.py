@@ -80,7 +80,7 @@ class Sandbox(Runner):
         kinematics.extend(
             #[dict(x=0.1,Q2=90, y=0)]
             #[dict(x=x, Q2=50.0) for x in interpolation_xgrid[::5]]
-            [dict(x=x, Q2=90.0, y=0) for x in np.geomspace(1e-4, 1, 10)]
+            [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, 1, 10)]
         )
         kinematics.extend(
             #[dict(x=0.1,Q2=90, y=0)]
@@ -92,8 +92,8 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
-        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
-        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
+        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
         observable_names = [
             #"F2_light",
             "F2_charm",
@@ -125,7 +125,7 @@ class Sandbox(Runner):
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 1, "IC": 1, "mc": 1.51}], self.generate_observables(), ["conly"])
+        self.run([{"PTO": 1, "IC": 1, "mc": 1.51, "FNS": "FONLL-A", "NfFF": 4}], self.generate_observables(), ["conly"])
 
 
 def main():
