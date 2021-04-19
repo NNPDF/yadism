@@ -25,7 +25,7 @@ class StructureFunction:
     ----------
         obs_name : ObservableName
             name
-        runner : Runner
+        runner : yadism.runner.Runner
             parent reference
     """
 
