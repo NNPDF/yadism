@@ -21,6 +21,8 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     """
     import apfel  # pylint:disable=import-outside-toplevel
 
+    # TODO use the banana implementation as long as possible!
+
     # Cleanup APFEL common blocks
     apfel.CleanUp()
 

@@ -50,20 +50,16 @@ class F2asyGluonAA(F2asyGluonVV):
 
 
 class F2matchingQuarkSp(pc.FMatchingQuark):
-    def NLO(self):
-        return self.mk_nlo(f2_intrinsic.F2IntrinsicSp)
+    ffns = f2_intrinsic.F2IntrinsicSp
 
 
 class F2matchingQuarkSm(pc.FMatchingQuark):
-    def NLO(self):
-        return self.mk_nlo(f2_intrinsic.F2IntrinsicSm)
+    ffns = f2_intrinsic.F2IntrinsicSm
 
 
 class F2matchingGluonSp(pc.FMatchingGluon):
-    def NLO(self):
-        return self.mk_nlo(f2_intrinsic.F2IntrinsicSp)
+    ffns = f2_intrinsic.F2IntrinsicSp
 
 
 class F2matchingGluonSm(pc.FMatchingGluon):
-    def NLO(self):
-        return self.mk_nlo(f2_intrinsic.F2IntrinsicSm)
+    ffns = f2_intrinsic.F2IntrinsicSm

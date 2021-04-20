@@ -152,14 +152,16 @@ class PartonicChannelHeavyIntrinsic(PartonicChannelAsyIntrinsic):
 
 
 class FMatching(PartonicChannelAsyIntrinsic):
+    ffns = lambda *_args: None
+
     def __init__(self, ESF, m1sq, m2sq, mu2hq):
         super().__init__(ESF, m1sq, m2sq)
         self.l = np.log(self.Q2 / mu2hq)
 
 
 class FMatchingQuark(FMatching):
-    def mk_nlo(self, intrinsic_pc):
-        obj = intrinsic_pc(self.ESF, self.m1sq, self.m2sq)
+    def NLO(self):
+        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
         parent_LO = obj.LO()
         try:
             _, _, icl = parent_LO
@@ -179,7 +181,7 @@ class FMatchingQuark(FMatching):
         # MMa: FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}]
         def loc(x):
             return (
-                asnorm
+                -asnorm
                 * icl
                 * constants.CF
                 * (
@@ -190,22 +192,50 @@ class FMatchingQuark(FMatching):
             )
 
         return 0, sing, loc
-    # TODO add xiF via mk_nlo_fact
 
-
-class FMatchingGluon(FMatching):
-    def mk_nlo(self, intrinsic_pc):
-        obj = intrinsic_pc(self.ESF, self.m1sq, self.m2sq)
+    def NLO_fact(self):
+        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
         parent_LO = obj.LO()
         try:
             _, _, icl = parent_LO
-        except TypeError: # is there a local part in the parent?
-            return parent_LO # no, so it should be 0 and we can pass through
-        l = self.l
+        except TypeError:
+            return parent_LO
+        asnorm = 2.0
+
+        def sing(z):
+            return -asnorm * icl * constants.CF * ((1.0 + z ** 2) / (1.0 - z))
+
+        # MMa: FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z), {z, 0, x}, Assumptions -> {0 < x < 1}]
+        def loc(x):
+            return (
+                asnorm
+                * icl
+                * constants.CF
+                * (-(x * (2.0 + x)) / 2.0 - 2.0 * np.log(1.0 - x))
+            )
+
+        return 0, sing, loc
+
+
+class FMatchingGluon(FMatching):
+    def NLO(self):
+        return self.mk_nlo_raw(self.l)
+
+    def mk_nlo_raw(self, l):
+        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
+        parent_LO = obj.LO()
+        try:
+            _, _, icl = parent_LO
+        except TypeError:  # is there a local part in the parent?
+            return parent_LO  # no, so it should be 0 and we can pass through
+
         # since as and p_qg appear together there is no need to put an explicit as_norm here
         # the explicit 2 instead is coming from Eq. (B.25) of Lucas IC paper
         # TODO add proper cite
         def reg(z):
-            return -icl * 2.0 * split.pqg(z) * l
+            return icl * 2.0 * split.pqg(z) * l
 
         return reg, 0, 0
+
+    def NLO_fact(self):
+        return self.mk_nlo_raw(-1.0)

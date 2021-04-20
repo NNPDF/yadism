@@ -13,5 +13,4 @@ class F2IntrinsicSp(PartonicChannelHeavyIntrinsic):
 
 class F2IntrinsicSm(PartonicChannelHeavyIntrinsic):
     def NLO(self):
-        #  return 0.0
         return self.mkNLO("2", "sminus")

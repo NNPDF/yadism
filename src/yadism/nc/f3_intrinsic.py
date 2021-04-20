@@ -9,9 +9,9 @@ class F3IntrinsicRp(PartonicChannelHeavyIntrinsic):
         return 0, 0, factor
 
     def NLO(self):
-        return self.mkNLO("f3", "rplus")
+        return self.mkNLO("3", "rplus")
 
 
 class F3IntrinsicRm(PartonicChannelHeavyIntrinsic):
     def NLO(self):
-        return self.mkNLO("f3", "rminus")
+        return self.mkNLO("3", "rminus")
