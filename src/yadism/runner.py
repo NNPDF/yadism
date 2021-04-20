@@ -143,6 +143,8 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
+        logger.info("PTO: %d", theory["PTO"])
+        logger.info("FNS: %s, NfFF: %d",theory["FNS"], theory["NfFF"])
 
         self.observable_instances = {}
         # for obs_name in observable_name.ObservableName.all():

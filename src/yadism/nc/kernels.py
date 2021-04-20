@@ -312,11 +312,11 @@ def generate_heavy_fonll_intrinsic_diff(esf, nl):
         wp = wVA + wAV
         wm = wVA - wAV
         return (
-            kernels.Kernel(
+            -kernels.Kernel(
                 {ihq: wp, (-ihq): -wp},
                 cfs["matching"]["Rp"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
-            kernels.Kernel(
+            -kernels.Kernel(
                 {ihq: wm, (-ihq): -wm},
                 cfs["matching"]["Rm"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
@@ -327,18 +327,18 @@ def generate_heavy_fonll_intrinsic_diff(esf, nl):
     wp = wVV + wAA
     wm = wVV - wAA
     return (
-        kernels.Kernel(
+        -kernels.Kernel(
             {ihq: wp, (-ihq): wp},
             cfs["matching"]["qSp"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
-        kernels.Kernel(
+        -kernels.Kernel(
             {ihq: wm, (-ihq): wm},
             cfs["matching"]["qSm"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
-        kernels.Kernel(
+        -kernels.Kernel(
             {21: wp}, cfs["matching"]["gSp"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq)
         ),
-        kernels.Kernel(
+        -kernels.Kernel(
             {21: wm}, cfs["matching"]["gSm"](esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq)
         ),
     )
