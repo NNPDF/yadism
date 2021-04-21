@@ -125,7 +125,7 @@ class Sandbox(Runner):
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 1, "IC": 1, "mc": 1.51, "XIF": 1., "FNS": "FONLL-A", "NfFF": 4}], self.generate_observables(), ["gonly"])
+        self.run([{"PTO": 1, "IC": 1, "mc": 1.51, "XIF": 1.}], self.generate_observables(), ["conly"])
 
 
 def main():

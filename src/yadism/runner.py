@@ -145,6 +145,8 @@ class Runner:
         )
         logger.info("PTO: %d", theory["PTO"])
         logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
+        logger.info("Intrinsic: %s", intrinsic_range)
+        logger.info("XIR: %g, XIF: %g", theory["XIR"], theory["XIF"])
 
         self.observable_instances = {}
         # for obs_name in observable_name.ObservableName.all():

@@ -35,7 +35,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             obj : dict
                 to be updated pandas record
         """
-        for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS", "DAMP"]:
+        for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS", "DAMP", "IC"]:
             obj[f] = theo[f]
 
     def fill_observables(self, ob, obj):
