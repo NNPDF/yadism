@@ -112,6 +112,7 @@ class Output(dict):
             obsname : str
                 observable to be dumped
         """
+        # pylint: disable=no-member
         if len(self[obsname]) <= 0:
             raise ValueError(f"no ESF {obsname}!")
         import pineappl  # pylint: disable=import-outside-toplevel
