@@ -171,6 +171,8 @@ class FMatchingQuark(FMatching):
         l = self.l
 
         def sing(z):
+            # this coefficient function is *almost* proportional to P_qq
+            # i.e. 2CF * (1.0 + z ** 2) / (1.0 - z) is the "bare" P_qq
             return (
                 asnorm
                 * icl
@@ -178,7 +180,8 @@ class FMatchingQuark(FMatching):
                 * ((1.0 + z ** 2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
             )
 
-        # MMa: FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}]
+        # MMa:
+        # FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}] # pylint: disable=line-too-long
         def loc(x):
             return (
                 -asnorm
@@ -200,21 +203,15 @@ class FMatchingQuark(FMatching):
             _, _, icl = parent_LO
         except TypeError:
             return parent_LO
-        asnorm = 2.0
 
+        def reg(z):
+            return -icl * split.pqq_reg(z)
         def sing(z):
-            return -asnorm * icl * constants.CF * ((1.0 + z ** 2) / (1.0 - z))
+            return -icl * split.pqq_sing(z)
+        def local(x):
+            return -icl * split.pqq_local(x)
 
-        # MMa: FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z), {z, 0, x}, Assumptions -> {0 < x < 1}]
-        def loc(x):
-            return (
-                asnorm
-                * icl
-                * constants.CF
-                * (-(x * (2.0 + x)) / 2.0 - 2.0 * np.log(1.0 - x))
-            )
-
-        return 0, sing, loc
+        return reg, sing, local
 
 
 class FMatchingGluon(FMatching):

@@ -83,8 +83,6 @@ class Sandbox(Runner):
             [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, 1, 10)]
         )
         kinematics.extend(
-            #[dict(x=0.1,Q2=90, y=0)]
-            #[dict(x=x, Q2=50.0) for x in interpolation_xgrid[::5]]
             [dict(x=x, Q2=1.51**2, y=0) for x in np.geomspace(1e-4, 1, 10)]
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
@@ -125,7 +123,7 @@ class Sandbox(Runner):
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 1, "IC": 1, "mc": 1.51, "XIF": 1.}], self.generate_observables(), ["conly"])
+        self.run([{"PTO": 1, "IC": 1, "mc": 1.51, "XIF": 1./.7, "FNS": "FONLL-A", "NfFF":4}], self.generate_observables(), ["conly"])
 
 
 def main():
