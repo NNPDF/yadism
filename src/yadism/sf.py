@@ -25,7 +25,7 @@ class StructureFunction:
     ----------
         obs_name : ObservableName
             name
-        runner : Runner
+        runner : yadism.runner.Runner
             parent reference
     """
 
@@ -47,6 +47,9 @@ class StructureFunction:
 
     def __repr__(self):
         return self.obs_name.name
+
+    def __len__(self):
+        return len(self.esfs)
 
     def load(self, kinematic_configs):
         """
@@ -119,6 +122,10 @@ class StructureFunction:
             # ask our parent (as always)
             return self.runner.get_sf(obs_name).get_esf(obs_name, kinematics, *args)
 
+    def iterate_result(self):
+        for esf in self.esfs:
+            yield esf.get_result()
+
     def get_result(self):
         """
         Collects the results from all childrens.
@@ -128,8 +135,4 @@ class StructureFunction:
             output : list(ESFResult)
                 all children outputs
         """
-        output = []
-        for esf in self.esfs:
-            output.append(esf.get_result())
-
-        return output
+        return list(self.iterate_result())

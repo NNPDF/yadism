@@ -35,7 +35,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             obj : dict
                 to be updated pandas record
         """
-        for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS", "DAMP"]:
+        for f in ["PTO", "XIF", "XIR", "TMC", "NfFF", "FNS", "DAMP", "IC"]:
             obj[f] = theo[f]
 
     def fill_observables(self, ob, obj):
@@ -92,7 +92,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         obj["structure_functions"] = f"{sfs} SF @ {esfs} pts"
 
         obj["theory"] = cac["t_hash"][: self.hash_len]
-        obj["observables"] = cac["o_hash"][: self.hash_len]
+        obj["ocard"] = cac["o_hash"][: self.hash_len]
         for f in ["pdf", "external"]:
             obj[f] = cac[f]
 
@@ -119,7 +119,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             obj["structure_functions"] = crash
 
         obj["theory"] = lg["t_hash"][: self.hash_len]
-        obj["observables"] = lg["o_hash"][: self.hash_len]
+        obj["ocard"] = lg["o_hash"][: self.hash_len]
         obj["pdf"] = lg["pdf"]
         obj["external"] = lg["external"]
 

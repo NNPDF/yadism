@@ -80,7 +80,7 @@ class ESFResult:
         # build
         res = 0
         err = 0
-        # TODO properly define xiF log (according to pineappl combine orders)
+        # join elements
         for o, (v, e) in self.orders.items():
             prefactor = (
                 ((alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)) ** o[0])

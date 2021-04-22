@@ -80,45 +80,50 @@ class Sandbox(Runner):
         kinematics.extend(
             #[dict(x=0.1,Q2=90, y=0)]
             #[dict(x=x, Q2=50.0) for x in interpolation_xgrid[::5]]
-            [dict(x=x, Q2=90.0, y=0) for x in np.geomspace(1e-4, 1, 10)]
+            [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, 1, 10)]
+        )
+        kinematics.extend(
+            [dict(x=x, Q2=1.51**2, y=0) for x in np.geomspace(1e-4, 1, 10)]
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
         #kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
-        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
+        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
+        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
         observable_names = [
-            "F2_light",
+            #"F2_light",
             "F2_charm",
             # "F2_bottom",
             # "F2_top",
-            "F2_total",
+            #"F2_total",
             #"FL_light",
-            #"FL_charm",
+            "FL_charm",
             # "FL_bottom",
             # "FL_total",
-            #"F3_light",
-            #"F3_charm",
+            #  "F3_light",
+            #  "F3_charm",
             # "F3_bottom",
             # "F3_total",
+            #  "XSHERANC",
             #"XSHERACC_light",
             #"XSHERACC_charm",
-            "XSCHORUSCC_light",
-            "XSCHORUSCC_charm",
-            "XSCHORUSCC",
-            "XSNUTEVCC_charm"
+            #"XSCHORUSCC_light",
+            #"XSCHORUSCC_charm",
+            #"XSCHORUSCC",
+            #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
         #update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
-        update = {"prDIS": ["CC"], "ProjectileDIS": ["antineutrino"]}
+        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"]}
         # card["PropagatorCorrection"] = .999
         # card["ProjectileDIS"] = "antineutrino"
         # card["PolarizationDIS"] = 0.5
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 0}], self.generate_observables(), ["CT14llo_NF4"])
+        self.run([{"PTO": 1, "IC": 1, "mc": 1.51, "XIF": 1./.7, "FNS": "FONLL-A", "NfFF":4}], self.generate_observables(), ["conly"])
 
 
 def main():

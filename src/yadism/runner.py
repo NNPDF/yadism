@@ -143,6 +143,10 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
+        logger.info("PTO: %d", theory["PTO"])
+        logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
+        logger.info("Intrinsic: %s", intrinsic_range)
+        logger.info("XIR: %g, XIF: %g", theory["XIR"], theory["XIF"])
 
         self.observable_instances = {}
         # for obs_name in observable_name.ObservableName.all():
@@ -220,16 +224,26 @@ class Runner:
         self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
         if log.debug:
-            tasks = precomputed_plan.items()
+            for name, obs in precomputed_plan.items():
+                self._output[name] = obs.get_result()
         else:
-            tasks = rich.progress.track(
-                precomputed_plan.items(),
-                description="computing...",
-                transient=True,
-                console=self.console,
-            )
-        for name, obs in tasks:
-            self._output[name] = obs.get_result()
+            with rich.progress.Progress(
+                transient=True, console=self.console
+            ) as progress:
+                task = progress.add_task(
+                    "Starting...",
+                    total=sum([len(obs) for obs in precomputed_plan.values()]),
+                )
+                for name, obs in precomputed_plan.items():
+                    results = []
+                    for res in obs.iterate_result():
+                        results.append(res)
+                        progress.update(
+                            task,
+                            description=f"Computing [bold green]{name}",
+                            advance=1,
+                        )
+                    self._output[name] = results
         end = time.time()
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")

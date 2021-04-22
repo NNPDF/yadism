@@ -50,7 +50,8 @@ class Runner(BenchmarkRunner):
 
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
         else:
-            sc = StrongCoupling.from_dict(theory)
+            new_theory = yadism.input.compatibility.update(theory)
+            sc = StrongCoupling.from_dict(new_theory)
             alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
 
         alpha_qed = lambda _muR: theory["alphaqed"]
@@ -77,16 +78,12 @@ class Runner(BenchmarkRunner):
                 external output
         """
         observable = ocard
-        if theory["IC"] != 0 and theory["PTO"] > 0:
-            raise ValueError(f"{self.external} is currently not able to run")
 
         if self.external == "APFEL":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 apfel_utils,
             )
 
-            # if theory["IC"] != 0 and theory["PTO"] > 0:
-            #    raise ValueError("APFEL is currently not able to run")
             return apfel_utils.compute_apfel_data(theory, observable, pdf)
 
         elif self.external == "QCDNUM":
@@ -118,7 +115,7 @@ class Runner(BenchmarkRunner):
             return res
         return {}
 
-    def log(self, _pdf, me, ext):
+    def log(self, t, o, _pdf, me, ext):
         log_tab = dfdict.DFdict()
         for sf in me:
             if not yadism.observable_name.ObservableName.is_valid(sf):

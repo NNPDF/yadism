@@ -105,7 +105,11 @@ class BenchmarkFNS(XspaceBenchmark):
         self.run(cartesian_product(fns), self.observable_updates(FX), ["toygonly"])
         # excluding the low q2 region.
         q2 = 6
-        self.run(cartesian_product(fns), self.observable_updates(FX, q2_min=q2), ["ToyLHAPDF"])
+        self.run(
+            cartesian_product(fns),
+            self.observable_updates(FX, q2_min=q2),
+            ["ToyLHAPDF"],
+        )
 
     def benchmark_FONLL(self):
 
@@ -132,7 +136,11 @@ class BenchmarkFNS(XspaceBenchmark):
         self.run(cartesian_product(fns), self.observable_updates(FX), ["toygonly"])
         # excluding the low q2 region.
         q2 = 6
-        self.run(cartesian_product(fns), self.observable_updates(FX, q2_min=q2), ["ToyLHAPDF"])
+        self.run(
+            cartesian_product(fns),
+            self.observable_updates(FX, q2_min=q2),
+            ["ToyLHAPDF"],
+        )
 
 
 if __name__ == "__main__":

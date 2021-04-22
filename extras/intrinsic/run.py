@@ -37,12 +37,23 @@ def exprs():
     for k in [1, 2, "L"]:
         for S in ["Splus", "Sminus"]:
             exprs[f"f{str(k).lower()}_{S.lower()}_raw"] = manipulate.parse_raw(r, k, S)
-            exprs[f"f{str(k).lower()}_{S.lower()}_soft"] = manipulate.parse_soft(r, k, S)
-            exprs[f"f{str(k).lower()}_{S.lower()}_virt"] = manipulate.parse_virt(r, k, S)
+            exprs[f"f{str(k).lower()}_{S.lower()}_soft"] = manipulate.parse_soft(
+                r, k, S
+            )
+            exprs[f"f{str(k).lower()}_{S.lower()}_virt"] = manipulate.parse_virt(
+                r, k, S
+            )
     for R in ["Rplus", "Rminus"]:
         exprs[f"f3_{R.lower()}_raw"] = manipulate.parse_raw(r, 3, R)
         exprs[f"f3_{R.lower()}_soft"] = manipulate.parse_soft(r, 3, R)
         exprs[f"f3_{R.lower()}_virt"] = manipulate.parse_virt(r, 3, R)
+    for k in [1, 2, "L"]:
+        for Spm in ["Splus", "Sminus"]:
+            exprs[f"m{str(k).lower()}_{Spm.lower()}"] = manipulate.extract_coefficient(
+                r, "m", k, Spm
+            )
+    for Rpm in ["Rplus", "Rminus"]:
+        exprs[f"m3_{Rpm.lower()}"] = manipulate.extract_coefficient(r, "m", 3, Rpm)
     r.close()
     # add static stuff
     exprs["I1"] = manipulate.prepare(data.I1, False)
@@ -107,13 +118,15 @@ def run():
     with open(output_path, "w") as o:
         o.write(cnt)
 
+
 def to_mma():
     e = exprs()
     mma_out = here / "ic.m"
     with open(mma_out, "w") as o:
-        for k,v in e.items():
+        for k, v in e.items():
             o.write(f"{k} = {v};\n")
 
+
 if __name__ == "__main__":
-    #run()
-    to_mma()
+    run()
+    #  to_mma()
