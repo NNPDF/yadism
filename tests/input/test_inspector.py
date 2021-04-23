@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Test the Input Inspector. 
+Test the Input Inspector.
 """
 import copy
 
@@ -36,11 +36,13 @@ class TestInspector:
             "kcThr": 1.0,
             "kbThr": 1.0,
             "ktThr": 1.0,
+            "kDIScThr": 1.0,
+            "kDISbThr": 1.0,
+            "kDIStThr": 1.0,
             "MZ": 91.1876,
             "MW": 90.398,
             "GF": 1.1663787e-05,
             "SIN2TW": 0.23126,
-            "CKM": "0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
             "ModEv": "EXA",
         }
 

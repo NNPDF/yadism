@@ -31,8 +31,8 @@ class TestFloat:
             cc.f2_heavy.F2heavyQuark(MockESF(x, Q2), m2hq=M2hq),
             cc.f3_heavy.F3heavyQuark(MockESF(x, Q2), m2hq=M2hq),
             cc.fl_heavy.FLheavyQuark(MockESF(x, Q2), m2hq=M2hq),
-            cc.f2_asy.F2asyQuark(MockESF(x, Q2), m2hq=M2hq),
-            cc.f3_asy.F3asyQuark(MockESF(x, Q2), m2hq=M2hq),
+            cc.f2_asy.F2asyQuark(MockESF(x, Q2), mu2hq=M2hq),
+            cc.f3_asy.F3asyQuark(MockESF(x, Q2), mu2hq=M2hq),
             cc.f2_light.F2lightQuark(MockESF(x, Q2), nf=nf),
             cc.f3_light.F3lightQuark(MockESF(x, Q2), nf=nf),
             nc.f2_light.F2lightNonSinglet(MockESF(x, Q2), nf=nf),
@@ -47,7 +47,7 @@ class TestFloat:
 
         # LO=0
         for pc in [
-            cc.fl_asy.FLasyQuark(MockESF(x, Q2), m2hq=M2hq),
+            cc.fl_asy.FLasyQuark(MockESF(x, Q2), mu2hq=M2hq),
             cc.fl_light.FLlightQuark(MockESF(x, Q2), nf=nf),
         ]:
             assert pc.LO() is None
@@ -60,8 +60,8 @@ class TestFloat:
         for z in [x, 0.9]:
             # non trivial LO + NLO*
             for pc in [
-                cc.f2_asy.F2asyGluon(MockESF(x, Q2), m2hq=M2hq),
-                cc.f3_asy.F3asyGluon(MockESF(x, Q2), m2hq=M2hq),
+                cc.f2_asy.F2asyGluon(MockESF(x, Q2), mu2hq=M2hq),
+                cc.f3_asy.F3asyGluon(MockESF(x, Q2), mu2hq=M2hq),
                 cc.f2_heavy.F2heavyGluon(MockESF(x, Q2), m2hq=M2hq),
                 cc.f3_heavy.F3heavyGluon(MockESF(x, Q2), m2hq=M2hq),
                 cc.fl_heavy.FLheavyGluon(MockESF(x, Q2), m2hq=M2hq),
@@ -74,12 +74,12 @@ class TestFloat:
             # LO=0
             for pc in [
                 cc.fl_light.FLlightGluon(MockESF(x, Q2), nf=nf),
-                cc.fl_asy.FLasyGluon(MockESF(x, Q2), m2hq=M2hq),
+                cc.fl_asy.FLasyGluon(MockESF(x, Q2), mu2hq=M2hq),
                 nc.fl_light.FLlightGluon(MockESF(x, Q2), nf=nf),
-                nc.f2_asy.F2asyGluonVV(MockESF(x, Q2), m2hq=M2hq),
-                nc.f2_asy.F2asyGluonAA(MockESF(x, Q2), m2hq=M2hq),
-                nc.fl_asy.FLasyGluonVV(MockESF(x, Q2), m2hq=M2hq),
-                nc.fl_asy.FLasyGluonAA(MockESF(x, Q2), m2hq=M2hq),
+                nc.f2_fonll.F2asyGluonVV(MockESF(x, Q2), mu2hq=M2hq),
+                nc.f2_fonll.F2asyGluonAA(MockESF(x, Q2), mu2hq=M2hq),
+                nc.fl_fonll.FLasyGluonVV(MockESF(x, Q2), mu2hq=M2hq),
+                nc.fl_fonll.FLasyGluonAA(MockESF(x, Q2), mu2hq=M2hq),
                 nc.f2_heavy.F2heavyGluonVV(MockESF(x, Q2), m2hq=M2hq),
                 nc.f2_heavy.F2heavyGluonAA(MockESF(x, Q2), m2hq=M2hq),
                 nc.fl_heavy.FLheavyGluonVV(MockESF(x, Q2), m2hq=M2hq),
