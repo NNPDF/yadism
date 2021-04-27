@@ -22,7 +22,7 @@ class Output(dict):
         return self.apply_pdf_theory(lhapdf_like, self.theory)
 
     def apply_pdf_theory(self, lhapdf_like, theory):
-        new_theory = compatibility.update(theory)
+        new_theory, _ = compatibility.update(theory, dict(TargetDIS="proton"))
         sc = strong_coupling.StrongCoupling.from_dict(new_theory)
         alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
         alpha_qed = lambda _muR: theory["alphaqed"]
