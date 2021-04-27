@@ -202,7 +202,9 @@ class MockRunner:
         threshold=threshold,
         coupling_constants=coupling_constants,
     )
-    theory_params = dict(pto=0, xiF=1, M2target=1.0, TMC=1, scheme="FFNS")
+    theory_params = dict(
+        pto=0, xiF=1, M2target=1.0, TMC=1, scheme="FFNS", target=dict(Z=1, A=1)
+    )
 
 
 def test_f():

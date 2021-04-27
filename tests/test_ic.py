@@ -96,10 +96,12 @@ def test_CRm():
         ppc = copy.copy(pc)
         ppc.delta = ppc.sigma_mp
         assert not np.isfinite(ic.CRm(ppc))
-    pc.sigma_pp = 0
+    pc.sigma_pp = 0  # deny contributions
     pc.Q2 = pc.m1sq = pc.m2sq
-    pc.delta = (
-        lambda a, b, c: np.sqrt(a ** 2 + b ** 2 + c ** 2 - 2 * (a * b + b * c + c * a))
-    )(pc.m1sq, pc.m2sq, -pc.Q2)
+    pc.delta = partonic_channel.PartonicChannelAsyIntrinsic.kinematic_delta(
+        pc.m1sq, pc.m2sq, -pc.Q2
+    )
+    pc.sigma_mp *= pc.delta  # Sigma_mp < delta otherwise the Li2 become undefined
+    pc.sigma_pm *= pc.delta  # see above
     pc.I1 = 1.0
     assert pytest.approx(ic.CRm(pc)) == 5.0 / 2.0 * pc.Q2 - 4.0

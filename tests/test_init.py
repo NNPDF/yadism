@@ -51,6 +51,7 @@ obs_dict = {
     "prDIS": "EM",
     "PolarizationDIS": 0.0,
     "ProjectileDIS": "electron",
+    "TargetDIS": "proton",
     "PropagatorCorrection": 0.0,
     "interpolation_is_log": 1.0,
     "interpolation_polynomial_degree": 4,

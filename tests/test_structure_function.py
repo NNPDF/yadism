@@ -33,7 +33,9 @@ class MockRunner:
         threshold=threshold,
         coupling_constants=coupling_constants,
     )
-    theory_params = dict(pto=0, scheme="FFNS", TMC=0, nf_ff=4, FONLL_damping=False)
+    theory_params = dict(
+        pto=0, scheme="FFNS", target=dict(Z=1, A=1), TMC=0, nf_ff=4, FONLL_damping=False
+    )
 
 
 class TestStructureFunction:
@@ -107,6 +109,7 @@ class TestEvaluatedStructureFunction:
         for scheme in ["FFNS", "ZM-VFNS", "FONLL-A"]:
             r = MockRunner()
             r.theory_params["scheme"] = scheme
+            r.theory_params["target"] = {"Z": 1, "A": 1}
             sf = StructureFunction(
                 observable_name.ObservableName("FL_light"),
                 r,
