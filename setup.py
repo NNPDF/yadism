@@ -34,6 +34,12 @@ def setup_package():
         author="A. Candido, F. Hekhorn, G. Magni",
         author_email="alessandro.candido@mi.infn.it, felix.hekhorn@mi.infn.it, gmagni@nikhef.nl",
         url="https://github.com/N3PDF/yadism",
+        project_urls={
+            "Documentation": "https://n3pdf.github.io/yadism/",
+            "Changelog": "https://github.com/N3PDF/yadism/releases",
+            "Issue Tracker": "https://github.com/N3PDF/yadism/issues",
+            "Coverage": "https://codecov.io/gh/N3PDF/yadism",
+        },
         package_dir={"": "src"},
         packages=find_packages("src"),
         package_data={"yadism": ["input/*.yaml"]},
