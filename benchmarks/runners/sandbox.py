@@ -93,13 +93,13 @@ class Sandbox(Runner):
         kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
         kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
         observable_names = [
-            #"F2_light",
-            "F2_charm",
+            "F2_light",
+            #"F2_charm",
             # "F2_bottom",
             # "F2_top",
             #"F2_total",
             #"FL_light",
-            "FL_charm",
+            #"FL_charm",
             # "FL_bottom",
             # "FL_total",
             #  "F3_light",
@@ -116,14 +116,14 @@ class Sandbox(Runner):
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
         #update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
-        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         # card["PropagatorCorrection"] = .999
         # card["ProjectileDIS"] = "antineutrino"
         # card["PolarizationDIS"] = 0.5
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 1, "IC": 1, "mc": 1.51, "XIF": 1./.7, "FNS": "FONLL-A", "NfFF":4}], self.generate_observables(), ["conly"])
+        self.run([{}], self.generate_observables(), ["uonly"])
 
 
 def main():

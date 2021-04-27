@@ -50,7 +50,7 @@ class Runner(BenchmarkRunner):
 
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
         else:
-            new_theory = yadism.input.compatibility.update(theory)
+            new_theory, _ = yadism.input.compatibility.update(theory, ocard)
             sc = StrongCoupling.from_dict(new_theory)
             alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
 

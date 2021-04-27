@@ -37,7 +37,7 @@ class EvaluatedCrossSection:
             mn = np.sqrt(self.xs.runner.theory_params["M2target"])
             m2w = self.xs.runner.theory_params["M2W"]
             yp -= 2.0 * (mn * x * y) ** 2 / Q2  # = ypc
-            # import pdb; pdb.set_trace()
+            # Chorus
             if kind == "XSCHORUSCC":
                 norm = (
                     conv

@@ -124,6 +124,7 @@ class EvaluatedStructureFunction:
                     pos = br.flavor_basis_pids.index(pid)
                     self.res.orders[o][0][pos] += w * val
                     self.res.orders[o][1][pos] += w * err
+
         self._computed = True
 
     def compute_coefficient_function(self, convolution_point, cf):

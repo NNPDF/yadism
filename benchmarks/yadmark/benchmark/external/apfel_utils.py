@@ -151,7 +151,7 @@ def load_apfel(theory, observables, pdf="ToyLH"):
     apfel.SetPropagatorCorrection(observables.get("PropagatorCorrection", 0))
     apfel.SetPolarizationDIS(observables.get("PolarizationDIS", 0))
     apfel.SetProjectileDIS(observables.get("ProjectileDIS", "electron"))
-    # set Target
+    apfel.SetTargetDIS(observables.get("TargetDIS", "proton"))
 
     # apfel initialization for DIS
     apfel.InitializeAPFEL_DIS()
@@ -252,10 +252,11 @@ def compute_apfel_data(theory, observables, pdf):
         apf_tab[obs_name] = []
         # a cross section?
         if obs_name in apfel_fkobservables:
+            apf_obs = apfel_fkobservables[obs_name]
+            if observables["TargetDIS"] == "lead":
+                apf_obs += "_Pb"
             # FK calls SetProcessDIS, SetProjectileDIS and SetTargetDIS
-            apfel.SetFKObservable(apfel_fkobservables[obs_name])
-            # TODO until target is implemented in yadism revert to proton
-            apfel.SetTargetDIS("proton")
+            apfel.SetFKObservable(apf_obs)
         elif obs_name not in apfel_structure_functions:  # not a SF?
             raise ValueError(f"Unkown observable {obs_name}")
 

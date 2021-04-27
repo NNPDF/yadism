@@ -101,9 +101,29 @@ class BenchmarkXS(ApfelBenchmark):
     def benchmark_pto(self, pto):
         kins = observables.default_kinematics.copy()
         obs_updates = observables.build(["XSHERANC"], kins, update={"prDIS": ["NC"]})
-        obs_updates.append(
+        obs_updates.extend(
+            observables.build(["XSHERACC"], kins, update={"prDIS": ["CC"]})
+        )
+        obs_updates.extend(
             observables.build(
-                ["XSHERACC", "XSCHORUSCC", "XSNUTEVCC"], kins, update={"prDIS": ["CC"]}
+                ["XSCHORUSCC"],
+                kins,
+                update={
+                    "prDIS": ["CC"],
+                    "TargetDIS": ["isoscalar", "lead"],
+                    "ProjectileDIS": ["neutrino"],
+                },
+            )
+        )
+        obs_updates.extend(
+            observables.build(
+                ["XSNUTEVCC_charm"],
+                kins,
+                update={
+                    "prDIS": ["CC"],
+                    "TargetDIS": ["iron"],
+                    "ProjectileDIS": ["antineutrino"],
+                },
             )
         )
         self.run([{"PTO": pto}], obs_updates, ["ToyLH"])
@@ -252,6 +272,9 @@ if __name__ == "__main__":
     # ffns.benchmark_nlo()
     # fonll = BenchmarkICFONLL()
     # fonll.benchmark_nlo()
+
+    xs = BenchmarkXS()
+    xs.benchmark_pto(0)
 
 # def plain_assert_external(theory, obs, sf, yad):
 #     # APFEL has a discretization in Q2/m2

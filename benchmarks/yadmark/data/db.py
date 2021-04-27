@@ -15,3 +15,4 @@ class Observable(Base):
     interpolation_xgrid = Column(Text)
     observables = Column(Text)
     prDIS = Column(Text)
+    TargetDIS = Column(Text)

@@ -206,8 +206,10 @@ class FMatchingQuark(FMatching):
 
         def reg(z):
             return -icl * split.pqq_reg(z)
+
         def sing(z):
             return -icl * split.pqq_sing(z)
+
         def local(x):
             return -icl * split.pqq_local(x)
 

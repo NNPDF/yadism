@@ -87,30 +87,22 @@ class Runner:
     )
 
     def __init__(self, theory: dict, observables: dict):
-        # ==============================
-        # Validate inputs
-        # ==============================
+        # Validate inputs and improve if necessary
         insp = inspector.Inspector(theory, observables)
         insp.perform_all_checks()
+        new_theory, new_observables = compatibility.update(theory, observables)
 
-        # ==============================
         # Store inputs
-        # ==============================
-        self._theory = theory
-        self._observables = observables
+        self._theory = new_theory
+        self._observables = new_observables
 
-        # ==============================
         # Setup eko stuffs
-        # ==============================
-        new_theory = compatibility.update(theory)
-        interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
+        interpolator = InterpolatorDispatcher.from_dict(self._observables, mode_N=False)
 
         # Non-eko theory
-        coupling_constants = CouplingConstants.from_dict(theory, observables)
+        coupling_constants = CouplingConstants.from_dict(theory, self._observables)
 
-        # ==============================
         # Initialize structure functions
-        # ==============================
         self.managers = dict(
             interpolator=interpolator,
             threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
@@ -137,30 +129,24 @@ class Runner:
             intrinsic_range=intrinsic_range,
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
+            target=new_observables["TargetDIS"],
             GF=theory["GF"],
             M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
-        logger.info("PTO: %d", theory["PTO"])
+        logger.info("PTO: %d, process: %s", theory["PTO"], new_observables["prDIS"])
         logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
         logger.info("Intrinsic: %s", intrinsic_range)
         logger.info("XIR: %g, XIF: %g", theory["XIR"], theory["XIF"])
+        logger.info(
+            "projectile: %s, target: {Z: %g, A: %g}",
+            new_observables["ProjectileDIS"],
+            *new_observables["TargetDIS"].values(),
+        )
 
         self.observable_instances = {}
-        # for obs_name in observable_name.ObservableName.all():
-        #     name = obs_name.name
-
-        #     # initialize an SF instance for each possible structure function
-        #     obj = SF(
-        #         obs_name,
-        #         runner=self,
-        #     )
-
-        #     # read kinematics
-        #     obj.load(self._observables["observables"].get(name, []))
-        #     self.observable_instances[name] = obj
         for obs_name, kins in self._observables["observables"].items():
             on = observable_name.ObservableName(obs_name)
             if on.kind in observable_name.xs:

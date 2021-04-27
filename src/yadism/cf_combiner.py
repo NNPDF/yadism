@@ -27,6 +27,7 @@ class CoefficientFunctionsCombiner:
         self.nf = esf.sf.threshold.nf(
             esf.Q2
         )  # TODO decide whether Q2 or muF2 is the correct thing
+        self.target = esf.sf.target
 
     def collect_ffns(self):
         """
@@ -169,5 +170,16 @@ class CoefficientFunctionsCombiner:
             ker.partons = {p: w for p, w in ker.partons.items() if w != 0}
             if len(ker.partons) > 0 and not isinstance(ker.coeff, EmptyPartonicChannel):
                 filtered_kernels.append(ker)
+
+        # add level-0 nuclear correction: apply isospin symmetry
+        z = self.target["Z"]
+        a = self.target["A"]
+        nucl_factors = np.array([[z, a - z], [a - z, z]]) / a
+        for ker in full:
+            for sign in [-1, 1]:
+                ps = np.array(
+                    [ker.partons.get(sign * 1, 0), ker.partons.get(sign * 2, 0)]
+                )
+                ker.partons[sign * 1], ker.partons[sign * 2] = nucl_factors @ ps
 
         return filtered_kernels

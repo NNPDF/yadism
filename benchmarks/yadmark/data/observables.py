@@ -14,16 +14,17 @@ default_card = dict(
     ProjectileDIS="electron",
     PolarizationDIS=0,
     PropagatorCorrection=0,
+    TargetDIS="proton",
     observables={},
 )
 default_card = dict(sorted(default_card.items()))
 
 default_kinematics = []
 default_kinematics.extend(
-    [dict(x=x, Q2=10.0) for x in default_card["interpolation_xgrid"][3::3]]
+    [dict(x=x, Q2=10.0, y=0) for x in default_card["interpolation_xgrid"][3::3]]
 )
 default_kinematics.extend(
-    [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(4, 22, 10).tolist()]
+    [dict(x=0.001, Q2=Q2, y=0) for Q2 in np.geomspace(4, 22, 10).tolist()]
 )
 
 default_config = {
