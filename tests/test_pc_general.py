@@ -35,7 +35,7 @@ class TestFloat:
             cc.f3_asy.F3asyQuark(MockESF(x, Q2), mu2hq=M2hq),
             cc.f2_light.F2lightQuark(MockESF(x, Q2), nf=nf),
             cc.f3_light.F3lightQuark(MockESF(x, Q2), nf=nf),
-            nc.f2_light.F2lightNonSinglet(MockESF(x, Q2), nf=nf),
+            nc.f2_light.NonSinglet(MockESF(x, Q2), nf=nf),
             nc.f3_light.F3lightNonSinglet(MockESF(x, Q2), nf=nf),
         ]:
             assert pc.LO()[0] == 0

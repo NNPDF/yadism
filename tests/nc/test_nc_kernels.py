@@ -82,7 +82,7 @@ def test_generate_heavy():
 def test_generate_light_fonll_diff_pc():
     esf = MockESF("F2_light", 0.1, 10)
     for nl in [3, 5]:
-        w = kernels.generate_light_fonll_diff(esf, nl)
+        w = kernels.generate_light_diff(esf, nl)
         # c/t as light
         ps = [{-(nl + 1): 9, (nl + 1): 9}]
         check(ps, w)
@@ -91,7 +91,7 @@ def test_generate_light_fonll_diff_pc():
 def test_generate_light_fonll_diff_pv():
     esf = MockESF("F3_light", 0.1, 10)
     for nl in [3, 5]:
-        w = kernels.generate_light_fonll_diff(esf, nl)
+        w = kernels.generate_light_diff(esf, nl)
         # c/t as light
         ps = [{-(nl + 1): 0, (nl + 1): 0}]
         check(ps, w)
@@ -100,7 +100,7 @@ def test_generate_light_fonll_diff_pv():
 def test_generate_heavy_fonll_diff_pc():
     esf = MockESF("F2_charm", 0.1, 10)
     for nl in [3, 5]:
-        w = kernels.generate_heavy_fonll_diff(esf, nl)
+        w = kernels.generate_heavy_diff(esf, nl)
         # light part + asy
         ps = [
             {-(nl + 1): 9, (nl + 1): 9},
@@ -115,7 +115,7 @@ def test_generate_heavy_fonll_diff_pc():
 def test_generate_heavy_fonll_diff_pv():
     esf = MockESF("F3_charm", 0.1, 10)
     for nl in [3, 5]:
-        w = kernels.generate_heavy_fonll_diff(esf, nl)
+        w = kernels.generate_heavy_diff(esf, nl)
         # light part + asy
         ps = [{-(nl + 1): -6, (nl + 1): 6}, {21: 0}, mkpv(nl, 0)]
         check(ps, w)

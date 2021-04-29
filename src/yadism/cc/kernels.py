@@ -195,11 +195,11 @@ def weights(coupling_constants, Q2, kind, cc_mask, nf):
     return weights
 
 
-def generate_light_fonll_diff(_esf, _nl):
+def generate_light_diff(_esf, _nl):
     """
     Collect the light diff coefficient functions for FONLL.
 
-    See :meth:`yadism.nc.kernels.generate_light_fonll_diff` on
+    See :meth:`yadism.nc.kernels.generate_light_diff` on
     why we need the singlet part (which here is 0 up to |NLO|).
 
     Parameters
@@ -217,7 +217,7 @@ def generate_light_fonll_diff(_esf, _nl):
     return ()
 
 
-def generate_heavy_fonll_diff(esf, nl):
+def generate_heavy_diff(esf, nl):
     kind = esf.sf.obs_name.kind
     cfs = coefficient_functions[kind]
     ihq = nl + 1
@@ -252,6 +252,6 @@ def generate_intrinsic(esf, ihq):
     )
 
 
-def generate_heavy_fonll_intrinsic_diff(_esf, _nl):
+def generate_heavy_intrinsic_diff(_esf, _nl):
     # TODO fill
     return ()

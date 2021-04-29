@@ -112,7 +112,7 @@ def test_generate_light_fonll_diff():
             MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10),
         ]:
             for nf in [3, 4, 5]:
-                w = kernels.generate_light_fonll_diff(esf, nf)
+                w = kernels.generate_light_diff(esf, nf)
                 assert len(w) == 0
 
 
@@ -120,7 +120,7 @@ def test_generate_light_fonll_diff():
 #     for sgn in [True, False]:
 #         esf = MockESF("F2charm", 11 * (1 if sgn else -1), 0.1, 10)
 #         for nl in [3, 4, 5]:
-#             w = kernels.generate_heavy_fonll_diff(esf, nl)
+#             w = kernels.generate_heavy_diff(esf, nl)
 #             norm = {3: 2, 4: 4, 5: 8}[nl]
 #             # light - asy
 #             ps = [
