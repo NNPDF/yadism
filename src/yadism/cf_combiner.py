@@ -164,13 +164,6 @@ class CoefficientFunctionsCombiner:
         else:
             raise ValueError("Unknown FNS")
 
-        # drop all kernels with 0 weight, or empty coeffs
-        filtered_kernels = []
-        for ker in full:
-            ker.partons = {p: w for p, w in ker.partons.items() if w != 0}
-            if len(ker.partons) > 0 and not isinstance(ker.coeff, EmptyPartonicChannel):
-                filtered_kernels.append(ker)
-
         # add level-0 nuclear correction: apply isospin symmetry
         z = self.target["Z"]
         a = self.target["A"]
@@ -181,5 +174,12 @@ class CoefficientFunctionsCombiner:
                     [ker.partons.get(sign * 1, 0), ker.partons.get(sign * 2, 0)]
                 )
                 ker.partons[sign * 1], ker.partons[sign * 2] = nucl_factors @ ps
+
+        # drop all kernels with 0 weight, or empty coeffs
+        filtered_kernels = []
+        for ker in full:
+            ker.partons = {p: w for p, w in ker.partons.items() if w != 0}
+            if len(ker.partons) > 0 and not isinstance(ker.coeff, EmptyPartonicChannel):
+                filtered_kernels.append(ker)
 
         return filtered_kernels
