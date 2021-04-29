@@ -102,7 +102,6 @@ class CoefficientFunctionsCombiner:
             elems.extend(self.kernels.generate_heavy(self.esf, nl))
             # add F^d
             ihq = nl + 1
-            # TODO we restrict to NLO for the moment
             if ihq in self.esf.sf.intrinsic_range:
                 elems.extend(self.kernels.generate_intrinsic(self.esf, ihq))
                 elems.extend(
@@ -139,12 +138,56 @@ class CoefficientFunctionsCombiner:
             return elems
         nhq = nl + 1
         m2hq = self.esf.sf.m2hq[nhq - 4]
-        power = self.esf.sf.damping_powers[nhq - 3]
+        power = self.esf.sf.damping_powers[nhq - 4]
         if self.esf.Q2 > m2hq:
             damp = np.power(1.0 - m2hq / self.esf.Q2, power)
         else:
             damp = 0.0
         return (damp * e for e in elems)
+
+    @staticmethod
+    def apply_isospin(full, z, a):
+        """
+        Apply isospin symmetry to u and d distributions.
+
+        Parameters
+        ----------
+            full : list(yadism.kernels.Kernel)
+                all participants
+            z : float
+                number of protons
+            a : float
+                atomic mass number
+        """
+        nucl_factors = np.array([[z, a - z], [a - z, z]]) / a
+        for ker in full:
+            for sign in [-1, 1]:
+                ps = np.array(
+                    [ker.partons.get(sign * 1, 0), ker.partons.get(sign * 2, 0)]
+                )
+                ker.partons[sign * 1], ker.partons[sign * 2] = nucl_factors @ ps
+
+    @staticmethod
+    def drop_empty(full):
+        """
+        Drop kernels with :class:`EmptyPartonicChannel` or its partons with empty weight.
+
+        Parameters
+        ----------
+            elems : list(yadism.kernels.Kernel)
+                all participants
+
+        Returns
+        -------
+            filtered_kernels : list(yadism.kernels.Kernel)
+                improved participants
+        """
+        filtered_kernels = []
+        for ker in full:
+            ker.partons = {p: w for p, w in ker.partons.items() if w != 0}
+            if len(ker.partons) > 0 and not isinstance(ker.coeff, EmptyPartonicChannel):
+                filtered_kernels.append(ker)
+        return filtered_kernels
 
     def collect_elems(self):
         """
@@ -165,21 +208,7 @@ class CoefficientFunctionsCombiner:
             raise ValueError("Unknown FNS")
 
         # add level-0 nuclear correction: apply isospin symmetry
-        z = self.target["Z"]
-        a = self.target["A"]
-        nucl_factors = np.array([[z, a - z], [a - z, z]]) / a
-        for ker in full:
-            for sign in [-1, 1]:
-                ps = np.array(
-                    [ker.partons.get(sign * 1, 0), ker.partons.get(sign * 2, 0)]
-                )
-                ker.partons[sign * 1], ker.partons[sign * 2] = nucl_factors @ ps
+        self.apply_isospin(full,self.target["Z"],self.target["A"])
 
         # drop all kernels with 0 weight, or empty coeffs
-        filtered_kernels = []
-        for ker in full:
-            ker.partons = {p: w for p, w in ker.partons.items() if w != 0}
-            if len(ker.partons) > 0 and not isinstance(ker.coeff, EmptyPartonicChannel):
-                filtered_kernels.append(ker)
-
-        return filtered_kernels
+        return self.drop_empty(full)

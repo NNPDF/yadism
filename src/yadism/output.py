@@ -112,7 +112,7 @@ class Output(dict):
             obsname : str
                 observable to be dumped
         """
-        # pylint: disable=no-member
+        # pylint: disable=no-member, too-many-locals
         if len(self[obsname]) <= 0:
             raise ValueError(f"no ESF {obsname}!")
         import pineappl  # pylint: disable=import-outside-toplevel
@@ -183,8 +183,6 @@ class Output(dict):
         grid.set_key_value("initial_state_2", str(lepton_pid))
 
         # dump file
-        # TODO: find a way to open file in python
-        # with open(output_pineappl, "wb") as f:
         grid.write(filename)
 
     def dump_yaml(self, stream=None):
