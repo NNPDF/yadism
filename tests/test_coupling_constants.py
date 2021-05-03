@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-import yadism.coupling_constants as coupl
+import yadism.coefficient_functions.coupling_constants as coupl
 
 
 class TestCouplingConstanst:

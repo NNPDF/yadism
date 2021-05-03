@@ -1,7 +1,10 @@
 import pytest
 
 from eko.thresholds import ThresholdsAtlas
-from yadism.nc import kernels
+from yadism.coefficient_functions.light import kernels as lker
+from yadism.coefficient_functions.heavy import kernels as hker
+from yadism.coefficient_functions.fonll import kernels as aker
+from yadism.coefficient_functions.intrinsic import kernels as iker
 from yadism import observable_name as on
 
 
@@ -31,6 +34,7 @@ class MockESF:
         self.sf = MockSF(sf)
         self.x = x
         self.Q2 = Q2
+        self.process = "NC"
 
 
 def mkpids(nf):
@@ -55,7 +59,7 @@ def check(ps, w):
 def test_generate_light_pc():
     esf = MockESF("F2_light", 0.1, 10)
     for nf in [3, 5]:
-        w = kernels.generate_light(esf, nf)
+        w = lker.generate(esf, nf)
         # ns, g, s
         ps = [mkpc(nf, 9), {21: 9}, mkpc(nf, 9)]
         check(ps, w)
@@ -64,7 +68,7 @@ def test_generate_light_pc():
 def test_generate_light_pv():  # pc = parity violating
     esf = MockESF("F3_light", 0.1, 10)
     for nf in [3, 5]:
-        w = kernels.generate_light(esf, nf)
+        w = lker.generate(esf, nf)
         # ns, g, s
         ps = [mkpv(nf, 6), {21: 0}, mkpv(nf, 0)]
         check(ps, w)
@@ -73,7 +77,7 @@ def test_generate_light_pv():  # pc = parity violating
 def test_generate_heavy():
     esf = MockESF("F2_charm", 0.1, 10)
     for nf in [3, 5]:
-        w = kernels.generate_heavy(esf, nf)
+        w = hker.generate(esf, nf)
         # gVV, gAA
         ps = [{21: 1}, {21: 8}]
         check(ps, w)
@@ -82,7 +86,7 @@ def test_generate_heavy():
 def test_generate_light_fonll_diff_pc():
     esf = MockESF("F2_light", 0.1, 10)
     for nl in [3, 5]:
-        w = kernels.generate_light_diff(esf, nl)
+        w = aker.generate_light_diff(esf, nl)
         # c/t as light
         ps = [{-(nl + 1): 9, (nl + 1): 9}]
         check(ps, w)
@@ -91,7 +95,7 @@ def test_generate_light_fonll_diff_pc():
 def test_generate_light_fonll_diff_pv():
     esf = MockESF("F3_light", 0.1, 10)
     for nl in [3, 5]:
-        w = kernels.generate_light_diff(esf, nl)
+        w = aker.generate_light_diff(esf, nl)
         # c/t as light
         ps = [{-(nl + 1): 0, (nl + 1): 0}]
         check(ps, w)
@@ -100,7 +104,7 @@ def test_generate_light_fonll_diff_pv():
 def test_generate_heavy_fonll_diff_pc():
     esf = MockESF("F2_charm", 0.1, 10)
     for nl in [3, 5]:
-        w = kernels.generate_heavy_diff(esf, nl)
+        w = aker.generate_heavy_diff(esf, nl)
         # light part + asy
         ps = [
             {-(nl + 1): 9, (nl + 1): 9},
@@ -115,7 +119,7 @@ def test_generate_heavy_fonll_diff_pc():
 def test_generate_heavy_fonll_diff_pv():
     esf = MockESF("F3_charm", 0.1, 10)
     for nl in [3, 5]:
-        w = kernels.generate_heavy_diff(esf, nl)
+        w = aker.generate_heavy_diff(esf, nl)
         # light part + asy
         ps = [{-(nl + 1): -6, (nl + 1): 6}, {21: 0}, mkpv(nl, 0)]
         check(ps, w)
@@ -124,7 +128,7 @@ def test_generate_heavy_fonll_diff_pv():
 def test_generate_intrinsic_pc():
     esf = MockESF("F2_charm", 0.1, 10)
     for nhq in [3, 5]:
-        w = kernels.generate_intrinsic(esf, nhq)
+        w = iker.generate(esf, nhq)
         # Sp, Sm
         ps = [{-nhq: 9, nhq: 9}, {-nhq: -7, nhq: -7}]
         check(ps, w)
@@ -133,7 +137,7 @@ def test_generate_intrinsic_pc():
 def test_generate_intrinsic_pv():
     esf = MockESF("F3_charm", 0.1, 10)
     for nhq in [3, 5]:
-        w = kernels.generate_intrinsic(esf, nhq)
+        w = iker.generate(esf, nhq)
         # Rp, Rm
         ps = [{-nhq: -6, nhq: 6}, {-nhq: 2, nhq: -2}]
         check(ps, w)

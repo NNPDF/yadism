@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from unittest import mock
-import pytest
 
-import yadism.splitting_functions as split
+import yadism.coefficient_functions.splitting_functions as split
 
 
 class TestSplittingLO:

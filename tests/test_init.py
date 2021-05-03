@@ -38,6 +38,8 @@ theory_dict = {
     "kDIScThr": 1.0,
     "kDISbThr": 1.0,
     "kDIStThr": 1.0,
+    "MaxNfPdf": 6,
+    "MaxNfAs": 6,
     "MZ": 91.1876,
     "MW": 90.398,
     "GF": 1.1663787e-05,

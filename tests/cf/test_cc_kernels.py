@@ -1,6 +1,8 @@
 import pytest
 
-from yadism.cc import kernels
+from yadism.coefficient_functions.light import kernels as lker
+from yadism.coefficient_functions.heavy import kernels as hker
+from yadism.coefficient_functions.fonll import kernels as aker
 from yadism import observable_name as on
 
 
@@ -33,6 +35,7 @@ class MockESF:
         self.sf = MockSF(sf, projectilePID)
         self.x = x
         self.Q2 = Q2
+        self.process = "CC"
 
 
 def mkpids(nf, sgn):
@@ -60,7 +63,7 @@ def test_generate_light_pc():
     for sgn in [True, False]:
         esf = MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10)
         for nf in [3, 4, 5]:
-            w = kernels.generate_light(esf, nf)
+            w = lker.generate(esf, nf)
             norm = {3: 1, 4: 3, 5: 7}[nf]
             # q, g
             ps = [mkpc(nf, norm, sgn), {21: (nf + 1) * norm / nf / 2.0}]
@@ -71,7 +74,7 @@ def test_generate_light_pv():
     for sgn in [True, False]:
         esf = MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10)
         for nf in [3, 4, 5]:
-            w = kernels.generate_light(esf, nf)
+            w = lker.generate(esf, nf)
             norm = {3: 1, 4: 3, 5: 7}[nf]
             # q, g
             ps = [
@@ -85,7 +88,7 @@ def test_generate_heavy_pc():
     for sgn in [True, False]:
         esf = MockESF("F2_charm", 11 * (1 if sgn else -1), 0.1, 10)
         for nf in [3, 4, 5]:
-            w = kernels.generate_heavy(esf, nf)
+            w = hker.generate(esf, nf)
             qnorm = {3: 2, 4: 4, 5: 8}[nf]
             gnorm = {3: 4, 4: 10, 5: 24}[nf]
             # q, g
@@ -97,7 +100,7 @@ def test_generate_heavy_pv():
     for sgn in [True, False]:
         esf = MockESF("F3_charm", 11 * (1 if sgn else -1), 0.1, 10)
         for nf in [3, 4, 5]:
-            w = kernels.generate_heavy(esf, nf)
+            w = hker.generate(esf, nf)
             qnorm = {3: 2, 4: 4, 5: 8}[nf]
             gnorm = {3: 4, 4: 10, 5: 24}[nf]
             # q, g
@@ -112,7 +115,7 @@ def test_generate_light_fonll_diff():
             MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10),
         ]:
             for nf in [3, 4, 5]:
-                w = kernels.generate_light_diff(esf, nf)
+                w = aker.generate_light_diff(esf, nf)
                 assert len(w) == 0
 
 

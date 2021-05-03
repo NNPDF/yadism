@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import copy
+
+import numpy as np
 
 import pytest
 
-from yadism import ic, partonic_channel
+from yadism.coefficient_functions.intrinsic import raw_nc
+from yadism.coefficient_functions.fonll import partonic_channel
 
 
 class MockObj:
@@ -13,8 +15,8 @@ class MockObj:
 
 
 def test_li2():
-    assert ic.li2(0) == 0
-    assert ic.li2(1) == np.pi ** 2 / 6.0
+    assert raw_nc.li2(0) == 0
+    assert raw_nc.li2(1) == np.pi ** 2 / 6.0
 
 
 def test_Cplus():
@@ -22,10 +24,10 @@ def test_Cplus():
     pc.m1sq = np.random.rand()
     pc.m2sq = 0
     pc.I1 = np.random.rand()
-    assert ic.Cplus(pc) == 0
+    assert raw_nc.Cplus(pc) == 0
     pc.m2sq = np.random.rand()
     pc.m1sq = 0
-    assert ic.Cplus(pc) == 0
+    assert raw_nc.Cplus(pc) == 0
 
 
 def test_C1pm():
@@ -34,7 +36,7 @@ def test_C1pm():
     pc.m1sq = pc.m2sq = np.random.rand()
     pc.I1 = np.random.rand()
     pc.Q2 = np.random.rand()
-    assert ic.C1p(pc) == ic.C1m(pc)
+    assert raw_nc.C1p(pc) == raw_nc.C1m(pc)
 
 
 def test_S():
@@ -47,19 +49,19 @@ def test_S():
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.m2sq = 0
-        ic.S(ppc)
+        raw_nc.S(ppc)
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.Q2 = 0
-        ic.S(ppc)
+        raw_nc.S(ppc)
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.delta = 0
-        ic.S(ppc)
+        raw_nc.S(ppc)
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.delta = ppc.sigma_pp
-        ic.S(ppc)
+        raw_nc.S(ppc)
 
 
 def test_CRm():
@@ -75,27 +77,27 @@ def test_CRm():
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.m1sq = 0
-        ic.CRm(ppc)
+        raw_nc.CRm(ppc)
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.m2sq = 0
-        ic.CRm(ppc)
+        raw_nc.CRm(ppc)
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.Q2 = 0
-        ic.CRm(ppc)
+        raw_nc.CRm(ppc)
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.delta = 0
-        ic.CRm(ppc)
+        raw_nc.CRm(ppc)
     with pytest.warns(RuntimeWarning):
         ppc = copy.copy(pc)
         ppc.delta = ppc.sigma_pm
-        assert not np.isfinite(ic.CRm(ppc))
+        assert not np.isfinite(raw_nc.CRm(ppc))
     with pytest.warns(RuntimeWarning):
         ppc = copy.copy(pc)
         ppc.delta = ppc.sigma_mp
-        assert not np.isfinite(ic.CRm(ppc))
+        assert not np.isfinite(raw_nc.CRm(ppc))
     pc.sigma_pp = 0  # deny contributions
     pc.Q2 = pc.m1sq = pc.m2sq
     pc.delta = partonic_channel.PartonicChannelAsyIntrinsic.kinematic_delta(
@@ -104,4 +106,4 @@ def test_CRm():
     pc.sigma_mp *= pc.delta  # Sigma_mp < delta otherwise the Li2 become undefined
     pc.sigma_pm *= pc.delta  # see above
     pc.I1 = 1.0
-    assert pytest.approx(ic.CRm(pc)) == 5.0 / 2.0 * pc.Q2 - 4.0
+    assert pytest.approx(raw_nc.CRm(pc)) == 5.0 / 2.0 * pc.Q2 - 4.0

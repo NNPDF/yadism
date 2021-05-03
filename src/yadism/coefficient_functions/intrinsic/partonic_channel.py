@@ -48,11 +48,11 @@ class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
         )(self)
 
         delta = norm * (
-            raw_nc.__getattribute__(f"f{kind}_{RS}_virt")( # pylint: disable=no-member
+            raw_nc.__getattribute__(f"f{kind}_{RS}_virt")(  # pylint: disable=no-member
                 self
             )
             + self.S  # add normalization between curly and upright F
-            * raw_nc.__getattribute__(f"m{kind}_{RS}")( # pylint: disable=no-member
+            * raw_nc.__getattribute__(f"m{kind}_{RS}")(  # pylint: disable=no-member
                 self
             )
         )
