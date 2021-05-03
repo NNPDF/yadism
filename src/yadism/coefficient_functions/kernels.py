@@ -5,6 +5,23 @@ from numbers import Number
 
 
 def import_local(kind, process, sibling):
+    """
+    Import the suitable subpackage with the actual partonic channel implementation.
+
+    Parameters
+    ----------
+        kind : str
+            structure function kind
+        process : str
+            DIS process type: "EM","NC","CC"
+        sibling : str
+            relative parent to import from
+
+    Returns
+    -------
+        module : module
+            module
+    """
     kind = kind.lower()
     process = process.lower()
     if process == "em":
@@ -14,6 +31,17 @@ def import_local(kind, process, sibling):
 
 
 class Kernel:
+    """
+    Combination of partons with their weights and their mathematical expression in this channel.
+
+    Parameters
+    ----------
+        partons : dict
+            mapping pid -> weight
+        coeff : PartonicChannel
+            mathematical expression
+    """
+
     def __init__(self, partons, coeff):
         self.partons = partons
         self.coeff = coeff

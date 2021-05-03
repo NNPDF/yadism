@@ -271,7 +271,7 @@ class CouplingConstants:
             ** 2,  # TODO remove defaults to the PDG2020 value
             "CKM": CKM2Matrix.from_str(
                 theory["CKM"]
-            ),  # TODO remove default in https://pdg.lbl.gov/2019/reviews/rpp2019-rev-ckm-matrix.pdf Eq. 12.33
+            ),  # TODO remove default in PDG2020 Eq. 12.33
             "sin2theta_weak": theory.get(
                 "SIN2TW", 0.23121
             ),  # TODO remove defaults to the PDG2020 value

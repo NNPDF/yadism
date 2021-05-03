@@ -23,20 +23,39 @@ def generate(esf, nf):
             list of elements
     """
     kind = esf.sf.obs_name.kind
-    mod = import_pc_module(kind, esf.process)
+    pcs = import_pc_module(kind, esf.process)
     if esf.process == "CC":
         weights = kernels.cc_weights(
             esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[:nf], nf
         )
     else:
         weights = nc_weights(esf.sf.coupling_constants, esf.Q2, kind, nf)
-    ns = kernels.Kernel(weights["ns"], mod.NonSinglet(esf, nf=nf))
-    g = kernels.Kernel(weights["g"], mod.Gluon(esf, nf=nf))
-    s = kernels.Kernel(weights["s"], mod.Singlet(esf, nf=nf))
+    ns = kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf=nf))
+    g = kernels.Kernel(weights["g"], pcs.Gluon(esf, nf=nf))
+    s = kernels.Kernel(weights["s"], pcs.Singlet(esf, nf=nf))
     return (ns, g, s)
 
 
 def nc_weights(coupling_constants, Q2, kind, nf):
+    """
+    Compute light NC weights.
+
+    Parameters
+    ----------
+        coupling_constants : CouplingConstants
+            manager for coupling constants
+        Q2 : float
+            W virtuality
+        kind : str
+            structure function kind
+        nf : int
+            number of light flavors
+
+    Returns
+    -------
+        weights : dict
+            mapping pid -> weight for ns, g and s channel
+    """
     # quark couplings
     tot_ch_sq = 0
     ns_partons = {}

@@ -23,7 +23,7 @@ class PartonicChannel(dict):
         """
         Convolution point
         """
-        return self.ESF.x  # pylint: disable=protected-access
+        return self.ESF.x
 
     def decorator(self, f):
         """

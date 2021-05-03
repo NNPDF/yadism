@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the CC light coefficient function.
-"""
 
 from . import f2_nc
 from .. import partonic_channel as pc

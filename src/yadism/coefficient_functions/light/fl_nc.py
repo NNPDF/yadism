@@ -1,40 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the DIS FL coefficient functions, for
-light quark flavours.
-
-The coefficient functions definition is given in :eqref:`4.2`,
-:cite:`vogt-f2nc` (the same of :eqref:`1` in :cite:`vogt-flnc`).
-The main reference for their expression is :cite:`vogt-flnc`.
-
-Scale varitions main reference is :cite:`vogt-sv`.
-
-"""
-
 from eko import constants
 
 from . import partonic_channel as pc
 
 
 class NonSinglet(pc.LightBase):
-    """
-    Computes light quark non-singlet channel of FLlight
-    """
-
-    label = "q"
-
     def NLO(self):
         """
-        Computes the quark singlet part of the next to leading order FL
-        structure function.
-
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
-
-        Returns
-        -------
-            sequence of callables
-                coefficient functions
-
         """
         CF = constants.CF
 
@@ -45,23 +18,9 @@ class NonSinglet(pc.LightBase):
 
 
 class Gluon(pc.LightBase):
-    """
-    Computes gluon channel of FLlight
-    """
-
-    label = "g"
-
     def NLO(self):
         """
-        Computes the gluon part of the next to leading order FL structure
-        function.
-
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
-
-        Returns
-        -------
-            sequence of callables
-                coefficient functions
         """
 
         def cg(z, nf=self.nf):
