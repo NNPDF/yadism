@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from scipy.special import spence
 
@@ -74,15 +75,18 @@ class ChargedCurrentBase(pc.PartonicChannel):
     Heavy partonic coefficient functions that respect hadronic and partonic
     thresholds.
 
-    The main reference used is: :cite:`gluck-ccheavy`.
-
-    From above we see that partonic coefficient functions have to be multiplied
+    From :cite:`gluck-ccheavy` we see that the partonic coefficient functions have to be multiplied
     by different factors for the different structure functions. In order to keep
     track of this we use the :attr:`sf_prefactor` attribute. Coefficients
     that to not explicitly depend on the structure function kind are mulitplied
     by this factor (:math:`B_{3,i}` and the explicit factorization bits).
     For all the other the factors have to be applied explicitly: e.g.
     :math:`A_L = A_2 - \lambda A_1`.
+
+    Parameters
+    ----------
+        m2hq : float
+            heavy quark mass
     """
 
     def __init__(self, *args, m2hq):
@@ -99,12 +103,14 @@ class ChargedCurrentBase(pc.PartonicChannel):
 
     def convolution_point(self):
         """
-        Convolution point
+        Change convolution point due to massive particles
         """
         return self.x / self.labda
 
 
 class ChargedCurrentNonSinglet(ChargedCurrentBase):
+    """Quark contributions"""
+
     def r_integral(self, x):
         r"""
         -Power(Pi,2)/6. + Li2(\[Lambda]) + Li2((1 - \[Lambda])/(1 -
@@ -208,6 +214,8 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
 
 
 class ChargedCurrentGluon(ChargedCurrentBase):
+    """Gluon contributions"""
+
     def NLO_fact(self):
         as_norm = 2.0
 

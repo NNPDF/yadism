@@ -1,31 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the NC F2 heavy coefficient functions.
-
-The main reference used is: :cite:`felix-thesis`.
-
-"""
-
 import numpy as np
 
 from . import partonic_channel as pc
 
 
 class GluonVV(pc.NeutralCurrentBase):
-
-    label = "gVV"
-
     def NLO(self):
         """
-        Computes the gluon part of the next to leading order F2 structure
-        function.
-
         |ref| implements :eqref:`D.1`, :cite:`felix-thesis`.
-
-        Returns
-        -------
-            sequence of callables
-                coefficient functions
         """
 
         def cg(z):
@@ -53,20 +35,9 @@ class GluonVV(pc.NeutralCurrentBase):
 
 
 class GluonAA(GluonVV):
-
-    label = "gAA"
-
     def NLO(self):
         """
-        Computes the gluon part of the next to leading order F2 structure
-        function.
-
         |ref| implements :eqref:`D.4`, :cite:`felix-thesis`.
-
-        Returns
-        -------
-            sequence of callables
-                coefficient functions
         """
 
         VV = super().NLO()

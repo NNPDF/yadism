@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the DIS F2 coefficient functions, for
-heavy quarks
-"""
-
 import numpy as np
 
 from . import partonic_channel as pc
@@ -11,13 +6,10 @@ from .. import splitting_functions as split
 
 
 class NonSinglet(pc.ChargedCurrentNonSinglet):
-    """
-    Computes the quark heavy quark channel of F2heavy
-    """
-
-    label = "q"
-
     def NLO(self):
+        """
+        |ref| implements :eqref:`A.1-4` with Table 1, :cite:`gluck-ccheavy`.
+        """
         a = self.ka
         b1 = lambda z: 2 - 2 * z ** 2 - 2 / z
         b2 = lambda z: 2 / z - 1 - z
@@ -26,13 +18,10 @@ class NonSinglet(pc.ChargedCurrentNonSinglet):
 
 
 class Gluon(pc.ChargedCurrentGluon):
-    """
-    Computes the gluon heavy quark channel of F2heavy
-    """
-
-    label = "g"
-
     def NLO(self):
+        """
+        |ref| implements :eqref:`A.5-7` with Table 2, :cite:`gluck-ccheavy`.
+        """
         as_norm = 2.0
 
         def reg(z):

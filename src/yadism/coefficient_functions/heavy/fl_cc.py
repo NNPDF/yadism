@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the CC FL heavy coefficient functions.
-"""
 
 import numpy as np
 
@@ -15,6 +12,9 @@ class NonSinglet(pc.ChargedCurrentNonSinglet):
         self.sf_prefactor = 1.0 - self.labda
 
     def NLO(self):
+        """
+        |ref| implements :eqref:`A.1-4` with Table 1, :cite:`gluck-ccheavy`.
+        """
         a = self.ka
         b1 = lambda z: (
             2.0 - 2.0 * z ** 2 - 2.0 / z - self.labda * (1.0 - 4.0 * z + z ** 2)
@@ -30,6 +30,9 @@ class Gluon(pc.ChargedCurrentGluon):
         self.sf_prefactor = 1.0 - self.labda
 
     def NLO(self):
+        """
+        |ref| implements :eqref:`A.5-7` with Table 2, :cite:`gluck-ccheavy`.
+        """
         as_norm = 2.0
 
         def reg(z):

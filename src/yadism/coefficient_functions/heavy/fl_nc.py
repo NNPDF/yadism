@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the NC FL heavy coefficient functions.
-
-The main reference used is: :cite:`felix-thesis`.
-
-"""
-
 import numpy as np
 
 from eko import constants
@@ -14,20 +7,9 @@ from . import partonic_channel as pc
 
 
 class GluonVV(pc.NeutralCurrentBase):
-
-    label = "gVV"
-
     def NLO(self):
         """
-        Computes the gluon part of the next to leading order FL structure
-        function.
-
         |ref| implements :eqref:`D.2`, :cite:`felix-thesis`.
-
-        Returns
-        -------
-            sequence of callables
-                coefficient functions
         """
         CF = constants.CF
 
@@ -46,20 +28,9 @@ class GluonVV(pc.NeutralCurrentBase):
 
 
 class GluonAA(GluonVV):
-
-    label = "gAA"
-
     def NLO(self):
         """
-        Computes the gluon part of the next to leading order F2 structure
-        function.
-
         |ref| implements :eqref:`D.5`, :cite:`felix-thesis`.
-
-        Returns
-        -------
-            sequence of callables
-                coefficient functions
         """
 
         VV = super().NLO()

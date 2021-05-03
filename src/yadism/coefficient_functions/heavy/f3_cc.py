@@ -1,12 +1,4 @@
 # -*- coding: utf-8 -*-
-r"""
-This module contains the implementation of the DIS F3 coefficient functions, for
-heavy quark flavors.
-
-The main reference used is: :cite:`gluck-ccheavy`.
-
-"""
-
 import numpy as np
 
 from . import partonic_channel as pc
@@ -14,19 +6,14 @@ from .. import splitting_functions as split
 
 
 class NonSinglet(pc.ChargedCurrentNonSinglet):
-    """
-    Computes the light quark channel of F3heavy.
-
-    :eqref:`2` of :cite:`gluck-ccheavy`
-    """
-
-    label = "q"
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.sf_prefactor = self.labda
 
     def NLO(self):
+        """
+        |ref| implements :eqref:`A.1-4` with Table 1, :cite:`gluck-ccheavy`.
+        """
         a = 0
         b1 = lambda z: (-1 - z ** 2) * self.sf_prefactor
         b2 = lambda z: (1 - z) * self.sf_prefactor
@@ -35,15 +22,10 @@ class NonSinglet(pc.ChargedCurrentNonSinglet):
 
 
 class Gluon(pc.ChargedCurrentGluon):
-    """
-    Computes the gluon channel of F3heavy
-
-    :eqref:`A5` of :cite:`gluck-ccheavy`
-    """
-
-    label = "g"
-
     def NLO(self):
+        """
+        |ref| implements :eqref:`A.5-7` with Table 2, :cite:`gluck-ccheavy`.
+        """
         as_norm = 2.0
 
         def reg(z):
@@ -63,11 +45,7 @@ class Gluon(pc.ChargedCurrentGluon):
         return reg
 
     def NLO_fact(self):
-        as_norm = 2.0
-
         def reg(z):
-            return (
-                (split.pqg(z) / 2.0) * as_norm * self.labda
-            )  # TODO unify with parent?
+            return split.pqg(z) * self.labda  # TODO unify with parent?
 
         return reg
