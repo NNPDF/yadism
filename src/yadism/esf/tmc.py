@@ -27,8 +27,8 @@ import abc
 
 import numpy as np
 
-from .esf.distribution_vec import DistributionVec
-from .esf.esf_result import ESFResult
+from .distribution_vec import DistributionVec
+from .esf_result import ESFResult
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
