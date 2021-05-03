@@ -1,27 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the DIS F2 coefficient functions
-
-.. todo::
-    docs
-"""
 
 import numpy as np
 
 from eko import constants
 
-from .. import partonic_channel as pc
+from . import partonic_channel as pc
 from .. import splitting_functions as split
-from ..esf.distribution_vec import rsl_from_distr_coeffs
+from ...esf.distribution_vec import rsl_from_distr_coeffs
 
 
-class F2asyQuark(pc.PartonicChannelAsy):
-    """
-    Computes the quark channel of the asymptotic limit of F2heavy.
-    """
-
-    label = "q"
-
+class AsyQuark(pc.PartonicChannelAsy):
     def LO(self):
         return 0.0, 0.0, 1.0
 
@@ -64,13 +52,7 @@ class F2asyQuark(pc.PartonicChannelAsy):
         return reg, sing, local
 
 
-class F2asyGluon(pc.PartonicChannelAsy):
-    """
-    Computes the gluon channel of the asymptotic limit of F2heavy.
-    """
-
-    label = "g"
-
+class AsyGluon(pc.PartonicChannelAsy):
     def NLO(self):
         as_norm = 2.0
 

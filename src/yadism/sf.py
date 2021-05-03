@@ -7,8 +7,7 @@ Defines the :py:class:`StructureFunction` class.
 """
 import logging
 
-from .esf import esf
-from .tmc import ESFTMCmap
+from .esf import esf, tmc
 
 logger = logging.getLogger(__name__)
 
@@ -113,7 +112,7 @@ class StructureFunction:
                 return self.cache[key]
             except KeyError:
                 if use_tmc_if_available:
-                    obj = ESFTMCmap[obs_name.kind](self, kinematics)
+                    obj = tmc.ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
                     obj = esf.EvaluatedStructureFunction(self, kinematics, *args)
                 self.cache[key] = obj

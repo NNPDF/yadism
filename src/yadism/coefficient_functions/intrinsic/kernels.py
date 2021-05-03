@@ -22,12 +22,20 @@ def generate(esf, ihq):
         elems : list(yadism.kernels.Kernel)
             list of elements
     """
-    if esf.process == "CC":
-        return ()
 
     kind = esf.sf.obs_name.kind
-    mod = import_pc_module(kind, esf.process)
+    cfs = import_pc_module(kind, esf.process)
     m2hq = esf.sf.m2hq[ihq - 4]
+    if esf.process == "CC":
+        # w = weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], ihq)
+        # wq = {k: v for k, v in w["q"].items() if abs(k) == ihq}
+        # if kind == "F3":
+        #     return (kernels.Kernel(wq, cfs["intrinsic"]["Rp"](esf, m1sq=m2hq, m2sq=0.0)),)
+        # return (
+        #     kernels.Kernel(wq, cfs["intrinsic"]["Sp"](esf, m1sq=m2hq, m2sq=0.0)),
+        #     kernels.Kernel(wq, cfs["intrinsic"]["Sm"](esf, m1sq=m2hq, m2sq=0.0)),
+        # )
+        return ()
     if kind == "F3":
         wVA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VA")
         wAV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
@@ -36,11 +44,11 @@ def generate(esf, ihq):
         return (
             kernels.Kernel(
                 {ihq: wp, (-ihq): -wp},
-                mod.Rplus(esf, m1sq=m2hq, m2sq=m2hq),
+                cfs.Rplus(esf, m1sq=m2hq, m2sq=m2hq),
             ),
             kernels.Kernel(
                 {ihq: wm, (-ihq): -wm},
-                mod.Rminus(esf, m1sq=m2hq, m2sq=m2hq),
+                cfs.Rminus(esf, m1sq=m2hq, m2sq=m2hq),
             ),
         )
     wVV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VV")
@@ -48,6 +56,6 @@ def generate(esf, ihq):
     wp = wVV + wAA
     wm = wVV - wAA
     return (
-        kernels.Kernel({ihq: wp, (-ihq): wp}, mod.Splus(esf, m1sq=m2hq, m2sq=m2hq)),
-        kernels.Kernel({ihq: wm, (-ihq): wm}, mod.Sminus(esf, m1sq=m2hq, m2sq=m2hq)),
+        kernels.Kernel({ihq: wp, (-ihq): wp}, cfs.Splus(esf, m1sq=m2hq, m2sq=m2hq)),
+        kernels.Kernel({ihq: wm, (-ihq): wm}, cfs.Sminus(esf, m1sq=m2hq, m2sq=m2hq)),
     )

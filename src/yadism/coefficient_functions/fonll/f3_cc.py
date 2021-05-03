@@ -1,27 +1,16 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the DIS F3 coefficient functions, for
-heavy quark flavours.
-
-.. todo::
-    docs
-"""
 
 import numpy as np
 
 from eko import constants
 
-from .. import partonic_channel as pc
+from . import partonic_channel as pc
 from .. import splitting_functions as split
-from ..esf.distribution_vec import rsl_from_distr_coeffs
+from ...esf.distribution_vec import rsl_from_distr_coeffs
 
 
-class F3asyQuark(pc.PartonicChannelAsy):
-    """
-    Computes the gluon channel of the asymptotic limit of F3heavy.
-    """
-
-    label = "q"
+class AsyQuark(pc.PartonicChannelAsy):
+    # TODO this should be pure light
 
     def LO(self):
         return 0.0, 0.0, 1.0
@@ -50,27 +39,10 @@ class F3asyQuark(pc.PartonicChannelAsy):
         return rsl_from_distr_coeffs(reg, delta, omz_pd, log_pd)
 
     def NLO_fact(self):
-        as_norm = 2.0
-
-        def reg(z):
-            return split.pqq_reg(z) / 2.0 * as_norm
-
-        def sing(z):
-            return split.pqq_sing(z) / 2.0 * as_norm
-
-        def local(x):
-            return split.pqq_local(x) / 2.0 * as_norm
-
-        return reg, sing, local
+        return split.pqq_reg, split.pqq_sing, split.pqq_local
 
 
-class F3asyGluon(pc.PartonicChannelAsy):
-    """
-    Computes the gluon channel of the asymptotic limit of F3heavy.
-    """
-
-    label = "g"
-
+class AsyGluon(pc.PartonicChannelAsy):
     def NLO(self):
         as_norm = 2.0
 
@@ -80,9 +52,4 @@ class F3asyGluon(pc.PartonicChannelAsy):
         return reg
 
     def NLO_fact(self):
-        as_norm = 2.0
-
-        def reg(z):
-            return (split.pqg(z) / 2.0) * as_norm
-
-        return reg
+        return split.pqg

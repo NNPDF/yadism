@@ -38,7 +38,7 @@ from . import log
 from .output import Output
 from .sf import StructureFunction as SF
 from .xs import CrossSection as XS
-from .coupling_constants import CouplingConstants
+from .coefficient_functions.coupling_constants import CouplingConstants
 
 log.setup()
 logger = logging.getLogger(__name__)

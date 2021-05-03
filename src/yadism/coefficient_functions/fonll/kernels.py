@@ -34,6 +34,8 @@ def generate_light_diff(esf, nl):
         elems : list(yadism.kernels.Kernel)
             list of elements
     """
+    if esf.process == "CC":
+        return ()
     kind = esf.sf.obs_name.kind
     light_cfs = import_pc_module(kind, esf.process, "light")
     light_weights = light.kernels.nc_weights(
@@ -49,22 +51,29 @@ def generate_heavy_diff(esf, nl):
     ihq = nl + 1
     # add light contributions
     ns_partons = {}
-    if kind != "F3":
-        w = esf.sf.coupling_constants.get_weight(
-            ihq, esf.Q2, "VV"
-        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
-    else:
-        w = esf.sf.coupling_constants.get_weight(
-            ihq, esf.Q2, "VA"
-        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
-
-    ns_partons[ihq] = w
-    ns_partons[-ihq] = w if kind != "F3" else -w
-    ch_av = w / (nl + 1) if kind != "F3" else 0.0
+    ch_av = 0
     s_partons = {}
-    for pid in range(1, nl + 1):
-        s_partons[pid] = ch_av
-        s_partons[-pid] = ch_av
+    if esf.process == "CC":
+        w = kernels.cc_weights(
+            esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], nl + 1
+        )
+        ns_partons, ch_av, s_partons = w["ns"], w["g"][21] / (nl + 1.0), w["s"]
+    else:
+        if kind != "F3":
+            w = esf.sf.coupling_constants.get_weight(
+                ihq, esf.Q2, "VV"
+            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+        else:
+            w = esf.sf.coupling_constants.get_weight(
+                ihq, esf.Q2, "VA"
+            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+
+        ns_partons[ihq] = w
+        ns_partons[-ihq] = w if kind != "F3" else -w
+        ch_av = w / (nl + 1) if kind != "F3" else 0.0
+        for pid in range(1, nl + 1):
+            s_partons[pid] = ch_av
+            s_partons[-pid] = ch_av
     elems = (
         kernels.Kernel(ns_partons, light_cfs.NonSinglet(esf, nf=nl + 1)),
         kernels.Kernel({21: ch_av}, light_cfs.Gluon(esf, nf=nl + 1)),
@@ -77,16 +86,34 @@ def generate_heavy_diff(esf, nl):
     fonll_cfs = import_pc_module(kind, esf.process)
     mu2hq = esf.sf.threshold.areas[ihq - 4].q2_max
     asys = []
-    asy_weights = heavy.kernels.nc_weights(esf.sf.coupling_constants, esf.Q2, kind, nl)
-    if kind != "F3":
+    if esf.process == "CC":
+        wa = kernels.cc_weights(
+            esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], nl
+        )
         asys = [
-            -kernels.Kernel(asy_weights["gVV"], fonll_cfs.AsyGluonVV(esf, mu2hq=mu2hq)),
-            -kernels.Kernel(asy_weights["gAA"], fonll_cfs.AsyGluonAA(esf, mu2hq=mu2hq)),
+            -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, mu2hq=mu2hq)),
+            -kernels.Kernel(wa["g"], fonll_cfs.AsyGluon(esf, mu2hq=mu2hq)),
         ]
+    else:
+        asy_weights = heavy.kernels.nc_weights(
+            esf.sf.coupling_constants, esf.Q2, kind, nl
+        )
+        if kind != "F3":
+            asys = [
+                -kernels.Kernel(
+                    asy_weights["gVV"], fonll_cfs.AsyGluonVV(esf, mu2hq=mu2hq)
+                ),
+                -kernels.Kernel(
+                    asy_weights["gAA"], fonll_cfs.AsyGluonAA(esf, mu2hq=mu2hq)
+                ),
+            ]
     return (*elems, *asys)
 
 
 def generate_heavy_intrinsic_diff(esf, nl):
+    if esf.process == "CC":
+        # TODO fill
+        return ()
     kind = esf.sf.obs_name.kind
     cfs = import_pc_module(kind, esf.process)
     ihq = nl + 1
