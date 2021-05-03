@@ -129,6 +129,16 @@ class DistributionVec:
               provided the coefficients of that one and the current one are
               summed element-wise
 
+        Parameters
+        ----------
+            other : DistributionVec,callable,float
+                summand
+
+        Returns
+        -------
+            DistributionVec :
+                self + other
+
         Note
         ----
         Do not support ``DistributionVec + iterable``, if needed use:
@@ -140,44 +150,94 @@ class DistributionVec:
         """
         # TODO: compile a proper comutational graph....
         # currently: compute the minimal nesting
-        result_args = []
         if isinstance(other, DistributionVec):
-            for c1, c2 in zip(self, other):
-                if c1 is None:
-                    result_args.append(c2)
-                elif c2 is None:
-                    result_args.append(c1)
-                elif callable(c1):
-                    if callable(c2):
-                        result_args.append(lambda x, c1=c1, c2=c2: c1(x) + c2(x))
-                    else:
-                        result_args.append(lambda x, c1=c1, c2=c2: c1(x) + c2)
-                else:
-                    if callable(c2):
-                        result_args.append(lambda x, c1=c1, c2=c2: c1 + c2(x))
-                    else:
-                        result_args.append(c1 + c2)
-        elif callable(other):
-            if self.regular is None:
-                result_args.append(other)
-            elif callable(self.regular):
-                result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2(x))
-            else:
-                result_args.append(lambda x, c1=self.regular, c2=other: c1 + c2(x))
-            result_args.append(self.singular)
-            result_args.append(self.local)
-        else:
-            # pretend to be a float
-            other = float(other)
-            if self.regular is None:
-                result_args.append(other)
-            elif callable(self.regular):
-                result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2)
-            else:
-                result_args.append(other + self.regular)
-            result_args.append(self.singular)
-            result_args.append(self.local)
+            return self.add_cls(other)
+        if callable(other):
+            return self.add_callable(other)
+        # pretend to be a float
+        return self.add_float(other)
 
+    def add_float(self, other):
+        """
+        Add another regular constant.
+
+        Parameters
+        ----------
+            other : float
+                summand
+
+        Returns
+        -------
+            DistributionVec :
+                self + other
+        """
+        result_args = []
+        other = float(other)
+        if self.regular is None:
+            result_args.append(other)
+        elif callable(self.regular):
+            result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2)
+        else:
+            result_args.append(other + self.regular)
+        result_args.append(self.singular)
+        result_args.append(self.local)
+        return DistributionVec(*result_args)
+
+    def add_callable(self, other):
+        """
+        Add another regular function.
+
+        Parameters
+        ----------
+            other : callable
+                summand
+
+        Returns
+        -------
+            DistributionVec :
+                self + other
+        """
+        result_args = []
+        if self.regular is None:
+            result_args.append(other)
+        elif callable(self.regular):
+            result_args.append(lambda x, c1=self.regular, c2=other: c1(x) + c2(x))
+        else:
+            result_args.append(lambda x, c1=self.regular, c2=other: c1 + c2(x))
+        result_args.append(self.singular)
+        result_args.append(self.local)
+        return DistributionVec(*result_args)
+
+    def add_cls(self, other):
+        """
+        Add another instance.
+
+        Parameters
+        ----------
+            other : DistributionVec
+                summand
+
+        Returns
+        -------
+            DistributionVec :
+                self + other
+        """
+        result_args = []
+        for c1, c2 in zip(self, other):
+            if c1 is None:
+                result_args.append(c2)
+            elif c2 is None:
+                result_args.append(c1)
+            elif callable(c1):
+                if callable(c2):
+                    result_args.append(lambda x, c1=c1, c2=c2: c1(x) + c2(x))
+                else:
+                    result_args.append(lambda x, c1=c1, c2=c2: c1(x) + c2)
+            else:
+                if callable(c2):
+                    result_args.append(lambda x, c1=c1, c2=c2: c1 + c2(x))
+                else:
+                    result_args.append(c1 + c2)
         return DistributionVec(*result_args)
 
     def __radd__(self, other):
