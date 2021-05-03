@@ -1,52 +1,50 @@
-DEMODIR=demo/yadism
+# Minimal makefile for Sphinx documentation
+#
 
-.PHONY: all, demo, view, clean, home, assets, sphinx-html, demo-dir
+# You can set these variables from the command line.
+SPHINXOPTS    =
+SPHINXBUILD   = sphinx-build
+SOURCEDIR     = source
+BUILDDIR      = build
 
-all: demo
-	@# all - compile everything in `demo`
+SRCDIR = ../../src/yadism
+YADISMOUT = $(SOURCEDIR)/modules
+YADMARKDIR = ../../benchmarks/yadmark
+YADMARKOUT = $(SOURCEDIR)/dev-tools/yadmark
 
-demo: home assets sphinx-html
+TODOOUTFILE = ./source/dev-tools/code-todos.rst
 
-demo-dir:
-	@mkdir -p $(DEMODIR)
-
-home: demo-dir
-	cd home-page && echo ${PWD} && make
-	cp -r home-page/build/* $(DEMODIR)
-
-assets: demo-dir
-	cd _assets && make
-	cp -r _assets $(DEMODIR)
-
-sphinx-html: demo-dir
-	cd sphinx && echo ${PWD} &&make html
-	cp -r sphinx/build/html $(DEMODIR)
-	@rm -rf $(DEMODIR)/develop
-	@mv $(DEMODIR)/html $(DEMODIR)/develop
-
-view: kill-server
-	@# view - Open result in default browser
-	@python3 -m http.server 8000 --directory demo & echo "$$!" > .server
-	${BROWSER} localhost:8000
-
-kill-server:
-	@# kill-server - kill running python server
-ifneq (,$(wildcard ./.server))
-	@echo "Kill server at PID:$$(cat .server)"
-	-@kill $$(cat .server)
-	@rm -f .server
-endif
-
-clean-demo:
-	@# clean-demo - Clean final product only
-	rm -rf demo
-
-clean: clean-demo
-	@# clean - Clean everything (nested)
-	cd sphinx && make clean
-	cd home-page && make clean
-	rm -rf demo
-
+# Put it first so that "make" without argument is like "make help".
 help:
-	@# help - Show this help.
-	@./MakefileHelp.sh
+	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+.PHONY: help html view clean clean-todos cleanall
+
+html: todos
+	sphinx-apidoc -o $(YADISMOUT) --module-first $(SRCDIR)
+	@rm -f $(YADISMOUT)/modules.rst
+	sphinx-apidoc -o $(YADMARKOUT) --module-first $(YADMARKDIR)
+	@rm -f $(YADMARKOUT)/modules.rst
+	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+view:
+	$(BROWSER) $(BUILDDIR)/html/index.html
+
+server:
+	python3 -m http.server 8000 --bind 127.0.0.1 --directory build/html &
+	$(BROWSER) 127.0.0.1:8000/index.html
+
+clean:
+	rm -rf build
+	rm -rf _build
+
+cleanall: clean clean-todos
+	rm -rf $(YADISMOUT)
+	rm -rf $(YADMARKOUT)
+
+# TODOs
+todos:
+	python generate_code_todos.py "$(SRCDIR)" "$(TODOOUTFILE)"
+
+clean-todos:
+	rm "$(TODOOUTFILE)"
