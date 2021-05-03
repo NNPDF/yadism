@@ -10,6 +10,7 @@ from ...esf.distribution_vec import rsl_from_distr_coeffs
 
 
 class AsyQuark(pc.PartonicChannelAsy):
+    # TODO inherit from light
     def LO(self):
         return 0.0, 0.0, 1.0
 
@@ -38,18 +39,7 @@ class AsyQuark(pc.PartonicChannelAsy):
         return rsl_from_distr_coeffs(reg, delta, omz_pd, log_pd)
 
     def NLO_fact(self):
-        as_norm = 2.0
-
-        def reg(z):
-            return (split.pqq_reg(z) / 2.0) * as_norm
-
-        def sing(z):
-            return (split.pqq_sing(z) / 2.0) * as_norm
-
-        def local(x):
-            return (split.pqq_local(x) / 2.0) * as_norm
-
-        return reg, sing, local
+        return split.pqq_reg, split.pqq_sing, split.pqq_local
 
 
 class AsyGluon(pc.PartonicChannelAsy):
@@ -66,9 +56,4 @@ class AsyGluon(pc.PartonicChannelAsy):
         return reg
 
     def NLO_fact(self):
-        as_norm = 2.0
-
-        def reg(z):
-            return split.pqg(z) / 2.0 * as_norm
-
-        return reg
+        return split.pqg

@@ -16,7 +16,9 @@ def generate_light_diff(esf, nl):
     """
     Collect the light diff coefficient functions for FONLL.
 
-    Following :eqref:`95` of :cite:`forte-fonll` we have to collect the
+    |ref| implements :eqref:`95`, :cite:`forte-fonll`.
+
+    Following the reference we have to collect the
     contributions of the *incoming* would-be-heavy quarks to the light
     structure function, where light means only non-heavy charges are active.
     So the incoming line can *not* be the one coupling to the photon, i.e. we
@@ -26,7 +28,7 @@ def generate_light_diff(esf, nl):
     ----------
         esf : EvaluatedStructureFunction
             kinematic point
-        nf : int
+        nl : int
             number of light flavors
 
     Returns
@@ -46,6 +48,9 @@ def generate_light_diff(esf, nl):
 
 
 def generate_heavy_diff(esf, nl):
+    """
+    |ref| implements :eqref:`89`, :cite:`forte-fonll`.
+    """
     kind = esf.sf.obs_name.kind
     light_cfs = import_pc_module(kind, esf.process, "light")
     ihq = nl + 1
@@ -111,6 +116,9 @@ def generate_heavy_diff(esf, nl):
 
 
 def generate_heavy_intrinsic_diff(esf, nl):
+    """
+    |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
+    """
     if esf.process == "CC":
         # TODO fill
         return ()

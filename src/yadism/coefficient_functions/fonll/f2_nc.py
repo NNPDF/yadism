@@ -11,12 +11,6 @@ from ..intrinsic import f2_nc
 
 
 class AsyGluonVV(pc.PartonicChannelAsy):
-    """
-    Computes the gluon channel of the asymptotic limit of F2heavy.
-    """
-
-    label = "gVV"
-
     def NLO(self):
         def cg(z, L=self.L):
             as_norm = 2.0
@@ -29,7 +23,7 @@ class AsyGluonVV(pc.PartonicChannelAsy):
 
 
 class AsyGluonAA(AsyGluonVV):
-    label = "gAA"
+    pass
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuark):

@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains the implementation of the DIS FL coefficient functions, for
-heavy quark flavours.
-
-.. todo::
-    docs
-"""
 
 from eko import constants
 
@@ -15,23 +8,7 @@ from ..intrinsic import fl_nc
 
 
 class AsyGluonVV(pc.PartonicChannelAsy):
-    """
-    Computes the gluon channel of the asymptotic limit of FLheavy.
-    """
-
-    label = "gVV"
-
     def NLO(self):
-        """
-        Returns
-        -------
-            sequence of callables
-                coefficient functions
-
-        .. todo::
-            docs
-        """
-
         def cg(z):
             return constants.TR * (16 * z * (1 - z))
 
@@ -39,11 +16,7 @@ class AsyGluonVV(pc.PartonicChannelAsy):
 
 
 class AsyGluonAA(AsyGluonVV):
-    """
-    Computes the gluon channel of the asymptotic limit of FLheavy.
-    """
-
-    label = "gAA"
+    pass
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuark):

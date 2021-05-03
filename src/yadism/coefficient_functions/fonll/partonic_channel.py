@@ -110,8 +110,7 @@ class FMatchingGluon(FMatching):
             return parent_LO  # no, so it should be 0 and we can pass through
 
         # since as and p_qg appear together there is no need to put an explicit as_norm here
-        # the explicit 2 instead is coming from Eq. (B.25) of Lucas IC paper
-        # TODO add proper cite
+        # the explicit 2 instead is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
         def reg(z):
             return icl * 2.0 * split.pqg(z) * l
 
