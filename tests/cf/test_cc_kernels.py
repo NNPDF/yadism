@@ -66,7 +66,7 @@ def test_generate_light_pc():
             w = lker.generate(esf, nf)
             norm = {3: 1, 4: 3, 5: 7}[nf]
             # q, g
-            ps = [mkpc(nf, norm, sgn), {21: (nf + 1) * norm / nf / 2.0}]
+            ps = [mkpc(nf, norm, sgn), {21: (nf + 1) * norm / nf / 2.0}, {}]
             check(ps, w)
 
 
@@ -80,6 +80,7 @@ def test_generate_light_pv():
             ps = [
                 mkpv(nf, norm, sgn),
                 {21: (-1 if sgn else 1) * (nf + 1) * norm / nf / 2.0},
+                {},
             ]
             check(ps, w)
 
