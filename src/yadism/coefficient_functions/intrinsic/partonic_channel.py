@@ -43,6 +43,8 @@ class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
     def mkNLO(self, kind, RS):
         self.init_nlo_vars()
         norm = 2.0 * constants.CF * self.eta / self.x  # 2 = as_norm
+        if kind == "3":
+            norm *= self.x
         omx = norm * raw_nc.__getattribute__(  # pylint: disable=no-member
             f"f{kind}_{RS}_soft"
         )(self)
