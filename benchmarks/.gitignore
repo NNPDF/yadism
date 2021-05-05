@@ -1,1 +1,5 @@
+# ignore qcdnum weights' files
 *.wgt
+# ignore airspeed velocity output
+html/
+results/

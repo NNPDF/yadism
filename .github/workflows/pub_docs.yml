@@ -38,13 +38,21 @@ jobs:
           python -m pip install --upgrade pip
           # install yadism
           pip install .
+          pip install benchmarks/
       - name: Build 🔨
         run: |
           pip install -r doc_requirements.txt
           sudo apt-get install graphviz
+          # the following is required by nbsphinx
+          sudo apt-get install pandoc
+          # install home page dependencies
           cd docs/home-page
           yarn
+          # tags are required for the home page structure
+          git fetch --tags
+          # build the home-page
           make
+          # build sphinx for the current branch
           cd ../sphinx/
           make html
       - name: Save files 💾

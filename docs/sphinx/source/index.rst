@@ -81,7 +81,6 @@ In particular:
   :hidden:
 
   dev-tools/tests.rst
-  dev-tools/db-suite.rst
   dev-tools/yadmark.rst
   dev-tools/extras.rst
   dev-tools/third-party.rst

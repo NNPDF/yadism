@@ -1,15 +1,9 @@
-import pathlib
 import numpy as np
-import yaml
-import math
-import os
+
+import eko.strong_coupling as eko_sc
 
 from yadism import observable_name as on
 from yadism.input import compatibility
-
-import eko.thresholds as thr
-import eko.strong_coupling as eko_sc
-import numpy as np
 
 
 def compute_xspace_bench_data(theory, observables, pdf):
@@ -23,15 +17,15 @@ def compute_xspace_bench_data(theory, observables, pdf):
             theory runcard
         observables : dict
             observables runcard
-        pdf : Any
-            PDF object (LHAPDF like)
+        pdf : lhapdf_like
+            PDF set
 
     Returns
     -------
         num_tab : dict
             xspace_bench numbers
     """
-    import xspace_bench
+    import xspace_bench  # pylint:disable=import-outside-toplevel
 
     # Available targets: PROTON, NEUTRON, ISOSCALAR, IRON
     target = "PROTON"
@@ -52,7 +46,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
     pdf_name = pdf.set().name
     if pdf_name == "ToyLH":
         raise Warning("yadmark ToyLH not equal to xspace_bench ToyLH")
-        pdf_name = "toyLH_NLO.LHgrid"
 
     # Constant values
     q_thr = []
@@ -67,17 +60,12 @@ def compute_xspace_bench_data(theory, observables, pdf):
     ckm = theory["CKM"].split(" ")
     ckm = [float(item) for item in ckm]
 
-    alpharef = theory["alphas"]
-    q2ref = theory["Qref"] ** 2
-    thr_list = [m ** 2 for m in q_thr]
-
     # FONLL damping, otherwise set to 0
     damp = 0
 
     # select scheme
     scheme = theory["FNS"]
     new_theory = compatibility.update(theory)
-    thrholder = thr.ThresholdsAtlas.from_dict(new_theory, "kDIS")
 
     if scheme == "ZM-VFNS":
         scheme = "ZMVN"
@@ -115,9 +103,8 @@ def compute_xspace_bench_data(theory, observables, pdf):
         obs = on.ObservableName(obs_name)
 
         out = []
-        # get all the q2
         q2s = []
-
+        # get all the q2
         for kin in observables["observables"].get(obs_name, []):
             if kin["Q2"] not in q2s:
                 q2s.append(kin["Q2"])
@@ -125,13 +112,13 @@ def compute_xspace_bench_data(theory, observables, pdf):
         # loop over points
         for q2 in q2s:
 
-            # get the x corresponding to q2
             xs = []
 
             alphas = sc.a_s(q2) * 4.0 * np.pi
             y = 0.5
             f = 0.0
 
+            # get all the x corresponding to q2
             for kin in observables["observables"].get(obs_name, []):
                 if kin["Q2"] == q2:
                     xs.append(kin["x"])
@@ -142,9 +129,8 @@ def compute_xspace_bench_data(theory, observables, pdf):
                 f3_fact = -1.0
                 if x == 1.0:
                     res = np.zeros((3, 5))
-                    continue
 
-                if proc == "NC" or proc == "EM":
+                elif proc == "NC" or proc == "EM":
                     f3_fact = 1.0
                     res = xspace_bench.nc_dis(
                         x,
@@ -163,6 +149,9 @@ def compute_xspace_bench_data(theory, observables, pdf):
                         damp,
                     )
                 elif proc == "CC":
+                    # for positron F3 has opposite sign
+                    if proj == "POSITRON" or proj == "ANTINEUTRINO":
+                        f3_fact = 1.0
                     res = xspace_bench.cc_dis(
                         x,
                         q2,

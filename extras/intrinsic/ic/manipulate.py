@@ -65,7 +65,7 @@ def init_kind_vars(runner, kind, fhat, M, N, V):
     V = prepare(V)
     kind = translate[kind]
     code_vars = f"""f{kind}hat = {fhat};
-    m{kind} = {M};
+    m{kind} = {M}/. {{x -> xBj, Del->delta}};
     n{kind} = {N};
     v{kind} = {V};
     f{kind}hatJoined = s1h/(8*(s1h + m22)) * Expand[m{kind} / n{kind}] * f{kind}hat;
@@ -89,8 +89,9 @@ def join_fl(runner):
             MMa expression - should be empty!
     """
     code = f"""
-    fLhatJoined = f{translate[2]}hatJoined - 2*x*f{translate[1]}hatJoined;
-    vLJoined = v{translate[2]}Joined - 2*x*v{translate[1]}Joined;
+    mL = m{translate[2]} - 2*xBj*m{translate[1]}
+    fLhatJoined = f{translate[2]}hatJoined - 2*xBj*f{translate[1]}hatJoined;
+    vLJoined = v{translate[2]}Joined - 2*xBj*v{translate[1]}Joined;
     """
     return runner.send(code)
 
@@ -224,3 +225,28 @@ def post_process(res):
     )
     res = re.sub("\\s+", " ", res)
     return res
+
+
+def extract_coefficient(runner, expr, kind, Spm):
+    """
+    Select a coupling coefficient and print the raw expression.
+
+    Parameters
+    ----------
+        runner : MmaRunner
+            Mathematica instance
+        kind : str
+            observable kind
+        Spm : str
+            coupling coefficient
+
+    Returns
+    -------
+        ex : str
+            MMa expression
+    """
+    kind = translate[kind]
+    code_xcoeff = f"""
+    Print@FortranForm@Coefficient[{expr}{kind}, {Spm}];
+    """
+    return runner.send(code_xcoeff)

@@ -6,5 +6,9 @@ ipython
 matplotlib
 pandas
 packutil
-#
+pineappl
+# airspeed velocity requirements
+asv
+virtualenv
+# install yadmark
 -e benchmarks/

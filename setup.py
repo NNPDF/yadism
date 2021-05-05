@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 # write version on the fly - inspired by numpy
 MAJOR = 0
-MINOR = 5
+MINOR = 6
 MICRO = 0
 
 repo_path = pathlib.Path(__file__).absolute().parent
@@ -31,9 +31,15 @@ def setup_package():
         description="Yet Another Deep-Inelastic Scattering Module",
         long_description=long_description,
         long_description_content_type="text/markdown",
-        author="A.Candido, S.Carrazza, F. Hekhorn",
-        author_email="stefano.carrazza@cern.ch",
+        author="A. Candido, F. Hekhorn, G. Magni",
+        author_email="alessandro.candido@mi.infn.it, felix.hekhorn@mi.infn.it, gmagni@nikhef.nl",
         url="https://github.com/N3PDF/yadism",
+        project_urls={
+            "Documentation": "https://n3pdf.github.io/yadism/",
+            "Changelog": "https://github.com/N3PDF/yadism/releases",
+            "Issue Tracker": "https://github.com/N3PDF/yadism/issues",
+            "Coverage": "https://codecov.io/gh/N3PDF/yadism",
+        },
         package_dir={"": "src"},
         packages=find_packages("src"),
         package_data={"yadism": ["input/*.yaml"]},

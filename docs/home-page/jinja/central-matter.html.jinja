@@ -31,8 +31,8 @@
       </div>
       <div class="dropdown-menu" id="dropdown-menu" role="menu">
         <div class="dropdown-content">
-          {% for minor in minors %}
-          <a href="{{ major }}.{{minor}}" class="dropdown-item">
+          {% for (minor, micro) in minors %}
+            <a href="v{{ major }}.{{minor}}.{{micro}}" class="dropdown-item">
             {{ major }}.{{minor}}
           </a>
           {% endfor %}

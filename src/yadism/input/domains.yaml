@@ -164,34 +164,34 @@
 #type: string
 
 - name: CharmThresholdRatio
-  known_as: kcThr
+  known_as: kDIScThr
   runcard: theory
   description: >
     Ratio between the charm threshold for VFNS and the specified value for
     charm mass `mc`
   type: real
   domain:
-    - kcThr > 0
+    - kDIScThr > 0
 
 - name: BottomThresholdRatio
-  known_as: kbThr
+  known_as: kDISbThr
   runcard: theory
   description: >
     Ratio between the bottom threshold for VFNS and the specified value for
     bottom mass `mb`
   type: real
   domain:
-    - kbThr > 0
+    - kDISbThr > 0
 
 - name: TopThresholdRatio
-  known_as: ktThr
+  known_as: kDIStThr
   runcard: theory
   description: >
     Ratio between the top threshold for VFNS and the specified value for top
     mass `mt`
   type: real
   domain:
-    - ktThr > 0
+    - kDIStThr > 0
 
 # Masses
 # ~~~~~~

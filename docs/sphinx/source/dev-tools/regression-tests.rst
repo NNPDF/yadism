@@ -4,6 +4,9 @@ Regression Tests
 This tests are implemented to guarantee the historical consistency of
 :mod:`yadism` results.
 
+.. todo::
+   Regression tests are not running yet.
+
 Description
 -----------
 

@@ -1,36 +1,50 @@
 Yadmark
 =======
 
-.. Important::
+Here we describe the design and API of the `yadmark` package.
+The specific purpose of this package is to cointain all the utils to benchmark efficiently `yadism`. 
+The underlying infrastructure is coming from `sqlite3` and `git-lfs` and it 
+is implemented in the package |banana|.
+
+To install `yadmark` you can type: 
+
+``pip install yadmark``
+
+.. important::
+
+   Due to a problem in |banana| the only working version of yadmark can be insalled locally 
+   with:
    
-   In this section is described the design and API of the `yadmark` package.
-   The underlying infrastructure is coming from `tinydb` and `git-lfs`, and it
-   is briefly explained in :doc:`db-suite`.
+   ``cd benchmarks && pip install -e .``
+
+
+There is not an explicit dependency of `yadmark` to |lhapdf|, but to install the external modules it is
+needed to have intelled at least the ``lhapdf`` python module.
+Among the external programs  olny |APFEL| provides a python wrapper, while both |QCDNUM| and |xspace-bench| 
+bindings are available in: `N3PDF/external <https://github.com/N3PDF/external>`_
+ 
+
+Yadmark is composed by three subpackages:
+
+* ``benchmark`` containing the runner, implementing the interface with the abstract class provided inside |banana| and the external utils that initialise and compute the requested |SF| using the external programs.
+* ``data`` which includes the module to generate `yadism` like observables cards and the module providing the observable database layout.
+* ``navigator`` implementing the navigator app. 
+
+The banana configuration is loaded from ``banana_cfg.py`` file. 
+
+To run Yadmark see the section of the available :doc:`runners<yadmark_runners>`.
+Furthermore Yadmark provides also a python interpter called :doc:`navigator<navigator>` to inspect 
+the cached benchmark reuslts. 
 
 .. toctree::
    :maxdepth: 1
-   :caption: Dev Tools
 
-   benchmark-runner.rst
+   yadmark_runners.rst
    navigator.rst
    API <yadmark/yadmark.rst>
 
-Runners
--------
 
-Some runner scripts are provided in the ``benchmarks/runners`` folder for
-different purposes.
 
-- ``sandbox.py``: it is used to provide the boilerplate needed for a basic run,
-  in order to make a quick run for debugging purpose, but still fully managed
-  and registered by the `yadmark` machinery and then available in the
-  `navigator`
-- ``regression.py``: it is used manually and by the corresponding workflow to
-  run the regression tests (see :doc:`regression-tests`) 
-- ``benchmarks_against_apfel.py``: it is used by the corresponding workflow to
-  run the established benchmarks against |APFEL|, and verify the agreement or the
-  known differences between the two results
-- ``benchmarks_against_qcdnum.py``: same as the previous one for |QCDNUM|
 
-Furthermore all of them are examples useful to understand how to use the
-`yadmark` package for benchmarking.
+
+

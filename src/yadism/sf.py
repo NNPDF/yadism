@@ -7,8 +7,7 @@ Defines the :py:class:`StructureFunction` class.
 """
 import logging
 
-from .esf import esf
-from .tmc import ESFTMCmap
+from .esf import esf, tmc
 
 logger = logging.getLogger(__name__)
 
@@ -21,52 +20,35 @@ class StructureFunction:
     exposed to the outside and the :py:class:`EvaluatedStructureFunction`
     which compute the actual observable.
 
-    The actual child class is determined by either `ESFmap` or, if TMC is
-    active, by `ESFTMCmap`.
-
     Parameters
     ----------
-        obs_name : .observable_name.ObservableName
+        obs_name : ObservableName
             name
-        eko_components : dict
-            managers dictionary that holds all created managers (which wrap
-            some more complicated structure)
-        theory_params : dict
-            theory dictionary containing all needed parameters
+        runner : yadism.runner.Runner
+            parent reference
     """
 
-    def __init__(
-        self, obs_name, runner=None, *, eko_components, theory_params, obs_params
-    ):
+    def __init__(self, obs_name, runner):
         # internal managers
         self.obs_name = obs_name
-        self.__runner = runner
-        self.__ESFs = []
-        self.__ESFcache = {}
-        # TODO wrap managers and parameters as single attributes
-        # external managers
-        self.interpolator = eko_components["interpolator"]
-        self.threshold = eko_components["threshold"]
-        self.strong_coupling = eko_components["alpha_s"]
-        self.coupling_constants = eko_components["coupling_constants"]
-        # parameters
-        self.pto = theory_params["pto"]
-        self.xiR = theory_params["xiR"]
-        self.xiF = theory_params["xiF"]
-        self.scheme = theory_params["scheme"]
-        self.nf_ff = theory_params["nf_ff"]
-        self.intrinsic_range = theory_params["intrinsic_range"]
-        self.m2hq = theory_params["m2hq"]
-        self.TMC = theory_params["TMC"]
-        self.M2target = theory_params["M2target"]
-        self.FONLL_damping = theory_params["FONLL_damping"]
-        self.damping_powers = theory_params["damping_powers"]
-        self.obs_params = obs_params
-
+        self.runner = runner
+        self.esfs = []
+        self.cache = {}
         logger.debug("Init %s", self)
+
+    def __getattribute__(self, name):
+        runner = object.__getattribute__(self, "runner")
+        if name in runner.managers:
+            return runner.managers[name]
+        if name in runner.theory_params:
+            return runner.theory_params[name]
+        return super().__getattribute__(name)
 
     def __repr__(self):
         return self.obs_name.name
+
+    def __len__(self):
+        return len(self.esfs)
 
     def load(self, kinematic_configs):
         """
@@ -77,10 +59,10 @@ class StructureFunction:
             kinematic_configs : list(dict)
                 run card input
         """
-        self.__ESFs = []
+        self.esfs = []
         # iterate F* configurations
         for kinematics in kinematic_configs:
-            self.__ESFs.append(self.get_esf(self.obs_name, kinematics, use_raw=False))
+            self.esfs.append(self.get_esf(self.obs_name, kinematics, use_raw=False))
 
     def get_esf(self, obs_name, kinematics, *args, use_raw=True, force_local=False):
         """
@@ -110,6 +92,8 @@ class StructureFunction:
             obj : EvaluatedStructureFunction
                 created object
         """
+        # TODO rethink and refactor method - only used by TMC
+        # TODO remove force_local
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
             obj = esf.EvaluatedStructureFunction(self, kinematics)
@@ -125,19 +109,21 @@ class StructureFunction:
             # TODO how to incorporate args?
             # search
             try:
-                return self.__ESFcache[key]
+                return self.cache[key]
             except KeyError:
                 if use_tmc_if_available:
-                    obj = ESFTMCmap[obs_name.kind](self, kinematics)
+                    obj = tmc.ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
                     obj = esf.EvaluatedStructureFunction(self, kinematics, *args)
-                self.__ESFcache[key] = obj
+                self.cache[key] = obj
                 return obj
         else:
             # ask our parent (as always)
-            return self.__runner.observable_instances[obs_name.name].get_esf(
-                obs_name, kinematics, *args
-            )
+            return self.runner.get_sf(obs_name).get_esf(obs_name, kinematics, *args)
+
+    def iterate_result(self):
+        for esf in self.esfs:
+            yield esf.get_result()
 
     def get_result(self):
         """
@@ -148,8 +134,4 @@ class StructureFunction:
             output : list(ESFResult)
                 all children outputs
         """
-        output = []
-        for esf in self.__ESFs:
-            output.append(esf.get_result())
-
-        return output
+        return list(self.iterate_result())

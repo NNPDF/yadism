@@ -13,7 +13,7 @@ There are two ways of using ``yadism``:
 .. todo::
     decide about ``run_dis`` and document it properly in module header
 """
-from typing import Any
+
 import time
 import inspect
 import logging
@@ -30,7 +30,6 @@ import rich.console
 
 from eko.interpolation import InterpolatorDispatcher
 from eko import thresholds
-from eko import strong_coupling
 from eko import basis_rotation as br
 
 from .input import inspector, compatibility
@@ -38,7 +37,8 @@ from . import observable_name
 from . import log
 from .output import Output
 from .sf import StructureFunction as SF
-from .coupling_constants import CouplingConstants
+from .xs import CrossSection as XS
+from .coefficient_functions.coupling_constants import CouplingConstants
 
 log.setup()
 logger = logging.getLogger(__name__)
@@ -87,43 +87,31 @@ class Runner:
     )
 
     def __init__(self, theory: dict, observables: dict):
-        # ==============================
-        # Validate inputs
-        # ==============================
+        # Validate inputs and improve if necessary
         insp = inspector.Inspector(theory, observables)
         insp.perform_all_checks()
+        new_theory, new_observables = compatibility.update(theory, observables)
 
-        # ==============================
         # Store inputs
-        # ==============================
-        self._theory = theory
-        self._observables = observables
+        self._theory = new_theory
+        self._observables = new_observables
 
-        # ==============================
         # Setup eko stuffs
-        # ==============================
-        new_theory = compatibility.update(theory)
-        self.interpolator = InterpolatorDispatcher.from_dict(observables, mode_N=False)
-        self.threshold = thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS")
-        self.strong_coupling = strong_coupling.StrongCoupling.from_dict(new_theory)
+        interpolator = InterpolatorDispatcher.from_dict(self._observables, mode_N=False)
 
         # Non-eko theory
-        self.coupling_constants = CouplingConstants.from_dict(theory, observables)
-        self.xiF = theory["XIF"]
+        coupling_constants = CouplingConstants.from_dict(theory, self._observables)
 
-        # ==============================
         # Initialize structure functions
-        # ==============================
-        eko_components = dict(
-            interpolator=self.interpolator,
-            threshold=self.threshold,
-            alpha_s=self.strong_coupling,
-            coupling_constants=self.coupling_constants,
+        self.managers = dict(
+            interpolator=interpolator,
+            threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
+            coupling_constants=coupling_constants,
         )
         # FONLL damping powers
         FONLL_damping = bool(theory["DAMP"])
         if FONLL_damping:
-            damping_power = theory.get("DAMPPOWER", 2)
+            damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
             damping_power_c = theory.get("DAMPPOWERCHARM", damping_power)
             damping_power_b = theory.get("DAMPPOWERBOTTOM", damping_power)
             damping_power_t = theory.get("DAMPPOWERTOP", damping_power)
@@ -134,37 +122,41 @@ class Runner:
         intrinsic_range = []
         if theory["IC"] == 1:
             intrinsic_range.append(4)
-        theory_params = dict(
+        self.theory_params = dict(
             pto=theory["PTO"],
-            xiR=theory["XIR"],
-            xiF=self.xiF,
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
             intrinsic_range=intrinsic_range,
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
+            target=new_observables["TargetDIS"],
+            GF=theory["GF"],
+            M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
-        obs_params = dict(process=observables.get("prDIS", "EM"))
+        logger.info("PTO: %d, process: %s", theory["PTO"], new_observables["prDIS"])
+        logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
+        logger.info("Intrinsic: %s", intrinsic_range)
+        logger.info("XIR: %g, XIF: %g", theory["XIR"], theory["XIF"])
+        logger.info(
+            "projectile: %s, target: {Z: %g, A: %g}",
+            new_observables["ProjectileDIS"],
+            *new_observables["TargetDIS"].values(),
+        )
 
         self.observable_instances = {}
-        for obs_name in observable_name.ObservableName.all():
-            name = obs_name.name
-
-            # initialize an SF instance for each possible structure function
-            obj = SF(
-                obs_name,
-                runner=self,
-                eko_components=eko_components,
-                theory_params=theory_params,
-                obs_params=obs_params,
-            )
-
+        for obs_name, kins in self._observables["observables"].items():
+            on = observable_name.ObservableName(obs_name)
+            if on.kind in observable_name.xs:
+                obs = XS(on, self)
+            else:
+                # TODO use get_sf?
+                obs = SF(on, self)
             # read kinematics
-            obj.load(self._observables["observables"].get(name, []))
-            self.observable_instances[name] = obj
+            obs.load(kins)
+            self.observable_instances[obs_name] = obs
 
         # output console
         if log.silent_mode:
@@ -176,18 +168,19 @@ class Runner:
         # Initialize output
         # ==============================
         self._output = Output()
-        self._output.update(self.interpolator.to_dict())
+        self._output.theory = theory
+        self._output.update(interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
-        self._output["xiF"] = self.xiF
+        self._output["projectilePID"] = coupling_constants.obs_config["projectilePID"]
 
-    def get_result(self, raw=False):
+    def get_sf(self, obs_name):
+        if obs_name.name not in self.observable_instances:
+            self.observable_instances[obs_name.name] = SF(obs_name, self)
+        return self.observable_instances[obs_name.name]
+
+    def get_result(self):
         """
         Compute coefficient functions grid for requested kinematic points.
-
-
-        .. admonition:: Implementation Note
-
-            get_output pipeline
 
         Returns
         -------
@@ -196,11 +189,6 @@ class Runner:
             (flavour, interpolation-index) for each requested kinematic
             point (x, Q2)
 
-
-        .. todo::
-
-            * docs
-            * get_output pipeline
         """
         self.console.print(self.banner)
 
@@ -222,53 +210,29 @@ class Runner:
         self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
         if log.debug:
-            tasks = precomputed_plan.items()
+            for name, obs in precomputed_plan.items():
+                self._output[name] = obs.get_result()
         else:
-            tasks = rich.progress.track(
-                precomputed_plan.items(),
-                description="computing...",
-                transient=True,
-                console=self.console,
-            )
-        for name, obs in tasks:
-            self._output[name] = obs.get_result()
+            with rich.progress.Progress(
+                transient=True, console=self.console
+            ) as progress:
+                task = progress.add_task(
+                    "Starting...",
+                    total=sum([len(obs) for obs in precomputed_plan.values()]),
+                )
+                for name, obs in precomputed_plan.items():
+                    results = []
+                    for res in obs.iterate_result():
+                        results.append(res)
+                        progress.update(
+                            task,
+                            description=f"Computing [bold green]{name}",
+                            advance=1,
+                        )
+                    self._output[name] = results
         end = time.time()
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")
 
         out = copy.deepcopy(self._output)
-        if raw:
-            out = out.get_raw()
         return out
-
-    def get_output(self):
-        return self.get_result(True)
-
-    def apply_pdf(self, pdfs: Any) -> dict:
-        """
-        Alias for the `__call__` method.
-
-        .. todo::
-            - implement
-            - docs
-        """
-        return self.get_result().apply_pdf(pdfs)
-
-    def clear(self) -> None:
-        """
-        Or 'restart' or whatever
-
-        .. todo::
-            - implement
-            - docs
-        """
-
-    def dump(self) -> None:
-        """
-        If any output available ('computed') dump the current output on file
-
-        .. todo::
-            - implement
-            - docs
-        """
-        return self.get_output().dump()

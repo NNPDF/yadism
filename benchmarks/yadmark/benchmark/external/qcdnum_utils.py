@@ -2,6 +2,44 @@ import pathlib
 import numpy as np
 
 from yadism import observable_name as on
+from yadism.coupling_constants import CouplingConstants
+
+
+# setup external PDF
+class PdfCallable:
+    """
+    Wrapper to introduce lhapdf under QCDNUM.
+
+    Parameters
+    ----------
+        pdf : lhapdf_like
+            PDF set
+    """
+
+    def __init__(self, pdf):
+        self.pdf = pdf
+
+    def __call__(self, ipdf, x, qmu2, first):
+        """
+        Functor function.
+
+        Parameters
+        ----------
+            ipdf : int
+                pid
+            x : float
+                momentum fraction
+            qmu2 : float
+                momentum transfer
+
+        Returns
+        -------
+            pdf(x)
+        """
+        if -6 <= ipdf <= 6:
+            a = self.pdf.xfxQ2(ipdf, x, qmu2)
+            return a
+        return 0.0
 
 
 def compute_qcdnum_data(
@@ -16,14 +54,17 @@ def compute_qcdnum_data(
             theory runcard
         observables : dict
             observables runcard
-        pdf : Any
-            PDF object (LHAPDF like)
+        pdf : lhapdf_like
+            PDF set
 
     Returns
     -------
         num_tab : dict
             QCDNUM numbers
     """
+    if observables["prDIS"] == "CC":
+        raise NotImplementedError("Charged current not supported in QCDNUM")
+
     import QCDNUM  # pylint:disable=import-outside-toplevel
 
     # remove QCDNUM cache files
@@ -40,11 +81,11 @@ def compute_qcdnum_data(
     QCDNUM.setalf(theory["alphas"], theory["Qref"] ** 2)
 
     # make x and Q grids
-    xmin = 0.1
-    q2min = 10
-    q2max = 20
-    for obs_name in observables['observables']:
-        #if not on.ObservableName.is_valid(obs):
+    xmin = 0.00001
+    q2min = 4
+    q2max = 40
+    for obs_name in observables["observables"]:
+        # if not on.ObservableName.is_valid(obs):
         #    continue
         obs = on.ObservableName(obs_name)
         for kin in observables["observables"].get(obs_name, []):
@@ -58,7 +99,7 @@ def compute_qcdnum_data(
         xwarr += [1, 1]
     iosp = 3
     n_x = 289
-    n_q = 60
+    n_q = 101
     af = 1.0 / theory["XIF"] ** 2
     bf = 0.0
     QCDNUM.gxmake(
@@ -75,6 +116,7 @@ def compute_qcdnum_data(
     iqc = QCDNUM.iqfrmq(mc ** 2)
     iqb = QCDNUM.iqfrmq(mb ** 2)
     iqt = QCDNUM.iqfrmq(mt ** 2)
+
     if theory["FNS"] == "FFNS":
         nfix = theory["NfFF"]
     else:
@@ -111,27 +153,13 @@ def compute_qcdnum_data(
     brf = 0
     QCDNUM.setabr(arf, brf)
 
-    # setup external PDF
-    class PdfCallable:
-        def __init__(self, pdf):
-            self.pdf = pdf
-
-        def __call__(self, ipdf, x, qmu2, first):
-            if -6 <= ipdf <= 6:
-                a = self.pdf.xfxQ2(ipdf, x, qmu2)
-                return a
-            return 0.0
-
     # func, pdf set number, nr. extra pdfs, thershold offset
     QCDNUM.extpdf(PdfCallable(pdf), iset, 0, 0)
 
-    weights = (
-        np.array([4.0, 1.0, 4.0, 1.0, 4.0, 1.0, 0.0, 1.0, 4.0, 1.0, 4.0, 1.0, 4.0]) / 9
-    )
-
+    coupling = CouplingConstants.from_dict(theory, observables)
     num_tab = {}
-    for obs_name in observables['observables']:
-        #if not on.ObservableName.is_valid(obs):
+    for obs_name in observables["observables"]:
+        # if not on.ObservableName.is_valid(obs):
         #    continue
         obs = on.ObservableName(obs_name)
         kind_key = None
@@ -139,63 +167,74 @@ def compute_qcdnum_data(
             kind_key = 2
         elif obs.kind == "FL":
             kind_key = 1
-        # elif obs.name == "F3light":
-        #     kind_key = 3
+        elif obs.name == "F3_light":
+            kind_key = 3
         else:
             raise NotImplementedError(f"kind {obs.name} is not implemented!")
 
-        # collect kins
-        xs = []
         q2s = []
-        for kin in observables["observables"].get(obs_name, []):
-            xs.append(kin["x"])
-            q2s.append(kin["Q2"])
-        # select fnc by flavor
-        if obs.flavor == "light":
-            QCDNUM.setord(1 + theory["PTO"])  # 1 = LO, ...
-            weights = (
-                np.array(
-                    [
-                        4.0 * 0,
-                        1.0 * 0,
-                        4.0 * 0,
-                        1.0,
-                        4.0,
-                        1.0,
-                        0.0,
-                        1.0,
-                        4.0,
-                        1.0,
-                        4.0 * 0,
-                        1.0 * 0,
-                        4.0 * 0,
-                    ]
-                )
-                / 9
-            )
-            # fs = []
-            # for x, Q2 in zip(xs,q2s):
-            #    fs.append(QCDNUM.zmstfun(kind_key, weights, [x], [Q2], 1 ))
-            fs = QCDNUM.zmstfun(kind_key, weights, xs, q2s, 1)
-        elif obs.is_raw_heavy:
-            # for HQ pto is not absolute but rather relative,
-            # i.e., 1 loop DIS here meas "LO"[QCDNUM]
-            if theory["PTO"] == 0:
-                fs = [0.0] * len(xs)
-            else:
-                QCDNUM.setord(theory["PTO"])  # 1 = LO, ...
-                if obs.flavor == "charm":
-                    fs = QCDNUM.hqstfun(kind_key, 1, weights, xs, q2s, 1)
-                elif obs.flavor == "bottom":
-                    fs = QCDNUM.hqstfun(kind_key, -2, weights, xs, q2s, 1)
-                elif obs.flavor == "top":
-                    fs = QCDNUM.hqstfun(kind_key, -3, weights, xs, q2s, 1)
-        else:
-            raise NotImplementedError(f"flavor {obs.flavor} is not implemented!")
-        # reshuffle output
         f_out = []
-        for x, q2, f in zip(xs, q2s, fs):
-            f_out.append(dict(x=x, Q2=q2, result=f))
+
+        # collect q2s
+        for kin in observables["observables"].get(obs_name, []):
+            if kin["Q2"] not in q2s:
+                q2s.append(kin["Q2"])
+
+        # loop over points
+        for q2 in q2s:
+
+            xs = []
+            fs = []
+
+            # get all the x corresponding to q2
+            for kin in observables["observables"].get(obs_name, []):
+                if kin["Q2"] == q2:
+                    xs.append(kin["x"])
+            # Use yadism to get all the weights
+            weights = []
+            for pid in range(-6, 7):
+                if pid == 0:
+                    pid = 21
+                # F3
+                if kind_key == 3:
+                    w = np.sign(pid) * (
+                        coupling.get_weight(pid, q2, "VA")
+                        + coupling.get_weight(pid, q2, "AV")
+                    )
+                # F2 and FL
+                else:
+                    w = coupling.get_weight(pid, q2, "VV") + coupling.get_weight(
+                        pid, q2, "AA"
+                    )
+                weights.append(w)
+
+            Q2s = [q2] * len(xs)
+            # select fnc by flavor
+            if obs.flavor == "light":
+                QCDNUM.setord(1 + theory["PTO"])  # 1 = LO, ...
+                fs.extend(QCDNUM.zmstfun(kind_key, weights, xs, Q2s, 1))
+
+            elif obs.is_raw_heavy:
+                # for HQ pto is not absolute but rather relative,
+                # i.e., 1 loop DIS here meas LO[QCDNUM]
+                if theory["PTO"] == 0:
+                    fs = [0.0] * len(xs)
+                else:
+                    QCDNUM.setord(theory["PTO"])  # 1 = LO, ...
+
+                if obs.flavor == "charm":
+                    fs.extend(QCDNUM.hqstfun(kind_key, 1, weights, xs, Q2s, 1))
+                elif obs.flavor == "bottom":
+                    fs.extend(QCDNUM.hqstfun(kind_key, -2, weights, xs, Q2s, 1))
+                elif obs.flavor == "top":
+                    fs.extend(QCDNUM.hqstfun(kind_key, -3, weights, xs, Q2s, 1))
+            else:
+                raise NotImplementedError(f"flavor {obs.flavor} is not implemented!")
+
+            # reshuffle output
+            for x, Q2, f in zip(xs, Q2s, fs):
+                f_out.append(dict(x=x, Q2=Q2, result=f))
+
         num_tab[obs_name] = f_out
 
     # remove QCDNUM cache files

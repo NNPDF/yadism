@@ -20,6 +20,7 @@ Available functions:
     dfl(id) - log as DataFrame
     simlogs(id) - find similar logs
     diff(id,id) - subtractig logs
+    compare(id,id) - compare externals
     check_log(id) - check logs passed
     crashed_log(id) - print crashed logs
 """
@@ -37,12 +38,9 @@ app = navigator.NavigatorApp(banana_cfg.banana_cfg, "sandbox")
 bnav.register_globals(globals(), app)
 
 # add my functions
-dfl = app.log_as_DFdict
-simlogs = app.list_all_sim_logs
-diff = app.subtract_tables
 check_log = app.check_log
-crashed_log = app.crashed_log
 
 
 def launch_navigator():
+    """CLI Entry point"""
     return bnav.launch_navigator("yadism", "yadmark")

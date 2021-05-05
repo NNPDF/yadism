@@ -10,8 +10,9 @@ setup(
     # package_dir={"": "."},
     packages=find_packages("."),
     install_requires=[
+        "yadism",
         "rich",
-        "tinydb~=4.1",
+        "sqlalchemy",
         "banana-hep",
         "pyyaml",
     ],
