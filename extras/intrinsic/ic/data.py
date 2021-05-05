@@ -62,7 +62,7 @@ M1 = """(Splus * Spp - 2*m1*m2*Sminus)/(2*Del)"""
 
 M2 = """Splus * Del * x / (Q2IC)"""
 
-M3 = """2 * Rplus"""
+M3 = """x * Rplus"""
 
 I1 = """dlog( ( Spp + Del ) / ( Spp - Del ) ) / Del"""
 

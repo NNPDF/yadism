@@ -3,7 +3,33 @@
 Test all the partonic coefficient functions
 """
 
-from yadism import cc, nc
+from yadism.coefficient_functions.light import (
+    f2_cc as lf2cc,
+    fl_cc as lflcc,
+    f3_cc as lf3cc,
+    f2_nc as lf2nc,
+    fl_nc as lflnc,
+    f3_nc as lf3nc,
+)
+from yadism.coefficient_functions.heavy import (
+    f2_cc as hf2cc,
+    fl_cc as hflcc,
+    f3_cc as hf3cc,
+    f2_nc as hf2nc,
+    fl_nc as hflnc,
+)
+from yadism.coefficient_functions.fonll import (
+    f2_nc as af2nc,
+    fl_nc as aflnc,
+    f2_cc as af2cc,
+    fl_cc as aflcc,
+    f3_cc as af3cc,
+)
+from yadism.coefficient_functions.intrinsic import (
+    f2_nc as if2nc,
+    fl_nc as iflnc,
+    f3_nc as if3nc,
+)
 
 M2hq = 1.0
 nf = 3
@@ -28,15 +54,15 @@ class TestFloat:
 
         # non trivial LO + NLO*
         for pc in [
-            cc.f2_heavy.F2heavyQuark(MockESF(x, Q2), m2hq=M2hq),
-            cc.f3_heavy.F3heavyQuark(MockESF(x, Q2), m2hq=M2hq),
-            cc.fl_heavy.FLheavyQuark(MockESF(x, Q2), m2hq=M2hq),
-            cc.f2_asy.F2asyQuark(MockESF(x, Q2), mu2hq=M2hq),
-            cc.f3_asy.F3asyQuark(MockESF(x, Q2), mu2hq=M2hq),
-            cc.f2_light.F2lightQuark(MockESF(x, Q2), nf=nf),
-            cc.f3_light.F3lightQuark(MockESF(x, Q2), nf=nf),
-            nc.f2_light.F2lightNonSinglet(MockESF(x, Q2), nf=nf),
-            nc.f3_light.F3lightNonSinglet(MockESF(x, Q2), nf=nf),
+            hf2cc.NonSinglet(MockESF(x, Q2), m2hq=M2hq),
+            hf3cc.NonSinglet(MockESF(x, Q2), m2hq=M2hq),
+            hflcc.NonSinglet(MockESF(x, Q2), m2hq=M2hq),
+            af2cc.AsyQuark(MockESF(x, Q2), mu2hq=M2hq),
+            af3cc.AsyQuark(MockESF(x, Q2), mu2hq=M2hq),
+            lf2cc.NonSinglet(MockESF(x, Q2), nf=nf),
+            lf3cc.NonSinglet(MockESF(x, Q2), nf=nf),
+            lf2nc.NonSinglet(MockESF(x, Q2), nf=nf),
+            lf3nc.NonSinglet(MockESF(x, Q2), nf=nf),
         ]:
             assert pc.LO()[0] == 0
             assert pc.LO()[1] == 0
@@ -47,8 +73,8 @@ class TestFloat:
 
         # LO=0
         for pc in [
-            cc.fl_asy.FLasyQuark(MockESF(x, Q2), mu2hq=M2hq),
-            cc.fl_light.FLlightQuark(MockESF(x, Q2), nf=nf),
+            aflcc.AsyQuark(MockESF(x, Q2), mu2hq=M2hq),
+            lflcc.NonSinglet(MockESF(x, Q2), nf=nf),
         ]:
             assert pc.LO() is None
             assert isinstance(pc.NLO()(z), float)
@@ -60,12 +86,12 @@ class TestFloat:
         for z in [x, 0.9]:
             # non trivial LO + NLO*
             for pc in [
-                cc.f2_asy.F2asyGluon(MockESF(x, Q2), mu2hq=M2hq),
-                cc.f3_asy.F3asyGluon(MockESF(x, Q2), mu2hq=M2hq),
-                cc.f2_heavy.F2heavyGluon(MockESF(x, Q2), m2hq=M2hq),
-                cc.f3_heavy.F3heavyGluon(MockESF(x, Q2), m2hq=M2hq),
-                cc.fl_heavy.FLheavyGluon(MockESF(x, Q2), m2hq=M2hq),
-                cc.f2_light.F2lightGluon(MockESF(x, Q2), nf=nf),
+                af2cc.AsyGluon(MockESF(x, Q2), mu2hq=M2hq),
+                af3cc.AsyGluon(MockESF(x, Q2), mu2hq=M2hq),
+                hf2cc.Gluon(MockESF(x, Q2), m2hq=M2hq),
+                hf3cc.Gluon(MockESF(x, Q2), m2hq=M2hq),
+                hflcc.Gluon(MockESF(x, Q2), m2hq=M2hq),
+                lf2cc.Gluon(MockESF(x, Q2), nf=nf),
             ]:
                 assert pc.LO() is None
                 assert isinstance(pc.NLO()(z), float)
@@ -73,17 +99,17 @@ class TestFloat:
 
             # LO=0
             for pc in [
-                cc.fl_light.FLlightGluon(MockESF(x, Q2), nf=nf),
-                cc.fl_asy.FLasyGluon(MockESF(x, Q2), mu2hq=M2hq),
-                nc.fl_light.FLlightGluon(MockESF(x, Q2), nf=nf),
-                nc.f2_fonll.F2asyGluonVV(MockESF(x, Q2), mu2hq=M2hq),
-                nc.f2_fonll.F2asyGluonAA(MockESF(x, Q2), mu2hq=M2hq),
-                nc.fl_fonll.FLasyGluonVV(MockESF(x, Q2), mu2hq=M2hq),
-                nc.fl_fonll.FLasyGluonAA(MockESF(x, Q2), mu2hq=M2hq),
-                nc.f2_heavy.F2heavyGluonVV(MockESF(x, Q2), m2hq=M2hq),
-                nc.f2_heavy.F2heavyGluonAA(MockESF(x, Q2), m2hq=M2hq),
-                nc.fl_heavy.FLheavyGluonVV(MockESF(x, Q2), m2hq=M2hq),
-                nc.fl_heavy.FLheavyGluonAA(MockESF(x, Q2), m2hq=M2hq),
+                lflcc.Gluon(MockESF(x, Q2), nf=nf),
+                aflcc.AsyGluon(MockESF(x, Q2), mu2hq=M2hq),
+                lflnc.Gluon(MockESF(x, Q2), nf=nf),
+                af2nc.AsyGluonVV(MockESF(x, Q2), mu2hq=M2hq),
+                af2nc.AsyGluonAA(MockESF(x, Q2), mu2hq=M2hq),
+                aflnc.AsyGluonVV(MockESF(x, Q2), mu2hq=M2hq),
+                aflnc.AsyGluonAA(MockESF(x, Q2), mu2hq=M2hq),
+                hf2nc.GluonVV(MockESF(x, Q2), m2hq=M2hq),
+                hf2nc.GluonAA(MockESF(x, Q2), m2hq=M2hq),
+                hflnc.GluonVV(MockESF(x, Q2), m2hq=M2hq),
+                hflnc.GluonAA(MockESF(x, Q2), m2hq=M2hq),
             ]:
                 assert pc.LO() is None
                 assert isinstance(pc.NLO()(z), float)
@@ -98,10 +124,10 @@ class TestIntrisic:
 
         # non trivial LO + NLO*
         for pc in [
-            cc.f2_intrinsic.F2IntrinsicSp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
-            cc.fl_intrinsic.FLIntrinsicSp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
-            nc.fl_intrinsic.FLIntrinsicSm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
-            cc.f3_intrinsic.F3IntrinsicRp(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            if2nc.Splus(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            iflnc.Splus(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            iflnc.Sminus(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            if3nc.Rplus(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
         ]:
             assert pc.LO()[0] == 0
             assert pc.LO()[1] == 0
@@ -111,8 +137,8 @@ class TestIntrisic:
 
         # LO=0
         for pc in [
-            nc.f2_intrinsic.F2IntrinsicSm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
-            nc.f3_intrinsic.F3IntrinsicRm(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            if2nc.Sminus(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
+            if3nc.Rminus(MockESF(x, Q2), m1sq=1.0, m2sq=2.0),
         ]:
             assert pc.LO() is None
             for i in range(3):

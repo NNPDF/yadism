@@ -74,16 +74,16 @@ class Sandbox(Runner):
     @staticmethod
     def generate_observables():
         defaults = copy.deepcopy(observables.default_card)
-        # xgrid = np.array(defaults["interpolation_xgrid"]).copy()
+        xgrid = np.array(defaults["interpolation_xgrid"]).copy()
         #interpolation_xgrid = np.linspace(1e-1, 1, 9).tolist()
         kinematics = []
         kinematics.extend(
             #[dict(x=0.1,Q2=90, y=0)]
-            #[dict(x=x, Q2=50.0) for x in interpolation_xgrid[::5]]
-            [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, 1, 10)]
+            #[dict(x=x, Q2=20.0) for x in xgrid[:-1:5]]
+            [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)]
         )
         kinematics.extend(
-            [dict(x=x, Q2=1.51**2, y=0) for x in np.geomspace(1e-4, 1, 10)]
+            [dict(x=x, Q2=1.51**2, y=0) for x in np.geomspace(1e-4, .9, 10)]
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
         #kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
@@ -93,7 +93,7 @@ class Sandbox(Runner):
         kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
         kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
         observable_names = [
-            "F2_light",
+            #"F2_light",
             #"F2_charm",
             # "F2_bottom",
             # "F2_top",
@@ -102,8 +102,8 @@ class Sandbox(Runner):
             #"FL_charm",
             # "FL_bottom",
             # "FL_total",
-            #  "F3_light",
-            #  "F3_charm",
+            #"F3_light",
+            "F3_charm",
             # "F3_bottom",
             # "F3_total",
             #  "XSHERANC",
@@ -115,20 +115,17 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        #update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
-        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
+        #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
+        #update= {}
         # card["PropagatorCorrection"] = .999
         # card["ProjectileDIS"] = "antineutrino"
         # card["PolarizationDIS"] = 0.5
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{}], self.generate_observables(), ["uonly"])
-
-
-def main():
-    sand = Sandbox()
-    sand.doit()
+        self.run([{"IC":1,"PTO": 1, "mc": 1.51}], self.generate_observables(), ["conly"])
 
 if __name__ == "__main__":
-    main()
+    sand = Sandbox()
+    sand.doit()

@@ -8,10 +8,10 @@ from eko.thresholds import ThresholdsAtlas
 from eko import basis_rotation as br
 
 from yadism import observable_name
-import yadism.tmc as TMC
+import yadism.esf.tmc as TMC
 from yadism.esf.esf import EvaluatedStructureFunction as ESF
 from yadism.esf.esf_result import ESFResult
-from yadism.coupling_constants import CouplingConstants
+from yadism.coefficient_functions.coupling_constants import CouplingConstants
 
 lo = (0, 0, 0, 0)
 

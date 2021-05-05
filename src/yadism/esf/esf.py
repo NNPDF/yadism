@@ -14,7 +14,7 @@ from eko import basis_rotation as br
 
 from . import distribution_vec as conv
 from .esf_result import ESFResult
-from .. import cf_combiner
+from .. import coefficient_functions as cf
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +103,7 @@ class EvaluatedStructureFunction:
         # something to do?
         if self._computed:
             return
-        cfc = cf_combiner.CoefficientFunctionsCombiner(self)
+        cfc = cf.Combiner(self)
         # run
         logger.debug("Compute %s", self)
         for o in self.orders:
