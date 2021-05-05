@@ -64,22 +64,22 @@ def fl_sminus_virt(pc):
     return ((np.sqrt(pc.m1sq * pc.m2sq)*((pc.C1m + pc.C1p)*pc.delta**2 + 4*pc.CRm*pc.Q2) + 2*pc.Cplus*(pc.delta**2 - pc.Q2*pc.sigma_pp))*pc.x)/(2.*pc.delta*pc.Q2)
 
 def f3_rplus_raw(pc):
-    return (2*pc.s1hat*((-2*pc.delta**2*(2*pc.m2sq + pc.s1hat))/pc.s1hat**2 + pc.sigma_mp - 3*pc.sigma_pm - (2*(pc.delta**2 + 2*pc.m2sq*pc.sigma_pm))/pc.s1hat - ((pc.s1hat - pc.sigma_mp)*(pc.s1hat + pc.sigma_pp))/(2.*(pc.m2sq + pc.s1hat))))/(pc.deltap*(pc.m2sq + pc.s1hat)) - (2*pc.L_xi*(pc.s1hat*(pc.s1hat**2 - 4*pc.m1sq*pc.sigma_mp + 3*pc.s1hat*pc.sigma_pm) + 2*pc.delta**2*(2*pc.s1hat + pc.sigma_pp)))/(pc.deltap**2*pc.s1hat)
+    return (pc.s1hat*((-2*pc.delta**2*(2*pc.m2sq + pc.s1hat))/pc.s1hat**2 + pc.sigma_mp - 3*pc.sigma_pm - (2*(pc.delta**2 + 2*pc.m2sq*pc.sigma_pm))/pc.s1hat - ((pc.s1hat - pc.sigma_mp)*(pc.s1hat + pc.sigma_pp))/(2.*(pc.m2sq + pc.s1hat)))*pc.x)/(pc.deltap*(pc.m2sq + pc.s1hat)) - (pc.L_xi*(pc.s1hat*(pc.s1hat**2 - 4*pc.m1sq*pc.sigma_mp + 3*pc.s1hat*pc.sigma_pm) + 2*pc.delta**2*(2*pc.s1hat + pc.sigma_pp))*pc.x)/(pc.deltap**2*pc.s1hat)
 
 def f3_rplus_soft(pc):
-    return -8 - (4*pc.L_xisoft*pc.sigma_pp)/pc.delta
+    return (-2*(2*pc.delta + pc.L_xisoft*pc.sigma_pp)*pc.x)/pc.delta
 
 def f3_rplus_virt(pc):
-    return 2*pc.CRm
+    return pc.CRm*pc.x
 
 def f3_rminus_raw(pc):
-    return (4*np.sqrt(pc.m1sq * pc.m2sq)*(pc.s1hat - pc.sigma_mp))/(pc.deltap*(pc.m2sq + pc.s1hat)) + (4*pc.L_xi*np.sqrt(pc.m1sq * pc.m2sq)*(pc.s1hat + pc.sigma_pm))/pc.deltap**2
+    return (2*np.sqrt(pc.m1sq * pc.m2sq)*(pc.s1hat - pc.sigma_mp)*pc.x)/(pc.deltap*(pc.m2sq + pc.s1hat)) + (2*pc.L_xi*np.sqrt(pc.m1sq * pc.m2sq)*(pc.s1hat + pc.sigma_pm)*pc.x)/pc.deltap**2
 
 def f3_rminus_soft(pc):
     return 0
 
 def f3_rminus_virt(pc):
-    return 2*pc.Cplus
+    return pc.Cplus*pc.x
 
 def m1_splus(pc):
     return pc.sigma_pp/(2.*pc.delta)
@@ -100,7 +100,7 @@ def ml_sminus(pc):
     return (2*np.sqrt(pc.m1sq * pc.m2sq)*pc.x)/pc.delta
 
 def m3_rplus(pc):
-    return 2
+    return pc.x
 
 def m3_rminus(pc):
     return 0
