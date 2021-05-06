@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# auto-generated module by light package
+# pylint: skip-file
 # fmt: off
 import numpy as np
 
@@ -16,8 +18,7 @@ def c3np2a (y, nf):
 def c3ns2b (y, nf):
     dl1 = np.log(1.-y)
     dm  = 1./(1.-y)
-    return (+ 14.2222 * dl1**3 - 61.3333 * dl1**2 - 31.105 * dl1+ 188.64+ nf * ( 1.77778 * dl1**2 - 8.5926 * dl1 + 6.3489 ))
-    return ( dm * c3ns2b)
+    return (+ 14.2222 * dl1**3 - 61.3333 * dl1**2 - 31.105 * dl1+ 188.64+ nf * ( 1.77778 * dl1**2 - 8.5926 * dl1 + 6.3489 ))*dm
 
 def c3nm2c (y, nf):
     dl1 = np.log(1.-y)

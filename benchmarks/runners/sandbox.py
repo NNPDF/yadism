@@ -124,7 +124,7 @@ class Sandbox(Runner):
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 1}], self.generate_observables(), ["ToyLH"])
+        self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
 
 if __name__ == "__main__":
     sand = Sandbox()

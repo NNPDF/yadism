@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# auto-generated module by light package
+# pylint: skip-file
 # fmt: off
 import numpy as np
 
