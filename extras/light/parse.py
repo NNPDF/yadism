@@ -9,7 +9,9 @@ def init():
     nnlo = here / "nnlo"
     shutil.rmtree(nnlo, ignore_errors=True)
     nnlo.mkdir()
-    (nnlo / "__init__.py").touch()
+    init = nnlo / "__init__.py"
+    with open(init, "w") as f:
+        f.write("# -*- coding: utf-8 -*-\n\n")
     return nnlo
 
 
@@ -32,6 +34,7 @@ def parse(path):
     new = "\n".join(new)
     new = re.sub(r"\n *\d *", "", new)
     new = re.sub(r"c\w* =(.*)", r"return (\1)", new)
+    new = re.sub(r"d([\+\-]?\d+)", r"e\1", new)
 
     return new
 
@@ -39,6 +42,8 @@ def parse(path):
 def write(path, content, nnlo):
     with open(nnlo / (path.stem + ".py"), "w") as f:
         f.write(content)
+    with open(nnlo / "__init__.py", "a") as f:
+        f.write(f"from . import {path.stem}\n")
 
 
 if __name__ == "__main__":

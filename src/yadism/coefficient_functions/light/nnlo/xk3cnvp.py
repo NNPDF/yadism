@@ -16,7 +16,7 @@ def c3q1sa (y):
 def c2q1sb (y):
     dl1 = np.log(1.-y)
     dm  = 1./(1.-y)
-    return (+ 28.4444 * dl1**3 - 64.d0 * dl1**2 - 283.157 * dl1+ 304.751)
+    return (+ 28.4444 * dl1**3 - 64.e0 * dl1**2 - 283.157 * dl1+ 304.751)
     return ( dm * c2q1sb)
 
 def c2q1sc (y):
