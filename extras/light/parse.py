@@ -2,6 +2,7 @@
 import pathlib
 import re
 import shutil
+import itertools
 
 here = pathlib.Path(__file__).absolute().parent
 
@@ -22,6 +23,7 @@ def parse(path):
     with open(path) as f:
         original = f.readlines()
 
+    # parse by line
     new = original
     new = list(filter(lambda l: l[0] != "*", new))
     for keyword in ["END", "IMPLICIT", "INTEGER", "REAL", "RETURN"]:
@@ -33,6 +35,28 @@ def parse(path):
     new = list(map(lambda l: " " * 4 + l if "function" not in l else l + ":", new))
     new = list(map(lambda l: l.replace("function ", "\ndef "), new))
 
+    # parse by function
+    functions, f = [], []
+    for line in new:
+        if line[0] == "\n":
+            if f != []:
+                functions.append(f)
+                f = []
+            line = line[1:]
+        f.append(line)
+
+    new_functions = []
+    for f in functions:
+        name = re.match(r"def (\w*) ?\(", f[0])[1]
+        new_f = [re.sub(r" \(", "(", f[0])]
+        for l in f[1:]:
+            l = re.sub(str(name), "res", l)
+            new_f.append(l)
+        new_f.append(" " * 4 + "return res")
+        new_functions.append(new_f)
+
+    # parse multiline
+    new = list(itertools.chain.from_iterable(new_functions))
     new = [
         "# -*- coding: utf-8 -*-",
         "# auto-generated module by light package",
@@ -42,9 +66,10 @@ def parse(path):
         "",
     ] + new
     new = "\n".join(new)
-    new = re.sub(r"\n *\d *", "", new)
-    new = re.sub(r"c\w* =(.*)", r"return (\1)", new)
+    new = re.sub(r"\n *\d *", " ", new)
     new = re.sub(r"d([\+\-]?\d+)", r"e\1", new)
+    new = re.sub(r"def", r"\ndef", new)
+    new += "\n"
 
     return new
 
@@ -57,10 +82,15 @@ def write(path, content, nnlo):
         f.write(f"from . import {path.stem}\n")
 
 
-if __name__ == "__main__":
+def production():
     nnlo = init()
     for p in sorted(here.iterdir()):
         if p.suffix == ".f":
             print(p.name)
             new = parse(p)
             write(p, new, nnlo)
+
+
+if __name__ == "__main__":
+    production()
+    #  parse(here / "xk3cnvp.f")
