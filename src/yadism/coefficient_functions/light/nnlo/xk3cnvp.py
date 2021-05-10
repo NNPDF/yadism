@@ -28,3 +28,8 @@ def c2q1sc(y):
     dl1 = np.log(1.-y)
     res = + 7.1111 * dl1**4 - 21.3333 * dl1**3 - 141.579 * dl1**2 + 304.751 * dl1 + 346.213
     return res
+
+def c3q1sc(y):
+    dl1 = np.log(1.-y)
+    res = + 7.1111 * dl1**4 - 21.3333 * dl1**3 - 141.579 * dl1**2 + 304.751 * dl1 + 345.993
+    return res

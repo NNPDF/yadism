@@ -20,3 +20,7 @@ def clnc2a(y, nf):
 def clnn2c(y):
     res = -0.164
     return res
+
+def clnc2c(y):
+    res = -0.150
+    return res

@@ -34,7 +34,8 @@ def parse(path):
     new = list(map(lambda l: l.replace("log (", "np.log("), new))
     new = list(map(lambda l: " " * 4 + l if "function" not in l else l + ":", new))
     new = list(map(lambda l: l.replace("function ", "\ndef "), new))
-
+    new += ["\n"]
+    
     # parse by function
     functions, f = [], []
     for line in new:
