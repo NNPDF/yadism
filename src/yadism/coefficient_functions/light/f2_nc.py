@@ -100,10 +100,10 @@ class Gluon(pc.LightBase):
         |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
         """
 
-        def cg(z, nf=self.nf):
+        def reg(z, nf=self.nf):
             return 2.0 * nf * split.pqg(z)
 
-        return cg
+        return reg
 
     def NNLO(self):
         """

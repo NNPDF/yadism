@@ -98,11 +98,11 @@ class Sandbox(Runner):
             # "F2_bottom",
             # "F2_top",
             #"F2_total",
-            #"FL_light",
+            "FL_light",
             #"FL_charm",
             # "FL_bottom",
             # "FL_total",
-            #"F3_light",
+            "F3_light",
             #"F3_charm",
             # "F3_bottom",
             # "F3_total",
@@ -115,7 +115,7 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
         # card["PropagatorCorrection"] = .999
@@ -124,7 +124,7 @@ class Sandbox(Runner):
         return observables.build(observable_names=observable_names,kinematics=kinematics,update=update)
 
     def doit(self):
-        self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
+        self.run([{"PTO": 1},{"PTO": 2}], self.generate_observables(), ["gonly"])
 
 if __name__ == "__main__":
     sand = Sandbox()

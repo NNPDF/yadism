@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
-from eko import constants
 
-from . import f2_cc
+from . import f3_nc
 from .. import partonic_channel as pc
 
+from . import nnlo
 
-class NonSinglet(f2_cc.NonSinglet):
-    def NLO(self):
+
+class NonSinglet(f3_nc.NonSinglet):
+    def NNLO(self):
         """
-        |ref| implements :eqref:`155`, :cite:`moch-f3nc`.
+        |ref| implements :eqref:`2.9`, :cite:`vogt-f2lcc`.
         """
-        CF = constants.CF
 
-        reg_f2, sing, loc = super().NLO()
+        def reg(z):
+            return nnlo.xc3ns2p.c3nm2a(z, self.nf)
 
-        def reg(z, CF=CF):
-            return reg_f2(z) - 2 * CF * (1 + z)
+        def sing(z):
+            return nnlo.xc3ns2p.c3ns2b(z, self.nf)
+
+        def loc(x):
+            return nnlo.xc3ns2p.c3nm2c(x, self.nf)
 
         return reg, sing, loc
 
