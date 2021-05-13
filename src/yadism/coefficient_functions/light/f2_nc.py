@@ -8,6 +8,8 @@ from . import partonic_channel as pc
 from .. import splitting_functions as split
 from ...esf.distribution_vec import rsl_from_distr_coeffs
 
+from . import nnlo
+
 
 class NonSinglet(pc.LightBase):
     @staticmethod
@@ -50,6 +52,22 @@ class NonSinglet(pc.LightBase):
 
         return split.pqq_reg, split.pqq_sing, split.pqq_local
 
+    def NNLO(self):
+        """
+        |ref| implements :eqref:`4.8`, :cite:`vogt-f2nc`.
+        """
+
+        def reg(z):
+            return nnlo.xc2ns2p.c2nn2a(z, self.nf)
+
+        def sing(z):
+            return nnlo.xc2ns2p.c2ns2b(z, self.nf)
+
+        def loc(x):
+            return nnlo.xc2ns2p.c2nn2c(x, self.nf)
+
+        return reg, sing, loc
+
 
 class Gluon(pc.LightBase):
     def NLO(self):
@@ -82,11 +100,32 @@ class Gluon(pc.LightBase):
         |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
         """
 
-        def cg(z, nf=self.nf):
+        def reg(z, nf=self.nf):
             return 2.0 * nf * split.pqg(z)
 
-        return cg
+        return reg
+
+    def NNLO(self):
+        """
+        |ref| implements :eqref:`4.10`, :cite:`vogt-f2nc`.
+        """
+
+        def reg(z):
+            return nnlo.xc2sg2p.c2g2a(z, self.nf)
+
+        def loc(x):
+            return nnlo.xc2sg2p.c2g2c(x, self.nf)
+
+        return reg, 0.0, loc
 
 
 class Singlet(pc.LightBase):
-    pass
+    def NNLO(self):
+        """
+        |ref| implements :eqref:`4.9`, :cite:`vogt-f2nc`.
+        """
+
+        def reg(z):
+            return nnlo.xc2sg2p.c2s2a(z, self.nf)
+
+        return reg, 0.0, 0.0

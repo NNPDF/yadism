@@ -111,4 +111,8 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
     if rest == 0 and kind == "F3":
         tot_ch_sq *= -1
     weights["g"][21] = tot_ch_sq / norm / 2
+    # add singlet
+    for q in weights["ns"]:
+        weights["s"][q] = tot_ch_sq / norm / 2
+        weights["s"][-q] = tot_ch_sq / norm / 2
     return weights

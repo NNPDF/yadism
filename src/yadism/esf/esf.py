@@ -83,7 +83,8 @@ class EvaluatedStructureFunction:
         self._computed = False
         # select available partonic coefficient functions
         self.orders = filter(
-            lambda e: e[0] <= SF.pto, [(0, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 1)]
+            lambda e: e[0] <= SF.pto,
+            [(0, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 1), (2, 0, 0, 0)],
         )
 
         logger.debug("Init %s", self)
@@ -148,12 +149,6 @@ class EvaluatedStructureFunction:
                 errors
         """
 
-        # if self.sf.pto > 0:
-        #     a_s = self.sf.strong_coupling.a_s(self.Q2 * self.sf.xiR ** 2)
-        #     d_vec += a_s * (
-        #         conv.DistributionVec(comp["NLO"]())
-        #         + (-np.log(self.sf.xiF ** 2)) * conv.DistributionVec(comp["NLO_fact"]())
-        #     )
         d_vec = conv.DistributionVec(cf)
         ls = []
         els = []

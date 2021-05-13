@@ -2,7 +2,7 @@ import pathlib
 import numpy as np
 
 from yadism import observable_name as on
-from yadism.coupling_constants import CouplingConstants
+from yadism.coefficient_functions.coupling_constants import CouplingConstants
 
 
 # setup external PDF
