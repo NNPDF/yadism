@@ -12,7 +12,7 @@ import numpy as np
 
 from eko import basis_rotation as br
 
-from . import conv
+from . import distribution_vec as conv
 from .esf_result import ESFResult
 from .. import coefficient_functions as cf
 
@@ -149,11 +149,12 @@ class EvaluatedStructureFunction:
                 errors
         """
 
+        d_vec = conv.DistributionVec(cf)
         ls = []
         els = []
         # iterate all polynomials
         for polynomial_f in self.sf.interpolator:
-            c, e = conv.convolution(cf, convolution_point, polynomial_f)
+            c, e = d_vec.convolution(convolution_point, polynomial_f)
             # add the factor x from the LHS
             c, e = c * convolution_point, e * convolution_point
             ls.append(c)

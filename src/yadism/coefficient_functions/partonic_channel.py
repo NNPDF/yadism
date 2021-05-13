@@ -31,6 +31,19 @@ class RSL:
 
     @classmethod
     def from_distr_coeffs(cls, reg, coeffs, reg_args=None):
+        """
+        Compute the RSL structure form the coefficients of the distributions
+
+        Parameters
+        ----------
+            regular : callable
+                regular piece (passed unchanged)
+            delta : float
+                coefficient of the Dirac-delta function
+            coeffs: list(float)
+                coefficients of the plus-distributions with increasing power of log
+
+        """
         pass
 
 

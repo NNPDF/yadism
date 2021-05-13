@@ -1,0 +1,145 @@
+# -*- coding: utf-8 -*-
+"""
+Defines :py:class:`DistributionVec` and its API, that are used to represent
+distribution objects in the coefficient function definition and calculation.
+
+"""
+
+import numpy as np
+import scipy.integrate
+import numba as nb
+
+from eko import interpolation
+
+# TODO: don't use any default
+eps_integration_border = 1e-10
+"""Set the integration domain restriction, see
+:ref:`Integration Note<integration-note>`"""
+
+eps_integration_abs = 1e-13
+"""Set the integration target absolute error, see
+:ref:`Integration Note<integration-note>`"""
+
+
+@nb.njit(
+    (
+        nb.f8,
+        nb.f8,
+        nb.types.function_type.FunctionType(nb.f8(nb.f8, nb.f8[:])),
+        nb.types.function_type.FunctionType(nb.f8(nb.f8, nb.f8[:])),
+        nb.f8,
+        nb.b1,
+        nb.f8[:, :],
+        nb.f8[:],
+    ),
+    cache=True,
+)
+def quad_ker(z, x, reg, sing, pdf_at_x, is_log, areas, args):
+    if is_log:
+        pdf_at_x_ov_z_div_z = interpolation.log_evaluate_x(x / z, areas) / z
+    else:
+        pdf_at_x_ov_z_div_z = interpolation.evaluate_x(x / z, areas) / z
+    # compute
+    reg_integrand = reg(z, args) * pdf_at_x_ov_z_div_z
+    sing_integrand = sing(z, args) * (pdf_at_x_ov_z_div_z - pdf_at_x)
+    return reg_integrand + sing_integrand
+
+
+def convolution(rsl, x, pdf_func):
+    r"""
+    Convolute the current :py:class:`DistributionVec` with a function
+    ``pdf_func``.
+
+    The definition of the convolution performed is:
+
+    .. math::
+        \int_x^{1} \frac{\text{d}z}{z} dvec(z) f\left(\frac{x}{z}\right)
+
+    (notice that is symmetryc in :math:`dvec \leftrightarrow f`).
+
+    .. _integration-note:
+
+    Note
+    ----
+    The class level attributes :py:attr:`eps_integration_abs` and
+    :py:attr:`eps_integration_border` regulate the integration process,
+    setting respectively the absolute error and restricting the
+    integration domain in order to avoid singularities.
+
+    Parameters
+    ----------
+    x : scalar
+        the kinematics point at which the convoution is evaluated
+    pdf_func : callable
+        the function to be convoluted with the current
+        :py:class:`DistributionVec` (usually a PDF, or a PDF
+        interpolator)
+
+    Returns
+    -------
+    float
+        the result of the convolution
+    float
+        the integration error
+
+    Note
+    ----
+    The real name of this method is ``convnd``.
+    """
+    # empty domain?
+    if x >= (1 - eps_integration_border):
+        return 0.0, 0.0
+    # eko environment?
+    if pdf_func.is_below_x(x):
+        # support below x --> trivially 0
+        return 0.0, 0.0
+    else:
+        # set breakpoints as relevant points of the integrand
+        # computed from interpolation areas of `pdf_func`
+        # and also eventually restrict integration domain
+        area_borders = []
+        for area in pdf_func.areas:
+            area_borders.extend([area.xmin, area.xmax])
+        area_borders = np.unique(area_borders)
+        if pdf_func._mode_log:  # pylint: disable=protected-access
+            area_borders = np.exp(area_borders)
+        breakpoints = x / area_borders
+        z_min = x
+        z_max = min(max(breakpoints), 1)
+
+    # cache values
+    pdf_at_x = pdf_func(x)
+
+    # actual convolution
+    # ------------------
+
+    # integrate the kernel, if needed
+    if rsl.reg is None and rsl.sing is None:
+        res, err = 0, 0
+    else:
+        res, err = scipy.integrate.quad(
+            quad_ker,
+            z_min * (1 + eps_integration_border),
+            z_max * (1 - eps_integration_border),
+            args=(
+                x,
+                rsl.reg,
+                rsl.sing,
+                pdf_at_x,
+                pdf_func._mode_log,
+                pdf_func.areas_representation,
+                rsl.args,
+            ),
+            epsabs=eps_integration_abs,
+            points=breakpoints,
+        )
+
+    # sum the addends
+    if rsl.loc is None:
+        local_at_x = 0
+    else:
+        local_at_x = rsl.loc(x)
+
+    res += pdf_at_x * local_at_x
+
+    return res, err

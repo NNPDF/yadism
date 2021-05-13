@@ -27,7 +27,7 @@ import abc
 
 import numpy as np
 
-from . import conv
+from .distribution_vec import DistributionVec
 from .esf_result import ESFResult
 
 
@@ -201,6 +201,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             self.xi,
             self.Q2,
         )
+        d = DistributionVec(ker)
         for xj, pj in zip(self.sf.interpolator.xgrid_raw, self.sf.interpolator):
             # basis function does not contribute?
             if pj.is_below_x(self.xi):
@@ -210,7 +211,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 self.sf.obs_name.apply_kind(kind), {"Q2": self.Q2, "x": xj}
             ).get_result()
             # compute interpolated h integral (j)
-            h2j = conv.convolution(ker, self.xi, pj)
+            h2j = d.convolution(self.xi, pj)
             # sum along j
             res += h2j * FXj
 
