@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from eko import constants
 
 from . import partonic_channel as pc
 
+from . import nlo
 from . import nnlo
 
 
 class NonSinglet(pc.LightBase):
-    def NLO(self):
+    @staticmethod
+    def NLO():
         """
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
         """
 
         def reg(z):
-            return constants.CF * 4.0 * z
+            return nlo.fl.ns_reg(z, np.array([], dtype=float))
 
         return reg
 
@@ -38,8 +39,8 @@ class Gluon(pc.LightBase):
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
         """
 
-        def reg(z, nf=self.nf):
-            return nf * constants.TR * 16 * z * (1.0 - z)
+        def reg(z):
+            return nlo.fl.gluon_reg(z, np.array([self.nf], dtype=float))
 
         return reg
 

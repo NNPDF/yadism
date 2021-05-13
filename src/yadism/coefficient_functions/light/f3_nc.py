@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from eko import constants
 
 from . import f2_nc
 from .. import partonic_channel as pc
+from ...esf.distribution_vec import rsl_from_distr_coeffs
 
+from . import nlo
 from . import nnlo
 
 
 class NonSinglet(f2_nc.NonSinglet):
-    def NLO(self):
+    @staticmethod
+    def NLO():
         """
         |ref| implements :eqref:`155`, :cite:`moch-f3nc`.
         """
-        CF = constants.CF
 
-        reg_f2, sing, loc = super().NLO()
+        def reg(z):
+            return nlo.f3.ns_reg(z, np.array([], dtype=float))
 
-        def reg(z, CF=CF):
-            return reg_f2(z) - 2 * CF * (1 + z)
-
-        return reg, sing, loc
+        return rsl_from_distr_coeffs(
+            reg, nlo.f2.ns_delta, nlo.f2.ns_omx, nlo.f2.ns_logomx
+        )
 
     def NNLO(self):
         """

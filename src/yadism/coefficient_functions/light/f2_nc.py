@@ -8,6 +8,7 @@ from . import partonic_channel as pc
 from .. import splitting_functions as split
 from ...esf.distribution_vec import rsl_from_distr_coeffs
 
+from . import nlo
 from . import nnlo
 
 
@@ -21,29 +22,18 @@ class NonSinglet(pc.LightBase):
         # leading order is just a delta function
         return 0.0, 0.0, 1.0
 
-    def NLO(self):
+    @staticmethod
+    def NLO():
         """
         |ref| implements :eqref:`4.3`, :cite:`vogt-f2nc`.
         """
-        CF = constants.CF
-        zeta_2 = np.pi ** 2 / 6.0
 
-        def reg(z, CF=CF):
-            # fmt: off
-            return CF*(
-                - 2 * (1 + z) * np.log((1 - z) / z)
-                - 4 * np.log(z) / (1 - z)
-                + 6 + 4 * z
-            )
-            # fmt: on
+        def reg(z):
+            return nlo.f2.ns_reg(z, np.array([], dtype=float))
 
-        delta = -CF * (9 + 4 * zeta_2)
-
-        omx = -3 * CF
-
-        logomx = 4 * CF
-
-        return rsl_from_distr_coeffs(reg, delta, omx, logomx)
+        return rsl_from_distr_coeffs(
+            reg, nlo.f2.ns_delta, nlo.f2.ns_omx, nlo.f2.ns_logomx
+        )
 
     def NLO_fact(self):
         """
@@ -82,16 +72,8 @@ class Gluon(pc.LightBase):
         plus antiflavours in which the gluon can go.
         """
 
-        def reg(z, nf=self.nf):
-            return (
-                nf
-                * (
-                    (2.0 - 4.0 * z * (1.0 - z)) * np.log((1.0 - z) / z)
-                    - 2.0
-                    + 16.0 * z * (1.0 - z)
-                )
-                * (2.0 * constants.TR)
-            )
+        def reg(z):
+            return nlo.f2.gluon_reg(z, np.array([self.nf], dtype=float))
 
         return reg
 
