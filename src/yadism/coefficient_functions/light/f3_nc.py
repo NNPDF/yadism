@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 from eko import constants
 
 from . import f2_nc
@@ -27,13 +28,13 @@ class NonSinglet(f2_nc.NonSinglet):
         """
 
         def reg(z):
-            return nnlo.xc3ns2p.c3np2a(z, self.nf)
+            return nnlo.xc3ns2p.c3np2a(z, np.array([self.nf], dtype=float))
 
         def sing(z):
-            return nnlo.xc3ns2p.c3ns2b(z, self.nf)
+            return nnlo.xc3ns2p.c3ns2b(z, np.array([self.nf], dtype=float))
 
         def loc(x):
-            return nnlo.xc3ns2p.c3np2c(x, self.nf)
+            return nnlo.xc3ns2p.c3np2c(x, np.array([self.nf], dtype=float))
 
         return reg, sing, loc
 

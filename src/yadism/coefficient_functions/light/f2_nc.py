@@ -58,13 +58,13 @@ class NonSinglet(pc.LightBase):
         """
 
         def reg(z):
-            return nnlo.xc2ns2p.c2nn2a(z, self.nf)
+            return nnlo.xc2ns2p.c2nn2a(z, np.array([self.nf], dtype=float))
 
         def sing(z):
-            return nnlo.xc2ns2p.c2ns2b(z, self.nf)
+            return nnlo.xc2ns2p.c2ns2b(z, np.array([self.nf], dtype=float))
 
         def loc(x):
-            return nnlo.xc2ns2p.c2nn2c(x, self.nf)
+            return nnlo.xc2ns2p.c2nn2c(x, np.array([self.nf], dtype=float))
 
         return reg, sing, loc
 
@@ -111,10 +111,10 @@ class Gluon(pc.LightBase):
         """
 
         def reg(z):
-            return nnlo.xc2sg2p.c2g2a(z, self.nf)
+            return nnlo.xc2sg2p.c2g2a(z, np.array([self.nf], dtype=float))
 
         def loc(x):
-            return nnlo.xc2sg2p.c2g2c(x, self.nf)
+            return nnlo.xc2sg2p.c2g2c(x, np.array([self.nf], dtype=float))
 
         return reg, 0.0, loc
 
@@ -126,6 +126,6 @@ class Singlet(pc.LightBase):
         """
 
         def reg(z):
-            return nnlo.xc2sg2p.c2s2a(z, self.nf)
+            return nnlo.xc2sg2p.c2s2a(z, np.array([self.nf], dtype=float))
 
         return reg, 0.0, 0.0
