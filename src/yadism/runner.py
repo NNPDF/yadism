@@ -247,6 +247,7 @@ class Runner:
                                 process.start()
                                 processes.append(process)
                             for process in processes:
+                                process.join()
                                 job_progress.update(task, advance=1)
                                 completed = sum(
                                     task.completed for task in job_progress.tasks
@@ -254,7 +255,6 @@ class Runner:
                                 overall_progress.update(
                                     overall_task, completed=completed
                                 )
-                                process.join()
                             self._output[name] = list(results)
         end = time.time()
         diff = end - start
