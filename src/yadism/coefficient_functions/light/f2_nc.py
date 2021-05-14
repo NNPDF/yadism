@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-import numpy as np
-
-from eko import constants
-
+from ..partonic_channel import RSL
 from . import partonic_channel as pc
 
 from .. import splitting_functions as split
-from ...esf.distribution_vec import rsl_from_distr_coeffs
 
 from . import nlo
 from . import nnlo
@@ -20,7 +16,7 @@ class NonSinglet(pc.LightBase):
         """
 
         # leading order is just a delta function
-        return 0.0, 0.0, 1.0
+        return RSL.from_delta(1.0)
 
     @staticmethod
     def NLO():
@@ -28,11 +24,8 @@ class NonSinglet(pc.LightBase):
         |ref| implements :eqref:`4.3`, :cite:`vogt-f2nc`.
         """
 
-        def reg(z):
-            return nlo.f2.ns_reg(z, np.array([], dtype=float))
-
-        return rsl_from_distr_coeffs(
-            reg, nlo.f2.ns_delta, nlo.f2.ns_omx, nlo.f2.ns_logomx
+        return RSL.from_distr_coeffs(
+            nlo.f2.ns_reg, (nlo.f2.ns_delta, nlo.f2.ns_omx, nlo.f2.ns_logomx)
         )
 
     def NLO_fact(self):
@@ -47,16 +40,9 @@ class NonSinglet(pc.LightBase):
         |ref| implements :eqref:`4.8`, :cite:`vogt-f2nc`.
         """
 
-        def reg(z):
-            return nnlo.xc2ns2p.c2nn2a(z, np.array([self.nf], dtype=float))
-
-        def sing(z):
-            return nnlo.xc2ns2p.c2ns2b(z, np.array([self.nf], dtype=float))
-
-        def loc(x):
-            return nnlo.xc2ns2p.c2nn2c(x, np.array([self.nf], dtype=float))
-
-        return reg, sing, loc
+        return RSL(
+            nnlo.xc2ns2p.c2nn2a, nnlo.xc2ns2p.c2ns2b, nnlo.xc2ns2p.c2nn2c, [self.nf]
+        )
 
 
 class Gluon(pc.LightBase):
@@ -72,10 +58,7 @@ class Gluon(pc.LightBase):
         plus antiflavours in which the gluon can go.
         """
 
-        def reg(z):
-            return nlo.f2.gluon_reg(z, np.array([self.nf], dtype=float))
-
-        return reg
+        return RSL(nlo.f2.gluon_reg, args=[self.nf])
 
     def NLO_fact(self):
         """
@@ -92,13 +75,7 @@ class Gluon(pc.LightBase):
         |ref| implements :eqref:`4.10`, :cite:`vogt-f2nc`.
         """
 
-        def reg(z):
-            return nnlo.xc2sg2p.c2g2a(z, np.array([self.nf], dtype=float))
-
-        def loc(x):
-            return nnlo.xc2sg2p.c2g2c(x, np.array([self.nf], dtype=float))
-
-        return reg, 0.0, loc
+        return RSL(nnlo.xc2sg2p.c2g2a, loc=nnlo.xc2sg2p.c2g2c, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
@@ -107,7 +84,4 @@ class Singlet(pc.LightBase):
         |ref| implements :eqref:`4.9`, :cite:`vogt-f2nc`.
         """
 
-        def reg(z):
-            return nnlo.xc2sg2p.c2s2a(z, np.array([self.nf], dtype=float))
-
-        return reg, 0.0, 0.0
+        return RSL(nnlo.xc2sg2p.c2s2a, args=[self.nf])

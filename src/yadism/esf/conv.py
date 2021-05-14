@@ -7,7 +7,6 @@ distribution objects in the coefficient function definition and calculation.
 
 import numpy as np
 import scipy.integrate
-import numba as nb
 
 from eko import interpolation
 
@@ -21,28 +20,35 @@ eps_integration_abs = 1e-13
 :ref:`Integration Note<integration-note>`"""
 
 
-@nb.njit(
-    (
-        nb.f8,
-        nb.f8,
-        nb.types.function_type.FunctionType(nb.f8(nb.f8, nb.f8[:])),
-        nb.types.function_type.FunctionType(nb.f8(nb.f8, nb.f8[:])),
-        nb.f8,
-        nb.b1,
-        nb.f8[:, :],
-        nb.f8[:],
-    ),
-    cache=True,
-)
-def quad_ker(z, x, reg, sing, pdf_at_x, is_log, areas, args):
+def quad_ker_reg_sing(z, x, is_log, areas, reg, reg_args, sing, pdf_at_x, sing_args):
     if is_log:
         pdf_at_x_ov_z_div_z = interpolation.log_evaluate_x(x / z, areas) / z
     else:
         pdf_at_x_ov_z_div_z = interpolation.evaluate_x(x / z, areas) / z
     # compute
-    reg_integrand = reg(z, args) * pdf_at_x_ov_z_div_z
-    sing_integrand = sing(z, args) * (pdf_at_x_ov_z_div_z - pdf_at_x)
+    reg_integrand = reg(z, reg_args) * pdf_at_x_ov_z_div_z
+    sing_integrand = sing(z, sing_args) * (pdf_at_x_ov_z_div_z - pdf_at_x)
     return reg_integrand + sing_integrand
+
+
+def quad_ker_reg(z, x, is_log, areas, reg, reg_args):
+    if is_log:
+        pdf_at_x_ov_z_div_z = interpolation.log_evaluate_x(x / z, areas) / z
+    else:
+        pdf_at_x_ov_z_div_z = interpolation.evaluate_x(x / z, areas) / z
+    # compute
+    reg_integrand = reg(z, reg_args) * pdf_at_x_ov_z_div_z
+    return reg_integrand
+
+
+def quad_ker_sing(z, x, is_log, areas, sing, pdf_at_x, sing_args):
+    if is_log:
+        pdf_at_x_ov_z_div_z = interpolation.log_evaluate_x(x / z, areas) / z
+    else:
+        pdf_at_x_ov_z_div_z = interpolation.evaluate_x(x / z, areas) / z
+    # compute
+    sing_integrand = sing(z, sing_args) * (pdf_at_x_ov_z_div_z - pdf_at_x)
+    return sing_integrand
 
 
 def convolution(rsl, x, pdf_func):
@@ -110,26 +116,44 @@ def convolution(rsl, x, pdf_func):
     # cache values
     pdf_at_x = pdf_func(x)
 
+    quad_ker = None
+    quad_args = None
+    if rsl.reg is not None or rsl.sing is not None:
+        quad_args = (
+            x,
+            pdf_func._mode_log,
+            pdf_func.areas_representation,
+        )
+        if rsl.reg is not None:
+            reg_args = (
+                rsl.reg,
+                rsl.args["reg"],
+            )
+            quad_args = (*quad_args, *reg_args)
+            quad_ker = quad_ker_reg
+        if rsl.sing is not None:
+            sing_args = (
+                rsl.sing,
+                pdf_at_x,
+                rsl.args["sing"],
+            )
+            quad_args = (*quad_args, *sing_args)
+            quad_ker = quad_ker_sing
+        if rsl.reg is not None and rsl.sing is not None:
+            quad_ker = quad_ker_reg_sing
+
     # actual convolution
     # ------------------
 
     # integrate the kernel, if needed
-    if rsl.reg is None and rsl.sing is None:
+    if quad_ker is None:
         res, err = 0, 0
     else:
         res, err = scipy.integrate.quad(
             quad_ker,
             z_min * (1 + eps_integration_border),
             z_max * (1 - eps_integration_border),
-            args=(
-                x,
-                rsl.reg,
-                rsl.sing,
-                pdf_at_x,
-                pdf_func._mode_log,
-                pdf_func.areas_representation,
-                rsl.args,
-            ),
+            args=quad_args,
             epsabs=eps_integration_abs,
             points=breakpoints,
         )
@@ -138,7 +162,7 @@ def convolution(rsl, x, pdf_func):
     if rsl.loc is None:
         local_at_x = 0
     else:
-        local_at_x = rsl.loc(x)
+        local_at_x = rsl.loc(x, rsl.args["loc"])
 
     res += pdf_at_x * local_at_x
 

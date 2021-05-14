@@ -84,7 +84,8 @@ class EvaluatedStructureFunction:
         # select available partonic coefficient functions
         self.orders = filter(
             lambda e: e[0] <= SF.pto,
-            [(0, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 1), (2, 0, 0, 0)],
+            #  [(0, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 1), (2, 0, 0, 0)],
+            [(0, 0, 0, 0), (1, 0, 0, 0), (2, 0, 0, 0)],
         )
 
         logger.debug("Init %s", self)
@@ -115,11 +116,12 @@ class EvaluatedStructureFunction:
             self.res.orders[o] = (zeros, zeros.copy())
             # iterate all partonic channels
             for cfe in cfc.collect_elems():
+                rsl = cfe.coeff[o]()
+                if rsl is None:
+                    continue
                 # compute convolution point
                 convolution_point = cfe.coeff.convolution_point()
-                val, err = self.compute_coefficient_function(
-                    convolution_point, cfe.coeff[o]()
-                )
+                val, err = self.compute_coefficient_function(convolution_point, rsl)
                 # blow up to flavor space
                 for pid, w in cfe.partons.items():
                     pos = br.flavor_basis_pids.index(pid)

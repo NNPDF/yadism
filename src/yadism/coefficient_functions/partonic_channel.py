@@ -22,12 +22,30 @@ def loc_from_distr_coeffs(x, coeffs):
     return res + delta
 
 
+@nb.njit("f8(f8,f8[:])", cache=True)
+def loc_from_delta(_, coeffs):
+    return coeffs[0]
+
+
 class RSL:
     def __init__(self, reg=None, sing=None, loc=None, args=None):
         self.reg = reg
         self.sing = sing
         self.loc = loc
-        self.args = args if args is not None else np.array([], dtype=float)
+        if isinstance(args, dict):
+            self.args = {
+                k: np.array(args[k], dtype=float)
+                if k in args and args[k] is not None
+                else np.array([], dtype=float)
+                for k in ["reg", "sing", "loc"]
+            }
+        else:
+            self.args = {
+                k: np.array(args, dtype=float)
+                if args is not None
+                else np.array([], dtype=float)
+                for k in ["reg", "sing", "loc"]
+            }
 
     @classmethod
     def from_distr_coeffs(cls, reg, coeffs, reg_args=None):
@@ -44,7 +62,22 @@ class RSL:
                 coefficients of the plus-distributions with increasing power of log
 
         """
-        pass
+        return cls(
+            reg=reg,
+            sing=sing_from_distr_coeffs,
+            loc=loc_from_distr_coeffs,
+            args={"reg": reg_args, "sing": coeffs[1:], "loc": coeffs},
+        )
+
+    @classmethod
+    def from_delta(cls, delta_coeff):
+        return cls(loc=loc_from_delta, args={"loc": [delta_coeff]})
+
+    def __repr__(self):
+        r = "r" if self.reg is not None else "-"
+        s = "s" if self.sing is not None else "-"
+        l = "l" if self.loc is not None else "-"
+        return f"RSL({r},{s},{l}) - args: {self.args}"
 
 
 class PartonicChannel(dict):
