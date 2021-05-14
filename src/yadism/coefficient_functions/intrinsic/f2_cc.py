@@ -4,9 +4,8 @@ import numpy as np
 
 from eko import constants
 
-from yadism.esf.distribution_vec import rsl_from_distr_coeffs
-
 from .. import partonic_channel as pc
+from ..partonic_channel import RSL
 
 from . import raw_cc
 
@@ -30,13 +29,13 @@ class Splus(f2_nc.Splus):
 #         self.lo = (1.-1./self.y)
 
 #     def LO(self):
-#         return 0, 0, self.lo
+#         return RSL.from_delta(self.lo)
 
 #     def NLO(self):
 #         norm = self.lo * constants.CF
 #         lnomx = raw_cc.lnomx * norm
 #         omx = raw_cc.omx(self.y) * norm
 #         delta = raw_cc.f2sv(self.y) * norm
-#         def reg(z):
+#         def reg(z, args):
 #             return (norm * raw_cc.f2r(self.y,z) - (lnomx*np.log(1.-z) + omx)/(1.-z))
-#         return rsl_from_distr_coeffs(reg, delta, omx, lnomx)
+#         return RSL.from_distr_coeffs(reg, (delta, omx, lnomx))

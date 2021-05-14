@@ -6,6 +6,7 @@ from eko import constants
 from . import raw_nc
 
 from ..fonll import partonic_channel as pc
+from ..partonic_channel import RSL
 
 
 class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
@@ -55,10 +56,10 @@ class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
             )
         )
 
-        def reg(z):
+        def reg(z, args):
             self.init_vars(z)
             return norm * raw_nc.__getattribute__(  # pylint: disable=no-member
                 f"f{kind}_{RS}_raw"
             )(self) - omx / (1.0 - z)
 
-        return rsl_from_distr_coeffs(reg, delta, omx)
+        return RSL.from_distr_coeffs(reg, (delta, omx))

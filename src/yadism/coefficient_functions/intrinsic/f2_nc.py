@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from . import partonic_channel as pc
+from ..partonic_channel import RSL
 
 
 class Splus(pc.NeutralCurrentBase):
     def LO(self):
         factor = self.delta / self.ESF.Q2 * self.eta
-        return 0, 0, factor
+        return RSL.from_delta(factor)
 
     def NLO(self):
         return self.mkNLO("2", "splus")
