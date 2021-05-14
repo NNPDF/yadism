@@ -44,7 +44,7 @@ class NeutralCurrentBase(pc.PartonicChannel):
                 output
         """
         if self.is_below_threshold(self.ESF.x):
-            return lambda: 0
+            return lambda: pc.RSL()
         return f
 
     def is_below_threshold(self, z):
@@ -135,7 +135,7 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
         b3 = self.sf_prefactor / 2
         as_norm = 2
 
-        def reg(z, b1=b1, b2=b2, CF=CF):
+        def reg(z, args):
             hq_reg = -(1 + z ** 2) * np.log(z) / (1 - z) - (1 + z) * (
                 2 * np.log(1 - z) - np.log(1 - self.labda * z)
             )
@@ -150,7 +150,7 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
                 )
             ) * as_norm
 
-        def sing(z, b1=b1, b3=b3, CF=CF):
+        def sing(z, args):
             hq_sing = 2 * ((2 * np.log(1 - z) - np.log(1 - self.labda * z)) / (1 - z))
             return (
                 (-self.sf_prefactor * np.log(self.labda) * (split.pqq_sing(z) / 2))
@@ -163,7 +163,7 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
                 )
             ) * as_norm
 
-        def local(x, a=a, b1=b1, b3=b3, CF=CF):
+        def local(x, args):
             log_pd_int = -np.log(1 - x) ** 2 / 2.0
             hq_loc = -(
                 4.0
@@ -193,10 +193,10 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
                 )
             ) * as_norm
 
-        return reg, sing, local
+        return pc.RSL(reg, sing, local)
 
     def LO(self):
-        return 0, 0, self.sf_prefactor
+        return pc.RSL.from_delta(self.sf_prefactor)
 
     def NLO_fact(self):
         as_norm = 2.0

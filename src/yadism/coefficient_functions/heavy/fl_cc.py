@@ -2,8 +2,9 @@
 
 import numpy as np
 
-from . import partonic_channel as pc
 from .. import splitting_functions as split
+from ..partonic_channel import RSL
+from . import partonic_channel as pc
 
 
 class NonSinglet(pc.ChargedCurrentNonSinglet):
@@ -35,7 +36,7 @@ class Gluon(pc.ChargedCurrentGluon):
         """
         as_norm = 2.0
 
-        def reg(z):
+        def reg(z, args):
             c1 = 8.0 * self.labda ** 2 - 6.0 * self.labda + 2.0
             c2 = 0.0
             c3 = 4.0 * self.labda
@@ -49,4 +50,4 @@ class Gluon(pc.ChargedCurrentGluon):
                 + self.h_g(z, [c1, c2, c3, c4])
             ) * as_norm
 
-        return reg
+        return RSL(reg)
