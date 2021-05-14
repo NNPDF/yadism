@@ -19,6 +19,7 @@ import inspect
 import logging
 import io
 import copy
+import warnings
 
 import rich
 import rich.align
@@ -209,27 +210,43 @@ class Runner:
         self.console.print(rich.markdown.Markdown("## Calculation"))
         self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
-        if log.debug:
-            for name, obs in precomputed_plan.items():
-                self._output[name] = obs.get_result()
-        else:
-            with rich.progress.Progress(
-                transient=True, console=self.console
-            ) as progress:
-                task = progress.add_task(
-                    "Starting...",
-                    total=sum([len(obs) for obs in precomputed_plan.values()]),
-                )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            if log.debug:
                 for name, obs in precomputed_plan.items():
-                    results = []
-                    for res in obs.iterate_result():
-                        results.append(res)
-                        progress.update(
-                            task,
-                            description=f"Computing [bold green]{name}",
-                            advance=1,
-                        )
-                    self._output[name] = results
+                    self._output[name] = obs.get_result()
+            else:
+                from multiprocessing import Process, Manager
+
+                with rich.progress.Progress(
+                    transient=True, console=self.console
+                ) as progress:
+                    task = progress.add_task(
+                        "Starting...",
+                        total=sum([len(obs) for obs in precomputed_plan.values()]),
+                    )
+                    for name, obs in precomputed_plan.items():
+
+                        def compute_esf(esf, results):
+                            results.append(esf.get_result())
+
+                        with Manager() as manager:
+                            processes = []
+                            results = manager.list([])
+                            for esf in obs.esfs:
+                                process = Process(
+                                    target=compute_esf, args=(esf, results)
+                                )
+                                process.start()
+                                processes.append(process)
+                            for process in processes:
+                                process.join()
+                                progress.update(
+                                    task,
+                                    description=f"Computing [bold green]{name}",
+                                    advance=1,
+                                )
+                            self._output[name] = list(results)
         end = time.time()
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")
