@@ -28,6 +28,7 @@ import rich.box
 import rich.progress
 import rich.markdown
 import rich.console
+import rich.live
 
 from eko.interpolation import InterpolatorDispatcher
 from eko import thresholds
@@ -218,14 +219,20 @@ class Runner:
             else:
                 from multiprocessing import Process, Manager
 
-                with rich.progress.Progress(
-                    transient=True, console=self.console
-                ) as progress:
-                    task = progress.add_task(
-                        "Starting...",
-                        total=sum([len(obs) for obs in precomputed_plan.values()]),
-                    )
+                (
+                    progress_table,
+                    overall_progress,
+                    overall_task,
+                    job_progress,
+                    tasks,
+                ) = prepare_progress(precomputed_plan)
+                with rich.live.Live(
+                    progress_table,
+                    transient=True,
+                    console=self.console,
+                ):
                     for name, obs in precomputed_plan.items():
+                        task = tasks[name]
 
                         def compute_esf(esf, results):
                             results.append(esf.get_result())
@@ -240,12 +247,14 @@ class Runner:
                                 process.start()
                                 processes.append(process)
                             for process in processes:
-                                process.join()
-                                progress.update(
-                                    task,
-                                    description=f"Computing [bold green]{name}",
-                                    advance=1,
+                                job_progress.update(task, advance=1)
+                                completed = sum(
+                                    task.completed for task in job_progress.tasks
                                 )
+                                overall_progress.update(
+                                    overall_task, completed=completed
+                                )
+                                process.join()
                             self._output[name] = list(results)
         end = time.time()
         diff = end - start
@@ -253,3 +262,52 @@ class Runner:
 
         out = copy.deepcopy(self._output)
         return out
+
+
+def prepare_progress(precomputed_plan):
+    from rich.panel import Panel
+    from rich.progress import (
+        Progress,
+        SpinnerColumn,
+        BarColumn,
+        TextColumn,
+        TimeRemainingColumn,
+    )
+    from rich.table import Table
+    from itertools import cycle
+
+    colors = cycle(["green", "magenta", "cyan"])
+
+    job_progress = Progress(
+        "{task.description}",
+        SpinnerColumn(),
+        BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+    )
+    tasks = {}
+    for name, obs in precomputed_plan.items():
+        tasks[name] = job_progress.add_task(f"[{next(colors)}]{name}", total=len(obs))
+
+    total = sum(task.total for task in job_progress.tasks)
+    overall_progress = Progress(
+        "{task.description}",
+        #  SpinnerColumn("simpleDots"),
+        BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TimeRemainingColumn(),
+    )
+    overall_task = overall_progress.add_task("Computing", total=int(total))
+
+    progress_table = Table.grid()
+    progress_table.add_row(
+        Panel.fit(
+            overall_progress,
+            title="Overall Progress",
+            border_style="green",
+            padding=(2, 2),
+        ),
+        Panel.fit(
+            job_progress, title="[b]Observables", border_style="red", padding=(1, 2)
+        ),
+    )
+    return progress_table, overall_progress, overall_task, job_progress, tasks
