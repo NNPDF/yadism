@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+from ..partonic_channel import RSL
 from . import f2_nc
 
 from . import nnlo
@@ -12,16 +13,9 @@ class NonSinglet(f2_nc.NonSinglet):
         |ref| implements :eqref:`2.9`, :cite:`vogt-f2lcc`.
         """
 
-        def reg(z):
-            return nnlo.xc2ns2p.c2nc2a(z, np.array([self.nf], dtype=float))
-
-        def sing(z):
-            return nnlo.xc2ns2p.c2ns2b(z, np.array([self.nf], dtype=float))
-
-        def loc(x):
-            return nnlo.xc2ns2p.c2nc2c(x, np.array([self.nf], dtype=float))
-
-        return reg, sing, loc
+        return RSL(
+            nnlo.xc2ns2p.c2nc2a, nnlo.xc2ns2p.c2ns2b, nnlo.xc2ns2p.c2nc2c, [self.nf]
+        )
 
 
 class Gluon(f2_nc.Gluon):

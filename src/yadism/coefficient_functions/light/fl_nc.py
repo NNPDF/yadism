@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+from ..partonic_channel import RSL
 from . import partonic_channel as pc
 
 from . import nlo
@@ -14,23 +15,16 @@ class NonSinglet(pc.LightBase):
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return nlo.fl.ns_reg(z, np.array([], dtype=float))
-
-        return reg
+        return RSL(nlo.fl.ns_reg)
 
     def NNLO(self):
         """
         |ref| implements :eqref:`4`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return nnlo.xclns2p.clnn2a(z, np.array([self.nf], dtype=float))
-
-        def loc(x):
-            return nnlo.xclns2p.clnn2c(x, np.array([], dtype=float))
-
-        return reg, 0.0, loc
+        return RSL(
+            nnlo.xclns2p.clnn2a, loc=nnlo.xclns2p.clnn2c, args=dict(reg=[self.nf])
+        )
 
 
 class Gluon(pc.LightBase):
@@ -39,20 +33,14 @@ class Gluon(pc.LightBase):
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return nlo.fl.gluon_reg(z, np.array([self.nf], dtype=float))
-
-        return reg
+        return RSL(nlo.fl.gluon_reg, args=[self.nf])
 
     def NNLO(self):
         """
         |ref| implements :eqref:`6`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return nnlo.xclsg2p.clg2a(z, np.array([self.nf], dtype=float))
-
-        return reg, 0.0, 0.0
+        return RSL(nnlo.xclsg2p.clg2a, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
@@ -61,7 +49,4 @@ class Singlet(pc.LightBase):
         |ref| implements :eqref:`5`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return nnlo.xclsg2p.cls2a(z, np.array([self.nf], dtype=float))
-
-        return reg, 0.0, 0.0
+        return RSL(nnlo.xclsg2p.cls2a, args=[self.nf])
