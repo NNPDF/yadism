@@ -7,8 +7,6 @@ from . import raw_nc
 
 from ..fonll import partonic_channel as pc
 
-from ...esf.distribution_vec import rsl_from_distr_coeffs
-
 
 class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
     def __init__(self, ESF, m1sq, m2sq):

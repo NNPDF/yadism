@@ -5,6 +5,7 @@ from eko import constants
 
 from .. import splitting_functions as split
 from .. import partonic_channel as pc
+from ..partonic_channel import RSL
 
 
 class PartonicChannelAsy(pc.PartonicChannel):
@@ -45,13 +46,13 @@ class FMatchingQuark(FMatching):
         obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
         parent_LO = obj.LO()
         try:
-            _, _, icl = parent_LO
-        except TypeError:
-            return parent_LO
+            icl = parent_LO.args["loc"][0]
+        except KeyError:  # is there a local part in the parent?
+            return parent_LO  # no, so it should be 0 and we can pass through
         asnorm = 2.0
         l = self.l
 
-        def sing(z):
+        def sing(z, args):
             # this coefficient function is *almost* proportional to P_qq
             # i.e. 2CF * (1.0 + z ** 2) / (1.0 - z) is the "bare" P_qq
             return (
@@ -63,7 +64,7 @@ class FMatchingQuark(FMatching):
 
         # MMa:
         # FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}] # pylint: disable=line-too-long
-        def loc(x):
+        def loc(x, args):
             return (
                 -asnorm
                 * icl
@@ -75,7 +76,7 @@ class FMatchingQuark(FMatching):
                 )
             )
 
-        return 0, sing, loc
+        return RSL(sing=sing, loc=loc)
 
     def NLO_fact(self):
         obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
@@ -105,16 +106,16 @@ class FMatchingGluon(FMatching):
         obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
         parent_LO = obj.LO()
         try:
-            _, _, icl = parent_LO
-        except TypeError:  # is there a local part in the parent?
+            icl = parent_LO.args["loc"][0]
+        except KeyError:  # is there a local part in the parent?
             return parent_LO  # no, so it should be 0 and we can pass through
 
         # since as and p_qg appear together there is no need to put an explicit as_norm here
         # the explicit 2 instead is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
-        def reg(z):
+        def reg(z, args):
             return icl * 2.0 * split.pqg(z) * l
 
-        return reg, 0, 0
+        return RSL(reg)
 
     def NLO_fact(self):
         return self.mk_nlo_raw(-1.0)

@@ -116,8 +116,8 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        #  update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
-        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
+        #  update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
         # card["PropagatorCorrection"] = .999
@@ -127,7 +127,8 @@ class Sandbox(Runner):
 
     def doit(self):
         #  self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
-        self.run([{"PTO": 1}], self.generate_observables(), ["ToyLH"])
+        #  self.run([{"PTO": 1}], self.generate_observables(), ["ToyLH"])
+        self.run([{"PTO": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51}], self.generate_observables(), ["ToyLH"])
 
 if __name__ == "__main__":
     sand = Sandbox()

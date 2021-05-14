@@ -7,19 +7,21 @@ from eko import constants
 
 from . import partonic_channel as pc
 from .. import splitting_functions as split
+from ..partonic_channel import RSL
 from ..intrinsic import f2_nc
 
 
 class AsyGluonVV(pc.PartonicChannelAsy):
     def NLO(self):
-        def cg(z, L=self.L):
+        def cg(z, args):
+            L = self.L
             as_norm = 2.0
             return as_norm * (
                 split.pqg(z) * (L + np.log((1.0 - z) / z))
                 + 2.0 * constants.TR * (-1.0 + 8.0 * z * (1.0 - z))
             )
 
-        return cg
+        return RSL(cg)
 
 
 class AsyGluonAA(AsyGluonVV):
