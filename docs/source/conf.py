@@ -117,8 +117,8 @@ rst_prolog = "\n".join([open(x).read() for x in os.scandir(shared)])
 #
 html_theme = "sphinx_rtd_theme"
 
-html_logo = "../../_assets/logo/logo-docs.png"
-html_favicon = "../../_assets/logo/logo-favicon-32x32.png"
+html_logo = "../_assets/logo/logo-docs.png"
+html_favicon = "../_assets/logo/logo-favicon-32x32.png"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

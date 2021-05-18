@@ -52,7 +52,7 @@ class FMatchingQuark(FMatching):
         asnorm = 2.0
         l = self.l
 
-        def sing(z, args):
+        def sing(z, _args):
             # this coefficient function is *almost* proportional to P_qq
             # i.e. 2CF * (1.0 + z ** 2) / (1.0 - z) is the "bare" P_qq
             return (
@@ -64,7 +64,7 @@ class FMatchingQuark(FMatching):
 
         # MMa:
         # FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}] # pylint: disable=line-too-long
-        def loc(x, args):
+        def loc(x, _args):
             return (
                 -asnorm
                 * icl
@@ -77,25 +77,6 @@ class FMatchingQuark(FMatching):
             )
 
         return RSL(sing=sing, loc=loc)
-
-    def NLO_fact(self):
-        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
-        parent_LO = obj.LO()
-        try:
-            _, _, icl = parent_LO
-        except TypeError:
-            return parent_LO
-
-        def reg(z):
-            return -icl * split.pqq_reg(z)
-
-        def sing(z):
-            return -icl * split.pqq_sing(z)
-
-        def local(x):
-            return -icl * split.pqq_local(x)
-
-        return reg, sing, local
 
 
 class FMatchingGluon(FMatching):
@@ -112,10 +93,7 @@ class FMatchingGluon(FMatching):
 
         # since as and p_qg appear together there is no need to put an explicit as_norm here
         # the explicit 2 instead is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
-        def reg(z, args):
-            return icl * 2.0 * split.pqg(z) * l
+        def reg(z, _args):
+            return icl * 2.0 * split.lo.pqg_reg(z, np.array([], dtype=float)) * l
 
         return RSL(reg)
-
-    def NLO_fact(self):
-        return self.mk_nlo_raw(-1.0)

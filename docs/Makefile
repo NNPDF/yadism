@@ -7,9 +7,9 @@ SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
 
-SRCDIR = ../../src/yadism
+SRCDIR = ../src/yadism
 YADISMOUT = $(SOURCEDIR)/modules
-YADMARKDIR = ../../benchmarks/yadmark
+YADMARKDIR = ../benchmarks/yadmark
 YADMARKOUT = $(SOURCEDIR)/dev-tools/yadmark
 
 TODOOUTFILE = ./source/dev-tools/code-todos.rst

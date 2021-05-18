@@ -69,7 +69,6 @@ class TestFloat:
             assert isinstance(pc.LO()[2], float)
             for i in range(3):
                 assert isinstance(pc.NLO()[i](z), float)
-                assert isinstance(pc.NLO_fact()[i](z), float)
 
         # LO=0
         for pc in [
@@ -78,7 +77,6 @@ class TestFloat:
         ]:
             assert pc.LO() is None
             assert isinstance(pc.NLO()(z), float)
-            assert pc.NLO_fact() is None
 
     def test_gluon(self):
         x = 0.1
@@ -95,7 +93,6 @@ class TestFloat:
             ]:
                 assert pc.LO() is None
                 assert isinstance(pc.NLO()(z), float)
-                assert isinstance(pc.NLO_fact()(z), float)
 
             # LO=0
             for pc in [
@@ -113,7 +110,6 @@ class TestFloat:
             ]:
                 assert pc.LO() is None
                 assert isinstance(pc.NLO()(z), float)
-                assert pc.NLO_fact() is None
 
 
 class TestIntrisic:

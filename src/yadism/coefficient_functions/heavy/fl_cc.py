@@ -36,7 +36,7 @@ class Gluon(pc.ChargedCurrentGluon):
         """
         as_norm = 2.0
 
-        def reg(z, args):
+        def reg(z, _args):
             c1 = 8.0 * self.labda ** 2 - 6.0 * self.labda + 2.0
             c2 = 0.0
             c3 = 4.0 * self.labda
@@ -44,7 +44,7 @@ class Gluon(pc.ChargedCurrentGluon):
             return (
                 (
                     self.sf_prefactor
-                    * (split.pqg(z) / 2.0)
+                    * (split.lo.pqg_reg(z, np.array([], dtype=float)) / 2.0)
                     * (self.l_labda(z) - np.log(self.labda))
                 )
                 + self.h_g(z, [c1, c2, c3, c4])

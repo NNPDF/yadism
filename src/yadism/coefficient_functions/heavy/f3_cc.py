@@ -29,14 +29,18 @@ class Gluon(pc.ChargedCurrentGluon):
         """
         as_norm = 2.0
 
-        def reg(z, args):
+        def reg(z, _args):
             c1 = 2.0 * (1.0 - self.labda)
             c2 = 0
             c3 = -2.0 * (1.0 - z)
             c4 = 2
             return (
                 (
-                    (split.pqg(z) / 2.0 * (-self.l_labda(z) - np.log(self.labda)))
+                    (
+                        split.lo.pqg_reg(z, np.array([], dtype=float))
+                        / 2.0
+                        * (-self.l_labda(z) - np.log(self.labda))
+                    )
                     + self.h_g(z, [c1, c2, c3, c4])
                 )
                 * self.labda
@@ -44,9 +48,3 @@ class Gluon(pc.ChargedCurrentGluon):
             )
 
         return RSL(reg)
-
-    def NLO_fact(self):
-        def reg(z):
-            return split.pqg(z) * self.labda  # TODO unify with parent?
-
-        return reg

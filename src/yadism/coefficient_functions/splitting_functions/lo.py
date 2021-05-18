@@ -2,26 +2,26 @@
 """
 Provides the Altarelli-Parisi splitting functions.
 
-The splitting functions are defined by :eqref:`4.90`, :cite:`pink-book` and
+The splitting functions are defined by :cite:`split-ns,split-singlet` and
 they are organized by the outgoing and incoming particle.
-
-Furthermore they are organized according to their
-:mod:`distribution structure <yadism.esf.distribution_vec>`.
-
-The reference for LO splitting functions is :cite:`pink-book`.
+Furthermore they are organized according to their RSL structure.
 
 """
 
 import numpy as np
+import numba as nb
 
 from eko import constants
 
+from ..partonic_channel import RSL
 
-def pqq_reg(z):
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pqq_reg(z, _args):
     """
     Regular part of :math:`P_{qq}` splitting function.
 
-    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
+    |ref| implements :eqref:`4.5`, :cite:`split-ns`.
 
     Parameters
     ----------
@@ -37,11 +37,12 @@ def pqq_reg(z):
     return -2.0 * constants.CF * (1.0 + z)
 
 
-def pqq_local(x):
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pqq_local(x, _args):
     r"""
     Local part of :math:`P_{qq}` splitting function.
 
-    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
+    |ref| implements :eqref:`4.5`, :cite:`split-ns`.
 
     Parameters
     ----------
@@ -57,11 +58,12 @@ def pqq_local(x):
     return constants.CF * (3.0 + 4.0 * np.log(1.0 - x))
 
 
-def pqq_sing(z):
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pqq_sing(z, _args):
     """
     Singular part of :math:`P_{qq}` splitting function.
 
-    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
+    |ref| implements :eqref:`4.5`, :cite:`split-ns`.
 
     Parameters
     ----------
@@ -72,16 +74,35 @@ def pqq_sing(z):
     -------
         float
             the singular bit the quark-quark splitting function :math:`P_{qq}^S(z)`
-
     """
     return 4.0 * constants.CF / (1.0 - z)
 
 
-def pqg(z):
+def pqq():
+    """
+    :math:`P_{qq}` splitting function.
+
+    |ref| implements :eqref:`4.5`, :cite:`split-ns`.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+
+    Returns
+    -------
+        RSL
+            the quark-quark splitting function :math:`P_{qq}(z)`
+    """
+    return RSL(pqq_reg, pqq_sing, pqq_local)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pqg_reg(z, _args):
     """
     (Regular) :math:`P_{qg}` splitting function.
 
-    |ref| implements :eqref:`4.94`, :cite:`pink-book`.
+    |ref| implements :eqref:`4.6`, :cite:`split-singlet`.
 
     Parameters
     ----------
@@ -95,3 +116,23 @@ def pqg(z):
 
     """
     return 2.0 * constants.TR * (z ** 2 + (1.0 - z) ** 2)
+
+
+def pqg():
+    """
+    :math:`P_{qg}` splitting function.
+
+    |ref| implements :eqref:`4.6`, :cite:`split-singlet`.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+
+    Returns
+    -------
+        RSL
+            the quark-gluon splitting function :math:`P_{qg}(z)`
+
+    """
+    return RSL(pqg_reg)

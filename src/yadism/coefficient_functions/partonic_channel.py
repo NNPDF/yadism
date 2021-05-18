@@ -94,10 +94,9 @@ class PartonicChannel(dict):
         super().__init__()
         self.ESF = ESF
         # default coeff functions to 0
-        self[(0, 0, 0, 0)] = self.decorator(self.LO)
-        self[(1, 0, 0, 0)] = self.decorator(self.NLO)
-        self[(1, 0, 0, 1)] = self.decorator(self.NLO_fact)
-        self[(2, 0, 0, 0)] = self.decorator(self.NNLO)
+        self[0] = self.decorator(self.LO)
+        self[1] = self.decorator(self.NLO)
+        self[2] = self.decorator(self.NNLO)
 
     def convolution_point(self):
         """
@@ -127,10 +126,6 @@ class PartonicChannel(dict):
 
     @staticmethod
     def NLO():
-        return None
-
-    @staticmethod
-    def NLO_fact():
         return None
 
     @staticmethod

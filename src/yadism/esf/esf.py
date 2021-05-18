@@ -13,7 +13,7 @@ import numpy as np
 from eko import basis_rotation as br
 
 from . import conv
-from .esf_result import ESFResult
+from .result import ESFResult
 from .. import coefficient_functions as cf
 
 logger = logging.getLogger(__name__)
@@ -79,14 +79,10 @@ class EvaluatedStructureFunction:
         self.x = x
         self.Q2 = kinematics["Q2"]
         self.process = SF.runner.managers["coupling_constants"].obs_config["process"]
-        self.res = ESFResult(self.x, self.Q2)
+        self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
         # select available partonic coefficient functions
-        self.orders = filter(
-            lambda e: e[0] <= SF.pto,
-            #  [(0, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 1), (2, 0, 0, 0)],
-            [(0, 0, 0, 0), (1, 0, 0, 0), (2, 0, 0, 0)],
-        )
+        self.orders = filter(lambda e: e <= SF.pto, range(2 + 1))
 
         logger.debug("Init %s", self)
 
@@ -106,6 +102,7 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         cfc = cf.Combiner(self)
+        self.res.nf = cfc.nf
         # run
         logger.debug("Compute %s", self)
         for o in self.orders:

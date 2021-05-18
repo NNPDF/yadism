@@ -29,6 +29,11 @@ Coefficient functions
 .. bibliography:: refs/cf-heavy.bib
     :all:
 
+**Intrinsic**:
+
+.. bibliography:: refs/ic.bib
+    :all:
+    
 FNS
 ~~~
 

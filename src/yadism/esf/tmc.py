@@ -28,7 +28,7 @@ import abc
 import numpy as np
 
 from . import conv
-from .esf_result import ESFResult
+from .result import ESFResult
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
@@ -197,10 +197,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 f"xi outside xgrid - cannot convolute starting from xi={self.xi}"
             )
         # iterate grid
-        res = ESFResult(
-            self.xi,
-            self.Q2,
-        )
+        res = ESFResult(self.xi, self.Q2, None)
         for xj, pj in zip(self.sf.interpolator.xgrid_raw, self.sf.interpolator):
             # basis function does not contribute?
             if pj.is_below_x(self.xi):

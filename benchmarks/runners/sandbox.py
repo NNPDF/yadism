@@ -116,7 +116,7 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #  update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}

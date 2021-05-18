@@ -38,23 +38,18 @@ class AsyQuark(pc.PartonicChannelAsy):
 
         return RSL.from_distr_coeffs(reg, (delta, omz_pd, log_pd))
 
-    def NLO_fact(self):
-        return split.pqq_reg, split.pqq_sing, split.pqq_local
-
 
 class AsyGluon(pc.PartonicChannelAsy):
     def NLO(self):
         as_norm = 2.0
 
-        def reg(z, args):
+        def reg(z, _args):
             L = self.L
             return (
-                (split.pqg(z) / 2.0) * (2.0 * np.log((1.0 - z) / z) + L)
+                (split.lo.pqg_reg(z, np.array([], dtype=float)) / 2.0)
+                * (2.0 * np.log((1.0 - z) / z) + L)
                 + 8.0 * z * (1.0 - z)
                 - 1.0
             ) * as_norm
 
         return RSL(reg)
-
-    def NLO_fact(self):
-        return split.pqg

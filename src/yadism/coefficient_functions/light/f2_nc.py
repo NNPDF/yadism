@@ -28,13 +28,6 @@ class NonSinglet(pc.LightBase):
             nlo.f2.ns_reg, (nlo.f2.ns_delta, nlo.f2.ns_omx, nlo.f2.ns_logomx)
         )
 
-    def NLO_fact(self):
-        """
-        |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
-        """
-
-        return split.pqq_reg, split.pqq_sing, split.pqq_local
-
     def NNLO(self):
         """
         |ref| implements :eqref:`4.8`, :cite:`vogt-f2nc`.
@@ -52,23 +45,13 @@ class Gluon(pc.LightBase):
 
         Note
         ----
-        2 * n_f here and in NLO_fact is coming from momentum sum
+        2 * n_f is coming from momentum sum
         rule q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} forall i}, so
         the 2 * n_f is needed to compensate for all the number of flavours
         plus antiflavours in which the gluon can go.
         """
 
         return RSL(nlo.f2.gluon_reg, args=[self.nf])
-
-    def NLO_fact(self):
-        """
-        |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
-        """
-
-        def reg(z, nf=self.nf):
-            return 2.0 * nf * split.pqg(z)
-
-        return reg
 
     def NNLO(self):
         """
