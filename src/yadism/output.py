@@ -54,24 +54,6 @@ class Output(dict):
         ret = PDFOutput()
 
         xgrid = self["interpolation_xgrid"]
-        # prepare scale variations
-        fact_matrices = {
-            ((1, 1), 0): np.zeros((len(xgrid), len(xgrid))),
-            ((2, 1), 0): np.zeros((len(xgrid), len(xgrid))),
-            ((2, 1), 1): np.zeros((len(xgrid), len(xgrid))),
-            ((2, 2), 0): np.zeros((len(xgrid), len(xgrid))),
-        }
-        fact_to_ren_prefactors = {((2, 1), 1): [0.0]}
-        sv = None
-        if np.isclose(xiF, 1.0) or np.isclose(xiR, 1.0):
-            sv = {}
-            fact_to_ren_scale_ratio = xiF / xiR
-            if not np.isclose(xiF, 1.0):
-                sv["XIF"] = xiF
-                sv["fact_matrices"] = fact_matrices
-            if not np.isclose(fact_to_ren_scale_ratio, 1.0):
-                sv["fact_to_ren_scale_ratio"] = fact_to_ren_scale_ratio
-                sv["fact_to_ren_prefactors"] = fact_to_ren_prefactors
 
         # dispatch onto result
         for obs in self:
@@ -83,12 +65,7 @@ class Output(dict):
             for kin in self[obs]:
                 ret[obs].append(
                     kin.apply_pdf(
-                        lhapdf_like,
-                        self["pids"],
-                        xgrid,
-                        alpha_s,
-                        alpha_qed,
-                        sv,
+                        lhapdf_like, self["pids"], xgrid, alpha_s, alpha_qed, xiR, xiF
                     )
                 )
         return ret

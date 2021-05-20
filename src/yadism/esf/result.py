@@ -10,8 +10,7 @@ class ESFResult:
     Represents the output tensor for a single kinematic point
 
     Parameters
-    ----------
-        x : float
+    ---------- x : float
             Bjorken x
         Q2 : float
             virtuality of the exchanged boson
@@ -46,7 +45,7 @@ class ESFResult:
             )
         return new_output
 
-    def apply_pdf(self, lhapdf_like, pids, xgrid, alpha_s, alpha_qed, sv):
+    def apply_pdf(self, lhapdf_like, pids, xgrid, alpha_s, alpha_qed, xiR, xiF):
         r"""
         Compute the observable for the given PDF.
 
@@ -71,60 +70,26 @@ class ESFResult:
             raise ValueError("Q2 is not set!")
 
         # factorization scale
-        if sv is not None and "xiF" in sv:
-            muF2 = self.Q2 * sv["xiF"] ** 2
-        else:
-            muF2 = self.Q2
+        muF2 = self.Q2 * xiF ** 2
         pdfs = np.zeros((len(pids), len(xgrid)))
         for j, pid in enumerate(pids):
             if not lhapdf_like.hasFlavor(pid):
                 continue
             pdfs[j] = np.array([lhapdf_like.xfxQ2(pid, z, muF2) / z for z in xgrid])
 
-        # prepare convolutions
-        raw = []
-        fact_sv_list = []
-        for o, (v, e) in self.orders.items():
-            res_o, err_o = np.einsum("aj,aj", v, pdfs), np.einsum("aj,aj", e, pdfs)
-            raw.append((res_o, err_o))
-            # apply factorization scale variations matrices
-            if sv is not None and "xiF" in sv:
-                for ((alphas_power, lnf_power), src), mat in sv[
-                    "fact_matrices"
-                ].items():
-                    if alphas_power != o:
-                        continue
-                    prefactor = (-np.log(sv["xiF"] ** 2)) ** lnf_power
-                    res_o += prefactor * np.einsum("aj,aj", mat @ raw[src][0], pdfs)
-                    err_o += prefactor * np.einsum("aj,aj", mat @ raw[src][1], pdfs)
-            fact_sv_list.append((res_o, err_o))
-        # apply ren/fact scale variations
-        fact_ren_sv_list = fact_sv_list
-        if sv is not None and "fact_to_ren_scale_ratio" in sv:
-            for (
-                (alphas_power, lnrf_power),
-                src,
-            ), nf_coeffs in sv["fact_to_ren_prefactors"].items():
-                prefactor = (nf_coeffs @ (self.nf ** np.arange(len(nf_coeffs)))) * (
-                    np.log(sv["fact_to_ren_scale_ratio"] ** 2)
-                ) ** lnrf_power
-                fact_ren_sv_list[alphas_power][0] += prefactor * fact_sv_list[src][0]
-                fact_ren_sv_list[alphas_power][1] += prefactor * fact_sv_list[src][1]
-
         # join elements
         res = 0
         err = 0
-        if sv is not None:
-            xiF = sv.get("xiF", 1.0)
-            fact_to_ren_scale_ratio = sv.get("fact_to_ren_scale_ratio", 1.0)
-            xiR = xiF / fact_to_ren_scale_ratio
-        else:
-            xiR = 1.0
-        my_alpha_s = alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)
-        for o, (v, e) in enumerate(fact_sv_list):
-            prefactor = (my_alpha_s) ** o
-            res += prefactor * v
-            err += prefactor * e
+        # join elements
+        for o, (v, e) in self.orders.items():
+            prefactor = (
+                ((alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)) ** o[0])
+                * ((alpha_qed(np.sqrt(self.Q2) * xiR)) ** o[1])
+                * ((np.log((xiF / xiR) ** 2)) ** o[2])
+                * ((np.log((1 / xiF) ** 2)) ** o[3])
+            )
+            res += prefactor * np.einsum("aj,aj", v, pdfs)
+            err += prefactor * np.einsum("aj,aj", e, pdfs)
 
         return dict(x=self.x, Q2=self.Q2, result=res, error=err)
 

@@ -78,6 +78,7 @@ class EvaluatedStructureFunction:
         self.sf = SF
         self.x = x
         self.Q2 = kinematics["Q2"]
+        self.nf = None
         self.process = SF.runner.managers["coupling_constants"].obs_config["process"]
         self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
@@ -89,7 +90,11 @@ class EvaluatedStructureFunction:
     def __repr__(self):
         return "%s_%s(x=%f,Q2=%f)" % (self.sf.obs_name, self.process, self.x, self.Q2)
 
-    def compute_local(self):
+    @property
+    def zeros(self):
+        return np.zeros((len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid)))
+
+    def compute_local(self, sv=None):
         """
         Here is where the local caching is actually implemented: if the
         coefficient functions are already computed don't do nothing,
@@ -102,15 +107,11 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         cfc = cf.Combiner(self)
-        self.res.nf = cfc.nf
         # run
         logger.debug("Compute %s", self)
+        # init order with 0
         for o in self.orders:
-            # init order with 0
-            zeros = np.zeros(
-                (len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid))
-            )
-            self.res.orders[o] = (zeros, zeros.copy())
+            self.res.orders[(o, 0, 0, 0)] = (self.zeros, self.zeros)
             # iterate all partonic channels
             for cfe in cfc.collect_elems():
                 rsl = cfe.coeff[o]()
@@ -122,10 +123,42 @@ class EvaluatedStructureFunction:
                 # blow up to flavor space
                 for pid, w in cfe.partons.items():
                     pos = br.flavor_basis_pids.index(pid)
-                    self.res.orders[o][0][pos] += w * val
-                    self.res.orders[o][1][pos] += w * err
+                    self.res.orders[(o, 0, 0, 0)][0][pos] += w * val
+                    self.res.orders[(o, 0, 0, 0)][1][pos] += w * err
+
+        # prepare convolutions
+        if sv is not None:
+            self.include_scale_variations(sv, cfc.nf)
 
         self._computed = True
+
+    def include_scale_variations(self, sv, nf):
+        for alphas_power in self.orders:
+            for lnf_power in range(alphas_power):
+                self.res.orders[(alphas_power, 0, 0, lnf_power)] = (
+                    self.zeros,
+                    self.zeros,
+                )
+                for lnrf_power in range(alphas_power - 1):
+                    self.res.orders[(alphas_power, 0, lnrf_power, lnf_power)] = (
+                        self.zeros,
+                        self.zeros,
+                    )
+        # apply factorization scale variations matrices
+        for ((alphas_power, lnf_power), src), mat in sv.fact_matrices(nf):
+            v, e = self.res.orders[(src, 0, 0, 0)]
+            self.res.orders[(alphas_power, 0, 0, lnf_power)][0] += mat @ v
+            self.res.orders[(alphas_power, 0, 0, lnf_power)][1] += mat @ e
+
+        # apply ren/fact scale variations
+        for (
+            (alphas_power, lnrf_power),
+            src,
+        ), coeff in sv.fact_to_ren_prefactors(nf):
+            for lnf_power in range(alphas_power):
+                v, e = self.res.orders[(src, 0, 0, lnf_power)]
+                self.res.orders[(alphas_power, 0, lnrf_power, lnf_power)][0] = coeff * v
+                self.res.orders[(alphas_power, 0, lnrf_power, lnf_power)][1] = coeff * e
 
     def compute_coefficient_function(self, convolution_point, cf):
         """
