@@ -7,8 +7,10 @@ class SFConv:
         self.coeffs[(1, 0)] = self.c10
         self.coeffs[(1, 1)] = self.c11
 
+
 class LOns(SFConv):
     pass
+
 
 class NLOns(SFConv):
     def c10(self):
@@ -17,16 +19,14 @@ class NLOns(SFConv):
 
 class NNLOns(SFConv):
     def c10(self):
-        return nlo.pqq
+        #  return nlo.pqq
+        pass
 
 
 nonsinglet = [LOns, NLOns, NNLOns]
 
 
-fact_list = {
-        ((1,1), 0): lo.pqq        
-
-}
+fact_list = {((1, 1), 0): lo.pqq}
 
 
-def c211
+#  def c211

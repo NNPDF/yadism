@@ -46,6 +46,22 @@ class Kernel:
         self.partons = partons
         self.coeff = coeff
 
+    @property
+    def channel(self):
+        cls = str(type(self.coeff)).split("'")[1].split(".")[-1]
+
+        # TODO: remove AsyQuark for AsyNonSinglet
+        if "NonSinglet" in cls or "Quark" in cls:
+            return "non-singlet"
+        elif "Singlet" in cls:
+            return "singlet"
+        elif "Gluon" in cls:
+            return "gluon"
+        elif any([x in cls for x in ["Splus", "Sminus", "Rplus", "Rminus"]]):
+            return "intrinsic"
+        else:
+            raise ValueError(f"Class '{cls}' does not correspond to a known channel")
+
     def __repr__(self):
         return repr({"partons": self.partons, "coeff": self.coeff})
 
