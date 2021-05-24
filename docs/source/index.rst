@@ -72,7 +72,9 @@ In particular:
   :caption: Implementation
   :hidden:
 
-  Overview <yadism.rst>
+  implementation/index.rst
+  Scale Variations <implementation/scale-variations.rst>
+  implementation/TMC.rst
   API <modules/yadism.rst>
 
 .. toctree::

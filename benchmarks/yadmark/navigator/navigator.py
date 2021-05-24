@@ -127,7 +127,7 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
         """
         Check if the log passed the default assertions
 
-        Paramters
+        Parameters
         ---------
             doc_hash : hash
                 log hash

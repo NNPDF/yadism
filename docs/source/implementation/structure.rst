@@ -7,7 +7,7 @@ overall project and the organization of the many ingredients/features composing
 this package.
 
 A brief outline can instead be found in the :doc:`introductive page
-<../yadism>`.
+<index>`.
 
 .. toctree::
    :maxdepth: 2
@@ -16,7 +16,6 @@ A brief outline can instead be found in the :doc:`introductive page
    input
    SF
    ESF
-   TMC
 
 
 Brief Descriptions

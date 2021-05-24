@@ -33,6 +33,12 @@ Coefficient functions
 
 .. bibliography:: refs/ic.bib
     :all:
+
+Scale Variations
+~~~~~~~~~~~~~~~~
+
+.. bibliography:: refs/sv.bib
+    :all:
     
 FNS
 ~~~
