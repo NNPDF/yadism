@@ -78,7 +78,7 @@ def pqq_sing(z, _args):
     return 4.0 * constants.CF / (1.0 - z)
 
 
-def pqq():
+def pqq(_nf):
     """
     :math:`P_{qq}` splitting function.
 
@@ -86,8 +86,8 @@ def pqq():
 
     Parameters
     ----------
-        z : float
-            partonic momentum fraction
+        nf : int
+            number of active flavors
 
     Returns
     -------
@@ -118,7 +118,7 @@ def pqg_reg(z, _args):
     return 2.0 * constants.TR * (z ** 2 + (1.0 - z) ** 2)
 
 
-def pqg():
+def pqg(_nf):
     """
     :math:`P_{qg}` splitting function.
 
@@ -126,8 +126,8 @@ def pqg():
 
     Parameters
     ----------
-        z : float
-            partonic momentum fraction
+        nf : int
+            number of active flavors
 
     Returns
     -------
@@ -136,3 +136,6 @@ def pqg():
 
     """
     return RSL(pqg_reg)
+
+
+raw_mapping = {"P_qq_0": pqq, "P_qg_0": pqg}

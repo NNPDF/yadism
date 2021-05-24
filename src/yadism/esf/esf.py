@@ -124,7 +124,7 @@ class EvaluatedStructureFunction:
                 for pid, w in cfe.partons.items():
                     pos = br.flavor_basis_pids.index(pid)
                     self.res.orders[(o, 0, 0, 0)][0][pos] += w * val
-                    self.res.orders[(o, 0, 0, 0)][1][pos] += w * err
+                    self.res.orders[(o, 0, 0, 0)][1][pos] += np.abs(w) * err
 
         # prepare convolutions
         if sv is not None:
