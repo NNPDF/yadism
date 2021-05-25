@@ -10,10 +10,11 @@ class ESFResult:
     Represents the output tensor for a single kinematic point
 
     Parameters
-    ---------- x : float
-            Bjorken x
-        Q2 : float
-            virtuality of the exchanged boson
+    ----------
+    x : float
+        Bjorken x
+    Q2 : float
+        virtuality of the exchanged boson
     """
 
     def __init__(self, x, Q2, nf, orders=None):

@@ -8,7 +8,7 @@ In this section is documented the structure of the package and it's API.
 .. toctree::
    :maxdepth: 2
 
-   Structure <package-structure/index.rst>
+   Structure <structure.rst>
    Miscellanea <misc/index.rst>
 
 

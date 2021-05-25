@@ -119,6 +119,10 @@
 
    <a href="https://github.com/N3PDF/external/tree/master/xspace-bench"><abbr title="Xspace Benchmark">xspace-bench</abbr></a>
 
+.. |eko| raw:: html
+
+   <a href="https://n3pdf.github.io/eko"><abbr title="Evolutionary Kernel Operators">eko</abbr></a>
+
 .. |banana| raw:: html
 
    <a href="https://n3pdf.github.io/banana/stable/"><abbr title="Benchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
