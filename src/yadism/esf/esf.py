@@ -15,6 +15,7 @@ from eko import basis_rotation as br
 from . import conv
 from .result import ESFResult
 from .. import coefficient_functions as cf
+from . import scale_variations as sv
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +84,7 @@ class EvaluatedStructureFunction:
         self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
         # select available partonic coefficient functions
-        self.orders = filter(lambda e: e <= SF.pto, range(2 + 1))
+        self.orders = list(filter(lambda e: e <= SF.pto, range(2 + 1)))
 
         logger.debug("Init %s", self)
 
@@ -94,7 +95,7 @@ class EvaluatedStructureFunction:
     def zeros(self):
         return np.zeros((len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid)))
 
-    def compute_local(self, sv=None):
+    def compute_local(self, sv_obj=None):
         """
         Here is where the local caching is actually implemented: if the
         coefficient functions are already computed don't do nothing,
@@ -107,90 +108,45 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         cfc = cf.Combiner(self)
+        kers = []
+        full_orders = [(o, 0, 0, 0) for o in self.orders]
+        # prepare scale variations
+        if sv_obj is not None:
+            full_orders = sv.build_orders(self.sf.pto)
+        # init orders with 0
+        for o in full_orders:
+            self.res.orders[o] = (self.zeros, self.zeros)
         # run
         logger.debug("Compute %s", self)
-        # init order with 0
-        for o in self.orders:
-            self.res.orders[(o, 0, 0, 0)] = (self.zeros, self.zeros)
-            # iterate all partonic channels
-            for cfe in cfc.collect_elems():
+        # iterate all partonic channels
+        for cfe in cfc.collect_elems():
+            ker_orders = {}
+            # compute raw coefficient functions
+            for o in self.orders:
                 rsl = cfe.coeff[o]()
                 if rsl is None:
                     continue
                 # compute convolution point
                 convolution_point = cfe.coeff.convolution_point()
-                val, err = self.compute_coefficient_function(convolution_point, rsl)
-                # blow up to flavor space
-                for pid, w in cfe.partons.items():
-                    pos = br.flavor_basis_pids.index(pid)
-                    self.res.orders[(o, 0, 0, 0)][0][pos] += w * val
-                    self.res.orders[(o, 0, 0, 0)][1][pos] += np.abs(w) * err
+                val, err = conv.convolute_vector(
+                    rsl, self.sf.interpolator, convolution_point
+                )
+                # add the factor x from the LHS
+                val, err = convolution_point * val, convolution_point * err
+                ker_orders[(o, 0, 0, 0)] = (cfe.partons, val, err)
 
-        # prepare convolutions
-        if sv is not None:
-            self.include_scale_variations(sv, cfc.nf)
+            # apply scale variations
+            if sv_obj is not None:
+                ker_orders = sv.magic(ker_orders)
+
+            # blow up to flavor space
+            for o, (partons, val, err) in ker_orders.items():
+                for pid, w in partons.items():
+                    pos = br.flavor_basis_pids.index(pid)
+                    self.res.orders[o][0][pos] += w * val
+                    self.res.orders[o][1][pos] += np.abs(w) * err
 
         self._computed = True
-
-    def include_scale_variations(self, sv, nf):
-        for alphas_power in self.orders:
-            for lnf_power in range(alphas_power):
-                self.res.orders[(alphas_power, 0, 0, lnf_power)] = (
-                    self.zeros,
-                    self.zeros,
-                )
-                for lnrf_power in range(alphas_power - 1):
-                    self.res.orders[(alphas_power, 0, lnrf_power, lnf_power)] = (
-                        self.zeros,
-                        self.zeros,
-                    )
-        # apply factorization scale variations matrices
-        for ((alphas_power, lnf_power), src), mat in sv.fact_matrices(nf):
-            v, e = self.res.orders[(src, 0, 0, 0)]
-            self.res.orders[(alphas_power, 0, 0, lnf_power)][0] += mat @ v
-            self.res.orders[(alphas_power, 0, 0, lnf_power)][1] += mat @ e
-
-        # apply ren/fact scale variations
-        for (
-            (alphas_power, lnrf_power),
-            src,
-        ), coeff in sv.fact_to_ren_prefactors(nf):
-            for lnf_power in range(alphas_power):
-                v, e = self.res.orders[(src, 0, 0, lnf_power)]
-                self.res.orders[(alphas_power, 0, lnrf_power, lnf_power)][0] = coeff * v
-                self.res.orders[(alphas_power, 0, lnrf_power, lnf_power)][1] = coeff * e
-
-    def compute_coefficient_function(self, convolution_point, cf):
-        """
-        Perform coefficient function calculation for a single stack of
-        coefficient functions,
-        combining orders, compute the convolution through
-        :meth:`DistributionVec.convolution` iterating over *basis
-        functions* and take care of scale variations.
-
-        Parameters
-        ----------
-        comp : yadism.partonic_channel.PartonicChannel
-            Coefficient function to be computed
-
-        Returns
-        -------
-            ls : list(float)
-                values
-            els : list(float)
-                errors
-        """
-
-        ls = []
-        els = []
-        # iterate all polynomials
-        for polynomial_f in self.sf.interpolator:
-            c, e = conv.convolution(cf, convolution_point, polynomial_f)
-            # add the factor x from the LHS
-            c, e = c * convolution_point, e * convolution_point
-            ls.append(c)
-            els.append(e)
-        return np.array(ls), np.array(els)
 
     def get_result(self):
         """

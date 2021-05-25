@@ -2,6 +2,12 @@ import numpy as np
 
 from eko import beta
 
+from . import lo
+
+raw_labels = [
+    {"P_qq_0": lo.pqq, "P_qg_0": lo.pqg},
+]
+
 
 def joint_lo(fnc, matrices, nf, add_gluonic=True):
     d = {

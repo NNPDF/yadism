@@ -167,3 +167,68 @@ def convolution(rsl, x, pdf_func):
     res += pdf_at_x * local_at_x
 
     return res, err
+
+
+def convolute_operator(fnc, interpolator):
+    """
+    Convolute function over all basis functions over all grid points.
+
+    Parameters
+    ----------
+        fnc : RSL
+            integration kernel
+        interpolator : InterpolationDispatcher
+            basis functions
+
+    Returns
+    -------
+        ls : np.ndarray
+            values
+        els : np.ndarray
+            errors
+    """
+    xgrid = interpolator.xgrid_raw
+    grid_size = len(xgrid)
+    op_res = np.zeros((grid_size, grid_size))
+    op_err = np.zeros((grid_size, grid_size))
+    # iterate output grid
+    for k, xk in enumerate(interpolator.xgrid_raw):
+        # iterate basis functions
+        for l, bf in enumerate(interpolator):
+            if k == l and l == grid_size - 1:
+                continue
+            # iterate sectors
+            res, err = convolution(fnc, xk, bf)
+            op_res[k][l] = res
+            op_err[k][l] = err
+    return op_res, op_err
+
+
+def convolute_vector(cf, interpolator, convolution_point):
+    """
+    Convolute function over all basis functions.
+
+    Parameters
+    ----------
+        cf : RSL
+            integration kernel
+        interpolator : InterpolationDispatcher
+            basis functions
+        convolution_point : float
+            convolution point
+
+    Returns
+    -------
+        ls : np.ndarray
+            values
+        els : np.ndarray
+            errors
+    """
+    ls = []
+    els = []
+    # iterate all polynomials
+    for polynomial_f in interpolator:
+        c, e = convolution(cf, convolution_point, polynomial_f)
+        ls.append(c)
+        els.append(e)
+    return np.array(ls), np.array(els)

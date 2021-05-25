@@ -1,4 +1,3 @@
-import numpy as np
 import numba as nb
 
 from eko.constants import CF

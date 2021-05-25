@@ -136,6 +136,3 @@ def pqg(_nf):
 
     """
     return RSL(pqg_reg)
-
-
-raw_mapping = {"P_qq_0": pqq, "P_qg_0": pqg}

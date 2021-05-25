@@ -56,7 +56,7 @@ class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
             )
         )
 
-        def reg(z, args):
+        def reg(z, _args):
             self.init_vars(z)
             return norm * raw_nc.__getattribute__(  # pylint: disable=no-member
                 f"f{kind}_{RS}_raw"
