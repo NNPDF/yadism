@@ -100,11 +100,11 @@ class Sandbox(Runner):
             # "F2_top",
             #"F2_total",
             #  "FL_light",
-            "FL_charm",
+            #  "FL_charm",
             # "FL_bottom",
             # "FL_total",
             #  "F3_light",
-            "F3_charm",
+            #  "F3_charm",
             # "F3_bottom",
             # "F3_total",
             #  "XSHERANC",
@@ -127,8 +127,9 @@ class Sandbox(Runner):
 
     def doit(self):
         #  self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
-        #  self.run([{"PTO": 1}], self.generate_observables(), ["ToyLH"])
-        self.run([{"PTO": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51}], self.generate_observables(), ["ToyLH"])
+        self.run([{"PTO": 1, "IC": 1, "mc": 1.51}], self.generate_observables(),
+                ["conly"])
+        #  self.run([{"PTO": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51}], self.generate_observables(), ["ToyLH"])
 
 if __name__ == "__main__":
     sand = Sandbox()
