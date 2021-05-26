@@ -1,8 +1,39 @@
 # -*- coding: utf-8 -*-
 
-from . import f3_nc
+import numpy as np
+
+from eko import constants
+
+from .. import partonic_channel as pc
+from ..partonic_channel import RSL
+
+from . import raw_cc
 
 
-class Rplus(f3_nc.Rplus):
+class Rplus(pc.PartonicChannel):
+    """
+    The convolution point simplifies to :math:`x` when m2=0,
+    see :eqref:`6` of :cite:`kretzer-schienbein`.
+    """
+
     def __init__(self, ESF, m1sq):
-        super().__init__(ESF, m1sq, 0.01)
+        super().__init__(ESF)
+        self.m1sq = m1sq
+        self.y = -ESF.Q2 / m1sq
+        self.lo = 1.0
+
+    def LO(self):
+        return RSL.from_delta(self.lo)
+
+    def NLO(self):
+        norm = constants.CF
+        lnomx = raw_cc.lnomx * norm * self.lo
+        omx = raw_cc.omx(self.y) * norm * self.lo
+        delta = raw_cc.f3sv(self.y) * norm
+
+        def reg(z, args):
+            return norm * raw_cc.f3r(self.y, z) - (lnomx * np.log(1.0 - z) + omx) / (
+                1.0 - z
+            )
+
+        return RSL.from_distr_coeffs(reg, (delta, omx, lnomx))

@@ -9,13 +9,6 @@ from ..partonic_channel import RSL
 
 from . import raw_cc
 
-from . import f2_nc
-
-
-#  class Splus(f2_nc.Splus):
-#  def __init__(self, ESF, m1sq):
-#  super().__init__(ESF, m1sq, 0.01)
-
 
 class Splus(pc.PartonicChannel):
     """
