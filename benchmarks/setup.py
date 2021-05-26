@@ -15,6 +15,7 @@ setup(
         "sqlalchemy",
         "banana-hep",
         "pyyaml",
+        "matplotlib",
     ],
     entry_points={
         "console_scripts": [

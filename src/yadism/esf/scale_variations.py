@@ -85,3 +85,6 @@ class ScaleVariations:
     def fact_to_ren_prefactors(self, nf):
         fact_to_ren_prefactors = {((2, 1), 1): [0.0]}
         return fact_to_ren_prefactors
+
+    def apply_scale_variations(self, ker_orders, nf):
+        pass
