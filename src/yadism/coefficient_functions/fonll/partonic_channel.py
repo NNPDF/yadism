@@ -40,10 +40,13 @@ class FMatching(PartonicChannelAsyIntrinsic):
         super().__init__(ESF, m1sq, m2sq)
         self.l = np.log(self.Q2 / mu2hq)
 
+    def obj(self):
+        return self.ffns(self.ESF, self.m1sq, self.m2sq)
+
 
 class FMatchingQuark(FMatching):
     def NLO(self):
-        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
+        obj = self.obj()
         parent_LO = obj.LO()
         try:
             icl = parent_LO.args["loc"][0]
@@ -78,13 +81,23 @@ class FMatchingQuark(FMatching):
 
         return RSL(sing=sing, loc=loc)
 
+class FMatchingCC(FMatchingQuark):
+    def __init__(self, ESF, m1sq, mu2hq):
+        super().__init__(ESF,m1sq,0.,mu2hq)
+
+    def obj(self):
+        return self.ffns(self.ESF, self.m1sq)
+
+class FMatchingQuarkCC(FMatchingCC, FMatchingQuark):
+    pass
+
 
 class FMatchingGluon(FMatching):
     def NLO(self):
         return self.mk_nlo_raw(self.l)
 
     def mk_nlo_raw(self, l):
-        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
+        obj = self.obj()
         parent_LO = obj.LO()
         try:
             icl = parent_LO.args["loc"][0]
@@ -97,3 +110,6 @@ class FMatchingGluon(FMatching):
             return icl * 2.0 * split.lo.pqg_reg(z, np.array([], dtype=float)) * l
 
         return RSL(reg)
+
+class FMatchingGluonCC(FMatchingCC, FMatchingGluon):
+    pass

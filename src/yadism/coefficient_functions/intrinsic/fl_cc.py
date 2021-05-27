@@ -31,7 +31,7 @@ class Splus(pc.PartonicChannel):
         omx = raw_cc.omx(self.y) * norm * self.lo
         delta = raw_cc.flsv(self.y) * norm
 
-        def reg(z, args):
+        def reg(z, _args):
             return norm * raw_cc.flr(self.y, z) - (lnomx * np.log(1.0 - z) + omx) / (
                 1.0 - z
             )

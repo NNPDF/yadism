@@ -8,6 +8,8 @@ from . import partonic_channel as pc
 from .. import splitting_functions as split
 from ..partonic_channel import RSL
 
+from ..intrinsic import f2_cc
+
 
 class AsyQuark(pc.PartonicChannelAsy):
     # TODO inherit from light
@@ -19,7 +21,7 @@ class AsyQuark(pc.PartonicChannelAsy):
         as_norm = 2.0
         zeta_2 = np.pi ** 2 / 6.0
 
-        def reg(z, args):
+        def reg(z, _args):
             return (
                 CF
                 * (
@@ -53,3 +55,11 @@ class AsyGluon(pc.PartonicChannelAsy):
             ) * as_norm
 
         return RSL(reg)
+
+
+class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):
+    ffns = f2_cc.Splus
+
+
+class MatchingGluonSplus(pc.FMatchingGluonCC):
+    ffns = f2_cc.Splus

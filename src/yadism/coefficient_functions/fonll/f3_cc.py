@@ -5,8 +5,8 @@ import numpy as np
 from eko import constants
 
 from . import partonic_channel as pc
-from .. import splitting_functions as split
 from ..partonic_channel import RSL
+from ..intrinsic import f3_cc
 
 
 class AsyQuark(pc.PartonicChannelAsy):
@@ -39,12 +39,5 @@ class AsyQuark(pc.PartonicChannelAsy):
         return RSL.from_distr_coeffs(reg, (delta, omz_pd, log_pd))
 
 
-class AsyGluon(pc.PartonicChannelAsy):
-    def NLO(self):
-        as_norm = 2.0
-
-        def reg(z, _args):
-            L = self.L
-            return -(split.lo.pqg_reg(z, np.array([], dtype=float)) / 2.0) * L * as_norm
-
-        return RSL(reg)
+class MatchingIntrinsicRplus(pc.FMatchingQuarkCC):
+    ffns = f3_cc.Rplus

@@ -127,8 +127,7 @@ class Sandbox(Runner):
 
     def doit(self):
         #  self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
-        self.run([{"PTO": 1, "IC": 1, "mc": 1.51}], self.generate_observables(),
-                ["conly"])
+        self.run([{"PTO": 1, "IC": 1,"mc": 1.51}], self.generate_observables(),["conly"])
         #  self.run([{"PTO": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51}], self.generate_observables(), ["ToyLH"])
 
 if __name__ == "__main__":

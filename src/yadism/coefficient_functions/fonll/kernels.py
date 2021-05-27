@@ -119,15 +119,33 @@ def generate_heavy_intrinsic_diff(esf, nl):
     """
     |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
     """
-    if esf.process == "CC":
-        # TODO fill
-        return ()
     kind = esf.sf.obs_name.kind
     cfs = import_pc_module(kind, esf.process)
     ihq = nl + 1
     m2hq = esf.sf.m2hq[ihq - 4]
     # matching scale
     mu2hq = esf.sf.threshold.areas[ihq - 4].q2_max
+    if esf.process == "CC":
+        w = kernels.cc_weights(
+            esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], ihq
+        )
+        wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
+        if kind == "F3":
+            return (
+                -kernels.Kernel(
+                    wq,
+                    cfs.MatchingIntrinsicRplus(esf, m1sq=m2hq, mu2hq=mu2hq),
+                ),
+            )
+        return (
+            -kernels.Kernel(
+                wq, cfs.MatchingIntrinsicSplus(esf, m1sq=m2hq,mu2hq=mu2hq)
+            ),
+            -kernels.Kernel(
+                wq, cfs.MatchingGluonSplus(esf, m1sq=m2hq, mu2hq=mu2hq)
+            ),
+        )
+    # NC
     if kind == "F3":
         wVA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VA")
         wAV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
@@ -136,11 +154,11 @@ def generate_heavy_intrinsic_diff(esf, nl):
         return (
             -kernels.Kernel(
                 {ihq: wp, (-ihq): -wp},
-                cfs.MatchingRplus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+                cfs.MatchingIntrinsicRplus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
             -kernels.Kernel(
                 {ihq: wm, (-ihq): -wm},
-                cfs.MatchingRminus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+                cfs.MatchingIntrinsicRminus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
         )
     # add matching terms
