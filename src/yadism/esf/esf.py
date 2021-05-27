@@ -115,7 +115,7 @@ class EvaluatedStructureFunction:
             full_orders = sv.build_orders(self.sf.pto)
         # init orders with 0
         for o in full_orders:
-            self.res.orders[o] = (self.zeros, self.zeros)
+            self.res.orders[o] = [self.zeros, self.zeros]
         # run
         logger.debug("Compute %s", self)
         # iterate all partonic channels
@@ -133,7 +133,12 @@ class EvaluatedStructureFunction:
                 )
                 # add the factor x from the LHS
                 val, err = convolution_point * val, convolution_point * err
-                ker_orders[(o, 0, 0, 0)] = (cfe.partons, val, err)
+                partons = np.array(
+                    [cfe.partons.get(pid, 0.0) for pid in br.flavor_basis_pids]
+                )[:, np.newaxis]
+                val = val[np.newaxis, :]
+                err = err[np.newaxis, :]
+                ker_orders[(o, 0, 0, 0)] = (partons, val, err)
 
             # apply scale variations
             if sv_manager is not None:
@@ -141,10 +146,8 @@ class EvaluatedStructureFunction:
 
             # blow up to flavor space
             for o, (partons, val, err) in ker_orders.items():
-                for pid, w in partons.items():
-                    pos = br.flavor_basis_pids.index(pid)
-                    self.res.orders[o][0][pos] += w * val
-                    self.res.orders[o][1][pos] += np.abs(w) * err
+                self.res.orders[o][0] += partons @ val
+                self.res.orders[o][1] += np.abs(partons) @ err
 
         self._computed = True
 
