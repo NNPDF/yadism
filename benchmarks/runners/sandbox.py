@@ -98,15 +98,15 @@ class Sandbox(Runner):
             "F2_charm",
             # "F2_bottom",
             # "F2_top",
-            #"F2_total",
+            #  "F2_total",
             #  "FL_light",
             "FL_charm",
             # "FL_bottom",
-            # "FL_total",
+            #  "FL_total",
             #  "F3_light",
             "F3_charm",
             # "F3_bottom",
-            # "F3_total",
+            #  "F3_total",
             #  "XSHERANC",
             #"XSHERACC_light",
             #"XSHERACC_charm",
@@ -116,7 +116,7 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
         #  update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
@@ -127,8 +127,9 @@ class Sandbox(Runner):
 
     def doit(self):
         #  self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
-        self.run([{"PTO": 1, "IC": 0,"mc": 1.51}], self.generate_observables(),["ToyLH"])
-        #  self.run([{"PTO": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51}], self.generate_observables(), ["ToyLH"])
+        #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
+        self.run([{"PTO": 1, "IC": 0, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51}],
+                self.generate_observables(), ["conly"])
 
 if __name__ == "__main__":
     sand = Sandbox()

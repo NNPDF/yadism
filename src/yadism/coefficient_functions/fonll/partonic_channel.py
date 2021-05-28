@@ -43,15 +43,18 @@ class FMatching(PartonicChannelAsyIntrinsic):
     def obj(self):
         return self.ffns(self.ESF, self.m1sq, self.m2sq)
 
+    def parent_lo_local(self):
+        parent_LO = self.obj().LO()
+        if parent_LO is None:
+            return None
+        return parent_LO.args["loc"][0]
+
 
 class FMatchingQuark(FMatching):
     def NLO(self):
-        obj = self.obj()
-        parent_LO = obj.LO()
-        try:
-            icl = parent_LO.args["loc"][0]
-        except KeyError:  # is there a local part in the parent?
-            return parent_LO  # no, so it should be 0 and we can pass through
+        icl = self.parent_lo_local()
+        if icl is None:
+            return None
         asnorm = 2.0
         l = self.l
 
@@ -81,12 +84,14 @@ class FMatchingQuark(FMatching):
 
         return RSL(sing=sing, loc=loc)
 
+
 class FMatchingCC(FMatchingQuark):
     def __init__(self, ESF, m1sq, mu2hq):
-        super().__init__(ESF,m1sq,0.,mu2hq)
+        super().__init__(ESF, m1sq, 0.0, mu2hq)
 
     def obj(self):
         return self.ffns(self.ESF, self.m1sq)
+
 
 class FMatchingQuarkCC(FMatchingCC, FMatchingQuark):
     pass
@@ -97,12 +102,9 @@ class FMatchingGluon(FMatching):
         return self.mk_nlo_raw(self.l)
 
     def mk_nlo_raw(self, l):
-        obj = self.obj()
-        parent_LO = obj.LO()
-        try:
-            icl = parent_LO.args["loc"][0]
-        except KeyError:  # is there a local part in the parent?
-            return parent_LO  # no, so it should be 0 and we can pass through
+        icl = self.parent_lo_local()
+        if icl is None:
+            return None
 
         # since as and p_qg appear together there is no need to put an explicit as_norm here
         # the explicit 2 instead is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
@@ -110,6 +112,7 @@ class FMatchingGluon(FMatching):
             return icl * 2.0 * split.lo.pqg_reg(z, np.array([], dtype=float)) * l
 
         return RSL(reg)
+
 
 class FMatchingGluonCC(FMatchingCC, FMatchingGluon):
     pass
