@@ -139,10 +139,10 @@ def generate_heavy_intrinsic_diff(esf, nl):
             )
         return (
             -kernels.Kernel(
-                wq, cfs.MatchingIntrinsicSplus(esf, m1sq=m2hq,mu2hq=mu2hq)
+                wq, cfs.MatchingIntrinsicSplus(esf, m1sq=m2hq, mu2hq=mu2hq)
             ),
             -kernels.Kernel(
-                wq, cfs.MatchingGluonSplus(esf, m1sq=m2hq, mu2hq=mu2hq)
+                w["g"], cfs.MatchingGluonSplus(esf, m1sq=m2hq, mu2hq=mu2hq)
             ),
         )
     # NC

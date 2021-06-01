@@ -85,7 +85,7 @@ class FMatchingQuark(FMatching):
         return RSL(sing=sing, loc=loc)
 
 
-class FMatchingCC(FMatchingQuark):
+class FMatchingCC(FMatching):
     def __init__(self, ESF, m1sq, mu2hq):
         super().__init__(ESF, m1sq, 0.0, mu2hq)
 

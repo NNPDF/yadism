@@ -84,7 +84,7 @@ class Sandbox(Runner):
             [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)]
         )
         kinematics.extend(
-            [dict(x=x, Q2=1.51**2, y=0) for x in np.geomspace(1e-4, .9, 10)]
+            [dict(x=x, Q2=1.52**2, y=0) for x in np.geomspace(1e-4, .9, 10)]
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
         #kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
@@ -116,8 +116,8 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
-        #  update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
+        #  update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
         # card["PropagatorCorrection"] = .999
@@ -129,7 +129,8 @@ class Sandbox(Runner):
         #  self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
         self.run([{"PTO": 1, "IC": 0, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51}],
-                self.generate_observables(), ["conly"])
+        #  self.run([{"PTO": 1, "IC": 1, "FNS": "FFNS", "mc": 1.51}],
+                self.generate_observables(), ["gonly"])
 
 if __name__ == "__main__":
     sand = Sandbox()
