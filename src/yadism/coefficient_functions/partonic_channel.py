@@ -88,11 +88,14 @@ class PartonicChannel(dict):
     ----------
         ESF : yadism.structure_function.esf.EvaluatedStructureFunction
             parent ESF
+        nf : int
+            number of pure light flavors
     """
 
-    def __init__(self, ESF):
+    def __init__(self, ESF, nf):
         super().__init__()
         self.ESF = ESF
+        self.nf = nf
         # default coeff functions to 0
         self[0] = self.decorator(self.LO)
         self[1] = self.decorator(self.NLO)

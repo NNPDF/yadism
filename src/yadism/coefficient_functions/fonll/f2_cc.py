@@ -2,43 +2,18 @@
 
 import numpy as np
 
-from eko import constants
+from ..partonic_channel import RSL
+from ..intrinsic import f2_cc as intrinsic
+from ..light import f2_cc as light
+from .. import splitting_functions as split
 
 from . import partonic_channel as pc
-from .. import splitting_functions as split
-from ..partonic_channel import RSL
-
-from ..intrinsic import f2_cc
 
 
-class AsyQuark(pc.PartonicChannelAsy):
-    # TODO inherit from light
-    def LO(self):
-        return RSL.from_delta(1.0)
-
-    def NLO(self):
-        CF = constants.CF
-        as_norm = 2.0
-        zeta_2 = np.pi ** 2 / 6.0
-
-        def reg(z, _args):
-            return (
-                CF
-                * (
-                    -(1.0 + z ** 2) / (1.0 - z) * np.log(z)
-                    - (1.0 + z) * np.log(1.0 - z)
-                    + (3.0 + 2.0 * z)
-                )
-                * as_norm
-            )
-
-        delta = -CF * (9.0 / 2.0 + 2.0 * zeta_2) * as_norm
-
-        omz_pd = -CF * 3.0 / 2.0 * as_norm
-
-        log_pd = 2.0 * CF * as_norm
-
-        return RSL.from_distr_coeffs(reg, (delta, omz_pd, log_pd))
+class AsyQuark(pc.PartonicChannelAsy, light.NonSinglet):
+    def NNLO(self):
+        # silence NNLO since heavy NNLO still not available
+        return RSL()
 
 
 class AsyGluon(pc.PartonicChannelAsy):
@@ -58,8 +33,8 @@ class AsyGluon(pc.PartonicChannelAsy):
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):
-    ffns = f2_cc.Splus
+    ffns = intrinsic.Splus
 
 
 class MatchingGluonSplus(pc.FMatchingGluonCC):
-    ffns = f2_cc.Splus
+    ffns = intrinsic.Splus

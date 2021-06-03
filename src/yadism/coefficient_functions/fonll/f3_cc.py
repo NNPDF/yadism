@@ -4,44 +4,31 @@ import numpy as np
 
 from eko import constants
 
+from ..partonic_channel import RSL
+from ..intrinsic import f3_cc as intrinsic
+from ..light import f3_cc as light
+from .. import splitting_functions as split
+
 from . import partonic_channel as pc
-from ..partonic_channel import RSL, EmptyPartonicChannel
-from ..intrinsic import f3_cc
 
 
-class AsyQuark(pc.PartonicChannelAsy):
-    # TODO this should be pure light
+class AsyQuark(pc.PartonicChannelAsy, light.NonSinglet):
+    def NNLO(self):
+        # silence NNLO since heavy NNLO still not available
+        return RSL()
 
-    def LO(self):
-        return RSL.from_delta(1.0)
 
+class AsyGluon(pc.PartonicChannelAsy):
     def NLO(self):
-        CF = constants.CF
-        as_norm = 2.0
+        def reg(z, args):
+            return -self.L * split.lo.pqg_reg(z, args)
 
-        def reg(z, _args):
-            return (
-                CF
-                * (
-                    -(1.0 + z ** 2) / (1.0 - z) * np.log(z)
-                    - (1.0 + z) * np.log(1.0 - z)
-                    + (2.0 + z)
-                )
-                * as_norm
-            )
-
-        delta = -CF * (9.0 / 2.0 + np.pi ** 2 / 3.0) * as_norm
-
-        omz_pd = -CF * 3.0 / 2.0 * as_norm
-
-        log_pd = 2.0 * CF * as_norm
-
-        return RSL.from_distr_coeffs(reg, (delta, omz_pd, log_pd))
-
-
-class AsyGluon(EmptyPartonicChannel):
-    pass
+        return RSL(reg)
 
 
 class MatchingIntrinsicRplus(pc.FMatchingQuarkCC):
-    ffns = f3_cc.Rplus
+    ffns = intrinsic.Rplus
+
+
+class MatchingGluonRplus(pc.FMatchingGluonCC):
+    ffns = intrinsic.Rplus

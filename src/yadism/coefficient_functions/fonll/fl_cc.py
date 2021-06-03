@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
-from eko import constants
+
+from ..partonic_channel import RSL
+from ..intrinsic import fl_cc as intrinsic
+from ..light import fl_cc as light
 
 from . import partonic_channel as pc
-from ..partonic_channel import RSL
-from ..intrinsic import fl_cc
 
 
-class AsyQuark(pc.PartonicChannelAsy):
-    # TODO inherit from light
-    def NLO(self):
-        CF = constants.CF
-        as_norm = 2.0
-
-        def reg(z, _args):
-            return CF * 2.0 * z * as_norm
-
-        return RSL(reg)
+class AsyQuark(pc.PartonicChannelAsy, light.NonSinglet):
+    def NNLO(self):
+        # silence NNLO since heavy NNLO still not available
+        return RSL()
 
 
 class AsyGluon(pc.PartonicChannelAsy):
@@ -29,8 +24,8 @@ class AsyGluon(pc.PartonicChannelAsy):
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):
-    ffns = fl_cc.Splus
+    ffns = intrinsic.Splus
 
 
 class MatchingGluonSplus(pc.FMatchingGluonCC):
-    ffns = fl_cc.Splus
+    ffns = intrinsic.Splus

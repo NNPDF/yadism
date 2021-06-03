@@ -6,12 +6,12 @@ from eko import constants
 from . import raw_nc
 
 from ..fonll import partonic_channel as pc
-from ..partonic_channel import RSL
+from ..partonic_channel import RSL, PartonicChannel
 
 
 class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
-    def __init__(self, ESF, m1sq, m2sq):
-        super().__init__(ESF, m1sq, m2sq)
+    def __init__(self, *args, m1sq, m2sq):
+        super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
         self.sigma_pp = self.Q2 + self.m2sq + self.m1sq
         self.sigma_mp = self.Q2 - self.m2sq + self.m1sq
 
@@ -63,3 +63,10 @@ class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
             )(self) - omx / (1.0 - z)
 
         return RSL.from_distr_coeffs(reg, (delta, omx))
+
+
+class ChargedCurrentBase(PartonicChannel):
+    def __init__(self, *args, m1sq):
+        super().__init__(*args)
+        self.m1sq = m1sq
+        self.y = -self.ESF.Q2 / m1sq

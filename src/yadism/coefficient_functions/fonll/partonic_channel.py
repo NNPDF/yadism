@@ -9,14 +9,14 @@ from ..partonic_channel import RSL
 
 
 class PartonicChannelAsy(pc.PartonicChannel):
-    def __init__(self, esf, mu2hq):
-        super().__init__(esf)
-        self.L = np.log(esf.Q2 / mu2hq)
+    def __init__(self, *args, mu2hq):
+        super().__init__(*args)
+        self.L = np.log(self.ESF.Q2 / mu2hq)
 
 
 class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
-    def __init__(self, ESF, m1sq, m2sq):
-        super().__init__(ESF)
+    def __init__(self, *args, m1sq, m2sq):
+        super().__init__(*args)
         self.Q2 = self.ESF.Q2
         self.x = self.ESF.x
         self.m1sq = m1sq
@@ -34,14 +34,14 @@ class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
 
 
 class FMatching(PartonicChannelAsyIntrinsic):
-    ffns = lambda *_args: None
+    ffns = lambda *_args, m1sq, m2sq: None
 
-    def __init__(self, ESF, m1sq, m2sq, mu2hq):
-        super().__init__(ESF, m1sq, m2sq)
+    def __init__(self, *args, m1sq, m2sq, mu2hq):
+        super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
         self.l = np.log(self.Q2 / mu2hq)
 
     def obj(self):
-        return self.ffns(self.ESF, self.m1sq, self.m2sq)
+        return self.ffns(self.ESF, self.nf, m1sq=self.m1sq, m2sq=self.m2sq)
 
     def parent_lo_local(self):
         parent_LO = self.obj().LO()
@@ -86,11 +86,13 @@ class FMatchingQuark(FMatching):
 
 
 class FMatchingCC(FMatching):
-    def __init__(self, ESF, m1sq, mu2hq):
-        super().__init__(ESF, m1sq, 0.0, mu2hq)
+    ffns = lambda *_args, m1sq: None
+
+    def __init__(self, *args, m1sq, mu2hq):
+        super().__init__(*args, m1sq=m1sq, m2sq=0.0, mu2hq=mu2hq)
 
     def obj(self):
-        return self.ffns(self.ESF, self.m1sq)
+        return self.ffns(self.ESF, self.nf, m1sq=self.m1sq)
 
 
 class FMatchingQuarkCC(FMatchingCC, FMatchingQuark):
@@ -108,6 +110,8 @@ class FMatchingGluon(FMatching):
 
         # since as and p_qg appear together there is no need to put an explicit as_norm here
         # the explicit 2 instead is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
+        # it is coming from the sum over quark and anti-quark (a quark split in
+        # both and either of them can interact with the EW boson)
         def reg(z, _args):
             return icl * 2.0 * split.lo.pqg_reg(z, np.array([], dtype=float)) * l
 

@@ -4,22 +4,20 @@ import numpy as np
 
 from eko import constants
 
-from .. import partonic_channel as pc
 from ..partonic_channel import RSL
 
+from . import partonic_channel as pc
 from . import raw_cc
 
 
-class Splus(pc.PartonicChannel):
+class Splus(pc.ChargedCurrentBase):
     """
     The convolution point simplifies to :math:`x` when m2=0,
     see :eqref:`6` of :cite:`kretzer-schienbein`.
     """
 
-    def __init__(self, ESF, m1sq):
-        super().__init__(ESF)
-        self.m1sq = m1sq
-        self.y = -ESF.Q2 / m1sq
+    def __init__(self, *args, m1sq):
+        super().__init__(*args, m1sq=m1sq)
         self.lo = -1.0 / self.y
 
     def LO(self):

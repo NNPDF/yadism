@@ -78,21 +78,22 @@ class Sandbox(Runner):
         xgrid = np.array(defaults["interpolation_xgrid"]).copy()
         #interpolation_xgrid = np.linspace(1e-1, 1, 9).tolist()
         kinematics = []
-        kinematics.extend(
+        #  kinematics.extend(
             #[dict(x=0.1,Q2=90, y=0)]
             #[dict(x=x, Q2=20.0) for x in xgrid[:-1:5]]
-            [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)]
-        )
-        kinematics.extend(
-            [dict(x=x, Q2=1.52**2, y=0) for x in np.geomspace(1e-4, .9, 10)]
-        )
+            #  [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)]
+        #  )
+        #  kinematics.extend(
+            #  [dict(x=x, Q2=1.52**2, y=0) for x in np.geomspace(1e-4, .9, 10)]
+        #  )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
         #kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
-        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
-        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20, 10).tolist()])
+        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(2, 20e2, 20).tolist()])
+        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(2,
+            20e2, 20).tolist()])
         observable_names = [
             #  "F2_light",
             "F2_charm",
@@ -128,9 +129,10 @@ class Sandbox(Runner):
     def doit(self):
         #  self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
-        self.run([{"PTO": 1, "IC": 0, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51}],
-        #  self.run([{"PTO": 1, "IC": 1, "FNS": "FFNS", "mc": 1.51}],
-                self.generate_observables(), ["gonly"])
+        self.run([{"PTO": 1, "IC": 0, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8}],
+        #  self.run([{"PTO": 1, "IC": 0, "FNS": "FFNS", "mc": 1.51}],
+                self.generate_observables(), ["dbaronly"])
+                #  self.generate_observables(), ["gonly"])
 
 if __name__ == "__main__":
     sand = Sandbox()
