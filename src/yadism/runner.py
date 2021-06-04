@@ -39,6 +39,7 @@ from .output import Output
 from .sf import StructureFunction as SF
 from .xs import CrossSection as XS
 from .coefficient_functions.coupling_constants import CouplingConstants
+from .esf import scale_variations as sv
 
 log.setup()
 logger = logging.getLogger(__name__)
@@ -101,12 +102,14 @@ class Runner:
 
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)
+        pto = theory["PTO"]
 
         # Initialize structure functions
         self.managers = dict(
             interpolator=interpolator,
             threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
             coupling_constants=coupling_constants,
+            sv_manager=sv.ScaleVariations(order=pto, interpolator=interpolator),
         )
         # FONLL damping powers
         FONLL_damping = bool(theory["DAMP"])
@@ -123,7 +126,7 @@ class Runner:
         if theory["IC"] == 1:
             intrinsic_range.append(4)
         self.theory_params = dict(
-            pto=theory["PTO"],
+            pto=pto,
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
             intrinsic_range=intrinsic_range,

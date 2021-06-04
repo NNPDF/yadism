@@ -30,9 +30,9 @@ def generate(esf, nf):
         )
     else:
         weights = nc_weights(esf.sf.coupling_constants, esf.Q2, kind, nf)
-    ns = kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf=nf))
-    g = kernels.Kernel(weights["g"], pcs.Gluon(esf, nf=nf))
-    s = kernels.Kernel(weights["s"], pcs.Singlet(esf, nf=nf))
+    ns = kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf))
+    g = kernels.Kernel(weights["g"], pcs.Gluon(esf, nf))
+    s = kernels.Kernel(weights["s"], pcs.Singlet(esf, nf))
     return (ns, g, s)
 
 

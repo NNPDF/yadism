@@ -95,7 +95,7 @@ class EvaluatedStructureFunction:
     def zeros(self):
         return np.zeros((len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid)))
 
-    def compute_local(self, sv_manager=None):
+    def compute_local(self):
         """
         Here is where the local caching is actually implemented: if the
         coefficient functions are already computed don't do nothing,
@@ -111,6 +111,7 @@ class EvaluatedStructureFunction:
         kers = []
         full_orders = [(o, 0, 0, 0) for o in self.orders]
         # prepare scale variations
+        sv_manager = self.sf.sv_manager
         if sv_manager is not None:
             full_orders = sv.build_orders(self.sf.pto)
         # init orders with 0

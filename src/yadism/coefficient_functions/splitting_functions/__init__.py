@@ -20,11 +20,14 @@ def joint_lo(fnc, matrices, nf, add_gluonic=True):
     if add_gluonic:
         d["S_gq"] = fnc("P_gq_0", matrices, nf)
         d["S_gg"] = fnc("P_gg_0", matrices, nf)
+    else:
+        d["S_gq"] = np.zeros_like(matrices["P_qq_0", nf])
+        d["S_gg"] = np.zeros_like(matrices["P_qq_0", nf])
     return d
 
 
-def c110(lab, matrices, _nf):
-    return matrices[lab]
+def c110(lab, matrices, nf):
+    return matrices[lab, nf]
 
 
 def c211(lab, matrices, nf):

@@ -199,8 +199,8 @@ def convolute_operator(fnc, interpolator):
                 continue
             # iterate sectors
             res, err = convolution(fnc, xk, bf)
-            op_res[k][l] = res
-            op_err[k][l] = err
+            op_res[l, k] = res
+            op_err[l, k] = err
     return op_res, op_err
 
 

@@ -95,17 +95,17 @@ class Sandbox(Runner):
         kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4,
             20e2, 10).tolist()])
         observable_names = [
-            #  "F2_light",
-            "F2_charm",
+            "F2_light",
+            #  "F2_charm",
             # "F2_bottom",
             # "F2_top",
             #  "F2_total",
-            #  "FL_light",
-            "FL_charm",
+            "FL_light",
+            #  "FL_charm",
             # "FL_bottom",
             #  "FL_total",
-            #  "F3_light",
-            "F3_charm",
+            "F3_light",
+            #  "F3_charm",
             # "F3_bottom",
             #  "F3_total",
             #  "XSHERANC",
@@ -129,10 +129,11 @@ class Sandbox(Runner):
     def doit(self):
         #  self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
-        self.run([{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8}],
-        #  self.run([{"PTO": 1, "IC": 1, "FNS": "FFNS", "mc": 1.51}],
+        #  self.run([{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8}],
+        self.run([{"PTO": 1, "IC": 0, "FNS": "FFNS", "mc": 1.51, "XIF": 2, "XIR": 1}],
                 #  self.generate_observables(), ["dbaronly"])
-                self.generate_observables(), ["conly"])
+                #  self.generate_observables(), ["conly"])
+                self.generate_observables(), ["ToyLH"])
 
 if __name__ == "__main__":
     sand = Sandbox()

@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 def build_orders(order):
     orders = []
     for alphas_power in range(order + 1):
-        for lnf_power in range(alphas_power):
-            for lnrf_power in range(alphas_power - 1):
+        for lnf_power in range(alphas_power + 1):
+            for lnrf_power in range(max(alphas_power - 1, 1)):
                 orders.append((alphas_power, 0, lnrf_power, lnf_power))
     return orders
 
@@ -46,39 +46,13 @@ class ScaleVariations:
         # fill rank-4 tensor
         smap = split.sector_mapping(self.order, self.operators, nf)
         fact_matrices = {}
-        f = len(br.evol_basis)
-        l = len(self.interpolator.xgrid)
-        zeros = np.zeros((f, l, f, l))
         # collect all elements
         for k, sectors in smap.items():
             # propagete sectors
-            fact_op = zeros.copy()
-            fact_op[
-                br.evol_basis.index("S"), :, br.evol_basis.index("S"), :
-            ] = sectors.get("S_qq", 0)
-            fact_op[
-                br.evol_basis.index("S"), :, br.evol_basis.index("g"), :
-            ] = sectors.get("S_qg", 0)
-            fact_op[
-                br.evol_basis.index("g"), :, br.evol_basis.index("S"), :
-            ] = sectors.get("S_gq", 0)
-            fact_op[
-                br.evol_basis.index("g"), :, br.evol_basis.index("g"), :
-            ] = sectors.get("S_gg", 0)
-            fact_op[
-                br.evol_basis.index("V"), :, br.evol_basis.index("V"), :
-            ] = sectors.get("NS_v", 0)
-            for q in range(2, nf + 1):
-                n = q ** 2 - 1
-                fact_op[
-                    br.evol_basis.index(f"T{n}"), :, br.evol_basis.index(f"T{n}"), :
-                ] = sectors.get("NS_p", 0)
-                fact_op[
-                    br.evol_basis.index(f"V{n}"), :, br.evol_basis.index(f"V{n}"), :
-                ] = sectors.get("NS_m", 0)
-            fact_matrices[k] = fact_op
-        # rotate back to flavor space
-        rot = br.rotate_flavor_to_evolution.copy()
+            fact_op = []
+            for ad in br.anomalous_dimensions_basis:
+                fact_op.append(sectors[ad])
+            fact_matrices[k] = np.array(fact_op)
 
         return fact_matrices
 
@@ -87,4 +61,17 @@ class ScaleVariations:
         return fact_to_ren_prefactors
 
     def apply_scale_variations(self, ker_orders, nf):
-        pass
+        fmatrices = self.fact_matrices(nf)
+        projectors = br.ad_projectors(nf)
+
+        ker_sv = {}
+
+        for (o, _, _, _), ker in ker_orders.items():
+            partons_proj = ker[0][:, 0] @ projectors
+            for (target, lnf, src), fmat in fmatrices.items():
+                if src == o:
+                    val_sv = fmat @ ker[1][0]
+                    err_sv = fmat @ ker[2][0]
+                    ker_sv[(target, 0, 0, lnf)] = (partons_proj.T, val_sv, err_sv)
+
+        return ker_sv
