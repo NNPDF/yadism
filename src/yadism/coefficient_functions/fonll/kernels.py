@@ -139,7 +139,8 @@ def generate_heavy_intrinsic_diff(esf, nl):
                     cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
                 ),
                 -kernels.Kernel(
-                    w["g"], cfs.MatchingGluonRplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq)
+                    {21: list(wq.values())[0]},
+                    cfs.MatchingGluonRplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
                 ),
             )
         return (
@@ -147,7 +148,8 @@ def generate_heavy_intrinsic_diff(esf, nl):
                 wq, cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq)
             ),
             -kernels.Kernel(
-                w["g"], cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq)
+                {21: list(wq.values())[0]},
+                cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
             ),
         )
     # NC
@@ -180,12 +182,15 @@ def generate_heavy_intrinsic_diff(esf, nl):
             {ihq: wm, (-ihq): wm},
             cfs.MatchingIntrinsicSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
+        # the explicit 2 is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
+        # it is coming from the sum over quark and anti-quark (a quark split in
+        # both and either of them can interact with the EW boson)
         -kernels.Kernel(
-            {21: wp},
+            {21: 2 * wp},
             cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
         -kernels.Kernel(
-            {21: wm},
+            {21: 2 * wm},
             cfs.MatchingGluonSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
     )

@@ -109,11 +109,8 @@ class FMatchingGluon(FMatching):
             return None
 
         # since as and p_qg appear together there is no need to put an explicit as_norm here
-        # the explicit 2 instead is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
-        # it is coming from the sum over quark and anti-quark (a quark split in
-        # both and either of them can interact with the EW boson)
         def reg(z, _args):
-            return icl * 2.0 * split.lo.pqg_reg(z, np.array([], dtype=float)) * l
+            return icl * split.lo.pqg_reg(z, np.array([], dtype=float)) * l
 
         return RSL(reg)
 

@@ -117,7 +117,8 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
     for q in range(1, min(nf + 2, 6 + 1)):
         sign = 1 if q % 2 == rest else -1
         w = coupling_constants.get_weight(q, Q2, None, cc_mask=cc_mask)
-        # the heavy quark can *NOT* be in the input
+        # the heavy quark can not be in the input
+        # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
             weights["ns"][sign * q] = w if kind != "F3" else sign * w
