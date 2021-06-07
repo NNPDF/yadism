@@ -32,7 +32,7 @@ class ScaleVariations:
         for order_labels in self.raw_labels:
             for l, fnc in order_labels.items():
                 if (l, nf) in self.operators:
-                    logger.info("using cached %s", l)
+                    logger.debug("using cached %s", l)
                     continue
                 start_time = time.perf_counter()
                 res, err = convolute_operator(fnc(nf), self.interpolator)
