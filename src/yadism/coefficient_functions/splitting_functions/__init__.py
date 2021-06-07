@@ -2,10 +2,20 @@ import numpy as np
 
 from eko import beta
 
-from . import lo
+from . import lo, nlo
 
 raw_labels = [
     {"P_qq_0": lo.pqq, "P_qg_0": lo.pqg},
+    {
+        "P_qq_1": nlo.pqq1,
+        "P_qg_1": nlo.pqg1,
+        "P_nsp_1": nlo.pnsp,
+        "P_nsm_1": nlo.pnsm,
+        "P_qq_0^2": nlo.pqq0_2,
+        "P_qg_0P_gq_0": nlo.pqg0pgq0,
+        "P_qq_0P_qg_0": nlo.pqq0pqg0,
+        "P_qg_0P_gg_0": nlo.pqg0pgg0,
+    },
 ]
 
 
