@@ -3,6 +3,7 @@ import numba as nb
 
 from eko import constants
 
+from ... import special
 from . import non_singlet as ns
 
 
@@ -99,6 +100,72 @@ def pgg0_local(x, args):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
+def pqq1ps_reg(z, args):
+    """
+    Regular :math:`P_{qq}` pure singlet splitting function.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+        args : np.ndarray
+            further arguments
+
+    Returns
+    -------
+        float
+            the quark-quark pure singlet splitting function :math:`P_{qq}(z)`
+
+    """
+    nf = args[0]
+    x = z
+
+    DX = 1 / x
+    LNX = np.log(x)
+    HR200 = LNX * LNX / 2
+
+    #  The splitting function in terms of the harmonic polylogs
+    X1PSA = (
+        +nf
+        * constants.CF
+        * (
+            -8
+            + 24 * x
+            - 224 / 9 * x ** 2
+            + 80 / 9 * DX
+            + 4 * LNX
+            + 20 * LNX * x
+            + 32 / 3 * LNX * x ** 2
+            - 8 * HR200
+            - 8 * HR200 * x
+        )
+    )
+
+    return X1PSA
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pqq1_reg(z, args):
+    """
+    Regular :math:`P_{qq}` splitting function.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+        args : np.ndarray
+            further arguments
+
+    Returns
+    -------
+        float
+            the quark-quark singlet splitting function :math:`P_{qq}(z)`
+
+    """
+    return pqq1ps_reg(z, args) + ns.pnsp_reg(z, args)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
 def pqg1_reg(z, args):
     """
     (Regular) :math:`P_{qg}` splitting function.
@@ -127,7 +194,7 @@ def pqg1_reg(z, args):
     ln1mx = np.log(1 - x)
     pqg = x ** 2 + (1 - x) ** 2
     pqgmx = x ** 2 + (1 + x) ** 2
-    S2x = ns.s2(x)
+    S2x = special.s2(x)
 
     X1QGA = 2 * CF * NF * (
         4

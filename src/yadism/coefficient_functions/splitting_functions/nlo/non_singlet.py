@@ -1,97 +1,206 @@
 import numpy as np
 import numba as nb
 
+from eko import constants
 
-@nb.njit("f8(f8)", cache=True)
-def li2(X):
-    # fmt: off
-    Z1 = 1
-    HF = Z1/2
-    PI = 3.14159265358979324
-    PI3 = PI**2/3
-    PI6 = PI**2/6
-    PI12 = PI**2/12
-
-    C = np.array([
-        +0.42996693560813697,
-        +0.40975987533077105,
-        -0.01858843665014592,
-        +0.00145751084062268,
-        -0.00014304184442340,
-        +0.00001588415541880,
-        -0.00000190784959387,
-        +0.00000024195180854,
-        -0.00000003193341274,
-        +0.00000000434545063,
-        -0.00000000060578480,
-        +0.00000000008612098,
-        -0.00000000001244332,
-        +0.00000000000182256,
-        -0.00000000000027007,
-        +0.00000000000004042,
-        -0.00000000000000610,
-        +0.00000000000000093,
-        -0.00000000000000014,
-        +0.00000000000000002,
-    ])
-
-    if X == 1:
-       H=PI6
-    elif X == -1:
-       H=-PI12
-    else:
-        T=-X
-        if T <= -2:
-            Y=-1/(1+T)
-            S=1
-            A=-PI3+HF*(np.log(-T)**2-np.log(1+1/T)**2)
-        elif T < -1:
-            Y=-1-T
-            S=-1
-            A=np.log(-T)
-            A=-PI6+A*(A+np.log(1+1/T))
-        elif T <= -HF:
-            Y=-(1+T)/T
-            S=1
-            A=np.log(-T)
-            A=-PI6+A*(-HF*A+np.log(1+T))
-        elif T < 0:
-            Y=-T/(1+T)
-            S=-1
-            A=HF*np.log(1+T)**2
-        elif T <= 1:
-            Y=T
-            S=1
-            A=0
-        else:
-            Y=1/T
-            S=-1
-            A=PI6+HF*np.log(T)**2
-
-        H=Y+Y-1
-        ALFA=H+H
-        B1=0
-        B2=0
-        for I in range(19, 0-1, -1):
-            B0=C[I]+ALFA*B1-B2
-            B2=B1
-            B1=B0
-
-        H=-(S*(B0-H*B2)+A)
-
-    DDILOG=H
-    # fmt: on
-
-    return DDILOG
+from ... import special
 
 
-@nb.njit("f8(f8)", cache=True)
-def s2(z):
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pnsm_reg(z, args):
+    """
+    Regular :math:`P_{ns,-}` non-singlet valence-like splitting function (common
+    to minus and valence).
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+        args : np.ndarray
+            further arguments
+
+    Returns
+    -------
+        float
+            the non-singlet valence-like splitting function :math:`P_{ns,-}(z)`
+
+    """
     x = z
+    NF = args[0]
+    zeta2 = special.zeta2
+    S2 = special.s2
+    CF = constants.CF
+    CA = constants.CA
 
     lnx = np.log(x)
-    ddilog = li2
+    ln1mx = np.log(1 - x)
+    pqq = 2 / (1 - x) - 1 - x
+    pqqmx = 2 / (1 + x) - 1 + x
+    S2x = S2(x)
+    DM = 1 / (1 - x)
 
-    S2 = -2 * ddilog(-x) + lnx ** 2 / 2 - 2 * lnx * np.log(1 + x) - np.pi ** 2 / 6
+    # fmt: off
+    GQQ1 = (
+        2 * CF * NF * ( ( - 1.1111111111111112 - ( 2 * lnx )
+        / 3 ) * pqq - ( 4 * ( 1 - x ) ) / 3 )
+        + 4 * CA * CF * ( ( 3.7222222222222223 + ( 11 * lnx )
+        / 6 + lnx**2 / 2 - np.pi**2 / 6 ) * pqq
+        + ( 20 * ( 1 - x ) ) / 3 + lnx * ( 1 + x) )
+        + 4 * CF**2 * ( ( ( - 3 * lnx ) / 2 - 2 * ln1mx
+        * lnx ) * pqq - 5 * ( 1 - x ) - ( lnx**2 * ( 1
+        + x ) ) / 2 - lnx * ( 1.5 + ( 7 * x ) / 2 ) )
+        - 4 * CF * ( CF - CA / 2 ) * ( 2 * pqqmx * S2x
+        + 4 * ( 1 - x ) + 2 * lnx * ( 1 + x ) )
+    )
+    # fmt: on
 
-    return S2
+    #  The soft (`+'-distribution) part of the splitting function
+
+    A2 = -40 / 9 * CF * NF + 268 / 9 * CA * CF - 8 * zeta2 * CA * CF
+
+    GQQ1L = DM * A2
+
+    #  The regular piece of the coefficient function
+
+    X1NSMA = GQQ1 - GQQ1L
+
+    return X1NSMA
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pnsp_reg(z, args):
+    """
+    Regular :math:`P_{ns,+}` non-singlet singlet-like splitting function.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+        args : np.ndarray
+            further arguments
+
+    Returns
+    -------
+        float
+            the non-singlet singlet-like splitting function :math:`P_{ns,+}(z)`
+
+    """
+    x = z
+    NF = args[0]
+    zeta2 = special.zeta2
+    S2 = special.s2
+    CF = constants.CF
+    CA = constants.CA
+
+    lnx = np.log(x)
+    ln1mx = np.log(1 - x)
+    pqq = 2 / (1 - x) - 1 - x
+    pqqmx = 2 / (1 + x) - 1 + x
+    S2x = S2(x)
+    DM = 1 / (1 - x)
+
+    # fmt: off
+    GQQ1 = (
+        2 * CF * NF * ( ( - 1.1111111111111112 - ( 2 * lnx )
+        / 3 ) * pqq - ( 4 * ( 1 - x ) ) / 3 )
+        + 4 * CA * CF * ( ( 3.7222222222222223 + ( 11 * lnx )
+        / 6 + lnx**2 / 2 - np.pi**2 / 6 ) * pqq
+        + ( 20 * ( 1 - x ) ) / 3 + lnx * ( 1 + x) )
+        + 4 * CF**2 * ( ( ( - 3 * lnx ) / 2 - 2 * ln1mx
+        * lnx ) * pqq - 5 * ( 1 - x ) - ( lnx**2 * ( 1
+        + x ) ) / 2 - lnx * ( 1.5 + ( 7 * x ) / 2 ) )
+        + 4 * CF * ( CF - CA / 2 ) * ( 2 * pqqmx * S2x
+        + 4 * ( 1 - x ) + 2 * lnx * ( 1 + x ) )
+    )
+    # fmt: on
+
+    #  The soft (`+'-distribution) part of the splitting function
+
+    A2 = -40 / 9 * CF * NF + 268 / 9 * CA * CF - 8 * zeta2 * CA * CF
+
+    GQQ1L = DM * A2
+
+    #  The regular piece of the coefficient function
+
+    X1NSPA = GQQ1 - GQQ1L
+
+    return X1NSPA
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pns_sing(z, args):
+    """
+    Singular :math:`P_{ns}` non-singlet splitting function (common to plus,
+    minus, and valence).
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+        args : np.ndarray
+            further arguments
+
+    Returns
+    -------
+        float
+            the non-singlet splitting function :math:`P_{ns}(z)`
+
+    """
+    Y = z
+    NF = args[0]
+    zeta2 = special.zeta2
+    CF = constants.CF
+    CA = constants.CA
+
+    A2 = -40 / 9 * CF * NF + 268 / 9 * CA * CF - 8 * zeta2 * CA * CF
+    X1NSB = A2 / (1 - Y)
+
+    return X1NSB
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pns_loc(x, args):
+    """
+    Local :math:`P_{ns}` non-singlet splitting function (common to plus,
+    minus, and valence).
+
+    Parameters
+    ----------
+        x : float
+            Bjorken :math:`x`
+        args : np.ndarray
+            further arguments
+
+    Returns
+    -------
+        float
+            the non-singlet splitting function :math:`P_{ns}(z)`
+
+    """
+    Y = x
+    NF = args[0]
+    zeta2 = special.zeta2
+    zeta3 = special.zeta3
+    CF = constants.CF
+    CA = constants.CA
+
+    # fmt: off
+    P1DELT =(
+        - 1/3*CF*NF
+        + 3/2*CF**2
+        + 17/6*CA*CF
+        + 24*zeta3*CF**2
+        - 12*zeta3*CA*CF
+        - 8/3*zeta2*CF*NF
+        - 12*zeta2*CF**2
+        + 44/3*zeta2*CA*CF
+    )
+    # fmt: on
+
+    #  The soft (`+'-distribution) part of the splitting function
+
+    A2 = -40 / 9 * CF * NF + 268 / 9 * CA * CF - 8 * zeta2 * CA * CF
+
+    X1NSC = np.log(1 - Y) * A2 + P1DELT
+
+    return X1NSC

@@ -11,20 +11,20 @@ def pgg0(nf):
     return RSL(s.pgg0_reg, s.pgg0_sing, s.pgg0_local, [nf])
 
 
-def pqq1(_nf):
-    return RSL()
+def pqq1(nf):
+    return RSL(s.pqq1_reg, ns.pns_sing, ns.pns_loc, [nf])
 
 
 def pqg1(nf):
     return RSL(s.pqg1_reg, args=[nf])
 
 
-def pnsp1(_nf):
-    return RSL()
+def pnsp1(nf):
+    return RSL(ns.pnsp_reg, ns.pns_sing, ns.pns_loc, [nf])
 
 
-def pnsm1(_nf):
-    return RSL()
+def pnsm1(nf):
+    return RSL(ns.pnsm_reg, ns.pns_sing, ns.pns_loc, [nf])
 
 
 def pqq0_2(_nf):

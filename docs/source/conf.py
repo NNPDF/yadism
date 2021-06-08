@@ -181,7 +181,7 @@ mathjax_options = {
     # "integrity": "sha256-QGbnX1xmeSwuEoIuUL3sa4ybs3Egp921kZfRsb87N+Q=",
 }
 
-mathjax_config = {
+mathjax3_config = {
     "extensions": ["tex2jax.js"],
     "jax": ["input/TeX", "output/HTML-CSS"],
     "loader": {"load": ["[tex]/color", "[tex]/physics"]},
@@ -311,7 +311,12 @@ autoclass_content = "class"
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {"https://docs.python.org/": None}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
+}
+
 
 # -- Options for todo extension ----------------------------------------------
 
