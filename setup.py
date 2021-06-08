@@ -55,6 +55,7 @@ def setup_package():
             "eko<0.7",
             "numpy",
             "scipy",
+            "numba",
             "pandas",
             "rich",
         ],

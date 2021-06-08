@@ -38,6 +38,26 @@ def pqq_reg(z, _args):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
+def pqq_sing(z, _args):
+    """
+    Singular part of :math:`P_{qq}` splitting function.
+
+    |ref| implements :eqref:`4.5`, :cite:`split-ns`.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+
+    Returns
+    -------
+        float
+            the singular bit the quark-quark splitting function :math:`P_{qq}^S(z)`
+    """
+    return 4.0 * constants.CF / (1.0 - z)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
 def pqq_local(x, _args):
     r"""
     Local part of :math:`P_{qq}` splitting function.
@@ -56,26 +76,6 @@ def pqq_local(x, _args):
 
     """
     return constants.CF * (3.0 + 4.0 * np.log(1.0 - x))
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pqq_sing(z, _args):
-    """
-    Singular part of :math:`P_{qq}` splitting function.
-
-    |ref| implements :eqref:`4.5`, :cite:`split-ns`.
-
-    Parameters
-    ----------
-        z : float
-            partonic momentum fraction
-
-    Returns
-    -------
-        float
-            the singular bit the quark-quark splitting function :math:`P_{qq}^S(z)`
-    """
-    return 4.0 * constants.CF / (1.0 - z)
 
 
 def pqq(_nf):
@@ -136,3 +136,6 @@ def pqg(_nf):
 
     """
     return RSL(pqg_reg)
+
+
+raw_labels = {"P_qq_0": pqq, "P_qg_0": pqg}

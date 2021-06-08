@@ -4,19 +4,14 @@ from eko import beta
 
 from . import lo, nlo
 
-raw_labels = [
-    {"P_qq_0": lo.pqq, "P_qg_0": lo.pqg},
-    {
-        "P_qq_1": nlo.pqq1,
-        "P_qg_1": nlo.pqg1,
-        "P_nsp_1": nlo.pnsp,
-        "P_nsm_1": nlo.pnsm,
-        "P_qq_0^2": nlo.pqq0_2,
-        "P_qg_0P_gq_0": nlo.pqg0pgq0,
-        "P_qq_0P_qg_0": nlo.pqq0pqg0,
-        "P_qg_0P_gg_0": nlo.pqg0pgg0,
-    },
-]
+raw_labels = [lo.raw_labels, nlo.raw_labels]
+
+
+def empty_gluon(matrices, nf):
+    return {
+        "S_gq": np.zeros_like(matrices["P_qq_0", nf]),
+        "S_gg": np.zeros_like(matrices["P_qq_0", nf]),
+    }
 
 
 def joint_lo(fnc, matrices, nf, add_gluonic=True):
@@ -31,8 +26,7 @@ def joint_lo(fnc, matrices, nf, add_gluonic=True):
         d["S_gq"] = fnc("P_gq_0", matrices, nf)
         d["S_gg"] = fnc("P_gg_0", matrices, nf)
     else:
-        d["S_gq"] = np.zeros_like(matrices["P_qq_0", nf])
-        d["S_gg"] = np.zeros_like(matrices["P_qq_0", nf])
+        d.update(empty_gluon(matrices, nf))
     return d
 
 
@@ -41,7 +35,7 @@ def c110(lab, matrices, nf):
 
 
 def c211(lab, matrices, nf):
-    return matrices[lab] - beta.beta_0(nf) * np.eye(matrices[lab].shape[0])
+    return matrices[lab, nf] - beta.beta_0(nf) * np.eye(matrices[lab, nf].shape[0])
 
 
 def c220ns(matrices, nf):
@@ -50,7 +44,8 @@ def c220ns(matrices, nf):
 
 def c220(labs, matrices, nf):
     return 0.5 * (
-        sum([matrices[lab] for lab in labs[0]]) - beta.beta_0(nf) * matrices[labs[1]]
+        sum([matrices[lab, nf] for lab in labs[0]])
+        - beta.beta_0(nf) * matrices[labs[1], nf]
     )
 
 
@@ -62,11 +57,12 @@ def sector_mapping(order, matrices, nf):
         smap.update(
             {
                 (2, 1, 0): {
-                    "NS_p": matrices["P_nsp_1"],
-                    "NS_m": matrices["P_nsm_1"],
-                    "NS_v": matrices["P_nsm_1"],
-                    "S_qq": matrices["P_qq_1"],
-                    "S_qg": matrices["P_qg_1"],
+                    "NS_p": matrices["P_nsp_1", nf],
+                    "NS_m": matrices["P_nsm_1", nf],
+                    "NS_v": matrices["P_nsm_1", nf],
+                    "S_qq": matrices["P_qq_1", nf],
+                    "S_qg": matrices["P_qg_1", nf],
+                    **empty_gluon(matrices, nf),
                 },
                 (2, 1, 1): joint_lo(c211, matrices, nf),
                 (2, 2, 0): {
@@ -79,6 +75,7 @@ def sector_mapping(order, matrices, nf):
                     "S_qg": c220(
                         (("P_qq_0P_qg_0", "P_qg_0P_gg_0"), "P_qg_0"), matrices, nf
                     ),
+                    **empty_gluon(matrices, nf),
                 },
             }
         )

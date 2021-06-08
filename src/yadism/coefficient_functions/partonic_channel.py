@@ -28,6 +28,24 @@ def loc_from_delta(_, coeffs):
 
 
 class RSL:
+    """
+    RSL representation of a distribution, containing Dirac delta and plus
+    distributions.
+
+    Parameters
+    ----------
+    reg : callable
+        regular part
+    sing : callable
+        singular part
+    loc : callable
+        local part
+    args : sequence or dict
+        arguments to pass to the individual parts (if dict) or to all of them
+        (if sequence); if no arguments needed `None` is available
+
+    """
+
     def __init__(self, reg=None, sing=None, loc=None, args=None):
         self.reg = reg
         self.sing = sing
@@ -50,7 +68,7 @@ class RSL:
     @classmethod
     def from_distr_coeffs(cls, reg, coeffs, reg_args=None):
         """
-        Compute the RSL structure form the coefficients of the distributions
+        Compute the RSL structure form the coefficients of the distributions.
 
         Parameters
         ----------
