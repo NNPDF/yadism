@@ -98,7 +98,29 @@ def pqq(_nf):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def pqg_reg(z, _args):
+def pqg_single(z, _args):
+    """
+    :math:`P_{q_ig}` splitting function (i.e.: :math:`P_{qg}` for a single
+    flavor).
+
+    |ref| implements :eqref:`4.6` and :eqref:`2.5`, :cite:`split-singlet`.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+
+    Returns
+    -------
+        float
+            the quark-gluon splitting function :math:`P_{q_ig}(z)`
+
+    """
+    return 2.0 * constants.TR * (z ** 2 + (1.0 - z) ** 2)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pqg_reg(z, args):
     """
     (Regular) :math:`P_{qg}` splitting function.
 
@@ -115,10 +137,10 @@ def pqg_reg(z, _args):
             the quark-gluon splitting function :math:`P_{qg}(z)`
 
     """
-    return 2.0 * constants.TR * (z ** 2 + (1.0 - z) ** 2)
+    return 2 * args[0] * pqg_single(z, args)
 
 
-def pqg(_nf):
+def pqg(nf):
     """
     :math:`P_{qg}` splitting function.
 
@@ -135,7 +157,7 @@ def pqg(_nf):
             the quark-gluon splitting function :math:`P_{qg}(z)`
 
     """
-    return RSL(pqg_reg)
+    return RSL(pqg_reg, args=[nf])
 
 
 raw_labels = {"P_qq_0": pqq, "P_qg_0": pqg}

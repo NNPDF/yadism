@@ -44,7 +44,7 @@ class Gluon(pc.ChargedCurrentGluon):
             return (
                 (
                     self.sf_prefactor
-                    * (split.lo.pqg_reg(z, np.array([], dtype=float)) / 2.0)
+                    * (split.lo.pqg_single(z, np.array([], dtype=float)) / 2.0)
                     * (self.l_labda(z) - np.log(self.labda))
                 )
                 + self.h_g(z, [c1, c2, c3, c4])

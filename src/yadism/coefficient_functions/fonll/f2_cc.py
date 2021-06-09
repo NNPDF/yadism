@@ -23,7 +23,7 @@ class AsyGluon(pc.PartonicChannelAsy):
         def reg(z, _args):
             L = self.L
             return (
-                (split.lo.pqg_reg(z, np.array([], dtype=float)) / 2.0)
+                (split.lo.pqg_single(z, np.array([], dtype=float)) / 2.0)
                 * (2.0 * np.log((1.0 - z) / z) + L)
                 + 8.0 * z * (1.0 - z)
                 - 1.0

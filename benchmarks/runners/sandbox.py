@@ -130,10 +130,20 @@ class Sandbox(Runner):
         #  self.run([{"PTO": 2}], self.generate_observables(), ["ToyLH"])
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
         #  self.run([{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8}],
+<<<<<<< HEAD
         self.run([{"PTO": 1, "IC": 0, "FNS": "FFNS", "mc": 1.51, "XIF": 1, "XIR": 1},{"PTO": 1, "IC": 0, "FNS": "FFNS", "mc": 1.51, "XIF": 2, "XIR": 1}],
                 #  self.generate_observables(), ["dbaronly"])
                   self.generate_observables(), ["gonly"])
                 #self.generate_observables(), ["ToyLH"])
+=======
+        self.run([{"PTO": 1, "IC": 0, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
+        #  {"PTO": 1, "IC": 0, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1,
+                  #  "XIR": 1},
+                  ],
+                #  self.generate_observables(), ["dbaronly"])
+                self.generate_observables(), ["gonly"])
+                #  self.generate_observables(), ["ToyLH"])
+>>>>>>> 867e583b7816bd147e40b015a410da938892948f
 
 if __name__ == "__main__":
     sand = Sandbox()
