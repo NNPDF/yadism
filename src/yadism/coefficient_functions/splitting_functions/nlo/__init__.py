@@ -4,18 +4,86 @@ from . import singlet as s, non_singlet as ns, convolutions as conv
 
 
 def pgq0(_nf):
+    """
+    |LO| gluon-quark splitting function :math:`P_{gq}^{(0)}`.
+
+    |ref| implements :eqref:`4.6`, :cite:`split-singlet`.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+
+    Returns
+    -------
+        float
+            |LO| gluon-quark splitting function :math:`P_{gq}^{(0)}(z)`
+
+    """
     return RSL(s.pgq0_reg)
 
 
 def pgg0(nf):
+    """
+    |LO| gluon-gluon splitting function :math:`P_{gg}^{(0)}`.
+
+    |ref| implements :eqref:`4.6`, :cite:`split-singlet`.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+        nf : int
+            the number of light flavors
+
+    Returns
+    -------
+        float
+            |LO| gluon-gluon splitting function :math:`P_{gg}^{(0)}(z)`
+
+    """
     return RSL(s.pgg0_reg, s.pgg0_sing, s.pgg0_local, [nf])
 
 
 def pqq1(nf):
+    """
+    |NLO| quark-quark splitting function :math:`P_{qq}^{(1)}`.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+        nf : int
+            the number of light flavors
+
+    Returns
+    -------
+        float
+            |NLO| quark-quark splitting function :math:`P_{qq}^{(1)}(z)`
+
+    """
     return RSL(s.pqq1_reg, ns.pns_sing, ns.pns_loc, [nf])
 
 
 def pqg1(nf):
+    """
+    |NLO| quark-gluon splitting function :math:`P_{qg}^{(1)}`.
+
+    |ref| implements :eqref:`4.8`, :cite:`split-singlet`.
+
+    Parameters
+    ----------
+        z : float
+            partonic momentum fraction
+        nf : int
+            the number of light flavors
+
+    Returns
+    -------
+        float
+            |NLO| quark-gluon splitting function :math:`P_{qg}^{(1)}(z)`
+
+    """
     return RSL(s.pqg1_reg, args=[nf])
 
 
@@ -31,16 +99,16 @@ def pqq0_2(_nf):
     return RSL.from_distr_coeffs(conv.pqq0_2_reg,conv.pqq0_2_coeffs)
 
 
-def pqg0pgq0(_nf):
-    return RSL()
+def pqg0pgq0(nf):
+    return RSL(conv.pqg0pgq0_reg, args=[nf])
 
 
-def pqq0pqg0(_nf):
-    return RSL()
+def pqq0pqg0(nf):
+    return RSL(conv.pqq0pqg0_reg, args=[nf])
 
 
-def pqg0pgg0(_nf):
-    return RSL()
+def pqg0pgg0(nf):
+    return RSL(conv.pqg0pgg0_reg, args=[nf])
 
 
 raw_labels = {
