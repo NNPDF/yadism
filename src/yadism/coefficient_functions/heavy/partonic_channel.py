@@ -217,7 +217,7 @@ class ChargedCurrentGluon(ChargedCurrentBase):
     def h_g(self, z, cs):
         c0 = (
             self.sf_prefactor
-            * (split.lo.pqg_reg(z, np.array([], dtype=float)) / 2.0)
+            * (split.lo.pqg_single(z, np.array([], dtype=float)) / 2.0)
             * (2.0 * np.log(1 - z) - np.log(1 - self.labda * z) - np.log(z))
         )
         cs.insert(0, c0)

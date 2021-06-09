@@ -17,7 +17,7 @@ class AsyGluonVV(pc.PartonicChannelAsy):
             L = self.L
             as_norm = 2.0
             return as_norm * (
-                split.lo.pqg_reg(z, np.array([], dtype=float))
+                split.lo.pqg_single(z, np.array([], dtype=float))
                 * (L + np.log((1.0 - z) / z))
                 + 2.0 * constants.TR * (-1.0 + 8.0 * z * (1.0 - z))
             )

@@ -21,7 +21,7 @@ class AsyQuark(pc.PartonicChannelAsy, light.NonSinglet):
 class AsyGluon(pc.PartonicChannelAsy):
     def NLO(self):
         def reg(z, args):
-            return -self.L * split.lo.pqg_reg(z, args)
+            return -self.L * split.lo.pqg_single(z, args)
 
         return RSL(reg)
 

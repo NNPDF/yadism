@@ -37,7 +37,7 @@ class Gluon(pc.ChargedCurrentGluon):
             return (
                 (
                     (
-                        split.lo.pqg_reg(z, np.array([], dtype=float))
+                        split.lo.pqg_single(z, np.array([], dtype=float))
                         / 2.0
                         * (-self.l_labda(z) - np.log(self.labda))
                     )
