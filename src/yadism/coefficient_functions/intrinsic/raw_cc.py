@@ -121,8 +121,8 @@ def flr(y, z):
 
 
 def f3r(y, z):
-    P1 = -1.0 / (1.0 - z)
-    P2 = -np.log(1.0 - z) * P1
+    P1 = 1.0 / (1.0 - z)
+    P2 = np.log(1.0 - z) * P1
     return (
         -2
         * P2
