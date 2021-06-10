@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[     17598,        491]
-NotebookOptionsPosition[     16584,        449]
-NotebookOutlinePosition[     16922,        464]
-CellTagsIndexPosition[     16879,        461]
+NotebookDataLength[     18091,        498]
+NotebookOptionsPosition[     17038,        455]
+NotebookOutlinePosition[     17376,        470]
+CellTagsIndexPosition[     17333,        467]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -34,14 +34,13 @@ Cell[BoxData[{
   RowBox[{"2", "nf", "*", "2", " ", "TR", "*", 
    RowBox[{"{", 
     RowBox[{
-     RowBox[{"2", "*", 
-      RowBox[{"(", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"z", "^", "2"}], "+", 
        RowBox[{
-        RowBox[{"z", "^", "2"}], "+", 
-        RowBox[{
-         RowBox[{"(", 
-          RowBox[{"1", "-", "z"}], ")"}], "^", "2"}]}], ")"}]}], ",", "0", 
-     ",", "0"}], "}"}]}]}], "\[IndentingNewLine]", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", "z"}], ")"}], "^", "2"}]}], ")"}], ",", "0", ",", 
+     "0"}], "}"}]}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Pgq0", "[", "z_", "]"}], ":=", 
   RowBox[{"2", "CF", "*", 
@@ -60,8 +59,8 @@ Cell[BoxData[{
        RowBox[{"(", 
         RowBox[{
          RowBox[{"1", "/", "z"}], "-", "2", "+", "z", "-", 
-         RowBox[{"z", "^", "2"}]}], ")"}]}], ",", "0", ",", "1"}], "}"}]}], 
-   "-", 
+         RowBox[{"z", "^", "2"}]}], ")"}]}], ",", 
+      RowBox[{"11", "/", "3"}], ",", "1"}], "}"}]}], "-", 
    RowBox[{
     RowBox[{"2", "/", "3"}], "nf", 
     RowBox[{"{", 
@@ -73,7 +72,8 @@ Cell[BoxData[{
   3.832155563620625*^9}, {3.832156365288444*^9, 3.832156408077579*^9}, {
   3.83215716847547*^9, 3.8321571711779413`*^9}, {3.8321574140548077`*^9, 
   3.832157478291511*^9}, {3.832230279726988*^9, 3.8322302838223667`*^9}, {
-  3.832230756226001*^9, 3.832230805729465*^9}}],
+  3.832230756226001*^9, 3.832230805729465*^9}, {3.832234537437788*^9, 
+  3.832234537649529*^9}, {3.8322346007586327`*^9, 3.832234602087508*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -323,7 +323,7 @@ Cell[BoxData[
  CellChangeTimes->{
   3.8321564187704906`*^9, 3.832157330142508*^9, 3.832230290611992*^9, 
    3.832230337502427*^9, {3.8322305524725924`*^9, 3.832230577390338*^9}, 
-   3.832231095251956*^9}],
+   3.832231095251956*^9, {3.83223458235646*^9, 3.832234624001025*^9}}],
 
 Cell[BoxData[
  InterpretationBox["\<\"List((CF**2*(27 - 8*Pi**2))/3.,24*CF**2,32*CF**2)\"\>",
@@ -335,7 +335,7 @@ Cell[BoxData[
  CellChangeTimes->{
   3.8321564187704906`*^9, 3.832157330142508*^9, 3.832230290611992*^9, 
    3.832230337502427*^9, {3.8322305524725924`*^9, 3.832230577390338*^9}, 
-   3.832231095262065*^9}]
+   3.832231095251956*^9, {3.83223458235646*^9, 3.8322346240120792`*^9}}]
 }, Open  ]]
 }, Open  ]],
 
@@ -352,9 +352,9 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- InterpretationBox["\<\"-8*CF*nf*TR*(-3 - 4*(-1 + z)*z + (-2 - 4*z + \
+ InterpretationBox["\<\"-4*CF*nf*TR*(-3 - 4*(-1 + z)*z + (-2 - 4*z + \
 8*z**2)*Log(z))\"\>",
-  FortranForm[(-8) $CellContext`CF $CellContext`nf $CellContext`TR (-3 - 
+  FortranForm[(-4) $CellContext`CF $CellContext`nf $CellContext`TR (-3 - 
     4 (-1 + $CellContext`z) $CellContext`z + (-2 - 4 $CellContext`z + 
       8 $CellContext`z^2) Log[$CellContext`z])],
   AutoDelete->True,
@@ -362,7 +362,8 @@ Cell[BoxData[
  CellChangeTimes->{
   3.832156424528615*^9, 3.832157175573563*^9, {3.832157292936597*^9, 
    3.832157325220913*^9}, 3.832230303853162*^9, 3.832230339001054*^9, {
-   3.832230551031085*^9, 3.832230572525077*^9}, 3.832231096376007*^9}],
+   3.832230551031085*^9, 3.832230572525077*^9}, 3.832231096376007*^9, 
+   3.832234625064275*^9}],
 
 Cell[BoxData[
  InterpretationBox["\<\"List(0,0,0)\"\>",
@@ -372,7 +373,8 @@ Cell[BoxData[
  CellChangeTimes->{
   3.832156424528615*^9, 3.832157175573563*^9, {3.832157292936597*^9, 
    3.832157325220913*^9}, 3.832230303853162*^9, 3.832230339001054*^9, {
-   3.832230551031085*^9, 3.832230572525077*^9}, 3.8322310963834677`*^9}]
+   3.832230551031085*^9, 3.832230572525077*^9}, 3.832231096376007*^9, 
+   3.8322346250722857`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -388,20 +390,20 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- InterpretationBox["\<\"(16*nf*TR*(nf*z*(-1 - 2*(-1 + z)*z) + CA*(4 + z*(9 + \
-(3 - 16*z)*z)) + 3*CA*z*(4 + z*(5 + 3*z))*Log(z)))/(3.*z)\"\>",
+ InterpretationBox["\<\"(4*nf*TR*(-2*nf*z*(1 + 2*(-1 + z)*z) + CA*(8 + z*(29 \
+- 2*z*(8 + 5*z))) + 6*CA*z*(4 + z*(5 + 3*z))*Log(z)))/(3.*z)\"\>",
   FortranForm[
-  Rational[16, 
-     3] $CellContext`nf $CellContext`TR $CellContext`z^(-1) ($CellContext`nf \
-$CellContext`z (-1 - 
+  Rational[4, 
+     3] $CellContext`nf $CellContext`TR $CellContext`z^(-1) ((-2) \
+$CellContext`nf $CellContext`z (1 + 
       2 (-1 + $CellContext`z) $CellContext`z) + $CellContext`CA (
-      4 + $CellContext`z (9 + (3 - 16 $CellContext`z) $CellContext`z)) + 
-    3 $CellContext`CA $CellContext`z (
+      8 + $CellContext`z (29 - 2 $CellContext`z (8 + 5 $CellContext`z))) + 
+    6 $CellContext`CA $CellContext`z (
       4 + $CellContext`z (5 + 3 $CellContext`z)) Log[$CellContext`z])],
   AutoDelete->True,
   Editable->True]], "Print",
  CellChangeTimes->{3.832230678006032*^9, 3.83223089909921*^9, 
-  3.832231097726408*^9}],
+  3.832231097726408*^9, 3.832234640400982*^9}],
 
 Cell[BoxData[
  InterpretationBox["\<\"List(0,0,0)\"\>",
@@ -409,7 +411,7 @@ Cell[BoxData[
   AutoDelete->True,
   Editable->True]], "Print",
  CellChangeTimes->{3.832230678006032*^9, 3.83223089909921*^9, 
-  3.832231097732486*^9}]
+  3.832231097726408*^9, 3.8322346404083977`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -425,17 +427,17 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- InterpretationBox["\<\"16*CF*nf*TR*(1 + 4/(3.*z) - z - (4*z**2)/3. + 2*(1 + \
+ InterpretationBox["\<\"8*CF*nf*TR*(1 + 4/(3.*z) - z - (4*z**2)/3. + 2*(1 + \
 z)*Log(z))\"\>",
   FortranForm[
-  16 $CellContext`CF $CellContext`nf $CellContext`TR (1 + 
+  8 $CellContext`CF $CellContext`nf $CellContext`TR (1 + 
     Rational[4, 3]/$CellContext`z - $CellContext`z + 
     Rational[-4, 3] $CellContext`z^2 + 
     2 (1 + $CellContext`z) Log[$CellContext`z])],
   AutoDelete->True,
   Editable->True]], "Print",
  CellChangeTimes->{3.8322308158506947`*^9, 3.832230949445822*^9, 
-  3.8322310987547417`*^9}],
+  3.8322310987547417`*^9, 3.832234669657277*^9}],
 
 Cell[BoxData[
  InterpretationBox["\<\"List(0,0,0)\"\>",
@@ -443,9 +445,13 @@ Cell[BoxData[
   AutoDelete->True,
   Editable->True]], "Print",
  CellChangeTimes->{3.8322308158506947`*^9, 3.832230949445822*^9, 
-  3.832231098758996*^9}]
+  3.8322310987547417`*^9, 3.832234669662456*^9}]
 }, Open  ]]
-}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.8322333475814247`*^9, 3.832233349665041*^9}, 
+   3.832234517059085*^9}]
 },
 WindowSize->{960, 1016},
 WindowMargins->{{Automatic, -10}, {Automatic, -8}},
@@ -463,36 +469,37 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[557, 20, 1963, 55, 88, "Input"],
-Cell[2523, 77, 9467, 226, 487, "Input"],
+Cell[557, 20, 2052, 55, 88, "Input"],
+Cell[2612, 77, 9467, 226, 487, "Input"],
 Cell[CellGroupData[{
-Cell[12015, 307, 147, 4, 30, "Input"],
+Cell[12104, 307, 147, 4, 30, "Input"],
 Cell[CellGroupData[{
-Cell[12187, 315, 436, 10, 23, "Print"],
-Cell[12626, 327, 451, 10, 23, "Print"]
+Cell[12276, 315, 481, 10, 23, "Print"],
+Cell[12760, 327, 498, 10, 23, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[13126, 343, 269, 6, 30, "Input"],
+Cell[13307, 343, 269, 6, 30, "Input"],
 Cell[CellGroupData[{
-Cell[13420, 353, 582, 11, 23, "Print"],
-Cell[14005, 366, 365, 8, 23, "Print"]
+Cell[13601, 353, 608, 12, 23, "Print"],
+Cell[14212, 367, 391, 9, 23, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[14419, 380, 222, 5, 30, "Input"],
+Cell[14652, 382, 222, 5, 30, "Input"],
 Cell[CellGroupData[{
-Cell[14666, 389, 676, 14, 43, "Print"],
-Cell[15345, 405, 218, 6, 23, "Print"]
+Cell[14899, 391, 706, 14, 43, "Print"],
+Cell[15608, 407, 242, 6, 23, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[15612, 417, 226, 5, 30, "Input"],
+Cell[15899, 419, 226, 5, 30, "Input"],
 Cell[CellGroupData[{
-Cell[15863, 426, 469, 11, 23, "Print"],
-Cell[16335, 439, 221, 6, 23, "Print"]
+Cell[16150, 428, 489, 11, 23, "Print"],
+Cell[16642, 441, 245, 6, 23, "Print"]
 }, Open  ]]
-}, Open  ]]
+}, Open  ]],
+Cell[16914, 451, 120, 2, 30, "Input"]
 }
 ]
 *)
