@@ -21,10 +21,6 @@ help:
 .PHONY: help html view clean clean-todos cleanall
 
 html: todos
-	sphinx-apidoc -o $(YADISMOUT) --module-first $(SRCDIR)
-	@rm -f $(YADISMOUT)/modules.rst
-	sphinx-apidoc -o $(YADMARKOUT) --module-first $(YADMARKDIR)
-	@rm -f $(YADMARKOUT)/modules.rst
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 view:
