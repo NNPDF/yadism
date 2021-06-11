@@ -1,3 +1,5 @@
+.. _theory-sv:
+
 Scale Variations
 ================
 
@@ -30,6 +32,18 @@ variations in the theory.
 This is really decoupled from the process itself, and it has been use as a
 guidance for the implementation itself, whose details are instead described in
 the :ref:`corresponding technical section <implement-sv>`.
+
+The most basic manifestation of scale variations is that:
+
+- PDFs are always evaluated at the factorization scale :math:`\mu_F` (and this
+  is a source of scale variations even at |LO|)
+- :math:`\alpha_s` is always evaluated at the renormalization scale
+  :math:`\mu_R` (and this is a source of scale variations already at |NLO|)
+
+Actually the scale variations have also a non-trivial impact on the coefficient
+function expressions (starting at |NLO| for factorization scale variations, and
+at |NNLO| for renormalization ones), and it is discuss in the following
+sections.
 
 Factorization
 ~~~~~~~~~~~~~

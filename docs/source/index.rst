@@ -73,7 +73,8 @@ In particular:
   :hidden:
 
   implementation/index.rst
-  Scale Variations <implementation/scale-variations.rst>
+  implementation/kernels.rst
+  implementation/scale-variations.rst
   implementation/TMC.rst
   API <modules/yadism.rst>
 
