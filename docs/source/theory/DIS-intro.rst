@@ -1,8 +1,12 @@
-Introduction to DIS
-===================
+DIS: process and definitions
+============================
 
 History
 -------
+
+.. todo::
+
+   here an svg with the base diagram
 
 - Short historical overview "DIS is the process involving [bla bla]"
 - "it has been historically relevant in QCD and [bla bla bla]"
@@ -57,30 +61,15 @@ Structure Function Kind
 
   - notice that the :math:`F_L` definition it's not exactly the one above, but
     it may be corrected (actually :math:`F_L` it's the object involved in
-    Callan-Gross relation, for more information see :ref:`fl corrections`)
+    Callan-Gross relation, for more information see :ref:`fl-corrections`)
 
 - Note that we compute :math:`xF_3` instead of the bare structure function to respect the native
   scaling in the full cross section
 
-Target Mass Corrections
------------------------
-
-Following :cite:`tmc-review`, :cite:`tmc-iranian` we provide three options:
-
-- **exact**: is the full and involves integration
-- **approximate**: is stemming from the exact, but the strcture functions in
-  the integrand are evaluated at the bottom end
-- **APFEL**: the one used in APFEL, similar to the exact but with g2 in
-  the review (Schienbein et al.) set to 0
-
-.. _fl corrections:
-
-:math:`F_L` definition
-~~~~~~~~~~~~~~~~~~~~~~
-
-Also the definition of :math:`F_L` may be corrected by the presence of a proton
-mass.
+Cross sections
+~~~~~~~~~~~~~~
 
 .. todo::
 
-   complete
+   also cross section(s), or better reduced cross sections, are available, thus
+   they have to be described

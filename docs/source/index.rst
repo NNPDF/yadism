@@ -46,45 +46,50 @@ In particular:
 .. _pip: https://pip.pypa.io/en/stable/
 
 .. toctree::
-  :maxdepth: 1
-  :caption: Overview
-  :hidden:
+   :maxdepth: 1
+   :caption: Overview
+   :hidden:
 
-  overview/features.rst
-  overview/tutorials/index.rst
-  overview/indices.rst
-
-.. toctree::
-  :maxdepth: 1
-  :caption: Theory
-  :hidden:
-
-  theory/DIS-intro.rst
-  theory/fact.rst
-  theory/fns.rst
-  theory/coeff-funcs.rst 
-  theory/scale-variations.rst
-
-  zzz-refs.rst
+   overview/features.rst
+   overview/tutorials/index.rst
 
 .. toctree::
-  :maxdepth: 1
-  :caption: Implementation
-  :hidden:
+   :maxdepth: 1
+   :caption: Theory
+   :hidden:
 
-  implementation/index.rst
-  implementation/kernels.rst
-  implementation/scale-variations.rst
-  implementation/TMC.rst
-  API <modules/yadism.rst>
+   theory/DIS-intro.rst
+   theory/fact.rst
+   theory/coeff-funcs.rst 
+   theory/fns.rst
+   theory/scale-variations.rst
+   Misc <theory/misc.rst>
+
+   zzz-refs.rst
 
 .. toctree::
-  :maxdepth: 1
-  :caption: Dev Tools
-  :hidden:
+   :maxdepth: 1
+   :caption: Implementation
+   :hidden:
 
-  dev-tools/tests.rst
-  dev-tools/yadmark.rst
-  dev-tools/extras.rst
-  dev-tools/third-party.rst
-  dev-tools/code-todos.rst
+   implementation/structure.rst
+   implementation/scale-variations.rst
+   implementation/TMC.rst
+   API <modules/yadism.rst>
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Dev Tools
+   :hidden:
+
+   dev-tools/tests.rst
+   dev-tools/yadmark.rst
+   dev-tools/metrics.rst
+   dev-tools/code-todos.rst
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Navigation
+   :hidden:
+
+   overview/indices.rst

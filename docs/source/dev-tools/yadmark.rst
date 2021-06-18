@@ -6,6 +6,11 @@ The specific purpose of this package is to cointain all the utils to benchmark e
 The underlying infrastructure is coming from `sqlite3` and `git-lfs` and it 
 is implemented in the package |banana|.
 
+.. admonition:: Tools
+
+   Other tools have been developed for benchmarking, and shipped with banana as
+   CLI. They install together with it, find the description at |banana-tools|. 
+
 To install `yadmark` you can type: 
 
 ``pip install yadmark``

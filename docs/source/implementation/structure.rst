@@ -6,92 +6,60 @@ point of view of the implementation of course, but mainly concerning the
 overall project and the organization of the many ingredients/features composing
 this package.
 
-A brief outline can instead be found in the :doc:`introductive page
-<index>`.
+
+Brief Description
+-----------------
+
+`yadism` is organized in two different parts:
+
+- the **physics-related** part, that includes a storage of coefficient functions
+  expressions (`PartonicChannel`), the coupling constants (charges) related to the |EW| boson
+  coupling (`CouplingConstants`), and the suitable joining between the two (`Kernel`)
+
+  all these elements are contained inside the `coefficient_function` subpackage,
+  and they are provided to the outside through `Combiner`, that recollects all
+  the `Kernel` relevant for a given calculation
+
+- the **computational** part, that is fully managed by a `Runner` instance, and
+  is composed of different elements, used for applying all the relevant steps
+  for the requested calculation
+
+Essentially the flow of an execution is the following:
+
+1. (**user** initiated) a `Runner` is instantiated and it is passed the theory
+   configuration, and the requested observables to compute (together with
+   related configurations)
+2. a check is performed on the user input (by an `Inspector`)
+3. the relevant global *service providers* are initialized and stored by the
+   `Runner` (like the :math:`\alpha_s` evolution, or the interpolation
+   dispatcher, or the couplings computer)
+4. the requested observables are scanned, and they are assigned to the
+   respective `StructureFunction` / `CrossSection` (acting as manager and caching
+   storage) according to their kind and heavyness (but multiple kinematics will
+   belong to the same `StructureFunction` / `CrossSection`)
+
+   each kinematic point will correspond to an instance of
+   `EvaluatedStructureFunction` / `EvaluatedCrossSection`
+
+5. (**user** initiated) output is requested
+6. the request is propagated to the managers, and then to all the required
+   `ESF` objects
+7. the `ESF` issues a request to the `Combiner` for the relevant `Kernel`
+8. all the `Kernel` are numerically convoluted with the |PDF| interpolation
+   polynomials
+9. all the results are collected in an `Output` object and returned to the user
+10. (**user** initiated) the `Output` object might be dumped on disk in one of
+    the available formats
+
+Elements
+--------
 
 .. toctree::
    :maxdepth: 2
 
    runner
    input
+   kernels
    SF
    ESF
-
-
-Brief Descriptions
-------------------
-First of all let's introduce a little bit more the `yadism` hierarchy.
-
-`yadism`'s class hierarchy actually spans two dimensions:
-
-- **height:** starting from the main :py:class:`Runner` there is a stack of
-  interfaces and server classes;
-
-  the implementation of this dimension is through **ownership** of an object on
-  a set of objects of the level directly below;
-  an outline of the so:
-
-  - :py:class:`Runner`, see `Runner`_ below
-  - :py:class:`StructureFunction`, see `Structure Function`_ below
-  - :py:class:`EvaluatedStructureFunction` 
-
-
-- **depth:** all the objects develop an internal hierarchy, used to factorize
-  all the common features and to delegate only the defining differences to the
-  lowest nodes;
-
-  the implementation of this dimension is through **inheritance**, so from the
-  point of view of the previous dimension all the elements of a single node
-  look really the same, implementing the very same interface;
-
-  most often the base classes in this hierarchy are abstract classes
-  (subclasses of :py:class:`abc.ABC` with some methods decorated with
-  :py:func:`abc.abstractmethod`), so they are not instantiable themselves, even
-  if they implement most of the logic (but the missing pieces are necessary to
-  have a working instance);
-
-  an example of this is the :py:class:`EvaluatedStructureFunction` internal
-  hierarchy, see `ESF hierarchy`_ below
-
-
-Runner
-~~~~~~
-This is the main interface, managing the full computation process, and it is
-the only object the final user should interact with, providing proper input and
-getting from the desired output
-
-Structure Function
-~~~~~~~~~~~~~~~~~~
-This is an internal interface, that manage the computation internally to each
-observable kind, and return the result of the calculation to its owner through
-proper methods; each of these object will in general manage the calculation of
-multiple atomic instances
-
-
-Evaluated Structure Function
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This structure is the lowest one in the height hierarchy.
-
-This class and its siblings (like :py:class:`EvaluatedStructureFunctionTMC`)
-are the atomic object, responsible for the calculation of a single observables
-(i.e. a fully specified physical observable on a single fully specified
-kinematic point, e.g. F2light(x, Q2))
-
-ESF hierarchy
-"""""""""""""
-The `ESF` internal hierarchy, bulding an inheritance chain
-
-- :py:class:`EvaluatedStructureFunction` is the base class, and specify the
-  constructor, the output method and even the full calculation process, but
-  it still misses the physics, that it is not specified at this level
-- classes :py:class:`EvaluatedStructureFunctionLight` and
-  :py:class:`EvaluatedStructureFunctionHeavy` factorize all the differences
-  related to the treatment of structure functions with DIS boson coupling to
-  either a light or a heavy quark flavour
-- classes :py:class:`EvaluatedStructureFunctionF2light`,
-  :py:class:`EvaluatedStructureFunctionF2charm`,
-  :py:class:`EvaluatedStructureFunctionF2bottom`,
-  :py:class:`EvaluatedStructureFunctionF2top`,
-  :py:class:`EvaluatedStructureFunctionFLlight`, ... are the final classes,
-  inheriting all the structures from above and only responsible to define the
-  mathematical expressions of the related coefficient functions
+   interpolation
