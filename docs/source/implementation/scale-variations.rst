@@ -124,11 +124,64 @@ separately and only recombined at the latest possible moment.
 Integrating in x-space
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. todo::
+The factorization theorem can be schematically written for scale variations as:
 
-   the two dimensions are: the convolution point and the basis function
-   
-   write the derivation and remark what is the correct order
+.. math::
+
+   F = f \otimes S \otimes c
+
+Where :math:`F` is the observable, :math:`f` the |PDF|, :math:`c` the raw
+coefficient function, and :math:`S` the splitting kernels organized as described
+in the theory section.
+
+Without the scale variations the interpolation is done completely on the |PDF|,
+as described in :doc:`interpolation`, and the interpolation polynomials would
+then be used to convolute numerically the coefficient functions:
+
+.. math::
+
+   F(x) &= [f \otimes c] (x) =  \left[\left(\sum_j f(x_j) p_j\right) \otimes c\right](x) =\\
+   &= \sum_j f(x_j) \left[p_j \otimes c\right](x) = \sum_j f(x_j) c_j(x)
+
+In this way for each kinematic specified :math:`x` the coefficient function is
+turned into a vector over interpolation basis.
+And so:
+
+.. math::
+
+   c_j(x) = (p_j \otimes c) (x)
+
+The same thing can be done with scale variations, turning the :math:`S` kernels
+into a matrix.
+
+.. math::
+
+   F(x) &= [f \otimes c] (x) =  \left[\left(\sum_j f(x_j) p_j\right) \otimes S \otimes c\right](x) =\\
+   &= \sum_j f(x_j) \left[p_j \otimes S \otimes c\right](x)\\ 
+   &= \sum_j f(x_j) \left[\left(\sum_k (p_j \otimes S)(x_k) p_k\right) \otimes c\right](x)\\ 
+   &= \sum_{jk} f(x_j) \left[(p_j \otimes S)(x_k)\, (p_k \otimes c)\right](x)\\ 
+   &= \sum_{jk} f(x_j)\, S_{jk}\, c_k(x)
+
+Where essentially the |PDF| have been interpolated first, and then the
+convolution of the interpolation basis and the splitting kernel (:math:`p_j
+\otimes S`) is also interpolated a second time.
+
+Note that:
+
+.. math::
+
+   S_{jk} = (p_j \otimes S)(x_k)
+
+So even if the two indices run **on the same basis**, they have actually
+**different sources**:
+
+- the first one, :math:`j`, is coming from the convolution with the
+  interpolation polynomial :math:`p_j` (same as for the coefficient function
+  :math:`c_j(x)`, because actually :math:`S \otimes c` is the scale-varied
+  coefficient function)
+- the second, :math:`k`, is coming from the evaluation on the grid point
+  :math:`x_k` (to be joined with the coefficient function `c_k(x)`, who is
+  stemming from)
 
 
 Remark on projectors
