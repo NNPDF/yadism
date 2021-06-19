@@ -98,23 +98,35 @@ Because of this we can apply splitting functions (and their convolutions) in two
 objects: the :math:`x`-space expression, and the projector relative to the space
 it acts on.
 
-The final formula related to the application of scale variations is the
-following:
+.. important::
 
-.. math::
+   The final formula related to the application of scale variations is the
+   following:
 
-   c_{a, (\beta, j)}^{(out, lnf)} = v_\alpha \Pi^{(ad)}_{\alpha\beta} S^{(ad), (out, lnf, in)}_{ji} c^{(in)}_{a,i}
+   .. math::
 
-where:
+      c_{a, (\beta, j)}^{(out, lnf)} = v_\alpha \Pi^{(ad)}_{\alpha\beta} S^{(ad), (out, lnf, in)}_{ji} c^{(in)}_{a,i}
 
-- :math:`(out, lnf, in)` are respectively indexing: the perturbative order of
-  the generated coefficient, the power of :math:`\log(Q^2/\mu_F)` the generated
-  coefficient is multiplied by, and the perturbative order of the coefficient
-  is applied on
-- :math:`(ad)` is an index over the anomalous dimension basis
-- :math:`\alpha, \beta` are indices in flavor space
-- :math:`i, j` are indices in the evolution space
-- :math:`a` is the structure function kind
+   where:
+
+   - :math:`v` are the weights assigned to each partonic channel
+   - :math:`\Pi` are the projectors over the subspaces related to the anomalous
+     dimension basis
+   - :math:`S` are the splitting kernels
+   - :math:`c` are the actual raw (non-scale-varied) coefficient functions on
+     the right hand side, and the dressed (scale-varied) ones on the left
+
+   and so:
+
+   1. :math:`(out, lnf, in)` are respectively indexing: the perturbative order of
+      the generated coefficient, the power of :math:`\log(Q^2/\mu_F)` the generated
+      coefficient is multiplied by, and the perturbative order of the coefficient
+      is applied on
+   2. :math:`(ad)` is an index over the anomalous dimension basis
+   3. :math:`\alpha, \beta` are indices in flavor space
+   4. :math:`i, j` are indices in the evolution space
+   5. :math:`a` is the structure function kind
+
 
 Notice that the part that involves the flavor space is only coupled to the part
 that involves the interpolation space by the sum over the anomalous dimension
@@ -166,36 +178,101 @@ Where essentially the |PDF| have been interpolated first, and then the
 convolution of the interpolation basis and the splitting kernel (:math:`p_j
 \otimes S`) is also interpolated a second time.
 
-Note that:
+.. important::
 
-.. math::
+   Note that:
 
-   S_{jk} = (p_j \otimes S)(x_k)
+   .. math::
 
-So even if the two indices run **on the same basis**, they have actually
-**different sources**:
+      S_{jk} = (p_j \otimes S)(x_k)
 
-- the first one, :math:`j`, is coming from the convolution with the
-  interpolation polynomial :math:`p_j` (same as for the coefficient function
-  :math:`c_j(x)`, because actually :math:`S \otimes c` is the scale-varied
-  coefficient function)
-- the second, :math:`k`, is coming from the evaluation on the grid point
-  :math:`x_k` (to be joined with the coefficient function `c_k(x)`, who is
-  stemming from)
+   So even if the two indices run **on the same basis**, they have actually
+   **different sources**:
+
+   1. the first one, :math:`j`, is coming from the convolution with the
+      interpolation polynomial :math:`p_j` (same as for the coefficient function
+      :math:`c_j(x)`, because actually :math:`S \otimes c` is the scale-varied
+      coefficient function)
+   2. the second, :math:`k`, is coming from the evaluation on the grid point
+      :math:`x_k` (to be joined with the coefficient function `c_k(x)`, who is
+      stemming from)
 
 
 Remark on projectors
 ~~~~~~~~~~~~~~~~~~~~
 
-.. todo::
+The projectors are not very complicate objects, but a little bit of care has to
+be used relatively to their normalization.
 
-   the projectors are obtained summing over tensor products (ket-bra) of
-   evolution-basis elements, but they have to be:
+Indeed the actual expression for the diagonal projectors is the following:
 
-   - normalized on the coefficient functions side (they project coefficient
-     functions) 
-   - necessarily unnormalized on the PDF side (since they turn PDF in flavor
-     basis into the evolution basis elements)
+.. math::
+
+   \Pi^{(a)} = \sum_{k \in a} \frac{\dyad{k}{k}}{|\bra{k}\ket{k}|^2}
+
+where the projectors over single states are explicitly normalized with the norm
+of the state, since the evolution basis itself is not normalized.
+
+.. note::
+   The sum is present because some anomalous dimension basis element do apply to
+   more than a single evolution flavor, referring actual to a subspace rather
+   than a single vector.
+
+   e.g.: for :math:`a = ns_+` the distributions involved are
+
+   .. math::
+
+      T_3, T_8, T_{15}, T_{24}, T_{35}
+
+   cut if there are less than 6 active flavors. For the full correspondence see
+   the `related eko's documentation
+   <https://eko.readthedocs.io/en/latest/theory/FlavorSpace.html#operator-anomalous-dimension-basis>`_.
+
+But in order to explicit the prescription for the off-diagonal elements the
+following has to be noticed:
+
+- the projector are made of a :math:`\bra{in}` that has to be contracted with the
+  incoming |PDF|, for this reason this has to remain unnormalized, in order to
+  obtain the required contributions for the unnormalized evolution basis (i.e.
+  it has to be the same contribution that would have been if directly applied to
+  the raw coefficient function)
+- the other component is a :math:`\ket{out}` that goes together the
+  non-scale-varied coefficient function itself, thus it has to be normalized,
+  because it should extract 
+
+
+E.g.: if the singlet |PDF| is plugged in, written in flavor basis, when no scale
+variations are present it would apply directly to the coefficient function,
+without any extra normalization
+
+.. math::
+
+   \bra{c_\Sigma}\ket{\Sigma}
+
+and the same should happen in case of scale variations: if the singlet is going
+to split a gluon then the singlet PDF has to contribute with the gluon
+coefficient function, so the last has to become singlet proportional:
+
+.. math::
+
+   \bra{c_g}\dyad{g}{\Sigma} \times \ket{\Sigma}
+
+while in the case of quark contributions to the gluon channel it has to be
+normalized.
+
+*Another, more practical, point of view is that this is because* :math:`P_{ab}`
+*already contains the normalization, e.g.* :math:`P_{qg} \propto 2 n_f` *, and
+thus it has to be subtracted from there in order to use the unnormalized
+projector).*
+
+.. important::
+   The actual expression for all projectors is then the following:
+
+   .. math::
+
+      \Pi^{(a)} = \sum_{(o, i) \in a} \frac{\dyad{o}{i}}{|\bra{o}\ket{o}|^2}
+   
+  
 
 Renormalization scale variations
 --------------------------------
