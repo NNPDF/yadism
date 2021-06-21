@@ -83,11 +83,13 @@ class ESFResult:
         err = 0
         # join elements
         for o, (v, e) in self.orders.items():
+            lnF = 1.0 if o[3] == 0 else (np.log((1 / xiF) ** 2)) ** o[3]
+            lnF2R = 1.0 if o[2] == 0 else (np.log((xiF / xiR) ** 2)) ** o[2]
             prefactor = (
                 ((alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)) ** o[0])
                 * ((alpha_qed(np.sqrt(self.Q2) * xiR)) ** o[1])
-                * ((np.log((xiF / xiR) ** 2)) ** o[2])
-                * ((np.log((1 / xiF) ** 2)) ** o[3])
+                * lnF2R
+                * lnF
             )
             res += prefactor * np.einsum("aj,aj", v, pdfs)
             err += prefactor * np.einsum("aj,aj", e, pdfs)

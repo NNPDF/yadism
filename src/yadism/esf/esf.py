@@ -108,7 +108,6 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         cfc = cf.Combiner(self)
-        kers = []
         full_orders = [(o, 0, 0, 0) for o in self.orders]
         # prepare scale variations
         sv_manager = self.sf.sv_manager
@@ -143,7 +142,12 @@ class EvaluatedStructureFunction:
 
             # apply scale variations
             if sv_manager is not None:
-                ker_orders.update(sv_manager.apply_scale_variations(ker_orders, cfc.nf))
+                ker_orders.update(
+                    sv_manager.apply_common_scale_variations(ker_orders, cfc.nf)
+                )
+                ker_orders.update(
+                    sv_manager.apply_diff_scale_variations(ker_orders, cfc.nf)
+                )
 
             # blow up to flavor space
             for o, (partons, val, err) in ker_orders.items():
