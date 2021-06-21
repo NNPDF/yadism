@@ -11,6 +11,9 @@
 .. |EW| replace::
    :abbr:`EW (ElectroWeak)`
 
+.. |QCD| replace::
+   :abbr:`QCD (Quantum Chromo Dynamics)`
+
 .. |DGLAP| replace::
    :abbr:`DGLAP (Dokshitzer-Gribov-Lipatov-Altarelli-Parisi)`
    

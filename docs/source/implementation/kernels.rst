@@ -1,6 +1,24 @@
 Kernels
 =======
 
+The coefficient functions consist of the partonic cross-sections, that have to
+be convoluted with the PDFs in order to obtain the hadronic structure functions,
+according to the factorization theorem:
+
+.. math::
+
+   F(x) = \sum_i f_i \otimes c_i (x) = \int_x^1 \frac{dz}{z}
+   f_i\left(\frac{x}{z}\right) c_i(z)
+
+So actually there is a coefficient function for each PDF (i.e. for each flavor).
+
+The actual physical combination are not as many as flavors, indeed |QCD| is
+flavor blind (in the massless case, and the only difference in the massive case
+are the value of the masses themselves).
+
+In particular there are 3 relevant combinations, as described in
+:doc:`../theory/coeff-funcs`.
+
 .. todo::
 
    - describe kernel structure

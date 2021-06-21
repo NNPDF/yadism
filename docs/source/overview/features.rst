@@ -1,16 +1,34 @@
 Features
 =========
 
-- |LO| structure functions
-- |NLO| structure functions
+``yadism`` implements the |DIS| observables up to |NNLO|, i.e. it is possible to
+ask for the following perturbative orders:
 
-  1. scale variations
-  2. target mass corrections
-  3. flavor number schemes
+- |LO|
+- |NLO|
+- |NNLO|
 
-The implemented structure functions are :math:`F_2,~F_L,~F_3` for the following
-|DIS| processes:
+The implemented observables consist of:
 
-- |EM|
-- |NC|
-- |CC|
+- the |DIS| unpolarized :ref:`structure functions
+  <theory/DIS-intro:structure function kind>`: :math:`F_2`, :math:`F_L`, and
+  :math:`F_3` (the structure function :math:`F_1` is not directly provided)
+- the |DIS| reduced :ref:`cross sections <theory/DIS-intro:cross sections>`
+  (with various normalizations)
+
+for all the possible |EW| bosons, i.e. for the :ref:`processes
+<theory/DIS-intro:process / currents>`: |EM|, |NC|, |CC|.
+
+All the observables are delivered both as their total value, but also split up
+according to their :ref:`heavyness <theory/DIS-intro:Heavyness>` (e.g.
+:math:`F_{2,c}` is provided).
+
+Moreover the following features are all available:
+
+1. :doc:`flavor number schemes <../theory/fns>`: |FFNS|, |ZM-VFNS|, |FONLL|
+2. :doc:`scale variations <../theory/scale-variations>`: independent variations
+   of factorization scale :math:`\mu_F` and renormalization scale :math:`\mu_R`
+3. :ref:`target mass corrections <theory/misc:target mass corrections>`
+   (available with the exact numerical integration and as approximate
+   non-integrated expressions)
+4. :doc:`intrinsic flavors <../theory/intrinsic>`, i.e. heavy quark-initiated |DIS|
