@@ -165,13 +165,6 @@ quark threshold: :math:`Q_{thr,n_f+1}`.
   By matching the two schemes a |GM-VFNS| is obtained, accounting for both the
   massive corrections and the resummation of collinear logarithms.
   
-  .. admonition:: Continuity: damping
-
-     | Up to |NLO| this scheme change is however continuous, but in general it
-      is not.
-     | In order to recover the continuous transition a damping procedure may be
-       adopted, turning the scheme in the so called **damp FONLL**.
-
 - above this threshold:
 
   The |ZM-VFNS| is employed and this leads to an inconsistency at this
@@ -180,6 +173,19 @@ quark threshold: :math:`Q_{thr,n_f+1}`.
   This amounts to simply make an hard cut to the original smooth decay of
   massive contributions, and to add the subsequent thresholds for the following
   massive quarks.
+
+Damping
+~~~~~~~
+
+Up to |NLO| the scheme change (from :math:`n_f - 1` flavors to :math:`n_f`) is
+continuous, but in general it is not.
+
+In order to recover the continuous transition a damping procedure may be
+adopted, turning the scheme in the so called **damp FONLL**.
+
+.. todo::
+
+   describe damping and its purpose
 
 Threshold different from heavy quark mass
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -210,3 +216,11 @@ as it is discussed in :cite:`forte-bqZfonll`.
 .. todo::
 
   add a comment on :math:`K_{ij}` dependency on threshold in intrinsic section
+
+Intrinsic Flavors
+~~~~~~~~~~~~~~~~~
+
+.. todo::
+
+   write about the cancellation and then :math:`K_ij` use for FONLL in intrinsic
+   charm

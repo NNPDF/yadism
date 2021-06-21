@@ -1,5 +1,5 @@
-Third Party Tools
-=================
+Insights & Metrics
+==================
 
 Codecov
 -------

@@ -1,11 +1,6 @@
 Coefficient Functions
 =====================
 
-.. toctree::
-  :maxdepth: 1
-  :hidden:
-
-  intrinsic.rst
 
 Overview of coefficient functions structure
 -------------------------------------------
@@ -143,3 +138,13 @@ following way:
     \int\limits_0^1 \!dz~ f(z) \left[r(z)g(z)\right]_+ &= \int\limits_0^1 dz \left(f(z) - f(1)\right)r(z)g(z)\\
       &= \int\limits_0^1 \left(f(z)r(z) - f(1)r(1)\right)g(z)~dz - f(1)\int\limits_0^1\! dz(r(z)-r(1))g(z)\\
       &= \int\limits_0^1\! dz~ f(z)\left(r(z) \left[g(z)\right]_+\right) - f(z)\left(\delta(1-z)\int\limits_0^1\! dy~ r(y) \left[g(y)\right]_+\right)
+
+Channels
+--------
+
+In this sections there are clarifications about specific channels.
+
+.. toctree::
+   :maxdepth: 1
+
+   intrinsic.rst
