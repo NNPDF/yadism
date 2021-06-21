@@ -20,6 +20,8 @@ import logging
 import io
 import copy
 
+import numpy as np
+
 import rich
 import rich.align
 import rich.panel
@@ -103,13 +105,17 @@ class Runner:
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)
         pto = theory["PTO"]
+        if np.isclose(theory["XIF"], 1.0) and np.isclose(theory["XIR"], 1.0):
+            sv_manager = None
+        else:
+            sv_manager = sv.ScaleVariations(order=pto, interpolator=interpolator)
 
         # Initialize structure functions
         self.managers = dict(
             interpolator=interpolator,
             threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
             coupling_constants=coupling_constants,
-            sv_manager=sv.ScaleVariations(order=pto, interpolator=interpolator),
+            sv_manager=sv_manager,
         )
         # FONLL damping powers
         FONLL_damping = bool(theory["DAMP"])

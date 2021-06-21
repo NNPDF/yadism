@@ -26,9 +26,25 @@ to evaluate the physical structure function).
 import abc
 
 import numpy as np
+import numba as nb
 
 from . import conv
+from ..coefficient_functions.partonic_channel import RSL
 from .result import ESFResult
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def h2_ker(z, args):
+    xi = args[0]
+    return 1 / xi * z
+
+
+h3_ker = h2_ker
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def g2_ker(z, _args):
+    return 1 - z
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
@@ -207,7 +223,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 self.sf.obs_name.apply_kind(kind), {"Q2": self.Q2, "x": xj}
             ).get_result()
             # compute interpolated h integral (j)
-            h2j = conv.convolution(ker, self.xi, pj)
+            h2j = conv.convolution(RSL(ker, args=[self.xi]), self.xi, pj)
             # sum along j
             res += h2j * FXj
 
@@ -236,7 +252,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total 1/z^2 we need to convolute with z/xi
         # as we get a 1/z by the measure and an evaluation of 1/xi*xi/z
-        return self._convolute_FX("F2", lambda z, xi=self.xi: 1 / xi * z)
+        return self._convolute_FX("F2", h2_ker)
 
     def _g2(self):
         r"""
@@ -262,7 +278,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total (z-xi)/z^2 we need to convolute with 1-z
         # as we get a 1/z by the measure and an evaluation of 1-xi/z
-        return self._convolute_FX("F2", lambda z: 1 - z)
+        return self._convolute_FX("F2", g2_ker)
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
@@ -449,7 +465,7 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
         """
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
         # so to achieve a total 1/z we need to convolute with 1
-        return self._convolute_FX("F3", lambda z, xi=self.xi: 1 / xi * z)
+        return self._convolute_FX("F3", h3_ker)
 
     def _get_result_exact(self):
         # collect F3
