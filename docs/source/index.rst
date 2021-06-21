@@ -5,8 +5,7 @@ Yadism documentation
 .. image:: /_static/logo-favicon.png
    :align: center
 
-`yadism` is a wonderful package for computing |DIS| observables replacing the
-corresponding one inside |APFEL|.
+`yadism` is a wonderful 😉 package for computing |DIS| observables.
 
 Design Goals
 ~~~~~~~~~~~~
