@@ -56,8 +56,8 @@ class ScaleVariations:
         """
         Compute all basic building blocks.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
             nf : int
                 number of active flavors
         """
@@ -80,8 +80,8 @@ class ScaleVariations:
         Compute all matrices related to factorization scale variation,
         i.e. :math:`\ln(Q^2/\mu_F^2)`.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
             nf : int
                 number of active flavors
 
@@ -109,8 +109,8 @@ class ScaleVariations:
         Provide the renormalization scale variation coefficients,
         i.e. :math:`\ln(\mu_F^2/\mu_R^2)`.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
             nf : int
                 number of active flavors
 
@@ -127,8 +127,8 @@ class ScaleVariations:
         """
         Add new kernels for common scale varied coefficient functions.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
             ker_orders : dict
                 raw (unscale-varied) coefficient functions
             nf : int
@@ -157,8 +157,8 @@ class ScaleVariations:
         """
         Add new kernels for different scale varied coefficient functions.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
             ker_orders : dict
                 common-scale varied coefficient functions
             nf : int

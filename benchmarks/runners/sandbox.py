@@ -117,7 +117,7 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #  update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
@@ -128,21 +128,22 @@ class Sandbox(Runner):
 
     def doit(self):
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
-        self.run(
-            [
+        self.run([
                 #{"PTO": 0},
-                #{"PTO": 2, "XIF": 1, "XIR": 2, "mb": 4.9906},
-                {"PTO": 2, "XIF": 2, "XIR": 1, "mb": 4.9907},
+                {"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9909},
+                #{"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
                 #{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 4, "mc": 1.51, "XIF": 1, "XIR": 1},
-            ],
-                #self.generate_observables(), ["dbaronly"])
-                #self.generate_observables(), ["gonly"])
-                #self.generate_observables(), ["toygonly"])
-                self.generate_observables(), ["uonly"])
-                #self.generate_observables(), ["conly"])
-                #self.generate_observables(), ["ToyLH"])
+            ], self.generate_observables(), [
+                #"dbaronly",
+                #"gonly",
+                #"toygonly",
+                "toyantichsing",
+                #"toyt3only",
+                #"conly",
+                #"ToyLH",
+            ])
 
 if __name__ == "__main__":
     sand = Sandbox()

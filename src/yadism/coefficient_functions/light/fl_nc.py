@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import numpy as np
-
 from ..partonic_channel import RSL
 from . import partonic_channel as pc
 
