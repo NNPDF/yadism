@@ -1,11 +1,12 @@
 Factorization
 =============
 
-.. todo::
-
-   Here a picture made with Inkscape of DIS diagram to make it clear what is
-   the hadronic part, what the leptonic and where the coupling are coming into
-   the game.
+.. figure:: /_static/dis-hadronic-leptonic.svg
+   :align: center
+   
+   In blue the leptonic coupling, the corresponding green one, close to the
+   blob, is instead the hadronic coupling.
+   The blob itself is the hadronic contribution.
 
 We refer to Factorization as the universal property that the |DIS| cross section
 can be factored into different parts: **DIS Factorization** ensures that
