@@ -59,7 +59,7 @@ In particular:
    :caption: Theory
    :hidden:
 
-   theory/DIS-intro.rst
+   theory/intro.rst
    theory/fact.rst
    theory/coeff-funcs.rst 
    theory/fns.rst

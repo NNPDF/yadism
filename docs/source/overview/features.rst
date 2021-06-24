@@ -11,16 +11,16 @@ ask for the following perturbative orders:
 The implemented observables consist of:
 
 - the |DIS| unpolarized :ref:`structure functions
-  <theory/DIS-intro:structure function kind>`: :math:`F_2`, :math:`F_L`, and
+  <theory/intro:structure function kind>`: :math:`F_2`, :math:`F_L`, and
   :math:`F_3` (the structure function :math:`F_1` is not directly provided)
-- the |DIS| reduced :ref:`cross sections <theory/DIS-intro:cross sections>`
+- the |DIS| reduced :ref:`cross sections <theory/intro:cross sections>`
   (with various normalizations)
 
 for all the possible |EW| bosons, i.e. for the :ref:`processes
-<theory/DIS-intro:process / currents>`: |EM|, |NC|, |CC|.
+<theory/intro:process / currents>`: |EM|, |NC|, |CC|.
 
 All the observables are delivered both as their total value, but also split up
-according to their :ref:`heavyness <theory/DIS-intro:Heavyness>` (e.g.
+according to their :ref:`heavyness <theory/intro:Heavyness>` (e.g.
 :math:`F_{2,c}` is provided).
 
 Moreover the following features are all available:
