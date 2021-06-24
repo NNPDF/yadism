@@ -27,6 +27,14 @@ The main categories for coefficients the same of Structure Functions, i.e.:
   - the **parity structure** (vectorial-vectorial/axial-axial/vectorial-axial),
     it is relevant only for the NC, and should be taken into account
 
+.. attention::
+
+   Notice that **non-singlet** does not refer to any of the evolution basis
+   ones (:math:`V, ~T_3, ~V_3, ~T_8, ~\dots`), and actually it has a non-null
+   projection over the *singlet* distribution itself.
+
+   See :doc:`nonsinglet`.
+
 These options set the overall structure of the coefficient functions, and it is
 reported in the following tables, just considering that the mass corrections
 for all the  flavors (charm/bottom/top) share the same functional form for the
@@ -47,6 +55,13 @@ for variable flavor scheme like FONLL.
    :header-rows: 1
    :stub-columns: 1
    :align: center
+
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   nonsinglet.rst
 
 Distributions
 -------------
