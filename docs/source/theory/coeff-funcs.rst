@@ -147,4 +147,6 @@ In this sections there are clarifications about specific channels.
 .. toctree::
    :maxdepth: 1
 
+   light.rst
+   heavy.rst
    intrinsic.rst

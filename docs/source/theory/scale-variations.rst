@@ -142,7 +142,9 @@ Procedures
   the coefficient functions corresponds to scheme C in
   :cite:`AbdulKhalek:2019ihb`.
 
-Other
------
+Sector Isolated
+---------------
 
-Independent singlet/non-singlet scale variations
+.. todo::
+
+   Independent singlet/non-singlet scale variations

@@ -1,5 +1,5 @@
-Intrinsic Heavy Quark Contributions
-===================================
+Heavy-Initiated Contributions (Intrinsic)
+=========================================
 
 .. todo:: clarify normalization in a_s
 

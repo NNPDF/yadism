@@ -8,7 +8,7 @@ DIS: process and definitions
 The Deep Inelastic Scattering process is the scattering of a lepton over an
 hadron component, mediated by an |EW| boson.
 
-The leptonic part do not couple directly to |QCD|, thus the :math:`\alpha_s`
+The leptonic part does not couple directly to |QCD|, thus the :math:`\alpha_s`
 corrections do apply only to the hadronic side (at |LO| |EW|), and the |EW|
 boson can be seen as emitted from the incoming lepton and absorbed into the
 hadron.
@@ -19,12 +19,35 @@ In this picture the process can be interpreted as the scattering of an off-shell
 Kinematics
 ----------
 
-.. todo::
+The following kinematic variables are often used in the following:
 
-   brief recap of DIS kinematics, take from pink book
+.. math::
+   
+   Q^2 &= - q^2 \\
+   M_h^2 &= p^2 \\
+   \nu &= q \cdot p \\
+   x &= \frac{Q^2}{2\nu} \\
+   y &= \frac{q \cdot p}{k \cdot p}
+
+so :math:`M_h` is the mass of the scattered hadron, while :math:`x` and
+:math:`y` are Bjorken variables.
+
+.. admonition:: Hadronic vs Partonic
+
+   Notice that the variables listed here are all **hadronic**, so :math:`x` is
+   not the partonic momentum fraction (it is only at |LO|, because the
+   coefficient function is a :math:`\delta`).
+
+   In order to avoid confusion the coefficient function variable will be called
+   :math:`z`, and thus the partonic momentum fraction will be :math:`x/z`.
 
 Notations
 ---------
+
+.. figure:: /_static/handbag.png
+   :align: center
+
+   The handbag diagram (B(k,p) are the |QCD| corrections to the hadronic tensor)
 
 We are following the notations in :cite:`Zyla:2020zbs`, i.e. we're using their
 normalization and definitions. So the hadronic tensor is given by
@@ -159,7 +182,7 @@ couple to the |EW| boson, are not included nor in ``light`` neither in
 
 .. math::
 
-   O_{total} != O_{light} + O_c + O_b + O_t
+   O_{total} \neq O_{light} + O_c + O_b + O_t
 
 All the heavynesses are defined tuning parameters at Lagrangian level, thus all
 the observables are potential physical observables, since they are well-defined
