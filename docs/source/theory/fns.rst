@@ -212,15 +212,3 @@ logarithm, that:
 - is a logarithm of the ratio with *the threshold*
 
 as it is discussed in :cite:`forte-bqZfonll`.
-
-.. todo::
-
-  add a comment on :math:`K_{ij}` dependency on threshold in intrinsic section
-
-Intrinsic Flavors
-~~~~~~~~~~~~~~~~~
-
-.. todo::
-
-   write about the cancellation and then :math:`K_ij` use for FONLL in intrinsic
-   charm

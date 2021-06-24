@@ -208,12 +208,13 @@ Indeed the actual expression for the diagonal projectors is the following:
 
 .. math::
 
-   \Pi^{(a)} = \sum_{k \in a} \frac{\dyad{k}{k}}{|\bra{k}\ket{k}|^2}
+   \Pi^{(a)} = \sum_{k \in a} \frac{\dyad{k}{k}}{\abs{\bra{k}\ket{k}}^2}
 
 where the projectors over single states are explicitly normalized with the norm
 of the state, since the evolution basis itself is not normalized.
 
 .. note::
+
    The sum is present because some anomalous dimension basis element do apply to
    more than a single evolution flavor, referring actual to a subspace rather
    than a single vector.
@@ -270,17 +271,37 @@ projector).*
 
    .. math::
 
-      \Pi^{(a)} = \sum_{(o, i) \in a} \frac{\dyad{o}{i}}{|\bra{o}\ket{o}|^2}
+      \Pi^{(a)} = \sum_{(o, i) \in a} \frac{\dyad{o}{i}}{\abs{\bra{o}\ket{o}}^2}
    
   
 
 Renormalization scale variations
 --------------------------------
 
-.. todo::
+The renormalization scale variations up to |NLO| consist only in the evaluation
+of the strong coupling :math:`\alpha_s` at a different scale.
 
-   - the true parameter is xiR/xiF and not xiR
-   - nevertheless, for user convenience, it is delivered in xiR (even if it is
-     done in xiR/xiF)
-   - it does not involve convolutions, and so it is conveniently done on top of
-     the factorization scale variations as it is written in Vogt
+Instead, starting at |NNLO|, there are further contributions to the coefficient
+functions anomalous to those discussed in the previous paragraph.
+
+These contributions do not require convolutions, they are reported in the
+:ref:`theory section <theory/scale-variations:Renormalization>`, and in
+``yadism`` they are actually implemented as they are written, i.e.:
+
+- first compute the factorization scale variations, and derive
+  :math:`\textbf{C}_a^{(i)}(x, L_M, 0)` from the :math:`\textbf{c}_a^{(l)}(x)`
+- then apply the further corrections on top of the new object, and obtain the
+  full :math:`\textbf{C}_a^{(i)}(x, L_M, L_R)` 
+
+.. attention::
+
+   The parameter :math:`L_R = \log(\mu_F^2 / \mu_R^2)`, so it does not account
+   for the difference between the process scale :math:`Q^2` and the
+   renormalization one :math:`\mu_R^2`, but between the latter and the
+   factorization one :math:`\mu_F^2`.
+
+   For the user convenience the result is nevertheless stored in grids in which
+   the parameters are instead:
+   
+   - :math:`\log(\mu_F^2 / Q^2)`
+   - :math:`\log(\mu_R^2 / Q^2)`
