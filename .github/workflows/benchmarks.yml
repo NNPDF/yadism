@@ -41,7 +41,7 @@ jobs:
       - name: Prepare Test environment
         run: |
           # install packages needed for testing
-          pip install -r test_requirements.txt
+          pip install -r dev_requirements.txt
           # move db
           mv benchmarks/storage/apfel.json benchmarks/data/
       #  run the test with 'pytest'

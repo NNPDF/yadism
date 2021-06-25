@@ -32,7 +32,7 @@ jobs:
       - name: Prepare Test environment
         run: |
           # install packages needed for testing
-          pip install -r test_requirements.txt
+          pip install -r dev_requirements.txt
       # pass with the linter
       - name: Lint with pylint
         run: |
