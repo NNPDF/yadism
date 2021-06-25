@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from scipy.special import spence
-
 from eko import constants
+from scipy.special import spence
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split

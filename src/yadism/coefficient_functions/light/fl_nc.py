@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from ..partonic_channel import RSL
+from . import nlo, nnlo
 from . import partonic_channel as pc
-
-from . import nlo
-from . import nnlo
 
 
 class NonSinglet(pc.LightBase):

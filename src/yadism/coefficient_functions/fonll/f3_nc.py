@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from . import partonic_channel as pc
-
 from ..intrinsic import f3_nc
+from . import partonic_channel as pc
 
 
 class MatchingIntrinsicRplus(pc.FMatchingQuark):

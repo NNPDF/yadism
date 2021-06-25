@@ -3,33 +3,25 @@
 Test all the partonic coefficient functions
 """
 
-from yadism.coefficient_functions.light import (
-    f2_cc as lf2cc,
-    fl_cc as lflcc,
-    f3_cc as lf3cc,
-    f2_nc as lf2nc,
-    fl_nc as lflnc,
-    f3_nc as lf3nc,
-)
-from yadism.coefficient_functions.heavy import (
-    f2_cc as hf2cc,
-    fl_cc as hflcc,
-    f3_cc as hf3cc,
-    f2_nc as hf2nc,
-    fl_nc as hflnc,
-)
-from yadism.coefficient_functions.fonll import (
-    f2_nc as af2nc,
-    fl_nc as aflnc,
-    f2_cc as af2cc,
-    fl_cc as aflcc,
-    f3_cc as af3cc,
-)
-from yadism.coefficient_functions.intrinsic import (
-    f2_nc as if2nc,
-    fl_nc as iflnc,
-    f3_nc as if3nc,
-)
+from yadism.coefficient_functions.fonll import f2_cc as af2cc
+from yadism.coefficient_functions.fonll import f2_nc as af2nc
+from yadism.coefficient_functions.fonll import f3_cc as af3cc
+from yadism.coefficient_functions.fonll import fl_cc as aflcc
+from yadism.coefficient_functions.fonll import fl_nc as aflnc
+from yadism.coefficient_functions.heavy import f2_cc as hf2cc
+from yadism.coefficient_functions.heavy import f2_nc as hf2nc
+from yadism.coefficient_functions.heavy import f3_cc as hf3cc
+from yadism.coefficient_functions.heavy import fl_cc as hflcc
+from yadism.coefficient_functions.heavy import fl_nc as hflnc
+from yadism.coefficient_functions.intrinsic import f2_nc as if2nc
+from yadism.coefficient_functions.intrinsic import f3_nc as if3nc
+from yadism.coefficient_functions.intrinsic import fl_nc as iflnc
+from yadism.coefficient_functions.light import f2_cc as lf2cc
+from yadism.coefficient_functions.light import f2_nc as lf2nc
+from yadism.coefficient_functions.light import f3_cc as lf3cc
+from yadism.coefficient_functions.light import f3_nc as lf3nc
+from yadism.coefficient_functions.light import fl_cc as lflcc
+from yadism.coefficient_functions.light import fl_nc as lflnc
 
 M2hq = 1.0
 nf = 3

@@ -6,9 +6,9 @@ import copy
 
 import numpy as np
 import pytest
+from eko.interpolation import InterpolatorDispatcher
 
 import yadism.esf.distribution_vec as conv
-from eko.interpolation import InterpolatorDispatcher
 
 
 # @pytest.mark.quick_check

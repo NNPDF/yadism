@@ -12,7 +12,7 @@ are considered massless, while heavier are considered infinitely massive).
 There is always a kinematic cut included in the case of massive corrections, due
 to the need to generate the massive quark
 
-- in the case of |NC| is applied as a cut: 
+- in the case of |NC| is applied as a cut:
 
    .. math::
 
@@ -30,4 +30,3 @@ Only logarithmic terms are retained, while all the power contributions are
 removed (thus the asymptotic limit can be null).
 
 They are needed to construct the :ref:`theory/fns:FONLL` scheme.
-

@@ -14,34 +14,31 @@ There are two ways of using ``yadism``:
     decide about ``run_dis`` and document it properly in module header
 """
 
-import time
-import inspect
-import logging
-import io
 import copy
+import inspect
+import io
+import logging
+import time
 
 import numpy as np
-
 import rich
 import rich.align
-import rich.panel
 import rich.box
-import rich.progress
-import rich.markdown
 import rich.console
-
-from eko.interpolation import InterpolatorDispatcher
-from eko import thresholds
+import rich.markdown
+import rich.panel
+import rich.progress
 from eko import basis_rotation as br
+from eko import thresholds
+from eko.interpolation import InterpolatorDispatcher
 
-from .input import inspector, compatibility
-from . import observable_name
-from . import log
+from . import log, observable_name
+from .coefficient_functions.coupling_constants import CouplingConstants
+from .esf import scale_variations as sv
+from .input import compatibility, inspector
 from .output import Output
 from .sf import StructureFunction as SF
 from .xs import CrossSection as XS
-from .coefficient_functions.coupling_constants import CouplingConstants
-from .esf import scale_variations as sv
 
 log.setup()
 logger = logging.getLogger(__name__)

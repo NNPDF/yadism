@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from ..partonic_channel import RSL
 from .. import partonic_channel as pc
-from . import f3_nc
-
-from . import nnlo
+from ..partonic_channel import RSL
+from . import f3_nc, nnlo
 
 
 class NonSinglet(f3_nc.NonSinglet):

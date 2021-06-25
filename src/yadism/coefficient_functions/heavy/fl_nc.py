@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
 from eko import constants
 
 from ..partonic_channel import RSL

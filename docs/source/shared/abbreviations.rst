@@ -16,7 +16,7 @@
 
 .. |DGLAP| replace::
    :abbr:`DGLAP (Dokshitzer-Gribov-Lipatov-Altarelli-Parisi)`
-   
+
 .. |PDF| replace::
    :abbr:`PDF (Parton Distribution Function(s))`
 

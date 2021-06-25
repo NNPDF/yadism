@@ -1,6 +1,7 @@
 from ...partonic_channel import RSL
-
-from . import singlet as s, non_singlet as ns, convolutions as conv
+from . import convolutions as conv
+from . import non_singlet as ns
+from . import singlet as s
 
 
 def pgq0(_nf):

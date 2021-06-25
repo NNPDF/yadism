@@ -2,11 +2,10 @@
 
 import numpy as np
 
-from ..partonic_channel import RSL
+from .. import splitting_functions as split
 from ..intrinsic import f2_cc as intrinsic
 from ..light import f2_cc as light
-from .. import splitting_functions as split
-
+from ..partonic_channel import RSL
 from . import partonic_channel as pc
 
 

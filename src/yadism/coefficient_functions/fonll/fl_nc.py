@@ -2,9 +2,9 @@
 
 from eko import constants
 
-from . import partonic_channel as pc
-from ..partonic_channel import RSL
 from ..intrinsic import fl_nc
+from ..partonic_channel import RSL
+from . import partonic_channel as pc
 
 
 class AsyGluonVV(pc.PartonicChannelAsy):

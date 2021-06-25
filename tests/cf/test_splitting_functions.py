@@ -1,6 +1,6 @@
 import numpy as np
-from scipy.special import spence
 import pytest
+from scipy.special import spence
 
 from yadism.coefficient_functions import splitting_functions as sf
 

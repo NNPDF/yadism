@@ -2,8 +2,8 @@
 # auto-generated module by light package
 # pylint: skip-file
 # fmt: off
-import numpy as np
 import numba as nb
+import numpy as np
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)

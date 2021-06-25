@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from .. import kernels
-
-from .. import light, heavy
+from .. import heavy, kernels, light
 
 
 def import_pc_module(kind, process, subpkg=None):

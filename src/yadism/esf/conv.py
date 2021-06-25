@@ -7,7 +7,6 @@ distribution objects in the coefficient function definition and calculation.
 
 import numpy as np
 import scipy.integrate
-
 from eko import interpolation
 
 # TODO: don't use any default

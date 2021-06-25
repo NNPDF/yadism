@@ -25,11 +25,11 @@ to evaluate the physical structure function).
 """
 import abc
 
-import numpy as np
 import numba as nb
+import numpy as np
 
-from . import conv
 from ..coefficient_functions.partonic_channel import RSL
+from . import conv
 from .result import ESFResult
 
 

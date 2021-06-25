@@ -169,9 +169,9 @@ into a matrix.
 .. math::
 
    F(x) &= [f \otimes c] (x) =  \left[\left(\sum_j f(x_j) p_j\right) \otimes S \otimes c\right](x) =\\
-   &= \sum_j f(x_j) \left[p_j \otimes S \otimes c\right](x)\\ 
-   &= \sum_j f(x_j) \left[\left(\sum_k (p_j \otimes S)(x_k) p_k\right) \otimes c\right](x)\\ 
-   &= \sum_{jk} f(x_j) \left[(p_j \otimes S)(x_k)\, (p_k \otimes c)\right](x)\\ 
+   &= \sum_j f(x_j) \left[p_j \otimes S \otimes c\right](x)\\
+   &= \sum_j f(x_j) \left[\left(\sum_k (p_j \otimes S)(x_k) p_k\right) \otimes c\right](x)\\
+   &= \sum_{jk} f(x_j) \left[(p_j \otimes S)(x_k)\, (p_k \otimes c)\right](x)\\
    &= \sum_{jk} f(x_j)\, S_{jk}\, c_k(x)
 
 Where essentially the |PDF| have been interpolated first, and then the
@@ -239,7 +239,7 @@ following has to be noticed:
   the raw coefficient function)
 - the other component is a :math:`\ket{out}` that goes together the
   non-scale-varied coefficient function itself, thus it has to be normalized,
-  because it should extract 
+  because it should extract
 
 
 E.g.: if the singlet |PDF| is plugged in, written in flavor basis, when no scale
@@ -272,8 +272,8 @@ projector).*
    .. math::
 
       \Pi^{(a)} = \sum_{(o, i) \in a} \frac{\dyad{o}{i}}{\abs{\bra{o}\ket{o}}^2}
-   
-  
+
+
 
 Renormalization scale variations
 --------------------------------
@@ -291,7 +291,7 @@ These contributions do not require convolutions, they are reported in the
 - first compute the factorization scale variations, and derive
   :math:`\textbf{C}_a^{(i)}(x, L_M, 0)` from the :math:`\textbf{c}_a^{(l)}(x)`
 - then apply the further corrections on top of the new object, and obtain the
-  full :math:`\textbf{C}_a^{(i)}(x, L_M, L_R)` 
+  full :math:`\textbf{C}_a^{(i)}(x, L_M, L_R)`
 
 .. attention::
 
@@ -302,6 +302,6 @@ These contributions do not require convolutions, they are reported in the
 
    For the user convenience the result is nevertheless stored in grids in which
    the parameters are instead:
-   
+
    - :math:`\log(\mu_F^2 / Q^2)`
    - :math:`\log(\mu_R^2 / Q^2)`

@@ -143,12 +143,12 @@ following way:
       &\Rightarrow c^S(z) = r(1)g(z)\,,~ c^R(z) = (r(z)-r(1))g(z)\,,~  c^L(x) = -r(1)\int\limits_0^x\!dz\, g(z)
 
 - A plus distribution that contains a regular function and a singular function :math:`c(z) = \left[r(z)g(z)\right]_+` can be simplified by
-  
+
  .. math ::
    \left[r(z)g(z)\right]_+ = r(z) \left[g(z)\right]_+ - \delta(1-z) \int\limits_0^1 dy~ r(y) \left[g(y)\right]_+
 
 .. details :: derivation
-   
+
   .. math ::
     \int\limits_0^1 \!dz~ f(z) \left[r(z)g(z)\right]_+ &= \int\limits_0^1 dz \left(f(z) - f(1)\right)r(z)g(z)\\
       &= \int\limits_0^1 \left(f(z)r(z) - f(1)r(1)\right)g(z)~dz - f(1)\int\limits_0^1\! dz(r(z)-r(1))g(z)\\

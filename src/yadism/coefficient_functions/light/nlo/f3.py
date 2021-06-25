@@ -1,5 +1,4 @@
 import numba as nb
-
 from eko.constants import CF
 
 from . import f2

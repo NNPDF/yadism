@@ -1,13 +1,12 @@
-import time
 import logging
+import time
 
 import numpy as np
-
 from eko import basis_rotation as br
 from eko import beta
 
-from .conv import convolute_operator
 from ..coefficient_functions import splitting_functions as split
+from .conv import convolute_operator
 
 logger = logging.getLogger(__name__)
 

@@ -2,11 +2,11 @@
 import pathlib
 import sys
 
+import lhapdf
 import numpy as np
 import yaml
 
 from yadism import Runner
-import lhapdf
 
 here = pathlib.Path(__file__).absolute().parent
 sys.path.append(str(here.parents[1] / "benchmarks" / "aux"))

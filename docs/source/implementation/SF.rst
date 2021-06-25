@@ -49,7 +49,7 @@ Cache is implemented on two levels:
 
 - a global management system, implemented in a distributed way across the |SF|
   instances, such that each |SF| object is responsible:
-  
+
   1. for the caching of the |ESF| corresponding to its kind
   2. to redirect the requests for different kind of |ESF| coming from any of
      the managed |ESF| (i.e. one of those it is responsible to cache)
@@ -57,5 +57,3 @@ Cache is implemented on two levels:
 - a local caching mechanism, implemented at the level of the single |ESF|
   object, that stores its result as soon as it calculates it the first time,
   and never recomputes (further details at :doc:`ESF <ESF>`)
-
-

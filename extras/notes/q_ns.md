@@ -106,7 +106,7 @@ To retrieve the exact definition of $q_{ns}$ in \cite{vogt-3loop} we assumed:
 \begin{align}
 x^{-1} F_2(x) &=  \sum\nolimits_q e_q^2 ~ q_+(x) \label{eq:lo}\\
 x^{-1} F_2(x) &=  q_{ns}(x) + \ev{e^2} q_s(x) \label{eq:vogt-lo}\\
-&=  q_{ns}(x) + \ev{e^2} \sum\nolimits_q q_+(x) 
+&=  q_{ns}(x) + \ev{e^2} \sum\nolimits_q q_+(x)
 \end{align}
 
 Where:
@@ -130,7 +130,7 @@ x^{-1} F_2(x) &= e_u^2 ~ u_+(x) \stackrel{!}{=} q_{ns}(x) + e_u^2 u_+(x)\\
 \begin{align}
 x^{-1} F_2(x)  &= e_u^2 u_+(x) + e_d^2 d_+(x) \stackrel{!}{=} q_{ns}(x) +
 \frac{e_u^2 + e_d^2}{2} ~ ( u_+(x) + d_+(x) )\\
-&\Rightarrow q_{ns}(x) = e_u^2 u_+(x) + e_d^2 d_+(x) - \frac{e_u^2 + e_d^2}{2} ~ ( u_+(x) + d_+(x) ) 
+&\Rightarrow q_{ns}(x) = e_u^2 u_+(x) + e_d^2 d_+(x) - \frac{e_u^2 + e_d^2}{2} ~ ( u_+(x) + d_+(x) )
 \end{align}
 
 Then:

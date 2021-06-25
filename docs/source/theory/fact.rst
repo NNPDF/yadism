@@ -3,7 +3,7 @@ Factorization
 
 .. figure:: /_static/dis-hadronic-leptonic.svg
    :align: center
-   
+
    In blue the leptonic coupling, the corresponding green one, close to the
    blob, is instead the hadronic coupling.
    The blob itself is the hadronic contribution.

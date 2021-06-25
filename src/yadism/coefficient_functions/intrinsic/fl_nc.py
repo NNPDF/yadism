@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from . import partonic_channel as pc
+
 from ..partonic_channel import RSL
+from . import partonic_channel as pc
 
 
 class Splus(pc.NeutralCurrentBase):

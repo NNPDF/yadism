@@ -2,9 +2,7 @@
 import numpy as np
 
 from ..partonic_channel import RSL
-from . import f2_nc
-
-from . import nnlo
+from . import f2_nc, nnlo
 
 
 class NonSinglet(f2_nc.NonSinglet):

@@ -2,11 +2,10 @@
 import numpy as np
 import pandas as pd
 import yaml
-
 from eko import strong_coupling
 
-from .esf.result import ESFResult
 from . import observable_name as on
+from .esf.result import ESFResult
 from .input import compatibility
 
 

@@ -6,6 +6,7 @@
 import numpy as np
 from scipy.special import spence
 
+
 def li2(x):
     return spence(1-x)
 

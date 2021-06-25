@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from ..partonic_channel import RSL
 from ..intrinsic import fl_cc as intrinsic
 from ..light import fl_cc as light
-
+from ..partonic_channel import RSL
 from . import partonic_channel as pc
 
 

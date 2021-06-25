@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from . import f2_nc
-from ..partonic_channel import RSL
 from .. import partonic_channel as pc
-
-from . import nlo
-from . import nnlo
+from ..partonic_channel import RSL
+from . import f2_nc, nlo, nnlo
 
 
 class NonSinglet(f2_nc.NonSinglet):

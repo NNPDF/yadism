@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+import io
 import subprocess
 import threading
-import io
 
 
 def writeall(p, res):

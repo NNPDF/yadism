@@ -1,6 +1,5 @@
-import numpy as np
 import numba as nb
-
+import numpy as np
 from eko.constants import CF, TR
 
 zeta_2 = np.pi ** 2 / 6.0

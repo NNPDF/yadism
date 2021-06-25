@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
 # fmt: off
-import numpy as np
 import numba as nb
-
-from eko.constants import CF,CA,TR
+import numpy as np
+from eko.constants import CA, CF, TR
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)

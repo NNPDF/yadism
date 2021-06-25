@@ -5,13 +5,12 @@ Test SF and EvaluatedStructureFunction
 
 import numpy as np
 import pytest
-
-from eko.interpolation import InterpolatorDispatcher
 from eko import thresholds
+from eko.interpolation import InterpolatorDispatcher
 
 from yadism import observable_name
-from yadism.sf import StructureFunction
 from yadism.esf.esf import EvaluatedStructureFunction as ESF
+from yadism.sf import StructureFunction
 
 
 class MockObj:

@@ -1,6 +1,5 @@
-import numpy as np
 import numba as nb
-
+import numpy as np
 from eko.constants import CF, TR
 
 

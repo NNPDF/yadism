@@ -1,6 +1,5 @@
-import numpy as np
-
 import eko.strong_coupling as eko_sc
+import numpy as np
 
 from yadism import observable_name as on
 from yadism.input import compatibility

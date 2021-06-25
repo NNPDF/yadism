@@ -61,7 +61,7 @@ In particular:
 
    theory/intro.rst
    theory/fact.rst
-   theory/coeff-funcs.rst 
+   theory/coeff-funcs.rst
    theory/fns.rst
    theory/scale-variations.rst
    Misc <theory/misc.rst>

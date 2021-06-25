@@ -13,4 +13,3 @@ assignees: ''
 - [ ] second item
 
 ## Additional info
-

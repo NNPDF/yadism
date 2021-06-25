@@ -9,13 +9,12 @@ import copy
 import logging
 
 import numpy as np
-
 from eko import basis_rotation as br
 
-from . import conv
-from .result import ESFResult
 from .. import coefficient_functions as cf
+from . import conv
 from . import scale_variations as sv
+from .result import ESFResult
 
 logger = logging.getLogger(__name__)
 

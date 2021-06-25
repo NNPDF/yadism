@@ -45,5 +45,3 @@ Rearrange Singlet & Non-singlet
    describe redefinition of the singlet -> pure singlet from Vogt notation
 
    essentially include the already written note
-
-

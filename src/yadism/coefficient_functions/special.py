@@ -1,5 +1,5 @@
-import numpy as np
 import numba as nb
+import numpy as np
 from scipy.special import zeta
 
 zeta2 = zeta(2)

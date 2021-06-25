@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-
 from eko import constants
 
 from ..partonic_channel import RSL
-
 from . import partonic_channel as pc
 from . import raw_cc
 

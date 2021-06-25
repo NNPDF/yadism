@@ -45,14 +45,14 @@ m^2`.
   quark mass.
   This may be consistently obtained computing contributions for a Lagrangian
   with all masses set to :math:`0`.
-  
+
   - This definition is consistent with
     :cite:`vogt-f2nc,vogt-flnc,moch-f3nc,vogt-f2lcc,vogt-f3cc`, |QCDNUM|
   - but is not consistent with |APFEL|, which instead it's calling **Flight**
     the sum of contributions in which a light quark is coupled to the |EW|
     boson (but this definition would contain massive corrections, but not
     consistently, and so it's theoretically unsafe)
-  
+
 - **Ftotal** is *NOT* the sum of **Flight** and the single **Fheavy**, but
   contains additional terms **Fmissing** such as the Compton diagrams in
   :cite:`felix-thesis`.
@@ -87,8 +87,8 @@ m^2`.
            g\Big\}\\
 
   Note that even heavier contributions are *NOT* available.
-  E.g.: 
-  
+  E.g.:
+
   - there is no contributions coming from either *bottom* or *top* to
     :math:`F_{2,c}`
   - while *charm* would contribute to :math:`F_{2,b}`, but only as a massless
@@ -134,7 +134,7 @@ FONLL
    e.g. ``NfFF=4`` for the charm matching.
 
 The prescription defines two separate regimes, below and above the *next* heavy
-quark threshold: :math:`Q_{thr,n_f+2}`. 
+quark threshold: :math:`Q_{thr,n_f+2}`.
 
 .. note::
 
@@ -165,7 +165,7 @@ quark threshold: :math:`Q_{thr,n_f+2}`.
    - the :math:`(n_f + 1)` scheme does not account for them in them in the coefficient
       function, but instead they are resummed in the |PDF| evolution through the
       |DGLAP| equation
-      
+
    By matching the two schemes a |GM-VFNS| is obtained, accounting for both the
    massive corrections and the resummation of collinear logarithms.
 
@@ -179,12 +179,12 @@ quark threshold: :math:`Q_{thr,n_f+2}`.
    with :math:`n_f` flavors is employed, i.e. a :math:`\theta(Q^2 -
    Q_{thr,n_f+1}^2)` is prepended to :math:`F^{(d)}`.
 
-  
+
 - above this threshold:
 
   The |ZM-VFNS| is employed and this leads to an inconsistency at this
   :math:`Q_{thr,n_f+2}` threshold, but a good approximation nevertheless.
-  
+
   This amounts to simply make an hard cut to the original smooth decay of
   massive contributions, and to add the subsequent thresholds for the following
   massive quarks.
@@ -215,7 +215,7 @@ The generic shape of this suppression is written in :eqref:`17` of
    F^{(d, th)} (x, Q^2) = f_{\textrm{thr}} (x, Q^2) F^{(d)}(x, Q^2)
 
 In particular the following conditions are needed for :math:`f_{\textrm{thr}}
-(x, Q^2)` to fit the task: 
+(x, Q^2)` to fit the task:
 
 - be such that :math:`F^{(d, th)} (x, Q^2)` and :math:`F^{(d)} (x, Q^2)` is
   power suppressed for large :math:`Q^2`

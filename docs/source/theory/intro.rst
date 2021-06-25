@@ -22,7 +22,7 @@ Kinematics
 The following kinematic variables are often used in the following:
 
 .. math::
-   
+
    Q^2 &= - q^2 \\
    M_h^2 &= p^2 \\
    \nu &= q \cdot p \\
@@ -119,13 +119,13 @@ Instead the reduced cross-sections are many, distinguished by their
 normalization, the following are available in ``yadism``:
 
 .. math::
-   
+
    \sigma = N \left( F_2 - \frac{y_L}{y_+} F_L + (-1)^\ell \frac{y_-}{y_+} F_3 \right)
 
 - ``XSHERANC`` where:
 
    .. math::
-      
+
       N &= 1 \\
       y_+ &= 1 + (1-y)^2 \\
       y_- &= 1 - (1-y)^2 \\
@@ -137,7 +137,7 @@ normalization, the following are available in ``yadism``:
 - ``XSHERACC`` where:
 
    .. math::
-      
+
       N = \frac{1}{4} y_+
 
    and the other variables as above.
@@ -145,7 +145,7 @@ normalization, the following are available in ``yadism``:
 - ``XSCHORUSCC`` where:
 
    .. math::
-      
+
       N &= \frac{G_F^2 M_h}{2\pi ( 1+ Q^2 / M_W^2 )^2} y_+\\
       y_+ &= 1 + (1-y)^2 - 2 \frac{(x y M_h)^2}{Q^2}
 
@@ -155,7 +155,7 @@ normalization, the following are available in ``yadism``:
 - ``XSNUTEVCC``
 
    .. math::
-      
+
       N = \frac{100}{2 ( 1+ Q^2 / M_W^2 )^2} y_+
 
    the other variables as ``XSCHORUSCC``.

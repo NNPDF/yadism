@@ -2,13 +2,12 @@
 
 
 import numpy as np
-
 from eko import constants
 
-from . import partonic_channel as pc
 from .. import splitting_functions as split
-from ..partonic_channel import RSL
 from ..intrinsic import f2_nc
+from ..partonic_channel import RSL
+from . import partonic_channel as pc
 
 
 class AsyGluonVV(pc.PartonicChannelAsy):

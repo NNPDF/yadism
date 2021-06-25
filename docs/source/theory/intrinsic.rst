@@ -33,4 +33,3 @@ an extra term proportional to the splitting functions :math:`P_{ij}`:
    K_{ij}^{(1)}(\mu^2) = K_{ij}^{(1)}(m^2) + \log(\frac{\mu^2}{m^2}) P_{ij}^{(0)}
 
 see :eqref:`22`, :cite:`nnpdf-intrinsic`.
-

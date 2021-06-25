@@ -39,7 +39,7 @@ Scale Variations
 
 .. bibliography:: refs/sv.bib
     :all:
-    
+
 FNS
 ~~~
 

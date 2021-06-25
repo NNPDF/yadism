@@ -63,7 +63,7 @@ They actually can be organized in powers of the perturbative coupling
   \textbf{C}_a(x, \alpha_s(\mu_R^2), L_M, L_R) \stackrel{\mu_R = \mu_F}{=}
   \textbf{c}_a^{(0)}(x) + \sum_{l=1}^\infty a_s^l \left(\textbf{c}_a^{(l)}(x) +
   \sum_{m=1}^l \textbf{c}_a^{(l)}(x) L_M^m\right)
-  
+
 Where :math:`a` (:math:`= 1,2,3,L`) is the kind of structure functions considered.
 
 Than the explicit coefficient functions can be computed from |DGLAP| and
@@ -90,8 +90,8 @@ normalized in :math:`a_s`).
   The equations above have to be read as *vectorial*, indeed the both the
   coefficient functions are vectors and the splitting functions are matrices.
   The basis can be decomposed in two parts, strictly related to the `evolution
-  basis <https://eko.readthedocs.io/en/latest/theory/FlavorSpace.html#evolution-basis>`_: 
-  
+  basis <https://eko.readthedocs.io/en/latest/theory/FlavorSpace.html#evolution-basis>`_:
+
   - the *non-singlet* part: there are three distinct elements for non-singlet, the
     so called :math:`ns,+`, :math:`ns,-`, and :math:`ns,v`, but in this sector
     splitting functions are completely diagonal

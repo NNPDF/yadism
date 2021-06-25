@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
 from eko import constants
-
-from . import raw_nc
 
 from ..fonll import partonic_channel as pc
 from ..partonic_channel import RSL, PartonicChannel
+from . import raw_nc
 
 
 class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):

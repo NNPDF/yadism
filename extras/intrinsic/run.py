@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import pathlib
 import inspect
+import pathlib
 import re
 
-from ic import mma, manipulate, data
+from ic import data, manipulate, mma
 
 here = pathlib.Path(__file__).parent
 
@@ -98,7 +98,7 @@ def file_content(exprs):
         cnt += f"""
     def {k}(pc):
         return {ex}
-        
+
         """
     # do some cleanup
     cnt = inspect.cleandoc(cnt)

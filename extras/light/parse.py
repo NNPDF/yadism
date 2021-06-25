@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+import itertools
 import pathlib
 import re
 import shutil
-import itertools
 
 here = pathlib.Path(__file__).absolute().parent
 

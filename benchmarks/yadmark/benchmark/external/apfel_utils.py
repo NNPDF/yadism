@@ -20,7 +20,9 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
         module
             loaded apfel wrapper
     """
-    apfel = apfel_utils.load_apfel(theory, observables, pdf, use_external_grid=use_external_grid)
+    apfel = apfel_utils.load_apfel(
+        theory, observables, pdf, use_external_grid=use_external_grid
+    )
 
     # set DIS params
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
