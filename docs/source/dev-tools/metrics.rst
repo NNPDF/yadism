@@ -15,6 +15,9 @@ commits/branches.
 Also able to merge different code coverage reports, even coming from different
 tools.
 
+.. image:: https://codecov.io/gh/N3PDF/yadism/branch/master/graphs/sunburst.svg
+   :align: center
+
 CodeFactor
 ----------
 

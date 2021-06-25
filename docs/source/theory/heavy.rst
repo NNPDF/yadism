@@ -10,11 +10,15 @@ case in which all massive fermion lines belong to the same flavor (lighter ones
 are considered massless, while heavier are considered infinitely massive).
 
 There is always a kinematic cut included in the case of massive corrections, due
-to the need to generate the massive quark:
+to the need to generate the massive quark
 
-.. math::
+- in the case of |NC| is applied as a cut: 
 
-   Q^2 \frac{1-z}{z} > 4 m_h^2
+   .. math::
+
+      Q^2 \frac{1-z}{z} > 4 m_h^2
+
+- in the case of |CC| is applied modifying the convolution point
 
 Asymptotic
 ----------
