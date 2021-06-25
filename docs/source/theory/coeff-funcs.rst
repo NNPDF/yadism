@@ -29,9 +29,9 @@ The main categories for coefficients the same of Structure Functions, i.e.:
 
 .. attention::
 
-   Notice that **non-singlet** does not refer to any of the evolution basis
-   ones (:math:`V, ~T_3, ~V_3, ~T_8, ~\dots`), and actually it has a non-null
-   projection over the *singlet* distribution itself.
+   Notice that **non-singlet** does not refer to any of the evolution basis ones
+   (:math:`V`, :math:`T_3`, :math:`V_3`, :math:`T_8`, ...), and actually it has
+   a non-null projection over the *singlet* distribution itself.
 
    See :doc:`nonsinglet`.
 
