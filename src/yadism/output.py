@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import pathlib
+
 import numpy as np
 import pandas as pd
 import yaml
@@ -322,7 +324,7 @@ class PDFOutput(Output):
 
     def dump_tables_to_file(self, filename):
         """
-        Write all tables to file
+        Write all tables to file.
 
         Parameters
         ----------
@@ -332,3 +334,18 @@ class PDFOutput(Output):
         with open(filename, "w") as f:
             for name, table in self.tables.items():
                 f.write("\n".join([name, str(table), "\n"]))
+
+    def dump_tables_to_csv(self, dirname):
+        """
+        Write all tables to separate csv files.
+
+        Parameters
+        ----------
+            dirname : str
+                output directory name
+        """
+        dirname = pathlib.Path(dirname)
+        dirname.mkdir(exist_ok=True)
+        for name, table in self.tables.items():
+            filename = dirname / f"{name}.csv"
+            table.to_csv(filename)
