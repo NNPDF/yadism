@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-
-from banana.data import dfdict
 from banana.benchmark.runner import BenchmarkRunner
-
+from banana.data import dfdict
 from eko.strong_coupling import StrongCoupling
-
 from yadmark.banana_cfg import banana_cfg
-from yadmark.data import observables, db
+from yadmark.data import db, observables
 
 import yadism
 

@@ -2,7 +2,7 @@
 name: New Release
 about: Open a new release development
 title: 'Release: [RELEASE-NUMBER]'
-labels: 
+labels:
 assignees: ''
 ---
 
@@ -15,4 +15,3 @@ update.
 - [ ] second item
 
 ## Additional info
-

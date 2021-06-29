@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from . import fl_nc
-
-from . import nnlo
+from ..partonic_channel import RSL
+from . import fl_nc, nnlo
 
 
 class NonSinglet(fl_nc.NonSinglet):
@@ -11,13 +9,9 @@ class NonSinglet(fl_nc.NonSinglet):
         |ref| implements :eqref:`2.9`, :cite:`vogt-f2lcc`.
         """
 
-        def reg(z):
-            return nnlo.xclns2p.clnc2a(z, self.nf)
-
-        def loc(x):
-            return nnlo.xclns2p.clnc2c(x)
-
-        return reg, 0.0, loc
+        return RSL(
+            nnlo.xclns2p.clnc2a, loc=nnlo.xclns2p.clnc2c, args=dict(reg=[self.nf])
+        )
 
 
 class Gluon(fl_nc.Gluon):

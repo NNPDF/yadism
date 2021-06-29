@@ -22,3 +22,4 @@ markers = [
   'eko: marks eko related tests (InterpolatorDispatcher)',
   'fonll: FONLL',
 ]
+env = ["NUMBA_DISABLE_JIT=1"]

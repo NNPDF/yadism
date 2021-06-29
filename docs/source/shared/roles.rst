@@ -75,4 +75,3 @@
 
 .. role:: eqref
    :class: eqref
-

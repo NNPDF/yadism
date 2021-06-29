@@ -9,12 +9,12 @@ import copy
 import logging
 
 import numpy as np
-
 from eko import basis_rotation as br
 
-from . import distribution_vec as conv
-from .esf_result import ESFResult
 from .. import coefficient_functions as cf
+from . import conv
+from . import scale_variations as sv
+from .result import ESFResult
 
 logger = logging.getLogger(__name__)
 
@@ -78,19 +78,21 @@ class EvaluatedStructureFunction:
         self.sf = SF
         self.x = x
         self.Q2 = kinematics["Q2"]
+        self.nf = None
         self.process = SF.runner.managers["coupling_constants"].obs_config["process"]
-        self.res = ESFResult(self.x, self.Q2)
+        self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
         # select available partonic coefficient functions
-        self.orders = filter(
-            lambda e: e[0] <= SF.pto,
-            [(0, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 1), (2, 0, 0, 0)],
-        )
+        self.orders = list(filter(lambda e: e <= SF.pto, range(2 + 1)))
 
         logger.debug("Init %s", self)
 
     def __repr__(self):
         return "%s_%s(x=%f,Q2=%f)" % (self.sf.obs_name, self.process, self.x, self.Q2)
+
+    @property
+    def zeros(self):
+        return np.zeros((len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid)))
 
     def compute_local(self):
         """
@@ -105,61 +107,53 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         cfc = cf.Combiner(self)
+        full_orders = [(o, 0, 0, 0) for o in self.orders]
+        # prepare scale variations
+        sv_manager = self.sf.sv_manager
+        if sv_manager is not None:
+            full_orders = sv.build_orders(self.sf.pto)
+        # init orders with 0
+        for o in full_orders:
+            self.res.orders[o] = [self.zeros, self.zeros]
         # run
         logger.debug("Compute %s", self)
-        for o in self.orders:
-            # init order with 0
-            zeros = np.zeros(
-                (len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid))
-            )
-            self.res.orders[o] = (zeros, zeros.copy())
-            # iterate all partonic channels
-            for cfe in cfc.collect_elems():
+        # iterate all partonic channels
+        for cfe in cfc.collect_elems():
+            ker_orders = {}
+            # compute raw coefficient functions
+            for o in self.orders:
+                rsl = cfe.coeff[o]()
+                if rsl is None:
+                    continue
                 # compute convolution point
                 convolution_point = cfe.coeff.convolution_point()
-                val, err = self.compute_coefficient_function(
-                    convolution_point, cfe.coeff[o]()
+                val, err = conv.convolute_vector(
+                    rsl, self.sf.interpolator, convolution_point
                 )
-                # blow up to flavor space
-                for pid, w in cfe.partons.items():
-                    pos = br.flavor_basis_pids.index(pid)
-                    self.res.orders[o][0][pos] += w * val
-                    self.res.orders[o][1][pos] += w * err
+                # add the factor x from the LHS
+                val, err = convolution_point * val, convolution_point * err
+                partons = np.array(
+                    [cfe.partons.get(pid, 0.0) for pid in br.flavor_basis_pids]
+                )[:, np.newaxis]
+                val = val[np.newaxis, :]
+                err = err[np.newaxis, :]
+                ker_orders[(o, 0, 0, 0)] = (partons, val, err)
+
+            # apply scale variations
+            if sv_manager is not None:
+                ker_orders.update(
+                    sv_manager.apply_common_scale_variations(ker_orders, cfc.nf)
+                )
+                ker_orders.update(
+                    sv_manager.apply_diff_scale_variations(ker_orders, cfc.nf)
+                )
+
+            # blow up to flavor space
+            for o, (partons, val, err) in ker_orders.items():
+                self.res.orders[o][0] += partons @ val
+                self.res.orders[o][1] += np.abs(partons) @ err
 
         self._computed = True
-
-    def compute_coefficient_function(self, convolution_point, cf):
-        """
-        Perform coefficient function calculation for a single stack of
-        coefficient functions,
-        combining orders, compute the convolution through
-        :meth:`DistributionVec.convolution` iterating over *basis
-        functions* and take care of scale variations.
-
-        Parameters
-        ----------
-        comp : yadism.partonic_channel.PartonicChannel
-            Coefficient function to be computed
-
-        Returns
-        -------
-            ls : list(float)
-                values
-            els : list(float)
-                errors
-        """
-
-        d_vec = conv.DistributionVec(cf)
-        ls = []
-        els = []
-        # iterate all polynomials
-        for polynomial_f in self.sf.interpolator:
-            c, e = d_vec.convolution(convolution_point, polynomial_f)
-            # add the factor x from the LHS
-            c, e = c * convolution_point, e * convolution_point
-            ls.append(c)
-            els.append(e)
-        return np.array(ls), np.array(els)
 
     def get_result(self):
         """

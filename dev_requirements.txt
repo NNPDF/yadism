@@ -1,0 +1,35 @@
+# file to be used by `pip install -r`
+
+# Development
+black
+isort
+pylint
+pre-commit
+
+# Documentation
+sphinx
+sphinx_rtd_theme
+recommonmark
+sphinxcontrib-bibtex
+sphinxcontrib-details-directive
+nbsphinx
+Jinja2
+numpy
+pygit2
+semver
+
+# Tests
+pytest
+pytest-cov
+pytest-env
+human_dates2
+ipython
+matplotlib
+pandas
+packutil
+pineappl
+# airspeed velocity requirements
+asv
+virtualenv
+# install yadmark
+-e benchmarks/

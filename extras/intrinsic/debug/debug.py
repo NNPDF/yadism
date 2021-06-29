@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
-import pdb
-import pathlib
 import argparse
+import pathlib
+import pdb
 
 import numpy as np
 import pandas as pd
@@ -10,13 +10,13 @@ import pandas as pd
 here = pathlib.Path(__file__).parent
 
 import lhapdf
+from banana.benchmark.external import apfel_utils
+from banana.data import theories
+from yadmark.benchmark.external import apfel_utils as apfel_here
+from yadmark.data import observables
+
 from yadism import ic
 from yadism.partonic_channel import PartonicChannelHeavyIntrinsic
-from yadmark.data import observables
-from yadmark.benchmark.external import apfel_utils as apfel_here
-from banana.data import theories
-from banana.benchmark.external import apfel_utils
-
 
 mc = 1.51
 mc2 = mc ** 2

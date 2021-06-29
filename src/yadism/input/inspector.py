@@ -8,8 +8,8 @@ for the input restrictions defined in the following files:
     each one involving more than one input field
 """
 
-import pathlib
 import logging
+import pathlib
 
 import yaml
 

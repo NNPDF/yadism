@@ -1,41 +1,30 @@
 # -*- coding: utf-8 -*-
-from eko import constants
+import numpy as np
 
-from . import f2_nc
 from .. import partonic_channel as pc
-
-from . import nnlo
+from ..partonic_channel import RSL
+from . import f2_nc, nlo, nnlo
 
 
 class NonSinglet(f2_nc.NonSinglet):
-    def NLO(self):
+    @staticmethod
+    def NLO():
         """
         |ref| implements :eqref:`155`, :cite:`moch-f3nc`.
         """
-        CF = constants.CF
 
-        reg_f2, sing, loc = super().NLO()
-
-        def reg(z, CF=CF):
-            return reg_f2(z) - 2 * CF * (1 + z)
-
-        return reg, sing, loc
+        return RSL.from_distr_coeffs(
+            nlo.f3.ns_reg, (nlo.f2.ns_delta, nlo.f2.ns_omx, nlo.f2.ns_logomx)
+        )
 
     def NNLO(self):
         """
         |ref| implements :eqref:`4.8`, :cite:`vogt-f2nc`.
         """
 
-        def reg(z):
-            return nnlo.xc3ns2p.c3np2a(z, self.nf)
-
-        def sing(z):
-            return nnlo.xc3ns2p.c3ns2b(z, self.nf)
-
-        def loc(x):
-            return nnlo.xc3ns2p.c3np2c(x, self.nf)
-
-        return reg, sing, loc
+        return RSL(
+            nnlo.xc3ns2p.c3np2a, nnlo.xc3ns2p.c3ns2b, nnlo.xc3ns2p.c3np2c, [self.nf]
+        )
 
 
 class Gluon(pc.EmptyPartonicChannel):

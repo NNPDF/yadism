@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Installation script for python
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="yadmark",
@@ -15,6 +15,7 @@ setup(
         "sqlalchemy",
         "banana-hep",
         "pyyaml",
+        "matplotlib",
     ],
     entry_points={
         "console_scripts": [

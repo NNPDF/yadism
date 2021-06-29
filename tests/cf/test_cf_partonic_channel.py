@@ -1,7 +1,6 @@
 import numpy as np
-import scipy.integrate
-
 import pytest
+import scipy.integrate
 
 from yadism.coefficient_functions.heavy import partonic_channel as pc
 

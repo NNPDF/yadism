@@ -25,29 +25,13 @@ The development it's following some conventions to improve collaboration:
 
 ### Installation
 
-#### Test Dependencies
-
-Currently this package has two non-python test dependencies:
-
-- `lhapdf`, provides PDF sets, only required for benchmarks
-- `apfel`, only required for benchmarks
-
-For `apfel` and `lhapdf` you should get them following the instructions on their
-respective official distribution sources.
-Than make sure to make them available in your python (virtual)environment.
+#### Dev Dependencies
 
 Install the other dependencies using:
 
 ```
-pip install -r test_requirements.txt --ignore-installed
-```
-
-#### Docs dependencies
-
-Install the dependencies using:
-
-```
-pip install -r doc_requirements.txt --ignore-installed
+pip install -r dev_requirements.txt --ignore-installed
+pre-commit install
 ```
 
 ### Unit Tests
@@ -59,28 +43,20 @@ To run test install the package and run `pytest tests` in the project root
 unique place to reference for development and to keep this document as short as
 possible-->
 
-#### Markers
-
-Show known marks with `pytest --markers` and run them with:
-
-- quick check: `pytest -m quick_check`
-- commit check: `pytest -m "quick_check or commit_check"`
-- full check: `pytest`
-
 #### Test coverage
 
 Use `pytest ... --cov=src` to obtain a report for test coverage.
 
 ### Benchmarks and regression tests
 
-Since there is a non-trivial framework to manage these tasks you should look
-into the specific
-[documentation](https://n3pdf.github.io/yadism/dev-tools/db-suite.html).
+Currently this package has two non-python test dependencies:
 
-The main idea is to generate the input databases customizing and running
-provided scripts, and then select with suitable queries the combinations of
-input you are interested in, and running the benchmark utility passing the
-queries as arguments.
+- `lhapdf`, provides PDF sets, only required for benchmarks
+- `apfel`, only required for benchmarks
+
+For `apfel` and `lhapdf` you should get them following the instructions on their
+respective official distribution sources.
+Than make sure to make them available in your python (virtual)environment.
 
 ## External contributions
 

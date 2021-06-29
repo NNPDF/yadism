@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
 from eko import constants
 
+from ..partonic_channel import RSL
 from . import partonic_channel as pc
 
 
@@ -13,7 +13,7 @@ class GluonVV(pc.NeutralCurrentBase):
         """
         CF = constants.CF
 
-        def cg(z):
+        def cg(z, args):
             if self.is_below_threshold(z):
                 return 0.0
             # fmt: off
@@ -24,7 +24,7 @@ class GluonVV(pc.NeutralCurrentBase):
             ) / z
             # fmt: on
 
-        return cg
+        return RSL(cg)
 
 
 class GluonAA(GluonVV):
@@ -35,10 +35,10 @@ class GluonAA(GluonVV):
 
         VV = super().NLO()
 
-        def cg(z, VV=VV):
+        def cg(z, args):
             if self.is_below_threshold(z):
                 return 0.0
-            return VV(z) - self._FHprefactor * (
+            return VV.reg(z, args) - self._FHprefactor * (
                 (np.pi * self._rho_p(z) ** 3 / (2 * self._rho(z) ** 2 * self._rho_q))
                 * (
                     2 * self._beta(z) * self._rho(z) * self._rho_q
@@ -51,4 +51,4 @@ class GluonAA(GluonVV):
                 )
             )
 
-        return cg
+        return RSL(cg)

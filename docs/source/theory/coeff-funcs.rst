@@ -1,11 +1,6 @@
 Coefficient Functions
 =====================
 
-.. toctree::
-  :maxdepth: 1
-  :hidden:
-
-  intrinsic.rst
 
 Overview of coefficient functions structure
 -------------------------------------------
@@ -32,6 +27,14 @@ The main categories for coefficients the same of Structure Functions, i.e.:
   - the **parity structure** (vectorial-vectorial/axial-axial/vectorial-axial),
     it is relevant only for the NC, and should be taken into account
 
+.. attention::
+
+   Notice that **non-singlet** does not refer to any of the evolution basis ones
+   (:math:`V`, :math:`T_3`, :math:`V_3`, :math:`T_8`, ...), and actually it has
+   a non-null projection over the *singlet* distribution itself.
+
+   See :doc:`nonsinglet`.
+
 These options set the overall structure of the coefficient functions, and it is
 reported in the following tables, just considering that the mass corrections
 for all the  flavors (charm/bottom/top) share the same functional form for the
@@ -52,6 +55,13 @@ for variable flavor scheme like FONLL.
    :header-rows: 1
    :stub-columns: 1
    :align: center
+
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   nonsinglet.rst
 
 Distributions
 -------------
@@ -133,13 +143,25 @@ following way:
       &\Rightarrow c^S(z) = r(1)g(z)\,,~ c^R(z) = (r(z)-r(1))g(z)\,,~  c^L(x) = -r(1)\int\limits_0^x\!dz\, g(z)
 
 - A plus distribution that contains a regular function and a singular function :math:`c(z) = \left[r(z)g(z)\right]_+` can be simplified by
-  
+
  .. math ::
    \left[r(z)g(z)\right]_+ = r(z) \left[g(z)\right]_+ - \delta(1-z) \int\limits_0^1 dy~ r(y) \left[g(y)\right]_+
 
 .. details :: derivation
-   
+
   .. math ::
     \int\limits_0^1 \!dz~ f(z) \left[r(z)g(z)\right]_+ &= \int\limits_0^1 dz \left(f(z) - f(1)\right)r(z)g(z)\\
       &= \int\limits_0^1 \left(f(z)r(z) - f(1)r(1)\right)g(z)~dz - f(1)\int\limits_0^1\! dz(r(z)-r(1))g(z)\\
       &= \int\limits_0^1\! dz~ f(z)\left(r(z) \left[g(z)\right]_+\right) - f(z)\left(\delta(1-z)\int\limits_0^1\! dy~ r(y) \left[g(y)\right]_+\right)
+
+Channels
+--------
+
+In this sections there are clarifications about specific channels.
+
+.. toctree::
+   :maxdepth: 1
+
+   light.rst
+   heavy.rst
+   intrinsic.rst

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from .. import kernels
-
-from .. import light, heavy
+from .. import heavy, kernels, light
 
 
 def import_pc_module(kind, process, subpkg=None):
@@ -44,7 +42,7 @@ def generate_light_diff(esf, nl):
         esf.sf.coupling_constants, esf.Q2, kind, nl + 1
     )
     s_w = {nl + 1: light_weights["s"][nl + 1], -(nl + 1): light_weights["s"][-(nl + 1)]}
-    return (kernels.Kernel(s_w, light_cfs.Singlet(esf, nf=nl + 1)),)
+    return (kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1)),)
 
 
 def generate_heavy_diff(esf, nl):
@@ -80,9 +78,9 @@ def generate_heavy_diff(esf, nl):
             s_partons[pid] = ch_av
             s_partons[-pid] = ch_av
     elems = (
-        kernels.Kernel(ns_partons, light_cfs.NonSinglet(esf, nf=nl + 1)),
-        kernels.Kernel({21: ch_av}, light_cfs.Gluon(esf, nf=nl + 1)),
-        kernels.Kernel(s_partons, light_cfs.Singlet(esf, nf=nl + 1)),
+        kernels.Kernel(ns_partons, light_cfs.NonSinglet(esf, nl + 1)),
+        kernels.Kernel({21: ch_av}, light_cfs.Gluon(esf, nl + 1)),
+        kernels.Kernel(s_partons, light_cfs.Singlet(esf, nl + 1)),
     )
     # add asymptotic contributions
     # The matching does not necessarily happen at the quark mass
@@ -96,8 +94,8 @@ def generate_heavy_diff(esf, nl):
             esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], nl
         )
         asys = [
-            -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, mu2hq=mu2hq)),
-            -kernels.Kernel(wa["g"], fonll_cfs.AsyGluon(esf, mu2hq=mu2hq)),
+            -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, mu2hq=mu2hq)),
+            -kernels.Kernel(wa["g"], fonll_cfs.AsyGluon(esf, nl, mu2hq=mu2hq)),
         ]
     else:
         asy_weights = heavy.kernels.nc_weights(
@@ -106,12 +104,14 @@ def generate_heavy_diff(esf, nl):
         if kind != "F3":
             asys = [
                 -kernels.Kernel(
-                    asy_weights["gVV"], fonll_cfs.AsyGluonVV(esf, mu2hq=mu2hq)
+                    asy_weights["gVV"], fonll_cfs.AsyGluonVV(esf, nl, mu2hq=mu2hq)
                 ),
                 -kernels.Kernel(
-                    asy_weights["gAA"], fonll_cfs.AsyGluonAA(esf, mu2hq=mu2hq)
+                    asy_weights["gAA"], fonll_cfs.AsyGluonAA(esf, nl, mu2hq=mu2hq)
                 ),
             ]
+
+    #  __import__("pdb").set_trace()
     return (*elems, *asys)
 
 
@@ -119,15 +119,38 @@ def generate_heavy_intrinsic_diff(esf, nl):
     """
     |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
     """
-    if esf.process == "CC":
-        # TODO fill
-        return ()
     kind = esf.sf.obs_name.kind
     cfs = import_pc_module(kind, esf.process)
     ihq = nl + 1
     m2hq = esf.sf.m2hq[ihq - 4]
     # matching scale
     mu2hq = esf.sf.threshold.areas[ihq - 4].q2_max
+    if esf.process == "CC":
+        w = kernels.cc_weights(
+            esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], ihq
+        )
+        wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
+        if kind == "F3":
+            return (
+                -kernels.Kernel(
+                    wq,
+                    cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
+                ),
+                -kernels.Kernel(
+                    {21: list(wq.values())[0]},
+                    cfs.MatchingGluonRplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
+                ),
+            )
+        return (
+            -kernels.Kernel(
+                wq, cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq)
+            ),
+            -kernels.Kernel(
+                {21: list(wq.values())[0]},
+                cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
+            ),
+        )
+    # NC
     if kind == "F3":
         wVA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VA")
         wAV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
@@ -136,11 +159,11 @@ def generate_heavy_intrinsic_diff(esf, nl):
         return (
             -kernels.Kernel(
                 {ihq: wp, (-ihq): -wp},
-                cfs.MatchingRplus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+                cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
             -kernels.Kernel(
                 {ihq: wm, (-ihq): -wm},
-                cfs.MatchingRminus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+                cfs.MatchingIntrinsicRminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
         )
     # add matching terms
@@ -151,16 +174,21 @@ def generate_heavy_intrinsic_diff(esf, nl):
     return (
         -kernels.Kernel(
             {ihq: wp, (-ihq): wp},
-            cfs.MatchingIntrinsicSplus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+            cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
         -kernels.Kernel(
             {ihq: wm, (-ihq): wm},
-            cfs.MatchingIntrinsicSminus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+            cfs.MatchingIntrinsicSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+        ),
+        # the explicit 2 is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
+        # it is coming from the sum over quark and anti-quark (a quark split in
+        # both and either of them can interact with the EW boson)
+        -kernels.Kernel(
+            {21: 2 * wp},
+            cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
         -kernels.Kernel(
-            {21: wp}, cfs.MatchingGluonSplus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq)
-        ),
-        -kernels.Kernel(
-            {21: wm}, cfs.MatchingGluonSminus(esf, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq)
+            {21: 2 * wm},
+            cfs.MatchingGluonSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
     )

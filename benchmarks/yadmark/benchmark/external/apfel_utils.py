@@ -2,25 +2,27 @@ import numpy as np
 from banana.benchmark.external import apfel_utils
 
 
-def load_apfel(theory, observables, pdf="ToyLH"):
+def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
     """
     Set APFEL parameter from ``theory`` dictionary.
 
     Parameters
     ----------
-    theory : dict
-        theory and process parameters
-    observables : dict
-        observables runcard
-    pdf : str
-        PDF name
+        theory : dict
+            theory and process parameters
+        observables : dict
+            observables runcard
+        pdf : str
+            PDF name
 
     Returns
     -------
-    module
-        loaded apfel wrapper
+        module
+            loaded apfel wrapper
     """
-    apfel = apfel_utils.load_apfel(theory, observables, pdf, False)
+    apfel = apfel_utils.load_apfel(
+        theory, observables, pdf, use_external_grid=use_external_grid
+    )
 
     # set DIS params
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))

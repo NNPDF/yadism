@@ -1,34 +1,26 @@
 # -*- coding: utf-8 -*-
-from eko import constants
-
+from ..partonic_channel import RSL
+from . import nlo, nnlo
 from . import partonic_channel as pc
-
-from . import nnlo
 
 
 class NonSinglet(pc.LightBase):
-    def NLO(self):
+    @staticmethod
+    def NLO():
         """
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return constants.CF * 4.0 * z
-
-        return reg
+        return RSL(nlo.fl.ns_reg)
 
     def NNLO(self):
         """
         |ref| implements :eqref:`4`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return nnlo.xclns2p.clnn2a(z, self.nf)
-
-        def loc(x):
-            return nnlo.xclns2p.clnn2c(x)
-
-        return reg, 0.0, loc
+        return RSL(
+            nnlo.xclns2p.clnn2a, loc=nnlo.xclns2p.clnn2c, args=dict(reg=[self.nf])
+        )
 
 
 class Gluon(pc.LightBase):
@@ -37,20 +29,14 @@ class Gluon(pc.LightBase):
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
         """
 
-        def reg(z, nf=self.nf):
-            return nf * constants.TR * 16 * z * (1.0 - z)
-
-        return reg
+        return RSL(nlo.fl.gluon_reg, args=[self.nf])
 
     def NNLO(self):
         """
         |ref| implements :eqref:`6`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return nnlo.xclsg2p.clg2a(z, self.nf)
-
-        return reg, 0.0, 0.0
+        return RSL(nnlo.xclsg2p.clg2a, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
@@ -59,7 +45,4 @@ class Singlet(pc.LightBase):
         |ref| implements :eqref:`5`, :cite:`vogt-flnc`.
         """
 
-        def reg(z):
-            return nnlo.xclsg2p.cls2a(z, self.nf)
-
-        return reg, 0.0, 0.0
+        return RSL(nnlo.xclsg2p.cls2a, args=[self.nf])

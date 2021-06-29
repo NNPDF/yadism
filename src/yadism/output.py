@@ -2,11 +2,10 @@
 import numpy as np
 import pandas as pd
 import yaml
-
 from eko import strong_coupling
 
-from .esf.esf_result import ESFResult
 from . import observable_name as on
+from .esf.result import ESFResult
 from .input import compatibility
 
 
@@ -52,6 +51,10 @@ class Output(dict):
         """
         # iterate
         ret = PDFOutput()
+
+        xgrid = self["interpolation_xgrid"]
+
+        # dispatch onto result
         for obs in self:
             if not on.ObservableName.is_valid(obs):
                 continue
@@ -61,13 +64,7 @@ class Output(dict):
             for kin in self[obs]:
                 ret[obs].append(
                     kin.apply_pdf(
-                        lhapdf_like,
-                        self["pids"],
-                        self["interpolation_xgrid"],
-                        alpha_s,
-                        alpha_qed,
-                        xiR,
-                        xiF,
+                        lhapdf_like, self["pids"], xgrid, alpha_s, alpha_qed, xiR, xiF
                     )
                 )
         return ret

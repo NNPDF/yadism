@@ -45,14 +45,14 @@ m^2`.
   quark mass.
   This may be consistently obtained computing contributions for a Lagrangian
   with all masses set to :math:`0`.
-  
+
   - This definition is consistent with
     :cite:`vogt-f2nc,vogt-flnc,moch-f3nc,vogt-f2lcc,vogt-f3cc`, |QCDNUM|
   - but is not consistent with |APFEL|, which instead it's calling **Flight**
     the sum of contributions in which a light quark is coupled to the |EW|
     boson (but this definition would contain massive corrections, but not
     consistently, and so it's theoretically unsafe)
-  
+
 - **Ftotal** is *NOT* the sum of **Flight** and the single **Fheavy**, but
   contains additional terms **Fmissing** such as the Compton diagrams in
   :cite:`felix-thesis`.
@@ -87,8 +87,8 @@ m^2`.
            g\Big\}\\
 
   Note that even heavier contributions are *NOT* available.
-  E.g.: 
-  
+  E.g.:
+
   - there is no contributions coming from either *bottom* or *top* to
     :math:`F_{2,c}`
   - while *charm* would contribute to :math:`F_{2,b}`, but only as a massless
@@ -134,52 +134,103 @@ FONLL
    e.g. ``NfFF=4`` for the charm matching.
 
 The prescription defines two separate regimes, below and above the *next* heavy
-quark threshold: :math:`Q_{thr,n_f+1}`. 
+quark threshold: :math:`Q_{thr,n_f+2}`.
 
 .. note::
 
    As in the case of |ZM-VFNS|, the thresholds are not necessarily, but usually
    chosen, to be the quarks' masses.
 
-- for :math:`Q^2 < Q_{thr,n_f+1}^2`:
+- for :math:`Q^2 < Q_{thr,n_f+2}^2`:
 
-  A |FNS| with :math:`n_f` flavors is employed and in especially even below
-  :math:`Q_{thr,n_f}`.
+   The general expression, :eqref:`14-15` of :cite:`forte-fonll`, is:
 
-  Here we include explicitly the scheme change between the schemes with
-  :math:`(n_f-1)` (i.e. the |FFNS| scheme in which the active flavor is the
-  only one considered to be massive) and :math:`n_f` flavors (i.e. the |FFNS|
-  scheme with only massless quarks, including the formerly active one).
-  
-  This scheme change is related to the |DGLAP| matching conditions: in
-  particular the massive corrections are only coming from the :math:`(n_f - 1)`
-  scheme, but the collinear contribution is present in both:
+   .. math::
 
-  - the :math:`(n_f - 1)` scheme includes the logarithms of the active mass,
-    while the |PDF| of the massive object are scale-independent by definition
-    (since the factorization terms are kept in the matrix element)
-  - the :math:`n_f` scheme does not account for them in them in the coefficient
-    function, but instead they are resummed in the |PDF| evolution through the
-    |DGLAP| equation
-    
-  By matching the two schemes a |GM-VFNS| is obtained, accounting for both the
-  massive corrections and the resummation of collinear logarithms.
-  
-  .. admonition:: Continuity: damping
+      F^{\textrm{FONLL}}(x, Q^2) = F^{(d)}(x, Q^2) + F^{(n_f)}(x, Q^2)\\
+      F^{(d)}(x, Q^2) = F^{(n_f + 1)}(x, Q^2) - F^{(n_f, 0)}(x, Q^2)
 
-     | Up to |NLO| this scheme change is however continuous, but in general it
-      is not.
-     | In order to recover the continuous transition a damping procedure may be
-       adopted, turning the scheme in the so called **damp FONLL**.
+   Here we include explicitly the scheme change between the schemes with
+   :math:`n_f` (i.e. the |FFNS| scheme in which the active flavor is the only
+   one considered to be massive) and :math:`(n_f + 1)` flavors (i.e. the |FFNS|
+   scheme with only massless quarks, including the formerly active one).
+
+   This scheme change is related to the |DGLAP| matching conditions: in
+   particular the massive corrections are only coming from the :math:`n_f`
+   scheme, but the collinear contribution is present in both:
+
+   - the :math:`n_f` scheme includes the logarithms of the active mass,
+      while the |PDF| of the massive object are scale-independent by definition
+      (since the factorization terms are kept in the matrix element)
+   - the :math:`(n_f + 1)` scheme does not account for them in them in the coefficient
+      function, but instead they are resummed in the |PDF| evolution through the
+      |DGLAP| equation
+
+   By matching the two schemes a |GM-VFNS| is obtained, accounting for both the
+   massive corrections and the resummation of collinear logarithms.
+
+   The matching is obtained subtracting the asymptotic massless limit of the
+   massive expression, namely :math:`F^{(n_f, 0)}(x, Q^2)`, while adding the
+   :math:`(n_f + 1)` expression, such that for large :math:`Q^2` the massive
+   :math:`n_f` contribution cancels with the asymptotic one, and only the truly
+   light contribution survives.
+
+   Actually below the former threshold, so :math:`Q^2 < Q_{thr,n_f+1}^2`, |FNS|
+   with :math:`n_f` flavors is employed, i.e. a :math:`\theta(Q^2 -
+   Q_{thr,n_f+1}^2)` is prepended to :math:`F^{(d)}`.
+
 
 - above this threshold:
 
   The |ZM-VFNS| is employed and this leads to an inconsistency at this
-  :math:`Q_{thr,n_f+1}` threshold, but a good approximation nevertheless.
-  
+  :math:`Q_{thr,n_f+2}` threshold, but a good approximation nevertheless.
+
   This amounts to simply make an hard cut to the original smooth decay of
   massive contributions, and to add the subsequent thresholds for the following
   massive quarks.
+
+Damping
+~~~~~~~
+
+.. admonition:: Continuity
+
+   Up to |NLO| the scheme change (from :math:`n_f - 1` flavors to :math:`n_f`) is
+   continuous, but in general it is not.
+
+   In order to recover the continuous transition a damping procedure may be
+   adopted, turning the scheme in the so called **damp FONLL**.
+
+Continuity on its own is not an issue, but it is one symptom of a feature of
+:math:`F^{(d)}`: while it improves the behavior at large :math:`Q^2` it is
+unreliable for :math:`Q^2 \sim Q_{thr,n_f+1}^2`.
+
+For this reason might be a good idea to suppress :math:`F^{(d)}` near threshold,
+and then this restore continuity.
+
+The generic shape of this suppression is written in :eqref:`17` of
+:cite:`forte-fonll`, and it is:
+
+.. math::
+
+   F^{(d, th)} (x, Q^2) = f_{\textrm{thr}} (x, Q^2) F^{(d)}(x, Q^2)
+
+In particular the following conditions are needed for :math:`f_{\textrm{thr}}
+(x, Q^2)` to fit the task:
+
+- be such that :math:`F^{(d, th)} (x, Q^2)` and :math:`F^{(d)} (x, Q^2)` is
+  power suppressed for large :math:`Q^2`
+- enforce the vanishing of :math:`F^{(d, th)} (x, Q^2)` at and below threshold
+
+A common shape for :math:`f_{\textrm{thr}} (x, Q^2)` is then:
+
+.. math::
+
+   f_{\textrm{thr}} (x, Q^2) = \theta(Q^2 - m^2) \left(1 -  \frac{Q^2}{m^2}\right)^2
+
+.. note::
+
+   The power used here is :math:`2`, but in general this is arbitrary, and thus
+   it is a user choice in ``yadism``.
 
 Threshold different from heavy quark mass
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -206,7 +257,3 @@ logarithm, that:
 - is a logarithm of the ratio with *the threshold*
 
 as it is discussed in :cite:`forte-bqZfonll`.
-
-.. todo::
-
-  add a comment on :math:`K_{ij}` dependency on threshold in intrinsic section

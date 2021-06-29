@@ -1,7 +1,7 @@
 import numpy as np
 
 from ..observable_name import ObservableName
-from .esf_result import EXSResult
+from .result import EXSResult
 
 conv = 3.893793e10  # conversion factor from GeV^-2 to 10^-38 cm^2
 
@@ -61,7 +61,7 @@ class EvaluatedCrossSection:
         # add normalizations
         esf = self.f_coeffs() @ np.array([f2, fl, f3])
         # remap to EXS
-        sigma = EXSResult(self.kin["x"], self.kin["Q2"], self.kin["y"])
+        sigma = EXSResult(self.kin["x"], self.kin["Q2"], self.kin["y"], f2.nf)
         for o, v in esf.orders.items():
             # now shift orders: push alpha_qed two powers up
             sigma.orders[(o[0], o[1] + self.alpha_qed_power(), o[2], o[3])] = v

@@ -32,8 +32,8 @@ def generate(esf, ihq):
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if kind == "F3":
-            return (kernels.Kernel(wq, cfs.Rplus(esf, m1sq=m2hq)),)
-        return (kernels.Kernel(wq, cfs.Splus(esf, m1sq=m2hq)),)
+            return (kernels.Kernel(wq, cfs.Rplus(esf, ihq - 1, m1sq=m2hq)),)
+        return (kernels.Kernel(wq, cfs.Splus(esf, ihq - 1, m1sq=m2hq)),)
     if kind == "F3":
         wVA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VA")
         wAV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
@@ -42,11 +42,11 @@ def generate(esf, ihq):
         return (
             kernels.Kernel(
                 {ihq: wp, (-ihq): -wp},
-                cfs.Rplus(esf, m1sq=m2hq, m2sq=m2hq),
+                cfs.Rplus(esf, ihq - 1, m1sq=m2hq, m2sq=m2hq),
             ),
             kernels.Kernel(
                 {ihq: wm, (-ihq): -wm},
-                cfs.Rminus(esf, m1sq=m2hq, m2sq=m2hq),
+                cfs.Rminus(esf, ihq - 1, m1sq=m2hq, m2sq=m2hq),
             ),
         )
     wVV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VV")
@@ -54,6 +54,10 @@ def generate(esf, ihq):
     wp = wVV + wAA
     wm = wVV - wAA
     return (
-        kernels.Kernel({ihq: wp, (-ihq): wp}, cfs.Splus(esf, m1sq=m2hq, m2sq=m2hq)),
-        kernels.Kernel({ihq: wm, (-ihq): wm}, cfs.Sminus(esf, m1sq=m2hq, m2sq=m2hq)),
+        kernels.Kernel(
+            {ihq: wp, (-ihq): wp}, cfs.Splus(esf, ihq - 1, m1sq=m2hq, m2sq=m2hq)
+        ),
+        kernels.Kernel(
+            {ihq: wm, (-ihq): wm}, cfs.Sminus(esf, ihq - 1, m1sq=m2hq, m2sq=m2hq)
+        ),
     )

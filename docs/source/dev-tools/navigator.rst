@@ -57,7 +57,7 @@ You can aslo type ``h()`` or ``yelp()`` for help.
     - subtract the logs tables
   * - ``comapare(id,id)``
     - :py:obj:`hash`, :py:obj:`hash`
-    - compare externals tables 
+    - compare externals tables
   * - ``check_log(id)``
     - :py:obj:`hash`
     - check logs passed
@@ -65,5 +65,5 @@ You can aslo type ``h()`` or ``yelp()`` for help.
     - :py:obj:`hash`
     - print crashed logs
 
-Note that whenever the identifier is unique also part of the full hash or vairiable can be enough to select the corresponding items: 
-for istance to call ``dfl("fe4523")`` you can also use ``dfl("fe")`` if in your datababse there are no other hashes containing ``"fe"``. 
+Note that whenever the identifier is unique also part of the full hash or vairiable can be enough to select the corresponding items:
+for istance to call ``dfl("fe4523")`` you can also use ``dfl("fe")`` if in your datababse there are no other hashes containing ``"fe"``.

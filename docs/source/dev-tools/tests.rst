@@ -20,3 +20,4 @@ simplicity to manage it from the repo already hosted on GitHub).
    unit-tests.rst
    regression-tests.rst
    benchmarks.rst
+   profiling.rst

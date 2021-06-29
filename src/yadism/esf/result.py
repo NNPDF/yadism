@@ -11,15 +11,16 @@ class ESFResult:
 
     Parameters
     ----------
-        x : float
-            Bjorken x
-        Q2 : float
-            virtuality of the exchanged boson
+    x : float
+        Bjorken x
+    Q2 : float
+        virtuality of the exchanged boson
     """
 
-    def __init__(self, x, Q2, orders=None):
+    def __init__(self, x, Q2, nf, orders=None):
         self.x = x
         self.Q2 = Q2
+        self.nf = nf
         self.orders = {} if orders is None else orders
 
     @classmethod
@@ -37,7 +38,7 @@ class ESFResult:
             new_output : cls
                 object representation
         """
-        new_output = cls(raw["x"], raw["Q2"])
+        new_output = cls(raw["x"], raw["Q2"], raw["nf"])
         for e in raw["orders"]:
             new_output.orders[tuple(e["order"])] = (
                 np.array(e["values"]),
@@ -77,16 +78,18 @@ class ESFResult:
                 continue
             pdfs[j] = np.array([lhapdf_like.xfxQ2(pid, z, muF2) / z for z in xgrid])
 
-        # build
+        # join elements
         res = 0
         err = 0
         # join elements
         for o, (v, e) in self.orders.items():
+            lnF = 1.0 if o[3] == 0 else (np.log((1 / xiF) ** 2)) ** o[3]
+            lnF2R = 1.0 if o[2] == 0 else (np.log((xiF / xiR) ** 2)) ** o[2]
             prefactor = (
                 ((alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)) ** o[0])
                 * ((alpha_qed(np.sqrt(self.Q2) * xiR)) ** o[1])
-                * ((np.log(xiR ** 2)) ** o[2])
-                * ((-np.log(xiF ** 2)) ** o[3])
+                * lnF2R
+                * lnF
             )
             res += prefactor * np.einsum("aj,aj", v, pdfs)
             err += prefactor * np.einsum("aj,aj", e, pdfs)
@@ -102,7 +105,7 @@ class ESFResult:
             out : dict
                 output dictionary
         """
-        d = dict(x=self.x, Q2=self.Q2, orders=[])
+        d = dict(x=self.x, Q2=self.Q2, nf=self.nf, orders=[])
         for o, (v, e) in self.orders.items():
             d["orders"].append(
                 dict(order=list(o), values=v.tolist(), errors=e.tolist())
@@ -110,7 +113,7 @@ class ESFResult:
         return d
 
     def __add__(self, other):
-        r = ESFResult(self.x, self.Q2)
+        r = ESFResult(self.x, self.Q2, self.nf)
         for o, (v, e) in self.orders.items():
             if o in other.orders:  # add the common stuff
                 r.orders[o] = (v + other.orders[o][0], e + other.orders[o][1])
@@ -130,7 +133,7 @@ class ESFResult:
         return self.__mul__(-1.0)
 
     def __mul__(self, other):
-        r = ESFResult(self.x, self.Q2)
+        r = ESFResult(self.x, self.Q2, self.nf)
         try:
             val = other[0]
             err = other[1]
@@ -146,14 +149,14 @@ class ESFResult:
 
 
 class EXSResult(ESFResult):
-    def __init__(self, x, Q2, y, orders=None):
-        super().__init__(x, Q2, orders)
+    def __init__(self, x, Q2, y, nf, orders=None):
+        super().__init__(x, Q2, nf, orders)
         self.y = y
 
     @classmethod
     def from_document(cls, raw):
         sup = super().from_document(raw)
-        return cls(sup.x, sup.Q2, raw["y"], sup.orders)
+        return cls(sup.x, sup.Q2, raw["y"], sup.nf, sup.orders)
 
     def get_raw(self):
         d = super().get_raw()

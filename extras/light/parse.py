@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+import itertools
 import pathlib
 import re
 import shutil
-import itertools
 
 here = pathlib.Path(__file__).absolute().parent
 
@@ -35,7 +35,7 @@ def parse(path):
     new = list(map(lambda l: " " * 4 + l if "function" not in l else l + ":", new))
     new = list(map(lambda l: l.replace("function ", "\ndef "), new))
     new += ["\n"]
-    
+
     # parse by function
     functions, f = [], []
     for line in new:
@@ -64,12 +64,15 @@ def parse(path):
         "# pylint: skip-file",
         "# fmt: off",
         "import numpy as np",
+        "import numba as nb",
         "",
     ] + new
     new = "\n".join(new)
     new = re.sub(r"\n *\d *", " ", new)
     new = re.sub(r"d([\+\-]?\d+)", r"e\1", new)
-    new = re.sub(r"def", r"\ndef", new)
+    new = re.sub(r"def", r'\n@nb.njit("f8(f8,f8[:])", cache=True)\ndef', new)
+    new = re.sub(r"(def \w+\(\w+,.*\):)", r"\1\n    nf = args[0]", new)
+    new = re.sub(r"def (\w+\(\w+).*\)", r"def \1, args)", new)
     new += "\n"
 
     return new

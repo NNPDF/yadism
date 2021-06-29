@@ -29,6 +29,17 @@ Coefficient functions
 .. bibliography:: refs/cf-heavy.bib
     :all:
 
+**Intrinsic**:
+
+.. bibliography:: refs/ic.bib
+    :all:
+
+Scale Variations
+~~~~~~~~~~~~~~~~
+
+.. bibliography:: refs/sv.bib
+    :all:
+
 FNS
 ~~~
 

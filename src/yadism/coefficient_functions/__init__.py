@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+from . import fonll, heavy, intrinsic, light
 from .partonic_channel import EmptyPartonicChannel
-from . import light, heavy, fonll, intrinsic
 
 
 class Combiner:

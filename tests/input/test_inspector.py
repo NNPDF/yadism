@@ -6,7 +6,7 @@ import copy
 
 import pytest
 
-from yadism.input import inspector, errors
+from yadism.input import errors, inspector
 
 
 # @pytest.mark.skip

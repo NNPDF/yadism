@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-
-from . import f3_nc
 from .. import partonic_channel as pc
-
-from . import nnlo
+from ..partonic_channel import RSL
+from . import f3_nc, nnlo
 
 
 class NonSinglet(f3_nc.NonSinglet):
@@ -12,16 +10,9 @@ class NonSinglet(f3_nc.NonSinglet):
         |ref| implements :eqref:`2.9`, :cite:`vogt-f2lcc`.
         """
 
-        def reg(z):
-            return nnlo.xc3ns2p.c3nm2a(z, self.nf)
-
-        def sing(z):
-            return nnlo.xc3ns2p.c3ns2b(z, self.nf)
-
-        def loc(x):
-            return nnlo.xc3ns2p.c3nm2c(x, self.nf)
-
-        return reg, sing, loc
+        return RSL(
+            nnlo.xc3ns2p.c3nm2a, nnlo.xc3ns2p.c3ns2b, nnlo.xc3ns2p.c3nm2c, [self.nf]
+        )
 
 
 class Gluon(pc.EmptyPartonicChannel):

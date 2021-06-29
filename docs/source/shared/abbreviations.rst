@@ -11,9 +11,12 @@
 .. |EW| replace::
    :abbr:`EW (ElectroWeak)`
 
+.. |QCD| replace::
+   :abbr:`QCD (Quantum Chromo Dynamics)`
+
 .. |DGLAP| replace::
    :abbr:`DGLAP (Dokshitzer-Gribov-Lipatov-Altarelli-Parisi)`
-   
+
 .. |PDF| replace::
    :abbr:`PDF (Parton Distribution Function(s))`
 
@@ -119,9 +122,17 @@
 
    <a href="https://github.com/N3PDF/external/tree/master/xspace-bench"><abbr title="Xspace Benchmark">xspace-bench</abbr></a>
 
+.. |eko| raw:: html
+
+   <a href="http://eko.readthedocs.io/"><abbr title="Evolutionary Kernel Operators">eko</abbr></a>
+
 .. |banana| raw:: html
 
-   <a href="https://n3pdf.github.io/banana/stable/"><abbr title="Benchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
+   <a href="http://banana-hep.readthedocs.io/"><abbr title="Benchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
+
+.. |banana-tools| raw:: html
+
+   <a href="https://banana-hep.readthedocs.io/en/latest/tools.html">banana tools</a>
 
 .. |lhapdf| raw:: html
 
