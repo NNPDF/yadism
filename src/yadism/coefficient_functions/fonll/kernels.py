@@ -87,7 +87,7 @@ def generate_heavy_diff(esf, nl):
     # m2hq = esf.sf.m2hq[ihq - 4]
     # but will be done at the proper threshold
     fonll_cfs = import_pc_module(kind, esf.process)
-    mu2hq = esf.sf.threshold.areas[ihq - 4].q2_max
+    mu2hq = esf.sf.threshold.area_walls[ihq - 3]
     asys = []
     if esf.process == "CC":
         wa = kernels.cc_weights(
@@ -124,7 +124,7 @@ def generate_heavy_intrinsic_diff(esf, nl):
     ihq = nl + 1
     m2hq = esf.sf.m2hq[ihq - 4]
     # matching scale
-    mu2hq = esf.sf.threshold.areas[ihq - 4].q2_max
+    mu2hq = esf.sf.threshold.area_walls[ihq - 3]
     if esf.process == "CC":
         w = kernels.cc_weights(
             esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], ihq
