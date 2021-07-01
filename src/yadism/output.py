@@ -137,13 +137,6 @@ class Output(dict):
         params.set_x_min(interpolation_xgrid[0])
         params.set_x_order(interpolation_polynomial_degree)
 
-        extra = pineappl.subgrid.ExtraSubgridParams()
-        extra.set_reweight2(False)
-        extra.set_x2_bins(1)
-        extra.set_x2_max(1.0)
-        extra.set_x2_min(1.0)
-        extra.set_x2_order(0)
-
         grid = pineappl.grid.Grid.create(lumi_entries, orders, bin_limits, params)
         limits = []
 
@@ -155,22 +148,17 @@ class Output(dict):
             limits.append((x, x))
             limits.append((Q2, Q2))
 
-            params.set_q2_bins(1)
-            params.set_q2_max(Q2)
-            params.set_q2_min(Q2)
-            params.set_q2_order(0)
             # add all orders
             for o, (v, _e) in obs.orders.items():
                 order_index = list(first_esf_result.orders.keys()).index(o)
                 prefactor = ((1.0 / (4.0 * np.pi)) ** o[0]) * ((-1.0) ** o[3])
                 # add for each pid/lumi
                 for pid_index, pid_values in enumerate(v):
-                    pid_values = list(reversed(prefactor * pid_values))
+                    pid_values = prefactor * pid_values
                     # grid is empty? skip
                     if not any(np.array(pid_values) != 0):
                         continue
-                    subgrid = pineappl.lagrange_subgrid.LagrangeSubgridV2(params, extra)
-                    subgrid.write_q2_slice(0, pid_values)
+                    subgrid = pineappl.import_only_subgrid.ImportOnlySubgridV1(pid_values[np.newaxis, :, np.newaxis], [Q2], interpolation_xgrid, [1.0])
                     grid.set_subgrid(order_index, bin_, pid_index, subgrid)
         # set the correct observables
         normalizations = [1.0] * bins
