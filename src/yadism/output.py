@@ -11,6 +11,30 @@ from .esf.result import ESFResult
 from .input import compatibility
 
 
+class MaskedPDF:
+    """
+    Mask some pids of a PDF set to be 0.
+
+    Parameters
+    ----------
+        lhapdf_like : callable
+            object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
+            and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
+        active_pids : list(int)
+            active PIDs
+    """
+
+    def __init__(self, lhapdf_like, active_pids):
+        self.parent = lhapdf_like
+        self.active_pids = active_pids
+
+    def __getattr__(self, name):
+        return self.parent.__getattribute__(name)
+
+    def xfxQ2(self, pid, x, Q2):
+        return self.parent.xfxQ2(pid, x, Q2) if pid in self.active_pids else 0.0
+
+
 class Output(dict):
     """
     Wrapper for the output to help with application
@@ -20,9 +44,39 @@ class Output(dict):
     theory = None
 
     def apply_pdf(self, lhapdf_like):
+        r"""
+        Compute all observables for the given PDF.
+
+        Parameters
+        ----------
+            lhapdf_like : object
+                object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
+                and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
+
+        Returns
+        -------
+            ret : PDFOutput
+                output dictionary with all structure functions for all x, Q2, result and error
+        """
         return self.apply_pdf_theory(lhapdf_like, self.theory)
 
     def apply_pdf_theory(self, lhapdf_like, theory):
+        r"""
+        Compute all observables for the given PDF.
+
+        Parameters
+        ----------
+            lhapdf_like : object
+                object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
+                and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
+            theory : dict
+                theory dictionary
+
+        Returns
+        -------
+            ret : PDFOutput
+                output dictionary with all structure functions for all x, Q2, result and error
+        """
         new_theory, _ = compatibility.update(theory, dict(TargetDIS="proton"))
         sc = strong_coupling.StrongCoupling.from_dict(new_theory)
         alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
@@ -44,7 +98,12 @@ class Output(dict):
                 and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
             alpha_s : callable
                 alpha_s(muR)
-
+            alpha_qed : callable
+                alpha_qed
+            xiR : float
+                ratio renormalization scale to virtuality (linear!)
+            xiF : float
+                ratio factorization scale to virtuality (linear!)
 
         Returns
         -------
@@ -158,7 +217,12 @@ class Output(dict):
                     # grid is empty? skip
                     if not any(np.array(pid_values) != 0):
                         continue
-                    subgrid = pineappl.import_only_subgrid.ImportOnlySubgridV1(pid_values[np.newaxis, :, np.newaxis], [Q2], interpolation_xgrid, [1.0])
+                    subgrid = pineappl.import_only_subgrid.ImportOnlySubgridV1(
+                        pid_values[np.newaxis, :, np.newaxis],
+                        [Q2],
+                        interpolation_xgrid,
+                        [1.0],
+                    )
                     grid.set_subgrid(order_index, bin_, pid_index, subgrid)
         # set the correct observables
         normalizations = [1.0] * bins
