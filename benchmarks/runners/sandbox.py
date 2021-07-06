@@ -9,6 +9,7 @@ from banana.data import cartesian_product
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
 
+
 class Sandbox(Runner):
 
     # external comparison program
@@ -77,7 +78,7 @@ class Sandbox(Runner):
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
         self.run([
                 #{"PTO": 0},
-                {"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9909},
+                {"PTO": 2, "XIF": 2, "XIR": 1, "mb": 4.9909},
                 #{"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
                 #{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
@@ -85,8 +86,8 @@ class Sandbox(Runner):
             ], self.generate_observables(), [
                 #"dbaronly",
                 #"gonly",
-                #"toygonly",
-                "toyantichsing",
+                "toygonly",
+                #"toyantichsing",
                 #"toyt3only",
                 #"conly",
                 #"ToyLH",

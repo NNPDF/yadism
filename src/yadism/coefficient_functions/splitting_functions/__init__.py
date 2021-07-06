@@ -34,7 +34,12 @@ def c110(lab, matrices, nf):
 
 
 def c211(lab, matrices, nf):
-    return matrices[lab, nf] - beta.beta_0(nf) * np.eye(matrices[lab, nf].shape[0])
+    # add -beta0 * identity
+    # where identity is both in interpolation and channel space
+    b0 = -beta.beta_0(nf) * np.eye(matrices[lab, nf].shape[0])
+    if lab in ["P_gq_0", "P_qg_0"]:
+        b0 = np.zeros_like(matrices[lab, nf])
+    return matrices[lab, nf] + b0
 
 
 def c220ns(matrices, nf):
