@@ -71,7 +71,8 @@ class ESFResult:
             raise ValueError("Q2 is not set!")
 
         # factorization scale
-        muF2 = self.Q2 * xiF ** 2
+        # muF2 = self.Q2 * xiF ** 2
+        muF2 = self.Q2
         pdfs = np.zeros((len(pids), len(xgrid)))
         for j, pid in enumerate(pids):
             if not lhapdf_like.hasFlavor(pid):
@@ -82,7 +83,8 @@ class ESFResult:
         res = 0
         err = 0
         # join elements
-        a_s = alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)
+        # a_s = alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)
+        a_s = alpha_s(np.sqrt(self.Q2)) / (4 * np.pi)
         alph_qed = alpha_qed(np.sqrt(self.Q2) * xiR)
         for o, (v, e) in self.orders.items():
             lnF = 1.0 if o[3] == 0 else (np.log((1 / xiF) ** 2)) ** o[3]
