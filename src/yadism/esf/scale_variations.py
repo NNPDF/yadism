@@ -142,15 +142,17 @@ class ScaleVariations:
         fmatrices = self.fact_matrices(nf)
         projectors = br.ad_projectors(nf)
         # join everything together
-        ker_sv = {}
-        for (o, oqed, _, _), ker in ker_orders.items():
+        added_ker_sv = []
+        for (o, oqed, _, _), ker in ker_orders:
             partons_proj = ker[0][:, 0] @ projectors
             for (target, lnf, src), fmat in fmatrices.items():
                 if src == o:
                     val_sv = fmat @ ker[1][0]
                     err_sv = fmat @ ker[2][0]
-                    ker_sv[(target, oqed, 0, lnf)] = (partons_proj.T, val_sv, err_sv)
-        return ker_sv
+                    added_ker_sv.append(
+                        ((target, oqed, 0, lnf), (partons_proj.T, val_sv, err_sv))
+                    )
+        return added_ker_sv
 
     def apply_diff_scale_variations(self, ker_orders, nf):
         """
@@ -170,13 +172,21 @@ class ScaleVariations:
         """
         ren_coeffs = self.ren_coeffs(nf)
         # join everything together
-        ker_sv = {}
-        for (o, oqed, _, lnf), ker in ker_orders.items():
+        added_ker_sv = []
+        for (o, oqed, _, lnf), ker in ker_orders:
+            # TODO: APFEL is wrong - fix it temporarily here
+            if (o, lnf) == (1, 1):
+                continue
             for (target, lnf2r, src), rcoeff in ren_coeffs.items():
                 if src == o:
-                    ker_sv[(target, oqed, lnf2r, lnf)] = (
-                        rcoeff * ker[0],
-                        ker[1],
-                        ker[2],
+                    added_ker_sv.append(
+                        (
+                            (target, oqed, lnf2r, lnf),
+                            (
+                                rcoeff * ker[0],
+                                ker[1],
+                                ker[2],
+                            ),
+                        )
                     )
-        return ker_sv
+        return added_ker_sv

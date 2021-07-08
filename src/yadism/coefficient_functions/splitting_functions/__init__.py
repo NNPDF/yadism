@@ -39,8 +39,7 @@ def c211(lab, matrices, nf):
     beta0 = beta.beta_0(nf) * np.eye(matrices[lab, nf].shape[0])
     if lab in ["P_gq_0", "P_qg_0"]:
         beta0 = np.zeros_like(matrices[lab, nf])
-    # return matrices[lab, nf] - beta0
-    return -beta0
+    return matrices[lab, nf] - beta0
 
 
 def c220ns(matrices, nf):
@@ -49,39 +48,40 @@ def c220ns(matrices, nf):
 
 def c220(labs, matrices, nf):
     return 0.5 * (
-        sum([matrices[lab, nf] for lab in labs[0]])
-        - beta.beta_0(nf) * matrices[labs[1], nf]
+        # sum([matrices[lab, nf] for lab in labs[0]])
+        -beta.beta_0(nf)
+        * matrices[labs[1], nf]
     )
 
 
 def sector_mapping(order, matrices, nf):
     smap = {}
-    # if order >= 1:
-    #     smap.update({(1, 1, 0): joint_lo(c110, matrices, nf, add_gluonic=False)})
+    if order >= 1:
+        smap.update({(1, 1, 0): joint_lo(c110, matrices, nf, add_gluonic=False)})
     if order >= 2:
         smap.update(
             {
-                # (2, 1, 0): {
-                #     "NS_p": matrices["P_nsp_1", nf],
-                #     "NS_m": matrices["P_nsm_1", nf],
-                #     "NS_v": matrices["P_nsm_1", nf],
-                #     "S_qq": matrices["P_qq_1", nf],
-                #     "S_qg": matrices["P_qg_1", nf],
-                #     **empty_gluon(matrices, nf),
-                # },
+                (2, 1, 0): {
+                    "NS_p": matrices["P_nsp_1", nf],
+                    "NS_m": matrices["P_nsm_1", nf],
+                    "NS_v": matrices["P_nsm_1", nf],
+                    "S_qq": matrices["P_qq_1", nf],
+                    "S_qg": np.zeros_like(matrices["P_qg_1", nf]),
+                    **empty_gluon(matrices, nf),
+                },
                 (2, 1, 1): joint_lo(c211, matrices, nf),
-                # (2, 2, 0): {
-                #     "NS_p": c220ns(matrices, nf),
-                #     "NS_m": c220ns(matrices, nf),
-                #     "NS_v": c220ns(matrices, nf),
-                #     "S_qq": c220(
-                #         (("P_qq_0^2", "P_qg_0P_gq_0"), "P_qq_0"), matrices, nf
-                #     ),
-                #     "S_qg": c220(
-                #         (("P_qq_0P_qg_0", "P_qg_0P_gg_0"), "P_qg_0"), matrices, nf
-                #     ),
-                #     **empty_gluon(matrices, nf),
-                # },
+                (2, 2, 0): {
+                    "NS_p": c220ns(matrices, nf),
+                    "NS_m": c220ns(matrices, nf),
+                    "NS_v": c220ns(matrices, nf),
+                    "S_qq": c220(
+                        (("P_qq_0^2", "P_qg_0P_gq_0"), "P_qq_0"), matrices, nf
+                    ),
+                    "S_qg": c220(
+                        (("P_qq_0P_qg_0", "P_qg_0P_gg_0"), "P_qg_0"), matrices, nf
+                    ),
+                    **empty_gluon(matrices, nf),
+                },
             }
         )
     return smap

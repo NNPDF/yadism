@@ -13,10 +13,10 @@ from yadmark.data import observables
 class Sandbox(Runner):
 
     # external comparison program
-    # external = "APFEL"
+    external = "APFEL"
     #external = "xspace_bench"
     #external = "QCDNUM"
-    external = "void"
+    #external = "void"
 
     # alphas_from_lhapdf = True
 
@@ -32,7 +32,7 @@ class Sandbox(Runner):
             [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)]
         )
         kinematics.extend(
-            [dict(x=x, Q2=1.6**2, y=0) for x in np.geomspace(1e-4, .9, 10)]
+            [dict(x=x, Q2=1.52**2, y=0) for x in np.geomspace(1e-4, .9, 10)]
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
         #kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
@@ -65,7 +65,7 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #  update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
@@ -78,7 +78,8 @@ class Sandbox(Runner):
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
         self.run([
                 #{"PTO": 0},
-                {"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9909},
+                #{"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9908},
+                {"PTO": 2, "XIF": 2, "XIR": 1, "mb": 4.9912},
                 #{"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
                 #{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
