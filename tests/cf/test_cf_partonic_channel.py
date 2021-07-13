@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 import scipy.integrate
 
-from yadism.coefficient_functions.heavy import partonic_channel as pc
+from yadism.coefficient_functions import partonic_channel as pc
+from yadism.coefficient_functions.heavy import partonic_channel as pcheavy
 
 M2hq = 1.0
 
@@ -24,8 +25,10 @@ class TestNeutralCurrentBase:
 
         for Q2 in [0.1, 1000]:
             x = 0.5
-            pch = pc.NeutralCurrentBase(MockESF(x, Q2), m2hq=M2hq)
-            assert pch.decorator(lambda: Q2)() == np.heaviside(Q2 - M2hq, Q2) * Q2
+            pch = pcheavy.NeutralCurrentBase(MockESF(x, Q2), 3, m2hq=M2hq)
+            assert pch.decorator(lambda: pc.RSL(Q2))().reg == (
+                Q2 if Q2 > M2hq else None
+            )
 
 
 class TestPartonicChannel:
@@ -36,7 +39,7 @@ class TestPartonicChannel:
 
         for Q2 in np.geomspace(1, 100, 3):
             for x in np.geomspace(1e-3, 0.99, 4):
-                pch = pc.ChargedCurrentNonSinglet(MockESF(x, Q2), m2hq=M2hq)
+                pch = pcheavy.ChargedCurrentNonSinglet(MockESF(x, Q2), 4, m2hq=M2hq)
                 res, err = scipy.integrate.quad(r_kernel, 0, x, args=(Q2,))
                 assert pytest.approx(pch.r_integral(x), 1e-8, err) == res
 
@@ -45,21 +48,21 @@ class TestPartonicChannel:
         # TODO: Think a more brilliant test!
         Q2 = 1
         x = 0.5
-        pch = pc.ChargedCurrentNonSinglet(MockESF(x, Q2), m2hq=M2hq)
+        pch = pcheavy.ChargedCurrentNonSinglet(MockESF(x, Q2), 5, m2hq=M2hq)
         b1 = lambda x: 1
         b2 = lambda x: 1
         a = 1
-        reg, sing, loc = pch.h_q(a, b1, b2)
+        rsl = pch.h_q(a, b1, b2)
 
-        assert reg(x) != 0.0
-        assert sing(x) != 0.0
-        assert loc(x) != 0.0
+        assert rsl.reg(x, [3]) != 0.0
+        assert rsl.sing(x, [3]) != 0.0
+        assert rsl.loc(x, [3]) != 0.0
 
     def test_h_g(self):
 
         # TODO: Think a more brilliant test!
         Q2 = 1
         x = 0.5
-        pch = pc.ChargedCurrentGluon(MockESF(x, Q2), m2hq=M2hq)
+        pch = pcheavy.ChargedCurrentGluon(MockESF(x, Q2), 6, m2hq=M2hq)
         cs = [1, 2, 3, 4]
         assert pch.h_g(x, cs) != 0.0
