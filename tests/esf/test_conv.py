@@ -12,7 +12,7 @@ from yadism.esf import conv
 
 
 # @pytest.mark.quick_check
-# @pytest.mark.skip
+@pytest.mark.skip
 class TestInit:
     def test_init_zero(self):
         d_vecs = [
@@ -94,7 +94,7 @@ class TestInit:
 
 
 # @pytest.mark.quick_check
-# @pytest.mark.skip
+@pytest.mark.skip
 class TestSpecial:
     def test_rsl_from_distr_coeffs(self):
         regular = [lambda x: x]
@@ -224,6 +224,7 @@ class TestSpecial:
 
 
 @pytest.mark.quick_check
+@pytest.mark.skip
 class TestConvnd:
     @staticmethod
     def against_known_grid(xs, f, coeff, res):
@@ -399,7 +400,7 @@ class TestConvnd:
 
 
 # @pytest.mark.quick_check
-# @pytest.mark.skip
+@pytest.mark.skip
 class Test_operations:
     def test_add_d_vec(self):
         vecs = [

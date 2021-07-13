@@ -31,6 +31,7 @@ class TestESFResult:
                     errors=np.random.rand(2, 2),
                 )
             ],
+            nf=3,
         )
         r = ESFResult.from_document(d)
         assert len(list(r.orders.values())[0]) == len(d["orders"][0]["values"])
@@ -40,6 +41,7 @@ class TestESFResult:
             x=0.5,
             Q2=10,
             orders={lo: (np.random.rand(2, 2), np.random.rand(2, 2))},
+            nf=4,
         )
 
         ra = ESFResult(**a)
@@ -54,7 +56,7 @@ class TestESFResult:
 
     def test_mul(self):
         v, e = np.random.rand(2, 2, 2)
-        r = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (v, e)}))
+        r = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (v, e)}, nf=5))
         for x in [2.0, (2.0, 0.0)]:
             rm = r * x
             np.testing.assert_allclose(rm.orders[lo][0], 2.0 * v)
@@ -72,12 +74,12 @@ class TestESFResult:
 
     def test_add(self):
         va, vb, ea, eb = np.random.rand(4, 2, 2)
-        ra = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (va, ea)}))
-        rb = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (vb, eb)}))
+        ra = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (va, ea)}, nf=6))
+        rb = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (vb, eb)}, nf=3))
         radd = ra + rb
         np.testing.assert_allclose(radd.orders[lo][0], va + vb)
         np.testing.assert_allclose(radd.orders[lo][1], ea + eb)
-        raa = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (va, ea)}))
+        raa = ESFResult(**dict(x=0.1, Q2=10, orders={lo: (va, ea)}, nf=5))
         r2a = ra + raa
         np.testing.assert_allclose(r2a.orders[lo][0], 2.0 * va)
         np.testing.assert_allclose(r2a.orders[lo][1], 2.0 * ea)
@@ -85,7 +87,9 @@ class TestESFResult:
     def test_apply_pdf(self):
         # test Q2 values
         for Q2 in [1, 10, 100]:
-            a = dict(x=0.5, Q2=Q2, orders={lo: ([[1, 0], [0, 1]], [[1, 0], [0, 1]])})
+            a = dict(
+                x=0.5, Q2=Q2, orders={lo: ([[1, 0], [0, 1]], [[1, 0], [0, 1]])}, nf=6
+            )
             # plain
             ra = ESFResult(**a)
             pra = ra.apply_pdf(
@@ -117,7 +121,9 @@ class TestESFResult:
 
         # errors
         with pytest.raises(ValueError, match=r"Q2"):
-            a = dict(x=0.5, Q2="bla", orders={lo: ([[1, 0], [0, 1]], [[1, 0], [0, 1]])})
+            a = dict(
+                x=0.5, Q2="bla", orders={lo: ([[1, 0], [0, 1]], [[1, 0], [0, 1]])}, nf=3
+            )
 
             ra = ESFResult(**a)
             ra.apply_pdf(
