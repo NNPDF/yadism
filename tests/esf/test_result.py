@@ -4,7 +4,7 @@ import copy
 import numpy as np
 import pytest
 
-from yadism.esf.esf_result import ESFResult
+from yadism.esf.result import ESFResult
 
 lo = (0, 0, 0, 0)
 

@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 from eko.interpolation import InterpolatorDispatcher
 
-import yadism.esf.distribution_vec as conv
+from yadism.esf import conv
 
 
 # @pytest.mark.quick_check
