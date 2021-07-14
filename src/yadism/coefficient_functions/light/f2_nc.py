@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-import numpy as np
-
-from eko import constants
-
-from . import partonic_channel as pc
-
 from .. import splitting_functions as split
-from ...esf.distribution_vec import rsl_from_distr_coeffs
+from ..partonic_channel import RSL
+from . import nlo, nnlo
+from . import partonic_channel as pc
 
 
 class NonSinglet(pc.LightBase):
@@ -17,38 +13,26 @@ class NonSinglet(pc.LightBase):
         """
 
         # leading order is just a delta function
-        return 0.0, 0.0, 1.0
+        return RSL.from_delta(1.0)
 
-    def NLO(self):
+    @staticmethod
+    def NLO():
         """
         |ref| implements :eqref:`4.3`, :cite:`vogt-f2nc`.
         """
-        CF = constants.CF
-        zeta_2 = np.pi ** 2 / 6.0
 
-        def reg(z, CF=CF):
-            # fmt: off
-            return CF*(
-                - 2 * (1 + z) * np.log((1 - z) / z)
-                - 4 * np.log(z) / (1 - z)
-                + 6 + 4 * z
-            )
-            # fmt: on
+        return RSL.from_distr_coeffs(
+            nlo.f2.ns_reg, (nlo.f2.ns_delta, nlo.f2.ns_omx, nlo.f2.ns_logomx)
+        )
 
-        delta = -CF * (9 + 4 * zeta_2)
-
-        omx = -3 * CF
-
-        logomx = 4 * CF
-
-        return rsl_from_distr_coeffs(reg, delta, omx, logomx)
-
-    def NLO_fact(self):
+    def NNLO(self):
         """
-        |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
+        |ref| implements :eqref:`4.8`, :cite:`vogt-f2nc`.
         """
 
-        return split.pqq_reg, split.pqq_sing, split.pqq_local
+        return RSL(
+            nnlo.xc2ns2p.c2nn2a, nnlo.xc2ns2p.c2ns2b, nnlo.xc2ns2p.c2nn2c, [self.nf]
+        )
 
 
 class Gluon(pc.LightBase):
@@ -58,35 +42,26 @@ class Gluon(pc.LightBase):
 
         Note
         ----
-        2 * n_f here and in NLO_fact is coming from momentum sum
+        2 * n_f is coming from momentum sum
         rule q_i -> {q_i, g} but g -> {g, q_i, \bar{q_i} forall i}, so
         the 2 * n_f is needed to compensate for all the number of flavours
         plus antiflavours in which the gluon can go.
         """
 
-        def reg(z, nf=self.nf):
-            return (
-                nf
-                * (
-                    (2.0 - 4.0 * z * (1.0 - z)) * np.log((1.0 - z) / z)
-                    - 2.0
-                    + 16.0 * z * (1.0 - z)
-                )
-                * (2.0 * constants.TR)
-            )
+        return RSL(nlo.f2.gluon_reg, args=[self.nf])
 
-        return reg
-
-    def NLO_fact(self):
+    def NNLO(self):
         """
-        |ref| implements :eqref:`2.17`, :cite:`vogt-sv`.
+        |ref| implements :eqref:`4.10`, :cite:`vogt-f2nc`.
         """
 
-        def cg(z, nf=self.nf):
-            return 2.0 * nf * split.pqg(z)
-
-        return cg
+        return RSL(nnlo.xc2sg2p.c2g2a, loc=nnlo.xc2sg2p.c2g2c, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
-    pass
+    def NNLO(self):
+        """
+        |ref| implements :eqref:`4.9`, :cite:`vogt-f2nc`.
+        """
+
+        return RSL(nnlo.xc2sg2p.c2s2a, args=[self.nf])

@@ -7,6 +7,7 @@ from collections.abc import Iterable
 
 # import pytest
 import numpy as np
+
 import yadism
 
 # import yadism.runner as Runner

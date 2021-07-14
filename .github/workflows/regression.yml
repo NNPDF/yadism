@@ -33,7 +33,7 @@ jobs:
       - name: Prepare Test environment
         run: |
           # install packages needed for testing
-          pip install -r test_requirements.txt
+          pip install -r dev_requirements.txt
           # move db
           head --bytes=20 benchmarks/storage/*
           mv benchmarks/storage/regression.json benchmarks/data/

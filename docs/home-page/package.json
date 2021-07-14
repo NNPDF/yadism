@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "bulma": "^0.9.0",
-    "dart-sass": "^1.25.0"
-  },
-  "license": "UNLICENSED"
-}

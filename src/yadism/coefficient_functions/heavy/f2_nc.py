@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+from ..partonic_channel import RSL
 from . import partonic_channel as pc
 
 
@@ -10,7 +11,7 @@ class GluonVV(pc.NeutralCurrentBase):
         |ref| implements :eqref:`D.1`, :cite:`felix-thesis`.
         """
 
-        def cg(z):
+        def cg(z, args):
             if self.is_below_threshold(z):
                 return 0.0
             # fmt: off
@@ -31,7 +32,7 @@ class GluonVV(pc.NeutralCurrentBase):
                 )) / z
             # fmt: on
 
-        return cg
+        return RSL(cg)
 
 
 class GluonAA(GluonVV):
@@ -42,11 +43,11 @@ class GluonAA(GluonVV):
 
         VV = super().NLO()
 
-        def cg(z, VV=VV):
+        def cg(z, args):
             if self.is_below_threshold(z):
                 return 0.0
-            return VV(z) + self._FHprefactor * np.pi / 2.0 * (
+            return VV.reg(z, args) + self._FHprefactor * np.pi / 2.0 * (
                 self._rho_p(z) * self._rho_q * np.log(self._chi(z))
             )
 
-        return cg
+        return RSL(cg)

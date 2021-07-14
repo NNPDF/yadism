@@ -18,5 +18,3 @@
   - compile `f(1)`
   - compile `f("1")` again
   - compile `f(1.)` again
-
-

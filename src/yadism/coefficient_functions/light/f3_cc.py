@@ -1,23 +1,18 @@
 # -*- coding: utf-8 -*-
-from eko import constants
-
-from . import f2_cc
 from .. import partonic_channel as pc
+from ..partonic_channel import RSL
+from . import f3_nc, nnlo
 
 
-class NonSinglet(f2_cc.NonSinglet):
-    def NLO(self):
+class NonSinglet(f3_nc.NonSinglet):
+    def NNLO(self):
         """
-        |ref| implements :eqref:`155`, :cite:`moch-f3nc`.
+        |ref| implements :eqref:`2.9`, :cite:`vogt-f2lcc`.
         """
-        CF = constants.CF
 
-        reg_f2, sing, loc = super().NLO()
-
-        def reg(z, CF=CF):
-            return reg_f2(z) - 2 * CF * (1 + z)
-
-        return reg, sing, loc
+        return RSL(
+            nnlo.xc3ns2p.c3nm2a, nnlo.xc3ns2p.c3ns2b, nnlo.xc3ns2p.c3nm2c, [self.nf]
+        )
 
 
 class Gluon(pc.EmptyPartonicChannel):

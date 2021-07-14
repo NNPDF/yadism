@@ -46,6 +46,22 @@ class Kernel:
         self.partons = partons
         self.coeff = coeff
 
+    @property
+    def channel(self):
+        cls = str(type(self.coeff)).split("'")[1].split(".")[-1]
+
+        # TODO: remove AsyQuark for AsyNonSinglet
+        if "NonSinglet" in cls or "Quark" in cls:
+            return "non-singlet"
+        elif "Singlet" in cls:
+            return "singlet"
+        elif "Gluon" in cls:
+            return "gluon"
+        elif any([x in cls for x in ["Splus", "Sminus", "Rplus", "Rminus"]]):
+            return "intrinsic"
+        else:
+            raise ValueError(f"Class '{cls}' does not correspond to a known channel")
+
     def __repr__(self):
         return repr({"partons": self.partons, "coeff": self.coeff})
 
@@ -101,7 +117,8 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
     for q in range(1, min(nf + 2, 6 + 1)):
         sign = 1 if q % 2 == rest else -1
         w = coupling_constants.get_weight(q, Q2, None, cc_mask=cc_mask)
-        # the heavy quark can *NOT* be in the input
+        # the heavy quark can not be in the input
+        # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
             weights["ns"][sign * q] = w if kind != "F3" else sign * w
@@ -111,4 +128,8 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
     if rest == 0 and kind == "F3":
         tot_ch_sq *= -1
     weights["g"][21] = tot_ch_sq / norm / 2
+    # add singlet
+    for q in weights["ns"]:
+        weights["s"][q] = tot_ch_sq / norm / 2
+        weights["s"][-q] = tot_ch_sq / norm / 2
     return weights

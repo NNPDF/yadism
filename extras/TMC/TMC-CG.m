@@ -20,6 +20,3 @@
 (* ::Input:: *)
 (*Series[fLs[x,\[Rho]],{\[Rho],0,1}]*)
 (*Series[fLa[x,\[Rho]],{\[Rho],0,1}]*)
-
-
-

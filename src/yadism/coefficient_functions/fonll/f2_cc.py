@@ -2,58 +2,38 @@
 
 import numpy as np
 
-from eko import constants
-
-from . import partonic_channel as pc
 from .. import splitting_functions as split
-from ...esf.distribution_vec import rsl_from_distr_coeffs
+from ..intrinsic import f2_cc as intrinsic
+from ..light import f2_cc as light
+from ..partonic_channel import RSL
+from . import partonic_channel as pc
 
 
-class AsyQuark(pc.PartonicChannelAsy):
-    # TODO inherit from light
-    def LO(self):
-        return 0.0, 0.0, 1.0
-
-    def NLO(self):
-        CF = constants.CF
-        as_norm = 2.0
-        zeta_2 = np.pi ** 2 / 6.0
-
-        def reg(z):
-            return (
-                CF
-                * (
-                    -(1.0 + z ** 2) / (1.0 - z) * np.log(z)
-                    - (1.0 + z) * np.log(1.0 - z)
-                    + (3.0 + 2.0 * z)
-                )
-                * as_norm
-            )
-
-        delta = -CF * (9.0 / 2.0 + 2.0 * zeta_2) * as_norm
-
-        omz_pd = -CF * 3.0 / 2.0 * as_norm
-
-        log_pd = 2.0 * CF * as_norm
-
-        return rsl_from_distr_coeffs(reg, delta, omz_pd, log_pd)
-
-    def NLO_fact(self):
-        return split.pqq_reg, split.pqq_sing, split.pqq_local
+class AsyQuark(pc.PartonicChannelAsy, light.NonSinglet):
+    def NNLO(self):
+        # silence NNLO since heavy NNLO still not available
+        return RSL()
 
 
 class AsyGluon(pc.PartonicChannelAsy):
     def NLO(self):
         as_norm = 2.0
 
-        def reg(z, L=self.L):
+        def reg(z, _args):
+            L = self.L
             return (
-                (split.pqg(z) / 2.0) * (2.0 * np.log((1.0 - z) / z) + L)
+                (split.lo.pqg_single(z, np.array([], dtype=float)) / 2.0)
+                * (2.0 * np.log((1.0 - z) / z) + L)
                 + 8.0 * z * (1.0 - z)
                 - 1.0
             ) * as_norm
 
-        return reg
+        return RSL(reg)
 
-    def NLO_fact(self):
-        return split.pqg
+
+class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):
+    ffns = intrinsic.Splus
+
+
+class MatchingGluonSplus(pc.FMatchingGluonCC):
+    ffns = intrinsic.Splus

@@ -31,13 +31,13 @@ def generate(esf, nf):
             esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[nf], nf
         )
         return (
-            kernels.Kernel(w["ns"], pcs.NonSinglet(esf, m2hq=m2hq)),
-            kernels.Kernel(w["g"], pcs.Gluon(esf, m2hq=m2hq)),
+            kernels.Kernel(w["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),
+            kernels.Kernel(w["g"], pcs.Gluon(esf, nf, m2hq=m2hq)),
         )
     else:
         weights = nc_weights(esf.sf.coupling_constants, esf.Q2, kind, nf)
-        gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, m2hq=m2hq))
-        gAA = kernels.Kernel(weights["gAA"], pcs.GluonAA(esf, m2hq=m2hq))
+        gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq))
+        gAA = kernels.Kernel(weights["gAA"], pcs.GluonAA(esf, nf, m2hq=m2hq))
         return (gVV, gAA)
 
 

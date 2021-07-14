@@ -2,17 +2,17 @@
 
 from eko import constants
 
-from . import partonic_channel as pc
-
 from ..intrinsic import fl_nc
+from ..partonic_channel import RSL
+from . import partonic_channel as pc
 
 
 class AsyGluonVV(pc.PartonicChannelAsy):
     def NLO(self):
-        def cg(z):
+        def cg(z, args):
             return constants.TR * (16 * z * (1 - z))
 
-        return cg
+        return RSL(cg)
 
 
 class AsyGluonAA(AsyGluonVV):

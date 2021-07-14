@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
 from eko import constants
 
-from .. import splitting_functions as split
 from .. import partonic_channel as pc
+from .. import splitting_functions as split
+from ..partonic_channel import RSL
 
 
 class PartonicChannelAsy(pc.PartonicChannel):
-    def __init__(self, esf, mu2hq):
-        super().__init__(esf)
-        self.L = np.log(esf.Q2 / mu2hq)
+    def __init__(self, *args, mu2hq):
+        super().__init__(*args)
+        self.L = np.log(self.ESF.Q2 / mu2hq)
 
 
 class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
-    def __init__(self, ESF, m1sq, m2sq):
-        super().__init__(ESF)
+    def __init__(self, *args, m1sq, m2sq):
+        super().__init__(*args)
         self.Q2 = self.ESF.Q2
         self.x = self.ESF.x
         self.m1sq = m1sq
@@ -33,25 +33,31 @@ class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
 
 
 class FMatching(PartonicChannelAsyIntrinsic):
-    ffns = lambda *_args: None
+    ffns = lambda *_args, m1sq, m2sq: None
 
-    def __init__(self, ESF, m1sq, m2sq, mu2hq):
-        super().__init__(ESF, m1sq, m2sq)
+    def __init__(self, *args, m1sq, m2sq, mu2hq):
+        super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
         self.l = np.log(self.Q2 / mu2hq)
+
+    def obj(self):
+        return self.ffns(self.ESF, self.nf, m1sq=self.m1sq, m2sq=self.m2sq)
+
+    def parent_lo_local(self):
+        parent_LO = self.obj().LO()
+        if parent_LO is None:
+            return None
+        return parent_LO.args["loc"][0]
 
 
 class FMatchingQuark(FMatching):
     def NLO(self):
-        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
-        parent_LO = obj.LO()
-        try:
-            _, _, icl = parent_LO
-        except TypeError:
-            return parent_LO
+        icl = self.parent_lo_local()
+        if icl is None:
+            return None
         asnorm = 2.0
         l = self.l
 
-        def sing(z):
+        def sing(z, _args):
             # this coefficient function is *almost* proportional to P_qq
             # i.e. 2CF * (1.0 + z ** 2) / (1.0 - z) is the "bare" P_qq
             return (
@@ -63,7 +69,7 @@ class FMatchingQuark(FMatching):
 
         # MMa:
         # FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}] # pylint: disable=line-too-long
-        def loc(x):
+        def loc(x, _args):
             return (
                 -asnorm
                 * icl
@@ -75,26 +81,21 @@ class FMatchingQuark(FMatching):
                 )
             )
 
-        return 0, sing, loc
+        return RSL(sing=sing, loc=loc)
 
-    def NLO_fact(self):
-        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
-        parent_LO = obj.LO()
-        try:
-            _, _, icl = parent_LO
-        except TypeError:
-            return parent_LO
 
-        def reg(z):
-            return -icl * split.pqq_reg(z)
+class FMatchingCC(FMatching):
+    ffns = lambda *_args, m1sq: None
 
-        def sing(z):
-            return -icl * split.pqq_sing(z)
+    def __init__(self, *args, m1sq, mu2hq):
+        super().__init__(*args, m1sq=m1sq, m2sq=0.0, mu2hq=mu2hq)
 
-        def local(x):
-            return -icl * split.pqq_local(x)
+    def obj(self):
+        return self.ffns(self.ESF, self.nf, m1sq=self.m1sq)
 
-        return reg, sing, local
+
+class FMatchingQuarkCC(FMatchingCC, FMatchingQuark):
+    pass
 
 
 class FMatchingGluon(FMatching):
@@ -102,19 +103,16 @@ class FMatchingGluon(FMatching):
         return self.mk_nlo_raw(self.l)
 
     def mk_nlo_raw(self, l):
-        obj = self.ffns(self.ESF, self.m1sq, self.m2sq)
-        parent_LO = obj.LO()
-        try:
-            _, _, icl = parent_LO
-        except TypeError:  # is there a local part in the parent?
-            return parent_LO  # no, so it should be 0 and we can pass through
+        icl = self.parent_lo_local()
+        if icl is None:
+            return None
 
         # since as and p_qg appear together there is no need to put an explicit as_norm here
-        # the explicit 2 instead is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
-        def reg(z):
-            return icl * 2.0 * split.pqg(z) * l
+        def reg(z, _args):
+            return icl * split.lo.pqg_single(z, np.array([], dtype=float)) * l
 
-        return reg, 0, 0
+        return RSL(reg)
 
-    def NLO_fact(self):
-        return self.mk_nlo_raw(-1.0)
+
+class FMatchingGluonCC(FMatchingCC, FMatchingGluon):
+    pass

@@ -1,20 +1,26 @@
 # -*- coding: utf-8 -*-
-from eko import constants
-
+from ..partonic_channel import RSL
+from . import nlo, nnlo
 from . import partonic_channel as pc
 
 
 class NonSinglet(pc.LightBase):
-    def NLO(self):
+    @staticmethod
+    def NLO():
         """
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
         """
-        CF = constants.CF
 
-        def cq_reg(z):
-            return CF * 4.0 * z
+        return RSL(nlo.fl.ns_reg)
 
-        return cq_reg
+    def NNLO(self):
+        """
+        |ref| implements :eqref:`4`, :cite:`vogt-flnc`.
+        """
+
+        return RSL(
+            nnlo.xclns2p.clnn2a, loc=nnlo.xclns2p.clnn2c, args=dict(reg=[self.nf])
+        )
 
 
 class Gluon(pc.LightBase):
@@ -23,11 +29,20 @@ class Gluon(pc.LightBase):
         |ref| implements :eqref:`3`, :cite:`vogt-flnc`.
         """
 
-        def cg(z, nf=self.nf):
-            return nf * constants.TR * 16 * z * (1.0 - z)
+        return RSL(nlo.fl.gluon_reg, args=[self.nf])
 
-        return cg
+    def NNLO(self):
+        """
+        |ref| implements :eqref:`6`, :cite:`vogt-flnc`.
+        """
+
+        return RSL(nnlo.xclsg2p.clg2a, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
-    pass
+    def NNLO(self):
+        """
+        |ref| implements :eqref:`5`, :cite:`vogt-flnc`.
+        """
+
+        return RSL(nnlo.xclsg2p.cls2a, args=[self.nf])

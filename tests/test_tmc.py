@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 import copy
+
 import numpy as np
 import pytest
-
+from eko import basis_rotation as br
 from eko.interpolation import InterpolatorDispatcher
 from eko.thresholds import ThresholdsAtlas
-from eko import basis_rotation as br
 
-from yadism import observable_name
 import yadism.esf.tmc as TMC
+from yadism import observable_name
+from yadism.coefficient_functions.coupling_constants import CouplingConstants
 from yadism.esf.esf import EvaluatedStructureFunction as ESF
 from yadism.esf.esf_result import ESFResult
-from yadism.coefficient_functions.coupling_constants import CouplingConstants
 
 lo = (0, 0, 0, 0)
 

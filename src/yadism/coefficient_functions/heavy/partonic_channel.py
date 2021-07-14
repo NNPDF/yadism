@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from scipy.special import spence
-
 from eko import constants
+from scipy.special import spence
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
@@ -44,7 +43,7 @@ class NeutralCurrentBase(pc.PartonicChannel):
                 output
         """
         if self.is_below_threshold(self.ESF.x):
-            return lambda: 0
+            return lambda: pc.RSL()
         return f
 
     def is_below_threshold(self, z):
@@ -135,12 +134,16 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
         b3 = self.sf_prefactor / 2
         as_norm = 2
 
-        def reg(z, b1=b1, b2=b2, CF=CF):
+        def reg(z, _args):
             hq_reg = -(1 + z ** 2) * np.log(z) / (1 - z) - (1 + z) * (
                 2 * np.log(1 - z) - np.log(1 - self.labda * z)
             )
             return (
-                (-self.sf_prefactor * np.log(self.labda) * (split.pqq_reg(z) / 2.0))
+                (
+                    -self.sf_prefactor
+                    * np.log(self.labda)
+                    * (split.lo.pqq_reg(z, np.array([], dtype=float)) / 2.0)
+                )
                 + CF
                 * (
                     self.sf_prefactor * hq_reg
@@ -150,10 +153,14 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
                 )
             ) * as_norm
 
-        def sing(z, b1=b1, b3=b3, CF=CF):
+        def sing(z, _args):
             hq_sing = 2 * ((2 * np.log(1 - z) - np.log(1 - self.labda * z)) / (1 - z))
             return (
-                (-self.sf_prefactor * np.log(self.labda) * (split.pqq_sing(z) / 2))
+                (
+                    -self.sf_prefactor
+                    * np.log(self.labda)
+                    * (split.lo.pqq_sing(z, np.array([], dtype=float)) / 2)
+                )
                 + CF
                 * (
                     self.sf_prefactor * hq_sing
@@ -163,7 +170,7 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
                 )
             ) * as_norm
 
-        def local(x, a=a, b1=b1, b3=b3, CF=CF):
+        def local(x, _args):
             log_pd_int = -np.log(1 - x) ** 2 / 2.0
             hq_loc = -(
                 4.0
@@ -182,7 +189,11 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
             )
 
             return (
-                (-self.sf_prefactor * np.log(self.labda) * (split.pqq_local(x) / 2.0))
+                (
+                    -self.sf_prefactor
+                    * np.log(self.labda)
+                    * (split.lo.pqq_local(x, np.array([], dtype=float)) / 2.0)
+                )
                 + CF
                 * (
                     self.sf_prefactor * hq_loc
@@ -193,41 +204,19 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
                 )
             ) * as_norm
 
-        return reg, sing, local
+        return pc.RSL(reg, sing, local)
 
     def LO(self):
-        return 0, 0, self.sf_prefactor
-
-    def NLO_fact(self):
-        as_norm = 2.0
-
-        def reg(z):
-            return (split.pqq_reg(z) / 2.0) * as_norm * self.sf_prefactor
-
-        def sing(z):
-            return (split.pqq_sing(z) / 2.0) * as_norm * self.sf_prefactor
-
-        def local(x):
-            return (split.pqq_local(x) / 2.0) * as_norm * self.sf_prefactor
-
-        return reg, sing, local
+        return pc.RSL.from_delta(self.sf_prefactor)
 
 
 class ChargedCurrentGluon(ChargedCurrentBase):
     """Gluon contributions"""
 
-    def NLO_fact(self):
-        as_norm = 2.0
-
-        def reg(z):
-            return (split.pqg(z) / 2.0) * as_norm * self.sf_prefactor
-
-        return reg
-
     def h_g(self, z, cs):
         c0 = (
             self.sf_prefactor
-            * (split.pqg(z) / 2.0)
+            * (split.lo.pqg_single(z, np.array([], dtype=float)) / 2.0)
             * (2.0 * np.log(1 - z) - np.log(1 - self.labda * z) - np.log(z))
         )
         cs.insert(0, c0)
