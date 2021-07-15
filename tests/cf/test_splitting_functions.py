@@ -91,10 +91,10 @@ class BenchmarkSFEKO:
                     y_qq = mellin_transform(sf.nlo.pqq1(nf), n)
                     e_qq = -(nlo.gamma_nsp_1(n, nf) + nlo.gamma_ps_1(n, nf))
                     np.testing.assert_allclose(y_qq[0], e_qq, atol=1e-6)
-                    # # qg
-                    # y_qg = mellin_transform(sf.nlo.pqg1(nf), n)
-                    # e_qg = -nlo.gamma_qg_1(n, nf)
-                    # np.testing.assert_allclose(y_qg[0], e_qg)
+                    # qg
+                    y_qg = mellin_transform(sf.nlo.pqg1(nf), n)
+                    e_qg = -nlo.gamma_qg_1(n, nf)
+                    np.testing.assert_allclose(y_qg[0], e_qg)
 
     def benchmark_conv(self):
         for nf in [3, 4]:

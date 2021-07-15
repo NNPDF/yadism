@@ -184,7 +184,7 @@ def pqg1_reg(z, args):
             the quark-gluon splitting function :math:`P_{qg}(z)`
 
     """
-    CA = constants.CF
+    CA = constants.CA
     CF = constants.CF
     NF = args[0]
     x = z
