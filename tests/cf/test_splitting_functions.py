@@ -101,9 +101,9 @@ class BenchmarkSFEKO:
             for n in [1.0 + 0j, 2.0 + 0j, 3.0 + 0j]:
                 s1 = harmonics.harmonic_S1(n)
                 # # qq*qq
-                # y_qqqq = mellin_transform(sf.nlo.pqq0_2(nf), n)
-                # e_qqqq = (-lo.gamma_ns_0(n, s1))*(-lo.gamma_ns_0(n, s1))
-                # np.testing.assert_allclose(y_qqqq[0], e_qqqq, atol=1e-6)
+                y_qqqq = mellin_transform(sf.nlo.pqq0_2(nf), n)
+                e_qqqq = (-lo.gamma_ns_0(n, s1)) * (-lo.gamma_ns_0(n, s1))
+                np.testing.assert_allclose(y_qqqq[0], e_qqqq, atol=1e-6)
                 # qq*qg
                 y_qqqg = mellin_transform(sf.nlo.pqq0pqg0(nf), n)
                 e_qqqg = (-lo.gamma_ns_0(n, s1)) * (-lo.gamma_qg_0(n, nf))
@@ -114,10 +114,10 @@ class BenchmarkSFEKO:
                     y_qggq = mellin_transform(sf.nlo.pqg0pgq0(nf), n)
                     e_qggq = (-lo.gamma_qg_0(n, nf)) * (-lo.gamma_gq_0(n))
                     np.testing.assert_allclose(y_qggq[0], e_qggq, atol=1e-6)
-                    # # qg*gg
-                    # y_qggg = mellin_transform(sf.nlo.pqg0pgg0(nf), n)
-                    # e_qggg = (-lo.gamma_qg_0(n, nf)) * (-lo.gamma_gg_0(n, s1, nf))
-                    # np.testing.assert_allclose(y_qggg[0], e_qggg, atol=1e-6)
+                    # qg*gg
+                    y_qggg = mellin_transform(sf.nlo.pqg0pgg0(nf), n)
+                    e_qggg = (-lo.gamma_qg_0(n, nf)) * (-lo.gamma_gg_0(n, s1, nf))
+                    np.testing.assert_allclose(y_qggg[0], e_qggg, atol=1e-6)
 
 
 # class TestConv:

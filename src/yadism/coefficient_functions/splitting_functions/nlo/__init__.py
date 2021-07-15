@@ -97,7 +97,8 @@ def pnsm1(nf):
 
 
 def pqq0_2(_nf):
-    return RSL.from_distr_coeffs(conv.pqq0_2_reg, conv.pqq0_2_coeffs)
+    return RSL(conv.pqq0_2_reg, conv.pqq0_2_sing, conv.pqq0_2_loc)
+    # return RSL.from_distr_coeffs(conv.pqq0_2_reg, conv.pqq0_2_coeffs)
 
 
 def pqg0pgq0(nf):
