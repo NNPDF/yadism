@@ -3,7 +3,7 @@
 .. todo::
     docs
 """
-__version__ = "0.0.0"
+__version__ = "0.7.0-post.3+473c689.dirty"
 
 from .output import Output
 from .runner import Runner

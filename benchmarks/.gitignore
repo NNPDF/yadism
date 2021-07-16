@@ -3,3 +3,7 @@
 # ignore airspeed velocity output
 html/
 results/
+# installation remnants
+apfel.py
+_apfel.so
+lhapdf.so

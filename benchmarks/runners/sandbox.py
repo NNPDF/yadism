@@ -87,10 +87,10 @@ class Sandbox(Runner):
                 #"dbaronly",
                 #"gonly",
                 #"toygonly",
-                "toyantichsing",
+                #  "toyantichsing",
                 #"toyt3only",
                 #"conly",
-                #"ToyLH",
+                "ToyLH",
             ])
 
 def main():

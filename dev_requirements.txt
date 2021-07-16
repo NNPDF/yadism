@@ -26,6 +26,5 @@ packutil
 pineappl
 # airspeed velocity requirements
 asv
-virtualenv
 # install yadmark
 -e benchmarks/
