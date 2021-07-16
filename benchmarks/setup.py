@@ -14,13 +14,10 @@ setup(
         "rich",
         "sqlalchemy",
         "banana-hep",
-        "pyyaml",
-        "matplotlib",
+        "pandas",
     ],
     entry_points={
         "console_scripts": [
-            "generate_theories=yadmark.data:generate_theories",
-            "generate_observables=yadmark.data:generate_observables",
             "navigator=yadmark.navigator:launch_navigator",
         ],
     },

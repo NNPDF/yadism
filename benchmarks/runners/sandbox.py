@@ -9,6 +9,7 @@ from banana.data import cartesian_product
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
 
+
 class Sandbox(Runner):
 
     # external comparison program
@@ -92,6 +93,9 @@ class Sandbox(Runner):
                 #"ToyLH",
             ])
 
-if __name__ == "__main__":
+def main():
     sand = Sandbox()
     sand.doit()
+
+if __name__ == "__main__":
+    main()

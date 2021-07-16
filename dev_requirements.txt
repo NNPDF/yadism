@@ -22,10 +22,6 @@ semver
 pytest
 pytest-cov
 pytest-env
-human_dates2
-ipython
-matplotlib
-pandas
 packutil
 pineappl
 # airspeed velocity requirements
