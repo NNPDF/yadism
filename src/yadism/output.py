@@ -210,7 +210,11 @@ class Output(dict):
             # add all orders
             for o, (v, _e) in obs.orders.items():
                 order_index = list(first_esf_result.orders.keys()).index(o)
-                prefactor = ((1.0 / (4.0 * np.pi)) ** o[0]) * ((-1.0) ** o[3])
+                prefactor = (
+                    ((1.0 / (4.0 * np.pi)) ** o[0])
+                    * ((-1.0) ** o[2])
+                    * ((-1.0) ** o[3])
+                )
                 # add for each pid/lumi
                 for pid_index, pid_values in enumerate(v):
                     pid_values = prefactor * pid_values

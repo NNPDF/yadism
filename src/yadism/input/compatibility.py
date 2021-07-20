@@ -25,8 +25,22 @@ def update(theory, observables):
     new_theory = theory.copy()
     new_obs = observables.copy()
     update_fns(new_theory)
+    update_scale_variations(new_theory)
     update_target(new_obs)
     return new_theory, new_obs
+
+
+def update_scale_variations(theory):
+    """
+    Extract necessity to compute scale variations.
+
+    Parameters
+    ----------
+        theory : dict
+            theory runcard
+    """
+    theory["RenScaleVar"] = not np.isclose(theory["XIR"], 1.0)
+    theory["FactScaleVar"] = not np.isclose(theory["XIF"], 1.0)
 
 
 def update_target(obs):

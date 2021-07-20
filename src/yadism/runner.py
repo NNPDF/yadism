@@ -102,10 +102,12 @@ class Runner:
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)
         pto = theory["PTO"]
-        if np.isclose(theory["XIF"], 1.0) and np.isclose(theory["XIR"], 1.0):
-            sv_manager = None
-        else:
-            sv_manager = sv.ScaleVariations(order=pto, interpolator=interpolator)
+        sv_manager = sv.ScaleVariations(
+            order=pto,
+            interpolator=interpolator,
+            activate_ren=new_theory["RenScaleVar"],
+            activate_fact=new_theory["FactScaleVar"],
+        )
 
         # Initialize structure functions
         self.managers = dict(
@@ -145,7 +147,6 @@ class Runner:
         logger.info("PTO: %d, process: %s", theory["PTO"], new_observables["prDIS"])
         logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
         logger.info("Intrinsic: %s", intrinsic_range)
-        logger.info("XIR: %g, XIF: %g", theory["XIR"], theory["XIF"])
         logger.info(
             "projectile: %s, target: {Z: %g, A: %g}",
             new_observables["ProjectileDIS"],

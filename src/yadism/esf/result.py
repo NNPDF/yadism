@@ -86,8 +86,8 @@ class ESFResult:
         alph_qed = alpha_qed(np.sqrt(self.Q2) * xiR)
         for o, (v, e) in self.orders.items():
             lnF = 1.0 if o[3] == 0 else (np.log((1 / xiF) ** 2)) ** o[3]
-            lnF2R = 1.0 if o[2] == 0 else (np.log((xiF / xiR) ** 2)) ** o[2]
-            prefactor = (a_s ** o[0]) * (alph_qed ** o[1]) * lnF2R * lnF
+            lnR = 1.0 if o[2] == 0 else (np.log((1 / xiR) ** 2)) ** o[2]
+            prefactor = (a_s ** o[0]) * (alph_qed ** o[1]) * lnR * lnF
             res += prefactor * np.einsum("aj,aj", v, pdfs)
             err += prefactor * np.einsum("aj,aj", e, pdfs)
 

@@ -4,6 +4,7 @@ import time
 import numpy as np
 from eko import basis_rotation as br
 from eko import beta
+from scipy.special import binom
 
 from ..coefficient_functions import splitting_functions as split
 from .conv import convolute_operator
@@ -45,11 +46,16 @@ class ScaleVariations:
             interpolation basis functions
     """
 
-    def __init__(self, order, interpolator):
+    def __init__(self, order, interpolator, activate_ren, activate_fact):
         self.order = order
         self.interpolator = interpolator
+        self.activate_ren = activate_ren
+        self.activate_fact = activate_fact
         self.operators = {}
         self.raw_labels = split.raw_labels[: self.order]
+        logger.info(
+            "RenScaleVar: %s, FactScaleVar: %s", self.activate_ren, self.activate_fact
+        )
 
     def compute_raw(self, nf):
         """
@@ -128,16 +134,18 @@ class ScaleVariations:
 
         Parameters
         ----------
-            ker_orders : dict
+            ker_orders : list
                 raw (unscale-varied) coefficient functions
             nf : int
                 number of active flavors
 
         Returns
         -------
-            dict :
+            list :
                 kernels map
         """
+        if not self.activate_fact:
+            return []
         # get the two ingredients: matrices and projectors
         fmatrices = self.fact_matrices(nf)
         projectors = br.ad_projectors(nf)
@@ -160,14 +168,53 @@ class ScaleVariations:
 
         Parameters
         ----------
-            ker_orders : dict
+            ker_orders : list
                 common-scale varied coefficient functions
             nf : int
                 number of active flavors
 
         Returns
         -------
-            dict :
+            Iterable :
+                kernels map
+        """
+        # if none is active - perfect, nothing to do
+        if not self.activate_fact and not self.activate_ren:
+            return []
+        diff_kers = self.apply_raw_diff_scale_variations(ker_orders, nf)
+        ren_kers = []
+        for (o, k) in diff_kers:
+            # ln((xi_f/xi_r)^2)^n = (ln(xi_f^2) - ln(xi_r^2))^n
+            n = o[2]
+            for j in range(
+                n + 1
+            ):  # j is the power of ln(xi_r^2), n-j is the power of ln(xi_f^2)
+                binomial = binom(n, j) * (-1) ** j  # take care of the additional minus
+                ren_kers.append(
+                    ((o[0], o[1], j, n - j + o[3]), (binomial * k[0], k[1], k[2]))
+                )
+        # if at least one was trivial, skip that one (since the user asked for it)
+        if not self.activate_ren:
+            return filter(lambda e: e[0][2] == 0, ren_kers)
+        if not self.activate_fact:
+            return filter(lambda e: e[0][3] == 0, ren_kers)
+        # ok, we need to return the full thing
+        return ren_kers
+
+    def apply_raw_diff_scale_variations(self, ker_orders, nf):
+        """
+        Add new kernels for different scale varied coefficient functions.
+
+        Parameters
+        ----------
+            ker_orders : list
+                common-scale varied coefficient functions
+            nf : int
+                number of active flavors
+
+        Returns
+        -------
+            list :
                 kernels map
         """
         ren_coeffs = self.ren_coeffs(nf)
@@ -175,18 +222,11 @@ class ScaleVariations:
         added_ker_sv = []
         for (o, oqed, _, lnf), ker in ker_orders:
             # TODO: APFEL is wrong - fix it temporarily here
-            if (o, lnf) == (1, 1):
-                continue
+            # if (o, lnf) == (1, 1):
+            #     continue
             for (target, lnf2r, src), rcoeff in ren_coeffs.items():
                 if src == o:
                     added_ker_sv.append(
-                        (
-                            (target, oqed, lnf2r, lnf),
-                            (
-                                rcoeff * ker[0],
-                                ker[1],
-                                ker[2],
-                            ),
-                        )
+                        ((target, oqed, lnf2r, lnf), (rcoeff * ker[0], ker[1], ker[2]))
                     )
         return added_ker_sv

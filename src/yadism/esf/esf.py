@@ -140,12 +140,21 @@ class EvaluatedStructureFunction:
                 ker_orders.append(((o, 0, 0, 0), (partons, val, err)))
 
             # apply scale variations
-            if sv_manager is not None:
+            # deny factorization scale variation for intrinsic
+            if cfe.channel != "intrinsic":
                 ker_orders.extend(
                     sv_manager.apply_common_scale_variations(ker_orders, cfc.nf)
                 )
                 ker_orders.extend(
                     sv_manager.apply_diff_scale_variations(ker_orders, cfc.nf)
+                )
+            else:
+                # deny them even as generated from diff
+                ker_orders.extend(
+                    filter(
+                        lambda e: e[0][3] == 0,
+                        sv_manager.apply_diff_scale_variations(ker_orders, cfc.nf),
+                    )
                 )
 
             # blow up to flavor space
