@@ -14,11 +14,11 @@ def pqq0_2_reg(z, _args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def pqq0_2_sing(z, _args):
-    return (-8*CF**2*(3 + 4*np.log(1 - z) + 2*np.log(z)))/(-1 + z)
+    return (-8*CF**2*(3 + 4*np.log(1 - z) - 2*np.log(z)))/(-1 + z)
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def pqq0_2_loc(z, _args):
-    return CF**2*(9 - (8*np.pi**2)/3. + 4*(3 - 4*np.log(1 - z))*np.log(1 - z) + 16*li2(1 - z))
+    return (CF**2*(27 + 8*np.pi**2 + 12*(3 - 4*np.log(1 - z))*np.log(1 - z) - 48*li2(1 - z)))/3.
 
 #pqq0_2_coeffs = ((CF**2*(27 - 8*np.pi**2))/3.,24*CF**2,32*CF**2)
 

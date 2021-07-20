@@ -103,21 +103,21 @@ class BenchmarkSFEKO:
                 # # qq*qq
                 y_qqqq = mellin_transform(sf.nlo.pqq0_2(nf), n)
                 e_qqqq = (-lo.gamma_ns_0(n, s1)) * (-lo.gamma_ns_0(n, s1))
-                np.testing.assert_allclose(y_qqqq[0], e_qqqq, atol=1e-6)
+                np.testing.assert_allclose(y_qqqq[0], e_qqqq, atol=1e-12)
                 # qq*qg
                 y_qqqg = mellin_transform(sf.nlo.pqq0pqg0(nf), n)
                 e_qqqg = (-lo.gamma_ns_0(n, s1)) * (-lo.gamma_qg_0(n, nf))
-                np.testing.assert_allclose(y_qqqg[0], e_qqqg, atol=1e-6)
+                np.testing.assert_allclose(y_qqqg[0], e_qqqg, atol=1e-12)
                 # protect singlet likes
                 if np.abs(n - 1.0) > 1e-5:
                     # qg*gq
                     y_qggq = mellin_transform(sf.nlo.pqg0pgq0(nf), n)
                     e_qggq = (-lo.gamma_qg_0(n, nf)) * (-lo.gamma_gq_0(n))
-                    np.testing.assert_allclose(y_qggq[0], e_qggq, atol=1e-6)
+                    np.testing.assert_allclose(y_qggq[0], e_qggq, atol=1e-12)
                     # qg*gg
                     y_qggg = mellin_transform(sf.nlo.pqg0pgg0(nf), n)
                     e_qggg = (-lo.gamma_qg_0(n, nf)) * (-lo.gamma_gg_0(n, s1, nf))
-                    np.testing.assert_allclose(y_qggg[0], e_qggg, atol=1e-6)
+                    np.testing.assert_allclose(y_qggg[0], e_qggg, atol=1e-12)
 
 
 # class TestConv:
