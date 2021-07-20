@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from yadism import output
-from yadism.esf import esf_result
+from yadism.esf import result
 
 lo = (0, 0, 0, 0)
 
@@ -44,7 +44,7 @@ class TestOutput:
                     },
                 )
                 # plain
-                o_esf.append(esf_result.ESFResult(**kin))
+                o_esf.append(result.ESFResult(**kin, nf=3))
 
             out[o] = o_esf
 

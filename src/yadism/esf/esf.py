@@ -119,7 +119,7 @@ class EvaluatedStructureFunction:
         logger.debug("Compute %s", self)
         # iterate all partonic channels
         for cfe in cfc.collect_elems():
-            ker_orders = {}
+            ker_orders = []
             # compute raw coefficient functions
             for o in self.orders:
                 rsl = cfe.coeff[o]()
@@ -137,19 +137,19 @@ class EvaluatedStructureFunction:
                 )[:, np.newaxis]
                 val = val[np.newaxis, :]
                 err = err[np.newaxis, :]
-                ker_orders[(o, 0, 0, 0)] = (partons, val, err)
+                ker_orders.append(((o, 0, 0, 0), (partons, val, err)))
 
             # apply scale variations
             if sv_manager is not None:
-                ker_orders.update(
+                ker_orders.extend(
                     sv_manager.apply_common_scale_variations(ker_orders, cfc.nf)
                 )
-                ker_orders.update(
+                ker_orders.extend(
                     sv_manager.apply_diff_scale_variations(ker_orders, cfc.nf)
                 )
 
             # blow up to flavor space
-            for o, (partons, val, err) in ker_orders.items():
+            for o, (partons, val, err) in ker_orders:
                 self.res.orders[o][0] += partons @ val
                 self.res.orders[o][1] += np.abs(partons) @ err
 

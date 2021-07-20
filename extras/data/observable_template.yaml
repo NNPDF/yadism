@@ -1,0 +1,9 @@
+interpolation_polynomial_degree: 4
+interpolation_xgrid: []
+interpolation_is_log: true
+observables: {}
+prDIS: EM
+PolarizationDIS: 0.
+ProjectileDIS: electron
+TargetDIS: proton
+PropagatorCorrection: 0.

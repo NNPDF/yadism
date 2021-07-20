@@ -26,6 +26,8 @@ class EvaluatedCrossSection:
         #     return np.array([1.0, -yL / yp, f3sign * ym / yp])
         # if kind == "XSyreduced":
         #     return np.array([yp, -yL, f3sign * ym])
+        if kind == "XSHERANCAVG":
+            return np.array([1.0, -yL / yp, 0.0])
         if kind == "XSHERANC":
             return np.array([1.0, -yL / yp, f3sign * ym / yp])
         norm = 0.0
@@ -55,11 +57,17 @@ class EvaluatedCrossSection:
     def get_result(self):
         # Collect esfs
         flavor = self.xs.obs_name.flavor
+        f_coeffs = self.f_coeffs()
         f2 = self.xs.get_esf(ObservableName(f"F2_{flavor}"), self.kin).get_result()
         fl = self.xs.get_esf(ObservableName(f"FL_{flavor}"), self.kin).get_result()
-        f3 = self.xs.get_esf(ObservableName(f"F3_{flavor}"), self.kin).get_result()
+        # skip F3 if it is not required
+        if f_coeffs[2] != 0.0:
+            f3 = self.xs.get_esf(ObservableName(f"F3_{flavor}"), self.kin).get_result()
+        else:
+            f3 = np.zeros_like(f2)
+
         # add normalizations
-        esf = self.f_coeffs() @ np.array([f2, fl, f3])
+        esf = f_coeffs @ np.array([f2, fl, f3])
         # remap to EXS
         sigma = EXSResult(self.kin["x"], self.kin["Q2"], self.kin["y"], f2.nf)
         for o, v in esf.orders.items():

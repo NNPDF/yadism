@@ -82,15 +82,12 @@ class ESFResult:
         res = 0
         err = 0
         # join elements
+        a_s = alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)
+        alph_qed = alpha_qed(np.sqrt(self.Q2) * xiR)
         for o, (v, e) in self.orders.items():
             lnF = 1.0 if o[3] == 0 else (np.log((1 / xiF) ** 2)) ** o[3]
             lnF2R = 1.0 if o[2] == 0 else (np.log((xiF / xiR) ** 2)) ** o[2]
-            prefactor = (
-                ((alpha_s(np.sqrt(self.Q2) * xiR) / (4 * np.pi)) ** o[0])
-                * ((alpha_qed(np.sqrt(self.Q2) * xiR)) ** o[1])
-                * lnF2R
-                * lnF
-            )
+            prefactor = (a_s ** o[0]) * (alph_qed ** o[1]) * lnF2R * lnF
             res += prefactor * np.einsum("aj,aj", v, pdfs)
             err += prefactor * np.einsum("aj,aj", e, pdfs)
 
