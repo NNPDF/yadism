@@ -48,9 +48,8 @@ def c220ns(matrices, nf):
 
 def c220(labs, matrices, nf):
     return 0.5 * (
-        # sum([matrices[lab, nf] for lab in labs[0]])
-        -beta.beta_0(nf)
-        * matrices[labs[1], nf]
+        sum([matrices[lab, nf] for lab in labs[0]])
+        - beta.beta_0(nf) * matrices[labs[1], nf]
     )
 
 
@@ -66,7 +65,7 @@ def sector_mapping(order, matrices, nf):
                     "NS_m": matrices["P_nsm_1", nf],
                     "NS_v": matrices["P_nsm_1", nf],
                     "S_qq": matrices["P_qq_1", nf],
-                    "S_qg": np.zeros_like(matrices["P_qg_1", nf]),
+                    "S_qg": matrices["P_qg_1", nf],
                     **empty_gluon(matrices, nf),
                 },
                 (2, 1, 1): joint_lo(c211, matrices, nf),

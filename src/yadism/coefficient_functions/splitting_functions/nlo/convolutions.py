@@ -20,8 +20,6 @@ def pqq0_2_sing(z, _args):
 def pqq0_2_loc(z, _args):
     return (CF**2*(27 + 8*np.pi**2 + 12*(3 - 4*np.log(1 - z))*np.log(1 - z) - 48*li2(1 - z)))/3.
 
-#pqq0_2_coeffs = ((CF**2*(27 - 8*np.pi**2))/3.,24*CF**2,32*CF**2)
-
 @nb.njit("f8(f8,f8[:])", cache=True)
 def pqq0pqg0_reg(z,args):
     nf = args[0]
