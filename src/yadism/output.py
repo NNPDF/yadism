@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import pathlib
 
 import numpy as np
@@ -43,6 +44,7 @@ class Output(dict):
     """
 
     theory = None
+    observables = None
 
     def apply_pdf(self, lhapdf_like):
         r"""
@@ -237,7 +239,10 @@ class Output(dict):
         # set the initial state PDF ids for the grid
         grid.set_key_value("initial_state_1", "2212")
         grid.set_key_value("initial_state_2", str(lepton_pid))
-        grid.set_key_value("runcard", "")
+        grid.set_key_value(
+            "runcard",
+            json.dumps(dict(theory=self.theory, observables=self.observables)),
+        )
         grid.set_key_value("yadism_version", version.full_version)
         grid.set_key_value("lumi_id_types", "pdg_mc_ids")
 

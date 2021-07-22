@@ -176,6 +176,7 @@ class Runner:
         # ==============================
         self._output = Output()
         self._output.theory = theory
+        self._output.observables = observables
         self._output.update(interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
         self._output["projectilePID"] = coupling_constants.obs_config["projectilePID"]
