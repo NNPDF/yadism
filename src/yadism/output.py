@@ -7,6 +7,7 @@ import yaml
 from eko import strong_coupling
 
 from . import observable_name as on
+from . import version
 from .esf.result import ESFResult
 from .input import compatibility
 
@@ -236,8 +237,12 @@ class Output(dict):
         # set the initial state PDF ids for the grid
         grid.set_key_value("initial_state_1", "2212")
         grid.set_key_value("initial_state_2", str(lepton_pid))
+        grid.set_key_value("runcard", "")
+        grid.set_key_value("yadism_version", version.full_version)
+        grid.set_key_value("lumi_id_types", "pdg_mc_ids")
 
         # dump file
+        grid.optimize()
         grid.write(filename)
 
     def dump_yaml(self, stream=None):
