@@ -40,8 +40,7 @@ class Sandbox(Runner):
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
         kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20e2, 10).tolist()])
-        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4,
-            20e2, 10).tolist()])
+        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 20e2, 10).tolist()])
         observable_names = [
             "F2_light",
             "FL_light",
@@ -65,7 +64,7 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
         #  update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
@@ -78,19 +77,22 @@ class Sandbox(Runner):
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
         self.run([
                 #{"PTO": 0},
-                {"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9909},
+                #{"PTO": 1, "FNS": "FONLL-A", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
+                #{"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9913},
+                {"PTO": 2, "XIF": 2, "XIR": 2, "mb": 4.9915},
                 #{"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
                 #{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
-                #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 4, "mc": 1.51, "XIF": 1, "XIR": 1},
+                #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
             ], self.generate_observables(), [
                 #"dbaronly",
                 #"gonly",
                 #"toygonly",
-                #  "toyantichsing",
+                #"toyantichsing",
                 #"toyt3only",
                 #"conly",
-                "ToyLH",
+                #"ToyLH",
+                "NNPDF31_nlo_as_0118",
             ])
 
 def main():

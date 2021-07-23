@@ -35,6 +35,7 @@ def generate_light_diff(esf, nl):
             list of elements
     """
     if esf.process == "CC":
+        # TODO Add NNLO if available
         return ()
     kind = esf.sf.obs_name.kind
     light_cfs = import_pc_module(kind, esf.process, "light")
@@ -48,40 +49,23 @@ def generate_light_diff(esf, nl):
 def generate_heavy_diff(esf, nl):
     """
     |ref| implements :eqref:`89`, :cite:`forte-fonll`.
+
+    Parameters
+    ----------
+        esf : EvaluatedStructureFunction
+            kinematic point
+        nl : int
+            number of light flavors
+
+    Returns
+    -------
+        elems : list(yadism.kernels.Kernel)
+            list of elements
     """
     kind = esf.sf.obs_name.kind
-    light_cfs = import_pc_module(kind, esf.process, "light")
     ihq = nl + 1
     # add light contributions
-    ns_partons = {}
-    ch_av = 0
-    s_partons = {}
-    if esf.process == "CC":
-        w = kernels.cc_weights(
-            esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], nl + 1
-        )
-        ns_partons, ch_av, s_partons = w["ns"], w["g"][21] / (nl + 1.0), w["s"]
-    else:
-        if kind != "F3":
-            w = esf.sf.coupling_constants.get_weight(
-                ihq, esf.Q2, "VV"
-            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
-        else:
-            w = esf.sf.coupling_constants.get_weight(
-                ihq, esf.Q2, "VA"
-            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
-
-        ns_partons[ihq] = w
-        ns_partons[-ihq] = w if kind != "F3" else -w
-        ch_av = w / (nl + 1) if kind != "F3" else 0.0
-        for pid in range(1, nl + 1):
-            s_partons[pid] = ch_av
-            s_partons[-pid] = ch_av
-    elems = (
-        kernels.Kernel(ns_partons, light_cfs.NonSinglet(esf, nl + 1)),
-        kernels.Kernel({21: ch_av}, light_cfs.Gluon(esf, nl + 1)),
-        kernels.Kernel(s_partons, light_cfs.Singlet(esf, nl + 1)),
-    )
+    elems = kernels.generate_single_flavor_light(esf, nl + 1, ihq)
     # add asymptotic contributions
     # The matching does not necessarily happen at the quark mass
     # m2hq = esf.sf.m2hq[ihq - 4]
@@ -111,13 +95,24 @@ def generate_heavy_diff(esf, nl):
                 ),
             ]
 
-    #  __import__("pdb").set_trace()
     return (*elems, *asys)
 
 
 def generate_heavy_intrinsic_diff(esf, nl):
     """
     |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
+
+    Parameters
+    ----------
+        esf : EvaluatedStructureFunction
+            kinematic point
+        nl : int
+            number of light flavors
+
+    Returns
+    -------
+        elems : list(yadism.kernels.Kernel)
+            list of elements
     """
     kind = esf.sf.obs_name.kind
     cfs = import_pc_module(kind, esf.process)

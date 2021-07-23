@@ -10,15 +10,16 @@ from eko.thresholds import ThresholdsAtlas
 import yadism.esf.tmc as TMC
 from yadism import observable_name
 from yadism.coefficient_functions.coupling_constants import CouplingConstants
+from yadism.esf import scale_variations as sv
 from yadism.esf.esf import EvaluatedStructureFunction as ESF
-from yadism.esf.esf_result import ESFResult
+from yadism.esf.result import ESFResult
 
 lo = (0, 0, 0, 0)
 
 
 class MockESF:
     def __init__(self, vals):
-        self.res = ESFResult(0.1, 10)
+        self.res = ESFResult(0.1, 10, nf=3)
         self.res.orders[lo] = (np.array([vals]), np.zeros(len(vals)))
 
     def get_result(self):
@@ -85,10 +86,14 @@ class TestAbstractTMC:
         objSF = MockSF()
         obj = MockTMC(objSF, {"x": 0.99, "Q2": 1})
         # test 0 function
-        res = obj._convolute_FX("F2", lambda x: 0)  # pylint: disable=protected-access
+        res = obj._convolute_FX(
+            "F2", lambda x, args: 0
+        )  # pylint: disable=protected-access
         is0(res)
         # test constant function
-        res = obj._convolute_FX("F2", lambda x: 1)  # pylint: disable=protected-access
+        res = obj._convolute_FX(
+            "F2", lambda x, args: 1
+        )  # pylint: disable=protected-access
         is0(res)
         # test random function
         res = obj._convolute_FX("F2", np.exp)  # pylint: disable=protected-access
@@ -124,7 +129,7 @@ class TestAbstractTMC:
         # convolute with constant function
         # res_const = int_xi^1 du/u 1 F2(u)
         res_const = obj._convolute_FX(  # pylint: disable=protected-access
-            "F2", lambda x: 1
+            "F2", lambda x, args: 1
         )
         assert isinstance(res_const, ESFResult)
         # res_h2 = int_xi^1 du/u 1/xi*(xi/u) F2(u)  = int_xi^1 du/u 1/u F2(u)
@@ -193,7 +198,8 @@ obs_d = dict(
 )
 interpolator = InterpolatorDispatcher(xg, 1, False, False)
 coupling_constants = CouplingConstants.from_dict(th_d, obs_d)
-threshold = ThresholdsAtlas([4, 20])
+threshold = ThresholdsAtlas([4, 20, np.inf])
+sv_manager = sv.ScaleVariations(order=0, interpolator=interpolator)
 
 
 class MockRunner:
@@ -201,6 +207,7 @@ class MockRunner:
         interpolator=interpolator,
         threshold=threshold,
         coupling_constants=coupling_constants,
+        sv_manager=sv_manager,
     )
     theory_params = dict(
         pto=0, xiF=1, M2target=1.0, TMC=1, scheme="FFNS", target=dict(Z=1, A=1)

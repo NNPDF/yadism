@@ -52,8 +52,8 @@ def quad_ker_sing(z, x, is_log, areas, sing, pdf_at_x, sing_args):
 
 def convolution(rsl, x, pdf_func):
     r"""
-    Convolute the current :py:class:`DistributionVec` with a function
-    ``pdf_func``.
+    Convolute a :py:class:`yadism.coefficient_functions.partonic_channel.RSL`
+    instance with a function ``pdf_func``.
 
     The definition of the convolution performed is:
 
@@ -66,18 +66,19 @@ def convolution(rsl, x, pdf_func):
 
     Note
     ----
-    The class level attributes :py:attr:`eps_integration_abs` and
+    The module level attributes :py:attr:`eps_integration_abs` and
     :py:attr:`eps_integration_border` regulate the integration process,
     setting respectively the absolute error and restricting the
     integration domain in order to avoid singularities.
 
     Parameters
     ----------
+    rsl: yadism.coefficient_functions.partonic_channel.RSL
+        an object representing a distribution
     x : scalar
         the kinematics point at which the convoution is evaluated
     pdf_func : callable
-        the function to be convoluted with the current
-        :py:class:`DistributionVec` (usually a PDF, or a PDF
+        the function to be convoluted with ``rsl`` (usually a PDF, or a PDF
         interpolator)
 
     Returns
@@ -89,7 +90,7 @@ def convolution(rsl, x, pdf_func):
 
     Note
     ----
-    The real name of this method is ``convnd``.
+    The real name of this function is ``convnd``.
     """
     # empty domain?
     if x >= (1 - eps_integration_border):

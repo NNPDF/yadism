@@ -9,6 +9,7 @@ from eko import thresholds
 from eko.interpolation import InterpolatorDispatcher
 
 from yadism import observable_name
+from yadism.esf import scale_variations as sv
 from yadism.esf.esf import EvaluatedStructureFunction as ESF
 from yadism.sf import StructureFunction
 
@@ -22,7 +23,8 @@ interpolator = InterpolatorDispatcher(xg, 1, False, False)
 coupling_constants = MockObj()
 coupling_constants.obs_config = dict(process="EM")
 coupling_constants.get_weight = lambda q, q2, t: 1
-threshold = thresholds.ThresholdsAtlas([50])
+threshold = thresholds.ThresholdsAtlas([50.0, np.inf, np.inf])
+sv_manager = sv.ScaleVariations(order=0, interpolator=interpolator)
 
 
 class MockRunner:
@@ -31,6 +33,7 @@ class MockRunner:
         interpolator=interpolator,
         threshold=threshold,
         coupling_constants=coupling_constants,
+        sv_manager=sv_manager,
     )
     theory_params = dict(
         pto=0, scheme="FFNS", target=dict(Z=1, A=1), TMC=0, nf_ff=4, FONLL_damping=False
