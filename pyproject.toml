@@ -42,14 +42,25 @@ rich = "^10.6.0"
 
 [tool.poetry.dev-dependencies]
 poethepoet = "^0.10.0"
-pytest = "^6.2.4"
-pytest-cov = "^2.12.1"
-pytest-env = "^0.6.2"
+# code review
 black = "^21.6b0"
 isort = "^5.9.2"
 pylint = "^2.9.3"
-yadmark = { path = "benchmarks/", develop = true }
+# test
+pytest = "^6.2.4"
+pytest-cov = "^2.12.1"
+pytest-env = "^0.6.2"
 packutil = "^0.0.4"
+# benchmark
+yadmark = { path = "benchmarks/", develop = true }
+asv = "^0.4.2"
+# docs
+Sphinx = "^4.1.1"
+sphinx-rtd-theme = "^0.5.2"
+recommonmark = "^0.7.1"
+sphinxcontrib-bibtex = "^2.3.0"
+sphinxcontrib-details-directive = "^0.1.0"
+nbsphinx = "^0.8.6"
 
 [tool.poe.tasks]
 test = "pytest tests"
