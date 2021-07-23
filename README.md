@@ -41,7 +41,7 @@ Provide all necessary tools to compute the DIS structure functions and related o
 
 ## Installation
 
-As a user please used the released version on PyPI, through your python package
+As a user please use the released version on PyPI, through your python package
 manager, e.g. with `pip`:
 
 ```sh
