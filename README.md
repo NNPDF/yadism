@@ -37,7 +37,7 @@ optional:
 
 ## Scope of the project
 
-Provide all necessary tools to compute the DIS structure functions and related object. This project is linked closely to [EKO](https://github.com/N3PDF/eko).
+Provide all necessary tools to compute the DIS structure functions and related objects. This project is linked closely to [EKO](https://github.com/N3PDF/eko).
 
 ## Installation
 
