@@ -38,7 +38,7 @@ def load_options(yes, no, default):
     def question(input_text, default_yes):
         if not any([yes, no, default]):
             choice = yes_choice if default_yes else no_choice
-            answer = input(f"Do you want to install with pipx? {choice} ")
+            answer = input(f"{input_text} {choice} ")
         else:
             if yes:
                 answer = "y"
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     question = load_options(args.yes, args.no, args.default)
 
-    pipx_answer = question("Do you want to install with pipx? [y/N] ", False)
+    pipx_answer = question("Do you want to install with pipx?", False)
 
     pipx = pipx_answer.lower() in ["y", "yes"]
     user = " --user" if args.user else ""
