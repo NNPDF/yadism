@@ -48,9 +48,12 @@ black = "^21.6b0"
 isort = "^5.9.2"
 pylint = "^2.9.3"
 yadmark = { path = "benchmarks/", develop = true }
+packutil = "^0.0.4"
 
 [tool.poe.tasks]
 test = "pytest tests"
+lint = "pylint src/*/*.py -E"
+lint-warnings = "pylint src/*/*.py --exit-zero"
 sandbox = "python benchmarks/runners/sandbox.py"
 navigator = "navigator"
 
