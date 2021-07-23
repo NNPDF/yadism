@@ -40,10 +40,21 @@ Provide all necessary tools to compute the DIS structure functions and related o
 
 ## Installation
 
-Once all the dependencies are available simply run:
+As a user please used the released version on PyPI, through your python package
+manager, e.g. with `pip`:
 
+```sh
+pip install yadism
 ```
-python setup.py install
+
+### Dev
+
+For development just use the install script and poetry (provided by install
+script):
+
+```sh
+python install.py
+poetry install
 ```
 
 ## Documentation
