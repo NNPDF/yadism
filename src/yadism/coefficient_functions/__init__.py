@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from . import fonll, heavy, intrinsic, light
+from . import fonll, heavy, intrinsic, kernels, light
 from .partonic_channel import EmptyPartonicChannel
 
 
@@ -38,14 +38,21 @@ class Combiner:
         if self.obs_name.flavor in ["light", "total"]:
             elems.extend(light.kernels.generate(self.esf, self.nf))
         if self.obs_name.flavor_family in ["heavy", "total"]:
-            # there is only *one* finite mass available, i.e. the next one
-            if (
-                self.obs_name.flavor_family == "heavy"
-                and self.obs_name.hqnumber != self.nf + 1
-            ):
-                raise ValueError(
-                    f"{self.obs_name} is not available in FFNS with nl={self.nf}"
-                )
+            if self.obs_name.flavor_family == "heavy":
+                # F2b is not avaible in FFNS3
+                if self.obs_name.hqnumber > self.nf + 1:
+                    raise ValueError(
+                        f"{self.obs_name} is not available in FFNS with nl={self.nf}"
+                    )
+                # F2c in FFNS5 is avaible, but light
+                if self.obs_name.hqnumber < self.nf + 1:
+                    elems.extend(
+                        kernels.generate_single_flavor_light(
+                            self.esf, self.nf, self.obs_name.hqnumber
+                        )
+                    )
+                    return elems
+                # F2c in FFNS3 is done next
             elems.extend(heavy.kernels.generate(self.esf, self.nf))
             ihq = self.nf + 1
             if ihq in self.esf.sf.intrinsic_range:
@@ -65,9 +72,17 @@ class Combiner:
         # light is *everything* up to nf and not only u+d+s
         if self.obs_name.flavor in ["light", "total"]:
             elems.extend(light.kernels.generate(self.esf, self.nf))
-        # heavy is not allowed
+        # heavy is allowed if we already passed it
         if self.obs_name.flavor_family in ["heavy"]:
-            raise ValueError(f"{self.obs_name} is not available in ZM-VFNS")
+            if self.obs_name.hqnumber > self.nf:
+                raise ValueError(
+                    f"{self.obs_name} is not available in ZM-VFNS, yet: nf={self.nf}"
+                )
+            elems.extend(
+                kernels.generate_single_flavor_light(
+                    self.esf, self.nf, self.obs_name.hqnumber
+                )
+            )
         return elems
 
     def collect_fonll(self):

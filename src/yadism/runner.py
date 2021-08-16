@@ -20,7 +20,6 @@ import io
 import logging
 import time
 
-import numpy as np
 import rich
 import rich.align
 import rich.box
@@ -102,10 +101,12 @@ class Runner:
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)
         pto = theory["PTO"]
-        if np.isclose(theory["XIF"], 1.0) and np.isclose(theory["XIR"], 1.0):
-            sv_manager = None
-        else:
-            sv_manager = sv.ScaleVariations(order=pto, interpolator=interpolator)
+        sv_manager = sv.ScaleVariations(
+            order=pto,
+            interpolator=interpolator,
+            activate_ren=new_theory["RenScaleVar"],
+            activate_fact=new_theory["FactScaleVar"],
+        )
 
         # Initialize structure functions
         self.managers = dict(
@@ -145,7 +146,6 @@ class Runner:
         logger.info("PTO: %d, process: %s", theory["PTO"], new_observables["prDIS"])
         logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
         logger.info("Intrinsic: %s", intrinsic_range)
-        logger.info("XIR: %g, XIF: %g", theory["XIR"], theory["XIF"])
         logger.info(
             "projectile: %s, target: {Z: %g, A: %g}",
             new_observables["ProjectileDIS"],
@@ -175,6 +175,7 @@ class Runner:
         # ==============================
         self._output = Output()
         self._output.theory = theory
+        self._output.observables = observables
         self._output.update(interpolator.to_dict())
         self._output["pids"] = br.flavor_basis_pids
         self._output["projectilePID"] = coupling_constants.obs_config["projectilePID"]

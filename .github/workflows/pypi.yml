@@ -24,13 +24,19 @@ jobs:
         uses: actions/setup-python@master
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package
+      - name: Install builder
         run: |
-          pip install -e .
+          pip install poetry poetry-dynamic-versioning
+      - name: Run tests
+        run: |
+          poetry install
+          pip install poethepoet
+          # run tests just before deployment
+          poe test
       - name: Package the distribution
         run: |
           # package the pure python wheel
-          pip wheel . -w dist --no-deps
+          poetry build
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:

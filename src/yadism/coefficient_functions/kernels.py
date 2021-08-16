@@ -133,3 +133,58 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
         weights["s"][q] = tot_ch_sq / norm / 2
         weights["s"][-q] = tot_ch_sq / norm / 2
     return weights
+
+
+def generate_single_flavor_light(esf, nf, ihq):
+    """
+    Add a light-like contribution for a single quark flavor.
+
+    The linear dependency to the electric charge is introduce by mulitplying
+    and diving by nf. The multiplication is *implicit* inside the coefficient function,
+    the division is *explict* made here.
+
+    Parameters
+    ----------
+        esf : EvaluatedStructureFunction
+            kinematic point
+        nf : int
+            number of light flavors
+        ihq : int
+            quark flavor to activate
+
+    Returns
+    -------
+        elems : list(yadism.kernels.Kernel)
+            list of elements
+    """
+    kind = esf.sf.obs_name.kind
+    light_cfs = import_local(
+        kind, esf.process, ".".join(__name__.split(".")[:-1] + ["light", ""])
+    )
+    ns_partons = {}
+    ch_av = 0
+    s_partons = {}
+    if esf.process == "CC":
+        w = cc_weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf)
+        ns_partons, ch_av, s_partons = w["ns"], w["g"][21] / (nf), w["s"]
+    else:
+        if kind != "F3":
+            w = esf.sf.coupling_constants.get_weight(
+                ihq, esf.Q2, "VV"
+            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+        else:
+            w = esf.sf.coupling_constants.get_weight(
+                ihq, esf.Q2, "VA"
+            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+
+        ns_partons[ihq] = w
+        ns_partons[-ihq] = w if kind != "F3" else -w
+        ch_av = w / (nf) if kind != "F3" else 0.0
+        for pid in range(1, nf):
+            s_partons[pid] = ch_av
+            s_partons[-pid] = ch_av
+    return (
+        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
+        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),
+        Kernel(s_partons, light_cfs.Singlet(esf, nf)),
+    )
