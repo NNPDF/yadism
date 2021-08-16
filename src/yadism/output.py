@@ -207,8 +207,8 @@ class Output(dict):
             x = obs.x
             Q2 = obs.Q2
 
-            limits.append((x, x))
             limits.append((Q2, Q2))
+            limits.append((x, x))
 
             # add all orders
             for o, (v, _e) in obs.orders.items():
