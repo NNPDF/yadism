@@ -3,7 +3,8 @@
 .. todo::
     docs
 """
-from .output import Output
+__version__ = "0.0.0"
+
 from .runner import Runner
 
 

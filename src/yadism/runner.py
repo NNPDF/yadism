@@ -20,7 +20,6 @@ import io
 import logging
 import time
 
-import numpy as np
 import rich
 import rich.align
 import rich.box

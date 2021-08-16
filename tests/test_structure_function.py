@@ -24,7 +24,9 @@ coupling_constants = MockObj()
 coupling_constants.obs_config = dict(process="EM")
 coupling_constants.get_weight = lambda q, q2, t: 1
 threshold = thresholds.ThresholdsAtlas([50.0, np.inf, np.inf])
-sv_manager = sv.ScaleVariations(order=0, interpolator=interpolator)
+sv_manager = sv.ScaleVariations(
+    order=0, interpolator=interpolator, activate_ren=False, activate_fact=False
+)
 
 
 class MockRunner:

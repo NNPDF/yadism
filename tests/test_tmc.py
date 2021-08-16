@@ -199,7 +199,9 @@ obs_d = dict(
 interpolator = InterpolatorDispatcher(xg, 1, False, False)
 coupling_constants = CouplingConstants.from_dict(th_d, obs_d)
 threshold = ThresholdsAtlas([4, 20, np.inf])
-sv_manager = sv.ScaleVariations(order=0, interpolator=interpolator)
+sv_manager = sv.ScaleVariations(
+    order=0, interpolator=interpolator, activate_ren=False, activate_fact=False
+)
 
 
 class MockRunner:

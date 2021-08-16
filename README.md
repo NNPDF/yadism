@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/N3PDF/yadism/actions?query=workflow%3A%22yadism%22"><img alt="Tests" src="https://github.com/N3PDF/yadism/workflows/yadism/badge.svg"></a>
+  <a href='https://yadism.readthedocs.io/en/latest/?badge=latest'><img src='https://readthedocs.org/projects/yadism/badge/?version=latest' alt='Documentation Status' /></a>
   <a href="https://pypi.org/project/yadism/"><img alt="PyPI" src="https://img.shields.io/pypi/v/yadism"/></a>
   <a href="https://codecov.io/gh/N3PDF/yadism"><img src="https://codecov.io/gh/N3PDF/yadism/branch/master/graph/badge.svg?token=qgCFyUQ6oG" /></a>
   <a href="https://www.codefactor.io/repository/github/n3pdf/yadism"><img src="https://www.codefactor.io/repository/github/n3pdf/yadism/badge?s=e5a00668b58574b5b056e1aca01c7b25d2c203f8" alt="CodeFactor" /></a>
@@ -36,22 +37,26 @@ optional:
 
 ## Scope of the project
 
-Provide all necessary tools to compute the DIS structure functions and related object. This project is linked closely to [EKO](https://github.com/N3PDF/eko).
+Provide all necessary tools to compute the DIS structure functions and related objects. This project is linked closely to [EKO](https://github.com/N3PDF/eko).
 
 ## Installation
 
-Once all the dependencies are available simply run:
+As a user please use [the released version on PyPI](https://pypi.org/project/yadism/),
+through your python package manager, e.g. with `pip`:
 
+```sh
+pip install yadism
 ```
-python setup.py install
+
+### Dev
+
+For development just use the install script and poetry (provided by install
+script):
+
+```sh
+python install.py
+poetry install
 ```
-
-## Documentation
-
-The documentation style of this code follows closely the [numpy documentation
-guide](https://numpydoc.readthedocs.io/en/latest/format.html).
-
-Docs available at: https://n3pdf.github.io/yadism/
 
 ## Development
 

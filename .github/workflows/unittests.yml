@@ -11,7 +11,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        python-version: [3.7, 3.8] # , 3.9] wait for numba to be available
+        python-version: [3.7, 3.8, 3.9]
       fail-fast: false
 
     steps:
@@ -28,24 +28,21 @@ jobs:
       - name: Install yadism
         run: |
           python -m pip install --upgrade pip
-          pip install .
-      - name: Prepare Test environment
-        run: |
-          # install packages needed for testing
-          pip install -r dev_requirements.txt
+          pip install poetry poetry-dynamic-versioning
+          poetry install
+          pip install poethepoet
       # pass with the linter
       - name: Lint with pylint
         run: |
           pip install pylint
           # Search for actual errors
-          pylint src/*/*.py -E
+          poe lint
           # For warnings instead return always zero
-          pylint src/*/*.py --exit-zero
+          poe lint-warnings
       #  run the test with 'pytest'
       - name: Test yadism
         run: |
-          # run tests
-          pytest tests
+          poe test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

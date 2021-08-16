@@ -7,8 +7,8 @@ import pandas as pd
 import yaml
 from eko import strong_coupling
 
+from . import __version__
 from . import observable_name as on
-from . import version
 from .esf.result import ESFResult
 from .input import compatibility
 
@@ -176,7 +176,7 @@ class Output(dict):
         # pylint: disable=no-member, too-many-locals
         if len(self[obsname]) <= 0:
             raise ValueError(f"no ESF {obsname}!")
-        import pineappl  # pylint: disable=import-outside-toplevel
+        import pineappl  # pylint: disable=import-outside-toplevel,import-error
 
         interpolation_xgrid = self["interpolation_xgrid"]
         # interpolation_is_log = self["interpolation_is_log"]
@@ -243,7 +243,7 @@ class Output(dict):
             "runcard",
             json.dumps(dict(theory=self.theory, observables=self.observables)),
         )
-        grid.set_key_value("yadism_version", version.full_version)
+        grid.set_key_value("yadism_version", __version__)
         grid.set_key_value("lumi_id_types", "pdg_mc_ids")
 
         # dump file

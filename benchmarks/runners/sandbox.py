@@ -95,6 +95,9 @@ class Sandbox(Runner):
                 "NNPDF31_nlo_as_0118",
             ])
 
-if __name__ == "__main__":
+def main():
     sand = Sandbox()
     sand.doit()
+
+if __name__ == "__main__":
+    main()
