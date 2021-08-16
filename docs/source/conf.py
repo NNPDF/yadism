@@ -18,8 +18,6 @@ import pathlib
 
 from recommonmark.transform import AutoStructify
 
-import yadism.version
-
 here = pathlib.Path(__file__).parent
 
 # -- Project information -----------------------------------------------------
@@ -27,14 +25,6 @@ here = pathlib.Path(__file__).parent
 project = "yadism"
 copyright = "2019-2021, the N3PDF team"  # pylint: disable=redefined-builtin
 author = "N3PDF team"
-
-# The short X.Y version
-version = yadism.version.short_version
-if not yadism.version.is_released:
-    version = "develop"
-
-# The full version, including alpha/beta/rc tags
-release = yadism.version.full_version
 
 # -- General configuration ---------------------------------------------------
 

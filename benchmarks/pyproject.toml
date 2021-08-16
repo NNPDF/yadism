@@ -6,7 +6,11 @@ build-backend = "poetry.core.masonry.api"
 name = "yadmark"
 version = "0.0.0"
 description = "yadism benchmarks"
-authors = ["Alessandro Candido <candido.ale@gmail.com>"]
+authors = [
+  "Alessandro Candido <alessandro.candido@mi.infn.it>",
+  "Felix Hekhorn <felix.hekhorn@mi.infn.it>",
+  "Giacomo Magni <gmagni@nikhef.nl>"
+]
 include = ["banana.yaml"]
 
 [tool.poetry.dependencies]
