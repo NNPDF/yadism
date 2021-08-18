@@ -9,11 +9,6 @@ from . import raw_cc
 
 
 class Splus(pc.ChargedCurrentBase):
-    """
-    The convolution point simplifies to :math:`x` when m2=0,
-    see :eqref:`6` of :cite:`kretzer-schienbein`.
-    """
-
     def __init__(self, *args, m1sq):
         super().__init__(*args, m1sq=m1sq)
         self.lo = 1.0 - 1.0 / self.y
