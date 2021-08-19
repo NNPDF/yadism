@@ -78,3 +78,68 @@ class GluonAA(GluonVV):
             )
 
         return RSL(cg)
+
+
+class SingletVV(pc.NeutralCurrentBase):
+    def NNLO(self):
+        """
+        |ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`.
+        """
+
+        def cq(z, _args):
+            if self.is_below_threshold(z):
+                return 0.0
+            return (
+                self._FHprefactor
+                / z
+                * (4.0 * np.pi) ** 2
+                * (
+                    LeProHQ.cq1("F2", "VV", self._xi, self._eta(z))
+                    + LeProHQ.cqBarF1("F2", "VV", self._xi, self._eta(z))
+                    * np.log(self._xi)
+                )
+            )
+
+        return RSL(cq)
+
+
+class SingletAA(pc.NeutralCurrentBase):
+    def NNLO(self):
+        """
+        |ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`.
+        """
+
+        def cq(z, _args):
+            if self.is_below_threshold(z):
+                return 0.0
+            return (
+                self._FHprefactor
+                / z
+                * (4.0 * np.pi) ** 2
+                * (
+                    LeProHQ.cq1("F2", "AA", self._xi, self._eta(z))
+                    + LeProHQ.cqBarF1("F2", "AA", self._xi, self._eta(z))
+                    * np.log(self._xi)
+                )
+            )
+
+        return RSL(cq)
+
+
+class NonSinglet(pc.NeutralCurrentBase):
+    def NNLO(self):
+        """
+        |ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`.
+        """
+
+        def dq(z, _args):
+            if self.is_below_threshold(z):
+                return 0.0
+            return (
+                self._FHprefactor
+                / z
+                * (4.0 * np.pi) ** 2
+                * (LeProHQ.dq1("F2", "VV", self._xi, self._eta(z)))
+            )
+
+        return RSL(dq)

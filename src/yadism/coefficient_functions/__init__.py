@@ -37,6 +37,7 @@ class Combiner:
         # light is *everything* up to nf and not only u+d+s
         if self.obs_name.flavor in ["light", "total"]:
             elems.extend(light.kernels.generate(self.esf, self.nf))
+        # add heavy (or fake it by light)
         if self.obs_name.flavor_family in ["heavy", "total"]:
             if self.obs_name.flavor_family == "heavy":
                 # F2b is not avaible in FFNS3
@@ -57,6 +58,9 @@ class Combiner:
             ihq = self.nf + 1
             if ihq in self.esf.sf.intrinsic_range:
                 elems.extend(intrinsic.kernels.generate(self.esf, ihq))
+        # add "missing" diagrams
+        if self.obs_name.flavor_family in ["total"]:  # ,"light"]:
+            elems.extend(heavy.kernels.generate_missing(self.esf, self.nf))
         return elems
 
     def collect_zmvfns(self):
