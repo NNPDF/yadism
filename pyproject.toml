@@ -46,6 +46,7 @@ recommonmark = {version = "^0.7.1", optional = true}
 sphinxcontrib-bibtex = {version = "^2.3.0", optional = true}
 sphinxcontrib-details-directive = {version = "^0.1.0", optional = true}
 nbsphinx = {version = "^0.8.6", optional = true}
+LeProHQ = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 poethepoet = "^0.10.0"

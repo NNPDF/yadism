@@ -20,6 +20,9 @@ class NeutralCurrentBase(pc.PartonicChannel):
         self._FHprefactor = self.ESF.Q2 / (np.pi * m2hq)
 
         # common variables
+        self._xi = self.ESF.Q2 / m2hq
+        self._eta = lambda z: self._xi / 4.0 * (1 / z - 1) - 1
+
         self._rho_q = -4 * m2hq / self.ESF.Q2
         self._rho = lambda z: -self._rho_q * z / (1 - z)
         self._rho_p = lambda z: -self._rho_q * z
