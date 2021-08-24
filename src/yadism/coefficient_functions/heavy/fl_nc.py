@@ -129,7 +129,7 @@ class SingletAA(pc.NeutralCurrentBase):
 class NonSinglet(pc.NeutralCurrentBase):
     def NNLO(self):
         """
-        |ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`.
+        |ref| implements NLO (heavy) non-singlet coefficient function, :cite:`felix-thesis`.
         """
 
         def dq(z, _args):

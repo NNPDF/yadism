@@ -48,6 +48,21 @@ def generate(esf, nf):
 
 
 def generate_missing(esf, nf):
+    """
+    Collect the missing coefficient functions
+
+    Parameters
+    ----------
+        esf : EvaluatedStructureFunction
+            kinematic point
+        nf : int
+            number of light flavors
+
+    Returns
+    -------
+        elems : list(yadism.kernels.Kernel)
+            list of elements
+    """
     kind = esf.sf.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
     ihq = nf + 1
@@ -77,16 +92,11 @@ def nc_weights(coupling_constants, Q2, kind, nf):
     Returns
     -------
         weights : dict
-            mapping pid -> weight for ns, g and s channel
+            mapping pid -> weight
     """
     ihq = nf + 1
     if kind == "F3":
-        # weights = {"qVA": {}}
-        #     for q in range(1, ihq):
-        #         w = coupling_constants.get_weight(q, Q2, kind)
-        #         weights["nsVA"][q] = w
-        #         weights["nsVA"][-q] = -w
-        return {"gVV": {}, "gAA": {}}
+        return {}
     weight_vv = coupling_constants.get_weight(ihq, Q2, "VV")
     weight_aa = coupling_constants.get_weight(ihq, Q2, "AA")
     sVV = {}
