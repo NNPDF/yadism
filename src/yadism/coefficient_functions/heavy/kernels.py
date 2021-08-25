@@ -101,7 +101,7 @@ def nc_weights(coupling_constants, Q2, kind, nf):
     weight_aa = coupling_constants.get_weight(ihq, Q2, "AA")
     sVV = {}
     sAA = {}
-    for q in range(nf + 1):
+    for q in range(1, nf + 1):
         sVV[q] = sVV[-q] = weight_vv
         sAA[q] = sAA[-q] = weight_aa
     return {"gVV": {21: weight_vv}, "gAA": {21: weight_aa}, "sVV": sVV, "sAA": sAA}

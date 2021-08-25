@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=attribute-defined-outside-init
 
 import copy
 
@@ -76,7 +77,8 @@ def test_CRm():
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.m1sq = 0
-        raw_nc.CRm(ppc)
+        with pytest.warns(RuntimeWarning):
+            raw_nc.CRm(ppc)
     with pytest.raises(ZeroDivisionError):
         ppc = copy.copy(pc)
         ppc.m2sq = 0

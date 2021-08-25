@@ -78,8 +78,8 @@ def test_generate_heavy():
     esf = MockESF("F2_charm", 0.1, 10)
     for nf in [3, 5]:
         w = hker.generate(esf, nf)
-        # gVV, gAA
-        ps = [{21: 1}, {21: 8}]
+        # gVV, gAA, sVV, sAA
+        ps = [{21: 1}, {21: 8}, mkpc(nf, 1), mkpc(nf, 8)]
         check(ps, w)
 
 
