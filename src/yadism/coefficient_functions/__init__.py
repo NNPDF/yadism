@@ -19,9 +19,7 @@ class Combiner:
     def __init__(self, esf):
         self.esf = esf
         self.obs_name = esf.sf.obs_name
-        self.nf = esf.sf.threshold.nf(
-            esf.Q2
-        )  # TODO decide whether Q2 or muF2 is the correct thing
+        self.nf = esf.sf.threshold.nf(esf.Q2)
         self.target = esf.sf.target
 
     def collect_ffns(self):
@@ -37,7 +35,9 @@ class Combiner:
         # light is *everything* up to nf and not only u+d+s
         if self.obs_name.flavor in ["light", "total"]:
             elems.extend(light.kernels.generate(self.esf, self.nf))
+        # add heavy
         if self.obs_name.flavor_family in ["heavy", "total"]:
+            # or fake it by light
             if self.obs_name.flavor_family == "heavy":
                 # F2b is not avaible in FFNS3
                 if self.obs_name.hqnumber > self.nf + 1:
@@ -52,11 +52,14 @@ class Combiner:
                         )
                     )
                     return elems
-                # F2c in FFNS3 is done next
+            # Now: F2c in FFNS3 (the true thing)
             elems.extend(heavy.kernels.generate(self.esf, self.nf))
             ihq = self.nf + 1
             if ihq in self.esf.sf.intrinsic_range:
                 elems.extend(intrinsic.kernels.generate(self.esf, ihq))
+        # add "missing" diagrams
+        if self.obs_name.flavor_family in ["total"]:  # ,"light"]:
+            elems.extend(heavy.kernels.generate_missing(self.esf, self.nf))
         return elems
 
     def collect_zmvfns(self):
