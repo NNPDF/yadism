@@ -59,9 +59,9 @@ def li2(X):
     ])
 
     if X == 1:
-       H=PI6
+        H=PI6
     elif X == -1:
-       H=-PI12
+        H=-PI12
     else:
         T=-X
         if T <= -2:
