@@ -303,10 +303,10 @@ A[15,10-1] =  .00000_00000_0015e0
 A[16,10-1] =  .00000_00000_0004e0
 A[17,10-1] =  .00000_00000_0001e0
 
-
+@nb.njit("c16(i8,i8,f8)", cache=True)
 def nielsen(N, M, X):
     """
-    Compute Nielsen’s Generalized Polylogarithm.
+    Compute Nielsen's Generalized Polylogarithm.
 
     Reimplementation of CGPLG (C321) from CERNlib :cite:`cernlib`.
 
@@ -325,12 +325,12 @@ def nielsen(N, M, X):
             :math:`S_{n,m}(x)`
 
     """
-    U = np.full(5,np.nan) # U(0:4), so keep indices
-    V = np.full(6,np.nan) # V(0:5), so keep indices
+    U = np.full(5,np.nan*1j) # U(0:4), so keep indices
+    V = np.full(6,np.nan*1j) # V(0:5), so keep indices
 
-    if N < 1 or N > 4 or M <1 or M > 4 or N+M > 5:
-        raise ValueError(f"ILLEGAL VALUES N={N}, M={M}")
-    if np.isclose(X,1.):
+    if N < 1 or N > 4 or M < 1 or M > 4 or N+M > 5:
+        raise ValueError("ILLEGAL VALUES N,M")
+    if X==1.:
         return S1[N-1,M-1]
     if X > 2. or X < -1.:
         X1=1./X
@@ -359,14 +359,14 @@ def nielsen(N, M, X):
             SK=SK+SGN[K]*SJ
         SJ=0.
         for J in range(0,N-1+1):
-            SJ=SJ+V[J]*C(N-J,M)
+            SJ=SJ+V[J]*C[N-J-1,M-1]
         return SGN[N]*SK+SGN[M]*(SJ+V[N+M])
     if X > HF:
         X1=1.-X
         H=C1*X1+C2
         ALFA=H+H
-        V[0]=1
-        U[0]=1
+        V[0]=1.
+        U[0]=1.
         V[1]=np.log(X1+I*Z0)
         U[1]=np.log(X)
         for L in range (2,M+1):

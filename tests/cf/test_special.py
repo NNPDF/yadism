@@ -25,3 +25,10 @@ def test_nielsen():
 
     # MMa: N[PolyLog[2,3,9/10],10]
     np.testing.assert_allclose(nielsen(2, 3, 0.9), 0.04688868860)
+    # MMa: N[PolyLog[3,2,-11/10],10]
+    np.testing.assert_allclose(nielsen(3, 2, -1.1), 0.05802161975)
+
+    # MMa: N[PolyLog[1, 1, 2], 10]
+    np.testing.assert_allclose(nielsen(1, 1, 2.0), 2.467401100 - 2.177586090j)
+    # MMa: N[PolyLog[1, 1, 3], 10]
+    np.testing.assert_allclose(nielsen(1, 1, 3.0), 2.320180423 - 3.451392295j)

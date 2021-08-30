@@ -1,9 +1,7 @@
 import numba as nb
 import numpy as np
-from scipy.special import zeta
 
-zeta2 = zeta(2)
-zeta3 = zeta(3)
+from .zeta import zeta2, zeta3
 
 
 @nb.njit("f8(f8)", cache=True)
