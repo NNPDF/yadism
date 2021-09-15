@@ -9,6 +9,11 @@ from . import raw_nc
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
+def cg_NLO(z, _args):
+    return raw_nc.clg1am0_a0(z)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
 def cg_NNLO(z, args):
     L = args[0]
     return raw_nc.clg2am0_aq(z) * L + raw_nc.clg2am0_a0(z)
@@ -16,7 +21,7 @@ def cg_NNLO(z, args):
 
 class AsyGluonVV(pc.PartonicChannelAsy):
     def NLO(self):
-        return RSL(raw_nc.clg1am0_a0)
+        return RSL(cg_NLO, args=[self.L])
 
     def NNLO(self):
         return RSL(cg_NNLO, args=[self.L])

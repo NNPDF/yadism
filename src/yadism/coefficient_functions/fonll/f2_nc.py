@@ -1,30 +1,44 @@
 # -*- coding: utf-8 -*-
 
+import numba as nb
 
-import numpy as np
-from eko import constants
-
-from .. import splitting_functions as split
 from ..intrinsic import f2_nc
 from ..partonic_channel import RSL
 from . import partonic_channel as pc
+from . import raw_nc
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cg_NLO(z, args):
+    L = args[0]
+    return L * raw_nc.c2g1am0_aq(z) + raw_nc.c2g1am0_a0(z)
 
 
 class AsyGluonVV(pc.PartonicChannelAsy):
     def NLO(self):
-        def cg(z, _args):
-            L = self.L
-            as_norm = 2.0
-            return as_norm * (
-                split.lo.pqg_single(z, np.array([], dtype=float))
-                * (L + np.log((1.0 - z) / z))
-                + 2.0 * constants.TR * (-1.0 + 8.0 * z * (1.0 - z))
-            )
-
-        return RSL(cg)
+        return RSL(cg_NLO, args=[self.L])
 
 
 class AsyGluonAA(AsyGluonVV):
+    pass
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cps_NNLO(z, args):
+    L = args[0]
+    return (
+        raw_nc.c2ps2am0_aq2(z) * L ** 2
+        + raw_nc.c2ps2am0_aq(z) * L
+        + raw_nc.c2ps2am0_a0(z)
+    )
+
+
+class AsySingletVV(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cps_NNLO, args=[self.L])
+
+
+class AsySingletAA(AsySingletVV):
     pass
 
 

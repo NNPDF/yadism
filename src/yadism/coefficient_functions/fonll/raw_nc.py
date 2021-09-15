@@ -8,9 +8,13 @@ from eko.constants import CA as ca
 from eko.constants import CF as cf
 from eko.constants import TR as tr
 
-from ..special.nielsen import nielsen as wgplg
+from ..special.nielsen import nielsen
 from ..special.zeta import zeta2, zeta3
 
+
+@nb.njit("f8(i8,i8,f8)", cache=True)
+def wgplg(m,n,z):
+   return nielsen(m,n,z).real
 
 @nb.njit("f8(f8)", cache=True)
 def clg1am0_a0(x):

@@ -68,15 +68,20 @@ def parse(path):
         "from eko.constants import CF as cf",
         "from eko.constants import TR as tr",
         "",
-        "from ..special.nielsen import nielsen as wgplg",
+        "from ..special.nielsen import nielsen",
         "from ..special.zeta import zeta2, zeta3" "",
+        "",
+        "def wgplg(m,n,z):",
+        "   return nielsen(m,n,z).real",
     ] + new
     new = "\n".join(new)
     new = re.sub(r"\n *\d *", " ", new)
     new = re.sub(r"d([\+\-]?\d+)", r"e\1", new)
-    new = re.sub(r"def", r'\n@nb.njit("f8(f8)", cache=True)\ndef', new)
-    # new = re.sub(r"(def \w+\(\w+,.*\):)", r"\1\n    nf = args[0]", new)
-    # new = re.sub(r"def (\w+\(\w+).*\)", r"def \1, args)", new)
+    new = new.replace("def", '\n@nb.njit("f8(f8)", cache=True)\ndef')
+    new = new.replace(
+        '@nb.njit("f8(f8)", cache=True)\ndef wgplg',
+        '@nb.njit("f8(i8,i8,f8)", cache=True)\ndef wgplg',
+    )
     new += "\n"
 
     return new
