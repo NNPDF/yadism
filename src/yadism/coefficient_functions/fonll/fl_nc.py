@@ -49,7 +49,7 @@ class AsySingletAA(AsySingletVV):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cns_NNLO(z, args):
     L = args[0]
-    return raw_nc.clns2am0_a0(z) * L + raw_nc.clns2am0_a0(z)
+    return raw_nc.clns2am0_aq(z) * L + raw_nc.clns2am0_a0(z)
 
 
 class AsyNonSingletMissing(pc.PartonicChannelAsy):
