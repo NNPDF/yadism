@@ -26,6 +26,9 @@ class AsyGluonVV(pc.PartonicChannelAsy):
     def NLO(self):
         return RSL(cg_NLO, args=[self.L])
 
+    def NNLO(self):
+        return RSL(cg_NNLO, args=[self.L])
+
 
 class AsyGluonAA(AsyGluonVV):
     pass
