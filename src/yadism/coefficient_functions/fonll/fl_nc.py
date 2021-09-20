@@ -2,8 +2,9 @@
 
 import numba as nb
 
-from ..intrinsic import fl_nc
-from ..partonic_channel import RSL
+from ..intrinsic import fl_nc as intrinsic
+from ..light import fl_nc as light
+from ..partonic_channel import RSL, EmptyPartonicChannel
 from . import partonic_channel as pc
 from . import raw_nc
 
@@ -46,6 +47,15 @@ class AsySingletAA(AsySingletVV):
     pass
 
 
+class PdfMatchingNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class LightNonSingletShifted(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return light.NonSinglet(self.ESF, self.nf).NLO()
+
+
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cns_NNLO(z, args):
     L = args[0]
@@ -58,16 +68,16 @@ class AsyNonSingletMissing(pc.PartonicChannelAsy):
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuark):
-    ffns = fl_nc.Splus
+    ffns = intrinsic.Splus
 
 
 class MatchingIntrinsicSminus(pc.FMatchingQuark):
-    ffns = fl_nc.Sminus
+    ffns = intrinsic.Sminus
 
 
 class MatchingGluonSplus(pc.FMatchingGluon):
-    ffns = fl_nc.Splus
+    ffns = intrinsic.Splus
 
 
 class MatchingGluonSminus(pc.FMatchingGluon):
-    ffns = fl_nc.Sminus
+    ffns = intrinsic.Sminus

@@ -47,11 +47,11 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4**2, 1e2, 10).tolist()])
 
         observable_names = [
-            #"F2_light",
-            # "FL_light",
+            "F2_light",
+            "FL_light",
             # "F3_light",
-            "F2_charm",
-            "FL_charm",
+            #"F2_charm",
+            #"FL_charm",
             #   "F3_charm",
             #"F2_bottom",
             # "F2_top",
@@ -82,8 +82,10 @@ class Sandbox(Runner):
         #  self.run([{"PTO": 1, "IC": 0,"mc": 1.51, "NfFF": 4}], self.generate_observables(),["conly"])
         self.run([
                 #{"PTO": 2, "NfFF": 5, "mc":2, "mb":3, "mt":4},
-                #{"PTO": 2,"FNS": "ZM-VFNS",},
-                {"PTO": 1, "FNS": "FONLL-A", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
+                #{"PTO": 2,"FNS": "FFNS","mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 3},
+                #{"PTO": 1, "FNS": "FONLL-A", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
+                #{"PTO": 2, "FNS": "FONLL-B", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
+                {"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9913},
                 #{"PTO": 2, "XIF": 2, "XIR": 2, "mb": 4.9915},
                 #{"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
@@ -91,14 +93,14 @@ class Sandbox(Runner):
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
             ], self.generate_observables(), [
-                #"dbaronly",
+                "dbaronly",
                 #"gonly",
                 #"toygonly",
                 #"toyantichsing",
                 #"toyt3only",
                 #"conly",
                 #"ToyLH",
-                "gonly",
+                #"gonly",
             ])
 
 def main():

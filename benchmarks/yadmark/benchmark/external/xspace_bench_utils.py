@@ -80,13 +80,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
             )
         damp = theory["DAMP"]
         scheme = "GMVN"
-
-    # elif scheme == "FONLL-A'":
-    #    if theory["DAMP"] != 0:
-    #            raise NotImplementedError("FONLL-A' only with out damping in xspace_bench")
-    #    if theory["NfFF"] != 4:
-    #        raise NotImplementedError("FONLL-A only with 3 ( ie. NfFF=4 ) light flavors in xspace_bench")
-    #    scheme = "FFN0"
     else:
         raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
 

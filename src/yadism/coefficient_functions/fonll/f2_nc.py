@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import numba as nb
+from eko.constants import TR
 
-from ..intrinsic import f2_nc
+from ..intrinsic import f2_nc as intrinsic
+from ..light import f2_nc as light
 from ..partonic_channel import RSL
+from ..splitting_functions import lo
 from . import partonic_channel as pc
 from . import raw_nc
 
@@ -83,22 +86,58 @@ def cns_NNLO_loc(z, args):
     )
 
 
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_reg(z, args):
+    L = args[0]
+    return L ** 2 / 2.0 * 2.0 * TR / 3 * lo.pqq_reg(z, args)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_sing(z, args):
+    L = args[0]
+    return (
+        pc.K_qq_sing(z)
+        + L ** 2 / 2.0 * 2.0 * TR / 3 * lo.pqq_sing(z, args)
+        - L * pc.Delta_qq_sing(z)
+    )
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_loc(z, args):
+    L = args[0]
+    return (
+        pc.K_qq_loc(z)
+        + L ** 2 / 2.0 * 2.0 * TR / 3 * lo.pqq_local(z, args)
+        - L * pc.Delta_qq_loc(z)
+    )
+
+
+class PdfMatchingNonSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(pdf_matching_reg, pdf_matching_sing, pdf_matching_loc, args=[self.L])
+
+
+class LightNonSingletShifted(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return light.NonSinglet(self.ESF, self.nf).NLO()
+
+
 class AsyNonSingletMissing(pc.PartonicChannelAsy):
     def NNLO(self):
         return RSL(cns_NNLO_reg, cns_NNLO_sing, cns_NNLO_loc, args=[self.L])
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuark):
-    ffns = f2_nc.Splus
+    ffns = intrinsic.Splus
 
 
 class MatchingIntrinsicSminus(pc.FMatchingQuark):
-    ffns = f2_nc.Sminus
+    ffns = intrinsic.Sminus
 
 
 class MatchingGluonSplus(pc.FMatchingGluon):
-    ffns = f2_nc.Splus
+    ffns = intrinsic.Splus
 
 
 class MatchingGluonSminus(pc.FMatchingGluon):
-    ffns = f2_nc.Sminus
+    ffns = intrinsic.Sminus

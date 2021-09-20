@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import LeProHQ
 import numpy as np
+from scipy.integrate import quad
 
 from ..partonic_channel import RSL
 from . import partonic_channel as pc
@@ -142,4 +143,7 @@ class NonSinglet(pc.NeutralCurrentBase):
                 * (LeProHQ.dq1("F2", "VV", self._xi, self._eta(z)))
             )
 
-        return RSL(dq)
+        def Adler(_x, _args):
+            return -quad(dq, 0, 1)
+
+        return RSL(dq, loc=Adler)

@@ -112,11 +112,12 @@ class Combiner:
 
         if self.obs_name.flavor in ["light", "total"]:
             # FFNSlow
-            elems.extend(light.kernels.generate(self.esf, nl))
+            # elems.extend(light.kernels.generate(self.esf, nl))
             # add F^d
-            elems.extend(
-                self.damp_elems(nl, fonll.kernels.generate_light_diff(self.esf, nl))
-            )
+            # elems.extend(
+            #    self.damp_elems(nl, fonll.kernels.generate_light_diff(self.esf, nl))
+            # )
+            elems.extend(fonll.kernels.generate_light(self.esf, nl))
         if self.obs_name.flavor_family in ["heavy", "total"]:
             ihq = nl + 1
             if self.obs_name.hqnumber < ihq:
@@ -145,14 +146,14 @@ class Combiner:
                 elems.extend(
                     self.damp_elems(nl, fonll.kernels.generate_heavy_diff(self.esf, nl))
                 )
-        # add "missing" diagrams
-        if self.obs_name.flavor_family in ["total"]:
-            # FFNSlow
-            elems.extend(heavy.kernels.generate_missing(self.esf, nl))
-            # add F^d
-            elems.extend(
-                self.damp_elems(nl, fonll.kernels.generate_missing_diff(self.esf, nl))
-            )
+        # # add "missing" diagrams
+        # if self.obs_name.flavor_family in ["total"]:
+        #     # FFNSlow
+        #     elems.extend(heavy.kernels.generate_missing(self.esf, nl))
+        #     # add F^d
+        #     elems.extend(
+        #         self.damp_elems(nl, fonll.kernels.generate_missing_diff(self.esf, nl))
+        #     )
         return elems
 
     def damp_elems(self, nl, elems):
@@ -240,7 +241,7 @@ class Combiner:
             full = self.collect_ffns()
         elif self.esf.sf.scheme == "ZM-VFNS":
             full = self.collect_zmvfns()
-        elif self.esf.sf.scheme in ["FONLL-A"]:
+        elif self.esf.sf.scheme in ["FONLL-A", "FONLL-B", "FONLL-C"]:
             full = self.collect_fonll()
         else:
             raise ValueError("Unknown FNS")

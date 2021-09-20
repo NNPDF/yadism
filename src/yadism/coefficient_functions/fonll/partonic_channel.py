@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numba as nb
 import numpy as np
 from eko import constants
 
@@ -15,6 +16,7 @@ class PartonicChannelAsy(pc.PartonicChannel):
         self.L = np.log(self.ESF.Q2 / mu2hq)
 
 
+@nb.njit("f8(f8)", cache=True)
 def Delta_qq_sing(z):
     r"""
     |ref| implements :eqref:`101`, :cite:`forte-fonll`.
@@ -28,6 +30,7 @@ def Delta_qq_sing(z):
     -------
         singular part of : math:`\Delta_qq(z)`
     """
+    as_norm = 4.0
     return (
         constants.CF
         * constants.TR
@@ -35,9 +38,11 @@ def Delta_qq_sing(z):
             (1.0 + z ** 2) / (1.0 - z) * (2.0 / 3.0 * np.log(z) + 10.0 / 9.0)
             + 4.0 / 3.0 * (1.0 - z)
         )
+        * as_norm
     )
 
 
+@nb.njit("f8(f8)", cache=True)
 def Delta_qq_loc(x):
     r"""
     |ref| implements :eqref:`101`, :cite:`forte-fonll`.
@@ -51,6 +56,7 @@ def Delta_qq_loc(x):
     -------
         local part of : math:`\Delta_qq(z)`
     """
+    as_norm = 4.0
     # Integrate[(1+z^2)/(1-z)(2/3 Log[z]+10/9)+4/3(1-z),{z,0,x},Assumptions->{0<x<1}]
     return (
         constants.CF
@@ -63,9 +69,11 @@ def Delta_qq_loc(x):
             + 24 * li2(1 - x)
         )
         / 18.0
+        * as_norm
     )
 
 
+@nb.njit("f8(f8)", cache=True)
 def K_qq_sing(z):
     """
     |ref| implements :eqref:`100`, :cite:`forte-fonll`.
@@ -79,6 +87,7 @@ def K_qq_sing(z):
     -------
         singular part of : math:`K_qq(z)`
     """
+    as_norm = 4.0
     return (
         constants.CF
         * constants.TR
@@ -88,9 +97,11 @@ def K_qq_sing(z):
             * (1.0 / 6.0 * np.log(z) ** 2 + 5.0 / 9.0 * np.log(z) + 28.0 / 27.0)
             + (1.0 - z) * (2.0 / 3.0 * np.log(z) + 13.0 / 9.0)
         )
+        * as_norm
     )
 
 
+@nb.njit("f8(f8)", cache=True)
 def K_qq_loc(x):
     """
     |ref| implements :eqref:`100`, :cite:`forte-fonll`.
@@ -104,6 +115,7 @@ def K_qq_loc(x):
     -------
         local part of : math:`K_qq(z)`
     """
+    as_norm = 4.0
     # MMa: Integrate[(1+z^2)/(1-z)(1/6 Log[z]^2+5/9Log[z]+28/27)+(1-z)(2/3Log[z]+13/9),{z,0,x},Assumptions->{0<x<1}]
     return (
         constants.CF
@@ -116,9 +128,10 @@ def K_qq_loc(x):
             * (4 * np.pi ** 2 + x * (-16 + 19 * x) + 3 * x * (2 + x) * np.log(x))
             + 8 * np.log(1 - x) * (-56 + 9 * np.log(x) ** 2)
             + 48 * (5 + 3 * np.log(x)) * li2(1 - x)
-            + 144 * nielsen(2, 1, x)
+            + 144 * nielsen(2, 1, x).real
         )
         / 216.0
+        * as_norm
     )
 
 
