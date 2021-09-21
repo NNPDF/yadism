@@ -19,9 +19,6 @@ def generate_light(esf, nl):
         return ()
     ihq = nl + 1
     light_elems = light.kernels.generate(esf, nl)
-    for e in light_elems:
-        e.partons[ihq] = 0
-        e.partons[-ihq] = 0
     kind = esf.sf.obs_name.kind
     mu2hq = esf.sf.threshold.area_walls[ihq - 3]
     L = np.log(esf.Q2 / mu2hq)
@@ -37,8 +34,11 @@ def generate_light(esf, nl):
         diff.append(e)
     for e in light.kernels.generate(esf, nl + 1):
         e.partons[21] = 0
-        e = -e
-        diff.append(e)
+        e.partons[ihq] = 0
+        e.partons[-ihq] = 0
+        diff.append(-e)
+
+    as_norm = 2.0
 
     return (
         # fully light contributions
@@ -48,13 +48,14 @@ def generate_light(esf, nl):
         # Pdf matching conditions
         -kernels.Kernel(
             light_weights["ns"],
-            fonll_cfs.PdfMatchingNonSinglet(esf, nl + 1, mu2hq=mu2hq),
+            fonll_cfs.PdfMatchingNonSinglet(esf, nl, mu2hq=mu2hq),
         ),
         # alpha s matching condition
         -(2.0 / 3.0 * TR * L)
+        * as_norm
         * kernels.Kernel(
             light_weights["ns"],
-            fonll_cfs.LightNonSingletShifted(esf, nl + 1, mu2hq=mu2hq),
+            fonll_cfs.LightNonSingletShifted(esf, nl, mu2hq=mu2hq),
         ),
         # derivative
         *diff,

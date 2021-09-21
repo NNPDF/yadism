@@ -89,15 +89,17 @@ def cns_NNLO_loc(z, args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def pdf_matching_reg(z, args):
     L = args[0]
-    return L ** 2 / 2.0 * 2.0 * TR / 3 * lo.pqq_reg(z, args)
+    as_norm = 2.0
+    return L ** 2 / 2.0 * 2.0 * TR / 3 * as_norm * lo.pqq_reg(z, args)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def pdf_matching_sing(z, args):
     L = args[0]
+    as_norm = 2.0
     return (
         pc.K_qq_sing(z)
-        + L ** 2 / 2.0 * 2.0 * TR / 3 * lo.pqq_sing(z, args)
+        + L ** 2 / 2.0 * 2.0 * TR / 3 * as_norm * lo.pqq_sing(z, args)
         - L * pc.Delta_qq_sing(z)
     )
 
@@ -105,9 +107,10 @@ def pdf_matching_sing(z, args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def pdf_matching_loc(z, args):
     L = args[0]
+    as_norm = 2.0
     return (
         pc.K_qq_loc(z)
-        + L ** 2 / 2.0 * 2.0 * TR / 3 * lo.pqq_local(z, args)
+        + L ** 2 / 2.0 * 2.0 * TR / 3 * as_norm * lo.pqq_local(z, args)
         - L * pc.Delta_qq_loc(z)
     )
 

@@ -95,7 +95,9 @@ class Sandbox(Runner):
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
             ], self.generate_observables(), [
-                "uonly",
+                #"uonly",
+                #"dbaronly"
+                "sonly"
                 #"toygonly",
                 #"toyantichsing",
                 #"toyt3only",
