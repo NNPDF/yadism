@@ -27,11 +27,13 @@ class Sandbox(Runner):
         #interpolation_xgrid = np.linspace(1e-1, 1, 9).tolist()
         kinematics = []
         kinematics.extend(
+            #[]
             #[dict(x=0.1,Q2=90, y=0)]
             #[dict(x=x, Q2=20.0) for x in xgrid[:-1:5]]
             [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)]
         )
         kinematics.extend(
+            #[]
             [dict(x=x, Q2=2**2, y=0) for x in np.geomspace(1e-4, .9, 10)]
         )
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
@@ -93,8 +95,7 @@ class Sandbox(Runner):
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
             ], self.generate_observables(), [
-                "dbaronly",
-                #"gonly",
+                "uonly",
                 #"toygonly",
                 #"toyantichsing",
                 #"toyt3only",

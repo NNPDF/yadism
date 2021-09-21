@@ -43,6 +43,8 @@ def generate_light(esf, nl):
     return (
         # fully light contributions
         *light_elems,
+        # missing
+        *heavy.kernels.generate_missing(esf, nl),
         # Pdf matching conditions
         -kernels.Kernel(
             light_weights["ns"],
