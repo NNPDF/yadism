@@ -36,7 +36,7 @@ def generate(esf, nf):
     return (ns, g, s)
 
 
-def nc_weights(coupling_constants, Q2, kind, nf):
+def nc_weights(coupling_constants, Q2, kind, nf, skip_heavylight=False):
     """
     Compute light NC weights.
 
@@ -50,6 +50,8 @@ def nc_weights(coupling_constants, Q2, kind, nf):
             structure function kind
         nf : int
             number of light flavors
+        skip_heavylight : bool
+            prevent the last quark to couple to the boson
 
     Returns
     -------
@@ -61,6 +63,10 @@ def nc_weights(coupling_constants, Q2, kind, nf):
     ns_partons = {}
     pids = range(1, nf + 1)
     for q in pids:
+        # we don't want this quark to couple to the photon (because it is treated separately),
+        # but still let it take part in the average
+        if skip_heavylight and q == nf:
+            continue
         if kind != "F3":
             w = coupling_constants.get_weight(
                 q, Q2, "VV"
@@ -75,5 +81,5 @@ def nc_weights(coupling_constants, Q2, kind, nf):
     # gluon coupling = charge average (omitting the *2/2)
     ch_av = tot_ch_sq / len(pids) if kind != "F3" else 0.0
     # same for singlet
-    s_partons = {q: ch_av for q in ns_partons}
+    s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
     return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons}

@@ -97,13 +97,14 @@ class Sandbox(Runner):
             ], self.generate_observables(), [
                 #"uonly",
                 #"dbaronly"
-                "sonly"
+                #"conly"
                 #"toygonly",
                 #"toyantichsing",
                 #"toyt3only",
                 #"conly",
                 #"ToyLH",
                 #"gonly",
+                "NNPDF31_nnlo_as_0118"
             ])
 
 def main():

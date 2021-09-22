@@ -18,6 +18,8 @@ def generate_light(esf, nl):
         # TODO
         return ()
     ihq = nl + 1
+    # rewrite the derivative term back as a sum
+    # and so we're back to cbar^{(nl)}
     light_elems = light.kernels.generate(esf, nl)
     kind = esf.sf.obs_name.kind
     mu2hq = esf.sf.threshold.area_walls[ihq - 3]
@@ -26,17 +28,6 @@ def generate_light(esf, nl):
     light_weights = light.kernels.nc_weights(
         esf.sf.coupling_constants, esf.Q2, kind, nl
     )
-
-    # rewrite the derivative term back as a sum
-    diff = []
-    for e in light.kernels.generate(esf, nl):
-        e.partons[21] = 0
-        diff.append(e)
-    for e in light.kernels.generate(esf, nl + 1):
-        e.partons[21] = 0
-        e.partons[ihq] = 0
-        e.partons[-ihq] = 0
-        diff.append(-e)
 
     as_norm = 2.0
 
@@ -57,8 +48,6 @@ def generate_light(esf, nl):
             light_weights["ns"],
             fonll_cfs.LightNonSingletShifted(esf, nl, mu2hq=mu2hq),
         ),
-        # derivative
-        *diff,
     )
 
 
@@ -92,7 +81,7 @@ def generate_light_diff(esf, nl):
     kind = esf.sf.obs_name.kind
     light_cfs = import_pc_module(kind, esf.process, "light")
     light_weights = light.kernels.nc_weights(
-        esf.sf.coupling_constants, esf.Q2, kind, nl + 1
+        esf.sf.coupling_constants, esf.Q2, kind, nl + 1, skip_heavylight=True
     )
     s_w = {nl + 1: light_weights["s"][nl + 1], -(nl + 1): light_weights["s"][-(nl + 1)]}
     return (kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1)),)
