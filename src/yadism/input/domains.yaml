@@ -128,12 +128,10 @@
   type: enum
   domain:
     - ZM-VFNS
-    - ZM-VFNS'
     - FFNS
     - FONLL-A
-    - FONLL-A'
-    #- FONLL-B
-    #- FONLL-C
+    - FONLL-B
+    - FONLL-C
 
 - name: Nf_FF
   known_as: NfFF

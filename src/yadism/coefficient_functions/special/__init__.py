@@ -1,9 +1,7 @@
 import numba as nb
 import numpy as np
-from scipy.special import zeta
 
-zeta2 = zeta(2)
-zeta3 = zeta(3)
+from .zeta import zeta2, zeta3
 
 
 @nb.njit("f8(f8)", cache=True)
@@ -59,9 +57,9 @@ def li2(X):
     ])
 
     if X == 1:
-       H=PI6
+        H=PI6
     elif X == -1:
-       H=-PI12
+        H=-PI12
     else:
         T=-X
         if T <= -2:
