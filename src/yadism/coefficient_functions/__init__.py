@@ -155,6 +155,19 @@ class Combiner:
         #     )
         return elems
 
+    def collect_fonll_mismatched(self):
+        kernels = []
+
+        for k in self.collect_fonll():
+            k.max_order = evolution_pto
+            kernels.append(k)
+
+        for k in self.collect_ffns():
+            k.min_order = evolution_pto
+            kernels.append(k)
+
+        return kernels
+
     def damp_elems(self, nl, elems):
         """
         Damp FONLL difference contributions if necessary.
