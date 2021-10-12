@@ -125,7 +125,16 @@ def test_generate_light_fonll_diff():
         ]:
             for nf in [3, 4, 5]:
                 w = aker.generate_light_diff(esf, nf)
-                assert len(w) == 0
+                # TODO fix
+                qnorm = {3: 2.5 / 3, 4: 2.25, 5: 4.2}[nf]
+                kindsgn = esf.sf.obs_name.kind == "F3"
+                ps = [
+                    {
+                        nf + 1: (1 if kindsgn != sgn else -1) * qnorm,
+                        -(nf + 1): (1 if kindsgn != sgn else -1) * qnorm,
+                    }
+                ]
+                check(ps, w)
 
 
 # def test_generate_heavy_fonll_diff_pc():
