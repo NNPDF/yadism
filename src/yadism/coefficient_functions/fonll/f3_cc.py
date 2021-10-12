@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np
-from eko import constants
-
 from .. import splitting_functions as split
 from ..intrinsic import f3_cc as intrinsic
 from ..light import f3_cc as light
-from ..partonic_channel import RSL
+from ..partonic_channel import RSL, EmptyPartonicChannel
 from . import partonic_channel as pc
 
 
@@ -22,6 +19,18 @@ class AsyGluon(pc.PartonicChannelAsy):
             return -self.L * split.lo.pqg_single(z, args)
 
         return RSL(reg)
+
+
+class PdfMatchingNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class LightNonSingletShifted(EmptyPartonicChannel):
+    pass
+
+
+class AsyNonSingletMissing(EmptyPartonicChannel):
+    pass
 
 
 class MatchingIntrinsicRplus(pc.FMatchingQuarkCC):
