@@ -20,13 +20,8 @@ class NeutralCurrentBase(pc.PartonicChannel):
         self._FHprefactor = self.ESF.Q2 / (np.pi * m2hq)
 
         # common variables
-        self._rho_q = -4 * m2hq / self.ESF.Q2
-        self._rho = lambda z: -self._rho_q * z / (1 - z)
-        self._rho_p = lambda z: -self._rho_q * z
-
-        self._beta = lambda z: np.sqrt(1 - self._rho(z))
-
-        self._chi = lambda z: (1 - self._beta(z)) / (1 + self._beta(z))
+        self._xi = self.ESF.Q2 / m2hq
+        self._eta = lambda z: self._xi / 4.0 * (1.0 / z - 1.0) - 1.0
 
     def decorator(self, f):
         """

@@ -45,9 +45,6 @@ Then:
     - if 6 < Nf_FF < 3: Nf_FF = 3
         - warning: is VNFS
         - set VNFS
-- if MassScheme = 'FONLL-A':
-    - warning
-    - set pto = 1
 - if MassScheme = 'FONLL-B':
     - warning
     - set pto = 1

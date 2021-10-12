@@ -78,8 +78,8 @@ def test_generate_heavy():
     esf = MockESF("F2_charm", 0.1, 10)
     for nf in [3, 5]:
         w = hker.generate(esf, nf)
-        # gVV, gAA
-        ps = [{21: 1}, {21: 8}]
+        # gVV, gAA, sVV, sAA
+        ps = [{21: 1}, {21: 8}, mkpc(nf, 1), mkpc(nf, 8)]
         check(ps, w)
 
 
@@ -88,7 +88,7 @@ def test_generate_light_fonll_diff_pc():
     for nl in [3, 5]:
         w = aker.generate_light_diff(esf, nl)
         # c/t as light
-        ps = [{-(nl + 1): 9, (nl + 1): 9}]
+        ps = [{-(nl + 1): 6.75 if nl == 3 else 7.5, (nl + 1): 6.75 if nl == 3 else 7.5}]
         check(ps, w)
 
 
@@ -112,6 +112,8 @@ def test_generate_heavy_fonll_diff_pc():
             mkpc(nl, 9 / (nl + 1)),
             {21: -1},
             {21: -8},
+            mkpc(nl, -1),
+            mkpc(nl, -8),
         ]
         check(ps, w)
 

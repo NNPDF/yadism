@@ -114,6 +114,7 @@ class TestEvaluatedStructureFunction:
             r = MockRunner()
             r.theory_params["scheme"] = scheme
             r.theory_params["target"] = {"Z": 1, "A": 1}
+            r.theory_params["m2hq"] = [1, 2, 3]
             sf = StructureFunction(
                 observable_name.ObservableName("FL_light"),
                 r,

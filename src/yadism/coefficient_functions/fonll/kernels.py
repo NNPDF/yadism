@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import numpy as np
+from eko.constants import TR
+
 from .. import heavy, kernels, light
 
 
@@ -10,9 +13,47 @@ def import_pc_module(kind, process, subpkg=None):
     return kernels.import_local(kind, process, subpkg)
 
 
+def generate_light(esf, nl):
+    if esf.process == "CC":
+        # TODO
+        return ()
+    ihq = nl + 1
+    # rewrite the derivative term back as a sum
+    # and so we're back to cbar^{(nl)}
+    light_elems = light.kernels.generate(esf, nl)
+    kind = esf.sf.obs_name.kind
+    mu2hq = esf.sf.threshold.area_walls[ihq - 3]
+    L = np.log(esf.Q2 / mu2hq)
+    fonll_cfs = import_pc_module(kind, esf.process)
+    light_weights = light.kernels.nc_weights(
+        esf.sf.coupling_constants, esf.Q2, kind, nl
+    )
+
+    as_norm = 2.0
+
+    return (
+        # fully light contributions
+        *light_elems,
+        # missing
+        *heavy.kernels.generate_missing(esf, nl),
+        # Pdf matching conditions
+        -kernels.Kernel(
+            light_weights["ns"],
+            fonll_cfs.PdfMatchingNonSinglet(esf, nl, mu2hq=mu2hq),
+        ),
+        # alpha s matching condition
+        -(2.0 / 3.0 * TR * L)
+        * as_norm
+        * kernels.Kernel(
+            light_weights["ns"],
+            fonll_cfs.LightNonSingletShifted(esf, nl, mu2hq=mu2hq),
+        ),
+    )
+
+
 def generate_light_diff(esf, nl):
-    """
-    Collect the light diff coefficient functions for FONLL.
+    r"""
+    Collect the light diff coefficient functions for |FONLL|.
 
     |ref| implements :eqref:`95`, :cite:`forte-fonll`.
 
@@ -40,7 +81,7 @@ def generate_light_diff(esf, nl):
     kind = esf.sf.obs_name.kind
     light_cfs = import_pc_module(kind, esf.process, "light")
     light_weights = light.kernels.nc_weights(
-        esf.sf.coupling_constants, esf.Q2, kind, nl + 1
+        esf.sf.coupling_constants, esf.Q2, kind, nl + 1, skip_heavylight=True
     )
     s_w = {nl + 1: light_weights["s"][nl + 1], -(nl + 1): light_weights["s"][-(nl + 1)]}
     return (kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1)),)
@@ -93,9 +134,46 @@ def generate_heavy_diff(esf, nl):
                 -kernels.Kernel(
                     asy_weights["gAA"], fonll_cfs.AsyGluonAA(esf, nl, mu2hq=mu2hq)
                 ),
+                -kernels.Kernel(
+                    asy_weights["sVV"], fonll_cfs.AsySingletVV(esf, nl, mu2hq=mu2hq)
+                ),
+                -kernels.Kernel(
+                    asy_weights["sAA"], fonll_cfs.AsySingletAA(esf, nl, mu2hq=mu2hq)
+                ),
             ]
 
     return (*elems, *asys)
+
+
+# def generate_missing_diff(esf, nl):
+#     """
+#     Collect the missing coefficient functions
+
+#     Parameters
+#     ----------
+#         esf : EvaluatedStructureFunction
+#             kinematic point
+#         nl : int
+#             number of light flavors
+
+#     Returns
+#     -------
+#         elems : list(yadism.kernels.Kernel)
+#             list of elements
+#     """
+#     kind = esf.sf.obs_name.kind
+#     fonll_cfs = import_pc_module(kind, esf.process)
+#     ihq = nl + 1
+#     mu2hq = esf.sf.threshold.area_walls[ihq - 3]
+#     # in CC there are no missing diagrams known yet
+#     if esf.process == "CC":
+#         return ()
+#     weights = light_nc_weights(esf.sf.coupling_constants, esf.Q2, kind, nl)
+#     return (
+#         -kernels.Kernel(
+#             weights["ns"], fonll_cfs.AsyNonSingletMissing(esf, nl, mu2hq=mu2hq)
+#         ),
+#     )
 
 
 def generate_heavy_intrinsic_diff(esf, nl):

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from .. import splitting_functions as split
 from ..partonic_channel import RSL
 from . import nlo, nnlo
 from . import partonic_channel as pc
@@ -37,7 +36,7 @@ class NonSinglet(pc.LightBase):
 
 class Gluon(pc.LightBase):
     def NLO(self):
-        """
+        r"""
         |ref| implements :eqref:`4.4`, :cite:`vogt-f2nc`.
 
         Note

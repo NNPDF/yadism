@@ -3,6 +3,7 @@ Zero-dependency bootstrap script
 """
 import argparse
 import pathlib
+import shutil
 import subprocess
 
 here = pathlib.Path(".").parent.absolute()
@@ -69,7 +70,10 @@ if __name__ == "__main__":
 
     question = load_options(args.yes, args.no, args.default)
 
-    pipx_answer = question("Do you want to install with pipx?", False)
+    if shutil.which("pipx") is not None:
+        pipx_answer = question("Do you want to install with pipx?", False)
+    else:
+        pipx_answer = "no"
 
     pipx = pipx_answer.lower() in ["y", "yes"]
     user = " --user" if args.user else ""
