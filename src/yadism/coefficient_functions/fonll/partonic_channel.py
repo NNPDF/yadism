@@ -8,6 +8,7 @@ from .. import splitting_functions as split
 from ..partonic_channel import RSL
 from ..special import li2
 from ..special.nielsen import nielsen
+from ..splitting_functions import lo
 
 
 class PartonicChannelAsy(pc.PartonicChannel):
@@ -133,6 +134,41 @@ def K_qq_loc(x):
         / 216.0
         * as_norm
     )
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_reg(z, args):
+    L = args[0]
+    as_norm = 2.0
+    return L ** 2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_reg(z, args)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_sing(z, args):
+    L = args[0]
+    as_norm = 2.0
+    return (
+        K_qq_sing(z)
+        + L ** 2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_sing(z, args)
+        - L * Delta_qq_sing(z)
+    )
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_loc(z, args):
+    L = args[0]
+    as_norm = 2.0
+    return (
+        K_qq_loc(z)
+        + L ** 2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_local(z, args)
+        - L * Delta_qq_loc(z)
+    )
+
+
+class PdfMatchingNonSinglet(PartonicChannelAsy):
+    def NNLO(self):
+        # we can define that here, since F2=F3 at LO and FL=0
+        return RSL(pdf_matching_reg, pdf_matching_sing, pdf_matching_loc, args=[self.L])
 
 
 class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
