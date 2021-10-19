@@ -166,7 +166,11 @@ def generate_single_flavor_light(esf, nf, ihq):
     s_partons = {}
     if esf.process == "CC":
         w = cc_weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf)
-        ns_partons, ch_av, s_partons = w["ns"], w["g"][21] / (nf), w["s"]
+        ns_partons, ch_av, s_partons = (
+            w["ns"],
+            w["g"][21] / (nf),
+            {k: v / (nf) for k, v in w["s"].items()},
+        )
     else:
         if kind != "F3":
             w = esf.sf.coupling_constants.get_weight(

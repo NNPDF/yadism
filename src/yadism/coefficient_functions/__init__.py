@@ -119,12 +119,12 @@ class Combiner:
             )
         if self.obs_name.flavor_family in ["heavy", "total"]:
             ihq = nl + 1
-            if self.obs_name.hqnumber < ihq:
+            if self.obs_name.is_raw_heavy and self.obs_name.hqnumber < ihq:
                 raise NotImplementedError(
                     f"We're not providing {self.obs_name} in FONLL with {nl} light flavors yet"
                 )
             # F2b is not avaible in FONLL@c
-            if self.obs_name.hqnumber > ihq:
+            if self.obs_name.is_raw_heavy and self.obs_name.hqnumber > ihq:
                 raise ValueError(
                     f"{self.obs_name} is not available in FONLL with {nl} light flavors "
                     "since we're not providing two masses corrections"
@@ -145,28 +145,20 @@ class Combiner:
                 elems.extend(
                     self.damp_elems(nl, fonll.kernels.generate_heavy_diff(self.esf, nl))
                 )
-        # # add "missing" diagrams
-        # if self.obs_name.flavor_family in ["total"]:
-        #     # FFNSlow
-        #     elems.extend(heavy.kernels.generate_missing(self.esf, nl))
-        #     # add F^d
-        #     elems.extend(
-        #         self.damp_elems(nl, fonll.kernels.generate_missing_diff(self.esf, nl))
-        #     )
         return elems
 
-    def collect_fonll_mismatched(self):
-        kernels = []
+    # def collect_fonll_mismatched(self):
+    #     kernels = []
 
-        for k in self.collect_fonll():
-            k.max_order = evolution_pto
-            kernels.append(k)
+    #     for k in self.collect_fonll():
+    #         k.max_order = evolution_pto
+    #         kernels.append(k)
 
-        for k in self.collect_ffns():
-            k.min_order = evolution_pto
-            kernels.append(k)
+    #     for k in self.collect_ffns():
+    #         k.min_order = evolution_pto
+    #         kernels.append(k)
 
-        return kernels
+    #     return kernels
 
     def damp_elems(self, nl, elems):
         """

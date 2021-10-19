@@ -17,7 +17,7 @@ def cg_NLO(z, _args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cg_NNLO(z, args):
     L = args[0]
-    return raw_nc.clg2am0_aq(z) * L + raw_nc.clg2am0_a0(z)
+    return (raw_nc.clg2am0_aq(z) - raw_nc.clg2am0_af(z)) * L + raw_nc.clg2am0_a0(z)
 
 
 class AsyGluonVV(pc.PartonicChannelAsy):
@@ -35,7 +35,7 @@ class AsyGluonAA(AsyGluonVV):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cps_NNLO(z, args):
     L = args[0]
-    return raw_nc.clps2am0_aq(z) * L + raw_nc.clps2am0_a0(z)
+    return (raw_nc.clps2am0_aq(z) - raw_nc.clps2am0_af(z)) * L + raw_nc.clps2am0_a0(z)
 
 
 class AsySingletVV(pc.PartonicChannelAsy):

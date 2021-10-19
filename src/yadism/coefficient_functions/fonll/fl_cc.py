@@ -2,7 +2,7 @@
 
 from ..intrinsic import fl_cc as intrinsic
 from ..light import fl_cc as light
-from ..partonic_channel import RSL
+from ..partonic_channel import RSL, EmptyPartonicChannel
 from . import partonic_channel as pc
 
 
@@ -20,6 +20,18 @@ class AsyGluon(pc.PartonicChannelAsy):
             return 4.0 * z * (1.0 - z) * as_norm
 
         return RSL(reg)
+
+
+class PdfMatchingNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class LightNonSingletShifted(EmptyPartonicChannel):
+    pass
+
+
+class AsyNonSingletMissing(EmptyPartonicChannel):
+    pass
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):

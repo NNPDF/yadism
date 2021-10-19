@@ -1,7 +1,7 @@
 import numpy as np
 
 from ..observable_name import ObservableName
-from .result import EXSResult
+from .result import ESFResult, EXSResult
 
 conv = 3.893793e10  # conversion factor from GeV^-2 to 10^-38 cm^2
 
@@ -64,7 +64,7 @@ class EvaluatedCrossSection:
         if f_coeffs[2] != 0.0:
             f3 = self.xs.get_esf(ObservableName(f"F3_{flavor}"), self.kin).get_result()
         else:
-            f3 = np.zeros_like(f2)
+            f3 = ESFResult(self.kin["x"], self.kin["Q2"], f2.nf)
 
         # add normalizations
         esf = f_coeffs @ np.array([f2, fl, f3])

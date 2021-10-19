@@ -5,7 +5,7 @@ import numpy as np
 from .. import splitting_functions as split
 from ..intrinsic import f2_cc as intrinsic
 from ..light import f2_cc as light
-from ..partonic_channel import RSL
+from ..partonic_channel import RSL, EmptyPartonicChannel
 from . import partonic_channel as pc
 
 
@@ -29,6 +29,18 @@ class AsyGluon(pc.PartonicChannelAsy):
             ) * as_norm
 
         return RSL(reg)
+
+
+class PdfMatchingNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class LightNonSingletShifted(EmptyPartonicChannel):
+    pass
+
+
+class AsyNonSingletMissing(EmptyPartonicChannel):
+    pass
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):

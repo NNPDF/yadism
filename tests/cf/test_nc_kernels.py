@@ -88,6 +88,7 @@ def test_generate_light_fonll_diff_pc():
     for nl in [3, 5]:
         w = aker.generate_light_diff(esf, nl)
         # c/t as light
+        # TODO check values
         ps = [{-(nl + 1): 6.75 if nl == 3 else 7.5, (nl + 1): 6.75 if nl == 3 else 7.5}]
         check(ps, w)
 
