@@ -19,7 +19,9 @@ def cg_NLO(z, args):
 def cg_NNLO(z, args):
     L = args[0]
     return (
-        raw_nc.c2g2am0_aq2(z) * L ** 2 + raw_nc.c2g2am0_aq(z) * L + raw_nc.c2g2am0_a0(z)
+        (raw_nc.c2g2am0_aq2(z) - raw_nc.c2g2am0_aqf(z)) * L ** 2
+        + (raw_nc.c2g2am0_aq(z) - raw_nc.c2g2am0_af(z)) * L
+        + raw_nc.c2g2am0_a0(z)
     )
 
 
@@ -39,8 +41,8 @@ class AsyGluonAA(AsyGluonVV):
 def cps_NNLO(z, args):
     L = args[0]
     return (
-        raw_nc.c2ps2am0_aq2(z) * L ** 2
-        + raw_nc.c2ps2am0_aq(z) * L
+        (raw_nc.c2ps2am0_aq2(z) - raw_nc.c2ps2am0_aqf(z)) * L ** 2
+        + (raw_nc.c2ps2am0_aq(z) - raw_nc.c2ps2am0_af(z)) * L
         + raw_nc.c2ps2am0_a0(z)
     )
 

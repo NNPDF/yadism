@@ -43,8 +43,8 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4**2, 1e2, 10).tolist()])
 
         observable_names = [
-            "F2_light",
-            "FL_light",
+            # "F2_light",
+            # "FL_light",
             # "F3_light",
             "F2_charm",
             "FL_charm",
@@ -55,7 +55,7 @@ class Sandbox(Runner):
             # "F3_bottom",
             "F2_total",
             "FL_total",
-            # "F3_total",
+            "F3_total",
             #  "XSHERANC",
             # "XSHERACC_light",
             # "XSHERACC_charm",
@@ -66,7 +66,7 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["CC"], "ProjectileDIS": ["positron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
@@ -101,9 +101,9 @@ class Sandbox(Runner):
                 #"conly",
                 #"ToyLH",
                 #"gonly",
-                #"NNPDF31_nnlo_as_0118",
-                "NN31g",
-                "NN31u",
+                "NNPDF31_nnlo_as_0118",
+                #"NN31g",
+                #"NN31u",
             ])
 
 def main():
