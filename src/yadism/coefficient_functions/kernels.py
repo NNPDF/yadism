@@ -158,23 +158,28 @@ def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf):
             mapping pid -> weight for q and g channel
     """
     weights = {"ns": {}, "g": {}, "s": {}}
+    # determine couplings
+    projectile_pid = coupling_constants.obs_config["projectilePID"]
+    if projectile_pid in [-11, 12]:
+        rest = 1
+    else:
+        rest = 0
     # quark couplings
     tot_ch_sq = 0
     norm = len(cc_mask)
     # iterate: include the heavy quark itself, since it can run in the singlet sector diagrams
     for q in range(1, min(nf + 2, 6 + 1)):
+        sign = 1 if q % 2 == rest else -1
         w = coupling_constants.get_weight(q, Q2, None, cc_mask=cc_mask)
         # the heavy quark can not be in the input
         # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
-            weights["ns"][q] = w / 2 if kind != "F3" else -w / 2
-            weights["ns"][-q] = w / 2 if kind != "F3" else -w / 2
+            weights["ns"][sign * q] = w / 2 * (1 if kind != "F3" else sign)
+            weights["ns"][-sign * q] = w / 2 * (1 if kind != "F3" else sign)
         # but it contributes to the average
         tot_ch_sq += w
     # gluon coupling = charge sum
-    if kind == "F3":
-        tot_ch_sq *= -1
     weights["g"][21] = tot_ch_sq / norm / 2
     # add singlet
     for q in weights["ns"]:
@@ -221,8 +226,8 @@ def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf):
         # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
-            weights["ns"][q] = sign * (w / 2 if kind != "F3" else -w / 2)
-            weights["ns"][-q] = -sign * (w / 2 if kind != "F3" else -w / 2)
+            weights["ns"][sign * q] = w / 2 * (1 if kind != "F3" else sign)
+            weights["ns"][-sign * q] = -w / 2 * (1 if kind != "F3" else sign)
     return weights
 
 

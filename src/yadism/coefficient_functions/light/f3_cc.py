@@ -15,7 +15,7 @@ class NonSingletOdd(f3_nc.NonSinglet):
         )
 
 
-class NonSingletEven(pc.EmptyPartonicChannel):
+class NonSingletEven(f3_nc.NonSinglet):
     pass
 
 

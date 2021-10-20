@@ -43,9 +43,9 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4**2, 1e2, 10).tolist()])
 
         observable_names = [
-            # "F2_light",
+            "F2_light",
             "FL_light",
-            # "F3_light",
+            "F3_light",
             # "F2_charm",
             # "FL_charm",
             # "F3_charm",
@@ -67,7 +67,7 @@ class Sandbox(Runner):
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
         #update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
-        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["positron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
         # card["PropagatorCorrection"] = .999
@@ -91,9 +91,9 @@ class Sandbox(Runner):
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
             ], self.generate_observables(), [
-                #"uonly",
-                "ubaronly",
-                #"dbaronly",
+                # "uonly",
+                # "ubaronly",
+                # "dbaronly",
                 #"conly",
                 #"toygonly",
                 #"toyuonly",
@@ -102,10 +102,10 @@ class Sandbox(Runner):
                 #"conly",
                 #"ToyLH",
                 #"gonly",
-                # "NNPDF31_nnlo_as_0118",
+                "NNPDF31_nnlo_as_0118",
                 # "NN31g",
-                #"NN31u",
-                #"NN31d",
+                "NN31u",
+                "NN31d",
             ])
 
 def main():
