@@ -44,18 +44,18 @@ class Sandbox(Runner):
 
         observable_names = [
             # "F2_light",
-            # "FL_light",
+            "FL_light",
             # "F3_light",
-            "F2_charm",
-            "FL_charm",
+            # "F2_charm",
+            # "FL_charm",
             # "F3_charm",
             # "F2_bottom",
             # "F2_top",
             # "FL_bottom",
             # "F3_bottom",
-            "F2_total",
-            "FL_total",
-            "F3_total",
+            # "F2_total",
+            # "FL_total",
+            # "F3_total",
             #  "XSHERANC",
             # "XSHERACC_light",
             # "XSHERACC_charm",
@@ -66,8 +66,8 @@ class Sandbox(Runner):
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
-        #update = {"prDIS": ["CC"], "ProjectileDIS": ["positron"]}
+        #update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
         # card["PropagatorCorrection"] = .999
@@ -79,11 +79,11 @@ class Sandbox(Runner):
         self.run([
                 #{"PTO": 2, "NfFF": 5, "mc":2, "mb":3, "mt":4},
                 #{"PTO": 0, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
-                #{"PTO": 1, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
-                #{"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
+                {"PTO": 1, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
+                {"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
                 #{"PTO": 1, "FNS": "FONLL-A", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-B", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
-                {"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
+                #{"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9913},
                 #{"PTO": 2, "XIF": 2, "XIR": 2, "mb": 4.9915},
                 #{"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
@@ -91,9 +91,10 @@ class Sandbox(Runner):
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
             ], self.generate_observables(), [
-                #"ubaronly",
-                #"dbaronly"
-                #"conly"
+                #"uonly",
+                "ubaronly",
+                #"dbaronly",
+                #"conly",
                 #"toygonly",
                 #"toyuonly",
                 #"toyantichsing",
@@ -101,9 +102,10 @@ class Sandbox(Runner):
                 #"conly",
                 #"ToyLH",
                 #"gonly",
-                "NNPDF31_nnlo_as_0118",
-                #"NN31g",
+                # "NNPDF31_nnlo_as_0118",
+                # "NN31g",
                 #"NN31u",
+                #"NN31d",
             ])
 
 def main():

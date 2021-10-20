@@ -4,7 +4,7 @@ from ..partonic_channel import RSL
 from . import f3_nc, nnlo
 
 
-class NonSinglet(f3_nc.NonSinglet):
+class NonSingletOdd(f3_nc.NonSinglet):
     def NNLO(self):
         """
         |ref| implements :eqref:`2.9`, :cite:`vogt-f2lcc`.
@@ -13,6 +13,10 @@ class NonSinglet(f3_nc.NonSinglet):
         return RSL(
             nnlo.xc3ns2p.c3nm2a, nnlo.xc3ns2p.c3ns2b, nnlo.xc3ns2p.c3nm2c, [self.nf]
         )
+
+
+class NonSingletEven(pc.EmptyPartonicChannel):
+    pass
 
 
 class Gluon(pc.EmptyPartonicChannel):
