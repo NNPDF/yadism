@@ -6,7 +6,7 @@ from ..partonic_channel import RSL, EmptyPartonicChannel
 from . import partonic_channel as pc
 
 
-class AsyQuark(pc.PartonicChannelAsy, light.NonSinglet):
+class AsyQuark(pc.PartonicChannelAsy, light.NonSingletEven):
     def NNLO(self):
         # silence NNLO since heavy NNLO still not available
         return RSL()
@@ -26,12 +26,13 @@ class PdfMatchingNonSinglet(EmptyPartonicChannel):
     pass
 
 
-class LightNonSingletShifted(EmptyPartonicChannel):
-    pass
+class LightNonSingletShifted(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return light.NonSingletEven(self.ESF, self.nf).NLO()
 
 
-class AsyNonSingletMissing(EmptyPartonicChannel):
-    pass
+# class AsyNonSingletMissing(EmptyPartonicChannel):
+#     pass
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):

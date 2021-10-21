@@ -261,28 +261,36 @@ def generate_single_flavor_light(esf, nf, ihq):
     ch_av = 0
     s_partons = {}
     if esf.process == "CC":
-        w = cc_weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf)
-        ns_partons, ch_av, s_partons = (
-            w["ns"],
-            w["g"][21] / (nf),
-            {k: v / (nf) for k, v in w["s"].items()},
+        w_even = cc_weights_even(
+            esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
         )
+        w_odd = cc_weights_odd(
+            esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
+        )
+        return (
+            Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf)),
+            Kernel({21: w_even["g"][21] / (nf)}, light_cfs.Gluon(esf, nf)),
+            Kernel(
+                {k: v / (nf) for k, v in w_even["s"].items()},
+                light_cfs.Singlet(esf, nf),
+            ),
+            Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf)),
+        )
+    if kind != "F3":
+        w = esf.sf.coupling_constants.get_weight(
+            ihq, esf.Q2, "VV"
+        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
     else:
-        if kind != "F3":
-            w = esf.sf.coupling_constants.get_weight(
-                ihq, esf.Q2, "VV"
-            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
-        else:
-            w = esf.sf.coupling_constants.get_weight(
-                ihq, esf.Q2, "VA"
-            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+        w = esf.sf.coupling_constants.get_weight(
+            ihq, esf.Q2, "VA"
+        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
 
-        ns_partons[ihq] = w
-        ns_partons[-ihq] = w if kind != "F3" else -w
-        ch_av = w / (nf) if kind != "F3" else 0.0
-        for pid in range(1, nf):
-            s_partons[pid] = ch_av
-            s_partons[-pid] = ch_av
+    ns_partons[ihq] = w
+    ns_partons[-ihq] = w if kind != "F3" else -w
+    ch_av = w / (nf) if kind != "F3" else 0.0
+    for pid in range(1, nf):
+        s_partons[pid] = ch_av
+        s_partons[-pid] = ch_av
     return (
         Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
         Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),

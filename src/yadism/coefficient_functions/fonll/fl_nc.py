@@ -56,15 +56,15 @@ class LightNonSingletShifted(pc.PartonicChannelAsy):
         return light.NonSinglet(self.ESF, self.nf).NLO()
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cns_NNLO(z, args):
-    L = args[0]
-    return raw_nc.clns2am0_aq(z) * L + raw_nc.clns2am0_a0(z)
+# @nb.njit("f8(f8,f8[:])", cache=True)
+# def cns_NNLO(z, args):
+#     L = args[0]
+#     return raw_nc.clns2am0_aq(z) * L + raw_nc.clns2am0_a0(z)
 
 
-class AsyNonSingletMissing(pc.PartonicChannelAsy):
-    def NNLO(self):
-        return RSL(cns_NNLO, args=[self.L])
+# class AsyNonSingletMissing(pc.PartonicChannelAsy):
+#     def NNLO(self):
+#         return RSL(cns_NNLO, args=[self.L])
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuark):
