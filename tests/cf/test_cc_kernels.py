@@ -63,58 +63,58 @@ def check(ps, w):
         assert pytest.approx(e) == k.partons
 
 
-def test_generate_light_pc():
-    for sgn in [True, False]:
-        esf = MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10)
-        for nf in [3, 4, 5]:
-            w = lker.generate(esf, nf)
-            norm = {3: 1, 4: 3, 5: 7}[nf]
-            # q, g
-            ps = [
-                mkpc(nf, norm, sgn),
-                {21: (nf + 1) * norm / nf / 2.0},
-                mksinglet(nf, (nf + 1) * norm / nf / 2.0),
-            ]
-            check(ps, w)
+# def test_generate_light_pc():
+#     for sgn in [True, False]:
+#         esf = MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10)
+#         for nf in [3, 4, 5]:
+#             w = lker.generate(esf, nf)
+#             norm = {3: 1, 4: 3, 5: 7}[nf]
+#             # q, g
+#             ps = [
+#                 mkpc(nf, norm, sgn),
+#                 {21: (nf + 1) * norm / nf / 2.0},
+#                 mksinglet(nf, (nf + 1) * norm / nf / 2.0),
+#             ]
+#             check(ps, w)
 
 
-def test_generate_light_pv():
-    for sgn in [True, False]:
-        esf = MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10)
-        for nf in [3, 4, 5]:
-            w = lker.generate(esf, nf)
-            norm = {3: 1, 4: 3, 5: 7}[nf]
-            # q, g
-            ps = [
-                mkpv(nf, norm, sgn),
-                {21: (-1 if sgn else 1) * (nf + 1) * norm / nf / 2.0},
-                mksinglet(nf, (-1 if sgn else 1) * (nf + 1) * norm / nf / 2.0),
-            ]
-            check(ps, w)
+# def test_generate_light_pv():
+#     for sgn in [True, False]:
+#         esf = MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10)
+#         for nf in [3, 4, 5]:
+#             w = lker.generate(esf, nf)
+#             norm = {3: 1, 4: 3, 5: 7}[nf]
+#             # q, g
+#             ps = [
+#                 mkpv(nf, norm, sgn),
+#                 {21: (-1 if sgn else 1) * (nf + 1) * norm / nf / 2.0},
+#                 mksinglet(nf, (-1 if sgn else 1) * (nf + 1) * norm / nf / 2.0),
+#             ]
+#             check(ps, w)
 
 
-def test_generate_heavy_pc():
-    for sgn in [True, False]:
-        esf = MockESF("F2_charm", 11 * (1 if sgn else -1), 0.1, 10)
-        for nf in [3, 4, 5]:
-            w = hker.generate(esf, nf)
-            qnorm = {3: 2, 4: 4, 5: 8}[nf]
-            gnorm = {3: 4, 4: 10, 5: 24}[nf]
-            # q, g
-            ps = [mkpc(nf, qnorm, sgn), {21: gnorm}]
-            check(ps, w)
+# def test_generate_heavy_pc():
+#     for sgn in [True, False]:
+#         esf = MockESF("F2_charm", 11 * (1 if sgn else -1), 0.1, 10)
+#         for nf in [3, 4, 5]:
+#             w = hker.generate(esf, nf)
+#             qnorm = {3: 2, 4: 4, 5: 8}[nf]
+#             gnorm = {3: 4, 4: 10, 5: 24}[nf]
+#             # q, g
+#             ps = [mkpc(nf, qnorm, sgn), {21: gnorm}]
+#             check(ps, w)
 
 
-def test_generate_heavy_pv():
-    for sgn in [True, False]:
-        esf = MockESF("F3_charm", 11 * (1 if sgn else -1), 0.1, 10)
-        for nf in [3, 4, 5]:
-            w = hker.generate(esf, nf)
-            qnorm = {3: 2, 4: 4, 5: 8}[nf]
-            gnorm = {3: 4, 4: 10, 5: 24}[nf]
-            # q, g
-            ps = [mkpv(nf, qnorm, sgn), {21: (-1 if sgn else 1) * gnorm}]
-            check(ps, w)
+# def test_generate_heavy_pv():
+#     for sgn in [True, False]:
+#         esf = MockESF("F3_charm", 11 * (1 if sgn else -1), 0.1, 10)
+#         for nf in [3, 4, 5]:
+#             w = hker.generate(esf, nf)
+#             qnorm = {3: 2, 4: 4, 5: 8}[nf]
+#             gnorm = {3: 4, 4: 10, 5: 24}[nf]
+#             # q, g
+#             ps = [mkpv(nf, qnorm, sgn), {21: (-1 if sgn else 1) * gnorm}]
+#             check(ps, w)
 
 
 # def test_generate_light_fonll_diff():

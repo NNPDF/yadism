@@ -121,13 +121,14 @@ class Combiner:
             ihq = nl + 1
             if self.obs_name.is_raw_heavy and self.obs_name.hqnumber < ihq:
                 raise NotImplementedError(
-                    f"We're not providing {self.obs_name} in FONLL with {nl} light flavors yet"
+                    f"We're not providing {self.obs_name} in FONLL with {nl} light flavors"
+                    f"(Q2={self.esf.Q2}) yet"
                 )
             # F2b is not avaible in FONLL@c
             if self.obs_name.is_raw_heavy and self.obs_name.hqnumber > ihq:
                 raise ValueError(
-                    f"{self.obs_name} is not available in FONLL with {nl} light flavors "
-                    "since we're not providing two masses corrections"
+                    f"{self.obs_name} is not available in FONLL with {nl} light flavors"
+                    f"(Q2={self.esf.Q2}) since we're not providing two masses corrections"
                 )
 
             # FFNSlow

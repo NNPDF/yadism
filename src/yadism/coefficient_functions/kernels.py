@@ -135,6 +135,102 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
     return weights
 
 
+def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf):
+    """
+    Collect the weights of the partons.
+
+    Parameters
+    ----------
+        coupling_constants : CouplingConstants
+            manager for coupling constants
+        Q2 : float
+            W virtuality
+        kind : str
+            structure function kind
+        cc_mask : str
+            participating flavors on the CKM matrix
+        nf : int
+            number of light flavors
+
+    Returns
+    -------
+        weights : dict
+            mapping pid -> weight for q and g channel
+    """
+    weights = {"ns": {}, "g": {}, "s": {}}
+    # determine couplings
+    projectile_pid = coupling_constants.obs_config["projectilePID"]
+    if projectile_pid in [-11, 12]:
+        rest = 1
+    else:
+        rest = 0
+    # quark couplings
+    tot_ch_sq = 0
+    norm = len(cc_mask)
+    # iterate: include the heavy quark itself, since it can run in the singlet sector diagrams
+    for q in range(1, min(nf + 2, 6 + 1)):
+        sign = 1 if q % 2 == rest else -1
+        w = coupling_constants.get_weight(q, Q2, None, cc_mask=cc_mask)
+        # the heavy quark can not be in the input
+        # NOTE: intrinsic abuse this statement with nf -> nf + 1
+        if q <= nf:
+            # @F3-sign@
+            weights["ns"][sign * q] = w / 2 * (1 if kind != "F3" else sign)
+            weights["ns"][-sign * q] = w / 2 * (1 if kind != "F3" else sign)
+        # but it contributes to the average
+        tot_ch_sq += w
+    # gluon coupling = charge sum
+    weights["g"][21] = tot_ch_sq / norm / 2
+    # add singlet
+    for q in weights["ns"]:
+        weights["s"][q] = tot_ch_sq / norm / 2
+        weights["s"][-q] = tot_ch_sq / norm / 2
+    return weights
+
+
+def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf):
+    """
+    Collect the weights of the partons.
+
+    Parameters
+    ----------
+        coupling_constants : CouplingConstants
+            manager for coupling constants
+        Q2 : float
+            W virtuality
+        kind : str
+            structure function kind
+        cc_mask : str
+            participating flavors on the CKM matrix
+        nf : int
+            number of light flavors
+
+    Returns
+    -------
+        weights : dict
+            mapping pid -> weight for q and g channel
+    """
+    weights = {"ns": {}}
+    # determine couplings
+    projectile_pid = coupling_constants.obs_config["projectilePID"]
+    if projectile_pid in [-11, 12]:
+        rest = 1
+    else:
+        rest = 0
+    # quark couplings
+    # iterate: include the heavy quark itself, since it can run in the singlet sector diagrams
+    for q in range(1, min(nf + 2, 6 + 1)):
+        sign = 1 if q % 2 == rest else -1
+        w = coupling_constants.get_weight(q, Q2, None, cc_mask=cc_mask)
+        # the heavy quark can not be in the input
+        # NOTE: intrinsic abuse this statement with nf -> nf + 1
+        if q <= nf:
+            # @F3-sign@
+            weights["ns"][sign * q] = w / 2 * (1 if kind != "F3" else sign)
+            weights["ns"][-sign * q] = -w / 2 * (1 if kind != "F3" else sign)
+    return weights
+
+
 def generate_single_flavor_light(esf, nf, ihq):
     """
     Add a light-like contribution for a single quark flavor.
@@ -165,28 +261,36 @@ def generate_single_flavor_light(esf, nf, ihq):
     ch_av = 0
     s_partons = {}
     if esf.process == "CC":
-        w = cc_weights(esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf)
-        ns_partons, ch_av, s_partons = (
-            w["ns"],
-            w["g"][21] / (nf),
-            {k: v / (nf) for k, v in w["s"].items()},
+        w_even = cc_weights_even(
+            esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
         )
+        w_odd = cc_weights_odd(
+            esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
+        )
+        return (
+            Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf)),
+            Kernel({21: w_even["g"][21] / (nf)}, light_cfs.Gluon(esf, nf)),
+            Kernel(
+                {k: v / (nf) for k, v in w_even["s"].items()},
+                light_cfs.Singlet(esf, nf),
+            ),
+            Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf)),
+        )
+    if kind != "F3":
+        w = esf.sf.coupling_constants.get_weight(
+            ihq, esf.Q2, "VV"
+        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
     else:
-        if kind != "F3":
-            w = esf.sf.coupling_constants.get_weight(
-                ihq, esf.Q2, "VV"
-            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
-        else:
-            w = esf.sf.coupling_constants.get_weight(
-                ihq, esf.Q2, "VA"
-            ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+        w = esf.sf.coupling_constants.get_weight(
+            ihq, esf.Q2, "VA"
+        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
 
-        ns_partons[ihq] = w
-        ns_partons[-ihq] = w if kind != "F3" else -w
-        ch_av = w / (nf) if kind != "F3" else 0.0
-        for pid in range(1, nf):
-            s_partons[pid] = ch_av
-            s_partons[-pid] = ch_av
+    ns_partons[ihq] = w
+    ns_partons[-ihq] = w if kind != "F3" else -w
+    ch_av = w / (nf) if kind != "F3" else 0.0
+    for pid in range(1, nf):
+        s_partons[pid] = ch_av
+        s_partons[-pid] = ch_av
     return (
         Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
         Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),

@@ -46,28 +46,28 @@ class Sandbox(Runner):
             # "F2_light",
             # "FL_light",
             # "F3_light",
-            "F2_charm",
-            "FL_charm",
+            # "F2_charm",
+            # "FL_charm",
             # "F3_charm",
             # "F2_bottom",
             # "F2_top",
             # "FL_bottom",
             # "F3_bottom",
-            "F2_total",
-            "FL_total",
-            "F3_total",
+            # "F2_total",
+            # "FL_total",
+            # "F3_total",
             #  "XSHERANC",
             # "XSHERACC_light",
             # "XSHERACC_charm",
-            # "XSHERACC",
+            "XSHERACC",
             #"XSCHORUSCC_light",
             #"XSCHORUSCC_charm",
             #"XSCHORUSCC",
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
-        #update = {"prDIS": ["CC"], "ProjectileDIS": ["positron"]}
+        #update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
         # card["PropagatorCorrection"] = .999
@@ -91,9 +91,10 @@ class Sandbox(Runner):
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
             ], self.generate_observables(), [
-                #"ubaronly",
-                #"dbaronly"
-                #"conly"
+                # "uonly",
+                # "ubaronly",
+                # "dbaronly",
+                #"conly",
                 #"toygonly",
                 #"toyuonly",
                 #"toyantichsing",
@@ -102,8 +103,9 @@ class Sandbox(Runner):
                 #"ToyLH",
                 #"gonly",
                 "NNPDF31_nnlo_as_0118",
-                #"NN31g",
+                # "NN31g",
                 #"NN31u",
+                #"NN31d",
             ])
 
 def main():

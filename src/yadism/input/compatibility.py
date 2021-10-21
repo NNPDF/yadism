@@ -83,7 +83,7 @@ def update_fns(theory):
     """
     fns = theory["FNS"]
     nf = theory["NfFF"]
-    if fns not in ["FONLL-A"]:  # = fns in FFNS or ZM-VFNS
+    if "FONLL" not in fns:  # = fns in FFNS or ZM-VFNS
         # enforce correct settings moving all thresholds to 0 or oo
         if fns == "FFNS":
             ks = [0] * (nf - 3) + [np.inf] * (6 - nf)
@@ -99,7 +99,7 @@ def update_fns(theory):
             theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
         # for the actual value - keep it or fallback to evolution
         hfl = hqfl[nf - 4]
-        if "kDIS{hfl}Thr" not in theory:
+        if f"kDIS{hfl}Thr" not in theory:
             theory[f"kDIS{hfl}Thr"] = theory[f"k{hfl}Thr"]
         # erase all lower thresholds, meaning lower than the interesting one (NfFF)
         for pid in range(4, nf + 1):

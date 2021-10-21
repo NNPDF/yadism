@@ -51,8 +51,10 @@ class TestFloat:
             hflcc.NonSinglet(MockESF(x, Q2), 5, m2hq=M2hq),
             af2cc.AsyQuark(MockESF(x, Q2), 6, mu2hq=M2hq),
             af3cc.AsyQuark(MockESF(x, Q2), 3, mu2hq=M2hq),
-            lf2cc.NonSinglet(MockESF(x, Q2), nf=nf),
-            lf3cc.NonSinglet(MockESF(x, Q2), nf=nf),
+            lf2cc.NonSingletEven(MockESF(x, Q2), nf=nf),
+            lf3cc.NonSingletEven(MockESF(x, Q2), nf=nf),
+            lf2cc.NonSingletOdd(MockESF(x, Q2), nf=nf),
+            lf3cc.NonSingletOdd(MockESF(x, Q2), nf=nf),
             lf2nc.NonSinglet(MockESF(x, Q2), nf=nf),
             lf3nc.NonSinglet(MockESF(x, Q2), nf=nf),
         ]:
@@ -67,7 +69,8 @@ class TestFloat:
         # LO=0
         for pc in [
             aflcc.AsyQuark(MockESF(x, Q2), 3, mu2hq=M2hq),
-            lflcc.NonSinglet(MockESF(x, Q2), nf=nf),
+            lflcc.NonSingletEven(MockESF(x, Q2), nf=nf),
+            lflcc.NonSingletOdd(MockESF(x, Q2), nf=nf),
         ]:
             assert pc.LO() is None
             for i in ["reg", "sing", "loc"]:

@@ -56,36 +56,6 @@ class AsySingletAA(AsySingletVV):
     pass
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cns_NNLO_reg(z, args):
-    L = args[0]
-    return (
-        raw_nc.c2ns2am0_aq2(z) * L ** 2
-        + raw_nc.c2ns2am0_aq(z) * L
-        + raw_nc.c2ns2am0_a0(z)
-    )
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cns_NNLO_sing(z, args):
-    L = args[0]
-    return (
-        raw_nc.c2ns2bm0_aq2(z) * L ** 2
-        + raw_nc.c2ns2bm0_aq(z) * L
-        + raw_nc.c2ns2bm0_a0(z)
-    )
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cns_NNLO_loc(z, args):
-    L = args[0]
-    return (
-        raw_nc.c2ns2cm0_aq2(z) * L ** 2
-        + raw_nc.c2ns2cm0_aq(z) * L
-        + raw_nc.c2ns2cm0_a0(z)
-    )
-
-
 class LightNonSingletShifted(pc.PartonicChannelAsy):
     def NNLO(self):
         return light.NonSinglet(self.ESF, self.nf).NLO()
@@ -95,9 +65,38 @@ class PdfMatchingNonSinglet(pc.PdfMatchingNonSinglet):
     pass
 
 
-class AsyNonSingletMissing(pc.PartonicChannelAsy):
-    def NNLO(self):
-        return RSL(cns_NNLO_reg, cns_NNLO_sing, cns_NNLO_loc, args=[self.L])
+# @nb.njit("f8(f8,f8[:])", cache=True)
+# def cns_NNLO_reg(z, args):
+#     L = args[0]
+#     return (
+#         raw_nc.c2ns2am0_aq2(z) * L ** 2
+#         + raw_nc.c2ns2am0_aq(z) * L
+#         + raw_nc.c2ns2am0_a0(z)
+#     )
+
+
+# @nb.njit("f8(f8,f8[:])", cache=True)
+# def cns_NNLO_sing(z, args):
+#     L = args[0]
+#     return (
+#         raw_nc.c2ns2bm0_aq2(z) * L ** 2
+#         + raw_nc.c2ns2bm0_aq(z) * L
+#         + raw_nc.c2ns2bm0_a0(z)
+#     )
+
+
+# @nb.njit("f8(f8,f8[:])", cache=True)
+# def cns_NNLO_loc(z, args):
+#     L = args[0]
+#     return (
+#         raw_nc.c2ns2cm0_aq2(z) * L ** 2
+#         + raw_nc.c2ns2cm0_aq(z) * L
+#         + raw_nc.c2ns2cm0_a0(z)
+#     )
+
+# class AsyNonSingletMissing(pc.PartonicChannelAsy):
+#     def NNLO(self):
+#         return RSL(cns_NNLO_reg, cns_NNLO_sing, cns_NNLO_loc, args=[self.L])
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuark):
