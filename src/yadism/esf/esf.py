@@ -122,6 +122,9 @@ class EvaluatedStructureFunction:
             ker_orders = []
             # compute raw coefficient functions
             for o in self.orders:
+                # is order suppressed?
+                if not cfe.has_order(o):
+                    continue
                 rsl = cfe.coeff[o]()
                 if rsl is None:
                     continue

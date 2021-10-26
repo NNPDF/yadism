@@ -218,7 +218,7 @@ def generate_heavy_intrinsic_diff(esf, nl):
     wAA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
     wp = wVV + wAA
     wm = wVV - wAA
-    return (
+    matchings = (
         -kernels.Kernel(
             {ihq: wp, (-ihq): wp},
             cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
@@ -239,3 +239,8 @@ def generate_heavy_intrinsic_diff(esf, nl):
             cfs.MatchingGluonSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
     )
+    # add normal terms starting from NNLO
+    nnlo_terms = generate_heavy_diff(esf, nl)
+    for k in nnlo_terms:
+        k.min_order = 2
+    return (*matchings, *nnlo_terms)

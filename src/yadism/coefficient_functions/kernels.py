@@ -40,11 +40,37 @@ class Kernel:
             mapping pid -> weight
         coeff : PartonicChannel
             mathematical expression
+        max_order : int
+            if given, silence above this order
+        min_order : int
+            if given, silenve below this order
     """
 
-    def __init__(self, partons, coeff):
+    def __init__(self, partons, coeff, max_order=None, min_order=None):
         self.partons = partons
         self.coeff = coeff
+        self.max_order = max_order
+        self.min_order = min_order
+
+    def has_order(self, order):
+        """
+        Is current order active?
+
+        Parameters
+        ----------
+            order : int
+                order
+
+        Returns
+        -------
+            bool :
+                is active?
+        """
+        if self.min_order and order < self.min_order:
+            return False
+        if self.max_order and order > self.max_order:
+            return False
+        return True
 
     @property
     def channel(self):

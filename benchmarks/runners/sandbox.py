@@ -3,11 +3,15 @@
 # fmt: off
 # Our testing playground
 import copy
+import pathlib
 
 import numpy as np
+import yaml
 from banana.data import cartesian_product
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
+
+here = pathlib.Path(__file__).parent
 
 
 class Sandbox(Runner):
@@ -27,16 +31,17 @@ class Sandbox(Runner):
         #interpolation_xgrid = np.linspace(1e-1, 1, 9).tolist()
         kinematics = []
         # kinematics.extend([dict(x=x, Q2=20.0) for x in xgrid[:-1:5]])
-        kinematics.extend([dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)])
-        kinematics.extend([dict(x=x, Q2=2**2, y=0) for x in np.geomspace(1e-4, .9, 10)])
+        #kinematics.extend([dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)])
+        kinematics.extend([dict(x=x, Q2=2**2, y=0) for x in np.geomspace(2e-5, 1e-2, 10)])
+        kinematics.extend([dict(x=x, Q2=2, y=0) for x in np.geomspace(2e-5, 1e-2, 10)])
         # kinematics.extend([dict(x=.01, Q2=10, y=y) for y in np.linspace(0, .9, 10)])
         # kinematics.extend([dict(x=x, Q2=90) for x in np.linspace(.8, .99, 10).tolist()])
         # kinematics.extend([dict(x=0.10914375746330703, Q2=Q2) for Q2 in np.geomspace(4, 1e3, 10).tolist()])
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
-        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e2, 10).tolist()])
-        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e2, 10).tolist()])
+        #kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e2, 10).tolist()])
+        #kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(4, 1e2, 10).tolist()])
         # kinematics.extend([dict(x=x, Q2=30.0, y=0) for x in np.geomspace(1e-4, .9, 10)])
         # kinematics.extend([dict(x=x, Q2=4**2, y=0) for x in np.geomspace(1e-4, .9, 10)])
         # kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4**2, 1e2, 10).tolist()])
@@ -59,15 +64,16 @@ class Sandbox(Runner):
             #  "XSHERANC",
             # "XSHERACC_light",
             # "XSHERACC_charm",
-            "XSHERACC",
+            "XSHERANC",
+            #"XSHERACC",
             #"XSCHORUSCC_light",
             #"XSCHORUSCC_charm",
             #"XSCHORUSCC",
             #"XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        #update = {"prDIS": ["NC"], "ProjectileDIS": ["electron"]}
-        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["NC"], "ProjectileDIS": ["positron"]}
+        #update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
         # card["PropagatorCorrection"] = .999
@@ -81,9 +87,11 @@ class Sandbox(Runner):
                 #{"PTO": 0, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
                 #{"PTO": 1, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
                 #{"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
+                {"PTO": 2, "FNS": "FONLL-C","NfFF":4,"IC":1,"mc":1.51,"Qmc":1.51,"mb":1e6,"mt":1e7,"ModEv":"TRN","MaxNfPdf":5,"MaxNfAs": 5, "Qmb":4.92,"Qmt":172.5,"alphas":0.118,"alphaqed":0.007496252,"Q0":1.65},
                 #{"PTO": 1, "FNS": "FONLL-A", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-B", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
-                {"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
+                #{"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
+                #{"PTO": 2, "FNS": "FONLL-C", "mc": 1.51, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9913},
                 #{"PTO": 2, "XIF": 2, "XIR": 2, "mb": 4.9915},
                 #{"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
@@ -102,15 +110,40 @@ class Sandbox(Runner):
                 #"conly",
                 #"ToyLH",
                 #"gonly",
-                "NNPDF31_nnlo_as_0118",
-                # "NN31g",
-                #"NN31u",
-                #"NN31d",
+                #"NNPDF31_nnlo_as_0118",
+                "NN31g",
+                "NN31u",
+                "NN31c",
             ])
+
+    def run_pineappl(self):
+        import pineappl
+        path = here / ".."/"200-HERA_NC_225GEV_EP_SIGMARED.pineappl.lz4"
+        cuts = slice(0,50)
+        if not path.exists():
+            raise FileNotFoundError(f"PineAPPL file {path} not found!")
+        g = pineappl.grid.Grid.read(str(path))
+        r = g.key_values()["runcard"]
+        runcard = yaml.safe_load(r)
+        for obs, kins in runcard["observables"]["observables"].items():
+            runcard["observables"]["observables"][obs] = kins[cuts]
+        runcard["theory"]["TMC"] = 0
+        #runcard["theory"]["FNS"] = "ZM-VFNS"
+        # runcard["theory"]["FNS"] = "FFNS"
+        # runcard["theory"]["NfFF"] = 4
+        runcard["theory"]["mb"] = 1e6
+        runcard["theory"]["mt"] = 1e7
+        self.run([runcard["theory"]], [runcard["observables"]],[
+            "NNPDF31_nnlo_as_0118",
+            "NN31g",
+            "NN31u",
+            "NN31c",
+        ])
 
 def main():
     sand = Sandbox()
-    sand.doit()
+    #sand.doit()
+    sand.run_pineappl()
 
 if __name__ == "__main__":
     main()
