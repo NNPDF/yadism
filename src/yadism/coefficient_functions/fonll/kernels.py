@@ -172,6 +172,10 @@ def generate_heavy_intrinsic_diff(esf, nl):
     m2hq = esf.sf.m2hq[ihq - 4]
     # matching scale
     mu2hq = esf.sf.threshold.area_walls[ihq - 3]
+    # add normal terms starting from NNLO
+    nnlo_terms = generate_heavy_diff(esf, nl)
+    for k in nnlo_terms:
+        k.min_order = 2
     if esf.process == "CC":
         w = kernels.cc_weights(
             esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], ihq
@@ -187,6 +191,7 @@ def generate_heavy_intrinsic_diff(esf, nl):
                     {21: list(wq.values())[0]},
                     cfs.MatchingGluonRplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
                 ),
+                *nnlo_terms,
             )
         return (
             -kernels.Kernel(
@@ -196,6 +201,7 @@ def generate_heavy_intrinsic_diff(esf, nl):
                 {21: list(wq.values())[0]},
                 cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
             ),
+            *nnlo_terms,
         )
     # NC
     if kind == "F3":
@@ -212,13 +218,14 @@ def generate_heavy_intrinsic_diff(esf, nl):
                 {ihq: wm, (-ihq): -wm},
                 cfs.MatchingIntrinsicRminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
             ),
+            *nnlo_terms,
         )
     # add matching terms
     wVV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VV")
     wAA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
     wp = wVV + wAA
     wm = wVV - wAA
-    matchings = (
+    return (
         -kernels.Kernel(
             {ihq: wp, (-ihq): wp},
             cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
@@ -238,9 +245,5 @@ def generate_heavy_intrinsic_diff(esf, nl):
             {21: 2 * wm},
             cfs.MatchingGluonSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
         ),
+        *nnlo_terms,
     )
-    # add normal terms starting from NNLO
-    nnlo_terms = generate_heavy_diff(esf, nl)
-    for k in nnlo_terms:
-        k.min_order = 2
-    return (*matchings, *nnlo_terms)
