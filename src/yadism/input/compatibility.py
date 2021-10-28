@@ -59,17 +59,27 @@ def update_target(obs):
         return
     if target == "proton":
         obs["TargetDIS"] = {"Z": 1.0, "A": 1.0}
+        # proton = 2212
+        obs["TargetDISid"] = "2212"
     elif target == "neutron":
         obs["TargetDIS"] = {"Z": 0.0, "A": 1.0}
+        # neutron = 2112
+        obs["TargetDISid"] = "2112"
     elif target == "isoscalar":
         obs["TargetDIS"] = {"Z": 1.0, "A": 2.0}
+        # deuteron = 10 0 001 002 0
+        obs["TargetDISid"] = "1000010020"
     elif target == "iron":
         obs["TargetDIS"] = {
             "Z": 23.403,
             "A": 49.618,
         }  # Fe=26 and we don't know how these factors got inside APFEL
+        # iron = 10 0 026 056 0
+        obs["TargetDISid"] = "1000260560"
     elif target == "lead":
         obs["TargetDIS"] = {"Z": 82.0, "A": 208.0}  # from hep-ex/0102049
+        # lead = 10 0 082 208 0
+        obs["TargetDISid"] = "1000822080"
     else:
         raise ValueError(f"Unknown TargetDIS '{target}'")
 

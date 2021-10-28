@@ -27,6 +27,7 @@ def dump_CHORUS(src_path, target_path):
     xs = "XSCHORUSCC"
     obs["observables"] = {xs: esf}
     obs["ProjectileDIS"] = "neutrino" if is_nu else "antineutrino"
+    obs["TargetDIS"] = "lead"
     with open(target_path, "w") as o:
         yaml.safe_dump(obs, o)
 
