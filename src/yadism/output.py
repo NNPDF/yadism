@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 import json
 import pathlib
 
@@ -146,8 +147,8 @@ class Output(dict):
         """
         out = {}
         # dump raw elements
-        for f in ["interpolation_polynomial_degree", "interpolation_is_log"]:
-            out[f] = self[f]
+        for f in self:
+            out[f] = copy.copy(self[f])
         out["pids"] = list(self["pids"])
         # make raw lists
         for k in ["interpolation_xgrid"]:
