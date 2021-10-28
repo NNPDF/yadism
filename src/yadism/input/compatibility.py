@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import warnings
+
 import numpy as np
 
 hqfl = "cbt"
@@ -96,6 +98,13 @@ def update_fns(theory):
         # keep the old setup for the ZM-VFNS part (above)
         for pid in range(nf + 1, 6 + 1):
             fl = hqfl[pid - 4]
+            if f"kDIS{fl}Thr" in theory and not np.isclose(
+                theory[f"kDIS{fl}Thr"], theory[f"k{fl}Thr"]
+            ):
+                warnings.warn(
+                    f"kDIS{fl}Thr is not equal to k{fl}Thr in the given theory and"
+                    f" is not the relevant FONLL threshold! kDIS{fl}Thr will be overwritten"
+                )
             theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
         # for the actual value - keep it or fallback to evolution
         hfl = hqfl[nf - 4]
