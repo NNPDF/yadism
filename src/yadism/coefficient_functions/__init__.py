@@ -5,6 +5,45 @@ from . import fonll, heavy, intrinsic, kernels, light
 from .partonic_channel import EmptyPartonicChannel
 
 
+def collect_ffns(esf, obs_name, nf):
+    """
+    Collects all kernels in the |FFNS|.
+
+    Returns
+    -------
+        elems : list(yadism.kernels.Kernel)
+            all participants
+    """
+    elems = []
+    # light is *everything* up to nf and not only u+d+s
+    if obs_name.flavor in ["light", "total"]:
+        elems.extend(light.kernels.generate(esf, nf))
+    # add heavy
+    if obs_name.flavor_family in ["heavy", "total"]:
+        # or fake it by light
+        if obs_name.flavor_family == "heavy":
+            # F2b is not avaible in FFNS3
+            if obs_name.hqnumber > nf + 1:
+                raise ValueError(
+                    f"{obs_name} is not available in FFNS with {nf} light flavors"
+                )
+            # F2c in FFNS5 is available, but light
+            if obs_name.hqnumber < nf + 1:
+                elems.extend(
+                    kernels.generate_single_flavor_light(esf, nf, obs_name.hqnumber)
+                )
+                return elems
+        # Now: F2c in FFNS3 (the true thing)
+        elems.extend(heavy.kernels.generate(esf, nf))
+        ihq = nf + 1
+        if ihq in esf.sf.intrinsic_range:
+            elems.extend(intrinsic.kernels.generate(esf, ihq))
+    # add "missing" diagrams
+    if obs_name.flavor_family in ["total"]:
+        elems.extend(heavy.kernels.generate_missing(esf, nf))
+    return elems
+
+
 class Combiner:
     """
     Does the matching between coefficient functions and partons with their approptiate coupling
@@ -21,46 +60,6 @@ class Combiner:
         self.obs_name = esf.sf.obs_name
         self.nf = esf.sf.threshold.nf(esf.Q2)
         self.target = esf.sf.target
-
-    def collect_ffns(self):
-        """
-        Collects all kernels in the |FFNS|.
-
-        Returns
-        -------
-            elems : list(yadism.kernels.Kernel)
-                all participants
-        """
-        elems = []
-        # light is *everything* up to nf and not only u+d+s
-        if self.obs_name.flavor in ["light", "total"]:
-            elems.extend(light.kernels.generate(self.esf, self.nf))
-        # add heavy
-        if self.obs_name.flavor_family in ["heavy", "total"]:
-            # or fake it by light
-            if self.obs_name.flavor_family == "heavy":
-                # F2b is not avaible in FFNS3
-                if self.obs_name.hqnumber > self.nf + 1:
-                    raise ValueError(
-                        f"{self.obs_name} is not available in FFNS with {self.nf} light flavors"
-                    )
-                # F2c in FFNS5 is available, but light
-                if self.obs_name.hqnumber < self.nf + 1:
-                    elems.extend(
-                        kernels.generate_single_flavor_light(
-                            self.esf, self.nf, self.obs_name.hqnumber
-                        )
-                    )
-                    return elems
-            # Now: F2c in FFNS3 (the true thing)
-            elems.extend(heavy.kernels.generate(self.esf, self.nf))
-            ihq = self.nf + 1
-            if ihq in self.esf.sf.intrinsic_range:
-                elems.extend(intrinsic.kernels.generate(self.esf, ihq))
-        # add "missing" diagrams
-        if self.obs_name.flavor_family in ["total"]:
-            elems.extend(heavy.kernels.generate_missing(self.esf, self.nf))
-        return elems
 
     def collect_zmvfns(self):
         """
@@ -106,9 +105,13 @@ class Combiner:
         """
         elems = []
         # above the *next* threshold use ZM-VFNS
-        nl = self.esf.sf.nf_ff - 1
-        if nl + 1 < self.nf:
-            return self.collect_zmvfns()
+        # nl = self.esf.sf.nf_ff - 1
+        # if nl + 1 < self.nf:
+        #     return self.collect_zmvfns()
+        nl = self.nf - 1
+        # below charm it is simply FFNS
+        if self.nf <= 3:
+            return self.collect_ffns()
 
         if self.obs_name.flavor in ["light", "total"]:
             # FFNSlow

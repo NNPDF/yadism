@@ -31,8 +31,8 @@ class Sandbox(Runner):
         #interpolation_xgrid = np.linspace(1e-1, 1, 9).tolist()
         kinematics = []
         # kinematics.extend([dict(x=x, Q2=20.0) for x in xgrid[:-1:5]])
-        #kinematics.extend([dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)])
-        #kinematics.extend([dict(x=x, Q2=2**2, y=0) for x in np.geomspace(1e-4, .9, 10)])
+        kinematics.extend([dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, .9, 10)])
+        kinematics.extend([dict(x=x, Q2=2, y=0) for x in np.geomspace(1e-4, .9, 10)])
         #kinematics.extend([dict(x=x, Q2=2**2, y=0) for x in np.geomspace(2e-5, 1e-2, 10)])
         #kinematics.extend([dict(x=x, Q2=2, y=0) for x in np.geomspace(2e-5, 1e-2, 10)])
         # kinematics.extend([dict(x=.01, Q2=10, y=y) for y in np.linspace(0, .9, 10)])
@@ -41,8 +41,8 @@ class Sandbox(Runner):
         # kinematics.extend([dict(x=0.0051, Q2=Q2) for Q2 in np.geomspace(10, 1e5, 60).tolist()])
         # kinematics = [dict(x=0.001,Q2=1e4)]
         # kinematics.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(500, 800, 10).tolist()])
-        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(10, 30, 10).tolist()])
-        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.geomspace(10, 30, 10).tolist()])
+        kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.linspace(2, 50, 10).tolist()])
+        kinematics.extend([dict(x=0.001, Q2=Q2,y=0) for Q2 in np.linspace(2, 50, 10).tolist()])
         # kinematics.extend([dict(x=x, Q2=30.0, y=0) for x in np.geomspace(1e-4, .9, 10)])
         # kinematics.extend([dict(x=x, Q2=4**2, y=0) for x in np.geomspace(1e-4, .9, 10)])
         # kinematics.extend([dict(x=0.1, Q2=Q2,y=0) for Q2 in np.geomspace(4**2, 1e2, 10).tolist()])
@@ -90,7 +90,7 @@ class Sandbox(Runner):
                 #{"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
                 #{"PTO": 2, "FNS": "FONLL-C","NfFF":4,"IC":1,"mc":1.51,"Qmc":1.51,"mb":1e6,"mt":1e7,"ModEv":"TRN","MaxNfPdf":5,"MaxNfAs": 5, "Qmb":4.92,"Qmt":172.5,"alphas":0.118,"alphaqed":0.007496252,"Q0":1.65},
                 #{"PTO": 1, "FNS": "FONLL-A", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
-                {"PTO": 1, "FNS": "FONLL-A", "mc": 1.51, "NfFF": 4, "kbThr": 100, "ktThr": 100, "alphas": .3, "Qref": 3},
+                {"PTO": 1, "FNS": "FONLL-A", "mc": 1.51, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-B", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-C", "mc": 1.51, "mb": 1e6,"mt": 1e8, "NfFF": 4},
@@ -154,8 +154,8 @@ class Sandbox(Runner):
 
 def main():
     sand = Sandbox()
-    #sand.doit()
-    sand.run_pineappl()
+    sand.doit()
+    #sand.run_pineappl()
 
 if __name__ == "__main__":
     main()

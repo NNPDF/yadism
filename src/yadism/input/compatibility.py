@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import warnings
 
 import numpy as np
 
@@ -95,35 +94,22 @@ def update_fns(theory):
     """
     fns = theory["FNS"]
     nf = theory["NfFF"]
-    if "FONLL" not in fns:  # = fns in FFNS or ZM-VFNS
-        # enforce correct settings moving all thresholds to 0 or oo
-        if fns == "FFNS":
-            ks = [0] * (nf - 3) + [np.inf] * (6 - nf)
-            for k, fl in zip(ks, hqfl):
-                theory[f"k{fl}Thr"] = k
-        # here there is no difference between DGLAP and DIS
+    # enforce correct settings moving all thresholds to 0 or oo
+    if fns == "FFNS":
+        ks = [0] * (nf - 3) + [np.inf] * (6 - nf)
+        for k, fl in zip(ks, hqfl):
+            theory[f"k{fl}Thr"] = k
+            theory[f"ZM{fl}"] = k < 1
+
+    if fns == "ZM-VFNS":
         for fl in hqfl:
-            theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
-    else:
-        # keep the old setup for the ZM-VFNS part (above)
-        for pid in range(nf + 1, 6 + 1):
-            fl = hqfl[pid - 4]
-            if f"kDIS{fl}Thr" in theory and not np.isclose(
-                theory[f"kDIS{fl}Thr"], theory[f"k{fl}Thr"]
-            ):
-                warnings.warn(
-                    f"kDIS{fl}Thr is not equal to k{fl}Thr in the given theory and"
-                    f" is not the relevant FONLL threshold! kDIS{fl}Thr will be overwritten"
-                )
-            theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
-        # for the actual value - keep it or fallback to evolution
-        hfl = hqfl[nf - 4]
-        if f"kDIS{hfl}Thr" not in theory:
-            theory[f"kDIS{hfl}Thr"] = theory[f"k{hfl}Thr"]
-        # erase all lower thresholds, meaning lower than the interesting one (NfFF)
-        for pid in range(4, nf + 1):
-            fl = hqfl[pid - 4]
-            # we actually need to run in the nf-FNS so even kill that one
-            theory[f"k{fl}Thr"] = 0
-            if pid < nf:
-                theory[f"kDIS{fl}Thr"] = 0
+            theory[f"ZM{fl}"] = True
+
+    if fns == "FONLL":
+        theory["ZMc"] = False
+        theory["ZMb"] = False
+        theory["ZMt"] = True
+
+    # here there is no difference between DGLAP and DIS
+    for fl in hqfl:
+        theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
