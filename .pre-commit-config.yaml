@@ -8,7 +8,7 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
   - repo: https://github.com/psf/black
-    rev: 21.9b0
+    rev: 21.10b0
     hooks:
       - id: black
   - repo: https://github.com/keewis/blackdoc
@@ -16,7 +16,7 @@ repos:
     hooks:
       - id: blackdoc
   - repo: https://github.com/pycqa/isort
-    rev: 5.9.3
+    rev: 5.10.1
     hooks:
       - id: isort
         args: ["--profile", "black"]
