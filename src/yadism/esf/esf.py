@@ -65,7 +65,7 @@ class EvaluatedStructureFunction:
 
     """
 
-    def __init__(self, SF, kinematics: dict):
+    def __init__(self, configs, kinematics: dict):
         x = kinematics["x"]
         if x > 1 or x <= 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1]")
@@ -75,11 +75,10 @@ class EvaluatedStructureFunction:
         if x < min(SF.interpolator.xgrid_raw):
             raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
 
-        self.sf = SF
         self.x = x
         self.Q2 = kinematics["Q2"]
         self.nf = None
-        self.process = SF.runner.managers["coupling_constants"].obs_config["process"]
+        self.process = configs.managers["coupling_constants"].obs_config["process"]
         self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
         # select available partonic coefficient functions
