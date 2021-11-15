@@ -72,7 +72,7 @@ class EvaluatedStructureFunction:
         if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
         # check domain
-        if x < min(SF.interpolator.xgrid_raw):
+        if x < min(configs.managers["interpolator"].xgrid_raw):
             raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
 
         self.x = x
@@ -82,7 +82,8 @@ class EvaluatedStructureFunction:
         self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
         # select available partonic coefficient functions
-        self.orders = list(filter(lambda e: e <= SF.pto, range(2 + 1)))
+        self.orders = list(filter(lambda e: e <= configs.theory["pto"], range(2 + 1)))
+        self.configs = configs
 
         logger.debug("Init %s", self)
 
@@ -91,7 +92,12 @@ class EvaluatedStructureFunction:
 
     @property
     def zeros(self):
-        return np.zeros((len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid)))
+        return np.zeros(
+            (
+                len(br.flavor_basis_pids),
+                len(self.configs.managers["interpolator"].xgrid),
+            )
+        )
 
     def compute_local(self):
         """
@@ -108,9 +114,9 @@ class EvaluatedStructureFunction:
         cfc = cf.Combiner(self)
         full_orders = [(o, 0, 0, 0) for o in self.orders]
         # prepare scale variations
-        sv_manager = self.sf.sv_manager
+        sv_manager = self.configs.managers["sv_manager"]
         if sv_manager is not None:
-            full_orders = sv.build_orders(self.sf.pto)
+            full_orders = sv.build_orders(self.configs.theory["pto"])
         # init orders with 0
         for o in full_orders:
             self.res.orders[o] = [self.zeros, self.zeros]
@@ -130,7 +136,7 @@ class EvaluatedStructureFunction:
                 # compute convolution point
                 convolution_point = cfe.coeff.convolution_point()
                 val, err = conv.convolute_vector(
-                    rsl, self.sf.interpolator, convolution_point
+                    rsl, self.configs.managers["interpolator"], convolution_point
                 )
                 # add the factor x from the LHS
                 val, err = convolution_point * val, convolution_point * err

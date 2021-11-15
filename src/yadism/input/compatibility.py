@@ -109,6 +109,10 @@ def update_fns(theory):
         theory["ZMc"] = False
         theory["ZMb"] = False
         theory["ZMt"] = True
+    else:
+        theory["ZMc"] = False
+        theory["ZMb"] = False
+        theory["ZMt"] = False
 
     # here there is no difference between DGLAP and DIS
     for fl in hqfl:

@@ -133,7 +133,7 @@ class Runner:
             pto=pto,
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
-            ZMq=(theory["ZMc"], theory["ZMb"], theory["ZMt"]),
+            ZMq=(new_theory["ZMc"], new_theory["ZMb"], new_theory["ZMt"]),
             intrinsic_range=intrinsic_range,
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],

@@ -95,7 +95,7 @@ class StructureFunction:
         if obs_name == self.obs_name:
             # convert to tuple
             key = list(kinematics.values())
-            use_tmc_if_available = not use_raw and self.TMC != 0
+            use_tmc_if_available = not use_raw and self.runner.configs.TMC != 0
             key.append(use_tmc_if_available)
             key = tuple(key)
             # TODO how to incorporate args?
