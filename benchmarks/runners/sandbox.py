@@ -4,7 +4,9 @@
 # Our testing playground
 import copy
 import pathlib
+import subprocess
 
+import lhapdf
 import numpy as np
 import yaml
 from banana.data import cartesian_product
@@ -13,6 +15,7 @@ from yadmark.data import observables
 
 here = pathlib.Path(__file__).parent
 
+lhapdf.pathsPrepend(subprocess.run("lhapdf-config --datadir".split(), capture_output=True).stdout.decode().strip())
 
 class Sandbox(Runner):
 
