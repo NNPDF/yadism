@@ -100,29 +100,26 @@ class Runner:
 
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)
-        pto = theory["PTO"]
-        sv_manager = sv.ScaleVariations(
-            order=pto,
-            interpolator=interpolator,
-            activate_ren=new_theory["RenScaleVar"],
-            activate_fact=new_theory["FactScaleVar"],
-        )
-
         # Initialize structure functions
         managers = dict(
             interpolator=interpolator,
             threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
             coupling_constants=coupling_constants,
-            sv_manager=sv_manager,
+            sv_manager=sv.ScaleVariations(
+                order=theory["PTO"],
+                interpolator=interpolator,
+                activate_ren=new_theory["RenScaleVar"],
+                activate_fact=new_theory["FactScaleVar"],
+            ),
         )
         # FONLL damping powers
         FONLL_damping = bool(theory["DAMP"])
         if FONLL_damping:
             damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
-            damping_power_c = theory.get("DAMPPOWERCHARM", damping_power)
-            damping_power_b = theory.get("DAMPPOWERBOTTOM", damping_power)
-            damping_power_t = theory.get("DAMPPOWERTOP", damping_power)
-            damping_powers = [damping_power_c, damping_power_b, damping_power_t]
+            damping_powers = [
+                theory.get(f"DAMPPOWER{quark}", damping_power)
+                for quark in ("CHARM", "BOTTOM", "TOP")
+            ]
         else:
             damping_powers = [2] * 3
         # pass theory params
@@ -130,7 +127,7 @@ class Runner:
         if theory["IC"] == 1:
             intrinsic_range.append(4)
         theory_params = dict(
-            pto=pto,
+            pto=theory["PTO"],
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
             ZMq=(new_theory["ZMc"], new_theory["ZMb"], new_theory["ZMt"]),
