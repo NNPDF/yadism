@@ -279,7 +279,7 @@ def generate_single_flavor_light(esf, nf, ihq):
         elems : list(yadism.kernels.Kernel)
             list of elements
     """
-    kind = esf.sf.obs_name.kind
+    kind = esf.info.obs_name.kind
     light_cfs = import_local(
         kind, esf.process, ".".join(__name__.split(".")[:-1] + ["light", ""])
     )
@@ -288,10 +288,10 @@ def generate_single_flavor_light(esf, nf, ihq):
     s_partons = {}
     if esf.process == "CC":
         w_even = cc_weights_even(
-            esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
+            esf.info.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
         )
         w_odd = cc_weights_odd(
-            esf.sf.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
+            esf.info.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
         )
         return (
             Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf)),
@@ -303,13 +303,13 @@ def generate_single_flavor_light(esf, nf, ihq):
             Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf)),
         )
     if kind != "F3":
-        w = esf.sf.coupling_constants.get_weight(
+        w = esf.info.coupling_constants.get_weight(
             ihq, esf.Q2, "VV"
-        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+        ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
     else:
-        w = esf.sf.coupling_constants.get_weight(
+        w = esf.info.coupling_constants.get_weight(
             ihq, esf.Q2, "VA"
-        ) + esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+        ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
 
     ns_partons[ihq] = w
     ns_partons[-ihq] = w if kind != "F3" else -w

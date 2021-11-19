@@ -88,7 +88,9 @@ class StructureFunction:
         # TODO remove force_local
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
-            obj = esf.EvaluatedStructureFunction(self.runner.configs, kinematics)
+            obj = esf.EvaluatedStructureFunction(
+                kinematics, self.obs_name, self.runner.configs
+            )
             return obj
         # else we're happy to cache
         # is it us or do we need to delegate?
@@ -107,7 +109,7 @@ class StructureFunction:
                     obj = tmc.ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
                     obj = esf.EvaluatedStructureFunction(
-                        self.runner.configs, kinematics, *args
+                        kinematics, self.obs_name, self.runner.configs
                     )
                 self.cache[key] = obj
                 return obj
@@ -116,8 +118,8 @@ class StructureFunction:
             return self.runner.get_sf(obs_name).get_esf(obs_name, kinematics, *args)
 
     def iterate_result(self):
-        for esf in self.esfs:
-            yield esf.get_result()
+        for owned_esf in self.esfs:
+            yield owned_esf.get_result()
 
     def get_result(self):
         """

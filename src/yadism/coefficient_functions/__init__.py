@@ -36,7 +36,7 @@ def collect_ffns(esf, obs_name, nf):
         # Now: F2c in FFNS3 (the true thing)
         elems.extend(heavy.kernels.generate(esf, nf))
         ihq = nf + 1
-        if ihq in esf.sf.intrinsic_range:
+        if ihq in esf.info.intrinsic_range:
             elems.extend(intrinsic.kernels.generate(esf, ihq))
     # add "missing" diagrams
     if obs_name.flavor_family in ["total"]:
@@ -57,9 +57,9 @@ class Combiner:
 
     def __init__(self, esf):
         self.esf = esf
-        self.obs_name = esf.sf.obs_name
-        self.nf = esf.sf.threshold.nf(esf.Q2)
-        self.target = esf.sf.target
+        self.obs_name = esf.info.obs_name
+        self.nf = esf.info.threshold.nf(esf.Q2)
+        self.target = esf.info.target
 
     def collect_zmvfns(self):
         """
@@ -105,13 +105,13 @@ class Combiner:
         """
         elems = []
         # above the *next* threshold use ZM-VFNS
-        # nl = self.esf.sf.nf_ff - 1
+        # nl = self.esf.info.nf_ff - 1
         # if nl + 1 < self.nf:
         #     return self.collect_zmvfns()
         nl = self.nf - 1
         # below charm it is simply FFNS
         if self.nf <= 3:
-            return self.collect_ffns()
+            return collect_ffns(self.esf, self.esf.info.obs_name, self.nf)
 
         if self.obs_name.flavor in ["light", "total"]:
             # FFNSlow
@@ -137,7 +137,7 @@ class Combiner:
             # FFNSlow
             elems.extend(heavy.kernels.generate(self.esf, nl))
             # add F^d
-            if ihq in self.esf.sf.intrinsic_range:
+            if ihq in self.esf.info.intrinsic_range:
                 elems.extend(intrinsic.kernels.generate(self.esf, ihq))
                 elems.extend(
                     self.damp_elems(
@@ -180,12 +180,12 @@ class Combiner:
             elems : list(Kernel)
                 modified kernels
         """
-        if not self.esf.sf.FONLL_damping:
+        if not self.esf.info.FONLL_damping:
             return elems
         nhq = nl + 1
         # TODO: replace mass with threshold?
-        m2hq = self.esf.sf.m2hq[nhq - 4]
-        power = self.esf.sf.damping_powers[nhq - 4]
+        m2hq = self.esf.info.m2hq[nhq - 4]
+        power = self.esf.info.damping_powers[nhq - 4]
         if self.esf.Q2 > m2hq:
             damp = np.power(1.0 - m2hq / self.esf.Q2, power)
         else:
@@ -245,11 +245,11 @@ class Combiner:
             elems : list(yadism.kernels.Kernel)
                 all participants
         """
-        if self.esf.sf.scheme == "FFNS":
-            full = self.collect_ffns()
-        elif self.esf.sf.scheme == "ZM-VFNS":
+        if self.esf.info.scheme == "FFNS":
+            full = collect_ffns(self.esf, self.esf.info.obs_name, self.nf)
+        elif self.esf.info.scheme == "ZM-VFNS":
             full = self.collect_zmvfns()
-        elif self.esf.sf.scheme in ["FONLL-A", "FONLL-B", "FONLL-C"]:
+        elif self.esf.info.scheme in ["FONLL-A", "FONLL-B", "FONLL-C"]:
             full = self.collect_fonll()
         else:
             raise ValueError("Unknown FNS")
