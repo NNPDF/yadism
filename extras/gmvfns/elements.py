@@ -31,6 +31,19 @@ class Scheme(dict):
         )
 
 
+class ObservableName:
+    def __init__(self, name):
+        self.name = name
+
+    @property
+    def family(self):
+        if "total" in self.name:
+            return "total"
+        if "light" in self.name:
+            return "light"
+        return "heavy"
+
+
 kg_space = dict(
     nf=[3, 4, 5, 6],
     coupl=["light", "heavy", "miss"],
@@ -124,6 +137,7 @@ class Patch(list):
 class VFNS(list):
     def __init__(self, confs, patches=None):
         self.scheme = Scheme(confs)
+        self.obs = ObservableName(confs.obs)
 
         if patches is None:
             patches = []
