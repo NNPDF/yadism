@@ -10,7 +10,7 @@ def combiner(obs, nf, masses):
     else:
         light.append(KernelGroup("light", nf))
 
-    for ihq in range(nf + 1, 6):
+    for ihq in range(nf + 1, 7):
         if masses[ihq]:
             light.append(KernelGroup("miss", nf, ihq=ihq))
 
