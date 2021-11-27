@@ -15,7 +15,7 @@ def combiner(obs, nf, masses):
 
         for ihq in range(nf + 1, 7):
             if masses[ihq]:
-                light.append(KernelGroup("miss", nf, ihq=ihq))
+                light.append(KernelGroup("miss", nf, ihq=ihq, nc=nf))
 
         p.append(light)
     if obs.family in ["heavy", "total"]:
@@ -25,6 +25,9 @@ def combiner(obs, nf, masses):
             # exclude sfh=3, since heavy contributions are there for [4,5,6]
             if sfh in masses and masses[sfh]:
                 heavy[sfh] = Component(sfh)
+                if obs.hq != 0 and obs.hq != sfh:
+                    continue
+
                 if sfh == nf:
                     heavy[sfh].append(KernelGroup("heavy", nf, ihq=sfh, fonll=True))
                 else:
@@ -32,7 +35,7 @@ def combiner(obs, nf, masses):
 
                 for ihq in range(sfh + 1, 7):
                     if masses[ihq]:
-                        heavy[sfh].append(KernelGroup("miss", nf, ihq=ihq))
+                        heavy[sfh].append(KernelGroup("miss", nf, ihq=ihq, nc=1))
                 p.append(heavy[sfh])
     return p
 

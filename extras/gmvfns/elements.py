@@ -43,6 +43,12 @@ class ObservableName:
             return "light"
         return "heavy"
 
+    @property
+    def hq(self):
+        if self.name in ["light", "total"]:
+            return 0
+        return ["charm", "bottom", "top"].index(self.name) + 4
+
 
 kg_space = dict(
     nf=[3, 4, 5, 6],
@@ -58,6 +64,7 @@ class KernelGroup:
     nf: int
     ihq: int = 0
     fonll: bool = False
+    nc: int = 0
 
     @property
     def flav(self):
@@ -70,6 +77,8 @@ class KernelGroup:
             attr = getattr(self, name)
             if attr not in domain:
                 raise RuntimeError(f"'{name}={attr}' not in domain {domain}")
+
+        attributes = []
 
         if self.ihq != 0:
             if not self.fonll and self.nf >= self.ihq:
@@ -87,16 +96,22 @@ class KernelGroup:
             heavyness = f"{self.nf}f:{self.flav}"
         else:
             heavyness = f"FO:{self.flav}"
+        attributes.append(heavyness)
 
-        missing = ""
         if self.coupl == "miss":
             if self.ihq == 0:
                 raise RuntimeError(
                     "Missing does not make sense for a pure light kernel."
                 )
-            missing = f", /{self.flav}"
+            attributes.append(f"/{self.flav}")
 
-        return f"F{self.coupl}({heavyness}{missing})"
+        if self.nc == 0:
+            self.nc = self.nf
+        else:
+            attributes.append(f"~~{self.nc}")
+
+        attributes = ", ".join(attributes)
+        return f"F{self.coupl}({attributes})"
 
 
 class Component(list):
