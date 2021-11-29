@@ -6,11 +6,12 @@ on:
       - master
       - "release/*"
   pull_request:
-    # TODO: https://github.community/t5/GitHub-Actions/Triggering-workflow-on-merge/td-p/40930
     types:
       - closed
-    branches:
-      - develop
+      - review_requested
+  pull_request_review:
+    types:
+      - submitted
 
 jobs:
   apfel:
@@ -27,14 +28,7 @@ jobs:
       - name: Run apfel benchmarks
         run: |
           pytest benchmarks/runners/apfel.py
-      # - name: Upload coverage to Codecov
-        # uses: codecov/codecov-action@v1
-        # with:
-          # token: ${{ secrets.CODECOV_TOKEN }}
-          # file: ./coverage.xml
-          # flags: benchmarks
-          # name: codecov-umbrella
-          # fail_ci_if_error: true
+
   qcdnum:
     runs-on: ubuntu-latest
     container:
