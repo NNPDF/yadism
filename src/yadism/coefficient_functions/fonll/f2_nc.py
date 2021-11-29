@@ -10,49 +10,107 @@ from . import raw_nc
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def cg_NLO(z, args):
+def cg_LL_NLO(z, args):
     L = args[0]
-    return raw_nc.c2g1am0_aq(z) * L + raw_nc.c2g1am0_a0(z)
+    return raw_nc.c2g1am0_aq(z) * L
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def cg_NNLO(z, args):
+def cg_const_NLO(z, _args):
+    return raw_nc.c2g1am0_a0(z)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cg_LL_NNLO(z, args):
     L = args[0]
-    return (
-        (raw_nc.c2g2am0_aq2(z) - raw_nc.c2g2am0_aqf(z)) * L ** 2
-        + (raw_nc.c2g2am0_aq(z) - raw_nc.c2g2am0_af(z)) * L
-        + raw_nc.c2g2am0_a0(z)
-    )
+    return (raw_nc.c2g2am0_aq2(z) - raw_nc.c2g2am0_aqf(z)) * L ** 2
 
 
-class AsyGluonVV(pc.PartonicChannelAsy):
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cg_NLL_NNLO(z, args):
+    L = args[0]
+    return +(raw_nc.c2g2am0_aq(z) - raw_nc.c2g2am0_af(z)) * L
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cg_const_NNLO(z, _args):
+    return +raw_nc.c2g2am0_a0(z)
+
+
+class AsyLLGluonVV(pc.PartonicChannelAsy):
     def NLO(self):
-        return RSL(cg_NLO, args=[self.L])
+        return RSL(cg_LL_NLO, args=[self.L])
 
     def NNLO(self):
-        return RSL(cg_NNLO, args=[self.L])
+        return RSL(cg_LL_NNLO, args=[self.L])
 
 
-class AsyGluonAA(AsyGluonVV):
+class AsyNLLGluonVV(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cg_NLL_NNLO, args=[self.L])
+
+
+class AsyConstGluonVV(pc.PartonicChannelAsy):
+    def NLO(self):
+        return RSL(cg_const_NLO, args=[self.L])
+
+    def NNLO(self):
+        return RSL(cg_const_NNLO)
+
+
+class AsyLLGluonAA(AsyLLGluonVV):
+    pass
+
+
+class AsyNLLGluonAA(AsyNLLGluonVV):
+    pass
+
+
+class AsyConstGluonAA(AsyConstGluonVV):
     pass
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def cps_NNLO(z, args):
+def cps_LL_NNLO(z, args):
     L = args[0]
-    return (
-        (raw_nc.c2ps2am0_aq2(z) - raw_nc.c2ps2am0_aqf(z)) * L ** 2
-        + (raw_nc.c2ps2am0_aq(z) - raw_nc.c2ps2am0_af(z)) * L
-        + raw_nc.c2ps2am0_a0(z)
-    )
+    return (raw_nc.c2ps2am0_aq2(z) - raw_nc.c2ps2am0_aqf(z)) * L ** 2
 
 
-class AsySingletVV(pc.PartonicChannelAsy):
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cps_NLL_NNLO(z, args):
+    L = args[0]
+    return +(raw_nc.c2ps2am0_aq(z) - raw_nc.c2ps2am0_af(z)) * L
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cps_const_NNLO(z, _args):
+    return +raw_nc.c2ps2am0_a0(z)
+
+
+class AsyLLSingletVV(pc.PartonicChannelAsy):
     def NNLO(self):
-        return RSL(cps_NNLO, args=[self.L])
+        return RSL(cps_LL_NNLO, args=[self.L])
 
 
-class AsySingletAA(AsySingletVV):
+class AsyNLLSingletVV(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cps_NLL_NNLO, args=[self.L])
+
+
+class AsyConstSingletVV(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cps_const_NNLO)
+
+
+class AsyLLSingletAA(AsyLLSingletVV):
+    pass
+
+
+class AsyNLLSingletAA(AsyNLLSingletVV):
+    pass
+
+
+class AsyConstSingletAA(AsyConstSingletVV):
     pass
 
 

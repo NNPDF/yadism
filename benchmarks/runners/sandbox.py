@@ -154,8 +154,8 @@ class Sandbox(Runner):
 
 def main():
     sand = Sandbox()
-    #sand.doit()
-    sand.run_pineappl()
+    sand.doit()
+    #sand.run_pineappl()
 
 if __name__ == "__main__":
     main()
