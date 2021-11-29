@@ -29,7 +29,8 @@ jobs:
         run: |
           # pytest benchmarks/runners/apfel.py
           # just check that apfel is actually available, for the time being
-          python -m apfel
+          #   waiting for: *proper runner*
+          python -c "import apfel"
 
   qcdnum:
     runs-on: ubuntu-latest
@@ -59,4 +60,7 @@ jobs:
           pip install .
       - name: Run apfel benchmarks
         run: |
-          pytest benchmarks/runners/xspace-bench.py
+          # pytest benchmarks/runners/xspace-bench.py
+          # just check that apfel is actually available, for the time being
+          #   waiting for: *required PDFsets*
+          python -c "import xspace_bench"
