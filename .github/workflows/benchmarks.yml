@@ -27,7 +27,9 @@ jobs:
           pip install .
       - name: Run apfel benchmarks
         run: |
-          pytest benchmarks/runners/apfel.py
+          # pytest benchmarks/runners/apfel.py
+          # just check that apfel is actually available, for the time being
+          python -m apfel
 
   qcdnum:
     runs-on: ubuntu-latest
