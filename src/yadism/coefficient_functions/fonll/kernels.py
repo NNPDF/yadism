@@ -110,8 +110,11 @@ def generate_heavy_diff(esf, nl):
     """
     kind = esf.sf.obs_name.kind
     ihq = nl + 1
+    pto_evol = 1
     # add light contributions
-    elems = kernels.generate_single_flavor_light(esf, nl + 1, ihq)
+    lights = kernels.generate_single_flavor_light(esf, nl + 1, ihq)
+    for e in lights:
+        e.max_order = pto_evol
     # add asymptotic contributions
     # The matching does not necessarily happen at the quark mass
     # m2hq = esf.sf.m2hq[ihq - 4]
@@ -132,22 +135,18 @@ def generate_heavy_diff(esf, nl):
             esf.sf.coupling_constants, esf.Q2, kind, nl
         )
         if kind != "F3":
-            asys = [
-                -kernels.Kernel(
-                    asy_weights["gVV"], fonll_cfs.AsyGluonVV(esf, nl, mu2hq=mu2hq)
-                ),
-                -kernels.Kernel(
-                    asy_weights["gAA"], fonll_cfs.AsyGluonAA(esf, nl, mu2hq=mu2hq)
-                ),
-                -kernels.Kernel(
-                    asy_weights["sVV"], fonll_cfs.AsySingletVV(esf, nl, mu2hq=mu2hq)
-                ),
-                -kernels.Kernel(
-                    asy_weights["sAA"], fonll_cfs.AsySingletAA(esf, nl, mu2hq=mu2hq)
-                ),
-            ]
+            for c, channel in (("g", "Gluon"), ("s", "Singlet")):
+                for res in range(pto_evol + 1):
+                    name = "Asy" + ("N" * res) + "LL" + channel
+                    for av in ("AA", "VV"):
+                        asys.append(
+                            -kernels.Kernel(
+                                asy_weights[f"{c}{av}"],
+                                fonll_cfs.__getattribute__(name)(esf, nl, mu2hq=mu2hq),
+                            )
+                        )
 
-    return (*elems, *asys)
+    return (*lights, *asys)
 
 
 def generate_heavy_intrinsic_diff(esf, nl):
