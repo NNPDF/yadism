@@ -21,7 +21,7 @@ def combiner(obs, nf, masses):
     if obs.family == "heavy":
         #  the only case in which an heavy contribution is not present in those
         #  accounted for in total, it's whene heavy already became heavylight
-        if obs.hq < nf:
+        if obs.hq < nf or (obs.hq == nf and not masses[obs.hq]):
             heavylight = Component(obs.hq)
             heavylight.append(KernelGroup("light", nf, ihq=obs.hq, nc=1))
             p.append(heavylight)

@@ -93,7 +93,7 @@ class KernelGroup:
                         "are active (even with FONLL)"
                     )
 
-        if self.ihq < self.nf:
+        if self.ihq < self.nf or (self.ihq == self.nf and not self.fonll):
             heavyness = f"zm:{self.nf}"
         elif not self.fonll:
             heavyness = f"{self.nf}f:{self.flav}"
@@ -110,6 +110,8 @@ class KernelGroup:
 
         if self.nc == 0:
             self.nc = self.nf
+        elif self.nc == 1:
+            attributes.append(f"~~{'cbt'[self.ihq-4]}")
         else:
             attributes.append(f"~~{self.nc}")
 
