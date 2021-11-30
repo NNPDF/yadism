@@ -81,16 +81,19 @@ class KernelGroup:
         attributes = []
 
         if self.ihq != 0:
-            if not self.fonll and self.nf >= self.ihq:
-                raise RuntimeError(
-                    f"'ihq={self.ihq}' is light when {self.nf} flavors are active"
-                )
-            if self.nf > self.ihq:
-                raise RuntimeError(
-                    f"'ihq={self.ihq}' is light when {self.nf} flavors are active (even with FONLL)"
-                )
+            # heavylight is allowed
+            if self.coupl != "light" and self.nf >= self.ihq:
+                if not self.fonll:
+                    raise RuntimeError(
+                        f"'ihq={self.ihq}' is light when {self.nf} flavors are active"
+                    )
+                if self.nf > self.ihq:
+                    raise RuntimeError(
+                        f"'ihq={self.ihq}' is light when {self.nf} flavors "
+                        "are active (even with FONLL)"
+                    )
 
-        if self.ihq == 0:
+        if self.ihq < self.nf:
             heavyness = f"zm:{self.nf}"
         elif not self.fonll:
             heavyness = f"{self.nf}f:{self.flav}"

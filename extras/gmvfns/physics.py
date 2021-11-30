@@ -18,6 +18,13 @@ def combiner(obs, nf, masses):
                 light.append(KernelGroup("miss", nf, ihq=ihq, nc=nf))
 
         p.append(light)
+    if obs.family == "heavy":
+        #  the only case in which an heavy contribution is not present in those
+        #  accounted for in total, it's whene heavy already became heavylight
+        if obs.hq < nf:
+            heavylight = Component(obs.hq)
+            heavylight.append(KernelGroup("light", nf, ihq=obs.hq, nc=1))
+            p.append(heavylight)
     if obs.family in ["heavy", "total"]:
         heavy = {}
         for sfh in range(nf, 7):
