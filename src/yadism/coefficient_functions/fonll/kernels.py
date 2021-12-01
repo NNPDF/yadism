@@ -92,7 +92,7 @@ def generate_light_diff(esf, nl):
     return (kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1)),)
 
 
-def generate_heavy_diff(esf, nl):
+def generate_heavy_diff(esf, nl, pto_evol):
     """
     |ref| implements :eqref:`89`, :cite:`forte-fonll`.
 
@@ -102,6 +102,8 @@ def generate_heavy_diff(esf, nl):
             kinematic point
         nl : int
             number of light flavors
+        pto_evol : int
+            PTO of evolution
 
     Returns
     -------
@@ -110,7 +112,6 @@ def generate_heavy_diff(esf, nl):
     """
     kind = esf.sf.obs_name.kind
     ihq = nl + 1
-    pto_evol = 1
     # add light contributions
     lights = kernels.generate_single_flavor_light(esf, nl + 1, ihq)
     for e in lights:
@@ -149,7 +150,7 @@ def generate_heavy_diff(esf, nl):
     return (*lights, *asys)
 
 
-def generate_heavy_intrinsic_diff(esf, nl):
+def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
     """
     |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
 
@@ -159,6 +160,8 @@ def generate_heavy_intrinsic_diff(esf, nl):
             kinematic point
         nl : int
             number of light flavors
+        pto_evol : int
+            PTO of evolution
 
     Returns
     -------
@@ -172,7 +175,7 @@ def generate_heavy_intrinsic_diff(esf, nl):
     # matching scale
     mu2hq = esf.sf.threshold.area_walls[ihq - 3]
     # add normal terms starting from NNLO
-    nnlo_terms = generate_heavy_diff(esf, nl)
+    nnlo_terms = generate_heavy_diff(esf, nl, pto_evol)
     for k in nnlo_terms:
         k.min_order = 2
     if esf.process == "CC":

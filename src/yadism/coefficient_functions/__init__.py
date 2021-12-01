@@ -139,27 +139,21 @@ class Combiner:
                 elems.extend(
                     self.damp_elems(
                         nl,
-                        fonll.kernels.generate_heavy_intrinsic_diff(self.esf, nl),
+                        fonll.kernels.generate_heavy_intrinsic_diff(
+                            self.esf, nl, self.esf.sf.pto_evol
+                        ),
                     )
                 )
             else:
                 elems.extend(
-                    self.damp_elems(nl, fonll.kernels.generate_heavy_diff(self.esf, nl))
+                    self.damp_elems(
+                        nl,
+                        fonll.kernels.generate_heavy_diff(
+                            self.esf, nl, self.esf.sf.pto_evol
+                        ),
+                    )
                 )
         return elems
-
-    # def collect_fonll_mismatched(self):
-    #     kernels = []
-
-    #     for k in self.collect_fonll():
-    #         k.max_order = evolution_pto
-    #         kernels.append(k)
-
-    #     for k in self.collect_ffns():
-    #         k.min_order = evolution_pto
-    #         kernels.append(k)
-
-    #     return kernels
 
     def damp_elems(self, nl, elems):
         """
