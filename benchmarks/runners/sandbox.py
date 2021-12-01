@@ -53,7 +53,7 @@ class Sandbox(Runner):
             # "FL_light",
             # "F3_light",
             "F2_charm",
-            # "FL_charm",
+            "FL_charm",
             # "F3_charm",
             # "F2_bottom",
             # "F2_top",

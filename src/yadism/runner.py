@@ -100,7 +100,7 @@ class Runner:
 
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)
-        pto = theory["PTO"]
+        pto = new_theory["PTODIS"]
         sv_manager = sv.ScaleVariations(
             order=pto,
             interpolator=interpolator,
@@ -143,7 +143,12 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
-        logger.info("PTO: %d, process: %s", theory["PTO"], new_observables["prDIS"])
+        logger.info(
+            "PTO: %d, PTO@evolution: %d, process: %s",
+            pto,
+            new_theory["PTO"],
+            new_observables["prDIS"],
+        )
         logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
         logger.info("Intrinsic: %s", intrinsic_range)
         logger.info(

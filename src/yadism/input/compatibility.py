@@ -127,3 +127,9 @@ def update_fns(theory):
             theory[f"k{fl}Thr"] = 0
             if pid < nf:
                 theory[f"kDIS{fl}Thr"] = 0
+    # fix FONLL-B and introduce PTODIS
+    if fns == "FONLL-B":
+        theory["PTODIS"] = 2
+        theory["PTO"] = 1
+    else:
+        theory["PTODIS"] = theory["PTO"]

@@ -10,61 +10,78 @@ from . import raw_nc
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def cg_NLO(z, _args):
+def cg_NLL_NLO(z, _args):
     return raw_nc.clg1am0_a0(z)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def cg_NNLO(z, args):
+def cg_NLL_NNLO(z, args):
     L = args[0]
-    return (raw_nc.clg2am0_aq(z) - raw_nc.clg2am0_af(z)) * L + raw_nc.clg2am0_a0(z)
-
-
-class AsyGluonVV(pc.PartonicChannelAsy):
-    def NLO(self):
-        return RSL(cg_NLO, args=[self.L])
-
-    def NNLO(self):
-        return RSL(cg_NNLO, args=[self.L])
-
-
-class AsyGluonAA(AsyGluonVV):
-    pass
+    return (raw_nc.clg2am0_aq(z) - raw_nc.clg2am0_af(z)) * L
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def cps_NNLO(z, args):
-    L = args[0]
-    return (raw_nc.clps2am0_aq(z) - raw_nc.clps2am0_af(z)) * L + raw_nc.clps2am0_a0(z)
+def cg_NNLL_NNLO(z, _args):
+    return raw_nc.clg2am0_a0(z)
 
 
-class AsySingletVV(pc.PartonicChannelAsy):
-    def NNLO(self):
-        return RSL(cps_NNLO, args=[self.L])
-
-
-class AsySingletAA(AsySingletVV):
+class AsyLLGluon(EmptyPartonicChannel):
     pass
 
 
-class PdfMatchingNonSinglet(EmptyPartonicChannel):
+class AsyNLLGluon(pc.PartonicChannelAsy):
+    def NLO(self):
+        return RSL(cg_NLL_NLO, args=[self.L])
+
+    def NNLO(self):
+        return RSL(cg_NLL_NNLO, args=[self.L])
+
+
+class AsyNNLLGluon(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cg_NNLL_NNLO)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cps_NLL_NNLO(z, args):
+    L = args[0]
+    return (raw_nc.clps2am0_aq(z) - raw_nc.clps2am0_af(z)) * L
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cps_NNLL_NNLO(z, _args):
+    return raw_nc.clps2am0_a0(z)
+
+
+class AsyLLSinglet(EmptyPartonicChannel):
+    pass
+
+
+class AsyNLLSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cps_NLL_NNLO, args=[self.L])
+
+
+class AsyNNLLSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cps_NNLL_NNLO)
+
+
+class PdfMatchingLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class PdfMatchingNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class PdfMatchingNNLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
 class LightNonSingletShifted(pc.PartonicChannelAsy):
     def NNLO(self):
         return light.NonSinglet(self.ESF, self.nf).NLO()
-
-
-# @nb.njit("f8(f8,f8[:])", cache=True)
-# def cns_NNLO(z, args):
-#     L = args[0]
-#     return raw_nc.clns2am0_aq(z) * L + raw_nc.clns2am0_a0(z)
-
-
-# class AsyNonSingletMissing(pc.PartonicChannelAsy):
-#     def NNLO(self):
-#         return RSL(cns_NNLO, args=[self.L])
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuark):
