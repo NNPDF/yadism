@@ -45,7 +45,7 @@ jobs:
           pip install .
       - name: Run apfel benchmarks
         run: |
-          pytest benchmarks/runners/qcdnum.py
+          pytest benchmarks/runners/qcdnum_.py
 
   xspace-bench:
     runs-on: ubuntu-latest
