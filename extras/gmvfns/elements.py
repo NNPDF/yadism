@@ -8,6 +8,8 @@ from rich.panel import Panel
 
 class Scheme(dict):
     def __init__(self, args):
+        super().__init__()
+
         self.args = args
         for k, v in vars(args).items():
             if k[0] == "m" and len(k) == 2:
@@ -102,7 +104,7 @@ class KernelGroup:
             if self.coupl == "light":
                 # in heavylight is the would-be heavy flavor to couple
                 self.icoupl = self.ihq
-            elif self.coupl == "miss":
+            elif self.coupl == "miss" and self.ncoupl == 1:
                 raise RuntimeError(
                     "Missing: if only 1 flavor coupling has to be specified"
                 )
@@ -145,7 +147,7 @@ class Component(list):
 
         if kernels is None:
             kernels = []
-        self.extend(kernels)
+        super().__init__(kernels)
 
     def render(self, color="magenta", color_add="none"):
         return f"[{color}]{self.name}[/] = " + " + ".join(
@@ -160,7 +162,7 @@ class Patch(list):
 
         if components is None:
             components = []
-        self.extend(components)
+        super().__init__(components)
 
     def render(self):
         lines = [comp.render() for comp in self]
@@ -178,7 +180,7 @@ class VFNS(list):
 
         if patches is None:
             patches = []
-        self.extend(patches)
+        super().__init__(patches)
 
     @property
     def masses(self):

@@ -16,7 +16,7 @@ class EvaluatedCrossSection:
         yp = 1.0 + (1.0 - y) ** 2
         ym = 1.0 - (1.0 - y) ** 2
         yL = y ** 2
-        obs_config = self.xs.runner.managers["coupling_constants"].obs_config
+        obs_config = self.xs.runner.configs.coupling_constants.obs_config
         f3sign = -1 if obs_config["projectilePID"] < 0 else 1
         # eta = 1 if obs_config["process"] == "CC" else 1
         # the alpha_qed^2 part is shifted below
@@ -36,14 +36,14 @@ class EvaluatedCrossSection:
         else:
             x = self.kin["x"]
             Q2 = self.kin["Q2"]
-            mn = np.sqrt(self.xs.runner.theory_params["M2target"])
-            m2w = self.xs.runner.theory_params["M2W"]
+            mn = np.sqrt(self.xs.runner.configs.M2target)
+            m2w = self.xs.runner.configs.M2W
             yp -= 2.0 * (mn * x * y) ** 2 / Q2  # = ypc
             # Chorus
             if kind == "XSCHORUSCC":
                 norm = (
                     conv
-                    * self.xs.runner.theory_params["GF"] ** 2
+                    * self.xs.runner.configs.GF ** 2
                     * mn
                     / (2.0 * np.pi * (1.0 + Q2 / m2w) ** 2)
                 )

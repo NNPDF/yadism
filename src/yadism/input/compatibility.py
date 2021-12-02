@@ -105,7 +105,7 @@ def update_fns(theory):
         for fl in hqfl:
             theory[f"ZM{fl}"] = True
 
-    if fns == "FONLL":
+    if "FONLL" in fns:
         theory["ZMc"] = False
         theory["ZMb"] = False
         theory["ZMt"] = True

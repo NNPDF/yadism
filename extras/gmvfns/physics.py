@@ -1,8 +1,14 @@
+import warnings
+
 from .elements import VFNS, Component, KernelGroup, Patch
 
 
 def light_component(nf, masses, intrinsic):
     comp = Component(0)
+
+    if len(intrinsic) > 0:
+        warnings.warn("Intrinsic singlet channel not applied", stacklevel=2)
+
     # the first condition essentially checks nf != 3
     if nf in masses and masses[nf]:
         comp.append(KernelGroup("light", nf, fonll=True))
@@ -33,7 +39,7 @@ def heavy_components(nf, hq, masses, intrinsic):
         # exclude sfh=3, since heavy contributions are there for [4,5,6]
         if sfh in masses and masses[sfh]:
             heavy[sfh] = Component(sfh)
-            if hq != 0 and hq != sfh:
+            if hq not in (0, sfh):
                 continue
 
             if sfh == nf:
