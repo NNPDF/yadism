@@ -1,10 +1,11 @@
 from .elements import VFNS, Component, KernelGroup, Patch
 
+
 def light_component(nf, masses):
     comp = Component(0)
     # the first condition essentially checks nf != 3
     if nf in masses and masses[nf]:
-        comp.append(KernelGroup("light", nf, ihq=nf, fonll=True))
+        comp.append(KernelGroup("light", nf, fonll=True))
     else:
         comp.append(KernelGroup("light", nf))
 
@@ -12,6 +13,7 @@ def light_component(nf, masses):
         if masses[ihq]:
             comp.append(KernelGroup("miss", nf, ihq=ihq, nc=nf))
     return comp
+
 
 def heavylight_components(nf, hq, masses):
     comps = []
@@ -21,6 +23,7 @@ def heavylight_components(nf, hq, masses):
         comps.append(heavylight)
 
     return comps
+
 
 def heavy_components(nf, hq, masses):
     comps = []
@@ -34,7 +37,7 @@ def heavy_components(nf, hq, masses):
                 continue
 
             if sfh == nf:
-                heavy[sfh].append(KernelGroup("heavy", nf, ihq=sfh, fonll=True))
+                heavy[sfh].append(KernelGroup("heavy", nf, fonll=True))
             else:
                 heavy[sfh].append(KernelGroup("heavy", nf, ihq=sfh))
 

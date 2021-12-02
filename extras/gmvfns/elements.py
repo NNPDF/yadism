@@ -93,6 +93,9 @@ class KernelGroup:
                         "are active (even with FONLL)"
                     )
 
+        if self.fonll:
+            self.ihq = self.nf
+
         if self.ihq < self.nf or (self.ihq == self.nf and not self.fonll):
             heavyness = f"zm:{self.nf}"
         elif not self.fonll:

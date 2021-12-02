@@ -23,93 +23,6 @@ class Component(list):
         return self.heavy + f"({', '.join(self)})"
 
 
-def light_component(nf, masses):
-    comp = Component(0)
-    # the first condition essentially checks nf != 3
-    if nf in masses and masses[nf]:
-        comp.append(kernels.KernelGroup("light", nf, ihq=nf, fonll=True))
-    else:
-        comp.append(kernels.KernelGroup("light", nf))
-
-    for ihq in range(nf + 1, 7):
-        if masses[ihq]:
-            comp.append(kernels.KernelGroup("miss", nf, ihq=ihq, nc=nf))
-    return comp
-
-
-def heavylight_components(nf, hq, masses):
-    comps = []
-    if hq < nf or (hq == nf and not masses[hq]):
-        heavylight = Component(hq)
-        heavylight.append(kernels.KernelGroup("light", nf, ihq=hq, nc=1))
-        comps.append(heavylight)
-
-    return comps
-
-
-def heavy_components(nf, hq, masses):
-    comps = []
-    heavy = {}
-    for sfh in range(nf, 7):
-        # if it's ZM you don't even have the component
-        # exclude sfh=3, since heavy contributions are there for [4,5,6]
-        if sfh in masses and masses[sfh]:
-            heavy[sfh] = Component(sfh)
-            if hq != 0 and hq != sfh:
-                continue
-
-            if sfh == nf:
-                heavy[sfh].append(kernels.KernelGroup("heavy", nf, ihq=sfh, fonll=True))
-            else:
-                heavy[sfh].append(kernels.KernelGroup("heavy", nf, ihq=sfh))
-
-            for ihq in range(sfh + 1, 7):
-                if masses[ihq]:
-                    heavy[sfh].append(kernels.KernelGroup("miss", nf, ihq=ihq, nc=1))
-                comps.append(heavy[sfh])
-
-    return comps
-
-
-def collect_ffns(esf, obs_name, nf):
-    """
-    Collects all kernels in the |FFNS|.
-
-    Returns
-    -------
-        elems : list(yadism.kernels.Kernel)
-            all participants
-    """
-    elems = []
-    # light is *everything* up to nf and not only u+d+s
-    if obs_name.flavor in ["light", "total"]:
-        elems.extend(light.kernels.generate(esf, nf))
-    # add heavy
-    if obs_name.flavor_family in ["heavy", "total"]:
-        # or fake it by light
-        if obs_name.flavor_family == "heavy":
-            # F2b is not avaible in FFNS3
-            if obs_name.hqnumber > nf + 1:
-                raise ValueError(
-                    f"{obs_name} is not available in FFNS with {nf} light flavors"
-                )
-            # F2c in FFNS5 is available, but light
-            if obs_name.hqnumber < nf + 1:
-                elems.extend(
-                    kernels.generate_single_flavor_light(esf, nf, obs_name.hqnumber)
-                )
-                return elems
-        # Now: F2c in FFNS3 (the true thing)
-        elems.extend(heavy.kernels.generate(esf, nf))
-        ihq = nf + 1
-        if ihq in esf.info.intrinsic_range:
-            elems.extend(intrinsic.kernels.generate(esf, ihq))
-    # add "missing" diagrams
-    if obs_name.flavor_family in ["total"]:
-        elems.extend(heavy.kernels.generate_missing(esf, nf))
-    return elems
-
-
 class Combiner:
     """
     Does the matching between coefficient functions and partons with their approptiate coupling
@@ -123,7 +36,7 @@ class Combiner:
 
     def __init__(self, esf):
         self.esf = esf
-        self.masses = {}
+        self.masses = {4: True, 5: False, 6: False}
         self.obs_name = esf.info.obs_name
         self.nf = esf.info.threshold.nf(esf.Q2)
         self.target = esf.info.target
@@ -131,46 +44,96 @@ class Combiner:
     def collect(self):
         elems = []
 
-        obs = self.obs_name
-        masses = self.masses
+        family = self.obs_name.flavor_family
 
         # Adding light component
-        if obs.family in ["light", "total"]:
-            elems.append(light_component(self.nf, masses))
-        if obs.family == "heavy":
+        if family in ["light", "total"]:
+            elems.append(self.light_component())
+        if family == "heavy":
             #  the only case in which an heavy contribution is not present in those
             #  accounted for in total, it's whene heavy already became heavylight
-            elems.extend(heavylight_components(self.nf, obs.hqnumber, masses))
-        if obs.family in ["heavy", "total"]:
-            elems.extend(heavy_components(self.nf, obs.hqnumber, masses))
+            elems.extend(self.heavylight_components())
+        if family in ["heavy", "total"]:
+            elems.extend(self.heavy_components())
 
         return elems
 
-    def collect_zmvfns(self):
-        """
-        Collects all kernels for |ZM-VFNS|.
+    def light_component(self):
+        nf = self.nf
+        nl = self.nf - 1
+        masses = self.masses
 
-        Returns
-        -------
-            elems : list(yadism.kernels.Kernel)
-                all participants
-        """
-        elems = []
-        # light is *everything* up to nf and not only u+d+s
-        if self.obs_name.flavor in ["light", "total"]:
-            elems.extend(light.kernels.generate(self.esf, self.nf))
-        # heavy is allowed if we already passed it
-        if self.obs_name.flavor_family in ["heavy"]:
-            if self.obs_name.hqnumber > self.nf:
-                raise ValueError(
-                    f"{self.obs_name} is not available in ZM-VFNS, yet: nf={self.nf}"
-                )
-            elems.extend(
-                kernels.generate_single_flavor_light(
-                    self.esf, self.nf, self.obs_name.hqnumber
-                )
+        comp = Component(0)
+
+        # the first condition essentially checks nf != 3
+        if nf in masses and masses[nf]:
+            comp.extend(fonll.kernels.generate_light(self.esf, nl))
+            comp.extend(
+                self.damp_elems(nl, fonll.kernels.generate_light_diff(self.esf, nl))
             )
-        return elems
+
+        else:
+            comp.extend(light.kernels.generate(self.esf, nf))
+
+        for ihq in range(nf + 1, 7):
+            if masses[ihq]:
+                comp.extend(heavy.kernels.generate_missing(self.esf, nf, ihq))
+        return comp
+
+    def heavylight_components(self):
+        nf = self.nf
+        hq = self.obs_name.hqnumber
+        masses = self.masses
+
+        comps = []
+
+        if hq < nf or (hq == nf and not masses[hq]):
+            heavylight = Component(hq)
+            heavylight.extend(kernels.generate_single_flavor_light(self.esf, nf, hq))
+            comps.append(heavylight)
+
+        return comps
+
+    def heavy_components(self):
+        nf = self.nf
+        nl = self.nf - 1
+        hq = self.obs_name.hqnumber
+        masses = self.masses
+
+        comps = []
+
+        heavy_comps = {}
+        for sfh in range(nf, 7):
+            # if it's ZM you don't even have the component
+            # exclude sfh=3, since heavy contributions are there for [4,5,6]
+            if sfh in masses and masses[sfh]:
+                heavy_comps[sfh] = Component(sfh)
+                if hq != 0 and hq != sfh:
+                    continue
+
+                if sfh == nf:
+                    heavy_comps[sfh].extend(
+                        heavy.kernels.generate(self.esf, nl, ihq=sfh)
+                    )
+                    heavy_comps[sfh].extend(
+                        self.damp_elems(
+                            nl, fonll.kernels.generate_heavy_diff(self.esf, nl)
+                        )
+                    )
+
+                else:
+                    heavy_comps[sfh].extend(
+                        heavy.kernels.generate(self.esf, nl, ihq=sfh)
+                    )
+
+                for ihq in range(sfh + 1, 7):
+                    if masses[ihq]:
+                        heavy_comps[sfh].extend(
+                            heavy.kernels.generate_missing(self.esf, nf, ihq)
+                        )
+                    comps.append(heavy_comps[sfh])
+
+        return comps
 
     def collect_fonll(self):
         """
@@ -195,8 +158,6 @@ class Combiner:
         #     return self.collect_zmvfns()
         nl = self.nf - 1
         # below charm it is simply FFNS
-        if self.nf <= 3:
-            return collect_ffns(self.esf, self.esf.info.obs_name, self.nf)
 
         if self.obs_name.flavor in ["light", "total"]:
             # FFNSlow
@@ -330,14 +291,11 @@ class Combiner:
             elems : list(yadism.kernels.Kernel)
                 all participants
         """
-        if self.esf.info.scheme == "FFNS":
-            full = collect_ffns(self.esf, self.esf.info.obs_name, self.nf)
-        elif self.esf.info.scheme == "ZM-VFNS":
-            full = self.collect_zmvfns()
-        elif self.esf.info.scheme in ["FONLL-A", "FONLL-B", "FONLL-C"]:
-            full = self.collect_fonll()
-        else:
-            raise ValueError("Unknown FNS")
+        components = self.collect()
+
+        full = []
+        for comp in components:
+            full.extend(comp)
 
         # add level-0 nuclear correction: apply isospin symmetry
         self.apply_isospin(full, self.target["Z"], self.target["A"])

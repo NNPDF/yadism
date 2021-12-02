@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import copy
 import importlib
-import inspect
 from numbers import Number
 
 
@@ -106,93 +105,6 @@ class Kernel:
 
 
 flavors = "duscbt"
-
-kg_space = dict(
-    nf=[3, 4, 5, 6],
-    coupl=["light", "heavy", "miss"],
-    ihq=[0, 4, 5, 6],
-    fonll=[False, True],
-)
-
-
-class KernelGroup:
-    def __init__(self, collector, coupl, nf, ihq=0, fonll=False, nc=0):
-        self.collector = collector
-        self.coupl = coupl
-        self.nf = nf
-        self.ihq = ihq
-        self.fonll = fonll
-        self.nc = nc
-
-        for name, domain in kg_space.items():
-            attr = getattr(self, name)
-            if attr not in domain:
-                raise RuntimeError(f"'{name}={attr}' not in domain {domain}")
-
-        if self.ihq != 0:
-            # heavylight is allowed
-            if self.coupl != "light" and self.nf >= self.ihq:
-                if not self.fonll:
-                    raise RuntimeError(
-                        f"'ihq={self.ihq}' is light when {self.nf} flavors are active"
-                    )
-                if self.nf > self.ihq:
-                    raise RuntimeError(
-                        f"'ihq={self.ihq}' is light when {self.nf} flavors "
-                        "are active (even with FONLL)"
-                    )
-
-    def __call__(self, esf):
-        sig = inspect.signature(self.collector)
-        return self.collector(
-            esf, **{k: getattr(self, k) for k in sig.parameters if k != "esf"}
-        )
-
-    @property
-    def flav(self):
-        if self.ihq == 0:
-            return ""
-        return flavors[self.ihq - 1]
-
-    def __repr__(self):
-        attributes = []
-
-        if self.ihq < self.nf or (self.ihq == self.nf and not self.fonll):
-            heavyness = f"zm:{self.nf}"
-        elif not self.fonll:
-            heavyness = f"{self.nf}f:{self.flav}"
-        else:
-            heavyness = f"FO:{self.flav}"
-        attributes.append(heavyness)
-
-        if self.coupl == "miss":
-            if self.ihq == 0:
-                raise RuntimeError(
-                    "Missing does not make sense for a pure light kernel."
-                )
-            attributes.append(f"/{self.flav}")
-
-        if self.nc == 0:
-            self.nc = self.nf
-        elif self.nc == 1:
-            attributes.append(f"~~{'cbt'[self.ihq-4]}")
-        else:
-            attributes.append(f"~~{self.nc}")
-
-        attributes = ", ".join(attributes)
-        return f"F{self.coupl}({attributes})"
-
-
-def kernel_group(coupl, fonll=False):
-    def decorator(collector):
-        def generate_kernel_group(nf, ihq=None, nc=None):
-            ihq = nf + 1
-            nc = nf
-            return KernelGroup(collector, coupl, nf, ihq, fonll, nc)
-
-        return generate_kernel_group
-
-    return decorator
 
 
 def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):

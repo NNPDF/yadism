@@ -7,7 +7,7 @@ def import_pc_module(kind, process):
     return kernels.import_local(kind, process, __name__)
 
 
-def generate(esf, nf):
+def generate(esf, nf, ihq):
     """
     Collect the heavy coefficient functions
 
@@ -25,9 +25,9 @@ def generate(esf, nf):
     """
     kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
-    ihq = nf + 1
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
+        # TODO: use ihq for couplings
         w = kernels.cc_weights(
             esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[nf], nf
         )
@@ -47,7 +47,7 @@ def generate(esf, nf):
         return (gVV, gAA, sVV, sAA)
 
 
-def generate_missing(esf, nf):
+def generate_missing(esf, nf, ihq):
     """
     Collect the missing coefficient functions
 
@@ -65,7 +65,6 @@ def generate_missing(esf, nf):
     """
     kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
-    ihq = nf + 1
     m2hq = esf.info.m2hq[ihq - 4]
     # in CC there are no missing diagrams known yet
     if esf.process == "CC":
