@@ -37,9 +37,13 @@ def heavy_components(nf, hq, masses, intrinsic):
                 continue
 
             if sfh == nf:
-                heavy[sfh].append(KernelGroup("heavy", nf, fonll=True))
+                heavy[sfh].append(
+                    KernelGroup("heavy", nf, fonll=True, intrinsic=sfh in intrinsic)
+                )
             else:
                 heavy[sfh].append(KernelGroup("heavy", nf, ihq=sfh))
+                if sfh in intrinsic:
+                    heavy[sfh].append(KernelGroup("heavy", nf, ihq=sfh, intrinsic=True))
 
             for ihq in range(sfh + 1, 7):
                 if masses[ihq]:
@@ -57,7 +61,7 @@ def combiner(obs, nf, masses, intrinsic):
         p.append(light_component(nf, masses, intrinsic))
     if obs.family == "heavy":
         #  the only case in which an heavy contribution is not present in those
-        #  accounted for in total, it's whene heavy already became heavylight
+        #  accounted for in total, it's when heavy already became heavylight
         p.extend(heavylight_components(nf, obs.hq, masses))
     if obs.family in ["heavy", "total"]:
         p.extend(heavy_components(nf, obs.hq, masses, intrinsic))
