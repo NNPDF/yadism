@@ -11,7 +11,7 @@ def light_component(nf, masses, intrinsic):
 
     for ihq in range(nf + 1, 7):
         if masses[ihq]:
-            comp.append(KernelGroup("miss", nf, ihq=ihq, nc=nf))
+            comp.append(KernelGroup("miss", nf, ihq=ihq, ncoupl=nf))
     return comp
 
 
@@ -19,7 +19,7 @@ def heavylight_components(nf, hq, masses):
     comps = []
     if hq < nf or (hq == nf and not masses[hq]):
         heavylight = Component(hq)
-        heavylight.append(KernelGroup("light", nf, ihq=hq, nc=1))
+        heavylight.append(KernelGroup("light", nf, ihq=hq, ncoupl=1))
         comps.append(heavylight)
 
     return comps
@@ -47,7 +47,9 @@ def heavy_components(nf, hq, masses, intrinsic):
 
             for ihq in range(sfh + 1, 7):
                 if masses[ihq]:
-                    heavy[sfh].append(KernelGroup("miss", nf, ihq=ihq, nc=1))
+                    heavy[sfh].append(
+                        KernelGroup("miss", nf, ihq=ihq, ncoupl=1, icoupl=sfh)
+                    )
             comps.append(heavy[sfh])
 
     return comps

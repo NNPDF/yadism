@@ -65,7 +65,8 @@ class KernelGroup:
     nf: int
     ihq: int = 0
     fonll: bool = False
-    nc: int = 0
+    ncoupl: int = 0
+    icoupl: int = 0
     intrinsic: bool = False
 
     @property
@@ -97,6 +98,8 @@ class KernelGroup:
 
         if self.fonll:
             self.ihq = self.nf
+        if self.icoupl == 0:
+            self.icoupl = self.ihq
 
         if self.ihq < self.nf or (self.ihq == self.nf and not self.fonll):
             heavyness = f"zm:{self.nf}"
@@ -113,12 +116,12 @@ class KernelGroup:
                 )
             attributes.append(f"/{self.flav}")
 
-        if self.nc == 0:
-            self.nc = self.nf
-        elif self.nc == 1:
-            attributes.append(f"~~{'cbt'[self.ihq-4]}")
+        if self.ncoupl == 0:
+            self.ncoupl = self.nf
+        elif self.ncoupl == 1:
+            attributes.append(f"~~{'cbt'[self.icoupl-4]}")
         else:
-            attributes.append(f"~~{self.nc}")
+            attributes.append(f"~~{self.ncoupl}")
 
         if self.intrinsic != 0:
             attributes.append(f"I{self.ihq}")
@@ -177,7 +180,11 @@ class VFNS(list):
 
     @property
     def intrinsic(self):
-        return self.scheme["intrinsic"]
+        intrinsic = self.scheme["intrinsic"]
+        if intrinsic is None:
+            return []
+        else:
+            return intrinsic
 
     def render(self):
         tab = table.Table.grid()
