@@ -37,6 +37,8 @@ def generate_light(esf, nl, pto_evol):
     # rewrite the derivative term back as a sum
     # and so we're back to cbar^{(nl)}
     light_elems = light.kernels.generate(esf, nl)
+    # for e in light_elems:
+    #    e.max_order = pto_evol
     kind = esf.sf.obs_name.kind
     mu2hq = esf.sf.threshold.area_walls[ihq - 3]
     L = np.log(esf.Q2 / mu2hq)
@@ -125,7 +127,12 @@ def generate_light_diff(esf, nl, pto_evol):
     s_w = {nl + 1: light_weights["s"][nl + 1], -(nl + 1): light_weights["s"][-(nl + 1)]}
     k = kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1))
     k.max_order = pto_evol
-    return (k,)
+
+    # ihq = nl + 1
+    # mu2hq = esf.sf.threshold.area_walls[ihq - 3]
+    # fonll_cfs = import_pc_module(kind, esf.process)
+    # km = kernels.Kernel(light_weights["ns"], fonll_cfs.AsyNNLLNonSinglet(esf, nl, mu2hq=mu2hq))
+    return (k,)  # km)
 
 
 def generate_heavy_diff(esf, nl, pto_evol):

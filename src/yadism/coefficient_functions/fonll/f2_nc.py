@@ -90,6 +90,26 @@ class AsyNNLLSinglet(pc.PartonicChannelAsy):
         return RSL(cps_NNLL_NNLO)
 
 
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_NNLL_NNLO_reg(z, _args):
+    return raw_nc.c2ns2am0_a0(z)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_NNLL_NNLO_sing(z, _args):
+    return raw_nc.c2ns2bm0_a0(z)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_NNLL_NNLO_loc(z, _args):
+    return raw_nc.c2ns2cm0_a0(z)
+
+
+class AsyNNLLNonSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cns_NNLL_NNLO_reg, cns_NNLL_NNLO_sing, cns_NNLL_NNLO_loc)
+
+
 class LightNonSingletShifted(pc.PartonicChannelAsy):
     def NNLO(self):
         return light.NonSinglet(self.ESF, self.nf).NLO()
