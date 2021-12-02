@@ -5,6 +5,72 @@ from . import fonll, heavy, intrinsic, kernels, light
 from .partonic_channel import EmptyPartonicChannel
 
 
+class Component(list):
+    """
+    Used for organize elements and debugging purpose.
+    """
+
+    heavyness = {0: "light", 4: "charm", 5: "bottom", 6: "top"}
+
+    def __init__(self, heavy, kernels=None):
+        self.heavy = heavy
+
+        if kernels is None:
+            kernels = []
+        self.extend(kernels)
+
+    def __repr__(self):
+        return self.heavy + f"({', '.join(self)})"
+
+
+def light_component(nf, masses):
+    comp = Component(0)
+    # the first condition essentially checks nf != 3
+    if nf in masses and masses[nf]:
+        comp.append(kernels.KernelGroup("light", nf, ihq=nf, fonll=True))
+    else:
+        comp.append(kernels.KernelGroup("light", nf))
+
+    for ihq in range(nf + 1, 7):
+        if masses[ihq]:
+            comp.append(kernels.KernelGroup("miss", nf, ihq=ihq, nc=nf))
+    return comp
+
+
+def heavylight_components(nf, hq, masses):
+    comps = []
+    if hq < nf or (hq == nf and not masses[hq]):
+        heavylight = Component(hq)
+        heavylight.append(kernels.KernelGroup("light", nf, ihq=hq, nc=1))
+        comps.append(heavylight)
+
+    return comps
+
+
+def heavy_components(nf, hq, masses):
+    comps = []
+    heavy = {}
+    for sfh in range(nf, 7):
+        # if it's ZM you don't even have the component
+        # exclude sfh=3, since heavy contributions are there for [4,5,6]
+        if sfh in masses and masses[sfh]:
+            heavy[sfh] = Component(sfh)
+            if hq != 0 and hq != sfh:
+                continue
+
+            if sfh == nf:
+                heavy[sfh].append(kernels.KernelGroup("heavy", nf, ihq=sfh, fonll=True))
+            else:
+                heavy[sfh].append(kernels.KernelGroup("heavy", nf, ihq=sfh))
+
+            for ihq in range(sfh + 1, 7):
+                if masses[ihq]:
+                    heavy[sfh].append(kernels.KernelGroup("miss", nf, ihq=ihq, nc=1))
+                comps.append(heavy[sfh])
+
+    return comps
+
+
 def collect_ffns(esf, obs_name, nf):
     """
     Collects all kernels in the |FFNS|.
@@ -57,9 +123,28 @@ class Combiner:
 
     def __init__(self, esf):
         self.esf = esf
+        self.masses = {}
         self.obs_name = esf.info.obs_name
         self.nf = esf.info.threshold.nf(esf.Q2)
         self.target = esf.info.target
+
+    def collect(self):
+        elems = []
+
+        obs = self.obs_name
+        masses = self.masses
+
+        # Adding light component
+        if obs.family in ["light", "total"]:
+            elems.append(light_component(self.nf, masses))
+        if obs.family == "heavy":
+            #  the only case in which an heavy contribution is not present in those
+            #  accounted for in total, it's whene heavy already became heavylight
+            elems.extend(heavylight_components(self.nf, obs.hqnumber, masses))
+        if obs.family in ["heavy", "total"]:
+            elems.extend(heavy_components(self.nf, obs.hqnumber, masses))
+
+        return elems
 
     def collect_zmvfns(self):
         """

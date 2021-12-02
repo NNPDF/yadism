@@ -6,6 +6,8 @@ def import_pc_module(kind, process):
     return kernels.import_local(kind, process, __name__)
 
 
+#  @kernels.kernel_group("light")
+#  def generate(nf, esf=None):
 def generate(esf, nf):
     """
     Collect the light coefficient functions
