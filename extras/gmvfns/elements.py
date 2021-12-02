@@ -55,6 +55,7 @@ kg_space = dict(
     coupl=["light", "heavy", "miss"],
     ihq=[0, 4, 5, 6],
     fonll=[False, True],
+    intrinsic=[False, True],
 )
 
 
@@ -65,6 +66,7 @@ class KernelGroup:
     ihq: int = 0
     fonll: bool = False
     nc: int = 0
+    intrinsic: bool = False
 
     @property
     def flav(self):
@@ -118,6 +120,9 @@ class KernelGroup:
         else:
             attributes.append(f"~~{self.nc}")
 
+        if self.intrinsic != 0:
+            attributes.append(f"I{self.ihq}")
+
         attributes = ", ".join(attributes)
         return f"F{self.coupl}({attributes})"
 
@@ -169,6 +174,10 @@ class VFNS(list):
     @property
     def masses(self):
         return self.scheme.masses
+
+    @property
+    def intrinsic(self):
+        return self.scheme["intrinsic"]
 
     def render(self):
         tab = table.Table.grid()

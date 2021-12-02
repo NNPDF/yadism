@@ -12,6 +12,10 @@ def configure():
 
     parser.add_argument("-o", "--obs", default="total", help="Requested observable")
 
+    parser.add_argument(
+        "-i", "--intrinsic", nargs="+", type=int, help="Intrinsic flavors"
+    )
+
     args = parser.parse_args()
 
     return args

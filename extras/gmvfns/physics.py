@@ -1,7 +1,7 @@
 from .elements import VFNS, Component, KernelGroup, Patch
 
 
-def light_component(nf, masses):
+def light_component(nf, masses, intrinsic):
     comp = Component(0)
     # the first condition essentially checks nf != 3
     if nf in masses and masses[nf]:
@@ -25,7 +25,7 @@ def heavylight_components(nf, hq, masses):
     return comps
 
 
-def heavy_components(nf, hq, masses):
+def heavy_components(nf, hq, masses, intrinsic):
     comps = []
     heavy = {}
     for sfh in range(nf, 7):
@@ -49,18 +49,18 @@ def heavy_components(nf, hq, masses):
     return comps
 
 
-def combiner(obs, nf, masses):
+def combiner(obs, nf, masses, intrinsic):
     p = Patch(obs.name, nf)
 
     # Adding light component
     if obs.family in ["light", "total"]:
-        p.append(light_component(nf, masses))
+        p.append(light_component(nf, masses, intrinsic))
     if obs.family == "heavy":
         #  the only case in which an heavy contribution is not present in those
         #  accounted for in total, it's whene heavy already became heavylight
         p.extend(heavylight_components(nf, obs.hq, masses))
     if obs.family in ["heavy", "total"]:
-        p.extend(heavy_components(nf, obs.hq, masses))
+        p.extend(heavy_components(nf, obs.hq, masses, intrinsic))
 
     return p
 
@@ -69,6 +69,6 @@ def scan(confs):
     vfns = VFNS(confs)
 
     for nf in range(3, 7):
-        vfns.append(combiner(vfns.obs, nf, vfns.masses))
+        vfns.append(combiner(vfns.obs, nf, vfns.masses, vfns.intrinsic))
 
     return vfns
