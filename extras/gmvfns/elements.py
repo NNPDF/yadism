@@ -99,7 +99,13 @@ class KernelGroup:
         if self.fonll:
             self.ihq = self.nf
         if self.icoupl == 0:
-            self.icoupl = self.ihq
+            if self.coupl == "light":
+                # in heavylight is the would-be heavy flavor to couple
+                self.icoupl = self.ihq
+            elif self.coupl == "miss":
+                raise RuntimeError(
+                    "Missing: if only 1 flavor coupling has to be specified"
+                )
 
         if self.ihq < self.nf or (self.ihq == self.nf and not self.fonll):
             heavyness = f"zm:{self.nf}"
