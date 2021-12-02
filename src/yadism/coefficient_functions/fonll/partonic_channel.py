@@ -77,8 +77,8 @@ def Delta_qq_loc(x):
     )
 
 
-@nb.njit("f8(f8)", cache=True)
-def K_qq_sing(z):
+@nb.njit("f8(f8, f8[:])", cache=True)
+def K_qq_sing(z, _args):
     """
     |ref| implements :eqref:`100`, :cite:`forte-fonll`.
 
@@ -105,8 +105,8 @@ def K_qq_sing(z):
     )
 
 
-@nb.njit("f8(f8)", cache=True)
-def K_qq_loc(x):
+@nb.njit("f8(f8,f8[:])", cache=True)
+def K_qq_loc(x, _args):
     """
     |ref| implements :eqref:`100`, :cite:`forte-fonll`.
 
@@ -154,16 +154,16 @@ def pdf_matching_LL_sing(z, args):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_NLL_sing(z, args):
-    L = args[0]
-    return -L * Delta_qq_sing(z)
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
 def pdf_matching_LL_loc(z, args):
     L = args[0]
     as_norm = 2.0
     return +(L ** 2) / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_local(z, args)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_NLL_sing(z, args):
+    L = args[0]
+    return -L * Delta_qq_sing(z)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)

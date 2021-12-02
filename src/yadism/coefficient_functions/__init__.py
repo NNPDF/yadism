@@ -112,10 +112,17 @@ class Combiner:
 
         if self.obs_name.flavor in ["light", "total"]:
             # FFNSlow
-            elems.extend(fonll.kernels.generate_light(self.esf, nl))
+            elems.extend(
+                fonll.kernels.generate_light(self.esf, nl, self.esf.sf.pto_evol)
+            )
             # add F^d
             elems.extend(
-                self.damp_elems(nl, fonll.kernels.generate_light_diff(self.esf, nl))
+                self.damp_elems(
+                    nl,
+                    fonll.kernels.generate_light_diff(
+                        self.esf, nl, self.esf.sf.pto_evol
+                    ),
+                )
             )
         if self.obs_name.flavor_family in ["heavy", "total"]:
             ihq = nl + 1
