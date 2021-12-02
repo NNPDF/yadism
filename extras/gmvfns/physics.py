@@ -48,7 +48,7 @@ def heavy_components(nf, hq, masses, intrinsic):
             for ihq in range(sfh + 1, 7):
                 if masses[ihq]:
                     heavy[sfh].append(KernelGroup("miss", nf, ihq=ihq, nc=1))
-                comps.append(heavy[sfh])
+            comps.append(heavy[sfh])
 
     return comps
 
