@@ -150,7 +150,7 @@ def generate_heavy_diff(esf, nl):
     return (*elems, *asys)
 
 
-def generate_heavy_intrinsic_diff(esf, nl):
+def generate_heavy_intrinsic_diff(esf, nl, ihq):
     """
     |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
 

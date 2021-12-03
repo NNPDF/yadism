@@ -94,25 +94,25 @@ def update_fns(theory):
     """
     fns = theory["FNS"]
     nf = theory["NfFF"]
-    # enforce correct settings moving all thresholds to 0 or oo
-    if fns == "FFNS":
-        ks = [0] * (nf - 3) + [np.inf] * (6 - nf)
-        for k, fl in zip(ks, hqfl):
-            theory[f"k{fl}Thr"] = k
-            theory[f"ZM{fl}"] = k < 1
-
-    if fns == "ZM-VFNS":
-        for fl in hqfl:
-            theory[f"ZM{fl}"] = True
 
     if "FONLL" in fns:
         theory["ZMc"] = False
         theory["ZMb"] = False
         theory["ZMt"] = True
+    elif fns == "ZM-VFNS":
+        for fl in hqfl:
+            theory[f"ZM{fl}"] = True
+    elif "FFNS" in fns:
+        # enforce correct settings moving all thresholds to 0 or oo
+        for k, fl in enumerate(hqfl):
+            if k + 4 <= nf:
+                theory[f"k{fl}Thr"] = 0.0
+                theory[f"ZM{fl}"] = True
+            else:
+                theory[f"k{fl}Thr"] = np.inf
+                theory[f"ZM{fl}"] = False
     else:
-        theory["ZMc"] = False
-        theory["ZMb"] = False
-        theory["ZMt"] = False
+        raise ValueError(f"Scheme '{fns}' not recognized.")
 
     # here there is no difference between DGLAP and DIS
     for fl in hqfl:

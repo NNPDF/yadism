@@ -9,6 +9,7 @@ import subprocess
 import lhapdf
 import numpy as np
 import yaml
+
 #  from banana.data import cartesian_product
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
@@ -91,22 +92,22 @@ class Sandbox(Runner):
     def doit(self):
         self.run([
                 #  {"PTO": 2, "NfFF": 5, "mc":2, "mb":3, "mt":4},
-                #  {"PTO": 0, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
-                #  {"PTO": 1, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
+                #  {"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
+                #  {"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
                 #  {"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
                 #  {"PTO": 2, "FNS": "FONLL-C","NfFF":4,"IC":1,"mc":1.51,"Qmc":1.51,"mb":1e6,"mt":1e7,"ModEv":"TRN","MaxNfPdf":5,"MaxNfAs": 5, "Qmb":4.92,"Qmt":172.5,"alphas":0.118,"alphaqed":0.007496252,"Q0":1.65},
                 #  {"PTO": 1, "FNS": "FONLL-A", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
-                {"PTO": 1, "FNS": "FONLL-A", "mc": 1.51, "NfFF": 4},
+                #  {"PTO": 1, "FNS": "FONLL-A", "mc": 1.51, "NfFF": 4},
                 #  {"PTO": 2, "FNS": "FONLL-B", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #  {"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #  {"PTO": 2, "FNS": "FONLL-C", "mc": 1.51, "mb": 1e6,"mt": 1e8, "NfFF": 4},
                 #  {"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9913},
                 #  {"PTO": 2, "XIF": 2, "XIR": 2, "mb": 4.9915},
                 #  {"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
-                #  {"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
+                {"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
                 #  {"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #  {"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
-                #  {"PTO": 1, "FNS": "ZM-VFNS", "mc": 1e-2, "mb": 1e8, "mt": 1e9, "NfFF": 4},
+                #  {"PTO": 2, "FNS": "ZM-VFNS", "mc": 2., "mb": 3., "mt": 5.},
             ], self.generate_observables(), [
                 #  "uonly",
                 #  "ubaronly",

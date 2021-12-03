@@ -43,31 +43,32 @@ class Combiner:
         self.target = esf.info.target
 
     def collect(self):
-        elems = []
+        comps = []
 
         family = self.obs_name.flavor_family
+        #  __import__("pdb").set_trace()
 
         # Adding light component
         if family in ["light", "total"]:
-            elems.append(self.light_component())
+            comps.append(self.light_component())
         if family == "heavy":
             #  the only case in which an heavy contribution is not present in those
             #  accounted for in total, it's whene heavy already became heavylight
-            elems.extend(self.heavylight_components())
+            comps.extend(self.heavylight_components())
         if family in ["heavy", "total"]:
-            elems.extend(self.heavy_components())
+            comps.extend(self.heavy_components())
 
-        return elems
+        return comps
 
     def light_component(self):
         nf = self.nf
-        nl = self.nf - 1
         masses = self.masses
 
         comp = Component(0)
 
         # the first condition essentially checks nf != 3
         if nf in masses and masses[nf]:
+            nl = nf - 1
             comp.extend(fonll.kernels.generate_light(self.esf, nl))
             comp.extend(
                 self.damp_elems(nl, fonll.kernels.generate_light_diff(self.esf, nl))
@@ -96,7 +97,6 @@ class Combiner:
 
     def heavy_components(self):
         nf = self.nf
-        nl = self.nf - 1
         hq = self.obs_name.hqnumber
         masses = self.masses
 
@@ -112,6 +112,7 @@ class Combiner:
                     continue
 
                 if sfh == nf:
+                    nl = nf - 1
                     heavy_comps[sfh].extend(
                         heavy.kernels.generate(self.esf, nl, ihq=sfh)
                     )
@@ -135,7 +136,7 @@ class Combiner:
                         )
                 else:
                     heavy_comps[sfh].extend(
-                        heavy.kernels.generate(self.esf, nl, ihq=sfh)
+                        heavy.kernels.generate(self.esf, nf, ihq=sfh)
                     )
 
                 for ihq in range(sfh + 1, 7):
