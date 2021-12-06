@@ -46,7 +46,6 @@ class Combiner:
         comps = []
 
         family = self.obs_name.flavor_family
-        #  __import__("pdb").set_trace()
 
         # Adding light component
         if family in ["light", "total"]:
@@ -138,6 +137,10 @@ class Combiner:
                     heavy_comps[sfh].extend(
                         heavy.kernels.generate(self.esf, nf, ihq=sfh)
                     )
+                    if sfh in self.intrinsic:
+                        heavy_comps[sfh].extend(
+                            intrinsic.kernels.generate(self.esf, ihq=sfh)
+                        )
 
                 for ihq in range(sfh + 1, 7):
                     if masses[ihq]:
