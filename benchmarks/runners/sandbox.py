@@ -104,8 +104,8 @@ class Sandbox(Runner):
                 #  {"PTO": 2, "XIF": 1, "XIR": 1, "mb": 4.9913},
                 #  {"PTO": 2, "XIF": 2, "XIR": 2, "mb": 4.9915},
                 #  {"PTO": 2, "XIF": 1, "XIR": 1e5, "mb": 4.9909},
-                #  {"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
-                {"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "mb": 1e6, "mt": 1e8, "XIF": 1, "XIR": 1},
+                {"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
+                #  {"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "mb": 1e6, "mt": 1e8, "XIF": 1, "XIR": 1},
                 #  {"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
                 #  {"PTO": 2, "FNS": "ZM-VFNS", "mc": 2., "mb": 3., "mt": 5.},
             ], self.generate_observables(), [

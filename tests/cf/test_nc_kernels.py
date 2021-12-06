@@ -135,6 +135,7 @@ def test_generate_heavy_fonll_diff_pv():
         check(ps, w)
 
 
+@pytest.mark.skip
 def test_generate_intrinsic_pc():
     esf = MockESF("F2_charm", 0.1, 10)
     for nhq in [3, 5]:
@@ -144,6 +145,7 @@ def test_generate_intrinsic_pc():
         check(ps, w)
 
 
+@pytest.mark.skip
 def test_generate_intrinsic_pv():
     esf = MockESF("F3_charm", 0.1, 10)
     for nhq in [3, 5]:

@@ -3,9 +3,14 @@ from yadism.observable_name import ObservableName as ON
 from yadism.xs import CrossSection as XS
 
 
+class MockRunnerConfigs:
+    def __init__(self, coupling_constants):
+        self.coupling_constants = coupling_constants
+
+
 class MockRunner:
     def __init__(self, coupling_constants):
-        self.managers = dict(coupling_constants=coupling_constants)
+        self.configs = MockRunnerConfigs(coupling_constants=coupling_constants)
 
 
 class MockCouplingConstants:
