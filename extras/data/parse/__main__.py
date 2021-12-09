@@ -1,9 +1,9 @@
 import argparse
 
-from . import CHORUS, HERA
+from . import CHORUS, HERA, NUTEV
 from .utils import runcards
 
-exps = {getattr(m, "__name__").split(".")[-1]: m for m in [CHORUS, HERA]}
+exps = {getattr(m, "__name__").split(".")[-1]: m for m in [CHORUS, HERA, NUTEV]}
 
 
 def parse_cli():
