@@ -216,6 +216,7 @@ class MockRunner:
     )
 
 
+@pytest.mark.skip
 def test_f():
     class MockSF:
         obs_name = observable_name.ObservableName("F2_light")

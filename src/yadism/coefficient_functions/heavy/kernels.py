@@ -7,7 +7,7 @@ def import_pc_module(kind, process):
     return kernels.import_local(kind, process, __name__)
 
 
-def generate(esf, nf):
+def generate(esf, nf, ihq):
     """
     Collect the heavy coefficient functions
 
@@ -23,13 +23,13 @@ def generate(esf, nf):
         elems : list(yadism.kernels.Kernel)
             list of elements
     """
-    kind = esf.sf.obs_name.kind
+    kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
-    ihq = nf + 1
-    m2hq = esf.sf.m2hq[ihq - 4]
+    m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
+        # TODO: use ihq for couplings
         w = kernels.cc_weights(
-            esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[nf], nf
+            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[nf], nf
         )
         return (
             kernels.Kernel(w["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),
@@ -39,7 +39,7 @@ def generate(esf, nf):
         # F3 is a non-singlet quantity and hence has neither gluon nor singlet-like contributions
         if kind == "F3":
             return ()
-        weights = nc_weights(esf.sf.coupling_constants, esf.Q2, kind, nf)
+        weights = nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf)
         gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq))
         gAA = kernels.Kernel(weights["gAA"], pcs.GluonAA(esf, nf, m2hq=m2hq))
         sVV = kernels.Kernel(weights["sVV"], pcs.SingletVV(esf, nf, m2hq=m2hq))
@@ -47,7 +47,7 @@ def generate(esf, nf):
         return (gVV, gAA, sVV, sAA)
 
 
-def generate_missing(esf, nf):
+def generate_missing(esf, nf, ihq, icoupl=None):
     """
     Collect the missing coefficient functions
 
@@ -57,20 +57,25 @@ def generate_missing(esf, nf):
             kinematic point
         nf : int
             number of light flavors
+        ihq : int
+            PID of heavy flavor
+        icoupl : None or int
+            PID of the flavor coupling (default: None)
 
     Returns
     -------
         elems : list(yadism.kernels.Kernel)
             list of elements
     """
-    kind = esf.sf.obs_name.kind
+    kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
-    ihq = nf + 1
-    m2hq = esf.sf.m2hq[ihq - 4]
+    m2hq = esf.info.m2hq[ihq - 4]
     # in CC there are no missing diagrams known yet
     if esf.process == "CC":
         return ()
-    weights = light_nc_weights(esf.sf.coupling_constants, esf.Q2, kind, nf)
+    weights = light_nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf)
+    if icoupl is not None:
+        weights["ns"] = {k: v for k, v in weights["ns"].items() if abs(k) == icoupl}
     return (kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),)
 
 

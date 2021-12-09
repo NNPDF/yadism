@@ -65,34 +65,39 @@ class EvaluatedStructureFunction:
 
     """
 
-    def __init__(self, SF, kinematics: dict):
+    def __init__(self, kinematics: dict, obs_name, configs):
         x = kinematics["x"]
         if x > 1 or x <= 0:
             raise ValueError("Kinematics 'x' must be in the range (0,1]")
         if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
         # check domain
-        if x < min(SF.interpolator.xgrid_raw):
+        if x < min(configs.interpolator.xgrid_raw):
             raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
 
-        self.sf = SF
         self.x = x
         self.Q2 = kinematics["Q2"]
         self.nf = None
-        self.process = SF.runner.managers["coupling_constants"].obs_config["process"]
+        self.process = configs.coupling_constants.obs_config["process"]
         self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
         # select available partonic coefficient functions
-        self.orders = list(filter(lambda e: e <= SF.pto, range(2 + 1)))
+        self.orders = list(filter(lambda e: e <= configs.theory["pto"], range(2 + 1)))
+        self.info = ESFInfo(obs_name, configs)
 
         logger.debug("Init %s", self)
 
     def __repr__(self):
-        return "%s_%s(x=%f,Q2=%f)" % (self.sf.obs_name, self.process, self.x, self.Q2)
+        return "%s_%s(x=%f,Q2=%f)" % (self.info.obs_name, self.process, self.x, self.Q2)
 
     @property
     def zeros(self):
-        return np.zeros((len(br.flavor_basis_pids), len(self.sf.interpolator.xgrid)))
+        return np.zeros(
+            (
+                len(br.flavor_basis_pids),
+                len(self.info.configs.interpolator.xgrid),
+            )
+        )
 
     def compute_local(self):
         """
@@ -109,9 +114,9 @@ class EvaluatedStructureFunction:
         cfc = cf.Combiner(self)
         full_orders = [(o, 0, 0, 0) for o in self.orders]
         # prepare scale variations
-        sv_manager = self.sf.sv_manager
+        sv_manager = self.info.configs.managers["sv_manager"]
         if sv_manager is not None:
-            full_orders = sv.build_orders(self.sf.pto)
+            full_orders = sv.build_orders(self.info.configs.theory["pto"])
         # init orders with 0
         for o in full_orders:
             self.res.orders[o] = [self.zeros, self.zeros]
@@ -131,7 +136,7 @@ class EvaluatedStructureFunction:
                 # compute convolution point
                 convolution_point = cfe.coeff.convolution_point()
                 val, err = conv.convolute_vector(
-                    rsl, self.sf.interpolator, convolution_point
+                    rsl, self.info.configs.managers["interpolator"], convolution_point
                 )
                 # add the factor x from the LHS
                 val, err = convolution_point * val, convolution_point * err
@@ -179,3 +184,15 @@ class EvaluatedStructureFunction:
         self.compute_local()
 
         return copy.deepcopy(self.res)
+
+
+class ESFInfo:
+    def __init__(self, obs_name, configs):
+        self.obs_name = obs_name
+        self.configs = configs
+
+    def __getattribute__(self, name):
+        if name in ["obs_name", "configs"]:
+            return super().__getattribute__(name)
+
+        return self.configs.__getattribute__(name)

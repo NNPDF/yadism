@@ -157,6 +157,8 @@ class ObservableName:
             idx = asys.index(self.flavor)
         elif self.is_heavylight:
             idx = heavylights.index(self.flavor)
+        elif self.flavor_family in ["light", "total"]:
+            idx = -4
         else:
             idx = heavys.index(self.flavor)
         return 4 + idx

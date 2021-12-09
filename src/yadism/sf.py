@@ -36,14 +36,6 @@ class StructureFunction:
         self.cache = {}
         logger.debug("Init %s", self)
 
-    def __getattribute__(self, name):
-        runner = object.__getattribute__(self, "runner")
-        if name in runner.managers:
-            return runner.managers[name]
-        if name in runner.theory_params:
-            return runner.theory_params[name]
-        return super().__getattribute__(name)
-
     def __repr__(self):
         return self.obs_name.name
 
@@ -96,14 +88,16 @@ class StructureFunction:
         # TODO remove force_local
         # if force_local is active suppress caching to avoid circular dependecy
         if force_local:
-            obj = esf.EvaluatedStructureFunction(self, kinematics)
+            obj = esf.EvaluatedStructureFunction(
+                kinematics, self.obs_name, self.runner.configs
+            )
             return obj
         # else we're happy to cache
         # is it us or do we need to delegate?
         if obs_name == self.obs_name:
             # convert to tuple
             key = list(kinematics.values())
-            use_tmc_if_available = not use_raw and self.TMC != 0
+            use_tmc_if_available = not use_raw and self.runner.configs.TMC != 0
             key.append(use_tmc_if_available)
             key = tuple(key)
             # TODO how to incorporate args?
@@ -114,7 +108,9 @@ class StructureFunction:
                 if use_tmc_if_available:
                     obj = tmc.ESFTMCmap[obs_name.kind](self, kinematics)
                 else:
-                    obj = esf.EvaluatedStructureFunction(self, kinematics, *args)
+                    obj = esf.EvaluatedStructureFunction(
+                        kinematics, self.obs_name, self.runner.configs
+                    )
                 self.cache[key] = obj
                 return obj
         else:
@@ -122,8 +118,8 @@ class StructureFunction:
             return self.runner.get_sf(obs_name).get_esf(obs_name, kinematics, *args)
 
     def iterate_result(self):
-        for esf in self.esfs:
-            yield esf.get_result()
+        for owned_esf in self.esfs:
+            yield owned_esf.get_result()
 
     def get_result(self):
         """

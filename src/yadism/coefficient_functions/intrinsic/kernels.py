@@ -23,20 +23,20 @@ def generate(esf, ihq):
             list of elements
     """
 
-    kind = esf.sf.obs_name.kind
+    kind = esf.info.obs_name.kind
     cfs = import_pc_module(kind, esf.process)
-    m2hq = esf.sf.m2hq[ihq - 4]
+    m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
         w = kernels.cc_weights(
-            esf.sf.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], ihq
+            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], ihq
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if kind == "F3":
             return (kernels.Kernel(wq, cfs.Rplus(esf, ihq - 1, m1sq=m2hq)),)
         return (kernels.Kernel(wq, cfs.Splus(esf, ihq - 1, m1sq=m2hq)),)
     if kind == "F3":
-        wVA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VA")
-        wAV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+        wVA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VA")
+        wAV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
         wp = wVA + wAV
         wm = wVA - wAV
         return (
@@ -49,8 +49,8 @@ def generate(esf, ihq):
                 cfs.Rminus(esf, ihq - 1, m1sq=m2hq, m2sq=m2hq),
             ),
         )
-    wVV = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "VV")
-    wAA = esf.sf.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+    wVV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VV")
+    wAA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
     wp = wVV + wAA
     wm = wVV - wAA
     return (

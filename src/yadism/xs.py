@@ -46,14 +46,18 @@ class CrossSection:
         """
         self.exss = []
         for kinematics in kinematic_configs:
-            self.exss.append(exs.EvaluatedCrossSection(self, kinematics))
+            self.exss.append(
+                exs.EvaluatedCrossSection(
+                    kinematics, self.obs_name, self.runner.configs, self.get_esf
+                )
+            )
 
     def get_esf(self, obs_name, kin):
         return self.runner.get_sf(obs_name).get_esf(obs_name, kin, use_raw=False)
 
     def iterate_result(self):
-        for exs in self.exss:
-            yield exs.get_result()
+        for exs_ in self.exss:
+            yield exs_.get_result()
 
     def get_result(self):
         """
