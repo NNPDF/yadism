@@ -103,51 +103,49 @@ class Combiner:
 
         heavy_comps = {}
         for sfh in range(nf, 7):
-            # if it's ZM you don't even have the component
             # exclude sfh=3, since heavy contributions are there for [4,5,6]
-            if sfh in masses and masses[sfh]:
-                heavy_comps[sfh] = Component(sfh)
-                if hq not in (0, sfh):
-                    continue
+            # if it's ZM you don't even have the component
+            if sfh not in masses or not masses[sfh]:
+                continue
 
-                if sfh == nf:
-                    nl = nf - 1
+            heavy_comps[sfh] = Component(sfh)
+            if hq not in (0, sfh):
+                continue
+
+            if sfh == nf:
+                # then it is FONLL
+                nl = nf - 1
+                heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nl, ihq=sfh))
+                if sfh not in self.intrinsic:
                     heavy_comps[sfh].extend(
-                        heavy.kernels.generate(self.esf, nl, ihq=sfh)
+                        self.damp_elems(
+                            nl, fonll.kernels.generate_heavy_diff(self.esf, nl)
+                        )
                     )
-                    if sfh not in self.intrinsic:
-                        heavy_comps[sfh].extend(
-                            self.damp_elems(
-                                nl, fonll.kernels.generate_heavy_diff(self.esf, nl)
-                            )
-                        )
-                    else:
-                        heavy_comps[sfh].extend(
-                            intrinsic.kernels.generate(self.esf, ihq=sfh)
-                        )
-                        heavy_comps[sfh].extend(
-                            self.damp_elems(
-                                nl,
-                                fonll.kernels.generate_heavy_intrinsic_diff(
-                                    self.esf, nl, ihq=sfh
-                                ),
-                            )
-                        )
                 else:
                     heavy_comps[sfh].extend(
-                        heavy.kernels.generate(self.esf, nf, ihq=sfh)
+                        intrinsic.kernels.generate(self.esf, ihq=sfh)
                     )
-                    if sfh in self.intrinsic:
-                        heavy_comps[sfh].extend(
-                            intrinsic.kernels.generate(self.esf, ihq=sfh)
+                    heavy_comps[sfh].extend(
+                        self.damp_elems(
+                            nl,
+                            fonll.kernels.generate_heavy_intrinsic_diff(self.esf, nl),
                         )
+                    )
+            else:
+                # then it is *not* FONLL
+                heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
+                if sfh in self.intrinsic:
+                    heavy_comps[sfh].extend(
+                        intrinsic.kernels.generate(self.esf, ihq=sfh)
+                    )
 
-                for ihq in range(sfh + 1, 7):
-                    if masses[ihq]:
-                        heavy_comps[sfh].extend(
-                            heavy.kernels.generate_missing(self.esf, nf, ihq)
-                        )
-                comps.append(heavy_comps[sfh])
+            for ihq in range(sfh + 1, 7):
+                if masses[ihq]:
+                    heavy_comps[sfh].extend(
+                        heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
+                    )
+            comps.append(heavy_comps[sfh])
 
         return comps
 

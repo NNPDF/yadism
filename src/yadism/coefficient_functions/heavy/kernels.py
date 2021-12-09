@@ -47,7 +47,7 @@ def generate(esf, nf, ihq):
         return (gVV, gAA, sVV, sAA)
 
 
-def generate_missing(esf, nf, ihq):
+def generate_missing(esf, nf, ihq, icoupl=None):
     """
     Collect the missing coefficient functions
 
@@ -57,6 +57,10 @@ def generate_missing(esf, nf, ihq):
             kinematic point
         nf : int
             number of light flavors
+        ihq : int
+            PID of heavy flavor
+        icoupl : None or int
+            PID of the flavor coupling (default: None)
 
     Returns
     -------
@@ -70,6 +74,8 @@ def generate_missing(esf, nf, ihq):
     if esf.process == "CC":
         return ()
     weights = light_nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf)
+    if icoupl is not None:
+        weights["ns"] = {k: v for k, v in weights["ns"].items() if abs(k) == icoupl}
     return (kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),)
 
 
