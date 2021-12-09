@@ -1,12 +1,11 @@
-import argparse
-
 import yaml
-from utils import here, load, obs_template
+
+from .utils import load, obs_template
 
 Mn = 0.9389
 
 
-def dump_CHORUS(src_path, target_path):
+def dump(src_path, target_path):
     """
     Write CHORUS observables.
 
@@ -37,16 +36,3 @@ new_names = {
     "x-sec_shift_nb": "CHORUS_CC_NB_PB_SIGMARED",
     "x-sec_shift_nu": "CHORUS_CC_NU_PB_SIGMARED",
 }
-
-
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("inputs", nargs="+")
-    args = ap.parse_args()
-    for i in args.inputs:
-        path = here / i
-        new_name = new_names[path.stem]
-        target = here / new_name / "observable.yaml"
-        target.parent.mkdir(exist_ok=True)
-        print(f"Writing {path} to {target}")
-        dump_CHORUS(path, target)

@@ -1,7 +1,13 @@
-import argparse
-
 import yaml
-from utils import here, load, obs_template
+
+from .utils import load, obs_template
+
+
+def dump(path, target):
+    if path.parent.stem == "HERACOMB":
+        dump_HERACOMB(path, target)
+    elif path.parent.stem in ["HERACOMB_SIGMARED_C", "HERACOMB_SIGMARED_B"]:
+        dump_HERACOMB_heavy(path, target)
 
 
 def dump_HERACOMB(src_path, target_path):
@@ -59,19 +65,3 @@ new_names = {
     "d18-037.tableCharm": "HERA_NC_318GEV_EAVG_SIGMARED_CHARM",
     "d18-037.tableBeauty": "HERA_NC_318GEV_EAVG_SIGMARED_BOTTOM",
 }
-
-
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("inputs", nargs="+")
-    args = ap.parse_args()
-    for i in args.inputs:
-        path = here / i
-        new_name = new_names[path.stem]
-        target = here / new_name / "observable.yaml"
-        target.parent.mkdir(exist_ok=True)
-        print(f"Writing {path} to {target}")
-        if path.parent.stem == "HERACOMB":
-            dump_HERACOMB(path, target)
-        elif path.parent.stem in ["HERACOMB_SIGMARED_C", "HERACOMB_SIGMARED_B"]:
-            dump_HERACOMB_heavy(path, target)
