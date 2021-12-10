@@ -16,7 +16,7 @@ def dump(src_path):
     data = load(src_path, 0, ["x", "Q2"])
     esf = [dict(x=d["x"], y=1.0, Q2=d["Q2"]) for d in data]
     obs["prDIS"] = "NC"
-    obs["observables"] = {"F2": esf}
+    obs["observables"] = {"F2total": esf}
     obs["ProjectileDIS"] = "electron"
     obs["TargetDIS"] = "proton"
 
