@@ -1,16 +1,16 @@
-import yaml
-
 from .utils import load, obs_template
 
 
-def dump(path, target):
+def dump(path):
     if path.parent.stem == "HERACOMB":
-        dump_HERACOMB(path, target)
-    elif path.parent.stem in ["HERACOMB_SIGMARED_C", "HERACOMB_SIGMARED_B"]:
-        dump_HERACOMB_heavy(path, target)
+        return dump_HERACOMB(path)
+    if path.parent.stem in ["HERACOMB_SIGMARED_C", "HERACOMB_SIGMARED_B"]:
+        return dump_HERACOMB_heavy(path)
+    else:
+        raise ValueError("HERA set not recognized")
 
 
-def dump_HERACOMB(src_path, target_path):
+def dump_HERACOMB(src_path):
     """
     Write HERACOMB observables.
 
@@ -28,11 +28,11 @@ def dump_HERACOMB(src_path, target_path):
     xs = "XSHERACC" if is_cc else "XSHERANC"
     obs["observables"] = {xs: esf}
     obs["ProjectileDIS"] = "electron" if "EM" in src_path.stem else "positron"
-    with open(target_path, "w") as o:
-        yaml.safe_dump(obs, o)
+
+    return obs
 
 
-def dump_HERACOMB_heavy(src_path, target_path):
+def dump_HERACOMB_heavy(src_path):
     """
     Write HERACOMB heavy observables.
 
@@ -49,8 +49,8 @@ def dump_HERACOMB_heavy(src_path, target_path):
     xs = "XSHERANCAVG"
     obs["observables"] = {xs: esf}
     obs["ProjectileDIS"] = "electron"
-    with open(target_path, "w") as o:
-        yaml.safe_dump(obs, o)
+
+    return obs
 
 
 # renaming

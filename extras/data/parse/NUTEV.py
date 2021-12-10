@@ -1,20 +1,16 @@
-import yaml
-
 from .utils import load, obs_template
 
 mn = 0.938
 
 
-def dump(src_path, target_path):
+def dump(src_path):
     """
-    Write CHORUS observables.
+    Compute NUTEV observables.
 
     Parameters
     ----------
         src_path : str
             input path
-        target_path : str
-            target path
     """
     obs = obs_template.copy()
     data = load(src_path, 0, ["-", "Enu", "y", "x"])
@@ -27,8 +23,8 @@ def dump(src_path, target_path):
     obs["observables"] = {xs: esf}
     obs["ProjectileDIS"] = "neutrino" if is_nu else "antineutrino"
     obs["TargetDIS"] = "iron"
-    with open(target_path, "w") as o:
-        yaml.safe_dump(obs, o)
+
+    return obs
 
 
 # renaming

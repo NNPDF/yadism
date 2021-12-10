@@ -1,9 +1,11 @@
 import argparse
 
-from . import CHORUS, HERA, NUTEV
+import yaml
+
+from . import CHORUS, HERA, NUTEV, SLAC
 from .utils import runcards
 
-exps = {getattr(m, "__name__").split(".")[-1]: m for m in [CHORUS, HERA, NUTEV]}
+exps = {getattr(m, "__name__").split(".")[-1]: m for m in [CHORUS, HERA, NUTEV, SLAC]}
 
 
 def parse_cli():
@@ -21,5 +23,8 @@ if __name__ == "__main__":
         new_name = exp.new_names[path.stem]
         target = runcards / new_name / "observable.yaml"
         target.parent.mkdir(exist_ok=True, parents=True)
+
         print(f"Writing {path} to {target}")
-        exp.dump(path, target)
+        obs = exp.dump(path)
+        with open(target, "w") as o:
+            yaml.safe_dump(obs, o)
