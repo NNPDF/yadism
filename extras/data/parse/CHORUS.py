@@ -4,15 +4,18 @@ Mn = 0.9389
 
 
 def dump(src_path):
-    """
-    Compute CHORUS observables.
+    """Compute CHORUS observables.
 
     Parameters
     ----------
-        src_path : str
-            input path
-        target_path : str
-            target path
+    src_path : str
+        input path
+
+    Returns
+    -------
+    dict
+        observables dictionary, corresponding to the runcard
+
     """
     obs = obs_template.copy()
     data = load(src_path, 2, ["Enu", "x", "y"])

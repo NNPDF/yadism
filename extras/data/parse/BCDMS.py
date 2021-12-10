@@ -5,8 +5,7 @@ from .utils import load, obs_template
 
 
 def dump(src_path):
-    """
-    Compute BCDMS observables.
+    """Compute BCDMS observables.
 
     Parameters
     ----------

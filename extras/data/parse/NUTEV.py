@@ -4,13 +4,18 @@ mn = 0.938
 
 
 def dump(src_path):
-    """
-    Compute NUTEV observables.
+    """Compute NUTEV observables.
 
     Parameters
     ----------
-        src_path : str
-            input path
+    src_path : str
+        input path
+
+    Returns
+    -------
+    dict
+        observables dictionary, corresponding to the runcard
+
     """
     obs = obs_template.copy()
     data = load(src_path, 0, ["-", "Enu", "y", "x"])

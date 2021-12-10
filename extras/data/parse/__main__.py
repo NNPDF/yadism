@@ -7,8 +7,16 @@ from .utils import runcards
 
 
 def parse_cli():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("inputs", nargs="+")
+    ap = argparse.ArgumentParser(
+        description=f"""
+            runcards generator: generate 'observable.yaml' from names
+            and commondata files (output stored in '{runcards}')"""
+    )
+    ap.add_argument(
+        "inputs",
+        nargs="+",
+        help="path inside an EXPERIMENT folder (e.g. 'CHORUSPb/x-sec_shift_nb.txt')",
+    )
     return ap.parse_args()
 
 
