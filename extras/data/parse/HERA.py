@@ -1,7 +1,7 @@
 from .utils import load, obs_template
 
 
-def dump(path):
+def dump(path, _target):
     if path.parent.stem == "HERACOMB":
         return dump_HERACOMB(path)
     if path.parent.stem in ["HERACOMB_SIGMARED_C", "HERACOMB_SIGMARED_B"]:

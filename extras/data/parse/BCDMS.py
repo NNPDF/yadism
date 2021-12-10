@@ -4,7 +4,7 @@ import tempfile
 from .utils import load, obs_template
 
 
-def dump(src_path):
+def dump(src_path, _target):
     """Compute BCDMS observables.
 
     Parameters
@@ -16,6 +16,7 @@ def dump(src_path):
     -------
     dict
         observables dictionary, corresponding to the runcard
+
     """
     obs = obs_template.copy()
     src = pathlib.Path(src_path)
@@ -43,4 +44,3 @@ new_names = {
     "bcd_d": "BCDMS_NC_EM_D_F2",
     "bcd_p": "BCDMS_NC_EM_P_F2",
 }
-# tmp0t2m7mk5

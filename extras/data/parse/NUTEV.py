@@ -3,7 +3,7 @@ from .utils import load, obs_template
 mn = 0.938
 
 
-def dump(src_path):
+def dump(src_path, _target):
     """Compute NUTEV observables.
 
     Parameters

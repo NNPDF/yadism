@@ -1,7 +1,7 @@
 from .utils import load, obs_template
 
 
-def dump(src_path):
+def dump(src_path, _target):
     """Compute SLAC observables.
 
     Parameters

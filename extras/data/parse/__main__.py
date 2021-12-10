@@ -20,6 +20,18 @@ def parse_cli():
     return ap.parse_args()
 
 
+def dump(path, new_name):
+    target = runcards / new_name / "observable.yaml"
+    target.parent.mkdir(exist_ok=True, parents=True)
+    obs = exp.dump(path, target)
+    bins = len(list(obs["observables"].values())[0])
+    print(f"exp   = {exp.__name__.split('.')[-1]}\tdataset = {path.stem}")
+    print(f"#bins = {bins}")
+    print(f"\tWriting: {path}\n\tto: {target}")
+    with open(target, "w") as o:
+        yaml.safe_dump(obs, o)
+
+
 if __name__ == "__main__":
     args = parse_cli()
 
@@ -27,13 +39,8 @@ if __name__ == "__main__":
         path = runcards.parent / i
         exp = exps[list(filter(lambda e: e in path.parent.name, exps.keys()))[0]]
         new_name = exp.new_names[path.stem]
-        target = runcards / new_name / "observable.yaml"
-        target.parent.mkdir(exist_ok=True, parents=True)
-
-        obs = exp.dump(path)
-        bins = len(list(obs["observables"].values())[0])
-        print(f"exp   = {exp.__name__.split('.')[-1]}\tdataset = {path.stem}")
-        print(f"#bins = {bins}")
-        print(f"\tWriting: {path}\n\tto: {target}")
-        with open(target, "w") as o:
-            yaml.safe_dump(obs, o)
+        if isinstance(new_name, str):
+            dump(path, new_name)
+        else:
+            for name in new_name:
+                dump(path, name)

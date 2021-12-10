@@ -3,7 +3,7 @@ from .utils import load, obs_template
 Mn = 0.9389
 
 
-def dump(src_path):
+def dump(src_path, _target):
     """Compute CHORUS observables.
 
     Parameters
