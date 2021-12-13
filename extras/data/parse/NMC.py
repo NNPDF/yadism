@@ -28,7 +28,7 @@ def dump(src_path, target):
                 cut_text = "\n".join(text.splitlines()[::2])
                 ntf.write(cut_text)
                 ntf.flush()
-                data = load(ntf.name, 0, ["x", "y", "Q2"])
+                data = load(ntf.name, 0, ["x", "Q2", "y"])
                 esf += [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
         obs["observables"] = {"XSHERANC": esf}
         obs["TargetDIS"] = "proton"
