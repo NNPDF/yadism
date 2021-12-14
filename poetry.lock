@@ -250,7 +250,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "eko"
-version = "0.7.3"
+version = "0.8.2"
 description = "Evolution Kernel Operator"
 category = "main"
 optional = false
@@ -1558,7 +1558,7 @@ pineappl = ["pineappl"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.10"
-content-hash = "fa1ed8f91355a7f4a2dac724832832a6afd1c2f0038c8564875dcca87d9fe77e"
+content-hash = "cee4740a6f87c73477500e8f60669932b15167aec05d79eed9e51d8f6a2a8b26"
 
 [metadata.files]
 a3b2bbc3ced97675ac3a71df45f55ba = [
@@ -1750,7 +1750,7 @@ docutils = [
     {file = "docutils-0.16.tar.gz", hash = "sha256:c2de3a60e9e7d07be26b7f2b00ca0309c207e06c100f9cc2a94931fc75a478fc"},
 ]
 eko = [
-    {file = "eko-0.7.3-py3-none-any.whl", hash = "sha256:c549341f67af80d876c3088b318a9b0ccf1268e769e6a67964151a5dd06a24e9"},
+    {file = "eko-0.8.2-py3-none-any.whl", hash = "sha256:ca1a1073b13f48ee4f51e65ee7d64e5a96e330de0692362eade014b7d91cbbbc"},
 ]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
