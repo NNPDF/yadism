@@ -3,7 +3,7 @@ import argparse
 import yaml
 
 from . import exps
-from .utils import runcards
+from .utils import runcards, metadata_template
 
 
 def parse_cli():
@@ -27,9 +27,30 @@ def dump(path, new_name):
     bins = len(list(obs["observables"].values())[0])
     print(f"exp   = {exp.__name__.split('.')[-1]}\tdataset = {path.stem}")
     print(f"#bins = {bins}")
-    print(f"\tWriting: {path}\n\tto: {target}")
+    print(f"\tWriting: {path}\n\tto: {target.parent}")
     with open(target, "w") as o:
         yaml.safe_dump(obs, o)
+    with open(target.with_name("metadata.yaml"), "w", encoding="utf-8") as m:
+        for k, v in metadata(path, new_name).items():
+            v = v if v is not None else ""
+            m.write(f"{k}={v}\n")
+
+
+def metadata(path, new_name):
+    metadata = metadata_template.copy()
+    metadata["nnpdf_id"] = path.stem
+
+    with open(path.parent / "metadata.yaml", encoding="utf-8") as m:
+        localmeta = yaml.safe_load(m)
+
+    for k, v in localmeta.items():
+        if not isinstance(v, dict):
+            metadata[k] = v
+
+    for k, v in localmeta[new_name].items():
+        metadata[k] = v
+
+    return metadata
 
 
 if __name__ == "__main__":

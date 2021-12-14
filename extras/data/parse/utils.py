@@ -88,3 +88,7 @@ def load(path, skiprows, fields):
 with open(template / "observable.yaml", encoding="utf-8") as o:
     obs_template = yaml.safe_load(o)
 obs_template["interpolation_xgrid"] = pineapple_xgrid
+
+# Load metadata template
+with open(template / "metadata.yaml", encoding="utf-8") as m:
+    metadata_template = yaml.safe_load(m)

@@ -1,0 +1,25 @@
+arxiv: 1506.06042
+data_url: https://www.desy.de/h1zeus/herapdf20
+y_label: sigr
+y_label_tex: $\sigma_\mathrm{red}$
+HERA_CC_318GEV_EM_SIGMARED:
+  description: HERA CC reduced cross section at 318 GeV electron scattering
+  hepdata: 10.17182/hepdata.68951.v1/t7
+HERA_CC_318GEV_EP_SIGMARED:
+  description: HERA CC reduced cross section at 318 GeV positron scattering
+  hepdata: 10.17182/hepdata.68951.v1/t6
+HERA_NC_318GEV_EM_SIGMARED:
+  description: HERA NC reduced cross section at 318 GeV electron scattering
+  hepdata: 10.17182/hepdata.68951.v1/t5
+HERA_NC_225GEV_EP_SIGMARED:
+  description: HERA NC reduced cross section at 225 GeV positron scattering
+  hepdata: 10.17182/hepdata.68951.v1/t4
+HERA_NC_251GEV_EP_SIGMARED:
+  description: HERA NC reduced cross section at 251 GeV positron scattering
+  hepdata: 10.17182/hepdata.68951.v1/t3
+HERA_NC_300GEV_EP_SIGMARED:
+  description: HERA NC reduced cross section at 300 GeV positron scattering
+  hepdata: 10.17182/hepdata.68951.v1/t2
+HERA_NC_318GEV_EP_SIGMARED:
+  description: HERA NC reduced cross section at 318 GeV positron scattering
+  hepdata: 10.17182/hepdata.68951.v1/t1
