@@ -30,7 +30,7 @@ def dump(path, new_name):
     print(f"\tWriting: {path}\n\tto: {target.parent}")
     with open(target, "w") as o:
         yaml.safe_dump(obs, o)
-    with open(target.with_name("metadata.yaml"), "w", encoding="utf-8") as m:
+    with open(target.with_name("metadata.txt"), "w", encoding="utf-8") as m:
         for k, v in metadata(path, new_name).items():
             v = v if v is not None else ""
             m.write(f"{k}={v}\n")

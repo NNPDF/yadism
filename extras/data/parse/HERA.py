@@ -47,6 +47,10 @@ def dump_HERACOMB_heavy(src_path):
     esf = load(src_path, 36, ["Q2", "x", "y"])
     obs["prDIS"] = "NC"
     xs = "XSHERANCAVG"
+    if "Charm" in str(src_path):
+        xs += "_charm"
+    elif "Beauty" in str(src_path):
+        xs += "_bottom"
     obs["observables"] = {xs: esf}
     obs["ProjectileDIS"] = "electron"
 
