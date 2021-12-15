@@ -1,0 +1,14 @@
+arxiv: null
+hepdata: 10.17182/hepdata.6187.v1
+NMC_NC_EM_P_SIGMARED:
+  y_label: sigr
+  y_label_tex: $\sigma_\mathrm{red}$
+  description: NMC reduced cross section
+NMC_NC_EM_P_F2:
+  y_label: F2
+  y_label_tex: $\F_{2,\mathrm{tot}}$
+  description: NMC F2 structure function, proton data
+NMC_NC_EM_D_F2:
+  y_label: F2
+  y_label_tex: $\F_{2,\mathrm{tot}}$
+  description: NMC F2 structure function, deuteron data
