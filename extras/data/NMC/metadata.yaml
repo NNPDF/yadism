@@ -1,5 +1,5 @@
 arxiv: null
-hepdata: 10.17182/hepdata.6187.v1
+hepdata: 10.17182/hepdata.32750.v1
 NMC_NC_EM_P_SIGMARED:
   y_label: sigr
   y_label_tex: $\sigma_\mathrm{red}$
