@@ -1,0 +1,8 @@
+arxiv: null
+y_label: sigr_ch
+y_label_tex: $\sigma^\mathrm{CHORUS}_\mathrm{red}$
+hepdata: 10.17182/hepdata.6187.v1
+CHORUS_CC_NB_PB_SIGMARED:
+  description: CHORUS antineutrino-nucleon scattering on lead data
+CHORUS_CC_NU_PB_SIGMARED:
+  description: CHORUS neutrino-nucleon scattering on lead data
