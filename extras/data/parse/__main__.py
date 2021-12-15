@@ -60,7 +60,12 @@ if __name__ == "__main__":
     for i in args.inputs:
         path = runcards.parent / i
         exp = exps[list(filter(lambda e: e in path.parent.name, exps.keys()))[0]]
-        new_name = exp.new_names[path.stem]
+        try:
+            new_name = exp.new_names[path.stem]
+        except KeyError:
+            print(f"Skipped {path}")
+            continue
+
         if isinstance(new_name, str):
             dump(path, new_name)
         else:
