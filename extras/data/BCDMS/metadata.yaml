@@ -1,0 +1,7 @@
+arxiv: null
+y_label: F2
+y_label_tex: $\F_{2,\mathrm{tot}}$
+BCDMS_NC_EM_D_F2:
+  description: BCDMS NC deuteron data
+BCDMS_NC_EM_P_F2:
+  description: BCDMS NC proton data
