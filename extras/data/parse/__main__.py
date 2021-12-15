@@ -47,8 +47,9 @@ def metadata(path, new_name):
         if not isinstance(v, dict):
             metadata[k] = v
 
-    for k, v in localmeta[new_name].items():
-        metadata[k] = v
+    if new_name in localmeta:
+        for k, v in localmeta[new_name].items():
+            metadata[k] = v
 
     return metadata
 
