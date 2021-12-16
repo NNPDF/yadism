@@ -51,6 +51,9 @@ def metadata(path, new_name):
         for k, v in localmeta[new_name].items():
             metadata[k] = v
 
+    if metadata["fktable_id"] is None:
+        metadata["fktable_id"] = metadata["nnpdf_id"]
+
     return metadata
 
 
