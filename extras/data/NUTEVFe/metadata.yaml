@@ -4,5 +4,7 @@ y_label: sigr_nt
 y_label_tex: $\sigma^\mathrm{NUTEV}_\mathrm{red}$
 NUTEV_CC_NB_FE_SIGMARED:
   description: NUTEV reduced cross section for antineutrino-nucleon scattering on iron
+  nnpdf_id: NTVNBDMNFe
 NUTEV_CC_NU_FE_SIGMARED:
   description: NUTEV reduced cross section for neutrino-nucleon scattering on iron
+  nnpdf_id: NTVNUDMNFe

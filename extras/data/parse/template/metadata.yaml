@@ -3,6 +3,7 @@ description: null
 hepdata: null
 data_url: null
 nnpdf_id: null
+fktable_id: null
 x1_label: Q2
 x1_label_tex: $Q^2$
 x1_unit: GeV^2

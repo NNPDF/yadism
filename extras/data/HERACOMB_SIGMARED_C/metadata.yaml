@@ -2,3 +2,4 @@ arxiv: 1804.01019
 description: HERA NC reduced charm cross section at 318 GeV
 y_label: sigr
 y_label_tex: $\sigma_\mathrm{red,\mathrm{c}\bar{\mathrm{c}}}$
+nnpdf_id: HERACOMB_SIGMARED_C
