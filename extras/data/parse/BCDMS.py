@@ -32,7 +32,7 @@ def dump(src_path, _target):
             esf += [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
 
     obs["prDIS"] = "NC"
-    obs["observables"] = {"F2total": esf}
+    obs["observables"] = {"F2_total": esf}
     obs["ProjectileDIS"] = "electron"
     obs["TargetDIS"] = "proton"
 

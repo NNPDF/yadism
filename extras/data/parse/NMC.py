@@ -35,7 +35,7 @@ def dump(src_path, target):
     else:
         data = load(str(src), 0, ["x", "Q2"])
         esf = [dict(x=d["x"], y=1.0, Q2=d["Q2"]) for d in data]
-        obs["observables"] = {"F2total": esf}
+        obs["observables"] = {"F2_total": esf}
         obs["TargetDIS"] = "proton" if "_P_" in target.name else "isoscalar"
 
     obs["prDIS"] = "NC"
