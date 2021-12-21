@@ -5,7 +5,7 @@ Test the interface provided for the user.
 
 from collections.abc import Iterable
 
-# import pytest
+import pytest
 import numpy as np
 
 import yadism
@@ -61,6 +61,7 @@ obs_dict = {
 }
 
 
+@pytest.mark.skip
 class TestInit:
     def test_run_yadism(self):
         o1 = yadism.run_yadism(theory_dict, obs_dict)
