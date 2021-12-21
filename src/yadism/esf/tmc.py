@@ -84,7 +84,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         self.x = kinematics["x"]
         self.Q2 = kinematics["Q2"]
         # compute variables
-        self.mu = self.sf.M2target / self.Q2
+        self.mu = self.sf.runner.configs.M2target / self.Q2
         self.rho = np.sqrt(1 + 4 * self.x ** 2 * self.mu)  # = r = sqrt(tau)
         self.xi = 2 * self.x / (1 + self.rho)
         # TMC are mostly determined by shifted kinematics
@@ -151,18 +151,18 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             an object that stores the details and result of the calculation
 
         """
-        if self.sf.TMC == 0:  # no TMC
+        if self.sf.runner.configs.TMC == 0:  # no TMC
             raise RuntimeError(
                 "EvaluatedStructureFunctionTMC shouldn't have been created as TMC is disabled."
             )
-        if self.sf.TMC == 1:  # APFEL
+        if self.sf.runner.configs.TMC == 1:  # APFEL
             out = self._get_result_APFEL()
-        elif self.sf.TMC == 2:  # approx
+        elif self.sf.runner.configs.TMC == 2:  # approx
             out = self._get_result_approx()
         elif self.sf.TMC == 3:  # exact
             out = self._get_result_exact()
         else:
-            raise ValueError(f"Unknown TMC value {self.sf.TMC}")
+            raise ValueError(f"Unknown TMC value {self.sf.runner.configs.TMC}")
 
         # ensure the correct kinematics is used after the calculations
         out.x = self.x
@@ -208,13 +208,16 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         """
         # check domain
-        if self.xi < min(self.sf.interpolator.xgrid_raw):
+        if self.xi < min(self.sf.runner.configs.interpolator.xgrid_raw):
             raise ValueError(
                 f"xi outside xgrid - cannot convolute starting from xi={self.xi}"
             )
         # iterate grid
         res = ESFResult(self.xi, self.Q2, None)
-        for xj, pj in zip(self.sf.interpolator.xgrid_raw, self.sf.interpolator):
+        for xj, pj in zip(
+            self.sf.runner.configs.interpolator.xgrid_raw,
+            self.sf.runner.configs.interpolator,
+        ):
             # basis function does not contribute?
             if pj.is_below_x(self.xi):
                 continue

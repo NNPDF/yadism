@@ -1,0 +1,10 @@
+arxiv: null
+y_label: F2
+y_label_tex: $\F_{2,\mathrm{tot}}$
+hepdata: null
+SLAC_NC_EM_D_F2:
+  description: SLAC NC structure function, deuteron data
+  nnpdf_id: SLACD
+SLAC_NC_EM_P_F2:
+  description: SLAC NC structure function, proton data
+  nnpdf_id: SLACP

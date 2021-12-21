@@ -4,6 +4,8 @@ import numpy as np
 import yaml
 
 here = pathlib.Path(__file__).parent
+template = here / "template"
+runcards = here.parent / "_runcards"
 
 pineapple_xgrid = [
     1.9999999999999954e-07,
@@ -83,6 +85,10 @@ def load(path, skiprows, fields):
 
 
 # Load obs template
-with open(here / "observable_template.yaml") as o:
+with open(template / "observable.yaml", encoding="utf-8") as o:
     obs_template = yaml.safe_load(o)
 obs_template["interpolation_xgrid"] = pineapple_xgrid
+
+# Load metadata template
+with open(template / "metadata.yaml", encoding="utf-8") as m:
+    metadata_template = yaml.safe_load(m)

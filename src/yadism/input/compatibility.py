@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import numpy as np
 
 hqfl = "cbt"
@@ -57,17 +58,27 @@ def update_target(obs):
         return
     if target == "proton":
         obs["TargetDIS"] = {"Z": 1.0, "A": 1.0}
+        # proton = 2212
+        obs["TargetDISid"] = "2212"
     elif target == "neutron":
         obs["TargetDIS"] = {"Z": 0.0, "A": 1.0}
+        # neutron = 2112
+        obs["TargetDISid"] = "2112"
     elif target == "isoscalar":
         obs["TargetDIS"] = {"Z": 1.0, "A": 2.0}
+        # deuteron = 10 0 001 002 0
+        obs["TargetDISid"] = "1000010020"
     elif target == "iron":
         obs["TargetDIS"] = {
             "Z": 23.403,
             "A": 49.618,
         }  # Fe=26 and we don't know how these factors got inside APFEL
+        # iron = 10 0 026 056 0
+        obs["TargetDISid"] = "1000260560"
     elif target == "lead":
         obs["TargetDIS"] = {"Z": 82.0, "A": 208.0}  # from hep-ex/0102049
+        # lead = 10 0 082 208 0
+        obs["TargetDISid"] = "1000822080"
     else:
         raise ValueError(f"Unknown TargetDIS '{target}'")
 
@@ -83,28 +94,26 @@ def update_fns(theory):
     """
     fns = theory["FNS"]
     nf = theory["NfFF"]
-    if "FONLL" not in fns:  # = fns in FFNS or ZM-VFNS
-        # enforce correct settings moving all thresholds to 0 or oo
-        if fns == "FFNS":
-            ks = [0] * (nf - 3) + [np.inf] * (6 - nf)
-            for k, fl in zip(ks, hqfl):
-                theory[f"k{fl}Thr"] = k
-        # here there is no difference between DGLAP and DIS
+
+    if "FONLL" in fns:
+        theory["ZMc"] = False
+        theory["ZMb"] = False
+        theory["ZMt"] = True
+    elif fns == "ZM-VFNS":
         for fl in hqfl:
-            theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
+            theory[f"ZM{fl}"] = True
+    elif "FFNS" in fns:
+        # enforce correct settings moving all thresholds to 0 or oo
+        for k, fl in enumerate(hqfl):
+            if k + 4 <= nf:
+                theory[f"k{fl}Thr"] = 0.0
+                theory[f"ZM{fl}"] = True
+            else:
+                theory[f"k{fl}Thr"] = np.inf
+                theory[f"ZM{fl}"] = False
     else:
-        # keep the old setup for the ZM-VFNS part (above)
-        for pid in range(nf + 1, 6 + 1):
-            fl = hqfl[pid - 4]
-            theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
-        # for the actual value - keep it or fallback to evolution
-        hfl = hqfl[nf - 4]
-        if f"kDIS{hfl}Thr" not in theory:
-            theory[f"kDIS{hfl}Thr"] = theory[f"k{hfl}Thr"]
-        # erase all lower thresholds, meaning lower than the interesting one (NfFF)
-        for pid in range(4, nf + 1):
-            fl = hqfl[pid - 4]
-            # we actually need to run in the nf-FNS so even kill that one
-            theory[f"k{fl}Thr"] = 0
-            if pid < nf:
-                theory[f"kDIS{fl}Thr"] = 0
+        raise ValueError(f"Scheme '{fns}' not recognized.")
+
+    # here there is no difference between DGLAP and DIS
+    for fl in hqfl:
+        theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]

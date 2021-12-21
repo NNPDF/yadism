@@ -5,6 +5,24 @@ from . import fonll, heavy, intrinsic, kernels, light
 from .partonic_channel import EmptyPartonicChannel
 
 
+class Component(list):
+    """
+    Used for organize elements and debugging purpose.
+    """
+
+    heavyness = {0: "light", 4: "charm", 5: "bottom", 6: "top"}
+
+    def __init__(self, heavy, kernels=None):
+        self.heavy = self.heavyness[heavy]
+
+        if kernels is None:
+            kernels = []
+        super().__init__(kernels)
+
+    def __repr__(self):
+        return self.heavy + f"({len(self)} kernels)"
+
+
 class Combiner:
     """
     Does the matching between coefficient functions and partons with their approptiate coupling
@@ -18,148 +36,118 @@ class Combiner:
 
     def __init__(self, esf):
         self.esf = esf
-        self.obs_name = esf.sf.obs_name
-        self.nf = esf.sf.threshold.nf(esf.Q2)
-        self.target = esf.sf.target
+        self.masses = {4 + i: not mass for i, mass in enumerate(esf.info.ZMq)}
+        self.intrinsic = esf.info.intrinsic_range
+        self.obs_name = esf.info.obs_name
+        self.nf = esf.info.threshold.nf(esf.Q2)
+        self.target = esf.info.target
 
-    def collect_ffns(self):
-        """
-        Collects all kernels in the |FFNS|.
+    def collect(self):
+        comps = []
 
-        Returns
-        -------
-            elems : list(yadism.kernels.Kernel)
-                all participants
-        """
-        elems = []
-        # light is *everything* up to nf and not only u+d+s
-        if self.obs_name.flavor in ["light", "total"]:
-            elems.extend(light.kernels.generate(self.esf, self.nf))
-        # add heavy
-        if self.obs_name.flavor_family in ["heavy", "total"]:
-            # or fake it by light
-            if self.obs_name.flavor_family == "heavy":
-                # F2b is not avaible in FFNS3
-                if self.obs_name.hqnumber > self.nf + 1:
-                    raise ValueError(
-                        f"{self.obs_name} is not available in FFNS with {self.nf} light flavors"
-                    )
-                # F2c in FFNS5 is available, but light
-                if self.obs_name.hqnumber < self.nf + 1:
-                    elems.extend(
-                        kernels.generate_single_flavor_light(
-                            self.esf, self.nf, self.obs_name.hqnumber
-                        )
-                    )
-                    return elems
-            # Now: F2c in FFNS3 (the true thing)
-            elems.extend(heavy.kernels.generate(self.esf, self.nf))
-            ihq = self.nf + 1
-            if ihq in self.esf.sf.intrinsic_range:
-                elems.extend(intrinsic.kernels.generate(self.esf, ihq))
-        # add "missing" diagrams
-        if self.obs_name.flavor_family in ["total"]:
-            elems.extend(heavy.kernels.generate_missing(self.esf, self.nf))
-        return elems
+        family = self.obs_name.flavor_family
 
-    def collect_zmvfns(self):
-        """
-        Collects all kernels for |ZM-VFNS|.
+        # Adding light component
+        if family in ["light", "total"]:
+            comps.append(self.light_component())
+        if family == "heavy":
+            #  the only case in which an heavy contribution is not present in those
+            #  accounted for in total, it's whene heavy already became heavylight
+            comps.extend(self.heavylight_components())
+        if family in ["heavy", "total"]:
+            comps.extend(self.heavy_components())
 
-        Returns
-        -------
-            elems : list(yadism.kernels.Kernel)
-                all participants
-        """
-        elems = []
-        # light is *everything* up to nf and not only u+d+s
-        if self.obs_name.flavor in ["light", "total"]:
-            elems.extend(light.kernels.generate(self.esf, self.nf))
-        # heavy is allowed if we already passed it
-        if self.obs_name.flavor_family in ["heavy"]:
-            if self.obs_name.hqnumber > self.nf:
-                raise ValueError(
-                    f"{self.obs_name} is not available in ZM-VFNS, yet: nf={self.nf}"
-                )
-            elems.extend(
-                kernels.generate_single_flavor_light(
-                    self.esf, self.nf, self.obs_name.hqnumber
-                )
-            )
-        return elems
+        return comps
 
-    def collect_fonll(self):
-        """
-        Collects all kernels for |FONLL|.
+    def light_component(self):
+        nf = self.nf
+        masses = self.masses
 
-        Returns
-        -------
-            elems : list(yadism.kernels.Kernel)
-                all participants
+        comp = Component(0)
 
-        Note
-        ----
-            While we're faking in |FFNS| "lower" heavy structure functions with light with a
-            single flavor (e.g. F2c in FFNS5), we do not repeat this here (for the moment).
-            We would need to convert the light input into a single flavor input, which would
-            in turn increase the complexity of this method.
-        """
-        elems = []
-        # above the *next* threshold use ZM-VFNS
-        nl = self.esf.sf.nf_ff - 1
-        if nl + 1 < self.nf:
-            return self.collect_zmvfns()
-
-        if self.obs_name.flavor in ["light", "total"]:
-            # FFNSlow
-            elems.extend(fonll.kernels.generate_light(self.esf, nl))
-            # add F^d
-            elems.extend(
+        # the first condition essentially checks nf != 3
+        if nf in masses and masses[nf]:
+            nl = nf - 1
+            comp.extend(fonll.kernels.generate_light(self.esf, nl))
+            comp.extend(
                 self.damp_elems(nl, fonll.kernels.generate_light_diff(self.esf, nl))
             )
-        if self.obs_name.flavor_family in ["heavy", "total"]:
-            ihq = nl + 1
-            if self.obs_name.is_raw_heavy and self.obs_name.hqnumber < ihq:
-                raise NotImplementedError(
-                    f"We're not providing {self.obs_name} in FONLL with {nl} light flavors"
-                    f"(Q2={self.esf.Q2}) yet"
-                )
-            # F2b is not avaible in FONLL@c
-            if self.obs_name.is_raw_heavy and self.obs_name.hqnumber > ihq:
-                raise ValueError(
-                    f"{self.obs_name} is not available in FONLL with {nl} light flavors"
-                    f"(Q2={self.esf.Q2}) since we're not providing two masses corrections"
-                )
+        else:
+            comp.extend(light.kernels.generate(self.esf, nf))
 
-            # FFNSlow
-            elems.extend(heavy.kernels.generate(self.esf, nl))
-            # add F^d
-            if ihq in self.esf.sf.intrinsic_range:
-                elems.extend(intrinsic.kernels.generate(self.esf, ihq))
-                elems.extend(
-                    self.damp_elems(
-                        nl,
-                        fonll.kernels.generate_heavy_intrinsic_diff(self.esf, nl),
+        for ihq in range(nf + 1, 7):
+            if masses[ihq]:
+                comp.extend(heavy.kernels.generate_missing(self.esf, nf, ihq))
+        return comp
+
+    def heavylight_components(self):
+        nf = self.nf
+        hq = self.obs_name.hqnumber
+        masses = self.masses
+
+        comps = []
+
+        if hq < nf or (hq == nf and not masses[hq]):
+            heavylight = Component(hq)
+            heavylight.extend(kernels.generate_single_flavor_light(self.esf, nf, hq))
+            comps.append(heavylight)
+
+        return comps
+
+    def heavy_components(self):
+        nf = self.nf
+        hq = self.obs_name.hqnumber
+        masses = self.masses
+
+        comps = []
+
+        heavy_comps = {}
+        for sfh in range(nf, 7):
+            # exclude sfh=3, since heavy contributions are there for [4,5,6]
+            # if it's ZM you don't even have the component
+            if sfh not in masses or not masses[sfh]:
+                continue
+
+            heavy_comps[sfh] = Component(sfh)
+            if hq not in (0, sfh):
+                continue
+
+            if sfh == nf:
+                # then it is FONLL
+                nl = nf - 1
+                heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nl, ihq=sfh))
+                if sfh not in self.intrinsic:
+                    heavy_comps[sfh].extend(
+                        self.damp_elems(
+                            nl, fonll.kernels.generate_heavy_diff(self.esf, nl)
+                        )
                     )
-                )
+                else:
+                    heavy_comps[sfh].extend(
+                        intrinsic.kernels.generate(self.esf, ihq=sfh)
+                    )
+                    heavy_comps[sfh].extend(
+                        self.damp_elems(
+                            nl,
+                            fonll.kernels.generate_heavy_intrinsic_diff(self.esf, nl),
+                        )
+                    )
             else:
-                elems.extend(
-                    self.damp_elems(nl, fonll.kernels.generate_heavy_diff(self.esf, nl))
-                )
-        return elems
+                # then it is *not* FONLL
+                heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
+                if sfh in self.intrinsic:
+                    heavy_comps[sfh].extend(
+                        intrinsic.kernels.generate(self.esf, ihq=sfh)
+                    )
 
-    # def collect_fonll_mismatched(self):
-    #     kernels = []
+            for ihq in range(sfh + 1, 7):
+                if masses[ihq]:
+                    heavy_comps[sfh].extend(
+                        heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
+                    )
+            comps.append(heavy_comps[sfh])
 
-    #     for k in self.collect_fonll():
-    #         k.max_order = evolution_pto
-    #         kernels.append(k)
-
-    #     for k in self.collect_ffns():
-    #         k.min_order = evolution_pto
-    #         kernels.append(k)
-
-    #     return kernels
+        return comps
 
     def damp_elems(self, nl, elems):
         """
@@ -177,12 +165,12 @@ class Combiner:
             elems : list(Kernel)
                 modified kernels
         """
-        if not self.esf.sf.FONLL_damping:
+        if not self.esf.info.FONLL_damping:
             return elems
         nhq = nl + 1
         # TODO: replace mass with threshold?
-        m2hq = self.esf.sf.m2hq[nhq - 4]
-        power = self.esf.sf.damping_powers[nhq - 4]
+        m2hq = self.esf.info.m2hq[nhq - 4]
+        power = self.esf.info.damping_powers[nhq - 4]
         if self.esf.Q2 > m2hq:
             damp = np.power(1.0 - m2hq / self.esf.Q2, power)
         else:
@@ -242,14 +230,11 @@ class Combiner:
             elems : list(yadism.kernels.Kernel)
                 all participants
         """
-        if self.esf.sf.scheme == "FFNS":
-            full = self.collect_ffns()
-        elif self.esf.sf.scheme == "ZM-VFNS":
-            full = self.collect_zmvfns()
-        elif self.esf.sf.scheme in ["FONLL-A", "FONLL-B", "FONLL-C"]:
-            full = self.collect_fonll()
-        else:
-            raise ValueError("Unknown FNS")
+        components = self.collect()
+
+        full = []
+        for comp in components:
+            full.extend(comp)
 
         # add level-0 nuclear correction: apply isospin symmetry
         self.apply_isospin(full, self.target["Z"], self.target["A"])

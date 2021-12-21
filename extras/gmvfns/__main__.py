@@ -1,0 +1,3 @@
+from . import simulate
+
+simulate()
