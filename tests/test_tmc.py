@@ -38,6 +38,7 @@ class MockTMC(TMC.EvaluatedStructureFunctionTMC):
         return MockESF([3.0, 0.0, 0.0])
 
 
+@pytest.mark.skip
 class TestAbstractTMC:
     def test_mode(self):
         class MockSF:
