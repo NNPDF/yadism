@@ -6,32 +6,40 @@ on:
       - "*"
 
 jobs:
-  build-n-publish:
+  publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI
 
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8]
-
-    #if: startsWith(github.event.ref, 'refs/tags')
+        python-version: [3.8, 3.9, 3.10]
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@master
       - name: Setup Python 🐍
-        uses: actions/setup-python@master
+        id: setup-python
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install builder
-        run: |
-          pip install poetry poetry-dynamic-versioning
+      - name: Install and configure Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-path: ~/.virtualenvs
+          installer-parallel: true
+      - name: Cache Poetry virtualenv
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: ~/.virtualenvs
+          key: ${{ runner.os }}-py-${{ steps.setup-python.outputs.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
       - name: Run tests
         run: |
+          pip install poetry-dynamic-versioning
           poetry install
-          pip install poethepoet
           # run tests just before deployment
+          pip install poethepoet
           poe test
       - name: Package the distribution
         run: |
