@@ -9,38 +9,44 @@ jobs:
   unittests:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 3
       matrix:
         python-version: [3.7, 3.8, 3.9]
       fail-fast: false
 
     steps:
-      # checkout the repo on the github runner
-      # with fetch-depth = 0 all the repo is checked out with full-history
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }} 🐍
+        id: setup-python
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      # install the actual python package 'yadism'
-      - name: Install yadism
-        run: |
-          python -m pip install --upgrade pip
-          pip install poetry poetry-dynamic-versioning
-          poetry install
-          pip install poethepoet
-      # pass with the linter
+      - name: Install and configure Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-path: ~/.virtualenvs
+          installer-parallel: true
+      - name: Cache Poetry virtualenv
+        uses: actions/cache@v1
+        id: cache
+        with:
+          path: ~/.virtualenvs
+          key: ${{ runner.os }}-py-${{ steps.setup-python.outputs.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install project
+        run: poetry install --no-interaction
+      - name: Install task runner
+        run: pip install poethepoet
       - name: Lint with pylint
         run: |
-          pip install pylint
           # Search for actual errors
           poe lint
           # For warnings instead return always zero
           poe lint-warnings
-      #  run the test with 'pytest'
-      - name: Test yadism
+      - name: Test with pytest
         run: |
           poe test
       - name: Upload coverage to Codecov
