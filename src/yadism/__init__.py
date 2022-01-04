@@ -3,9 +3,11 @@
 .. todo::
     docs
 """
-__version__ = "0.0.0"
 
+from . import version, output
 from .runner import Runner
+
+__version__ = version.__version__
 
 
 def run_yadism(theory: dict, observables: dict):

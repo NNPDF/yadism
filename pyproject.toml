@@ -100,7 +100,7 @@ style = "semver"
 dirty = true
 
 [tool.poetry-dynamic-versioning.substitution]
-files = ["src/yadism/__init__.py"]
+files = ["src/yadism/version.py"]
 
 [tool.pytest.ini_options]
 #norecursedirs = benchmarks/aux
