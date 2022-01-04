@@ -62,7 +62,6 @@ ipython = "^7.28.0"
 pytest = "^6.2.4"
 pytest-cov = "^2.12.1"
 pytest-env = "^0.6.2"
-packutil = "^0.0.4"
 # benchmark
 yadmark = { path = "benchmarks/", develop = true }
 asv = "^0.4.2"
