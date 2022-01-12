@@ -1,7 +1,7 @@
 from .utils import load, obs_template
 
 
-def dump(src_path, _target):
+def dump(src_path, target):
     """Compute SLAC observables.
 
     Parameters
@@ -21,7 +21,7 @@ def dump(src_path, _target):
     obs["prDIS"] = "NC"
     obs["observables"] = {"F2_total": esf}
     obs["ProjectileDIS"] = "electron"
-    obs["TargetDIS"] = "proton"
+    obs["TargetDIS"] = "proton" if "_P_" in target.parent.name else "isoscalar"
 
     return obs
 

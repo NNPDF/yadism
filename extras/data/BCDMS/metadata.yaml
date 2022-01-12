@@ -7,5 +7,5 @@ BCDMS_NC_EM_D_F2:
 BCDMS_NC_EM_P_F2:
   description: BCDMS NC proton data
   nnpdf_id: BCDMSP
-  y_label: F2
-  y_label_tex: $\F_{2,\mathrm{tot}}$
+  y_label: F2p
+  y_label_tex: $\F_{2,\mathrm{tot}}^{(p)}$

@@ -34,7 +34,12 @@ def dump(src_path, _target):
     obs["prDIS"] = "NC"
     obs["observables"] = {"F2_total": esf}
     obs["ProjectileDIS"] = "electron"
-    obs["TargetDIS"] = "proton"
+    if "bcd_p" in src.stem:
+        obs["TargetDIS"] = "proton"
+    elif "bcd_d" in src.stem:
+        obs["TargetDIS"] = "isoscalar"
+    else:
+        raise ValueError("BCDMS unknown data")
 
     return obs
 
