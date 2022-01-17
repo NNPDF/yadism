@@ -40,8 +40,10 @@ def update_scale_variations(theory):
         theory : dict
             theory runcard
     """
-    theory["RenScaleVar"] = not np.isclose(theory["XIR"], 1.0)
-    theory["FactScaleVar"] = not np.isclose(theory["XIF"], 1.0)
+    if "RenScaleVar" not in theory:
+        theory["RenScaleVar"] = not np.isclose(theory["XIR"], 1.0)
+    if "FactScaleVar" not in theory:
+        theory["FactScaleVar"] = not np.isclose(theory["XIF"], 1.0)
 
 
 def update_target(obs):
