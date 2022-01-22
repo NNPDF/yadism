@@ -24,6 +24,11 @@ classifiers = [
   "Topic :: Scientific/Engineering",
   "Topic :: Scientific/Engineering :: Physics",
 ]
+packages = [
+  { include = "yadism", from = "src" },
+  { include = "yadmark", from = "src" },
+  { include = "yadbox", from = "src" },
+]
 
 [tool.poetry.urls]
 "Issue Tracker" = "https://github.com/N3PDF/yadism/issues"
@@ -48,6 +53,10 @@ recommonmark = { version = "^0.7.1", optional = true }
 sphinxcontrib-bibtex = { version = "^2.3.0", optional = true }
 sphinxcontrib-details-directive = { version = "^0.1.0", optional = true }
 nbsphinx = { version = "^0.8.6", optional = true }
+# yadmark
+banana-hep = { version = "^0.4.0", optional = true }
+sqlalchemy = { version = "^1.4.21", optional = true }
+a3b2bbc3ced97675ac3a71df45f55ba = { version = "^6.4.0", optional = true }
 
 [tool.poetry.dev-dependencies]
 poethepoet = "^0.10.0"
@@ -75,6 +84,7 @@ nbsphinx = "^0.8.6"
 
 [tool.poetry.extras]
 pineappl = ["pineappl"]
+mark = ["banana-hep", "sqlalchemy", "a3b2bbc3ced97675ac3a71df45f55ba"]
 docs = [
   "sphinx",
   "sphinx-rtd-theme",
@@ -84,12 +94,16 @@ docs = [
   "nbsphinx",
 ]
 
+[tool.poetry.scripts]
+yanav = "yadmark.navigator:launch_navigator"
+
 [tool.poe.tasks]
 test = "pytest tests"
 lint = "pylint src/*/*.py -E"
 lint-warnings = "pylint src/*/*.py --exit-zero"
 sandbox = "python benchmarks/runners/sandbox.py"
-navigator = "navigator"
+navigator = "yadnav"
+nav = "yadnav"
 black = "black ."
 
 [tool.poetry-dynamic-versioning]

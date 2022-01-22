@@ -4,10 +4,10 @@ import pandas as pd
 from banana.benchmark.runner import BenchmarkRunner
 from banana.data import dfdict
 from eko.strong_coupling import StrongCoupling
-from yadmark.banana_cfg import banana_cfg
-from yadmark.data import db, observables
 
 import yadism
+from yadmark.banana_cfg import banana_cfg
+from yadmark.data import db, observables
 
 
 class Runner(BenchmarkRunner):
