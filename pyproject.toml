@@ -36,10 +36,10 @@ packages = [
 "Changelog" = "https://github.com/N3PDF/yadism/releases"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.10"
-numpy = "^1.20.0"
+python = ">=3.8,<3.11"
+numpy = "^1.21.0"
 scipy = "^1.7.0"
-numba = "^0.54.1"
+numba = "^0.55.0"
 eko = "^0.8.2"
 pandas = "^1.3.0"
 rich = "^10.6.0"
@@ -106,11 +106,11 @@ nav = "yadnav"
 black = "black ."
 isort = "isort ."
 format = ["black", "isort"]
-docs = { "shell" = "cd doc; make html" }
-docs-view = { "shell" = "cd doc; make view" }
-docs-server = { "shell" = "cd doc; make server" }
-docs-clean = { "shell" = "cd doc; make clean" }
-docs-cleanall = { "shell" = "cd doc; make cleanall" }
+docs = { "shell" = "cd docs; make html" }
+docs-view = { "shell" = "cd docs; make view" }
+docs-server = { "shell" = "cd docs; make server" }
+docs-clean = { "shell" = "cd docs; make clean" }
+docs-cleanall = { "shell" = "cd docs; make cleanall" }
 
 [tool.poetry-dynamic-versioning]
 enable = true
