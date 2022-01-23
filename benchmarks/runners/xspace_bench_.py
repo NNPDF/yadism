@@ -4,6 +4,7 @@
 # import pytest
 import numpy as np
 from banana.data import cartesian_product
+
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
 

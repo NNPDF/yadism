@@ -19,6 +19,7 @@ import pathlib
 import numpy as np
 import pytest
 from banana.data import cartesian_product
+
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
 

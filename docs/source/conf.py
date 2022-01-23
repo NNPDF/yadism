@@ -329,7 +329,12 @@ def run_apidoc(_):
     (docs_dest / "modules.rst").unlink()
     # 'yadmark'
     docs_dest = here / "dev-tools" / "yadmark"
-    package = here.parents[1] / "benchmarks" / "yadmark"
+    package = here.parents[1] / "src" / "yadmark"
+    main(["--module-first", "-o", str(docs_dest), str(package)])
+    (docs_dest / "modules.rst").unlink()
+    # 'yadmark'
+    docs_dest = here / "ui" / "yadbox"
+    package = here.parents[1] / "src" / "yadbox"
     main(["--module-first", "-o", str(docs_dest), str(package)])
     (docs_dest / "modules.rst").unlink()
 

@@ -4,11 +4,10 @@
 import copy
 
 import numpy as np
-
 from banana.data import cartesian_product, theories
-from yadmark.data import observables, pineappl_xgrid
 
 import yadism
+from yadmark.data import observables, pineappl_xgrid
 
 
 class Pineappl:
