@@ -5,8 +5,8 @@ Test the interface provided for the user.
 
 from collections.abc import Iterable
 
-import pytest
 import numpy as np
+import pytest
 
 import yadism
 

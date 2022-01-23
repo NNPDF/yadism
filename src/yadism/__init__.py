@@ -4,7 +4,7 @@
     docs
 """
 
-from . import version, output
+from . import output, version
 from .runner import Runner
 
 __version__ = version.__version__

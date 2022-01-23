@@ -3,7 +3,7 @@ import argparse
 import yaml
 
 from . import exps
-from .utils import runcards, metadata_template
+from .utils import metadata_template, runcards
 
 
 def parse_cli():

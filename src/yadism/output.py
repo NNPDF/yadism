@@ -8,10 +8,10 @@ import pandas as pd
 import yaml
 from eko import strong_coupling
 
-from .version import __version__
 from . import observable_name as on
 from .esf.result import ESFResult
 from .input import compatibility
+from .version import __version__
 
 
 class MaskedPDF:

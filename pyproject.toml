@@ -104,6 +104,13 @@ sandbox = "python benchmarks/runners/sandbox.py"
 navigator = "yadnav"
 nav = "yadnav"
 black = "black ."
+isort = "isort ."
+format = ["black", "isort"]
+docs = { "shell" = "cd doc; make html" }
+docs-view = { "shell" = "cd doc; make view" }
+docs-server = { "shell" = "cd doc; make server" }
+docs-clean = { "shell" = "cd doc; make clean" }
+docs-cleanall = { "shell" = "cd doc; make cleanall" }
 
 [tool.poetry-dynamic-versioning]
 enable = true
