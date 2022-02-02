@@ -5,7 +5,7 @@ import yaml
 
 here = pathlib.Path(__file__).parent
 template = here / "template"
-runcards = here.parent / "_runcards"
+runcards = here.parents[1] / "_runcards"
 
 pineapple_xgrid = [
     1.9999999999999954e-07,

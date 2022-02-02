@@ -2,7 +2,6 @@ import argparse
 
 import yaml
 
-from . import exps
 from .utils import metadata_template, runcards
 
 
@@ -20,7 +19,7 @@ def parse_cli():
     return ap.parse_args()
 
 
-def dump(path, new_name):
+def dump(exp, path, new_name):
     target = runcards / new_name / "observable.yaml"
     target.parent.mkdir(exist_ok=True, parents=True)
     obs = exp.dump(path, target)
@@ -55,22 +54,3 @@ def metadata(path, new_name):
         metadata["fktable_id"] = metadata["nnpdf_id"]
 
     return metadata
-
-
-if __name__ == "__main__":
-    args = parse_cli()
-
-    for i in args.inputs:
-        path = runcards.parent / i
-        exp = exps[list(filter(lambda e: e in path.parent.name, exps.keys()))[0]]
-        try:
-            new_name = exp.new_names[path.stem]
-        except KeyError:
-            print(f"Skipped {path}")
-            continue
-
-        if isinstance(new_name, str):
-            dump(path, new_name)
-        else:
-            for name in new_name:
-                dump(path, name)
