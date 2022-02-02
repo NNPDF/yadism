@@ -1,5 +1,6 @@
+import argparse
+
 from . import BCDMS, CHORUS, HERA, NMC, NUTEV, SLAC
-from . import cli
 from . import utils
 
 exps = {
@@ -8,9 +9,22 @@ exps = {
 }
 
 
-def main():
-    args = cli.parse_cli()
+def cli(subparsers):
+    ap = subparsers.add_parser(
+        "generate",
+        description=f"""
+            runcards generator: generate 'observable.yaml' from names
+            and commondata files (output stored in '{utils.runcards}')""",
+    )
+    ap.add_argument(
+        "inputs",
+        nargs="+",
+        help="path inside an EXPERIMENT folder (e.g. 'CHORUSPb/x-sec_shift_nb.txt')",
+    )
+    ap.set_defaults(func=main)
 
+
+def main(args):
     for i in args.inputs:
         path = utils.runcards.parent / i
         exp = exps[list(filter(lambda e: e in path.parent.name, exps.keys()))[0]]
@@ -21,7 +35,7 @@ def main():
             continue
 
         if isinstance(new_name, str):
-            cli.dump(exp, path, new_name)
+            utils.dump(exp, path, new_name)
         else:
             for name in new_name:
-                cli.dump(exp, path, name)
+                utils.dump(exp, path, name)
