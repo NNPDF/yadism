@@ -1,13 +1,18 @@
-MODULE=machinery
+PY=python3
+
+PACKAGE=machinery
 OUTPUT=_runcards
-IGNORE=Makefile ${MODULE} README.md ${OUTPUT}
+IGNORE=Makefile ${PACKAGE} README.md ${OUTPUT}
 FOLDERS=$(filter-out ${IGNORE},$(wildcard *))
 
 all:
 	@for exp in ${FOLDERS}; do \
 		echo $$exp; \
-		python3 -m ${MODULE} generate $$exp/*; \
+		${PY} -m ${PACKAGE} generate $$exp/*; \
 		done
+
+benchmark:
+	@${PY} -m ${PACKAGE} benchmark ${OUTPUT}/*
 
 clean:
 	rm -rf ${OUTPUT}
