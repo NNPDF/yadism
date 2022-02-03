@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import banana.cfg
 from banana import navigator as bnav
 
-from .. import banana_cfg
 from . import navigator
+
+banana_cfg = banana.cfg.cfg
 
 
 def yelp(*args):
@@ -32,7 +34,7 @@ Available functions:
 
 h = yelp
 
-app = navigator.NavigatorApp(banana_cfg.banana_cfg, "sandbox")
+app = navigator.NavigatorApp(banana_cfg, "sandbox")
 
 # register banana functions
 bnav.register_globals(globals(), app)

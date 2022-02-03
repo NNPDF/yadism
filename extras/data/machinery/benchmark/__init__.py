@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
 import pathlib
 
 import yaml
+
+from . import runner
 
 here = pathlib.Path(__file__).parent
 
@@ -26,13 +29,10 @@ def read_metadata(body):
     return metadata
 
 
-def benchmark(theory, observables):
-    pass
-
-
 def main(args):
     theory = yaml.safe_load((args.theory).read_text(encoding="utf-8"))
     print("theory", theory["ID"], end="\n\n")
+    theory["PTO"] = 0
 
     for folder in args.folders:
         metadata = read_metadata((folder / "metadata.txt").read_text(encoding="utf-8"))
@@ -41,4 +41,4 @@ def main(args):
             (folder / "observable.yaml").read_text(encoding="utf-8")
         )
         print("  target:", observables["TargetDIS"])
-        benchmark(theory, observables)
+        runner.benchmark(theory, observables)

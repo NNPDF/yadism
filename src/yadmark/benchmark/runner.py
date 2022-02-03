@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import banana.cfg
 import numpy as np
 import pandas as pd
 from banana.benchmark.runner import BenchmarkRunner
@@ -6,13 +7,10 @@ from banana.data import dfdict
 from eko.strong_coupling import StrongCoupling
 
 import yadism
-from yadmark.banana_cfg import banana_cfg
 from yadmark.data import db, observables
 
 
 class Runner(BenchmarkRunner):
-    banana_cfg = banana_cfg
-
     alphas_from_lhapdf = False
     """Use the alpha_s routine provided by the Pdf?"""
 
