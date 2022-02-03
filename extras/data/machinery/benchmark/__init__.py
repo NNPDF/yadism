@@ -33,6 +33,7 @@ def main(args):
     theory = yaml.safe_load((args.theory).read_text(encoding="utf-8"))
     print("theory", theory["ID"], end="\n\n")
     theory["PTO"] = 0
+    theory["FNS"] = "ZM-VFNS"
 
     for folder in args.folders:
         metadata = read_metadata((folder / "metadata.txt").read_text(encoding="utf-8"))
