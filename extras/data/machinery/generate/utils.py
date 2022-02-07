@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pathlib
 
 import numpy as np
@@ -98,6 +99,10 @@ def dump(exp, path, new_name):
     target = runcards / new_name / "observable.yaml"
     target.parent.mkdir(exist_ok=True, parents=True)
     obs = exp.dump(path, target)
+    for o, esfs in obs["observables"].items():
+        obs["observables"][o] = list(
+            sorted(esfs, key=lambda esf: (esf["Q2"], esf["x"], esf["y"]))
+        )
     bins = len(list(obs["observables"].values())[0])
     print(f"exp   = {exp.__name__.split('.')[-1]}\tdataset = {path.stem}")
     print(f"#bins = {bins}")
