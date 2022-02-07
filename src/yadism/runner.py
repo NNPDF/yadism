@@ -224,7 +224,7 @@ class Runner:
             ) as progress:
                 task = progress.add_task(
                     "Starting...",
-                    total=sum([len(obs) for obs in precomputed_plan.values()]),
+                    total=sum(len(obs) for obs in precomputed_plan.values()),
                 )
                 for name, obs in precomputed_plan.items():
                     results = []

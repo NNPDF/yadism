@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Zero-dependency bootstrap script
 """

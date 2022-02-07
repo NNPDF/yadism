@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 import argparse
 
-from . import BCDMS, CHORUS, HERA, NMC, NUTEV, SLAC
-from . import utils
+from . import BCDMS, CHORUS, HERA, NMC, NUTEV, SLAC, utils
 
 exps = {
     getattr(m, "__name__").split(".")[-1]: m

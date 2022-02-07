@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from eko import beta
 
@@ -48,7 +49,7 @@ def c220ns(matrices, nf):
 
 def c220(labs, matrices, nf):
     return 0.5 * (
-        sum([matrices[lab, nf] for lab in labs[0]])
+        sum(matrices[lab, nf] for lab in labs[0])
         - beta.beta_0(nf) * matrices[labs[1], nf]
     )
 

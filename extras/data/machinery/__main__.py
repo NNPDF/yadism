@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 import argparse
 
-from . import generate
-from . import benchmark
+from . import benchmark, generate
 
 
 def cli():

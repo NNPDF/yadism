@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numba as nb
 from eko.constants import CF
 
