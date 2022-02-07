@@ -16,4 +16,9 @@ def benchmark(theory, observables):
     runner = Runner()
     runner.external = "apfel"
 
+    for obs, esfs in observables["observables"].items():
+        observables["observables"][obs] = list(
+            filter(lambda esf: esf["Q2"] > 1.0, esfs)
+        )
+
     runner.run([theory], [observables], ["ToyLH"])

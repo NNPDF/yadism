@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from banana.benchmark.external import apfel_utils
 
@@ -125,7 +126,7 @@ def compute_apfel_data(theory, observables, pdf):
             # FK calls SetProcessDIS, SetProjectileDIS and SetTargetDIS
             apfel.SetFKObservable(apf_obs)
         elif obs_name not in apfel_structure_functions:  # not a SF?
-            raise ValueError(f"Unkown observable {obs_name}")
+            raise ValueError(f"Unknown observable {obs_name}")
 
         # iterate over input kinematics
         for kin in kinematics:
