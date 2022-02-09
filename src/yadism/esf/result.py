@@ -159,3 +159,8 @@ class EXSResult(ESFResult):
         d = super().get_raw()
         d["y"] = self.y
         return d
+
+    def apply_pdf(self, *args):
+        res = super().apply_pdf(*args)
+        res["y"] = self.y
+        return res

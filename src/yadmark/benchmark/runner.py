@@ -112,20 +112,28 @@ class Runner(BenchmarkRunner):
 
     def log(self, t, o, _pdf, me, ext):
         log_tab = dfdict.DFdict()
+        kins = ["x", "Q2"]
+
         for sf in me:
             if not yadism.observable_name.ObservableName.is_valid(sf):
                 continue
             esfs = []
 
+            obs_kins = kins.copy()
+            if "y" in me[sf][0]:
+                obs_kins += ["y"]
+
             # Sort the point using yadism order since yadism list can be different from ext
             for yad in me[sf]:
                 cnt = 0
                 for oth in ext[sf]:
-                    if all([yad[k] == oth[k] for k in ["x", "Q2"]]):
+                    if all([yad[k] == oth[k] for k in obs_kins]):
                         # add common values
                         esf = {}
                         esf["x"] = yad["x"]
                         esf["Q2"] = yad["Q2"]
+                        if "y" in obs_kins:
+                            esf["y"] = yad["y"]
                         esf["yadism"] = f = yad["result"]
                         esf["yadism_error"] = yad["error"]
                         esf[self.external] = r = oth["result"]
