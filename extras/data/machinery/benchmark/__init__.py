@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pathlib
+import traceback
 
 import yaml
 
@@ -45,4 +46,7 @@ def main(args):
             (folder / "observable.yaml").read_text(encoding="utf-8")
         )
         print("  target:", observables["TargetDIS"])
-        runner.benchmark(theory, observables)
+        try:
+            runner.benchmark(theory, observables)
+        except Exception:
+            traceback.print_exc()
