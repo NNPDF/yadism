@@ -16,7 +16,7 @@ class MockObj:
 
 def test_li2():
     assert raw_nc.li2(0) == 0
-    assert raw_nc.li2(1) == np.pi ** 2 / 6.0
+    assert raw_nc.li2(1) == np.pi**2 / 6.0
 
 
 def test_Cplus():

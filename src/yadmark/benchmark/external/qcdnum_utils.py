@@ -115,9 +115,9 @@ def compute_qcdnum_data(
     mc = theory["mc"]
     mb = theory["mb"]
     mt = theory["mt"]
-    iqc = QCDNUM.iqfrmq(mc ** 2)
-    iqb = QCDNUM.iqfrmq(mb ** 2)
-    iqt = QCDNUM.iqfrmq(mt ** 2)
+    iqc = QCDNUM.iqfrmq(mc**2)
+    iqb = QCDNUM.iqfrmq(mb**2)
+    iqt = QCDNUM.iqfrmq(mt**2)
 
     if theory["FNS"] == "FFNS":
         nfix = theory["NfFF"]

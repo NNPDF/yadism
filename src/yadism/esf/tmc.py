@@ -85,7 +85,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         self.Q2 = kinematics["Q2"]
         # compute variables
         self.mu = self.sf.runner.configs.M2target / self.Q2
-        self.rho = np.sqrt(1 + 4 * self.x ** 2 * self.mu)  # = r = sqrt(tau)
+        self.rho = np.sqrt(1 + 4 * self.x**2 * self.mu)  # = r = sqrt(tau)
         self.xi = 2 * self.x / (1 + self.rho)
         # TMC are mostly determined by shifted kinematics
         self._shifted_kinematics = {"x": self.xi, "Q2": self.Q2}
@@ -303,9 +303,9 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
     def __init__(self, SF, kinematics):
         super().__init__(SF, kinematics)
         # shifted prefactor is common
-        self._factor_shifted = self.x ** 2 / (self.xi ** 2 * self.rho ** 3)
+        self._factor_shifted = self.x**2 / (self.xi**2 * self.rho**3)
         # h2 comes with a seperate factor
-        self._factor_h2 = 6.0 * self.mu * self.x ** 3 / (self.rho ** 4)
+        self._factor_h2 = 6.0 * self.mu * self.x**3 / (self.rho**4)
 
     def _get_result_approx(self):
         approx_prefactor = self._factor_shifted * (
@@ -328,7 +328,7 @@ class ESFTMC_F2(EvaluatedStructureFunctionTMC):
         return self._factor_shifted * F2out + self._factor_h2 * h2out
 
     def _get_result_exact(self):
-        factor_g2 = 12.0 * self.mu ** 2 * self.x ** 4 / self.rho ** 5
+        factor_g2 = 12.0 * self.mu**2 * self.x**4 / self.rho**5
         # collect F2
         F2out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute raw integral
@@ -361,9 +361,9 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
     def __init__(self, SF, kinematics):
         super().__init__(SF, kinematics)
         # shifted prefactor is common
-        self._factor_shifted = self.x ** 2 / (self.xi ** 2 * self.rho)
+        self._factor_shifted = self.x**2 / (self.xi**2 * self.rho)
         # h2 comes with a seperate factor
-        self._factor_h2 = 4.0 * self.mu * self.x ** 3 / (self.rho ** 2)
+        self._factor_h2 = 4.0 * self.mu * self.x**3 / (self.rho**2)
 
     def _get_result_approx(self):
         # fmt: off
@@ -393,7 +393,7 @@ class ESFTMC_FL(EvaluatedStructureFunctionTMC):
         return self._factor_shifted * FLout + self._factor_h2 * h2out
 
     def _get_result_exact(self):
-        factor_g2 = 8.0 * self.mu ** 2 * self.x ** 4 / self.rho ** 3
+        factor_g2 = 8.0 * self.mu**2 * self.x**4 / self.rho**3
         # collect F2
         FLout = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
         # compute raw integral
@@ -427,9 +427,9 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
         super().__init__(SF, kinematics)
         # shifted prefactor is common
         # beware that we are dealing with xF_3(x) and so xiF_3(xi) also on the right
-        self._factor_shifted = self.x ** 2 / (self.xi ** 2 * self.rho ** 2)
+        self._factor_shifted = self.x**2 / (self.xi**2 * self.rho**2)
         # h3 comes with a seperate factor
-        self._factor_h3 = 2.0 * self.mu * self.x ** 3 / (self.rho ** 3)
+        self._factor_h3 = 2.0 * self.mu * self.x**3 / (self.rho**3)
 
     def _get_result_approx(self):
         approx_prefactor = self._factor_shifted * (

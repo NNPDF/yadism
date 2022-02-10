@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import IPython
 
 cmds = """
@@ -12,4 +13,3 @@ for cmd in cmds.splitlines():
 
 
 IPython.start_ipython(args)
-

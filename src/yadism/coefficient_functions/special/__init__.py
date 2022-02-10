@@ -114,6 +114,6 @@ def s2(z):
     lnx = np.log(x)
     ddilog = li2
 
-    S2 = -2 * ddilog(-x) + lnx ** 2 / 2 - 2 * lnx * np.log(1 + x) - np.pi ** 2 / 6
+    S2 = -2 * ddilog(-x) + lnx**2 / 2 - 2 * lnx * np.log(1 + x) - np.pi**2 / 6
 
     return S2

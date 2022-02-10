@@ -105,13 +105,13 @@ class CouplingConstants:
         elif mode == "ZZ":
             if quark_coupling_type in ["VV", "AA"]:
                 return (
-                    projectile_v ** 2
-                    + projectile_a ** 2
+                    projectile_v**2
+                    + projectile_a**2
                     + 2.0 * pol * projectile_v * projectile_a
                 )
             else:
                 return 2.0 * projectile_v * projectile_a + pol * (
-                    projectile_v ** 2 + projectile_a ** 2
+                    projectile_v**2 + projectile_a**2
                 )
         raise ValueError(f"Unknown mode: {mode}")
 
@@ -184,7 +184,7 @@ class CouplingConstants:
         if mode == "phZ":
             return eta_phZ
         if mode == "ZZ":
-            return eta_phZ ** 2
+            return eta_phZ**2
         if mode == "WW":
             eta_W = (
                 (eta_phZ / 2)
@@ -284,7 +284,7 @@ class CouplingConstants:
             )
             # TODO raise warning in log if inconsitent
         else:
-            theory_config["MW2"] = MW ** 2
+            theory_config["MW2"] = MW**2
 
         # map projectile to PID
         proj = observables.get("ProjectileDIS", "electron")

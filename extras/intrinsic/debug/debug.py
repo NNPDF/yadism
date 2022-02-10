@@ -19,7 +19,7 @@ from yadmark.benchmark.external import apfel_utils as apfel_here
 from yadmark.data import observables
 
 mc = 1.51
-mc2 = mc ** 2
+mc2 = mc**2
 
 
 def call_apfel():

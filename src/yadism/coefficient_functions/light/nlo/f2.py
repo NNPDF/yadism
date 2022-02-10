@@ -3,7 +3,7 @@ import numba as nb
 import numpy as np
 from eko.constants import CF, TR
 
-zeta_2 = np.pi ** 2 / 6.0
+zeta_2 = np.pi**2 / 6.0
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)

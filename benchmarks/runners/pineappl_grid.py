@@ -25,7 +25,7 @@ class Pineappl:
             [dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, 0.9, 10)]
         )
         kinematics.extend(
-            [dict(x=x, Q2=1.51 ** 2, y=0) for x in np.geomspace(1e-4, 0.9, 10)]
+            [dict(x=x, Q2=1.51**2, y=0) for x in np.geomspace(1e-4, 0.9, 10)]
         )
         kinematics.extend(
             [dict(x=0.1, Q2=Q2, y=0) for Q2 in np.geomspace(4, 20, 10).tolist()]

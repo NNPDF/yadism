@@ -13,10 +13,10 @@ def test_li2():
 
 
 def test_nielsen():
-    np.testing.assert_allclose(nielsen(1, 1, 1), np.pi ** 2 / 6.0)
+    np.testing.assert_allclose(nielsen(1, 1, 1), np.pi**2 / 6.0)
     np.testing.assert_allclose(nielsen(1, 1, 0), 0.0)
     np.testing.assert_allclose(
-        nielsen(1, 1, 0.5), np.pi ** 2 / 12.0 - np.log(2) ** 2 / 2.0
+        nielsen(1, 1, 0.5), np.pi**2 / 12.0 - np.log(2) ** 2 / 2.0
     )
 
     # MMa: N[PolyLog[1,2,3/10],10]

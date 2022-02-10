@@ -47,7 +47,7 @@ class Runner(BenchmarkRunner):
         else:
             new_theory, _ = yadism.input.compatibility.update(theory, ocard)
             sc = StrongCoupling.from_dict(new_theory)
-            alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
+            alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
 
         alpha_qed = lambda _muR: theory["alphaqed"]
         return runner.get_result().apply_pdf_alphas_alphaqed_xir_xif(
