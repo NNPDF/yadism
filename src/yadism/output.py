@@ -241,8 +241,12 @@ class Output(dict):
         grid.set_key_value("initial_state_1", "2212")
         grid.set_key_value("initial_state_2", str(lepton_pid))
         grid.set_key_value(
+            "theory",
+            json.dumps(self.theory)
+        )
+        grid.set_key_value(
             "runcard",
-            json.dumps(dict(theory=self.theory, observables=self.observables)),
+            json.dumps(self.observables)
         )
         grid.set_key_value("yadism_version", __version__)
         grid.set_key_value("lumi_id_types", "pdg_mc_ids")
