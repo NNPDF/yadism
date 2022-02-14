@@ -266,6 +266,8 @@ class Output(dict):
         """
         # TODO explicitly silence yaml
         out = self.get_raw()
+        out["theory"] = self.theory
+        out["observables"] = self.observables
         return yaml.dump(out, stream)
 
     def dump_yaml_to_file(self, filename):
@@ -312,7 +314,13 @@ class Output(dict):
                 continue
             for j, kin in enumerate(obj[obs]):
                 obj[obs][j] = ESFResult.from_document(kin)
-        return cls(obj)
+
+        out = cls(obj)
+        out.theory = obj["theory"]
+        out.observables = obj["observables"]
+        del out["theory"]
+        del out["observables"]
+        return out
 
     @classmethod
     def load_yaml_from_file(cls, filename):
