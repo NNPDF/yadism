@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "yadism"
-version = "0.10.4-post.10+8202002.dirty"
+version = "0.0.0"
 description = "Yet Another Deep-Inelastic Scattering Module"
 authors = [
   "Alessandro Candido <alessandro.candido@mi.infn.it>",
