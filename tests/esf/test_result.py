@@ -15,7 +15,7 @@ class MockPDFgonly:
 
     def xfxQ2(self, pid, x, Q2):
         if pid == 21:
-            return x ** 2 * Q2  # it is xfxQ2! beware of the additional x
+            return x**2 * Q2  # it is xfxQ2! beware of the additional x
         return 0
 
 
@@ -116,8 +116,8 @@ class TestESFResult:
                     1.0,
                     xiF,
                 )
-                assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
-                assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
+                assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF**2
+                assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF**2
 
         # errors
         with pytest.raises(ValueError, match=r"Q2"):

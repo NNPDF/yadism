@@ -36,7 +36,7 @@ def Delta_qq_sing(z):
         constants.CF
         * constants.TR
         * (
-            (1.0 + z ** 2) / (1.0 - z) * (2.0 / 3.0 * np.log(z) + 10.0 / 9.0)
+            (1.0 + z**2) / (1.0 - z) * (2.0 / 3.0 * np.log(z) + 10.0 / 9.0)
             + 4.0 / 3.0 * (1.0 - z)
         )
         * as_norm
@@ -63,7 +63,7 @@ def Delta_qq_loc(x):
         constants.CF
         * constants.TR
         * (
-            -4 * np.pi ** 2
+            -4 * np.pi**2
             + (16 - 19 * x) * x
             - 40 * np.log(1 - x)
             - 6 * x * (2 + x) * np.log(x)
@@ -93,7 +93,7 @@ def K_qq_sing(z):
         constants.CF
         * constants.TR
         * (
-            (1.0 + z ** 2)
+            (1.0 + z**2)
             / (1.0 - z)
             * (1.0 / 6.0 * np.log(z) ** 2 + 5.0 / 9.0 * np.log(z) + 28.0 / 27.0)
             + (1.0 - z) * (2.0 / 3.0 * np.log(z) + 13.0 / 9.0)
@@ -122,11 +122,11 @@ def K_qq_loc(x):
         constants.CF
         * constants.TR
         * (
-            -40 * np.pi ** 2
+            -40 * np.pi**2
             - x * (8 + 211 * x)
             - 6
             * np.log(x)
-            * (4 * np.pi ** 2 + x * (-16 + 19 * x) + 3 * x * (2 + x) * np.log(x))
+            * (4 * np.pi**2 + x * (-16 + 19 * x) + 3 * x * (2 + x) * np.log(x))
             + 8 * np.log(1 - x) * (-56 + 9 * np.log(x) ** 2)
             + 48 * (5 + 3 * np.log(x)) * li2(1 - x)
             + 144 * nielsen(2, 1, x).real
@@ -140,7 +140,7 @@ def K_qq_loc(x):
 def pdf_matching_reg(z, args):
     L = args[0]
     as_norm = 2.0
-    return L ** 2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_reg(z, args)
+    return L**2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_reg(z, args)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
@@ -149,7 +149,7 @@ def pdf_matching_sing(z, args):
     as_norm = 2.0
     return (
         K_qq_sing(z)
-        + L ** 2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_sing(z, args)
+        + L**2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_sing(z, args)
         - L * Delta_qq_sing(z)
     )
 
@@ -160,7 +160,7 @@ def pdf_matching_loc(z, args):
     as_norm = 2.0
     return (
         K_qq_loc(z)
-        + L ** 2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_local(z, args)
+        + L**2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_local(z, args)
         - L * Delta_qq_loc(z)
     )
 
@@ -184,7 +184,7 @@ class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
 
     @staticmethod
     def kinematic_delta(a, b, c):
-        return np.sqrt(a ** 2 + b ** 2 + c ** 2 - 2 * (a * b + b * c + c * a))
+        return np.sqrt(a**2 + b**2 + c**2 - 2 * (a * b + b * c + c * a))
 
     def convolution_point(self):
         return self.x / self.eta
@@ -222,7 +222,7 @@ class FMatchingQuark(FMatching):
                 asnorm
                 * icl
                 * constants.CF
-                * ((1.0 + z ** 2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
+                * ((1.0 + z**2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
             )
 
         # MMa:

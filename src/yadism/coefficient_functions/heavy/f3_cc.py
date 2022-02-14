@@ -16,7 +16,7 @@ class NonSinglet(pc.ChargedCurrentNonSinglet):
         |ref| implements :eqref:`A.1-4` with Table 1, :cite:`gluck-ccheavy`.
         """
         a = 0
-        b1 = lambda z: (-1 - z ** 2) * self.sf_prefactor
+        b1 = lambda z: (-1 - z**2) * self.sf_prefactor
         b2 = lambda z: (1 - z) * self.sf_prefactor
 
         return self.h_q(a, b1, b2)

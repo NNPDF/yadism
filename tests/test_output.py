@@ -17,7 +17,7 @@ class MockPDFgonly:
 
     def xfxQ2(self, pid, x, Q2):
         if pid == 21:
-            return x ** 2 * Q2  # it is xfxQ2! beware of the additional x
+            return x**2 * Q2  # it is xfxQ2! beware of the additional x
         return 0
 
 
@@ -75,8 +75,8 @@ class TestOutput:
             for a, pra in zip(out["F2_total"], ret["F2_total"]):
                 expexted_res = a.orders[lo][0][0][0] * a.x * a.Q2
                 expected_err = np.abs(a.orders[lo][0][0][0]) * a.x * a.Q2
-                assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF ** 2
-                assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF ** 2
+                assert pytest.approx(pra["result"], 0, 0) == expexted_res * xiF**2
+                assert pytest.approx(pra["error"], 0, 0) == expected_err * xiF**2
 
     def test_io(self):
         d, _obs = self.fake_output()

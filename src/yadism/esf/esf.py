@@ -88,7 +88,9 @@ class EvaluatedStructureFunction:
         logger.debug("Init %s", self)
 
     def __repr__(self):
-        return "%s_%s(x=%f,Q2=%f)" % (self.info.obs_name, self.process, self.x, self.Q2)
+        return "{}_{}(x={:f},Q2={:f})".format(
+            self.info.obs_name, self.process, self.x, self.Q2
+        )
 
     @property
     def zeros(self):

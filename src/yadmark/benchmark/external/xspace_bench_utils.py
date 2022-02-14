@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import eko.strong_coupling as eko_sc
 import numpy as np
 

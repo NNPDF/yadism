@@ -114,7 +114,7 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
         """
         labda = self.labda
         return (
-            -np.pi ** 2 / 6
+            -np.pi**2 / 6
             + spence(1 - labda)
             + spence((1 - x) * labda / (1 - x * labda))
             + np.log(1 - labda) * np.log(labda)
@@ -130,7 +130,7 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
         as_norm = 2
 
         def reg(z, _args):
-            hq_reg = -(1 + z ** 2) * np.log(z) / (1 - z) - (1 + z) * (
+            hq_reg = -(1 + z**2) * np.log(z) / (1 - z) - (1 + z) * (
                 2 * np.log(1 - z) - np.log(1 - self.labda * z)
             )
             return (
@@ -170,7 +170,7 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
             hq_loc = -(
                 4.0
                 + 1.0 / (2.0 * self.labda)
-                + np.pi ** 2 / 3.0  # see erratum
+                + np.pi**2 / 3.0  # see erratum
                 + (1.0 + 3.0 * self.labda) / (2.0 * self.labda) * self.ka
             ) - 2.0 * (2.0 * log_pd_int - self.r_integral(x))
 
@@ -180,7 +180,7 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
 
             b3_int = (
                 -((x * (-1.0 + self.labda)) / (self.labda * (-1.0 + x * self.labda)))
-                - np.log(1.0 - self.labda * x) / self.labda ** 2
+                - np.log(1.0 - self.labda * x) / self.labda**2
             )
 
             return (

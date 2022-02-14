@@ -18,8 +18,9 @@ have a quick look with:
 
 ```python
 import pstats
-p = pstats.Stats('output.prof')
-p.sort_stats('cumulative').print_stats(10)
+
+p = pstats.Stats("output.prof")
+p.sort_stats("cumulative").print_stats(10)
 ```
 
 or read the [docs](https://docs.python.org/3/library/profile.html) for more commands.

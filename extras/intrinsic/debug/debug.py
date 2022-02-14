@@ -19,7 +19,7 @@ from yadmark.benchmark.external import apfel_utils as apfel_here
 from yadmark.data import observables
 
 mc = 1.51
-mc2 = mc ** 2
+mc2 = mc**2
 
 
 def call_apfel():
@@ -34,7 +34,7 @@ def call_apfel():
 
 def analyze_soft():
     with open(here / "SV.txt") as of:
-        odata = pd.read_csv(of, sep="\s+", header=None)
+        odata = pd.read_csv(of, sep=r"\s+", header=None)
     kins = odata[::2]
     kins.drop([0, 4, 5, 6], inplace=True, axis=1)
     kins.columns = ["Q2", "m1sq", "m2sq"]
@@ -68,7 +68,7 @@ def analyze_soft():
 
 def analyze_soft1():
     with open(here / "SV1.txt") as of:
-        odata = pd.read_csv(of, sep="\s+", header=None)
+        odata = pd.read_csv(of, sep=r"\s+", header=None)
     soft = odata[odata[0] == "Soft"].copy()
     soft.drop([0], inplace=True, axis=1)
     soft.columns = ["Q2", "m1sq", "m2sq", "apf"]
@@ -125,7 +125,7 @@ def analyze_soft1():
 
 def analyze_fhat():
     with open(here / "fhat.txt") as of:
-        odata = pd.read_csv(of, sep="\s+", header=None)
+        odata = pd.read_csv(of, sep=r"\s+", header=None)
         odata.columns = ["tag", "z", "Q2", "m1sq", "m2sq", "apf", "Splus", "Sminus"]
     f1hat = odata[odata["tag"] == "f1hat"].copy()
     f1hat.drop(["tag"], inplace=True, axis=1)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from yadism.esf.exs import EvaluatedCrossSection as EXS
 from yadism.observable_name import ObservableName as ON
 from yadism.xs import CrossSection as XS

@@ -71,7 +71,7 @@ class ESFResult:
             raise ValueError("Q2 is not set!")
 
         # factorization scale
-        muF2 = self.Q2 * xiF ** 2
+        muF2 = self.Q2 * xiF**2
         pdfs = np.zeros((len(pids), len(xgrid)))
         for j, pid in enumerate(pids):
             if not lhapdf_like.hasFlavor(pid):
@@ -159,3 +159,8 @@ class EXSResult(ESFResult):
         d = super().get_raw()
         d["y"] = self.y
         return d
+
+    def apply_pdf(self, *args):
+        res = super().apply_pdf(*args)
+        res["y"] = self.y
+        return res

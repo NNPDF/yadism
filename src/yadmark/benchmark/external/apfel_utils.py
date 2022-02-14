@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from banana.benchmark.external import apfel_utils
 
@@ -125,12 +126,13 @@ def compute_apfel_data(theory, observables, pdf):
             # FK calls SetProcessDIS, SetProjectileDIS and SetTargetDIS
             apfel.SetFKObservable(apf_obs)
         elif obs_name not in apfel_structure_functions:  # not a SF?
-            raise ValueError(f"Unkown observable {obs_name}")
+            raise ValueError(f"Unknown observable {obs_name}")
 
         # iterate over input kinematics
         for kin in kinematics:
             Q2 = kin["Q2"]
             x = kin["x"]
+            y = kin["y"]
 
             # disable APFEL evolution: we are interested in the pure DIS part
             #
@@ -145,9 +147,10 @@ def compute_apfel_data(theory, observables, pdf):
             if obs_name in apfel_structure_functions:
                 result = apfel_structure_functions[obs_name](x)
             else:
-                result = apfel.FKObservables(x, np.sqrt(Q2), kin["y"])
+                result = apfel.FKObservables(x, np.sqrt(Q2), y)
             # take over the kinematics
             r = kin.copy()
             r["result"] = result
             apf_tab[obs_name].append(r)
+
     return apf_tab

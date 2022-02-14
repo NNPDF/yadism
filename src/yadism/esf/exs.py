@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 
 from ..observable_name import ObservableName
@@ -17,7 +18,7 @@ class EvaluatedCrossSection:
         y = self.kin["y"]
         yp = 1.0 + (1.0 - y) ** 2
         ym = 1.0 - (1.0 - y) ** 2
-        yL = y ** 2
+        yL = y**2
         obs_config = self.info.configs.coupling_constants.obs_config
         f3sign = -1 if obs_config["projectilePID"] < 0 else 1
         # eta = 1 if obs_config["process"] == "CC" else 1
@@ -45,7 +46,7 @@ class EvaluatedCrossSection:
             if kind == "XSCHORUSCC":
                 norm = (
                     conv
-                    * self.info.configs.GF ** 2
+                    * self.info.configs.GF**2
                     * mn
                     / (2.0 * np.pi * (1.0 + Q2 / m2w) ** 2)
                 )

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .utils import load, obs_template
 
 mn = 0.938
@@ -24,7 +25,7 @@ def dump(src_path, _target):
     ]
     is_nu = "NU" in src_path.stem
     obs["prDIS"] = "CC"
-    xs = "XSNUTEVCC"
+    xs = "XSNUTEVCC_charm"
     obs["observables"] = {xs: esf}
     obs["ProjectileDIS"] = "neutrino" if is_nu else "antineutrino"
     obs["TargetDIS"] = "iron"

@@ -8,7 +8,7 @@ def sing_from_distr_coeffs(z, coeffs):
     log_ = np.log(1 - z)
     res = 0
     for k, coeff in enumerate(coeffs):
-        res += coeff * 1 / (1 - z) * log_ ** k
+        res += coeff * 1 / (1 - z) * log_**k
     return res
 
 

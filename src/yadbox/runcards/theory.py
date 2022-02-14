@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def ffns(nf):
     theory = {}
 

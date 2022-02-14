@@ -6,15 +6,17 @@
 import pathlib
 import subprocess
 
+import banana
 import lhapdf
 import numpy as np
 import yaml
 
+here = pathlib.Path(__file__).parent
+banana.register(here.parent)
+
 #  from banana.data import cartesian_product
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
-
-here = pathlib.Path(__file__).parent
 
 lhapdf.pathsPrepend(
     subprocess.run("lhapdf-config --datadir".split(), capture_output=True).stdout.decode().strip()

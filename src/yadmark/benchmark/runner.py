@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import banana.cfg
 import numpy as np
 import pandas as pd
 from banana.benchmark.runner import BenchmarkRunner
@@ -6,13 +7,10 @@ from banana.data import dfdict
 from eko.strong_coupling import StrongCoupling
 
 import yadism
-from yadmark.banana_cfg import banana_cfg
 from yadmark.data import db, observables
 
 
 class Runner(BenchmarkRunner):
-    banana_cfg = banana_cfg
-
     alphas_from_lhapdf = False
     """Use the alpha_s routine provided by the Pdf?"""
 
@@ -49,7 +47,7 @@ class Runner(BenchmarkRunner):
         else:
             new_theory, _ = yadism.input.compatibility.update(theory, ocard)
             sc = StrongCoupling.from_dict(new_theory)
-            alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
+            alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
 
         alpha_qed = lambda _muR: theory["alphaqed"]
         return runner.get_result().apply_pdf_alphas_alphaqed_xir_xif(
@@ -76,28 +74,28 @@ class Runner(BenchmarkRunner):
         """
         observable = ocard
 
-        if self.external == "APFEL":
+        if self.external.upper() == "APFEL":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 apfel_utils,
             )
 
             return apfel_utils.compute_apfel_data(theory, observable, pdf)
 
-        elif self.external == "QCDNUM":
+        elif self.external.upper() == "QCDNUM":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 qcdnum_utils,
             )
 
             return qcdnum_utils.compute_qcdnum_data(theory, observable, pdf)
 
-        elif self.external == "xspace_bench":
+        elif self.external.lower() == "xspace_bench":
             from .external import (  # pylint:disable=import-error,import-outside-toplevel
                 xspace_bench_utils,
             )
 
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
 
-        elif self.external == "void":
+        elif self.external.lower() == "void":
             # set all ESF simply to 0
             res = {}
             for sf, esfs in ocard["observables"].items():
@@ -110,24 +108,32 @@ class Runner(BenchmarkRunner):
                     void_esfs.append(n)
                 res[sf] = void_esfs
             return res
-        return {}
+        raise ValueError("Unknown external")
 
     def log(self, t, o, _pdf, me, ext):
         log_tab = dfdict.DFdict()
+        kins = ["x", "Q2"]
+
         for sf in me:
             if not yadism.observable_name.ObservableName.is_valid(sf):
                 continue
             esfs = []
 
+            obs_kins = kins.copy()
+            if "y" in me[sf][0]:
+                obs_kins += ["y"]
+
             # Sort the point using yadism order since yadism list can be different from ext
             for yad in me[sf]:
                 cnt = 0
                 for oth in ext[sf]:
-                    if all([yad[k] == oth[k] for k in ["x", "Q2"]]):
+                    if all([yad[k] == oth[k] for k in obs_kins]):
                         # add common values
                         esf = {}
                         esf["x"] = yad["x"]
                         esf["Q2"] = yad["Q2"]
+                        if "y" in obs_kins:
+                            esf["y"] = yad["y"]
                         esf["yadism"] = f = yad["result"]
                         esf["yadism_error"] = yad["error"]
                         esf[self.external] = r = oth["result"]
