@@ -39,8 +39,8 @@ def generate_light(esf, nl, pto_evol):
     light_elems = light.kernels.generate(esf, nl)
     # for e in light_elems:
     #    e.max_order = pto_evol
-    kind = esf.sf.obs_name.kind
-    mu2hq = esf.sf.threshold.area_walls[ihq - 3]
+    kind = esf.info.obs_name.kind
+    mu2hq = esf.info.threshold.area_walls[ihq - 3]
     L = np.log(esf.Q2 / mu2hq)
     fonll_cfs = import_pc_module(kind, esf.process)
 
@@ -81,7 +81,7 @@ def generate_light(esf, nl, pto_evol):
         # true light contributions
         *light_elems,
         # missing
-        *heavy.kernels.generate_missing(esf, nl),
+        *heavy.kernels.generate_missing(esf, nl, ihq),
         # matching
         *pdf_matching,
         *alphas_matching,
