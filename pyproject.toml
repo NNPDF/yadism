@@ -94,7 +94,7 @@ docs = [
 ]
 
 [tool.poetry.scripts]
-yanav = "yadmark.navigator:launch_navigator"
+yadnav = "yadmark.navigator:launch_navigator"
 
 [tool.poe.tasks]
 test = "pytest tests"

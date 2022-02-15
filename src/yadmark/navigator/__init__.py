@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-import banana.cfg
+import pathlib
+
+import banana
+from banana import cfg as banana_cfg
 from banana import navigator as bnav
 
 from . import navigator
 
-banana_cfg = banana.cfg.cfg
+here = pathlib.Path(__file__).parent
+banana.register(here.parents[2] / "benchmarks")
 
 
 def yelp(*args):
@@ -34,7 +38,7 @@ Available functions:
 
 h = yelp
 
-app = navigator.NavigatorApp(banana_cfg, "sandbox")
+app = navigator.NavigatorApp(banana_cfg.cfg, "sandbox")
 
 # register banana functions
 bnav.register_globals(globals(), app)
