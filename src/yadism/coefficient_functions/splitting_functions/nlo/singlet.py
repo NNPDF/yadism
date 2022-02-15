@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numba as nb
 import numpy as np
 from eko import constants
@@ -49,7 +50,7 @@ def pgg0_reg(z, _args):
             the gluon-gluon splitting function :math:`P_{gg}(z)`
 
     """
-    return 4 * constants.CA * (1 / z - 2 + z - z ** 2)
+    return 4 * constants.CA * (1 / z - 2 + z - z**2)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
@@ -130,11 +131,11 @@ def pqq1ps_reg(z, args):
         * (
             -8
             + 24 * x
-            - 224 / 9 * x ** 2
+            - 224 / 9 * x**2
             + 80 / 9 * DX
             + 4 * LNX
             + 20 * LNX * x
-            + 32 / 3 * LNX * x ** 2
+            + 32 / 3 * LNX * x**2
             - 8 * HR200
             - 8 * HR200 * x
         )
@@ -191,16 +192,16 @@ def pqg1_reg(z, args):
 
     lnx = np.log(x)
     ln1mx = np.log(1 - x)
-    pqg = x ** 2 + (1 - x) ** 2
-    pqgmx = x ** 2 + (1 + x) ** 2
+    pqg = x**2 + (1 - x) ** 2
+    pqgmx = x**2 + (1 + x) ** 2
     S2x = special.s2(x)
 
     X1QGA = 2 * CF * NF * (
         4
         + 4 * ln1mx
-        + (10 - 4 * (ln1mx - lnx) + 2 * (-ln1mx + lnx) ** 2 - 2 * np.pi ** 2 / 3) * pqg
+        + (10 - 4 * (ln1mx - lnx) + 2 * (-ln1mx + lnx) ** 2 - 2 * np.pi**2 / 3) * pqg
         - lnx * (1 - 4 * x)
-        - lnx ** 2 * (1 - 2 * x)
+        - lnx**2 * (1 - 2 * x)
         - 9 * x
     ) + 2 * CA * NF * (
         20.22222222222222
@@ -208,16 +209,16 @@ def pqg1_reg(z, args):
         + (
             -24.22222222222222
             + 4 * ln1mx
-            - 2 * ln1mx ** 2
+            - 2 * ln1mx**2
             + (44 * lnx) / 3
-            - lnx ** 2
-            + np.pi ** 2 / 3
+            - lnx**2
+            + np.pi**2 / 3
         )
         * pqg
         + 2 * pqgmx * S2x
         + 40 / (9 * x)
         + (14 * x) / 9
-        - lnx ** 2 * (2 + 8 * x)
+        - lnx**2 * (2 + 8 * x)
         + lnx * (-12.666666666666666 + (136 * x) / 3)
     )
     return X1QGA

@@ -115,7 +115,7 @@ def pqg_single(z, _args):
             the quark-gluon splitting function :math:`P_{q_ig}(z)`
 
     """
-    return 2.0 * constants.TR * (z ** 2 + (1.0 - z) ** 2)
+    return 2.0 * constants.TR * (z**2 + (1.0 - z) ** 2)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)

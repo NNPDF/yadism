@@ -38,6 +38,7 @@ class MockTMC(TMC.EvaluatedStructureFunctionTMC):
         return MockESF([3.0, 0.0, 0.0])
 
 
+@pytest.mark.skip
 class TestAbstractTMC:
     def test_mode(self):
         class MockSF:
@@ -216,6 +217,7 @@ class MockRunner:
     )
 
 
+@pytest.mark.skip
 def test_f():
     class MockSF:
         obs_name = observable_name.ObservableName("F2_light")

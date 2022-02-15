@@ -69,12 +69,12 @@ class TestCouplingConstanst:
         obs_d = dict(PolarizationDIS=0.0, prDIS="EM", PropagatorCorrection=0)
         coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
 
-        assert coupl_const.theory_config["MZ2"] == MZ ** 2
-        assert coupl_const.theory_config["MW2"] == MZ ** 2 / (1 - sin2tw)
+        assert coupl_const.theory_config["MZ2"] == MZ**2
+        assert coupl_const.theory_config["MW2"] == MZ**2 / (1 - sin2tw)
 
         th_d["MW"] = MW = 2
         coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
-        assert coupl_const.theory_config["MW2"] == MW ** 2
+        assert coupl_const.theory_config["MW2"] == MW**2
 
         # Unknown projectile
         obs_d["ProjectileDIS"] = 0
@@ -168,28 +168,28 @@ class TestLeptonicHadronic:
 
 class TestPropagator:
     def test_cc(self):
-        th_d = dict(sin2theta_weak=0.5, MZ2=100, MW2=80 ** 2)
+        th_d = dict(sin2theta_weak=0.5, MZ2=100, MW2=80**2)
         obs_d = dict(process="EM", propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
         assert coupl_const.propagator_factor("WW", 0.0) == 0.0
 
     def test_pure_em(self):
-        th_d = dict(sin2theta_weak=0.5, MZ2=80, MW2=100 ** 2)
+        th_d = dict(sin2theta_weak=0.5, MZ2=80, MW2=100**2)
         obs_d = dict(process="EM", propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
         assert coupl_const.propagator_factor("phph", 91.2) == 1.0
 
     def test_nc_interference(self):
-        th_d = dict(sin2theta_weak=0.5, MZ2=100, MW2=80 ** 2)
+        th_d = dict(sin2theta_weak=0.5, MZ2=100, MW2=80**2)
         obs_d = dict(process="EM", propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
         assert coupl_const.propagator_factor("phZ", 0.0) == 0.0
 
     def test_pure_z(self):
-        th_d = dict(sin2theta_weak=0.5, MZ2=80, MW2=100 ** 2)
+        th_d = dict(sin2theta_weak=0.5, MZ2=80, MW2=100**2)
         obs_d = dict(process="EM", propagatorCorrection=0)
         coupl_const = coupl.CouplingConstants(th_d, obs_d)
 
@@ -242,4 +242,4 @@ class TestCKM2Matrix:
     def test_from_str(self):
         ra = (np.random.rand(9) + 1.0) / 2.0
         ra_s = " ".join([str(x) for x in ra])
-        assert (coupl.CKM2Matrix(ra ** 2).m == coupl.CKM2Matrix.from_str(ra_s).m).all()
+        assert (coupl.CKM2Matrix(ra**2).m == coupl.CKM2Matrix.from_str(ra_s).m).all()

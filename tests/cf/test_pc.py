@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Old distribution vector tests
 """

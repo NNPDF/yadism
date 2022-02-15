@@ -23,7 +23,7 @@ def cg_NLL_NLO(z, _args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cg_LL_NNLO(z, args):
     L = args[0]
-    return (raw_nc.c2g2am0_aq2(z) - raw_nc.c2g2am0_aqf(z)) * L ** 2
+    return (raw_nc.c2g2am0_aq2(z) - raw_nc.c2g2am0_aqf(z)) * L**2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
@@ -61,7 +61,7 @@ class AsyNNLLGluon(pc.PartonicChannelAsy):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cps_LL_NNLO(z, args):
     L = args[0]
-    return (raw_nc.c2ps2am0_aq2(z) - raw_nc.c2ps2am0_aqf(z)) * L ** 2
+    return (raw_nc.c2ps2am0_aq2(z) - raw_nc.c2ps2am0_aqf(z)) * L**2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)

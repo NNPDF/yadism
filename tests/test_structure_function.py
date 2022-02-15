@@ -42,6 +42,7 @@ class MockRunner:
     )
 
 
+@pytest.mark.skip
 class TestStructureFunction:
     def test_get_esf_same_name(self):
         # setup env
@@ -86,6 +87,7 @@ class TestStructureFunction:
             sf.get_esf(name, {"x": 0.1, "Q2": 1})
 
 
+@pytest.mark.skip
 class TestEvaluatedStructureFunction:
     def test_init_repr(self):
 

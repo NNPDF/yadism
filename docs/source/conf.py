@@ -11,8 +11,7 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import sys
+
 import os
 import pathlib
 
@@ -330,7 +329,12 @@ def run_apidoc(_):
     (docs_dest / "modules.rst").unlink()
     # 'yadmark'
     docs_dest = here / "dev-tools" / "yadmark"
-    package = here.parents[1] / "benchmarks" / "yadmark"
+    package = here.parents[1] / "src" / "yadmark"
+    main(["--module-first", "-o", str(docs_dest), str(package)])
+    (docs_dest / "modules.rst").unlink()
+    # 'yadmark'
+    docs_dest = here / "ui" / "yadbox"
+    package = here.parents[1] / "src" / "yadbox"
     main(["--module-first", "-o", str(docs_dest), str(package)])
     (docs_dest / "modules.rst").unlink()
 

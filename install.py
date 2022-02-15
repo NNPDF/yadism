@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Zero-dependency bootstrap script
 """
@@ -54,12 +55,12 @@ def load_options(yes, no, default):
 
 def repo_management(pipx, user):
     if pipx:
-        print("installing management dependecies with pipx...")
+        print("installing management dependencies with pipx...")
         subprocess.call("pipx install poetry".split())
         subprocess.call("pipx inject poetry poetry-dynamic-versioning".split())
         subprocess.call("pipx install pre-commit".split())
     else:
-        print("installing management dependecies with pip...")
+        print("installing management dependencies with pip...")
         subprocess.call(f"pip install{user} poetry".split())
         subprocess.call(f"pip install{user} poetry-dynamic-versioning".split())
         subprocess.call(f"pip install{user} pre-commit".split())

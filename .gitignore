@@ -1,6 +1,3 @@
-# ignore version
-src/yadism/version.py
-
 *.wgt
 
 # Byte-compiled / optimized / DLL files

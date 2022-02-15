@@ -110,7 +110,7 @@ class Runner:
         )
 
         # Initialize structure functions
-        self.managers = dict(
+        managers = dict(
             interpolator=interpolator,
             threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
             coupling_constants=coupling_constants,
@@ -120,21 +120,22 @@ class Runner:
         FONLL_damping = bool(theory["DAMP"])
         if FONLL_damping:
             damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
-            damping_power_c = theory.get("DAMPPOWERCHARM", damping_power)
-            damping_power_b = theory.get("DAMPPOWERBOTTOM", damping_power)
-            damping_power_t = theory.get("DAMPPOWERTOP", damping_power)
-            damping_powers = [damping_power_c, damping_power_b, damping_power_t]
+            damping_powers = [
+                theory.get(f"DAMPPOWER{quark}", damping_power)
+                for quark in ("CHARM", "BOTTOM", "TOP")
+            ]
         else:
             damping_powers = [2] * 3
         # pass theory params
         intrinsic_range = []
         if theory["IC"] == 1:
             intrinsic_range.append(4)
-        self.theory_params = dict(
+        theory_params = dict(
             pto=pto,
             pto_evol=pto_evol,
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
+            ZMq=(new_theory["ZMc"], new_theory["ZMb"], new_theory["ZMt"]),
             intrinsic_range=intrinsic_range,
             m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
             TMC=theory["TMC"],
@@ -151,6 +152,7 @@ class Runner:
             pto_evol,
             new_observables["prDIS"],
         )
+        self.configs = RunnerConfigs(theory=theory_params, managers=managers)
         logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
         logger.info("Intrinsic: %s", intrinsic_range)
         logger.info(
@@ -159,7 +161,7 @@ class Runner:
             *new_observables["TargetDIS"].values(),
         )
 
-        self.observable_instances = {}
+        self.observables = {}
         for obs_name, kins in self._observables["observables"].items():
             on = observable_name.ObservableName(obs_name)
             if on.kind in observable_name.xs:
@@ -169,7 +171,7 @@ class Runner:
                 obs = SF(on, self)
             # read kinematics
             obs.load(kins)
-            self.observable_instances[obs_name] = obs
+            self.observables[obs_name] = obs
 
         # output console
         if log.silent_mode:
@@ -188,9 +190,9 @@ class Runner:
         self._output["projectilePID"] = coupling_constants.obs_config["projectilePID"]
 
     def get_sf(self, obs_name):
-        if obs_name.name not in self.observable_instances:
-            self.observable_instances[obs_name.name] = SF(obs_name, self)
-        return self.observable_instances[obs_name.name]
+        if obs_name.name not in self.observables:
+            self.observables[obs_name.name] = SF(obs_name, self)
+        return self.observables[obs_name.name]
 
     def get_result(self):
         """
@@ -209,7 +211,7 @@ class Runner:
         # precomputing the plan of calculation
         precomputed_plan = {}
         printable_plan = []
-        for name, obs in self.observable_instances.items():
+        for name, obs in self.observables.items():
             if name in self._observables["observables"].keys():
                 precomputed_plan[name] = obs
                 printable_plan.append(
@@ -232,7 +234,7 @@ class Runner:
             ) as progress:
                 task = progress.add_task(
                     "Starting...",
-                    total=sum([len(obs) for obs in precomputed_plan.values()]),
+                    total=sum(len(obs) for obs in precomputed_plan.values()),
                 )
                 for name, obs in precomputed_plan.items():
                     results = []
@@ -250,3 +252,24 @@ class Runner:
 
         out = copy.deepcopy(self._output)
         return out
+
+
+class RunnerConfigs:
+    def __init__(self, theory, managers):
+        self.theory = theory
+        self.managers = managers
+
+    def __getattribute__(self, name):
+        managers = object.__getattribute__(self, "managers")
+        if name == "managers":
+            return managers
+        if name in managers:
+            return self.managers[name]
+
+        theory = object.__getattribute__(self, "theory")
+        if name == "theory":
+            return theory
+        if name in theory:
+            return theory[name]
+
+        return super().__getattribute__(name)

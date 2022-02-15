@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pytest
 
 from yadism import observable_name as on

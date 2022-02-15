@@ -8,10 +8,10 @@ import pandas as pd
 import yaml
 from eko import strong_coupling
 
-from . import __version__
 from . import observable_name as on
 from .esf.result import ESFResult
 from .input import compatibility
+from .version import __version__
 
 
 class MaskedPDF:
@@ -83,7 +83,7 @@ class Output(dict):
         """
         new_theory, _ = compatibility.update(theory, dict(TargetDIS="proton"))
         sc = strong_coupling.StrongCoupling.from_dict(new_theory)
-        alpha_s = lambda muR: sc.a_s(muR ** 2) * 4.0 * np.pi
+        alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
         alpha_qed = lambda _muR: theory["alphaqed"]
         return self.apply_pdf_alphas_alphaqed_xir_xif(
             lhapdf_like, alpha_s, alpha_qed, theory["XIR"], theory["XIF"]
@@ -240,10 +240,8 @@ class Output(dict):
         # set the initial state PDF ids for the grid
         grid.set_key_value("initial_state_1", "2212")
         grid.set_key_value("initial_state_2", str(lepton_pid))
-        grid.set_key_value(
-            "runcard",
-            json.dumps(dict(theory=self.theory, observables=self.observables)),
-        )
+        grid.set_key_value("theory", json.dumps(self.theory))
+        grid.set_key_value("runcard", json.dumps(self.observables))
         grid.set_key_value("yadism_version", __version__)
         grid.set_key_value("lumi_id_types", "pdg_mc_ids")
 
@@ -268,6 +266,8 @@ class Output(dict):
         """
         # TODO explicitly silence yaml
         out = self.get_raw()
+        out["theory"] = self.theory
+        out["observables"] = self.observables
         return yaml.dump(out, stream)
 
     def dump_yaml_to_file(self, filename):
@@ -314,7 +314,13 @@ class Output(dict):
                 continue
             for j, kin in enumerate(obj[obs]):
                 obj[obs][j] = ESFResult.from_document(kin)
-        return cls(obj)
+
+        out = cls(obj)
+        out.theory = obj["theory"]
+        out.observables = obj["observables"]
+        del out["theory"]
+        del out["observables"]
+        return out
 
     @classmethod
     def load_yaml_from_file(cls, filename):

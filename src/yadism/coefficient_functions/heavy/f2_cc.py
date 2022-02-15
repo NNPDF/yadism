@@ -12,7 +12,7 @@ class NonSinglet(pc.ChargedCurrentNonSinglet):
         |ref| implements :eqref:`A.1-4` with Table 1, :cite:`gluck-ccheavy`.
         """
         a = self.ka
-        b1 = lambda z: 2 - 2 * z ** 2 - 2 / z
+        b1 = lambda z: 2 - 2 * z**2 - 2 / z
         b2 = lambda z: 2 / z - 1 - z
 
         return self.h_q(a, b1, b2)
