@@ -113,7 +113,7 @@ docs-clean = { "shell" = "cd docs; make clean" }
 docs-cleanall = { "shell" = "cd docs; make cleanall" }
 
 [tool.poetry-dynamic-versioning]
-enable = false
+enable = true
 vcs = "git"
 style = "semver"
 dirty = true
