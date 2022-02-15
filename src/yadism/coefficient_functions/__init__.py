@@ -77,7 +77,10 @@ class Combiner:
                 self.damp_elems(
                     nl,
                     fonll.kernels.generate_light_diff(
-                        self.esf, nl, self.esf.info.theory["pto_evol"]
+                        self.esf,
+                        nl,
+                        self.esf.info.theory["pto"],
+                        self.esf.info.theory["pto_evol"],
                     ),
                 )
             )

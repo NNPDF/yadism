@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from ..intrinsic import f3_nc as intrinsic
 from ..light import f3_nc as light
+from ..partonic_channel import EmptyPartonicChannel
 from . import partonic_channel as pc
 
 
@@ -27,3 +28,9 @@ class MatchingIntrinsicRplus(pc.FMatchingQuark):
 
 class MatchingIntrinsicRminus(pc.FMatchingQuark):
     ffns = intrinsic.Rminus
+
+
+# TODO extract coefficient function from Buza/LeProHQ: see Eq. B.4 of Nucl. Phys. B485-420
+# and remember that in the non-singlet case d_{2xg1} = d_{xF3}
+class AsyNNLLNonSinglet(EmptyPartonicChannel):
+    pass
