@@ -49,7 +49,7 @@ def test_cg():
                 f_f2_nc.AsyNNLLGluon(esf, nf, mu2hq=m2hq),
             ]
             for o in ["NLO", "NNLO"]:
-                order = lambda pc: pc.__getattribute__(o)()
+                order = lambda pc, o=o: pc.__getattribute__(o)()
                 a = order(cg).reg(z, order(cg).args["reg"])
                 b = 0.0
                 for cgasy in cgasys:
