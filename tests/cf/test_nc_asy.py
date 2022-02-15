@@ -43,11 +43,18 @@ def test_cg():
     for nf in [3, 4]:
         for z in [1e-1, 1e-2, 1e-3]:
             cg = h_f2_nc.GluonVV(esf, nf, m2hq=m2hq)
-            cgasy = f_f2_nc.AsyGluonVV(esf, nf, mu2hq=m2hq)
+            cgasys = [
+                f_f2_nc.AsyLLGluon(esf, nf, mu2hq=m2hq),
+                f_f2_nc.AsyNLLGluon(esf, nf, mu2hq=m2hq),
+                f_f2_nc.AsyNNLLGluon(esf, nf, mu2hq=m2hq),
+            ]
             for o in ["NLO", "NNLO"]:
                 order = lambda pc: pc.__getattribute__(o)()
                 a = order(cg).reg(z, order(cg).args["reg"])
-                b = order(cgasy).reg(z, order(cgasy).args["reg"])
+                b = 0.0
+                for cgasy in cgasys:
+                    if order(cgasy):
+                        b += order(cgasy).reg(z, order(cgasy).args["reg"])
                 np.testing.assert_allclose(
                     a, b, rtol=7e-2, err_msg=f"nf={nf}, z={z},o={o}"
                 )
