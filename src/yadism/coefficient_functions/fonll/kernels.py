@@ -81,11 +81,11 @@ def generate_light(esf, nl, pto_evol):
         # matching
         *pdf_matching,
         *alphas_matching,
-        # missing is dealt above
+        # missing is dealt above in order to reuse this method in diff
     )
 
 
-def generate_light_diff(esf, nl, pto, pto_evol):
+def generate_light_diff(esf, nl, pto_evol):
     r"""
     Collect the light diff coefficient functions for |FONLL|.
 
@@ -127,20 +127,19 @@ def generate_light_diff(esf, nl, pto, pto_evol):
 
     # the asy has all the light stuff again, so subtract it back
     asy = []
-    if pto > pto_evol:
-        light_elems = generate_light(esf, nl, pto_evol)
-        for e in light_elems:
-            e.min_order = pto
-            asy.append(-e)
-        # add in addition it also has the asymptotic limit of missing
-        ihq = nl + 1
-        mu2hq = esf.info.threshold.area_walls[ihq - 3]
-        fonll_cfs = import_pc_module(kind, esf.process)
-        km = kernels.Kernel(
-            light_weights["ns"], fonll_cfs.AsyNNLLNonSinglet(esf, nl, mu2hq=mu2hq)
-        )
-        km.min_order = pto
-        asy.append(-km)
+    light_elems = generate_light(esf, nl, pto_evol)
+    for e in light_elems:
+        e.min_order = pto_evol + 1
+        asy.append(-e)
+    # add in addition it also has the asymptotic limit of missing
+    ihq = nl + 1
+    mu2hq = esf.info.threshold.area_walls[ihq - 3]
+    fonll_cfs = import_pc_module(kind, esf.process)
+    km = kernels.Kernel(
+        light_weights["ns"], fonll_cfs.AsyNNLLNonSinglet(esf, nl, mu2hq=mu2hq)
+    )
+    km.min_order = pto_evol + 1
+    asy.append(-km)
     return (k, *asy)
 
 

@@ -10,7 +10,7 @@ def sing_from_distr_coeffs(z, coeffs):
     log_ = np.log(1 - z)
     res = 0
     for k, coeff in enumerate(coeffs):
-        res += coeff * 1 / (1 - z) * log_ ** k
+        res += coeff * 1 / (1 - z) * log_**k
     return res
 
 
@@ -104,7 +104,7 @@ class RSL:
                 d[part[0]] = "-"
                 del args[part]
 
-        return f"RSL({d['r']},{d['s']},{d['l']}) - args: {self.args}"
+        return f"RSL({d['r']},{d['s']},{d['l']}) - args: {args}"
 
 
 class PartonicChannel(dict):
