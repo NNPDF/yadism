@@ -132,14 +132,14 @@ def generate_light_diff(esf, nl, pto_evol):
         e.min_order = pto_evol + 1
         asy.append(-e)
     # add in addition it also has the asymptotic limit of missing
-    ihq = nl + 1
-    mu2hq = esf.info.threshold.area_walls[ihq - 3]
-    fonll_cfs = import_pc_module(kind, esf.process)
-    km = kernels.Kernel(
-        light_weights["ns"], fonll_cfs.AsyNNLLNonSinglet(esf, nl, mu2hq=mu2hq)
-    )
-    km.min_order = pto_evol + 1
-    asy.append(-km)
+    if pto_evol >= 2:  # starts at NNLL
+        ihq = nl + 1
+        mu2hq = esf.info.threshold.area_walls[ihq - 3]
+        fonll_cfs = import_pc_module(kind, esf.process)
+        km = kernels.Kernel(
+            light_weights["ns"], fonll_cfs.AsyNNLLNonSinglet(esf, nl, mu2hq=mu2hq)
+        )
+        asy.append(-km)
     return (k, *asy)
 
 
