@@ -67,6 +67,21 @@ class AsyNNLLSinglet(pc.PartonicChannelAsy):
         return RSL(cps_NNLL_NNLO)
 
 
+class AsyLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_NLL_NNLO(z, args):
+    L = args[0]
+    return raw_nc.clns2am0_aq(z) * L
+
+
+class AsyNLLNonSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cns_NLL_NNLO)
+
+
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cns_NNLL_NNLO(z, _args):
     return raw_nc.clns2am0_a0(z)

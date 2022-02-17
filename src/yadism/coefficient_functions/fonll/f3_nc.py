@@ -32,5 +32,13 @@ class MatchingIntrinsicRminus(pc.FMatchingQuark):
 
 # TODO extract coefficient function from Buza/LeProHQ: see Eq. B.4 of Nucl. Phys. B485-420
 # and remember that in the non-singlet case d_{2xg1} = d_{xF3}
+class AsyLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class AsyNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
 class AsyNNLLNonSinglet(EmptyPartonicChannel):
     pass

@@ -91,6 +91,52 @@ class AsyNNLLSinglet(pc.PartonicChannelAsy):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
+def cns_LL_NNLO_reg(z, args):
+    L = args[0]
+    return raw_nc.c2ns2am0_aq2(z) * L**2
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_LL_NNLO_sing(z, args):
+    L = args[0]
+    return raw_nc.c2ns2bm0_aq2(z) * L**2
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_LL_NNLO_loc(z, args):
+    L = args[0]
+    return raw_nc.c2ns2cm0_aq2(z) * L**2
+
+
+class AsyLLNonSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cns_LL_NNLO_reg, cns_LL_NNLO_sing, cns_LL_NNLO_loc, args=[self.L])
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_NLL_NNLO_reg(z, args):
+    L = args[0]
+    return raw_nc.c2ns2am0_aq(z) * L
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_NLL_NNLO_sing(z, args):
+    L = args[0]
+    return raw_nc.c2ns2bm0_aq(z) * L
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cns_NLL_NNLO_loc(z, args):
+    L = args[0]
+    return raw_nc.c2ns2cm0_aq(z) * L
+
+
+class AsyNLLNonSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(cns_NLL_NNLO_reg, cns_NLL_NNLO_sing, cns_NLL_NNLO_loc, args=[self.L])
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
 def cns_NNLL_NNLO_reg(z, _args):
     return raw_nc.c2ns2am0_a0(z)
 
