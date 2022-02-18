@@ -41,7 +41,6 @@ def mellin_transform(rsl, N):
     integrand = integrand_reg_sing
     if rsl.sing is None:
         integrand = integrand_reg
-    # import pdb; pdb.set_trace()
     r, re = integrate.quad(lambda x: np.real(integrand(x)), 0, 1, full_output=1)[:2]
     i, ie = integrate.quad(lambda x: np.imag(integrand(x)), 0, 1, full_output=1)[:2]
     if rsl.loc is not None:
