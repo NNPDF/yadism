@@ -2,6 +2,8 @@
 import copy
 import json
 import pathlib
+import tarfile
+import tempfile
 
 import numpy as np
 import pandas as pd
@@ -287,6 +289,63 @@ class Output(dict):
         with open(filename, "w") as f:
             ret = self.dump_yaml(f)
         return ret
+
+    def dump_tar(self, tarname):
+        """Serialize result in a tar archive."""
+        tarpath = pathlib.Path(tarname)
+        if tarpath.suffix != ".tar":
+            raise ValueError(f"'{tarname}' is not a valid tar filename, wrong suffix")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmpdir = pathlib.Path(tmpdir)
+
+            metadata = {}
+            for field in self:
+                if not on.ObservableName.is_valid(field) or self[field] is None:
+                    # this way even scalar types are properly casted
+                    # it works for sure for: None, bool, int, float, str
+                    # and so everything we need (what is safe in yaml)
+                    metadata[field] = np.array(self[field]).tolist()
+                else:
+                    kinematics = {}
+                    for key in self[field][0].get_raw():
+                        if key != "orders":
+                            kinematics[key] = []
+
+                    orders_first = []
+                    values = []
+                    errors = []
+                    for esfres in self[field]:
+                        orders = []
+                        esf_values = []
+                        esf_errors = []
+                        for key, value in esfres.get_raw().items():
+                            if key != "orders":
+                                kinematics[key].append(value)
+                            else:
+                                for order in value:
+                                    orders.append(order["order"])
+                                    esf_values.append(order["values"])
+                                    esf_errors.append(order["errors"])
+
+                        if len(orders_first) == 0:
+                            orders_first = orders
+                        else:
+                            assert orders_first == orders
+                        values.append(esf_values)
+                        errors.append(esf_errors)
+
+                    np.savez_compressed(
+                        tmpdir / field, values=np.array(values), errors=np.array(errors)
+                    )
+                    metadata[field] = dict(orders=orders_first, kinematics=kinematics)
+
+            (tmpdir / "metadata.yaml").write_text(
+                yaml.dump(metadata, default_flow_style=None), encoding="utf-8"
+            )
+
+            with tarfile.open(tarpath, "w") as tar:
+                tar.add(tmpdir, arcname=tarpath.stem)
 
     @classmethod
     def load_yaml(cls, stream):
