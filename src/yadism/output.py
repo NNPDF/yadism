@@ -290,7 +290,7 @@ class Output(dict):
             ret = self.dump_yaml(f)
         return ret
 
-    def dump_tar(self, tarname):
+    def dump_tar(self, tarname, runcards=True):
         """Serialize result in a tar archive."""
         tarpath = pathlib.Path(tarname)
         if tarpath.suffix != ".tar":
@@ -341,8 +341,16 @@ class Output(dict):
                     metadata[field] = dict(orders=orders_first, kinematics=kinematics)
 
             (tmpdir / "metadata.yaml").write_text(
-                yaml.dump(metadata, default_flow_style=None), encoding="utf-8"
+                yaml.safe_dump(metadata, default_flow_style=None), encoding="utf-8"
             )
+            if runcards:
+                (tmpdir / "theory.yaml").write_text(
+                    yaml.safe_dump(self.theory), encoding="utf-8"
+                )
+                (tmpdir / "observables.yaml").write_text(
+                    yaml.safe_dump(self.observables, default_flow_style=None),
+                    encoding="utf-8",
+                )
 
             with tarfile.open(tarpath, "w") as tar:
                 tar.add(tmpdir, arcname=tarpath.stem)
