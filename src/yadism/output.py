@@ -394,7 +394,23 @@ class Output(dict):
                     else:
                         out[metafield] = metavalue
                 else:
-                    pass
+                    op = np.load(innerdir / f"{metafield}.npz")
+                    kinvars, kinvalues = list(zip(*metavalue["kinematics"].items()))
+                    kinematics = [dict(zip(kinvars, kin)) for kin in zip(*kinvalues)]
+                    orders = metavalue["orders"]
+
+                    Result = ESFResult if "y" not in kinvars else EXSResult
+                    results = []
+
+                    for kin, val, err in zip(kinematics, op["values"], op["errors"]):
+                        res = kin.copy()
+                        res["orders"] = [
+                            dict(zip(["order", "values", "errors"], ordvalerr))
+                            for ordvalerr in zip(orders, val, err)
+                        ]
+                        results.append(Result.from_document(res))
+
+                    out[metafield] = results
 
         return out
 
