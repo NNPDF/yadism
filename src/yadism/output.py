@@ -362,6 +362,43 @@ class Output(dict):
                 tar.add(tmpdir, arcname=tarpath.stem)
 
     @classmethod
+    def load_tar(cls, tarname):
+        tarpath = pathlib.Path(tarname)
+
+        # Initialize output object
+        out = cls()
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmpdir = pathlib.Path(tmpdir)
+
+            with tarfile.open(tarpath, "r") as tar:
+                tar.extractall(tmpdir)
+
+            # The internal name is the one that has been used to save, since the
+            # tar could have been renamed in the meanwhile, it might be unknown,
+            # but there is only a single folder
+            innerdir = list(tmpdir.glob("*"))[0]
+
+            runcards = innerdir / "runcards"
+            out.theory = yaml.safe_load((runcards / "theory.yaml").read_text())
+            out.observables = yaml.safe_load(
+                (runcards / "observables.yaml").read_text()
+            )
+
+            metadata = yaml.safe_load((innerdir / "metadata.yaml").read_text())
+            for metafield, metavalue in metadata.items():
+                if not on.ObservableName.is_valid(metafield) or metavalue is None:
+                    ar = np.array(metavalue)
+                    if ar.ndim > 0:
+                        out[metafield] = ar
+                    else:
+                        out[metafield] = metavalue
+                else:
+                    pass
+
+        return out
+
+    @classmethod
     def load_yaml(cls, stream):
         """
         Load YAML representation from stream
