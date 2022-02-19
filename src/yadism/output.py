@@ -11,7 +11,7 @@ import yaml
 from eko import strong_coupling
 
 from . import observable_name as on
-from .esf.result import ESFResult
+from .esf.result import ESFResult, EXSResult
 from .input import compatibility
 from .version import __version__
 
@@ -422,8 +422,9 @@ class Output(dict):
                 continue
             if obj[obs] is None:
                 continue
+            Result = ESFResult if "y" not in obj[obs][0] else EXSResult
             for j, kin in enumerate(obj[obs]):
-                obj[obs][j] = ESFResult.from_document(kin)
+                obj[obs][j] = Result.from_document(kin)
 
         out = cls(obj)
         out.theory = obj["theory"]
