@@ -300,22 +300,22 @@ class Output(dict):
             tmpdir = pathlib.Path(tmpdir)
 
             metadata = {}
-            for field in self:
-                if not on.ObservableName.is_valid(field) or self[field] is None:
+            for metafield, metavalue in self.items():
+                if not on.ObservableName.is_valid(metafield) or metavalue is None:
                     # this way even scalar types are properly casted
                     # it works for sure for: None, bool, int, float, str
                     # and so everything we need (what is safe in yaml)
-                    metadata[field] = np.array(self[field]).tolist()
+                    metadata[metafield] = np.array(metavalue).tolist()
                 else:
                     kinematics = {}
-                    for key in self[field][0].get_raw():
+                    for key in metavalue[0].get_raw():
                         if key != "orders":
                             kinematics[key] = []
 
                     orders_first = []
                     values = []
                     errors = []
-                    for esfres in self[field]:
+                    for esfres in metavalue:
                         orders = []
                         esf_values = []
                         esf_errors = []
@@ -336,9 +336,13 @@ class Output(dict):
                         errors.append(esf_errors)
 
                     np.savez_compressed(
-                        tmpdir / field, values=np.array(values), errors=np.array(errors)
+                        tmpdir / metafield,
+                        values=np.array(values),
+                        errors=np.array(errors),
                     )
-                    metadata[field] = dict(orders=orders_first, kinematics=kinematics)
+                    metadata[metafield] = dict(
+                        orders=orders_first, kinematics=kinematics
+                    )
 
             (tmpdir / "metadata.yaml").write_text(
                 yaml.safe_dump(metadata, default_flow_style=None), encoding="utf-8"
