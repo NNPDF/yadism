@@ -270,7 +270,7 @@ class Output(dict):
         out = self.get_raw()
         out["theory"] = self.theory
         out["observables"] = self.observables
-        return yaml.dump(out, stream)
+        return yaml.dump(out, stream, default_flow_style=None)
 
     def dump_yaml_to_file(self, filename):
         """
