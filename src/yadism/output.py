@@ -344,10 +344,12 @@ class Output(dict):
                 yaml.safe_dump(metadata, default_flow_style=None), encoding="utf-8"
             )
             if runcards:
-                (tmpdir / "theory.yaml").write_text(
+                runcards = tmpdir / "runcards"
+                runcards.mkdir()
+                (runcards / "theory.yaml").write_text(
                     yaml.safe_dump(self.theory), encoding="utf-8"
                 )
-                (tmpdir / "observables.yaml").write_text(
+                (runcards / "observables.yaml").write_text(
                     yaml.safe_dump(self.observables, default_flow_style=None),
                     encoding="utf-8",
                 )
