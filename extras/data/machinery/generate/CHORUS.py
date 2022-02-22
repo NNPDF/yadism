@@ -19,7 +19,7 @@ def dump(src_path, _target):
 
     """
     obs = obs_template.copy()
-    data = load(src_path, 2, ["Enu", "x", "y"])
+    data = load(src_path, 0, ["Enu", "x", "y"])
     esf = [
         dict(x=d["x"], y=d["y"], Q2=2.0 * Mn * d["x"] * d["y"] * d["Enu"]) for d in data
     ]
