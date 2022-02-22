@@ -23,10 +23,10 @@ def dump(src_path, target):
 
     if src.stem == "nmc_p":
         esf = []
-        for sub in src.glob("*"):
+        for sub in sorted(src.glob("*")):
             text = sub.read_text()
             with tempfile.NamedTemporaryFile(mode="w") as ntf:
-                cut_text = "\n".join(text.splitlines()[::2])
+                cut_text = "\n".join(text.splitlines())
                 ntf.write(cut_text)
                 ntf.flush()
                 data = load(ntf.name, 0, ["x", "Q2", "y"])
