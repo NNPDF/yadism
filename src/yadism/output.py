@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+"""
+Output related utilities: for the main output (that is the computed |PDF|
+independent |DIS| operator) three outputs are provided:
+
+- tar archive, containing metadata and binary :mod:`numpy.lib.format` arrays
+  (this is the **suggested** output format)
+- single file `yaml <https://yaml.org/>`_ output: a single human readable (but
+  possibly huge) file
+- `PineAPPL <https://github.com/N3PDF/pineappl>`_ interpolation grid: very
+  useful to store in a standard format (supporting also non-|DIS| processes) and
+  interfacing to other codes (but *no loading* is supported from this format)
+
+"""
 import copy
 import json
 import pathlib
@@ -17,16 +30,17 @@ from .version import __version__
 
 
 class MaskedPDF:
-    """
-    Mask some pids of a PDF set to be 0.
+    """Mask some pids of a PDF set to be 0.
 
     Parameters
     ----------
-        lhapdf_like : callable
-            object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
-            and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
-        active_pids : list(int)
-            active PIDs
+    lhapdf_like : callable
+        object that provides an xfxQ2 callable (as `lhapdf
+        <https://lhapdf.hepforge.org/>`_ and :class:`ekomark.toyLH.toyPDF` do)
+        (and thus is in flavor basis)
+    active_pids : list[int]
+        active PIDs
+
     """
 
     def __init__(self, lhapdf_like, active_pids):
@@ -41,47 +55,48 @@ class MaskedPDF:
 
 
 class Output(dict):
-    """
-    Wrapper for the output to help with application
-    to PDFs and dumping to file.
+    """Wrapper for the output to help with application to PDFs and dumping to
+    file.
     """
 
     theory = None
     observables = None
 
     def apply_pdf(self, lhapdf_like):
-        r"""
-        Compute all observables for the given PDF.
+        r"""Compute all observables for the given PDF.
 
         Parameters
         ----------
-            lhapdf_like : object
-                object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
-                and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
+        lhapdf_like : object
+            object that provides an xfxQ2 callable (as `lhapdf
+            <https://lhapdf.hepforge.org/>`_ and :class:`ekomark.toyLH.toyPDF`
+            do) (and thus is in flavor basis)
 
         Returns
         -------
-            ret : PDFOutput
-                output dictionary with all structure functions for all x, Q2, result and error
+        ret : :class:`PDFOutput`
+            output dictionary with all structure functions for all x, Q2, result and error
+
         """
         return self.apply_pdf_theory(lhapdf_like, self.theory)
 
     def apply_pdf_theory(self, lhapdf_like, theory):
-        r"""
-        Compute all observables for the given PDF.
+        r"""Compute all observables for the given PDF.
 
         Parameters
         ----------
-            lhapdf_like : object
-                object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
-                and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
-            theory : dict
-                theory dictionary
+        lhapdf_like : object
+            object that provides an xfxQ2 callable (as `lhapdf
+            <https://lhapdf.hepforge.org/>`_ and :class:`ekomark.toyLH.toyPDF`
+            do) (and thus is in flavor basis)
+        theory : dict
+            theory dictionary
 
         Returns
         -------
-            ret : PDFOutput
-                output dictionary with all structure functions for all x, Q2, result and error
+        ret : :class:`PDFOutput`
+            output dictionary with all structure functions for all x, Q2, result and error
+
         """
         new_theory, _ = compatibility.update(theory, dict(TargetDIS="proton"))
         sc = strong_coupling.StrongCoupling.from_dict(new_theory)
@@ -94,27 +109,29 @@ class Output(dict):
     def apply_pdf_alphas_alphaqed_xir_xif(
         self, lhapdf_like, alpha_s, alpha_qed, xiR, xiF
     ):
-        r"""
-        Compute all observables for the given PDF.
+        r"""Compute all observables for the given PDF.
 
         Parameters
         ----------
-            lhapdf_like : object
-                object that provides an xfxQ2 callable (as `lhapdf <https://lhapdf.hepforge.org/>`_
-                and :class:`ekomark.toyLH.toyPDF` do) (and thus is in flavor basis)
-            alpha_s : callable
-                alpha_s(muR)
-            alpha_qed : callable
-                alpha_qed
-            xiR : float
-                ratio renormalization scale to virtuality (linear!)
-            xiF : float
-                ratio factorization scale to virtuality (linear!)
+        lhapdf_like : object
+            object that provides an xfxQ2 callable (as `lhapdf
+            <https://lhapdf.hepforge.org/>`_ and :class:`ekomark.toyLH.toyPDF`
+            do) (and thus is in flavor basis)
+        alpha_s : callable
+            :math:`\alpha_s(\mu_R)`, the running strong coupling
+        alpha_qed : callable
+            :math:`\alpha(\mu_R)`, the running fine structure constant
+        xiR : float
+            ratio renormalization scale to |EW| boson virtuality (linear!)
+        xiF : float
+            ratio factorization scale to |EW| boson virtuality (linear!)
 
         Returns
         -------
-            ret : PDFOutput
-                output dictionary with all structure functions for all x, Q2, result and error
+        ret : :class:`PDFOutput`
+            output dictionary with all structure functions for all :math:`x`,
+            :math:`Q^2`, result and error
+
         """
         # iterate
         ret = PDFOutput()
@@ -137,15 +154,15 @@ class Output(dict):
         return ret
 
     def get_raw(self):
-        """
-        Serialize result as dict.
+        """Serialize result as dict.
 
         This maps the original numpy matrices to lists.
 
         Returns
         -------
-            out : dict
-                dictionary which will be written on output
+        out : dict
+            dictionary which will be written on output
+
         """
         out = {}
         # dump raw elements
@@ -166,15 +183,15 @@ class Output(dict):
         return out
 
     def dump_pineappl_to_file(self, filename, obsname):
-        """
-        Write output on a PineAPPL grid file.
+        """Write output on a PineAPPL grid file.
 
         Parameters
         ----------
-            filename : str
-                output file name
-            obsname : str
-                observable to be dumped
+        filename : str
+            output file name
+        obsname : str
+            observable to be dumped
+
         """
         # pylint: disable=no-member, too-many-locals
         if len(self[obsname]) <= 0:
@@ -252,19 +269,19 @@ class Output(dict):
         grid.write(filename)
 
     def dump_yaml(self, stream=None):
-        """
-        Serialize result as YAML.
+        """Serialize result as YAML.
 
         Parameters
         ----------
-            stream : None or stream
-                if given, dump is written on it
+        stream : None or stream
+            if given, dump is written on it
 
         Returns
         -------
-            dump : any
-                result of dump(output, stream), i.e. a string, if no stream is given or
-                Null, if self is written sucessfully to stream
+        dump : any
+            result of dump(output, stream), i.e. a string, if no stream is given or
+            Null, if self is written sucessfully to stream
+
         """
         # TODO explicitly silence yaml
         out = self.get_raw()
@@ -284,6 +301,7 @@ class Output(dict):
         -------
         ret : any
             result of dump(output, stream), i.e. Null if written sucessfully
+
         """
         with open(filename, "w") as f:
             ret = self.dump_yaml(f)
@@ -397,6 +415,11 @@ class Output(dict):
         tarpath : str or os.PathLike
             target file path (it has to be a 'tar' archive)
 
+        Returns
+        -------
+        :class:`Output`
+            loaded object
+
         """
         tarpath = pathlib.Path(tarpath)
 
@@ -451,18 +474,18 @@ class Output(dict):
 
     @classmethod
     def load_yaml(cls, stream):
-        """
-        Load YAML representation from stream
+        """Load YAML representation from stream
 
         Parameters
         ----------
-            stream : any
-                source stream
+        stream : any
+            source stream
 
         Returns
         -------
-            obj : cls
-                loaded object
+        obj : :class:`Output`
+            loaded object
+
         """
         obj = yaml.safe_load(stream)
         # make list numpy
@@ -486,18 +509,18 @@ class Output(dict):
 
     @classmethod
     def load_yaml_from_file(cls, filename):
-        """
-        Load YAML representation from file
+        """Load YAML representation from file
 
         Parameters
         ----------
-            filename : str or os.PathLike
-                source file name
+        filename : str or os.PathLike
+            source file name
 
         Returns
         -------
-            obj : cls
-                loaded object
+        obj : :class:`Output`
+            loaded object
+
         """
         obj = None
         with open(filename) as o:
@@ -506,18 +529,16 @@ class Output(dict):
 
 
 class PDFOutput(Output):
-    """
-    Wrapper for the PDF output to help with dumping to file.
-    """
+    """Wrapper for the PDF output to help with dumping to file."""
 
     def get_raw(self):
-        """
-        Convert the object into a native Python dictionary
+        """Convert the object into a native Python dictionary
 
         Returns
         -------
-            out : dict
-                raw dictionary
+        out : dict
+            raw dictionary
+
         """
         out = {}
         for obs in self:
@@ -530,27 +551,25 @@ class PDFOutput(Output):
 
     @classmethod
     def load_yaml(cls, stream):
-        """
-        Load the object from YAML.
+        """Load the object from YAML.
 
         Parameters
         ----------
-            stream : any
-                source stream
+        stream : any
+            source stream
 
         Returns
         -------
-            obj : cls
-                created object
+        obj : :class:`PDFOutput`
+            loaded object
+
         """
         obj = yaml.safe_load(stream)
         return cls(obj)
 
     @property
     def tables(self):
-        """
-        Convert data into a mapping structure functions -> pandas DataFrame
-        """
+        """Convert data into a mapping structure functions -> :class:`pandas.DataFrame`"""
         tables = {}
         for k, v in self.items():
             tables[k] = pd.DataFrame(v)
@@ -558,26 +577,26 @@ class PDFOutput(Output):
         return tables
 
     def dump_tables_to_file(self, filename):
-        """
-        Write all tables to file.
+        """Write all tables to file.
 
         Parameters
         ----------
-            filename : str
-                output file name
+        filename : str
+            output file name
+
         """
         with open(filename, "w") as f:
             for name, table in self.tables.items():
                 f.write("\n".join([name, str(table), "\n"]))
 
     def dump_tables_to_csv(self, dirname):
-        """
-        Write all tables to separate csv files.
+        """Write all tables to separate csv files.
 
         Parameters
         ----------
-            dirname : str
-                output directory name
+        dirname : str
+            output directory name
+
         """
         dirname = pathlib.Path(dirname)
         dirname.mkdir(exist_ok=True)
