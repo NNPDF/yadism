@@ -167,7 +167,7 @@ class Output(dict):
 
     def dump_pineappl_to_file(self, filename, obsname):
         """
-        Write a pineappl grid to file.
+        Write output on a PineAPPL grid file.
 
         Parameters
         ----------
@@ -273,18 +273,17 @@ class Output(dict):
         return yaml.dump(out, stream, default_flow_style=None)
 
     def dump_yaml_to_file(self, filename):
-        """
-        Writes YAML representation to a file.
+        """Writes YAML representation to a file.
 
         Parameters
         ----------
-            filename : string
-                target file name
+        filename : str or os.PathLike
+            target file name
 
         Returns
         -------
-            ret : any
-                result of dump(output, stream), i.e. Null if written sucessfully
+        ret : any
+            result of dump(output, stream), i.e. Null if written sucessfully
         """
         with open(filename, "w") as f:
             ret = self.dump_yaml(f)
@@ -492,7 +491,7 @@ class Output(dict):
 
         Parameters
         ----------
-            filename : string
+            filename : str or os.PathLike
                 source file name
 
         Returns
