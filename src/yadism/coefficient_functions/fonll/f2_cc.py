@@ -31,16 +31,32 @@ class AsyGluon(pc.PartonicChannelAsy):
         return RSL(reg)
 
 
-class PdfMatchingNonSinglet(EmptyPartonicChannel):
+class PdfMatchingLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class PdfMatchingNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class PdfMatchingNNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class AsyLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class AsyNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class AsyNNLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
 class LightNonSingletShifted(EmptyPartonicChannel):
     pass
-
-
-# class AsyNonSingletMissing(EmptyPartonicChannel):
-#     pass
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):

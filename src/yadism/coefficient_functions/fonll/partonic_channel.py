@@ -17,6 +17,9 @@ class PartonicChannelAsy(pc.PartonicChannel):
         self.L = np.log(self.ESF.Q2 / mu2hq)
 
 
+# we can define those here, since F2=F3=delta(1-z) at LO and FL=0
+
+
 @nb.njit("f8(f8)", cache=True)
 def Delta_qq_sing(z):
     r"""
@@ -74,8 +77,8 @@ def Delta_qq_loc(x):
     )
 
 
-@nb.njit("f8(f8)", cache=True)
-def K_qq_sing(z):
+@nb.njit("f8(f8, f8[:])", cache=True)
+def K_qq_sing(z, _args):
     """
     |ref| implements :eqref:`100`, :cite:`forte-fonll`.
 
@@ -102,8 +105,8 @@ def K_qq_sing(z):
     )
 
 
-@nb.njit("f8(f8)", cache=True)
-def K_qq_loc(x):
+@nb.njit("f8(f8,f8[:])", cache=True)
+def K_qq_loc(x, _args):
     """
     |ref| implements :eqref:`100`, :cite:`forte-fonll`.
 
@@ -117,7 +120,7 @@ def K_qq_loc(x):
         local part of : math:`K_qq(z)`
     """
     as_norm = 4.0
-    # MMa: Integrate[(1+z^2)/(1-z)(1/6 Log[z]^2+5/9Log[z]+28/27)+(1-z)(2/3Log[z]+13/9),{z,0,x},Assumptions->{0<x<1}]
+    # Integrate[(1+z^2)/(1-z)(1/6 Log[z]^2+5/9Log[z]+28/27)+(1-z)(2/3Log[z]+13/9),{z,0,x},Assumptions->{0<x<1}]
     return (
         constants.CF
         * constants.TR
@@ -137,38 +140,56 @@ def K_qq_loc(x):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_reg(z, args):
+def pdf_matching_LL_reg(z, args):
     L = args[0]
     as_norm = 2.0
     return L**2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_reg(z, args)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_sing(z, args):
+def pdf_matching_LL_sing(z, args):
     L = args[0]
     as_norm = 2.0
-    return (
-        K_qq_sing(z)
-        + L**2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_sing(z, args)
-        - L * Delta_qq_sing(z)
-    )
+    return +(L**2) / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_sing(z, args)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_loc(z, args):
+def pdf_matching_LL_loc(z, args):
     L = args[0]
     as_norm = 2.0
-    return (
-        K_qq_loc(z)
-        + L**2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_local(z, args)
-        - L * Delta_qq_loc(z)
-    )
+    return +(L**2) / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_local(z, args)
 
 
-class PdfMatchingNonSinglet(PartonicChannelAsy):
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_NLL_sing(z, args):
+    L = args[0]
+    return -L * Delta_qq_sing(z)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def pdf_matching_NLL_loc(z, args):
+    L = args[0]
+    return -L * Delta_qq_loc(z)
+
+
+class PdfMatchingLLNonSinglet(PartonicChannelAsy):
     def NNLO(self):
-        # we can define that here, since F2=F3 at LO and FL=0
-        return RSL(pdf_matching_reg, pdf_matching_sing, pdf_matching_loc, args=[self.L])
+        return RSL(
+            pdf_matching_LL_reg,
+            pdf_matching_LL_sing,
+            pdf_matching_LL_loc,
+            args=[self.L],
+        )
+
+
+class PdfMatchingNLLNonSinglet(PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(sing=pdf_matching_NLL_sing, loc=pdf_matching_NLL_loc, args=[self.L])
+
+
+class PdfMatchingNNLLNonSinglet(PartonicChannelAsy):
+    def NNLO(self):
+        return RSL(sing=K_qq_sing, loc=K_qq_loc, args=[self.L])
 
 
 class PartonicChannelAsyIntrinsic(pc.PartonicChannel):

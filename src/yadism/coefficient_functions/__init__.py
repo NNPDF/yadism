@@ -23,6 +23,9 @@ class Component(list):
         return self.heavy + f"({len(self)} kernels)"
 
 
+# TODO add more doc strings
+
+
 class Combiner:
     """
     Does the matching between coefficient functions and partons with their approptiate coupling
@@ -68,9 +71,21 @@ class Combiner:
         # the first condition essentially checks nf != 3
         if nf in masses and masses[nf]:
             nl = nf - 1
-            comp.extend(fonll.kernels.generate_light(self.esf, nl))
             comp.extend(
-                self.damp_elems(nl, fonll.kernels.generate_light_diff(self.esf, nl))
+                fonll.kernels.generate_light(
+                    self.esf, nl, self.esf.info.theory["pto_evol"]
+                )
+            )
+            comp.extend(heavy.kernels.generate_missing(self.esf, nl, nl + 1))
+            comp.extend(
+                self.damp_elems(
+                    nl,
+                    fonll.kernels.generate_light_diff(
+                        self.esf,
+                        nl,
+                        self.esf.info.theory["pto_evol"],
+                    ),
+                )
             )
         else:
             comp.extend(light.kernels.generate(self.esf, nf))
@@ -119,7 +134,10 @@ class Combiner:
                 if sfh not in self.intrinsic:
                     heavy_comps[sfh].extend(
                         self.damp_elems(
-                            nl, fonll.kernels.generate_heavy_diff(self.esf, nl)
+                            nl,
+                            fonll.kernels.generate_heavy_diff(
+                                self.esf, nl, self.esf.info.theory["pto_evol"]
+                            ),
                         )
                     )
                 else:
@@ -129,7 +147,9 @@ class Combiner:
                     heavy_comps[sfh].extend(
                         self.damp_elems(
                             nl,
-                            fonll.kernels.generate_heavy_intrinsic_diff(self.esf, nl),
+                            fonll.kernels.generate_heavy_intrinsic_diff(
+                                self.esf, nl, self.esf.info.theory["pto_evol"]
+                            ),
                         )
                     )
             else:

@@ -126,12 +126,8 @@ FONLL
 | That is: two different schemes are considered, and they are matched at a given
   scale, accounting for the resummation of collinear logarithms.
 
-.. important::
-
-   In the original paper the prescription is only presented for the charm
-   contributions, but we extend it here to an arbitrary quark: in especially
-   the ``NfFF`` configuration variable as to point to the *heavy* quark, i.e.
-   e.g. ``NfFF=4`` for the charm matching.
+In the original paper the prescription is only presented for the charm
+contributions, but we extend it here to an arbitrary quark.
 
 The prescription defines two separate regimes, below and above the *next* heavy
 quark threshold: :math:`Q_{thr,n_f+2}`.

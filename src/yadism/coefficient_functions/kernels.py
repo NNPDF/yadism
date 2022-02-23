@@ -101,7 +101,9 @@ class Kernel:
         if not isinstance(f, Number):
             raise ValueError("Can only multiply numbers")
         partons = {k: f * v for k, v in self.partons.items()}
-        return self.__class__(partons, copy.copy(self.coeff))
+        return self.__class__(
+            partons, copy.copy(self.coeff), self.max_order, self.min_order
+        )
 
 
 flavors = "duscbt"
