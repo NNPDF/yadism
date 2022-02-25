@@ -22,17 +22,32 @@ class AsyGluon(pc.PartonicChannelAsy):
         return RSL(reg)
 
 
-class PdfMatchingNonSinglet(EmptyPartonicChannel):
+class PdfMatchingLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
-class LightNonSingletShifted(pc.PartonicChannelAsy):
-    def NNLO(self):
-        return light.NonSingletEven(self.ESF, self.nf).NLO()
+class PdfMatchingNLLNonSinglet(EmptyPartonicChannel):
+    pass
 
 
-# class AsyNonSingletMissing(EmptyPartonicChannel):
-#     pass
+class PdfMatchingNNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class LightNonSingletShifted(EmptyPartonicChannel):
+    pass
+
+
+class AsyLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class AsyNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class AsyNNLLNonSinglet(EmptyPartonicChannel):
+    pass
 
 
 class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):

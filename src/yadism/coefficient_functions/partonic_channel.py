@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import copy
+
 import numba as nb
 import numpy as np
 
@@ -92,10 +94,17 @@ class RSL:
         return cls(loc=loc_from_delta, args={"loc": [delta_coeff]})
 
     def __repr__(self):
-        r = "r" if self.reg is not None else "-"
-        s = "s" if self.sing is not None else "-"
-        l = "l" if self.loc is not None else "-"
-        return f"RSL({r},{s},{l}) - args: {self.args}"
+        args = copy.deepcopy(self.args)
+        d = {}
+
+        for part in ["reg", "sing", "loc"]:
+            if self.__getattribute__(part) is not None:
+                d[part[0]] = part[0]
+            else:
+                d[part[0]] = "-"
+                del args[part]
+
+        return f"RSL({d['r']},{d['s']},{d['l']}) - args: {args}"
 
 
 class PartonicChannel(dict):

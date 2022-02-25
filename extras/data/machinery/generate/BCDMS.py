@@ -23,7 +23,7 @@ def dump(src_path, _target):
     src = pathlib.Path(src_path)
 
     esf = []
-    for sub in src.glob("*"):
+    for sub in sorted(src.glob("*")):
         text = sub.read_text()
         with tempfile.NamedTemporaryFile(mode="w") as ntf:
             cut_text = "\n".join(text.splitlines()[::2])

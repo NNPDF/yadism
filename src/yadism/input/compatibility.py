@@ -119,3 +119,10 @@ def update_fns(theory):
     # here there is no difference between DGLAP and DIS
     for fl in hqfl:
         theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
+
+    # fix FONLL-B and introduce PTODIS
+    if fns == "FONLL-B":
+        theory["PTODIS"] = 2
+        theory["PTO"] = 1
+    else:
+        theory["PTODIS"] = theory["PTO"]

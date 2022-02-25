@@ -100,17 +100,21 @@ class Runner:
 
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)
+        pto = new_theory["PTODIS"]
+        pto_evol = new_theory["PTO"]
+        sv_manager = sv.ScaleVariations(
+            order=pto,
+            interpolator=interpolator,
+            activate_ren=new_theory["RenScaleVar"],
+            activate_fact=new_theory["FactScaleVar"],
+        )
+
         # Initialize structure functions
         managers = dict(
             interpolator=interpolator,
             threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
             coupling_constants=coupling_constants,
-            sv_manager=sv.ScaleVariations(
-                order=theory["PTO"],
-                interpolator=interpolator,
-                activate_ren=new_theory["RenScaleVar"],
-                activate_fact=new_theory["FactScaleVar"],
-            ),
+            sv_manager=sv_manager,
         )
         # FONLL damping powers
         FONLL_damping = bool(theory["DAMP"])
@@ -127,7 +131,8 @@ class Runner:
         if theory["IC"] == 1:
             intrinsic_range.append(4)
         theory_params = dict(
-            pto=theory["PTO"],
+            pto=pto,
+            pto_evol=pto_evol,
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
             ZMq=(new_theory["ZMc"], new_theory["ZMb"], new_theory["ZMt"]),
@@ -141,8 +146,13 @@ class Runner:
             FONLL_damping=FONLL_damping,
             damping_powers=damping_powers,
         )
+        logger.info(
+            "PTO: %d, PTO@evolution: %d, process: %s",
+            pto,
+            pto_evol,
+            new_observables["prDIS"],
+        )
         self.configs = RunnerConfigs(theory=theory_params, managers=managers)
-        logger.info("PTO: %d, process: %s", theory["PTO"], new_observables["prDIS"])
         logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
         logger.info("Intrinsic: %s", intrinsic_range)
         logger.info(
