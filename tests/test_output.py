@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import io
 from unittest import mock
-
+import tarfile
 import numpy as np
 import pytest
-
+import pathlib
 from yadism import output
 from yadism.esf import result
 
@@ -110,3 +110,31 @@ class TestOutput:
             np.testing.assert_almost_equal(
                 o3["interpolation_xgrid"], d["interpolation_xgrid"]
             )
+    
+    def test_tar_output(self, tmp_path):
+        out, obs = self.fake_output()
+        #dump fake output
+        o1 = output.Output(out)
+        temp_path = pathlib.Path(tmp_path)
+        fn = pathlib.Path("test.tar")
+        actual_path = pathlib.PurePath(temp_path, fn)
+        o1.dump_tar(actual_path)
+        #load fake output
+        r1 = output.Output.load_tar(actual_path)
+        #test they are equal
+        np.testing.assert_almost_equal(
+                o1["interpolation_xgrid"], r1["interpolation_xgrid"]
+            )
+        np.testing.assert_almost_equal(
+                o1["pids"], r1["pids"]
+            )
+        np.testing.assert_equal(len(o1), len(r1))
+        np.testing.assert_equal(type(o1), type(r1))
+
+            
+
+
+
+        
+
+   
