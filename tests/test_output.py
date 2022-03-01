@@ -116,8 +116,7 @@ class TestOutput:
         #dump fake output
         o1 = output.Output(out)
         temp_path = pathlib.Path(tmp_path)
-        fn = pathlib.Path("test.tar")
-        actual_path = pathlib.PurePath(temp_path, fn)
+        actual_path = temp_path / "test.tar"
         o1.dump_tar(actual_path)
         #load fake output
         r1 = output.Output.load_tar(actual_path)
