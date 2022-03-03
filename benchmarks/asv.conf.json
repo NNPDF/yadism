@@ -67,7 +67,7 @@
   // `asv` will cache wheels of the recent builds in each
   // environment, making them faster to install next time.  This is
   // number of builds to keep, per environment.
-  "build_cache_size": 8
+  "build_cache_size": 8,
 
   // The commits after which the regression search in `asv publish`
   // should start looking for regressions. Dictionary whose keys are
@@ -82,7 +82,7 @@
   //    "another_benchmark": null,   // Skip regression detection altogether
   // }
 
-  // "build_command": [
-  // "PIP_NO_BUILD_ISOLATION=false python -mpip wheel --no-deps -w {build_cache_dir} {build_dir}"
-  // ]
+  "build_command": [
+    "PIP_NO_BUILD_ISOLATION=false python -mpip wheel --no-deps -w {build_cache_dir} {build_dir}"
+  ]
 }

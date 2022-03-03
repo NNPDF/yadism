@@ -106,7 +106,7 @@ lint-warnings = "pylint src/*/*.py --exit-zero"
 sandbox = "python benchmarks/runners/sandbox.py"
 navigator = "yadnav"
 nav = "yadnav"
-asv-run = "asv run --config benchmarks/asv.conf.json"
+asv-run = "asv run --config benchmarks/asv.conf.json master..HEAD"
 asv-preview = "asv preview --config benchmarks/asv.conf.json"
 asv-publish = "asv publish --config benchmarks/asv.conf.json"
 asv-clean = { "shell" = "rm -rf benchmarks/env benchmarks/html benchmarks/results" }
