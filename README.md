@@ -57,7 +57,7 @@ poetry install
 ```
 
 To install `poetry` and the other recommended tools, follow the
-[instructions](.gihub/CONTRIBUTING.md#development-tools).
+[instructions](.github/CONTRIBUTING.md#development-tools).
 
 ## Development
 
