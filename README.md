@@ -50,13 +50,14 @@ pip install yadism
 
 ### Dev
 
-For development just use the install script and poetry (provided by install
-script):
+For development just use [`poetry`](https://python-poetry.org/):
 
 ```sh
-python install.py
 poetry install
 ```
+
+To install `poetry` and the other recommended tools, follow the
+[instructions](.gihub/CONTRIBUTING.md#development-tools).
 
 ## Development
 
