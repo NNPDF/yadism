@@ -73,6 +73,7 @@ pytest-cov = "^2.12.1"
 pytest-env = "^0.6.2"
 # benchmark
 asv = "^0.4.2"
+virtualenv = "^20.13.2"
 # docs
 Sphinx = "^4.1.1"
 sphinx-rtd-theme = "^0.5.2"
@@ -105,6 +106,11 @@ lint-warnings = "pylint src/*/*.py --exit-zero"
 sandbox = "python benchmarks/runners/sandbox.py"
 navigator = "yadnav"
 nav = "yadnav"
+asv-run = "asv run --config benchmarks/asv.conf.json"
+asv-preview = "asv preview --config benchmarks/asv.conf.json"
+asv-publish = "asv publish --config benchmarks/asv.conf.json"
+asv-clean = { "shell" = "rm -rf benchmarks/env benchmarks/html benchmarks/results" }
+asv = ["asv-run", "asv-publish", "asv-preview"]
 docs = { "shell" = "cd docs; make html" }
 docs-view = { "shell" = "cd docs; make view" }
 docs-server = { "shell" = "cd docs; make server" }
