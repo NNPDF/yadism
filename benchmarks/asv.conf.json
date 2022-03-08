@@ -82,6 +82,9 @@
   //    "another_benchmark": null,   // Skip regression detection altogether
   // }
 
+
+  "install_command": ["in-dir={env_dir} python -mpip install {wheel_file}[mark]"],
+
   "build_command": [
     "PIP_NO_BUILD_ISOLATION=false python -mpip wheel --no-deps -w {build_cache_dir} {build_dir}"
   ]
