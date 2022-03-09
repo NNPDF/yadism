@@ -131,3 +131,11 @@ class StructureFunction:
                 all children outputs
         """
         return list(self.iterate_result())
+
+    def drop_cache(self):
+        """Drop temporary cache.
+
+        This preserves final results, since they are not part of the cache.
+
+        """
+        self.cache = {}

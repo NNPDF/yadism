@@ -194,6 +194,15 @@ class Runner:
             self.observables[obs_name.name] = SF(obs_name, self)
         return self.observables[obs_name.name]
 
+    def drop_cache(self):
+        """Drop the whole cache for all observables.
+
+        This preserves final results, since they are not part of the cache.
+
+        """
+        for obs in self.observables.values():
+            self.drop_cache()
+
     def get_result(self):
         """
         Compute coefficient functions grid for requested kinematic points.
