@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
 import pathlib
-import tarfile
 from unittest import mock
 
 import numpy as np

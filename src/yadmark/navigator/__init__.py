@@ -6,7 +6,7 @@ import banana
 from banana import cfg as banana_cfg
 from banana import navigator as bnav
 
-from . import navigator, glob
+from . import glob, navigator
 
 here = pathlib.Path(__file__).parent
 banana.register(here.parents[2] / "benchmarks")
