@@ -27,7 +27,6 @@ class CrossSection:
         self.obs_name = obs_name
         self.runner = runner
         self.exss = []
-        self.cache = {}
         logger.debug("Init %s", self)
 
     def __repr__(self):
@@ -56,9 +55,9 @@ class CrossSection:
     def get_esf(self, obs_name, kin):
         return self.runner.get_sf(obs_name).get_esf(obs_name, kin, use_raw=False)
 
-    def iterate_result(self):
-        for exs_ in self.exss:
-            yield exs_.get_result()
+    def iterate_result(self, key=lambda indexed: indexed[0]):
+        for idx, owned_exs in sorted(enumerate(self.exss), key=key):
+            yield idx, owned_exs.get_result()
 
     def get_result(self):
         """

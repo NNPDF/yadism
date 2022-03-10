@@ -201,7 +201,8 @@ class Runner:
 
         """
         for obs in self.observables.values():
-            self.drop_cache()
+            if isinstance(obs, SF):
+                obs.drop_cache()
 
     def get_result(self):
         """
@@ -246,12 +247,12 @@ class Runner:
                     total=sum(len(obs) for obs in precomputed_plan.values()),
                 )
                 for name, obs in precomputed_plan.items():
-                    results = []
-                    for res in obs.iterate_result():
-                        results.append(res)
+                    results = [None] * len(obs)
+                    for idx, res in obs.iterate_result(lambda indexed: indexed[1].Q2):
+                        results[idx] = res
                         progress.update(
                             task,
-                            description=f"Computing [bold green]{name}",
+                            description=f"Computing [bold green]{name} Q2={res.Q2}",
                             advance=1,
                         )
                     self._output[name] = results

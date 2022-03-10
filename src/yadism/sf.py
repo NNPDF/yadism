@@ -117,9 +117,9 @@ class StructureFunction:
             # ask our parent (as always)
             return self.runner.get_sf(obs_name).get_esf(obs_name, kinematics, *args)
 
-    def iterate_result(self):
-        for owned_esf in self.esfs:
-            yield owned_esf.get_result()
+    def iterate_result(self, key=lambda indexed: indexed[0]):
+        for idx, owned_esf in sorted(enumerate(self.esfs), key=key):
+            yield idx, owned_esf.get_result()
 
     def get_result(self):
         """
