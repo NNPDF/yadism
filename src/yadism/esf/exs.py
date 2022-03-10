@@ -11,11 +11,14 @@ conv = 3.893793e10  # conversion factor from GeV^-2 to 10^-38 cm^2
 class EvaluatedCrossSection:
     def __init__(self, kin, obs_name, configs, get_esf):
         self.kin = kin
+        self.Q2 = kin["Q2"]
+        self.x = kin["x"]
+        self.y = kin["y"]
         self.info = ESFInfo(obs_name, configs)
         self.get_esf = get_esf
 
     def f_coeffs(self):
-        y = self.kin["y"]
+        y = self.y
         yp = 1.0 + (1.0 - y) ** 2
         ym = 1.0 - (1.0 - y) ** 2
         yL = y**2
@@ -37,8 +40,8 @@ class EvaluatedCrossSection:
         if kind == "XSHERACC":
             norm = 1.0 / 4.0
         else:
-            x = self.kin["x"]
-            Q2 = self.kin["Q2"]
+            x = self.x
+            Q2 = self.Q2
             mn = np.sqrt(self.info.configs.M2target)
             m2w = self.info.configs.M2W
             yp -= 2.0 * (mn * x * y) ** 2 / Q2  # = ypc
@@ -67,12 +70,12 @@ class EvaluatedCrossSection:
         if f_coeffs[2] != 0.0:
             f3 = self.get_esf(ObservableName(f"F3_{flavor}"), self.kin).get_result()
         else:
-            f3 = ESFResult(self.kin["x"], self.kin["Q2"], f2.nf)
+            f3 = ESFResult(self.x, self.Q2, f2.nf)
 
         # add normalizations
         esf = f_coeffs @ np.array([f2, fl, f3])
         # remap to EXS
-        sigma = EXSResult(self.kin["x"], self.kin["Q2"], self.kin["y"], f2.nf)
+        sigma = EXSResult(self.x, self.Q2, self.y, f2.nf)
         for o, v in esf.orders.items():
             # now shift orders: push alpha_qed two powers up
             sigma.orders[(o[0], o[1] + self.alpha_qed_power(), o[2], o[3])] = v
