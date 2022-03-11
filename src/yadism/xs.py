@@ -55,9 +55,9 @@ class CrossSection:
     def get_esf(self, obs_name, kin):
         return self.runner.get_sf(obs_name).get_esf(obs_name, kin, use_raw=False)
 
-    def iterate_result(self, key=lambda indexed: indexed[0]):
-        for idx, owned_exs in sorted(enumerate(self.exss), key=key):
-            yield idx, owned_exs.get_result()
+    @property
+    def elements(self):
+        return self.exss
 
     def get_result(self):
         """
@@ -68,4 +68,4 @@ class CrossSection:
             output : list(ESFResult)
                 all children outputs
         """
-        return list(self.iterate_result())
+        return list(elem.get_result() for elem in self.elements)

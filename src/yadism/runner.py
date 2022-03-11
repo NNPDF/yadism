@@ -241,16 +241,29 @@ class Runner:
                 "Starting...",
                 total=sum(len(obs) for obs in precomputed_plan.values()),
             )
+
             for name, obs in precomputed_plan.items():
+                # init slots
                 results = [None] * len(obs)
-                for idx, res in obs.iterate_result(lambda indexed: indexed[1].Q2):
-                    rich.print(idx, res.Q2)
-                    results[idx] = res
+                Q2 = None
+
+                # compute
+                for idx, elem in sorted(
+                    enumerate(obs.elements), key=lambda indexed: indexed[1].Q2
+                ):
+                    # if we're changing Q2, drop cache
+                    if Q2 is not None and Q2 != elem.Q2:
+                        self.drop_cache()
+                    Q2 = elem.Q2
+
+                    results[idx] = elem.get_result()
                     progress.update(
                         task,
                         description=f"Computing [bold green]{name}",
                         advance=1,
                     )
+
+                self.drop_cache()
                 self._output[name] = results
 
         end = time.time()

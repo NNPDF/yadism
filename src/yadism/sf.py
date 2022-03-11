@@ -117,9 +117,9 @@ class StructureFunction:
             # ask our parent (as always)
             return self.runner.get_sf(obs_name).get_esf(obs_name, kinematics, *args)
 
-    def iterate_result(self, key=lambda indexed: indexed[0]):
-        for idx, owned_esf in sorted(enumerate(self.esfs), key=key):
-            yield idx, owned_esf.get_result()
+    @property
+    def elements(self):
+        return self.esfs
 
     def get_result(self):
         """
@@ -130,7 +130,7 @@ class StructureFunction:
             output : list(ESFResult)
                 all children outputs
         """
-        return list(self.iterate_result())
+        return list(elem.get_result() for elem in self.elements)
 
     def drop_cache(self):
         """Drop temporary cache.
