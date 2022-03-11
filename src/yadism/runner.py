@@ -235,27 +235,24 @@ class Runner:
         self.console.print(rich.markdown.Markdown("## Calculation"))
         self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
-        if log.debug:
+
+        with rich.progress.Progress(transient=True, console=self.console) as progress:
+            task = progress.add_task(
+                "Starting...",
+                total=sum(len(obs) for obs in precomputed_plan.values()),
+            )
             for name, obs in precomputed_plan.items():
-                self._output[name] = obs.get_result()
-        else:
-            with rich.progress.Progress(
-                transient=True, console=self.console
-            ) as progress:
-                task = progress.add_task(
-                    "Starting...",
-                    total=sum(len(obs) for obs in precomputed_plan.values()),
-                )
-                for name, obs in precomputed_plan.items():
-                    results = [None] * len(obs)
-                    for idx, res in obs.iterate_result(lambda indexed: indexed[1].Q2):
-                        results[idx] = res
-                        progress.update(
-                            task,
-                            description=f"Computing [bold green]{name} Q2={res.Q2}",
-                            advance=1,
-                        )
-                    self._output[name] = results
+                results = [None] * len(obs)
+                for idx, res in obs.iterate_result(lambda indexed: indexed[1].Q2):
+                    rich.print(idx, res.Q2)
+                    results[idx] = res
+                    progress.update(
+                        task,
+                        description=f"Computing [bold green]{name}",
+                        advance=1,
+                    )
+                self._output[name] = results
+
         end = time.time()
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")
