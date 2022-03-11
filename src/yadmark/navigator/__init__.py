@@ -38,7 +38,7 @@ Available functions:
 
 
 def register_globals(configpath):
-    app = navigator.NavigatorApp(banana_cfg.cfg, "sandbox")
+    app = navigator.NavigatorApp(configpath, "sandbox")
     glob.app = app
 
     glob.glob["yelp"] = yelp
