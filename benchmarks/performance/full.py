@@ -18,11 +18,12 @@ def generate_observable():
     observable = copy.deepcopy(observables.default_card)
 
     kinematics = []
-    kinematics.extend([dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, 0.9, 10)])
+    kinematics.extend([dict(x=x, Q2=20.0, y=0) for x in np.geomspace(1e-4, 0.9, 100)])
     kinematics.extend(
-        [dict(x=0.1, Q2=Q2, y=0) for Q2 in np.geomspace(4, 20, 10).tolist()]
+        [dict(x=0.1, Q2=Q2, y=0) for Q2 in np.geomspace(4, 20, 1000).tolist()]
     )
 
+    observable["observables"]["F2_light"] = kinematics
     return observable
 
 
@@ -57,12 +58,4 @@ class PeakMemorySuite:
         compute_sf()
 
     def peakmem_sf_tmc(self):
-        compute_sf_tmc()
-
-
-class TimeSuite:
-    def time_sf(self):
-        compute_sf()
-
-    def time_sf_tmc(self):
         compute_sf_tmc()
