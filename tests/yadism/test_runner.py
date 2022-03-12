@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 import collections
 import contextlib
+import dataclasses
 
 import pytest
 import rich.progress
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
+import yadism.input.compatibility
+import yadism.input.inspector
 from yadism import runner, sf
 
 
@@ -48,9 +51,65 @@ class ResultsRunner(runner.Runner):
 
 
 class TestRunner:
-    def test_init(self):
-        #  runner.Runner({}, {})
-        pass
+    @given(st.data())
+    @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
+    def test_init(self, monkeypatch, data):
+        @dataclasses.dataclass
+        class FakeInspector:
+            theory: dict
+            observables: dict
+
+            def perform_all_checks(self):
+                pass
+
+        def fake_update(*args):
+            return args
+
+        monkeypatch.setattr(yadism.input.inspector, "Inspector", FakeInspector)
+        monkeypatch.setattr(yadism.input.compatibility, "update", fake_update)
+        pto = data.draw(st.integers(0, 2))
+        masses = {f"m{q}": v + 2.0 for v, q in enumerate("cbt")}
+        kthr = {f"kDIS{q}Thr": v + 2.0 for v, q in enumerate("cbt")}
+        zm_masses = {f"ZM{q}": True for q in "cbt"}
+        theory = dict(
+            PTO=pto,
+            PTODIS=pto,
+            FNS="ZM-VFNS",
+            NfFF=3,
+            nf0=3,
+            **masses,
+            **kthr,
+            **zm_masses,
+            MaxNfPdf=6,
+            MP=1.0,
+            Q0=2.0,
+            HQ="POLE",
+            DAMP=0,
+            IC=1,
+            TMC=0,
+            RenScaleVar=True,
+            FactScaleVar=False,
+            CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
+            MW=100.0,
+            MZ=100.0,
+            GF=1.0,
+        )
+        xgrid = data.draw(st.lists(st.floats(1e-4, 1.0), min_size=3, unique=True))
+        observables = dict(
+            interpolation_xgrid=xgrid,
+            interpolation_polynomial_degree=len(xgrid) - 2,
+            interpolation_is_log=True,
+            prDIS=data.draw(st.sampled_from(["EM", "NC", "CC"])),
+            TargetDIS=dict(Z=1.0, A=2.0),
+            ProjectileDIS="electron",
+            PolarizationDIS=0.0,
+            PropagatorCorrection=0.0,
+            observables={},
+        )
+
+        full_runner = runner.Runner(theory, observables)
+
+        assert full_runner._theory["PTO"] == theory["PTO"]
 
     @given(st.text(min_size=2))
     @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
