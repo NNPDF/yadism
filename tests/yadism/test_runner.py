@@ -10,7 +10,7 @@ from hypothesis import strategies as st
 
 import yadism.input.compatibility
 import yadism.input.inspector
-from yadism import runner, sf
+from yadism import log, runner, sf
 
 
 class DropRunner(runner.Runner):
@@ -67,6 +67,7 @@ class TestRunner:
 
         monkeypatch.setattr(yadism.input.inspector, "Inspector", FakeInspector)
         monkeypatch.setattr(yadism.input.compatibility, "update", fake_update)
+
         pto = data.draw(st.integers(0, 2))
         masses = {f"m{q}": v + 2.0 for v, q in enumerate("cbt")}
         kthr = {f"kDIS{q}Thr": v + 2.0 for v, q in enumerate("cbt")}
@@ -84,7 +85,7 @@ class TestRunner:
             MP=1.0,
             Q0=2.0,
             HQ="POLE",
-            DAMP=0,
+            DAMP=1,
             IC=1,
             TMC=0,
             RenScaleVar=True,
@@ -94,22 +95,40 @@ class TestRunner:
             MZ=100.0,
             GF=1.0,
         )
-        xgrid = data.draw(st.lists(st.floats(1e-4, 1.0), min_size=3, unique=True))
+        xgrid = (
+            [1e-5]
+            + data.draw(
+                st.lists(
+                    st.floats(1e-4, 1.0 - 1e-4), min_size=1, max_size=10, unique=True
+                )
+            )
+            + [1.0]
+        )
         observables = dict(
             interpolation_xgrid=xgrid,
             interpolation_polynomial_degree=len(xgrid) - 2,
             interpolation_is_log=True,
-            prDIS=data.draw(st.sampled_from(["EM", "NC", "CC"])),
+            prDIS="CC",
             TargetDIS=dict(Z=1.0, A=2.0),
             ProjectileDIS="electron",
             PolarizationDIS=0.0,
             PropagatorCorrection=0.0,
-            observables={},
+            observables={
+                "F2_charm": [dict(x=0.1, Q2=10.0)],
+                "XSCHORUSCC": [dict(x=0.1, y=0.5, Q2=10.0)],
+            },
         )
 
         full_runner = runner.Runner(theory, observables)
 
         assert full_runner._theory["PTO"] == theory["PTO"]
+
+        log.silent_mode = True
+        theory["DAMP"] = 0
+
+        full_runner = runner.Runner(theory, observables)
+
+        assert full_runner.console.file is not None
 
     @given(st.text(min_size=2))
     @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
