@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import collections
+import contextlib
 
 import pytest
+import rich.progress
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
@@ -29,6 +31,22 @@ class GetRunner(runner.Runner):
         self.observables = dict(a=None)
 
 
+class ResultsRunner(runner.Runner):
+    def __init__(self, observables):
+        self.observables = observables
+        self._observables = dict(observables={obs: [] for obs in observables})
+        self._output = {}
+
+        class FakeConsole:
+            def __init__(self):
+                self.content = []
+
+            def print(self, *args):
+                self.content.extend(args)
+
+        self.console = FakeConsole()
+
+
 class TestRunner:
     def test_init(self):
         #  runner.Runner({}, {})
@@ -50,6 +68,24 @@ class TestRunner:
 
         drop_runner.drop_cache()
         assert all(o.passed for o in drop_runner.observables.values())
+
+    @given(st.lists(st.text()))
+    @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
+    def test_result(self, monkeypatch, names):
+        FakeSF = collections.namedtuple("FakeSF", ["name", "runner", "elements"])
+        obss = {name: FakeSF(name, None, []) for name in names}
+        results_runner = ResultsRunner(obss)
+
+        @contextlib.contextmanager
+        def fake_progress(*args, **kwargs):
+            class FakeProgress:
+                def add_task(self, *args, **kwargs):
+                    return None
+
+            yield FakeProgress()
+
+        monkeypatch.setattr(rich.progress, "Progress", fake_progress)
+        assert results_runner.get_result() is not None
 
 
 class TestConfig:
