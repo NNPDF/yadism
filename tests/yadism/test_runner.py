@@ -150,8 +150,22 @@ class TestRunner:
     @given(st.lists(st.text()))
     @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
     def test_result(self, monkeypatch, names):
-        FakeSF = collections.namedtuple("FakeSF", ["name", "runner", "elements"])
-        obss = {name: FakeSF(name, None, []) for name in names}
+        @dataclasses.dataclass
+        class FakeESF:
+            Q2: float
+
+            def get_result(self):
+                return None
+
+        class FakeSF:
+            def __init__(self, name):
+                self.name = name
+                self.elements = [FakeESF(Q2) for Q2 in range(1, 4)]
+
+            def __len__(self):
+                return len(self.elements)
+
+        obss = {name: FakeSF(name) for name in names}
         results_runner = ResultsRunner(obss)
 
         @contextlib.contextmanager
@@ -159,6 +173,9 @@ class TestRunner:
             class FakeProgress:
                 def add_task(self, *args, **kwargs):
                     return None
+
+                def update(self, *args, **kwargs):
+                    pass
 
             yield FakeProgress()
 
