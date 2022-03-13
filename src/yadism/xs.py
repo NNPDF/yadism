@@ -35,6 +35,10 @@ class CrossSection:
     def __len__(self):
         return len(self.exss)
 
+    @property
+    def elements(self):
+        return self.exss
+
     def load(self, kinematic_configs):
         """
         Loads all kinematic configurations from the run card.
@@ -54,10 +58,6 @@ class CrossSection:
 
     def get_esf(self, obs_name, kin):
         return self.runner.get_sf(obs_name).get_esf(obs_name, kin, use_raw=False)
-
-    @property
-    def elements(self):
-        return self.exss
 
     def get_result(self):
         """
