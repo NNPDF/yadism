@@ -45,7 +45,7 @@ def register_globals(configpath):
     glob.glob["h"] = yelp
 
     # register banana functions
-    bnav.register_globals(globals(), app)
+    bnav.register_globals(glob.glob, glob.app)
 
     # add my functions
     glob.glob["check_log"] = app.check_log
