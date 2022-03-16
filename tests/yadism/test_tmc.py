@@ -3,15 +3,10 @@ import copy
 
 import numpy as np
 import pytest
-from eko import basis_rotation as br
 from eko.interpolation import InterpolatorDispatcher
-from eko.thresholds import ThresholdsAtlas
 
 import yadism.esf.tmc as TMC
 from yadism import observable_name
-from yadism.coefficient_functions.coupling_constants import CouplingConstants
-from yadism.esf import scale_variations as sv
-from yadism.esf.esf import EvaluatedStructureFunction as ESF
 from yadism.esf.result import ESFResult
 
 lo = (0, 0, 0, 0)
@@ -38,15 +33,25 @@ class MockTMC(TMC.EvaluatedStructureFunctionTMC):
         return MockESF([3.0, 0.0, 0.0])
 
 
-@pytest.mark.skip
+class MockObj:
+    pass
+
+
+class MockSF:
+    obs_name = observable_name.ObservableName("F2_light")
+
+    def __init__(self, tmc, xg=None):
+        if xg is None:
+            xg = np.array([0.2, 0.6, 1.0])
+        self.runner = MockObj()
+        self.runner.configs = MockObj()
+        self.runner.configs.M2target = 1.0
+        self.runner.configs.TMC = tmc
+        self.runner.configs.interpolator = InterpolatorDispatcher(xg, 1, False, False)
+
+
 class TestAbstractTMC:
     def test_mode(self):
-        class MockSF:
-            M2target = 1.0
-
-            def __init__(self, tmc):
-                self.TMC = tmc
-
         for k in [1, 2, 3]:
             objSF = MockSF(k)
             obj = MockTMC(objSF, {"x": 0.99, "Q2": 1})
@@ -67,11 +72,7 @@ class TestAbstractTMC:
     def test_convolute_F2_empty(self):
         xg = np.array([0.2, 0.6, 1.0])
 
-        class MockSF:
-            obs_name = observable_name.ObservableName("F2_light")
-            M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False)
-
+        class MockSF1(MockSF):
             def get_esf(self, _name, kinematics):
                 # this means F2(x>.6) = 0
                 if kinematics["x"] >= 0.6:
@@ -84,17 +85,17 @@ class TestAbstractTMC:
             np.testing.assert_allclose(np.max(np.abs(res.orders[lo][1])), 0)
 
         # build objects
-        objSF = MockSF()
+        objSF = MockSF1(1, xg)
         obj = MockTMC(objSF, {"x": 0.99, "Q2": 1})
         # test 0 function
-        res = obj._convolute_FX(
-            "F2", lambda x, args: 0
-        )  # pylint: disable=protected-access
+        res = obj._convolute_FX(  # pylint: disable=protected-access
+            "F2", lambda _x, _args: 0
+        )
         is0(res)
         # test constant function
-        res = obj._convolute_FX(
-            "F2", lambda x, args: 1
-        )  # pylint: disable=protected-access
+        res = obj._convolute_FX(  # pylint: disable=protected-access
+            "F2", lambda _x, _args: 1
+        )
         is0(res)
         # test random function
         res = obj._convolute_FX("F2", np.exp)  # pylint: disable=protected-access
@@ -109,11 +110,7 @@ class TestAbstractTMC:
     def test_convolute_F2_delta(self):
         xg = np.array([0.2, 0.6, 1.0])
 
-        class MockSF:
-            obs_name = observable_name.ObservableName("F2_light")
-            M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False)
-
+        class MockSF2(MockSF):
             def get_esf(self, _name, kinematics):
                 # this means F2 = pdf
                 if kinematics["x"] == 0.2:
@@ -125,7 +122,7 @@ class TestAbstractTMC:
                 raise ValueError("unkown x")
 
         # build objects
-        objSF = MockSF()
+        objSF = MockSF2(1, xg)
         obj = MockTMC(objSF, {"x": 0.99, "Q2": 1})
         # convolute with constant function
         # res_const = int_xi^1 du/u 1 F2(u)
@@ -170,85 +167,13 @@ class TestAbstractTMC:
     def test_convolute_F2_xi_of_domain(self):
         xg = np.array([0.2, 0.6, 1.0])
 
-        class MockSF:
-            obs_name = observable_name.ObservableName("F2_light")
-            M2target = 1.0
-            interpolator = InterpolatorDispatcher(xg, 1, False, False)
-
+        class MockSF3(MockSF):
             def get_esf(self, _name, kinematics):
                 pass
 
         #  build objects
-        objSF = MockSF()
+        objSF = MockSF3(1, xg)
         obj = MockTMC(objSF, {"x": 0.2, "Q2": 1})
         #  xi < x so this has to fail
         with pytest.raises(ValueError):
             obj._h2()  # pylint: disable=protected-access
-
-
-xg = np.array([0.2, 0.6, 1.0])
-th_d = dict(
-    sin2theta_weak=1.0,
-    CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
-)
-obs_d = dict(
-    ProjectileDIS="electron",
-    PolarizationDIS=0.0,
-    prDIS="EM",
-    PropagatorCorrection=0,
-)
-interpolator = InterpolatorDispatcher(xg, 1, False, False)
-coupling_constants = CouplingConstants.from_dict(th_d, obs_d)
-threshold = ThresholdsAtlas([4, 20, np.inf])
-sv_manager = sv.ScaleVariations(
-    order=0, interpolator=interpolator, activate_ren=False, activate_fact=False
-)
-
-
-class MockRunner:
-    managers = dict(
-        interpolator=interpolator,
-        threshold=threshold,
-        coupling_constants=coupling_constants,
-        sv_manager=sv_manager,
-    )
-    theory_params = dict(
-        pto=0, xiF=1, M2target=1.0, TMC=1, scheme="FFNS", target=dict(Z=1, A=1)
-    )
-
-
-@pytest.mark.skip
-def test_f():
-    class MockSF:
-        obs_name = observable_name.ObservableName("F2_light")
-        runner = MockRunner()
-
-        def __getattribute__(self, name):
-            runner = object.__getattribute__(self, "runner")
-            if name in runner.managers:
-                return runner.managers[name]
-            if name in runner.theory_params:
-                return runner.theory_params[name]
-            return super().__getattribute__(name)
-
-        def __init__(self, tmc):
-            self.TMC = tmc
-
-        def get_esf(self, _name, kinematics):
-            # this means F2 = pdf
-            vs = self.interpolator.get_interpolation(
-                [kinematics["x"]] * len(br.flavor_basis_pids)
-            )
-            r = ESF(self, kinematics)
-            r.res.orders[lo] = (vs, np.zeros(len(vs)))
-            return r
-
-    # build objects
-    x = 1.0
-    Q2 = 10
-    for tmc in [1, 2, 3]:
-        objSF = MockSF(tmc)
-        for cls in [TMC.ESFTMC_F2, TMC.ESFTMC_FL, TMC.ESFTMC_F3]:
-            obj = cls(objSF, dict(x=x, Q2=Q2))
-            # for the moment we can't do more than this ..
-            assert isinstance(obj.get_result(), ESFResult)

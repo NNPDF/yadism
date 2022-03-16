@@ -159,7 +159,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
             out = self._get_result_APFEL()
         elif self.sf.runner.configs.TMC == 2:  # approx
             out = self._get_result_approx()
-        elif self.sf.TMC == 3:  # exact
+        elif self.sf.runner.configs.TMC == 3:  # exact
             out = self._get_result_exact()
         else:
             raise ValueError(f"Unknown TMC value {self.sf.runner.configs.TMC}")
