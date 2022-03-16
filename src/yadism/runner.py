@@ -194,6 +194,16 @@ class Runner:
             self.observables[obs_name.name] = SF(obs_name, self)
         return self.observables[obs_name.name]
 
+    def drop_cache(self):
+        """Drop the whole cache for all observables.
+
+        This preserves final results, since they are not part of the cache.
+
+        """
+        for obs in self.observables.values():
+            if isinstance(obs, SF):
+                obs.drop_cache()
+
     def get_result(self):
         """
         Compute coefficient functions grid for requested kinematic points.
@@ -225,27 +235,37 @@ class Runner:
         self.console.print(rich.markdown.Markdown("## Calculation"))
         self.console.print("yadism took off! please stay tuned ...")
         start = time.time()
-        if log.debug:
+
+        with rich.progress.Progress(transient=True, console=self.console) as progress:
+            task = progress.add_task(
+                "Starting...",
+                total=sum(len(obs) for obs in precomputed_plan.values()),
+            )
+
             for name, obs in precomputed_plan.items():
-                self._output[name] = obs.get_result()
-        else:
-            with rich.progress.Progress(
-                transient=True, console=self.console
-            ) as progress:
-                task = progress.add_task(
-                    "Starting...",
-                    total=sum(len(obs) for obs in precomputed_plan.values()),
-                )
-                for name, obs in precomputed_plan.items():
-                    results = []
-                    for res in obs.iterate_result():
-                        results.append(res)
-                        progress.update(
-                            task,
-                            description=f"Computing [bold green]{name}",
-                            advance=1,
-                        )
-                    self._output[name] = results
+                # init slots
+                results = [None] * len(obs)
+                Q2 = None
+
+                # compute
+                for idx, elem in sorted(
+                    enumerate(obs.elements), key=lambda indexed: indexed[1].Q2
+                ):
+                    # if we're changing Q2, drop cache
+                    if Q2 is not None and Q2 != elem.Q2:
+                        self.drop_cache()
+                    Q2 = elem.Q2
+
+                    results[idx] = elem.get_result()
+                    progress.update(
+                        task,
+                        description=f"Computing [bold green]{name}",
+                        advance=1,
+                    )
+
+                self.drop_cache()
+                self._output[name] = results
+
         end = time.time()
         diff = end - start
         self.console.print(f"[cyan]took {diff:.2f} s")

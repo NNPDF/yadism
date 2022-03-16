@@ -5,7 +5,7 @@ from yadism import observable_name as on
 
 from ..data import db
 
-table_objects = bnav.table_objects
+table_objects = bnav.navigator.table_objects
 table_objects["o"] = db.Observable
 
 

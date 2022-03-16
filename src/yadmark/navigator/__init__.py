@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import argparse
 import pathlib
 
 import banana
 from banana import cfg as banana_cfg
 from banana import navigator as bnav
 
-from . import navigator
+from . import glob, navigator
 
 here = pathlib.Path(__file__).parent
 banana.register(here.parents[2] / "benchmarks")
@@ -36,17 +37,33 @@ Available functions:
     return None
 
 
-h = yelp
+def register_globals(configpath):
+    app = navigator.NavigatorApp(configpath, "sandbox")
+    glob.app = app
 
-app = navigator.NavigatorApp(banana_cfg.cfg, "sandbox")
+    glob.glob["yelp"] = yelp
+    glob.glob["h"] = yelp
 
-# register banana functions
-bnav.register_globals(globals(), app)
+    # register banana functions
+    bnav.register_globals(glob.glob, glob.app)
 
-# add my functions
-check_log = app.check_log
+    # add my functions
+    glob.glob["check_log"] = app.check_log
 
 
 def launch_navigator():
     """CLI Entry point"""
-    return bnav.launch_navigator("yadism", "yadmark")
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "-c", "--config", type=pathlib.Path, default=None, help="Path to config file"
+    )
+
+    args = parser.parse_args()
+
+    register_globals(banana_cfg.detect(args.config))
+
+    return bnav.launch_navigator(
+        ["yadism", "yadmark", "yadmark.navigator.glob"], skip_cfg=True
+    )
