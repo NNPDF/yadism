@@ -196,6 +196,13 @@ class Output(dict):
         # pylint: disable=no-member, too-many-locals
         if len(self[obsname]) <= 0:
             raise ValueError(f"no ESF {obsname}!")
+
+        filename = pathlib.Path(filename)
+        if not any(
+            filename.name.endswith(ext) for ext in [".pineappl", ".pineappl.lz4"]
+        ):
+            raise ValueError(f"Invalid extension in {filename.name}")
+
         import pineappl  # pylint: disable=import-outside-toplevel,import-error
 
         interpolation_xgrid = self["interpolation_xgrid"]
@@ -266,7 +273,10 @@ class Output(dict):
 
         # dump file
         grid.optimize()
-        grid.write(filename)
+        if filename.suffix == ".lz4":
+            grid.write_lz4(filename)
+        else:
+            grid.write(filename)
 
     def dump_yaml(self, stream=None):
         """Serialize result as YAML.
