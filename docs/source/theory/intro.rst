@@ -151,6 +151,7 @@ normalization, the following are available in ``yadism``:
 
    and :math:`M_h` is the mass of the scattered hadron, the other variables as
    above.
+   This definition is consistent also with the ``CDHSW`` experiment.
 
 - ``XSNUTEVCC``
 
@@ -159,6 +160,7 @@ normalization, the following are available in ``yadism``:
       N = \frac{100}{2 ( 1+ Q^2 / M_W^2 )^2} y_+
 
    the other variables as ``XSCHORUSCC``.
+
 
 Heavyness
 ---------
