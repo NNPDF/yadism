@@ -5,7 +5,8 @@ from ..observable_name import ObservableName
 from .esf import ESFInfo
 from .result import ESFResult, EXSResult
 
-conv = 3.893793e10  # conversion factor from GeV^-2 to 10^-38 cm^2
+GEV_CM2_CONV = 3.893793e10
+"Conversion factor from GeV^-2 to 10^-38 cm^2"
 
 
 def xs_coeffs(kind, y, x=None, Q2=None, params=None):
@@ -55,7 +56,12 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
         yp -= 2.0 * (mn * x * y) ** 2 / Q2  # = ypc
         # CHORUS
         if kind == "XSCHORUSCC":
-            norm = conv * params["GF"] ** 2 * mn / (2.0 * np.pi * (1.0 + Q2 / m2w) ** 2)
+            norm = (
+                GEV_CM2_CONV
+                * params["GF"] ** 2
+                * mn
+                / (2.0 * np.pi * (1.0 + Q2 / m2w) ** 2)
+            )
         # NUTEV
         if kind == "XSNUTEVCC":
             norm = 100.0 / 2.0 / (1.0 + Q2 / m2w) ** 2
