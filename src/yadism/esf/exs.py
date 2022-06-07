@@ -18,9 +18,14 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
         the identifier of the cross section for which coefficients have to be
         computed
     y : float
+        Bjorken y value for the chosen kinematic point
     x: None or float
+        Bjorken x value for the chosen kinematic point
     Q2: None or float
+        photon virtuality for the chosen kinematic point
     params : None or dict
+        theory parameters required to fully specify the coefficients (which ones
+        depends on the chosen definition, i.e. on `kind`)
 
     """
     yp = 1.0 + (1.0 - y) ** 2
