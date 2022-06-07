@@ -60,6 +60,13 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
     # HERA
     if kind == "XSHERACC":
         norm = 1.0 / 4.0
+    # FW CHARM
+    if kind == "FW":
+        mn = params["M2target"]
+        norm = 1.0 
+        ym = 0
+        yp = 1.0
+        yL = y**2/(2*(y**2/2 + (1-y) - mn * (x * y/ Q2) ** 2))
     else:
         mn = params["M2target"]
         m2w = params["M2W"]

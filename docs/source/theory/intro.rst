@@ -161,6 +161,15 @@ normalization, the following are available in ``yadism``:
 
    the other variables as ``XSCHORUSCC``.
 
+- ``FW`` from the `CHARM` experiment:
+
+   .. math::
+
+      N &= 1.0 \\ 
+      y_{-} &= 0 \\
+      y_{+} &= 1.0 \\
+      y_{L} = \frac{y^2}{2 (y^2/2 + (1-y) - M_{n} (x y/ Q2)^2)}
+
 
 Heavyness
 ---------
