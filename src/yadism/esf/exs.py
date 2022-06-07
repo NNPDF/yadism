@@ -27,11 +27,6 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
     ym = 1.0 - (1.0 - y) ** 2
     yL = y**2
 
-    # if kind == "XSreduced":
-    #     return np.array([1.0, -yL / yp, f3sign * ym / yp])
-    # if kind == "XSyreduced":
-    #     return np.array([yp, -yL, f3sign * ym])
-
     # Neutral Currents
     # HERA average
     if kind == "XSHERANCAVG":
