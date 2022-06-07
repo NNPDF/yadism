@@ -27,6 +27,16 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
         theory parameters required to fully specify the coefficients (which ones
         depends on the chosen definition, i.e. on `kind`)
 
+    Returns
+    -------
+    np.ndarray
+        the coefficients of the cross-section on the basis `(F2, FL, xF3)`
+
+    Raises
+    ------
+    ValueError or KeyError
+        in case not enough parameters have been specified
+
     """
     yp = 1.0 + (1.0 - y) ** 2
     ym = 1.0 - (1.0 - y) ** 2
