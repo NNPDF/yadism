@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import numpy as np
+
 from yadism.esf.exs import EvaluatedCrossSection as EXS
 from yadism.esf.exs import xs_coeffs
 from yadism.xs import CrossSection as XS
@@ -20,10 +22,33 @@ class MockCouplingConstants:
 
 
 def test_xs_coeffs():
+    assert xs_coeffs("XSHERANCAVG", x=0.5, Q2=10, y=0.1)[2] == 0.0
+
     assert (
         xs_coeffs("XSHERANC", x=0.5, Q2=10, y=0.1, params=dict(projectilePID=-1))[0]
         == 1.0
     )
+
+    heracc = xs_coeffs("XSHERACC", x=0.5, Q2=10, y=0.1, params=dict(projectilePID=1))
+    assert heracc[0] + heracc[2] == 1 / 2.0
+
+    chorus = xs_coeffs(
+        "XSCHORUSCC",
+        x=0.5,
+        Q2=10,
+        y=0.1,
+        params=dict(projectilePID=1, M2target=0.0, M2W=1.0, GF=1.0),
+    )
+    assert all(chorus == np.array([0.0, 0.0, 0.0]))
+
+    nutev = xs_coeffs(
+        "XSNUTEVCC",
+        x=0.5,
+        Q2=1.0,
+        y=0.1,
+        params=dict(projectilePID=1, M2target=0.0, M2W=1.0),
+    )
+    assert nutev[0] + nutev[2] == 100.0 / 2**2
 
 
 def test_alpha_qed():
