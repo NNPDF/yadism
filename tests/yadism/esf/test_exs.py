@@ -41,6 +41,16 @@ def test_xs_coeffs():
     )
     assert all(chorus == np.array([0.0, 0.0, 0.0]))
 
+    fw = xs_coeffs(
+        "FW",
+        x=0.5,
+        Q2=1.0,
+        y=0.1,
+        params=dict(projectilePID=1, M2target=0.0, M2W=1.0),
+    )
+    assert fw[0] == 1.0
+    assert fw[2] == 0.0
+
     nutev = xs_coeffs(
         "XSNUTEVCC",
         x=0.5,
