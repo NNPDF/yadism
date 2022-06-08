@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 
 import numpy as np
@@ -6,15 +7,15 @@ import yadism
 
 
 def dump_pineappl_to_file(output, filename, obsname):
-    """
-    Write a pineappl grid to file.
+    """Write output on a PineAPPL grid file.
 
     Parameters
     ----------
-        filename : str
-            output file name
-        obsname : str
-            observable to be dumped
+    filename : str
+        output file name
+    obsname : str
+        observable to be dumped
+
     """
     # pylint: disable=no-member, too-many-locals
     if len(output[obsname]) <= 0:
@@ -80,10 +81,8 @@ def dump_pineappl_to_file(output, filename, obsname):
     # set the initial state PDF ids for the grid
     grid.set_key_value("initial_state_1", "2212")
     grid.set_key_value("initial_state_2", str(lepton_pid))
-    grid.set_key_value(
-        "runcard",
-        json.dumps(dict(theory=output.theory, observables=output.observables)),
-    )
+    grid.set_key_value("theory", json.dumps(output.theory))
+    grid.set_key_value("runcard", json.dumps(output.observables))
     grid.set_key_value("yadism_version", yadism.__version__)
     grid.set_key_value("lumi_id_types", "pdg_mc_ids")
 
