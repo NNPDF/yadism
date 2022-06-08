@@ -27,7 +27,6 @@ class CrossSection:
         self.obs_name = obs_name
         self.runner = runner
         self.exss = []
-        self.cache = {}
         logger.debug("Init %s", self)
 
     def __repr__(self):
@@ -35,6 +34,10 @@ class CrossSection:
 
     def __len__(self):
         return len(self.exss)
+
+    @property
+    def elements(self):
+        return self.exss
 
     def load(self, kinematic_configs):
         """
@@ -56,10 +59,6 @@ class CrossSection:
     def get_esf(self, obs_name, kin):
         return self.runner.get_sf(obs_name).get_esf(obs_name, kin, use_raw=False)
 
-    def iterate_result(self):
-        for exs_ in self.exss:
-            yield exs_.get_result()
-
     def get_result(self):
         """
         Collects the results from all childrens.
@@ -69,4 +68,4 @@ class CrossSection:
             output : list(ESFResult)
                 all children outputs
         """
-        return list(self.iterate_result())
+        return list(elem.get_result() for elem in self.elements)

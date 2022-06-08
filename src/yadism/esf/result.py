@@ -102,7 +102,13 @@ class ESFResult:
             out : dict
                 output dictionary
         """
-        d = dict(x=self.x, Q2=self.Q2, nf=self.nf, orders=[])
+        try:
+            nf = int(self.nf)
+        except TypeError:
+            nf = self.nf
+
+        d = dict(x=float(self.x), Q2=float(self.Q2), nf=nf, orders=[])
+
         for o, (v, e) in self.orders.items():
             d["orders"].append(
                 dict(order=list(o), values=v.tolist(), errors=e.tolist())
@@ -157,7 +163,7 @@ class EXSResult(ESFResult):
 
     def get_raw(self):
         d = super().get_raw()
-        d["y"] = self.y
+        d["y"] = float(self.y)
         return d
 
     def apply_pdf(self, *args):

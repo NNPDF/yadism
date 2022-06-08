@@ -1,5 +1,7 @@
-database_path: benchmark.db
-input_tables:
-  - theories
-  - observables
-  - cache
+paths:
+  database: benchmark.db
+input:
+  tables:
+    - theories
+    - observables
+    - cache

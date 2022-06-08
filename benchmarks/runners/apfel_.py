@@ -18,10 +18,13 @@ import pathlib
 
 import numpy as np
 import pytest
+from banana import register
 from banana.data import cartesian_product
 
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
+
+register(pathlib.Path(__file__).parents[1])
 
 
 class ApfelBenchmark(Runner):

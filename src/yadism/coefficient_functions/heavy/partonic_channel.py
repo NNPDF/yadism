@@ -59,7 +59,6 @@ class NeutralCurrentBase(pc.PartonicChannel):
         .. todo::
             use threshold on shat or using FH's zmax?
         """
-        # import pdb; pdb.set_trace()
         shat = self.ESF.Q2 * (1 - z) / z
         return shat <= 4 * self.m2hq
 
