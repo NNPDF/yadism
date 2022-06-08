@@ -161,7 +161,7 @@ normalization, the following are available in ``yadism``:
 
    the other variables as ``XSCHORUSCC``.
 
-- ``FW`` from the `CHARM` experiment:
+- ``FW`` from the `CDHSW` experiment:
 
    .. math::
 

@@ -60,7 +60,7 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
     # HERA
     if kind == "XSHERACC":
         norm = 1.0 / 4.0
-    # FW CHARM see http://cds.cern.ch/record/200223/files/198909396.pdf
+    # FW CDHSW see http://cds.cern.ch/record/200223/files/198909396.pdf
     elif kind == "FW":
         mn = np.sqrt(params["M2target"])
         norm = 1.0
