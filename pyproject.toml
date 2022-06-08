@@ -129,7 +129,6 @@ dirty = true
 files = ["src/yadism/version.py"]
 
 [tool.pytest.ini_options]
-#norecursedirs = benchmarks/aux
 testpaths = ['tests/', 'benchmarks/runners/']
 python_files = ['test_*.py', 'benchmark_*.py', 'regression.py']
 python_classes = ['Test*', 'Benchmark*']
