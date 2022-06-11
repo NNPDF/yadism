@@ -2,6 +2,8 @@
 import logging
 import os
 
+from rich.logging import RichHandler
+
 # read environment
 log_level = int(os.environ.get("YADISM_LOG_LEVEL", logging.INFO))
 log_to_stdout = bool(os.environ.get("YADISM_LOG_STDOUT", True))
@@ -26,10 +28,11 @@ def setup(
     """
     logger.setLevel(log_level)
     ekologger.setLevel(log_level)
+    logger.handlers = []
+    ekologger.handlers = []
+
     # add rich logger
     if log_to_stdout:
-        from rich.logging import RichHandler  # pylint: disable=import-outside-toplevel
-
         rh = RichHandler(log_level, console=console)
         rh.setFormatter(logging.Formatter("%(message)s", datefmt="[%X]"))
         logger.addHandler(rh)
