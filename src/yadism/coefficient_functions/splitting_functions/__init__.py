@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from eko import basis_rotation as br
 from eko import beta
 
 from . import lo, nlo
@@ -9,22 +10,22 @@ raw_labels = [lo.raw_labels, nlo.raw_labels]
 
 def empty_gluon(matrices, nf):
     return {
-        "S_gq": np.zeros_like(matrices["P_qq_0", nf]),
-        "S_gg": np.zeros_like(matrices["P_qq_0", nf]),
+        (21, 100): np.zeros_like(matrices["P_qq_0", nf]),
+        (21, 21): np.zeros_like(matrices["P_qq_0", nf]),
     }
 
 
 def joint_lo(fnc, matrices, nf, add_gluonic=True):
     d = {
-        "NS_p": fnc("P_qq_0", matrices, nf),
-        "NS_m": fnc("P_qq_0", matrices, nf),
-        "NS_v": fnc("P_qq_0", matrices, nf),
-        "S_qq": fnc("P_qq_0", matrices, nf),
-        "S_qg": fnc("P_qg_0", matrices, nf),
+        (br.non_singlet_pids_map["ns+"], 0): fnc("P_qq_0", matrices, nf),
+        (br.non_singlet_pids_map["ns-"], 0): fnc("P_qq_0", matrices, nf),
+        (br.non_singlet_pids_map["nsV"], 0): fnc("P_qq_0", matrices, nf),
+        (100, 100): fnc("P_qq_0", matrices, nf),
+        (100, 21): fnc("P_qg_0", matrices, nf),
     }
     if add_gluonic:
-        d["S_gq"] = fnc("P_gq_0", matrices, nf)
-        d["S_gg"] = fnc("P_gg_0", matrices, nf)
+        d[(21, 100)] = fnc("P_gq_0", matrices, nf)
+        d[(21, 21)] = fnc("P_gg_0", matrices, nf)
     else:
         d.update(empty_gluon(matrices, nf))
     return d
@@ -62,22 +63,22 @@ def sector_mapping(order, matrices, nf):
         smap.update(
             {
                 (2, 1, 0): {
-                    "NS_p": matrices["P_nsp_1", nf],
-                    "NS_m": matrices["P_nsm_1", nf],
-                    "NS_v": matrices["P_nsm_1", nf],
-                    "S_qq": matrices["P_qq_1", nf],
-                    "S_qg": matrices["P_qg_1", nf],
+                    (br.non_singlet_pids_map["ns+"], 0): matrices["P_nsp_1", nf],
+                    (br.non_singlet_pids_map["ns-"], 0): matrices["P_nsm_1", nf],
+                    (br.non_singlet_pids_map["nsV"], 0): matrices["P_nsm_1", nf],
+                    (100, 100): matrices["P_qq_1", nf],
+                    (100, 21): matrices["P_qg_1", nf],
                     **empty_gluon(matrices, nf),
                 },
                 (2, 1, 1): joint_lo(c211, matrices, nf),
                 (2, 2, 0): {
-                    "NS_p": c220ns(matrices, nf),
-                    "NS_m": c220ns(matrices, nf),
-                    "NS_v": c220ns(matrices, nf),
-                    "S_qq": c220(
+                    (br.non_singlet_pids_map["ns+"], 0): c220ns(matrices, nf),
+                    (br.non_singlet_pids_map["ns-"], 0): c220ns(matrices, nf),
+                    (br.non_singlet_pids_map["nsV"], 0): c220ns(matrices, nf),
+                    (100, 100): c220(
                         (("P_qq_0^2", "P_qg_0P_gq_0"), "P_qq_0"), matrices, nf
                     ),
-                    "S_qg": c220(
+                    (100, 21): c220(
                         (("P_qq_0P_qg_0", "P_qg_0P_gg_0"), "P_qg_0"), matrices, nf
                     ),
                     **empty_gluon(matrices, nf),
