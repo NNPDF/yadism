@@ -3,6 +3,7 @@ import collections
 import contextlib
 import dataclasses
 
+import numpy as np
 import pytest
 import rich.progress
 from hypothesis import HealthCheck, given, settings
@@ -95,15 +96,7 @@ class TestRunner:
             MZ=100.0,
             GF=1.0,
         )
-        xgrid = (
-            [1e-5]
-            + data.draw(
-                st.lists(
-                    st.floats(1e-4, 1.0 - 1e-4), min_size=1, max_size=10, unique=True
-                )
-            )
-            + [1.0]
-        )
+        xgrid = np.geomspace(1e-5, 1.0, 6)
         observables = dict(
             interpolation_xgrid=xgrid,
             interpolation_polynomial_degree=len(xgrid) - 2,

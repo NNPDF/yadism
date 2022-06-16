@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from eko import interpolation
-from eko.anomalous_dimensions import harmonics, lo, nlo
+from eko import harmonics
+from eko.anomalous_dimensions import as1, as2
 from scipy import integrate
 
 from yadism.coefficient_functions import splitting_functions as sf
-from yadism.esf import conv
 
 
 def mellin_transform(rsl, N):
@@ -54,69 +53,72 @@ class BenchmarkSFEKO:
     def benchmark_lo(self):
         for nf in [3, 4]:
             for n in [1.0 + 0j, 2.0 + 0j, 3.0 + 0j]:
-                s1 = harmonics.harmonic_S1(n)
+                s1 = harmonics.S1(n)
                 # qq - gamma_qq(N=1)=0, so we need an atol
                 y_qq = mellin_transform(sf.lo.pqq(nf), n)
-                e_qq = -lo.gamma_ns_0(n, s1)
+                e_qq = -as1.gamma_ns(n, s1)
                 np.testing.assert_allclose(y_qq[0], e_qq, atol=1e-6)
                 # qg
                 y_qg = mellin_transform(sf.lo.pqg(nf), n)
-                e_qg = -lo.gamma_qg_0(n, nf)
+                e_qg = -as1.gamma_qg(n, nf)
                 np.testing.assert_allclose(y_qg[0], e_qg)
                 # protect singlet likes
                 if np.abs(n - 1.0) > 1e-5:
                     # gq
                     y_gq = mellin_transform(sf.nlo.pgq0(nf), n)
-                    e_gq = -lo.gamma_gq_0(n)
+                    e_gq = -as1.gamma_gq(n)
                     np.testing.assert_allclose(y_gq[0], e_gq)
                     # gg
                     y_gg = mellin_transform(sf.nlo.pgg0(nf), n)
-                    e_gg = -lo.gamma_gg_0(n, s1, nf)
+                    e_gg = -as1.gamma_gg(n, s1, nf)
                     np.testing.assert_allclose(y_gg[0], e_gg)
 
     def benchmark_nlo(self):
         for nf in [3, 4]:
             for n in [1.0 + 0j, 2.0 + 0j, 3.0 + 0j]:
+                s1 = harmonics.S1(n)
+                s2 = harmonics.S2(n)
+                sx = np.array([s1, s2])
                 # nsm
                 y_nsm = mellin_transform(sf.nlo.pnsm1(nf), n)
-                e_nsm = -nlo.gamma_nsm_1(n, nf)
+                e_nsm = -as2.gamma_nsm(n, nf, sx)
                 np.testing.assert_allclose(y_nsm[0], e_nsm, atol=2e-6)
                 # nsp
                 y_nsp = mellin_transform(sf.nlo.pnsp1(nf), n)
-                e_nsp = -nlo.gamma_nsp_1(n, nf)
+                e_nsp = -as2.gamma_nsp(n, nf, sx)
                 np.testing.assert_allclose(y_nsp[0], e_nsp, atol=2e-6)
                 # protect singlet likes
                 if np.abs(n - 1.0) > 1e-5:
                     # qq
                     y_qq = mellin_transform(sf.nlo.pqq1(nf), n)
-                    e_qq = -(nlo.gamma_nsp_1(n, nf) + nlo.gamma_ps_1(n, nf))
+                    e_qq = -(as2.gamma_nsp(n, nf, sx) + as2.gamma_ps(n, nf))
                     np.testing.assert_allclose(y_qq[0], e_qq, atol=1e-6)
                     # qg
                     y_qg = mellin_transform(sf.nlo.pqg1(nf), n)
-                    e_qg = -nlo.gamma_qg_1(n, nf)
+                    e_qg = -as2.gamma_qg(n, nf, sx)
                     np.testing.assert_allclose(y_qg[0], e_qg)
 
     def benchmark_conv(self):
         for nf in [3, 4]:
             for n in [1.0 + 0j, 2.0 + 0j, 3.0 + 0j]:
-                s1 = harmonics.harmonic_S1(n)
+                s1 = harmonics.S1(n)
                 # # qq*qq
                 y_qqqq = mellin_transform(sf.nlo.pqq0_2(nf), n)
-                e_qqqq = (-lo.gamma_ns_0(n, s1)) * (-lo.gamma_ns_0(n, s1))
+                e_qqqq = (-as1.gamma_ns(n, s1)) * (-as1.gamma_ns(n, s1))
                 np.testing.assert_allclose(y_qqqq[0], e_qqqq, atol=1e-12)
                 # qq*qg
                 y_qqqg = mellin_transform(sf.nlo.pqq0pqg0(nf), n)
-                e_qqqg = (-lo.gamma_ns_0(n, s1)) * (-lo.gamma_qg_0(n, nf))
+                e_qqqg = (-as1.gamma_ns(n, s1)) * (-as1.gamma_qg(n, nf))
                 np.testing.assert_allclose(y_qqqg[0], e_qqqg, atol=1e-12)
                 # protect singlet likes
                 if np.abs(n - 1.0) > 1e-5:
                     # qg*gq
                     y_qggq = mellin_transform(sf.nlo.pqg0pgq0(nf), n)
-                    e_qggq = (-lo.gamma_qg_0(n, nf)) * (-lo.gamma_gq_0(n))
+                    e_qggq = (-as1.gamma_qg(n, nf)) * (-as1.gamma_gq(n))
                     np.testing.assert_allclose(y_qggq[0], e_qggq, atol=1e-12)
                     # qg*gg
                     y_qggg = mellin_transform(sf.nlo.pqg0pgg0(nf), n)
-                    e_qggg = (-lo.gamma_qg_0(n, nf)) * (-lo.gamma_gg_0(n, s1, nf))
+                    e_qggg = (-as1.gamma_qg(n, nf)) * (-as1.gamma_gg(n, s1, nf))
                     np.testing.assert_allclose(y_qggg[0], e_qggg, atol=1e-12)
 
 
