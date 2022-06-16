@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import pathlib
 import re
 from dataclasses import dataclass
@@ -32,7 +33,8 @@ class Block:
     grid: np.ndarray
 
 
-def parse(path: pathlib.Path) -> tuple[int, list[Block]]:
+def parse(path: os.PathLike) -> tuple[int, list[Block]]:
+    path = pathlib.Path(path)
     content = path.read_text(encoding="utf-8")
 
     charge = 1 if path.stem.startswith("nu") else -1
@@ -41,7 +43,6 @@ def parse(path: pathlib.Path) -> tuple[int, list[Block]]:
     for bl in re.finditer(BLOCK, content, flags=re.MULTILINE | re.DOTALL):
         blocks.append(block(bl))
 
-    __import__("pdb").set_trace()
     return charge, blocks
 
 
@@ -68,8 +69,8 @@ def block(matched: re.Match) -> Block:
     scales = re.search(SCALES, content)
     if scales is None:
         raise ValueError()
-    parsed["mc"] = scales[1]
-    parsed["qcd_scale"] = scales[2]
+    parsed["mc"] = dtof(scales[1])
+    parsed["qcd_scale"] = dtof(scales[2])
 
     nx = int(re.search(XGRID, content)[1])
     xgrid = [
