@@ -61,8 +61,6 @@ a3b2bbc3ced97675ac3a71df45f55ba = { version = "^6.4.0", optional = true }
 [tool.poetry.dev-dependencies]
 poethepoet = "^0.10.0"
 # code review
-black = "^22.1.0"
-isort = "^5.9.2"
 pylint = "^2.9.3"
 # debug / explore
 pdbpp = "^0.10.3"
@@ -149,6 +147,3 @@ markers = [
   'fonll: FONLL',
 ]
 env = ["NUMBA_DISABLE_JIT=1"]
-
-[tool.isort]
-profile = "black"
