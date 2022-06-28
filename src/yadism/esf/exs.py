@@ -82,6 +82,13 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
         # NUTEV
         if kind == "XSNUTEVCC":
             norm = 100.0 / 2.0 / (1.0 + Q2 / m2w) ** 2
+        if kind == "XSNUTEVNU":
+            norm = (
+                GEV_CM2_CONV
+                * params["GF"] ** 2
+                * mn
+                / (2.0 * np.pi)
+            )
     return np.array([yp, -yL, f3sign * ym]) * norm
 
 

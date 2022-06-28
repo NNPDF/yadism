@@ -161,14 +161,22 @@ normalization, the following are available in ``yadism``:
 
    the other variables as ``XSCHORUSCC``.
 
-- ``FW`` from the `CDHSW` experiment:
+- ``XSNUTEVNU`` :cite:`NuTeV:2005wsg`: 
+
+   .. math::
+
+      N = \frac{G_F^2 M_h}{2 \pi } y_+
+
+   the other variables as ``XSCHORUSCC``.
+
+- ``FW`` from the ``CDHSW`` experiment :cite:`Berge:1989hr`:
 
    .. math::
 
       N &= 1.0 \\ 
       y_{-} &= 0 \\
       y_{+} &= 1.0 \\
-      y_{L} &= \frac{y^2}{2 (y^2/2 + (1-y) - M_{n} (x y/ Q2)^2)}
+      y_{L} &= \frac{y^2}{2 (y^2/2 + (1-y) - (M_{h} x y/ Q)^2)}
 
 
 Heavyness
