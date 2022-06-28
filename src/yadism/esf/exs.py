@@ -82,7 +82,7 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
         # NUTEV
         if kind == "XSNUTEVCC":
             norm = 100.0 / 2.0 / (1.0 + Q2 / m2w) ** 2
-        # NUTEV neutriono dis
+        # NUTEV neutrino dis
         if kind == "XSNUTEVNU":
             norm = (
                 GEV_CM2_CONV
