@@ -3,11 +3,17 @@
 # Compare the results with QCDNUM
 
 # import pytest
+import pathlib
+
+import banana
 import numpy as np
 from banana.data import cartesian_product
 
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
+
+here = pathlib.Path(__file__).parent
+banana.register(here.parent)
 
 
 class QCDNUMBenchmark(Runner):
@@ -203,7 +209,7 @@ if __name__ == "__main__":
 
     # You can benchmark FNS and SV for FXlight with FNS = 1
     sv = BenchmarkScaleVariations()
-    sv.benchmark_nlo(FNS=0)
+    sv.benchmark_nlo(FNS=1)
 
     fns = BenchmarkFNS()
     fns.benchmark_ZM()
