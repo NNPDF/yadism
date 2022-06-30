@@ -104,9 +104,15 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
         )
 
     def benchmark_nlo(self, FNS=0):
-
         self.run(
             self.theory_updates(1, FNS),
+            self.observable_updates(),
+            ["ToyLH"],
+        )
+
+    def benchmark_nnlo(self, FNS=0):
+        self.run(
+            self.theory_updates(2, FNS),
             self.observable_updates(),
             ["ToyLH"],
         )
@@ -210,6 +216,7 @@ if __name__ == "__main__":
     # You can benchmark FNS and SV for FXlight with FNS = 1
     sv = BenchmarkScaleVariations()
     sv.benchmark_nlo(FNS=1)
+    sv.benchmark_nnlo(FNS=1)
 
     fns = BenchmarkFNS()
     fns.benchmark_ZM()
