@@ -114,7 +114,7 @@ python-versions = "*"
 
 [[package]]
 name = "banana-hep"
-version = "0.6.5"
+version = "0.6.6"
 description = "Benchmark QCD physics"
 category = "main"
 optional = true
@@ -129,7 +129,7 @@ numpy = ">=1.21.0,<2.0.0"
 pandas = ">=1.3.5,<2.0.0"
 pendulum = ">=2.1.2,<3.0.0"
 PyYAML = ">=6.0,<7.0"
-rich = ">=10.16.1,<11.0.0"
+rich = ">=12.4.4,<13.0.0"
 SQLAlchemy = ">=1.4.29,<2.0.0"
 
 [package.extras]
@@ -1296,16 +1296,16 @@ use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
 
 [[package]]
 name = "rich"
-version = "10.16.2"
+version = "12.4.4"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
-python-versions = ">=3.6.2,<4.0.0"
+python-versions = ">=3.6.3,<4.0.0"
 
 [package.dependencies]
-colorama = ">=0.4.0,<0.5.0"
 commonmark = ">=0.9.0,<0.10.0"
 pygments = ">=2.6.0,<3.0.0"
+typing-extensions = {version = ">=4.0.0,<5.0", markers = "python_version < \"3.9\""}
 
 [package.extras]
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
@@ -1713,7 +1713,7 @@ pineappl = ["pineappl"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "8c33e970e0e6130988a1906c55d651177e9290430b61413912ea6e62e81e085b"
+content-hash = "6445bbac33dccb5deab03e0876e69f50da4028910a879b454cc535e29aebb9c8"
 
 [metadata.files]
 a3b2bbc3ced97675ac3a71df45f55ba = [
@@ -1765,8 +1765,8 @@ backcall = [
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
 ]
 banana-hep = [
-    {file = "banana-hep-0.6.5.tar.gz", hash = "sha256:748923aae41d5be0e117516698e523935d5f68146b53a8565372c7489137b0f1"},
-    {file = "banana_hep-0.6.5-py3-none-any.whl", hash = "sha256:6a8da394b0492cdd11f454a73c81727aff1bc96b206f1ca109cecdd087b980cd"},
+    {file = "banana-hep-0.6.6.tar.gz", hash = "sha256:7bee9b0932b8076bd625e5559fb760758216d30dc66b4128d726111bdaba9da3"},
+    {file = "banana_hep-0.6.6-py3-none-any.whl", hash = "sha256:1344b7d2a75837e408db2d9c1802cd8cd1686abd5c19928fa35f5fbfb2de66a8"},
 ]
 beautifulsoup4 = [
     {file = "beautifulsoup4-4.11.1-py3-none-any.whl", hash = "sha256:58d5c3d29f5a36ffeb94f02f0d786cd53014cf9b3b3951d42e0080d8a9498d30"},
@@ -2719,8 +2719,8 @@ requests = [
     {file = "requests-2.28.0.tar.gz", hash = "sha256:d568723a7ebd25875d8d1eaf5dfa068cd2fc8194b2e483d7b1f7c81918dbec6b"},
 ]
 rich = [
-    {file = "rich-10.16.2-py3-none-any.whl", hash = "sha256:c59d73bd804c90f747c8d7b1d023b88f2a9ac2454224a4aeaf959b21eeb42d03"},
-    {file = "rich-10.16.2.tar.gz", hash = "sha256:720974689960e06c2efdb54327f8bf0cdbdf4eae4ad73b6c94213cad405c371b"},
+    {file = "rich-12.4.4-py3-none-any.whl", hash = "sha256:d2bbd99c320a2532ac71ff6a3164867884357da3e3301f0240090c5d2fdac7ec"},
+    {file = "rich-12.4.4.tar.gz", hash = "sha256:4c586de507202505346f3e32d1363eb9ed6932f0c2f63184dea88983ff4971e2"},
 ]
 scipy = [
     {file = "scipy-1.8.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:65b77f20202599c51eb2771d11a6b899b97989159b7975e9b5259594f1d35ef4"},
