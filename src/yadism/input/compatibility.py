@@ -88,7 +88,7 @@ def update_target(obs):
         A = 40 + 3 * 16 + 12  # A(CaCO3): Atomic MAss
         Z = 20 + 3 * 8 + 6  # Z(CaCO3): Atomic Number
         obs["TargetDIS"] = {"Z": Z, "A": A}
-        obs["TargetDISid"] = f"1000{str(Z)}0{str(A)}0"
+        obs["TargetDISid"] = f"1000{str(Z)}{str(A)}0"
     else:
         raise ValueError(f"Unknown TargetDIS '{target}'")
 
