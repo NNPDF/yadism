@@ -4,12 +4,14 @@ import pathlib
 import re
 import shutil
 
+from numpy import source
+
 here = pathlib.Path(__file__).absolute().parent
 
 
-def init():
+def init(order):
     """Setup package init"""
-    nnlo = here / "nnlo"
+    nnlo = here / order
     shutil.rmtree(nnlo, ignore_errors=True)
     nnlo.mkdir()
     init = nnlo / "__init__.py"
@@ -86,15 +88,15 @@ def write(path, content, nnlo):
         f.write(f"from . import {path.stem}\n")
 
 
-def production():
-    nnlo = init()
-    for p in sorted(here.iterdir()):
+def production(pto):
+    path_to_source = here / f"{pto}_source"
+    outfolder = init(pto)
+    for p in sorted(path_to_source.iterdir()):
         if p.suffix == ".f":
             print(p.name)
             new = parse(p)
-            write(p, new, nnlo)
-
+            write(p, new, outfolder)
 
 if __name__ == "__main__":
-    production()
-    #  parse(here / "xk3cnvp.f")
+    # production("nnlo")
+    production("n3lo")
