@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from ..partonic_channel import RSL
-from . import nlo, nnlo
+from . import n3lo, nlo, nnlo
 from . import partonic_channel as pc
 
 
@@ -33,6 +33,14 @@ class NonSinglet(pc.LightBase):
             nnlo.xc2ns2p.c2nn2a, nnlo.xc2ns2p.c2ns2b, nnlo.xc2ns2p.c2nn2c, [self.nf]
         )
 
+    def N3LO(self):
+        """
+        |ref| implements :eqref:`4.11`, :cite:`vogt-f2nc`.
+        """
+        return RSL(
+            n3lo.xc2ns3p.c2np3a, n3lo.xc2ns3p.c2ns3b, nnlo.xc2ns3p.c2np3c, [self.nf]
+        )
+
 
 class Gluon(pc.LightBase):
     def NLO(self):
@@ -56,6 +64,13 @@ class Gluon(pc.LightBase):
 
         return RSL(nnlo.xc2sg2p.c2g2a, loc=nnlo.xc2sg2p.c2g2c, args=[self.nf])
 
+    def N3LO(self):
+        """
+        |ref| implements :eqref:`4.13`, :cite:`vogt-f2nc`.
+        """
+
+        return RSL(n3lo.xc2sg3p.c2g2a, loc=n3lo.xc2sg3p.c2g3c, args=[self.nf])
+
 
 class Singlet(pc.LightBase):
     def NNLO(self):
@@ -64,3 +79,10 @@ class Singlet(pc.LightBase):
         """
 
         return RSL(nnlo.xc2sg2p.c2s2a, args=[self.nf])
+
+    def N3LO(self):
+        """
+        |ref| implements :eqref:`4.12`, :cite:`vogt-f2nc`.
+        """
+
+        return RSL(n3lo.xc2sg3p.c2s3a, loc=n3lo.xc2sg3p.c2s3c, args=[self.nf])

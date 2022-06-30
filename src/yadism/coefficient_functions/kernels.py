@@ -43,7 +43,7 @@ class Kernel:
         max_order : int
             if given, silence above this order
         min_order : int
-            if given, silenve below this order
+            if given, silence below this order
     """
 
     def __init__(self, partons, coeff, max_order=None, min_order=None):
