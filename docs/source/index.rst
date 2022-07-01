@@ -77,6 +77,7 @@ In particular:
    implementation/scale-variations.rst
    implementation/TMC.rst
    API <modules/yadism.rst>
+   ui/yadbox.rst
 
 .. toctree::
    :maxdepth: 1
