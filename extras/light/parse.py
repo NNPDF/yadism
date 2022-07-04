@@ -4,8 +4,6 @@ import pathlib
 import re
 import shutil
 
-from numpy import source
-
 here = pathlib.Path(__file__).absolute().parent
 
 
@@ -96,6 +94,7 @@ def production(pto):
             print(p.name)
             new = parse(p)
             write(p, new, outfolder)
+
 
 if __name__ == "__main__":
     # production("nnlo")

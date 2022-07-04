@@ -38,7 +38,7 @@ class NonSinglet(pc.LightBase):
         |ref| implements :eqref:`4.11`, :cite:`vogt-f2nc`.
         """
         return RSL(
-            n3lo.xc2ns3p.c2np3a, n3lo.xc2ns3p.c2ns3b, nnlo.xc2ns3p.c2np3c, [self.nf]
+            n3lo.xc2ns3p.c2np3a, n3lo.xc2ns3p.c2ns3b, n3lo.xc2ns3p.c2np3c, [self.nf]
         )
 
 
@@ -69,7 +69,7 @@ class Gluon(pc.LightBase):
         |ref| implements :eqref:`4.13`, :cite:`vogt-f2nc`.
         """
 
-        return RSL(n3lo.xc2sg3p.c2g2a, loc=n3lo.xc2sg3p.c2g3c, args=[self.nf])
+        return RSL(n3lo.xc2sg3p.c2g3a, loc=n3lo.xc2sg3p.c2g3c, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
