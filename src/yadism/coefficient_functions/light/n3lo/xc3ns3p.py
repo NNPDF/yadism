@@ -1,17 +1,27 @@
 # -*- coding: utf-8 -*-
+"""
+Note that here the m refers to odd-N, but it actually corresponds to
+:math:`\nu + \bar{\nu}`. Vice versa for the minus combination. See the source
+file for reference or :cite:`Davies:2016ruz`.
+"""
 import numba as nb
 import numpy as np
 
 from .common import d3, d27, d81, d243
+from .xcdiff3p import c3q3dfp, c3q3dfpc
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c3nm3a(y, args):
     nf = args[0]
+    is_nc = args[0]
     y1 = 1.0 - y
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
-    fl02 = 1.0
+    if is_nc:
+        fl02 = 0.0
+    else:
+        fl02 = 1.0
     res = (
         -1853.0
         - 5709.0 * y
@@ -139,3 +149,13 @@ def c3nm3c(y, args):
         )
     )
     return res
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def c3np3a(y, args):
+    return c3nm3a(y, args) - c3q3dfp(y, args)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def c3np3c(y, args):
+    return c3nm3c(y, args) - c3q3dfpc(y, args)
