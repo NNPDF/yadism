@@ -3,19 +3,19 @@
 import numba as nb
 import numpy as np
 
-from ...special.nielsen import A, nielsen
+from ...special.nielsen import nielsen
 from ...special.zeta import zeta2
 from .common import d81, fl
 from .xcdiff3p import clq3dfp
 
 
-@nb.njit("c16(f8,f8[:])", cache=True)
+@nb.njit("f8(f8,f8[:])", cache=True)
 def clnp3a(y, args):
     nf = args[0]
     is_nc = args[1]
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
-    li2 = nielsen(1, 1, y)
+    li2 = nielsen(1, 1, y).real
     if is_nc:
         fl11 = fl(nf)
     else:
@@ -84,7 +84,7 @@ def clnp3c(y, args):
     return res
 
 
-@nb.njit("c16(f8,f8[:])", cache=True)
+@nb.njit("f8(f8,f8[:])", cache=True)
 def clnm3a(y, args):
     return clnp3a(y, args) - clq3dfp(y, args)
 

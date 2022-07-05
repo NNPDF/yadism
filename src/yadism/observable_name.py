@@ -3,7 +3,15 @@
 fake_kind = "??"
 sfs = ["F2", "FL", "F3"]
 # xs = ["XSreduced", "XSyreduced"]
-xs = ["XSHERANC", "XSHERANCAVG", "XSHERACC", "XSCHORUSCC", "XSNUTEVCC", "XSNUTEVNU", "FW"]
+xs = [
+    "XSHERANC",
+    "XSHERANCAVG",
+    "XSHERACC",
+    "XSCHORUSCC",
+    "XSNUTEVCC",
+    "XSNUTEVNU",
+    "FW",
+]
 kinds = sfs + xs + [fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
@@ -65,12 +73,12 @@ class ObservableName:
 
     def apply_asy(self):
         """
-        Computes the asymptotic heavy correspondend.
+        Computes the asymptotic heavy correspondent.
 
         Returns
         -------
             apply_asy : type(self)
-                asymptotic heavy correspondend
+                asymptotic heavy correspondent
         """
         if self.flavor not in heavys:
             raise ValueError(f"observable is not heavy! [{self}]")
