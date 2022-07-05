@@ -3,15 +3,20 @@ import numba as nb
 import numpy as np
 
 from .common import d3, d27, d81, d243, fl
+from .xcdiff3p import c2q3dfp, c2q3dfpc
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2np3a(y, args):
     nf = args[0]
+    is_nc = args[1]
     y1 = 1.0 - y
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
-    fl11 = fl(nf)
+    if is_nc:
+        fl11 = fl(nf)
+    else:
+        fl11 = 0.0
     res = (
         -4926.0
         + 7725.0 * y
@@ -104,8 +109,12 @@ def c2ns3b(y, args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2np3c(y, args):
     nf = args[0]
+    is_nc = args[1]
     dl1 = np.log(1.0 - y)
-    fl11 = fl(nf)
+    if is_nc:
+        fl11 = fl(nf)
+    else:
+        fl11 = 0.0
 
     res = (
         +256.0 * d81 * dl1**6
@@ -138,3 +147,13 @@ def c2np3c(y, args):
         - fl11 * nf * 11.8880
     )
     return res
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def c2nm3a(y, args):
+    return c2np3a(y, args) - c2q3dfp(y, args)
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def c2nm3c(y, args):
+    return c2np3c(y, args) - c2q3dfpc(y, args)

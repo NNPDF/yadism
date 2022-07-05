@@ -60,14 +60,14 @@ def c2s3a(y, args):
         - y * dl**2 * (101.8 + 34.79 * dl + 3.070 * dl**2)
         - 9.075 * y * y1 * dl1
     ) * y
-    res = nf * (c2s31 + (fls[nf] - fl[nf]) * c2s3F + nf * c2s32)
+    res = nf * (c2s31 + (fls(nf) - fl(nf)) * c2s3F + nf * c2s32)
     return res
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2s3c(y, args):
     nf = args[0]
-    res = -(fls[nf] - fl[nf]) * nf * 11.8880
+    res = -(fls(nf) - fl(nf)) * nf * 11.8880
     return res
 
 
@@ -127,7 +127,7 @@ def c2g3a(y, args):
         + y * dl**3 * (520.0 * d81 + 11.27 * y)
         + 60.0 * d81 * y * dl**4
     )
-    res = nf * (c2g31 + nf * (c2g32 + flg[nf] * c2g3F))
+    res = nf * (c2g31 + nf * (c2g32 + flg(nf) * c2g3F))
     return res
 
 

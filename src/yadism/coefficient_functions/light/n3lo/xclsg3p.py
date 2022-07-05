@@ -39,7 +39,7 @@ def cls3a(y, args):
         + 9.773 * dl
         + y * dl * (363.8 + 68.32 * dl)
     ) * y
-    res = nf * (cls31 + fls[nf] * cls3F + nf * cls32)
+    res = nf * (cls31 + fls(nf) * cls3F + nf * cls32)
     return res
 
 
@@ -97,5 +97,5 @@ def clg3a(y, args):
         - (15.40 - 2.201 * y) * y * dl**2
         - (71.66 - 0.121 * y) * y * dl
     )
-    res = nf * (clg31 + nf * (clg32 + flg[nf] * clg3F))
+    res = nf * (clg31 + nf * (clg32 + flg(nf) * clg3F))
     return res

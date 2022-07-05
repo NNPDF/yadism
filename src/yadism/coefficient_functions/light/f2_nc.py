@@ -38,7 +38,10 @@ class NonSinglet(pc.LightBase):
         |ref| implements :eqref:`4.11`, :cite:`vogt-f2nc`.
         """
         return RSL(
-            n3lo.xc2ns3p.c2np3a, n3lo.xc2ns3p.c2ns3b, n3lo.xc2ns3p.c2np3c, [self.nf]
+            n3lo.xc2ns3p.c2np3a,
+            n3lo.xc2ns3p.c2ns3b,
+            n3lo.xc2ns3p.c2np3c,
+            [self.nf, True],
         )
 
 

@@ -27,7 +27,7 @@ class NonSinglet(pc.LightBase):
         |ref| implements :eqref:`8`, :cite:`vogt-flnc`.
         """
         return RSL(
-            n3lo.xclns3p.clnp3a, loc=n3lo.xclns3p.clnp3c, args=dict(reg=[self.nf])
+            n3lo.xclns3p.clnp3a, loc=n3lo.xclns3p.clnp3c, args=dict(reg=[self.nf, True])
         )
 
 
