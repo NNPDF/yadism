@@ -1,6 +1,2 @@
 NCPositivityCharge: "up"
-observables:
-  F2_light:
-  - Q2: 2.5
-    x: 0.001
-    y: 1.0
+obs: F2_light
