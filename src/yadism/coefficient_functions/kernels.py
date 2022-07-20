@@ -3,6 +3,8 @@ import copy
 import importlib
 from numbers import Number
 
+from .coupling_constants import flavors
+
 
 def import_local(kind, process, sibling):
     """
@@ -104,9 +106,6 @@ class Kernel:
         return self.__class__(
             partons, copy.copy(self.coeff), self.max_order, self.min_order
         )
-
-
-flavors = "duscbt"
 
 
 def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):

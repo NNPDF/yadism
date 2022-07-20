@@ -15,3 +15,4 @@ class Observable(Base):
     observables = Column(Text)
     prDIS = Column(Text)
     TargetDIS = Column(Text)
+    NCPositivityCharge = Column(Text)
