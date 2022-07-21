@@ -13,7 +13,7 @@ def _make_kins():
     # from meta
     fNData = 20
 
-    q2pos = 5  # GeV2
+    q2pos = 5.0  # GeV2
     xmin = 5e-7
     xmax = 0.9
     xch = 0.1
