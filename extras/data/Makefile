@@ -2,7 +2,7 @@ PY=python3
 
 PACKAGE=machinery
 OUTPUT=_runcards
-IGNORE=Makefile ${PACKAGE} README.md ${OUTPUT} banana.yaml benchmark.db
+IGNORE=Makefile ${PACKAGE} README.md ${OUTPUT} banana.yaml benchmark.db navigator.py __pycache__
 FOLDERS=$(filter-out ${IGNORE},$(wildcard *))
 
 all:
