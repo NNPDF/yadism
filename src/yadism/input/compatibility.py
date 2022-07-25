@@ -81,6 +81,14 @@ def update_target(obs):
         obs["TargetDIS"] = {"Z": 82.0, "A": 208.0}  # from hep-ex/0102049
         # lead = 10 0 082 208 0
         obs["TargetDISid"] = "1000822080"
+    elif target == "neon":
+        obs["TargetDIS"] = {"Z": 10.0, "A": 20.0}
+        obs["TargetDISid"] = "1000100200"
+    elif target == "marble":
+        A = 40 + 3 * 16 + 12  # A(CaCO3): Atomic MAss
+        Z = 20 + 3 * 8 + 6  # Z(CaCO3): Atomic Number
+        obs["TargetDIS"] = {"Z": Z, "A": A}
+        obs["TargetDISid"] = f"1000{str(Z)}{str(A)}0"
     else:
         raise ValueError(f"Unknown TargetDIS '{target}'")
 

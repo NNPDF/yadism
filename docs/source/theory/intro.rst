@@ -120,7 +120,7 @@ normalization, the following are available in ``yadism``:
 
 .. math::
 
-   \sigma = N \left( F_2 - \frac{y_L}{y_+} F_L + (-1)^\ell \frac{y_-}{y_+} F_3 \right)
+   \sigma = N \left( F_2 - \frac{y_L}{y_+} F_L + (-1)^\ell \frac{y_-}{y_+} x F_3 \right)
 
 - ``XSHERANC`` where:
 
@@ -152,8 +152,9 @@ normalization, the following are available in ``yadism``:
    and :math:`M_h` is the mass of the scattered hadron, the other variables as
    above.
    This definition is consistent also with the ``CDHSW`` experiment.
+   Note that a conversion factor from :math:`GeV^{-2} \to cm^2` is required.
 
-- ``XSNUTEVCC``
+- ``XSNUTEVCC`` :cite:`CHORUS:2005cpn`:
 
    .. math::
 
@@ -161,14 +162,23 @@ normalization, the following are available in ``yadism``:
 
    the other variables as ``XSCHORUSCC``.
 
-- ``FW`` from the `CDHSW` experiment:
+- ``XSNUTEVNU`` :cite:`NuTeV:2005wsg`: 
+
+   .. math::
+
+      N = \frac{G_F^2 M_h}{2 \pi } y_+
+
+   the other variables as ``XSCHORUSCC``.
+   Also in this case a conversion factor from :math:`GeV^{-2} \to cm^2` is required.
+
+- ``FW`` from the ``CDHSW`` experiment :cite:`Berge:1989hr`:
 
    .. math::
 
       N &= 1.0 \\ 
       y_{-} &= 0 \\
       y_{+} &= 1.0 \\
-      y_{L} &= \frac{y^2}{2 (y^2/2 + (1-y) - M_{n} (x y/ Q2)^2)}
+      y_{L} &= \frac{y^2}{2 (y^2/2 + (1-y) - (M_{h} x y/ Q)^2)}
 
 
 Heavyness
