@@ -43,6 +43,10 @@ class PdfMatchingNNLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
+class PdfMatchingNNNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
 class AsyLLNonSinglet(EmptyPartonicChannel):
     pass
 
@@ -52,6 +56,10 @@ class AsyNLLNonSinglet(EmptyPartonicChannel):
 
 
 class AsyNNLLNonSinglet(EmptyPartonicChannel):
+    pass
+
+
+class AsyNNNLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
