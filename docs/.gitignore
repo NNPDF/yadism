@@ -7,6 +7,6 @@ source/dev-tools/code-todos.rst
 # Ignore auto generated module references (benchmark package)
 source/dev-tools/yadmark
 # yadbox
-source/ui
+source/ui/yadbox
 # Ignore generated sphinx-bibtex file
 source/bibtex.json

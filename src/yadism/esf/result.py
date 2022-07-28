@@ -158,7 +158,7 @@ class EXSResult(ESFResult):
 
     @classmethod
     def from_document(cls, raw):
-        sup = super().from_document(raw)
+        sup = ESFResult.from_document(raw)
         return cls(sup.x, sup.Q2, raw["y"], sup.nf, sup.orders)
 
     def get_raw(self):
