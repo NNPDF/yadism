@@ -126,7 +126,7 @@ class ScaleVariations:
                 map with `(target, lnf2r, src) -> np.ndarray`
 
         """
-        ren_coeffs = {(2, 1, 1): -beta.beta_0(nf)}
+        ren_coeffs = {(2, 1, 1): -beta.beta_qcd_as2(nf)}
         return dict(filter(lambda item: item[0][0] <= self.order, ren_coeffs.items()))
 
     def apply_common_scale_variations(self, ker_orders, nf):

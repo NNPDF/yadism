@@ -28,6 +28,11 @@ def update(theory, observables):
     update_fns(new_theory)
     update_scale_variations(new_theory)
     update_target(new_obs)
+    if "alphaqed" in new_theory:
+        new_theory["alphaem"] = new_theory.pop("alphaqed")
+    # TODO: update Yadism syintax and revove PTO everywhere?
+    if "QED" in new_theory:
+        new_theory["order"] = (new_theory["PTO"] + 1, new_theory.pop("QED"))
     return new_theory, new_obs
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import eko.strong_coupling as eko_sc
+import eko.couplings as eko_sc
 import numpy as np
 
 from yadism import observable_name as on
@@ -84,7 +84,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
     else:
         raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
 
-    sc = eko_sc.StrongCoupling.from_dict(new_theory)
+    sc = eko_sc.Couplings.from_dict(new_theory)
 
     num_tab = {}
     # loop over functions
