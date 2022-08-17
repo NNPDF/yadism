@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""Generator for positivity datasets."""
+import copy
+
 import yaml
 
 from .utils import obs_template
@@ -9,6 +12,11 @@ def _make_kins():
 
     Routine is taken from https://github.com/NNPDF/nnpdf/blob/17952b40f02d23fc2b29a702ea93db6dc4e3b2fa/buildmaster/filters/POS.cc
     and meta data from https://github.com/NNPDF/nnpdf/blob/17952b40f02d23fc2b29a702ea93db6dc4e3b2fa/buildmaster/meta/POSF2U.yaml .
+
+    Returns
+    -------
+    list
+        list of kinematics
     """
     # from meta
     fNData = 20
@@ -41,9 +49,8 @@ def dump(src_path, _target):
     -------
     dict
         observables dictionary, corresponding to the runcard
-
     """
-    obs = obs_template.copy()
+    obs = copy.deepcopy(obs_template)
     with open(src_path, "r", encoding="utf-8") as f:
         obs_update = yaml.safe_load(f)
     obs["NCPositivityCharge"] = obs_update["NCPositivityCharge"]
@@ -58,4 +65,8 @@ def dump(src_path, _target):
 # renaming
 new_names = {
     "u": "NNPDF_POS_F2U_40",
+    "d": "NNPDF_POS_F2D_40",
+    "s": "NNPDF_POS_F2S_40",
+    "c": "NNPDF_POS_F2C_40",
+    "g": "NNPDF_POS_FLL_40",
 }

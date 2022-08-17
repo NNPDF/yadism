@@ -1,0 +1,6 @@
+arxiv:
+hepdata:
+y_label: FL_light
+y_label_tex: $F_L^{light}$
+description: DIS positivity for FL_light
+nnpdf_id: POSFLL

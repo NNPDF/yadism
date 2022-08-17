@@ -1,0 +1,6 @@
+arxiv:
+hepdata:
+y_label: F2c
+y_label_tex: $F_2^{c}$
+description: DIS positivity for charm quark
+nnpdf_id: POSF2C
