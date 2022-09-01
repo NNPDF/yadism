@@ -17,7 +17,7 @@ def test_N3LO_labels():
     assert f3_ns.N3LO().args["sing"] is not None
 
 
-class Test_Bluemelein_results:
+class Test_Blumlein_results:
     """Comparison with exact results provided in https://arxiv.org/pdf/2208.14325.pdf.
     They follow the convention:
 

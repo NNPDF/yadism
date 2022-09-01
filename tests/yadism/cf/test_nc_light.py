@@ -38,7 +38,7 @@ def test_N3LO_labels():
     assert f2_s.N3LO().args["loc"] is not None
 
 
-class Test_Bluemelein_results:
+class Test_Blumlein_results:
     """Comparison with exact results provided in https://arxiv.org/pdf/2208.14325.pdf.
     They follow the convention:
 
@@ -128,18 +128,20 @@ class Test_Bluemelein_results:
             )
             f2_g_result.append(f2_g.reg(x, f2_g.args["reg"]))
 
+        f2_ns_result = np.array(f2_ns_result)
+        f2_s_result = np.array(f2_s_result)
         # Local pieces do not match ...
         # ns,+
         np.testing.assert_allclose(
-            np.array(f2_ns_result)[:, :-1],
+            f2_ns_result[:, :-1],
             (f2_ns_ref + self.w2 * f2_d33_ref)[:, :-1],
             rtol=5e-3,
         )
         # singlet
         np.testing.assert_allclose(
-            np.array(f2_s_result + f2_ns_ref)[:, :-1],
+            (f2_s_result + f2_ns_result)[:, :-1],
             (f2_ps_ref + self.w3 * f2_d33_ref + f2_ns_ref)[:, :-1],
-            rtol=3e-3,
+            rtol=2e-3,
         )
         # gluon
         np.testing.assert_allclose(f2_g_result, f2_g_ref, rtol=8e-4)
@@ -212,19 +214,22 @@ class Test_Bluemelein_results:
             fl_s_result.append(fl_s.reg(x, fl_s.args["reg"]))
             fl_g_result.append(fl_g.reg(x, fl_g.args["reg"]))
 
+        fl_ns_result = np.array(fl_ns_result)
+        fl_s_result = np.array(fl_s_result)
+
         # Less accurate since Vogt et al. parametrization contains
         # a local part (not physical) that is used to compensate the accuracy
         # ns,+
         np.testing.assert_allclose(
-            np.array(fl_ns_result)[:, 0],
+            fl_ns_result[:, 0],
             fl_ns_ref + self.w2 * fl_d33_ref,
             rtol=9e-2,
         )
         # singlet
         np.testing.assert_allclose(
-            fl_s_result + fl_ns_ref,
+            fl_s_result + fl_ns_result[:, 0],
             fl_ps_ref + self.w3 * fl_d33_ref + fl_ns_ref,
-            rtol=7e-3,
+            rtol=1e-2,
         )
         # gluon
         np.testing.assert_allclose(fl_g_result, fl_g_ref, rtol=8e-4)
