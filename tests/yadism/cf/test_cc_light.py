@@ -18,7 +18,8 @@ def test_N3LO_labels():
 
 
 class Test_Blumlein_results:
-    """Comparison with exact results provided in https://arxiv.org/pdf/2208.14325.pdf.
+    """Comparison with exact results provided in
+    the source files of https://arxiv.org/abs/2208.14325.
     They follow the convention:
 
       c_ns  = c_{ns} + c_{q,d33}
