@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from eko.constants import CA, CF, TR
-from eko.harmonics.constants import zeta2 as z2
-from eko.harmonics.constants import zeta3 as z3
 from test_pc_general import MockESF
 
 from yadism.coefficient_functions.light import f2_nc, fl_nc
@@ -60,14 +57,46 @@ class Test_Blumlein_results:
     def test_f2(self):
         f2_ns_ref = np.array(
             [
-                [-25210.90144877971, +1541.5296261447852, -547.2207168022906],
-                [-19754.604794494728, +1542.2108232097264, -547.2207168022906],
-                [-9363.79003285024, +1549.0339855391976, -547.2207168022906],
-                [-4082.1177848093157, +1618.3994999557867, -547.2207168022906],
-                [-3633.2967291433406, +2442.1103273243853, -547.2207168022906],
-                [-5010.398131329288, +3726.6274238095793, -547.2207168022906],
-                [-6859.0499497526125, +5612.869667249117, -547.2207168022906],
-                [-18895.21889556136, +70966.81668869735, -547.2207168022906],
+                [
+                    -25210.90144877971,
+                    +1541.5296261447852,
+                    -547.2207168022906 - 0.015414917879195673,
+                ],
+                [
+                    -19754.604794494728,
+                    +1542.2108232097264,
+                    -547.2207168022906 - 0.15418323657594063,
+                ],
+                [
+                    -9363.79003285024,
+                    +1549.0339855391976,
+                    -547.2207168022906 - 1.5452418733014899,
+                ],
+                [
+                    -4082.1177848093157,
+                    +1618.3994999557867,
+                    -547.2207168022906 - 15.797135410340475,
+                ],
+                [
+                    -3633.2967291433406,
+                    +2442.1103273243853,
+                    -547.2207168022906 - 196.61407095029423,
+                ],
+                [
+                    -5010.398131329288,
+                    +3726.6274238095793,
+                    -547.2207168022906 - 501.12391506634765,
+                ],
+                [
+                    -6859.0499497526125,
+                    +5612.869667249117,
+                    -547.2207168022906 - 961.8181838278934,
+                ],
+                [
+                    -18895.21889556136,
+                    +70966.81668869735,
+                    -547.2207168022906 - 12274.642592256147,
+                ],
             ]
         )
         f2_ps_ref = np.zeros_like(f2_ns_ref)
@@ -137,11 +166,19 @@ class Test_Blumlein_results:
             (f2_ns_ref + self.w2 * f2_d33_ref)[:, :-1],
             rtol=5e-3,
         )
+        np.testing.assert_allclose(
+            f2_ns_result[:, -1], (f2_ns_ref + self.w2 * f2_d33_ref)[:, -1], rtol=7e-2
+        )
         # singlet
         np.testing.assert_allclose(
             (f2_s_result + f2_ns_result)[:, :-1],
             (f2_ps_ref + self.w3 * f2_d33_ref + f2_ns_ref)[:, :-1],
             rtol=2e-3,
+        )
+        np.testing.assert_allclose(
+            (f2_s_result + f2_ns_result)[:, -1],
+            (f2_ps_ref + self.w3 * f2_d33_ref + f2_ns_ref)[:, -1],
+            rtol=5.1e-2,
         )
         # gluon
         np.testing.assert_allclose(f2_g_result, f2_g_ref, rtol=8e-4)
@@ -218,7 +255,8 @@ class Test_Blumlein_results:
         fl_s_result = np.array(fl_s_result)
 
         # Less accurate since Vogt et al. parametrization contains
-        # a local part (not physical) that is used to compensate the accuracy
+        # a local part (not physical) that is used to fine tune the accuracy
+        # as written in the source fortran files
         # ns,+
         np.testing.assert_allclose(
             fl_ns_result[:, 0],

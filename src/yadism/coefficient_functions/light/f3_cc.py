@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Note that the source files follows :cite:`vogt-f3cc` for which the odd-N moments
-are called minus even if they correspond to :math:`\nu + \bar{\nu}`. This notation is changed
-in :cite:`Davies:2016ruz` where the |N3LO| results are presented.
+At |N3LO| that the source files in fortran follows :cite:`vogt-f3cc` notation
+where the odd-N moments are called minus even if they correspond to :math:`\nu + \bar{\nu}`.
+This convention is changed in :cite:`Davies:2016ruz` where the |N3LO| CC results are presented
+for the first time. Referred equations are not always in agreement with the code conventions.
 """
 from .. import partonic_channel as pc
 from ..partonic_channel import RSL
@@ -34,7 +35,17 @@ class NonSingletOdd(f3_nc.NonSinglet):
 
 
 class NonSingletEven(f3_nc.NonSinglet):
-    pass
+    def N3LO(self):
+        """
+        |ref| implements the sum between :eqref:`2.11` and :eqref:`3.8`, :cite:`Davies:2016ruz`.
+        """
+
+        return RSL(
+            n3lo.xc3ns3p.c3np3a,
+            n3lo.xc3ns3p.c3ns3b,
+            n3lo.xc3ns3p.c3np3c,
+            [self.nf, False],
+        )
 
 
 class Gluon(pc.EmptyPartonicChannel):
