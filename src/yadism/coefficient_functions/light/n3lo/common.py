@@ -12,13 +12,13 @@ d243 = 1.0 / 243.0
 @nb.njit("f8(i4)", cache=True)
 def fl(nf):
     fl = [-1.0, 0.5, 0.0, 0.5, 0.2, 0.5]
-    return fl[nf]
+    return fl[int(nf)]
 
 
 @nb.njit("f8(i4)", cache=True)
 def fls(nf):
     fls = [1.0, 0.1, 0.0, 0.1, 0.01818181818, 0.1]
-    return fls[nf]
+    return fls[int(nf)]
 
 
 @nb.njit("f8(i4)", cache=True)

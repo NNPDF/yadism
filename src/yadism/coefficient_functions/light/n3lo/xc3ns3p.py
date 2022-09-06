@@ -19,9 +19,9 @@ def c3nm3a(y, args):
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
     if is_nc:
-        fl02 = 0.0
-    else:
         fl02 = 1.0
+    else:
+        fl02 = 0.0
     res = (
         -1853.0
         - 5709.0 * y
@@ -153,9 +153,9 @@ def c3nm3c(y, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c3np3a(y, args):
-    return c3nm3a(y, args) - c3q3dfp(y, args)
+    return c3nm3a(y, args) + c3q3dfp(y, args)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c3np3c(y, args):
-    return c3nm3c(y, args) - c3q3dfpc(y, args)
+    return c3nm3c(y, args) + c3q3dfpc(y, args)
