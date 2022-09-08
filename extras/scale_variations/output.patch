@@ -1,0 +1,18 @@
+diff --git a/src/yadism/output.py b/src/yadism/output.py
+index ea23bc57..6418d23f 100644
+--- a/src/yadism/output.py
++++ b/src/yadism/output.py
+@@ -233,6 +233,13 @@ class Output(dict):
+             # add all orders
+             for o, (v, _e) in obs.orders.items():
+                 order_index = list(first_esf_result.orders.keys()).index(o)
++                if o[0] > 0:
++                    if o[0] == 1 and o[3] == 1:
++                        pass
++                    else:
++                        print("skip",o)
++                        continue
++                print("dump",o)
+                 prefactor = (
+                     ((1.0 / (4.0 * np.pi)) ** o[0])
+                     * ((-1.0) ** o[2])
