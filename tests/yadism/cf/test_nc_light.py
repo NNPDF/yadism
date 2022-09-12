@@ -40,13 +40,13 @@ class Test_Blumlein_results:
     the source files of https://arxiv.org/abs/2208.14325.
     They follow the convention:
 
-      c_ns  = c_{ns} + w2 c_{q,d33},  eq 87
-      c_s  = c_{ns} + w3 c_{q,d33} + c_{ps}, eq 93
-      c_g = c_{g,a} + w3 c_{g,d33},  eq 94
+      c_ns = c_{ns} + w2 c_{q,d33}, eq 87
+      c_s = c_{ns} + w3 c_{q,d33} + c_{ps}, eq 93
+      c_g = c_{g,a} + w3 c_{g,d33}, eq 94
 
 
     Reference numbers are obtained with the notebook provided in the arxiv.
-    Tables  follow the syntax reg, sing, loc
+    Tables follow the syntax reg, sing, loc
     """
 
     Q2 = 10

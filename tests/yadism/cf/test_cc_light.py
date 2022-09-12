@@ -22,10 +22,10 @@ class Test_Blumlein_results:
     the source files of https://arxiv.org/abs/2208.14325.
     They follow the convention:
 
-      c_ns  = c_{ns} + c_{q,d33}
+      c_ns = c_{ns} + c_{q,d33}
 
     Reference numbers are obtained with the notebook provided in the arxiv.
-    Tables  follow the syntax reg, sing, loc
+    Tables follow the syntax reg, sing, loc
     """
 
     Q2 = 10
@@ -101,10 +101,11 @@ class Test_Blumlein_results:
                 ]
             )
 
-        # ns,+
+        # ns,+, sing and reg parts
         np.testing.assert_allclose(
             np.array(f3_ns_result)[:, :-1], (f3_ns_ref + f3_d33_ref)[:, :-1], rtol=3e-4
         )
+        # ns,+ local part
         np.testing.assert_allclose(
             np.array(f3_ns_result)[:, -1], (f3_ns_ref + f3_d33_ref)[:, -1], rtol=5e-2
         )
