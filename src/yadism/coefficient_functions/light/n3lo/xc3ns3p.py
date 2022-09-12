@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Note that here the m refers to odd-N, but it actually corresponds to
-:math:`\nu + \bar{\nu}`. Vice versa for the minus combination. See the source
-file for reference or :cite:`Davies:2016ruz`.
+:math:`\nu + \bar{\nu}`. Vice versa for the minus combination.
+To generate `c3np3a,c3np3c` we follow `xcdiff3p.f` or the reference paper :cite:`Davies:2016ruz`.
 """
 import numba as nb
 import numpy as np

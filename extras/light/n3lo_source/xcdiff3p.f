@@ -1,3 +1,4 @@
+* Tis file comes form https://arxiv.org/abs/1606.08907
 *
 * ..File: xcdiff3p.f    F_{i,NS},  i = 2,3,L  (even-N - odd-N)
 *
