@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-At |N3LO| that the source files in fortran follows :cite:`vogt-f3cc` notation
-where the odd-N moments are called minus even if they correspond to :math:`\nu + \bar{\nu}`.
-This convention is changed in :cite:`Davies:2016ruz` where the |N3LO| CC results are presented
-for the first time. Referred equations are not always in agreement with the code conventions.
+See :mod:`f3_cc` docstring for the name conventions.
 """
 from .. import partonic_channel as pc
 from ..partonic_channel import RSL
@@ -23,7 +20,8 @@ class NonSinglet(f2_nc.NonSinglet):
 
     def NNLO(self):
         """
-        |ref| implements the sum between :eqref:`2.8` and :eqref:`3.5`, :cite:`Davies:2016ruz`.
+        |ref| implements the sum between :eqref:`2.8` and :eqref:`3.5`, :cite:`Davies:2016ruz`
+        or :eqref:`208`, :cite:`moch-f3nc`.
         """
 
         return RSL(
