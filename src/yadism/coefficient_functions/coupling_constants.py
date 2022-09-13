@@ -227,6 +227,11 @@ class CouplingConstants:
             ) * self.partonic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
         # NC or EM
         # are we in positivity mode?
+        # Note that for yadism the values None and "all" are equivalent
+        # (they both mean no restriction on the couplings),
+        # but this might be not the case for the caller (e.g. pinefarm)
+        # since he may want to do further adjustments (such as deactivate TMC
+        # in the theory).
         if (
             self.obs_config["nc_pos_charge"] is not None
             and self.obs_config["nc_pos_charge"] != "all"
