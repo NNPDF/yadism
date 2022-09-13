@@ -106,6 +106,7 @@ class TestRunner:
             ProjectileDIS="electron",
             PolarizationDIS=0.0,
             PropagatorCorrection=0.0,
+            NCPositivityCharge=None,
             observables={
                 "F2_charm": [dict(x=0.1, Q2=10.0)],
                 "XSCHORUSCC": [dict(x=0.1, y=0.5, Q2=10.0)],

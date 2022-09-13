@@ -31,6 +31,9 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
     apfel.SetPolarizationDIS(observables.get("PolarizationDIS", 0))
     apfel.SetProjectileDIS(observables.get("ProjectileDIS", "electron"))
     apfel.SetTargetDIS(observables.get("TargetDIS", "proton"))
+    charge = observables.get("NCPositivityCharge")
+    if charge is not None:
+        apfel.SelectCharge(charge)
 
     # apfel initialization for DIS
     apfel.InitializeAPFEL_DIS()
