@@ -3,7 +3,7 @@ import copy
 import importlib
 from numbers import Number
 
-from .coupling_constants import flavors
+from eko import basis_rotation as br
 
 
 def import_local(kind, process, sibling):
@@ -289,10 +289,10 @@ def generate_single_flavor_light(esf, nf, ihq):
     s_partons = {}
     if esf.process == "CC":
         w_even = cc_weights_even(
-            esf.info.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
+            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], nf
         )
         w_odd = cc_weights_odd(
-            esf.info.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nf
+            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], nf
         )
         return (
             Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf)),

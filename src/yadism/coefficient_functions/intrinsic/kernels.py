@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from eko import basis_rotation as br
+
 from .. import kernels
-from ..coupling_constants import flavors
 
 
 def import_pc_module(kind, process):
@@ -29,7 +30,7 @@ def generate(esf, ihq):
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
         w = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, flavors[ihq - 1], ihq
+            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], ihq
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if kind == "F3":
