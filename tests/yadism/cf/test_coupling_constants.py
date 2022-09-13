@@ -49,10 +49,11 @@ class TestCouplingConstanst:
             PropagatorCorrection=0,
             NCPositivityCharge=None,
         )
-        assert coupl.CouplingConstants.from_dict(th_d, obs_d).get_weight(
-            1, 0, None, cc_mask="b"
-        ) == coupl.CouplingConstants.from_dict(th_d, obs_d).get_weight(
-            1, 0, None, cc_mask="b"
+        assert (
+            coupl.CouplingConstants.from_dict(th_d, obs_d).get_weight(
+                1, 0, None, cc_mask="b"
+            )
+            == 0
         )
 
         # Unknown
