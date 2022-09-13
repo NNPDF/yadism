@@ -3,6 +3,7 @@ import numpy as np
 from eko.constants import TR
 
 from .. import heavy, kernels, light
+from ..coupling_constants import flavors
 
 
 def import_pc_module(kind, process, subpkg=None):
@@ -44,7 +45,7 @@ def generate_light(esf, nl, pto_evol):
 
     if esf.process == "CC":
         light_weights = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[:nl], nl
+            esf.info.coupling_constants, esf.Q2, kind, flavors[:nl], nl
         )
     else:
         light_weights = light.kernels.nc_weights(
@@ -115,7 +116,7 @@ def generate_light_diff(esf, nl, pto_evol):
     light_cfs = import_pc_module(kind, esf.process, "light")
     if esf.process == "CC":
         light_weights = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[:nl], nl + 1
+            esf.info.coupling_constants, esf.Q2, kind, flavors[:nl], nl + 1
         )
     else:
         light_weights = light.kernels.nc_weights(
@@ -177,7 +178,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
     asys = []
     if esf.process == "CC":
         wa = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], nl
+            esf.info.coupling_constants, esf.Q2, kind, flavors[ihq - 1], nl
         )
         asys = [
             -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, mu2hq=mu2hq)),
@@ -232,7 +233,7 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
         k.min_order = 2
     if esf.process == "CC":
         w = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[ihq - 1], ihq
+            esf.info.coupling_constants, esf.Q2, kind, flavors[ihq - 1], ihq
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if kind == "F3":

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .. import kernels
+from ..coupling_constants import flavors
 from ..light.kernels import nc_weights as light_nc_weights
 
 
@@ -29,7 +30,7 @@ def generate(esf, nf, ihq):
     if esf.process == "CC":
         # TODO: use ihq for couplings
         w = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[nf], nf
+            esf.info.coupling_constants, esf.Q2, kind, flavors[nf], nf
         )
         return (
             kernels.Kernel(w["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),

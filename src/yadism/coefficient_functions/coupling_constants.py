@@ -2,8 +2,11 @@
 import logging
 
 import numpy as np
+from eko import basis_rotation as br
 
 logger = logging.getLogger(__name__)
+
+flavors = br.quark_names
 
 
 class CouplingConstants:
@@ -223,6 +226,22 @@ class CouplingConstants:
             return self.leptonic_coupling(
                 "WW", quark_coupling_type
             ) * self.partonic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
+        # NC or EM
+        # are we in positivity mode?
+        # Note that for yadism the values None and "all" are equivalent
+        # (they both mean no restriction on the couplings),
+        # but this might be not the case for the caller (e.g. pinefarm)
+        # since he may want to do further adjustments (such as deactivate TMC
+        # in the theory).
+        if (
+            self.obs_config["nc_pos_charge"] is not None
+            and self.obs_config["nc_pos_charge"] != "all"
+        ):
+            pos = self.obs_config["nc_pos_charge"][0]
+            pos_pid = 1 + flavors.index(pos)
+            if abs(pid) != pos_pid:
+                return 0.0
+
         w_phph = (
             self.leptonic_coupling("phph", quark_coupling_type)
             * self.propagator_factor("phph", Q2)
@@ -301,6 +320,7 @@ class CouplingConstants:
             "projectilePID": projectile_pids[proj],
             "polarization": observables["PolarizationDIS"],
             "propagatorCorrection": observables["PropagatorCorrection"],
+            "nc_pos_charge": observables["NCPositivityCharge"],
         }
         o = cls(theory_config, obs_config)
         return o
@@ -376,13 +396,13 @@ class CKM2Matrix:
             return self[pid]
         return self[:, pid]
 
-    def masked(self, flavors):
+    def masked(self, flavs):
         """
         Apply a mask according to the flavor
 
         Parameters
         ----------
-            flavors : str
+            flavs : str
                 participating flavors as single characters
 
         Returns
@@ -391,13 +411,13 @@ class CKM2Matrix:
                 masked matrix
         """
         op = np.zeros((3, 3))
-        if "dus" in flavors:
+        if "dus" in flavs:
             op += np.array([[1, 1, 0], [0, 0, 0], [0, 0, 0]])
-        if "c" in flavors:
+        if "c" in flavs:
             op += np.array([[0, 0, 0], [1, 1, 0], [0, 0, 0]])
-        if "b" in flavors:
+        if "b" in flavs:
             op += np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
-        if "t" in flavors:
+        if "t" in flavs:
             op += np.array([[0, 0, 0], [0, 0, 0], [1, 1, 1]])
         return type(self)(self.m * op)
 

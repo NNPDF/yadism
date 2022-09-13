@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import argparse
-
-from . import BCDMS, CHORUS, HERA, NMC, NUTEV, SLAC, utils
+from . import BCDMS, CHORUS, HERA, NMC, NUTEV, POS, SLAC, utils
 
 exps = {
-    getattr(m, "__name__").split(".")[-1]: m
-    for m in [CHORUS, HERA, NMC, NUTEV, SLAC, BCDMS]
+    getattr(m, "__name__").rsplit(".", maxsplit=1)[-1]: m
+    for m in [BCDMS, CHORUS, HERA, NMC, NUTEV, POS, SLAC]
 }
 
 
@@ -27,7 +25,9 @@ def cli(subparsers):
 def main(args):
     for i in args.inputs:
         path = utils.runcards.parent / i
-        exp = exps[list(filter(lambda e: e in path.parent.name, exps.keys()))[0]]
+        exp = exps[
+            list(filter(lambda e, path=path: e in path.parent.name, exps.keys()))[0]
+        ]
         try:
             new_name = exp.new_names[path.stem]
         except KeyError:
