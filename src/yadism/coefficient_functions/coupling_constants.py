@@ -2,10 +2,11 @@
 import logging
 
 import numpy as np
+from eko import basis_rotation as br
 
 logger = logging.getLogger(__name__)
 
-flavors = "duscbt"
+flavors = br.quark_names
 
 
 class CouplingConstants:
