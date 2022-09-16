@@ -120,6 +120,11 @@ class Runner(BenchmarkRunner):
             esfs = []
 
             obs_kins = kins.copy()
+
+            # skip if it is empty
+            if len(me[sf]) == 0:
+                continue
+
             if "y" in me[sf][0]:
                 obs_kins += ["y"]
 

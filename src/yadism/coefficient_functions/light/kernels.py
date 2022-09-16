@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from eko import basis_rotation as br
+
 from .. import kernels
 
 
@@ -26,13 +28,13 @@ def generate(esf, nf):
     pcs = import_pc_module(kind, esf.process)
     if esf.process == "CC":
         weights_even = kernels.cc_weights_even(
-            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[:nf], nf
+            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[:nf], nf
         )
         ns_even = kernels.Kernel(weights_even["ns"], pcs.NonSingletEven(esf, nf))
         g = kernels.Kernel(weights_even["g"], pcs.Gluon(esf, nf))
         s = kernels.Kernel(weights_even["s"], pcs.Singlet(esf, nf))
         weights_odd = kernels.cc_weights_odd(
-            esf.info.coupling_constants, esf.Q2, kind, kernels.flavors[:nf], nf
+            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[:nf], nf
         )
         ns_odd = kernels.Kernel(weights_odd["ns"], pcs.NonSingletOdd(esf, nf))
         return (ns_even, g, s, ns_odd)
