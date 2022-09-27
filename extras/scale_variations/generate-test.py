@@ -83,7 +83,8 @@ for j, grid in enumerate(grids):
     oo["interpolation_xgrid"] = grid.tolist()
     obs = []
     for x in grid:
-        obs.append(dict(Q2=300.0, x=x))
+        obs.append(dict(Q2=300.0, x=float(x)))
     oo["observables"]["F2_light"] = obs
     out = yadism.run_yadism(t, oo)
-    out.dump_pineappl_to_file(f"test{j}.pineappl.lz4", "F2_light")
+    out.dump_tar(f"test{j}.tar")
+    # out.dump_pineappl_to_file(f"test{j}.pineappl.lz4", "F2_light")
