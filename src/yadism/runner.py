@@ -39,7 +39,6 @@ from .output import Output
 from .sf import StructureFunction as SF
 from .xs import CrossSection as XS
 
-log.setup()
 logger = logging.getLogger(__name__)
 
 
@@ -179,6 +178,7 @@ class Runner:
         else:
             file = None
         self.console = rich.console.Console(file=file)
+        log.setup(self.console)
         # ==============================
         # Initialize output
         # ==============================

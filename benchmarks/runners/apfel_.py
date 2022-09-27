@@ -58,6 +58,18 @@ class BenchmarkProjectile(ApfelBenchmark):
         self.run([{"PTO": pto}], obs_update, ["ToyLH"])
 
 
+class BenchmarkPositivity(ApfelBenchmark):
+    update = {
+        "NCPositivityCharge": ["up", "down", "strange", "all"],
+    }
+
+    def benchmark_pto(self, pto):
+        obs_update = observables.build(
+            **(observables.default_config[pto]), update=self.update
+        )
+        self.run([{"PTO": pto}], obs_update, ["ToyLH"])
+
+
 class BenchmarkPropagatorCorrection(ApfelBenchmark):
     update = {
         "prDIS": ["NC", "CC"],
@@ -262,12 +274,17 @@ class BenchmarkICFONLL(ApfelICBenchmark):
 
 
 if __name__ == "__main__":
-    plain = BenchmarkPlain()
-    # plain.benchmark_lo()
-    # plain.benchmark_nlo()
+    # plain = BenchmarkPlain()
+    # plain.benchmark_pto(0)
+    # plain.benchmark_pto(1)
 
-    # proj = BenchmarkTMC()
-    # proj.benchmark_lo()
+    # proj = BenchmarkProjectile()
+    # proj.benchmark_pto(0)
+    # proj.benchmark_pto(1)
+
+    pos = BenchmarkPositivity()
+    pos.benchmark_pto(0)
+    pos.benchmark_pto(1)
 
     # ffns = BenchmarkICFFNS()
     # ffns.benchmark_lo()
@@ -275,8 +292,8 @@ if __name__ == "__main__":
     # fonll = BenchmarkICFONLL()
     # fonll.benchmark_nlo()
 
-    xs = BenchmarkXS()
-    xs.benchmark_pto(0)
+    # xs = BenchmarkXS()
+    # xs.benchmark_pto(0)
 
 # def plain_assert_external(theory, obs, sf, yad):
 #     # APFEL has a discretization in Q2/m2

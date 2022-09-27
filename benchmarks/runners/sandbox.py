@@ -25,11 +25,11 @@ lhapdf.pathsPrepend(
 
 class Sandbox(Runner):
 
-    #  external comparison program
+    # external comparison program
     external = "APFEL"
-    #  external = "xspace_bench"
-    #  external = "QCDNUM"
-    #  external = "void"
+    # external = "xspace_bench"
+    # external = "QCDNUM"
+    # external = "void"
 
     #  alphas_from_lhapdf = True
 
@@ -79,8 +79,8 @@ class Sandbox(Runner):
             #  "XSNUTEVCC_charm"
         ]
         #update = {"prDIS": ["EM"],"interpolation_xgrid":[interpolation_xgrid], "interpolation_polynomial_degree": [4]}
-        #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"]}
-        update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
+        update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "NCPositivityCharge": ["strange"]}
+        #update = {"prDIS": ["CC"], "ProjectileDIS": ["electron"]}
         #update = {"prDIS": ["EM"], "ProjectileDIS": ["electron"], "TargetDIS":["lead"]}
         #update= {}
         # card["PropagatorCorrection"] = .999
@@ -95,7 +95,8 @@ class Sandbox(Runner):
                 #{"PTO": 1, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3},
                 #{"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-C","NfFF":4,"IC":1,"mc":1.51,"Qmc":1.51,"mb":1e6,"mt":1e7,"ModEv":"TRN","MaxNfPdf":5,"MaxNfAs": 5, "Qmb":4.92,"Qmt":172.5,"alphas":0.118,"alphaqed":0.007496252,"Q0":1.65},
-                #{"PTO": 1, "FNS": "FONLL-A", "mc": 1.95, "mb": 1e6,"mt": 1e8, "NfFF": 4, "IC":0},
+                #{"PTO": 1, "FNS": "FONLL-A","IC":0},
+                {"PTO": 2, "FNS": "FONLL-C","IC":0},
                 #{"PTO": 2, "FNS": "FONLL-B", "mc": 1.51, "NfFF": 4, "kbThr": 100, "ktThr": 100, "alphas": .3, "Qref": 3},
                 #{"PTO": 2, "FNS": "FONLL-B", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 4},
@@ -108,20 +109,20 @@ class Sandbox(Runner):
                 #{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4, "mc": 1.51, "mb": 1e6, "mt": 1e8},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 1, "XIR": 1},
                 #{"PTO": 1, "IC": 1, "FNS": "FFNS", "NfFF": 3, "mc": 1.51, "XIF": 2, "XIR": 1},
-                {"PTO": 0, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3, "TMC": 1},
+                #{"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 3, "XIF": 2},
             ], self.generate_observables(), [
                 # "uonly",
                 # "ubaronly",
-                # "dbaronly",
+                # "donly",
                 # "conly",
                 # "toygonly",
                 # "toyuonly",
                 # "toyantichsing",
                 # "toyt3only",
                 # "conly",
-                "ToyLH",
+                # "ToyLH",
                 # "gonly",
-                # "NNPDF31_nnlo_as_0118",
+                "NNPDF31_nnlo_as_0118",
                 # "NN31g",
                 # "NN31u",
                 # "NN31c",

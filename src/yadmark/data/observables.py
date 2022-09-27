@@ -14,6 +14,7 @@ default_card = dict(
     PolarizationDIS=0,
     PropagatorCorrection=0,
     TargetDIS="proton",
+    NCPositivityCharge=None,
     observables={},
 )
 default_card = dict(sorted(default_card.items()))

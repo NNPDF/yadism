@@ -37,6 +37,7 @@ def main(args):
     if args.lo:
         print("LO comparison")
         theory["PTO"] = 0
+        theory["TMC"] = 0
         theory["FNS"] = "ZM-VFNS"
 
     for folder in args.folders:

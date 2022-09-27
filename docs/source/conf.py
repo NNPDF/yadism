@@ -22,7 +22,7 @@ here = pathlib.Path(__file__).parent
 # -- Project information -----------------------------------------------------
 
 project = "yadism"
-copyright = "2019-2021, the N3PDF team"  # pylint: disable=redefined-builtin
+copyright = "2019-2022, the N3PDF team"  # pylint: disable=redefined-builtin
 author = "N3PDF team"
 
 # -- General configuration ---------------------------------------------------
