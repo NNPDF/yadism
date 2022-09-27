@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Export predictions to PineAPPL."""
 import json
 
 import numpy as np
@@ -85,6 +86,14 @@ def dump_pineappl_to_file(output, filename, obsname):
     grid.set_key_value("runcard", json.dumps(output.observables))
     grid.set_key_value("yadism_version", yadism.__version__)
     grid.set_key_value("lumi_id_types", "pdg_mc_ids")
+    # set bin information
+    grid.set_key_value("x1_label", "Q2")
+    grid.set_key_value("x1_label_tex", "$Q^2$")
+    grid.set_key_value("x1_unit", "GeV^2")
+    grid.set_key_value("x2_label", "x")
+    grid.set_key_value("x2_label_tex", "$x$")
+    grid.set_key_value("x2_unit", "")
+    grid.set_key_value("y_label", obsname)
 
     # dump file
     grid.optimize()
