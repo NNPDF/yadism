@@ -21,11 +21,11 @@ import tempfile
 import numpy as np
 import pandas as pd
 import yaml
-from eko import strong_coupling
+from eko import compatibility as eko_compatibility
+from eko import couplings
 
 from . import observable_name as on
 from .esf.result import ESFResult, EXSResult
-from .input import compatibility
 from .version import __version__
 
 
@@ -98,8 +98,8 @@ class Output(dict):
             output dictionary with all structure functions for all x, Q2, result and error
 
         """
-        new_theory, _ = compatibility.update(theory, dict(TargetDIS="proton"))
-        sc = strong_coupling.StrongCoupling.from_dict(new_theory)
+        new_eko_theory = eko_compatibility.update_theory(theory)
+        sc = couplings.Couplings.from_dict(new_eko_theory)
         alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
         alpha_qed = lambda _muR: theory["alphaqed"]
         return self.apply_pdf_alphas_alphaqed_xir_xif(
