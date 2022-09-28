@@ -21,7 +21,7 @@ import tempfile
 import numpy as np
 import pandas as pd
 import yaml
-from eko import strong_coupling
+from eko import couplings
 
 from . import observable_name as on
 from .esf.result import ESFResult, EXSResult
@@ -99,7 +99,7 @@ class Output(dict):
 
         """
         new_theory, _ = compatibility.update(theory, dict(TargetDIS="proton"))
-        sc = strong_coupling.StrongCoupling.from_dict(new_theory)
+        sc = couplings.Couplings.from_dict(new_theory)
         alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
         alpha_qed = lambda _muR: theory["alphaqed"]
         return self.apply_pdf_alphas_alphaqed_xir_xif(

@@ -39,7 +39,7 @@
     DIS perturbative order (in the strong coupling expansion)
   type: integer
   domain:
-    - 0 <= PTO <= 2
+    - 0 <= PTO <= 3
 
 # Strong Coupling
 # ---------------

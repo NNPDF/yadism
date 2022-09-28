@@ -38,7 +38,7 @@ def c110(lab, matrices, nf):
 def c211(lab, matrices, nf):
     # add -beta0 * identity
     # where identity is both in interpolation and channel space
-    beta0 = beta.beta_0(nf) * np.eye(matrices[lab, nf].shape[0])
+    beta0 = beta.beta_qcd_as2(nf) * np.eye(matrices[lab, nf].shape[0])
     if lab in ["P_gq_0", "P_qg_0"]:
         beta0 = np.zeros_like(matrices[lab, nf])
     return matrices[lab, nf] - beta0
@@ -51,7 +51,7 @@ def c220ns(matrices, nf):
 def c220(labs, matrices, nf):
     return 0.5 * (
         sum(matrices[lab, nf] for lab in labs[0])
-        - beta.beta_0(nf) * matrices[labs[1], nf]
+        - beta.beta_qcd_as2(nf) * matrices[labs[1], nf]
     )
 
 
@@ -85,4 +85,5 @@ def sector_mapping(order, matrices, nf):
                 },
             }
         )
+    # TODO: _N3LO_ add NNLO splitting functions and scale variations
     return smap

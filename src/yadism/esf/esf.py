@@ -82,7 +82,10 @@ class EvaluatedStructureFunction:
         self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
         # select available partonic coefficient functions
-        self.orders = list(filter(lambda e: e <= configs.theory["pto"], range(2 + 1)))
+        max_orders = 3
+        self.orders = list(
+            filter(lambda e: e <= configs.theory["pto"], range(max_orders + 1))
+        )
         self.info = ESFInfo(obs_name, configs)
 
         logger.debug("Init %s", self)
