@@ -1,29 +1,29 @@
 # -*- coding: utf-8 -*-
-import eko.couplings as eko_sc
+"""Benchmark to xspace_bench (the original FONLL implementation)."""
 import numpy as np
+from eko import compatibility as eko_compatibility
+from eko import couplings as eko_sc
 
 from yadism import observable_name as on
-from yadism.input import compatibility
 
 
 def compute_xspace_bench_data(theory, observables, pdf):
-
     """
     Run xspace_bench to compute observables.
 
     Parameters
     ----------
-        theory : dict
-            theory runcard
-        observables : dict
-            observables runcard
-        pdf : lhapdf_like
-            PDF set
+    theory : dict
+        theory runcard
+    observables : dict
+        observables runcard
+    pdf : lhapdf_like
+        PDF set
 
     Returns
     -------
-        num_tab : dict
-            xspace_bench numbers
+    dict
+        xspace_bench numbers
     """
     import xspace_bench  # pylint:disable=import-outside-toplevel
 
@@ -65,7 +65,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
     # select scheme
     scheme = theory["FNS"]
-    new_theory = compatibility.update(theory)
 
     if scheme == "ZM-VFNS":
         scheme = "ZMVN"
@@ -84,7 +83,8 @@ def compute_xspace_bench_data(theory, observables, pdf):
     else:
         raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
 
-    sc = eko_sc.Couplings.from_dict(new_theory)
+    new_eko_theory = eko_compatibility.update_theory(theory)
+    sc = eko_sc.Couplings.from_dict(new_eko_theory)
 
     num_tab = {}
     # loop over functions
