@@ -192,6 +192,10 @@ class PdfMatchingNNLLNonSinglet(PartonicChannelAsy):
         return RSL(sing=K_qq_sing, loc=K_qq_loc, args=[self.L])
 
 
+class PdfMatchingNNNLLNonSinglet(PartonicChannelAsy):
+    pass
+
+
 class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
     def __init__(self, *args, m1sq, m2sq):
         super().__init__(*args)

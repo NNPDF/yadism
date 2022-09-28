@@ -85,4 +85,5 @@ def sector_mapping(order, matrices, nf):
                 },
             }
         )
+    # TODO: _N3LO_ add NNLO splitting functions and scale variations
     return smap

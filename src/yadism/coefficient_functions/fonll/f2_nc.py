@@ -58,6 +58,10 @@ class AsyNNLLGluon(pc.PartonicChannelAsy):
         return RSL(cg_NNLL_NNLO)
 
 
+class AsyNNNLLGluon(pc.PartonicChannelAsy):
+    pass
+
+
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cps_LL_NNLO(z, args):
     L = args[0]
@@ -88,6 +92,10 @@ class AsyNLLSinglet(pc.PartonicChannelAsy):
 class AsyNNLLSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
         return RSL(cps_NNLL_NNLO)
+
+
+class AsyNNNLLSinglet(pc.PartonicChannelAsy):
+    pass
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
@@ -156,6 +164,10 @@ class AsyNNLLNonSinglet(pc.PartonicChannelAsy):
         return RSL(cns_NNLL_NNLO_reg, cns_NNLL_NNLO_sing, cns_NNLL_NNLO_loc)
 
 
+class AsyNNNLLNonSinglet(pc.PartonicChannelAsy):
+    pass
+
+
 class LightNonSingletShifted(pc.PartonicChannelAsy):
     def NNLO(self):
         return light.NonSinglet(self.ESF, self.nf).NLO()
@@ -170,6 +182,10 @@ class PdfMatchingNLLNonSinglet(pc.PdfMatchingNLLNonSinglet):
 
 
 class PdfMatchingNNLLNonSinglet(pc.PdfMatchingNNLLNonSinglet):
+    pass
+
+
+class PdfMatchingNNNLLNonSinglet(pc.PdfMatchingNNNLLNonSinglet):
     pass
 
 

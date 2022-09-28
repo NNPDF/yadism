@@ -69,7 +69,7 @@ class TestRunner:
         monkeypatch.setattr(yadism.input.inspector, "Inspector", FakeInspector)
         monkeypatch.setattr(yadism.input.compatibility, "update", fake_update)
 
-        pto = data.draw(st.integers(0, 2))
+        pto = data.draw(st.integers(0, 3))
         masses = {f"m{q}": v + 2.0 for v, q in enumerate("cbt")}
         kthr = {f"kDIS{q}Thr": v + 2.0 for v, q in enumerate("cbt")}
         zm_masses = {f"ZM{q}": True for q in "cbt"}
