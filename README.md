@@ -6,8 +6,8 @@
   <a href="https://github.com/N3PDF/yadism/actions?query=workflow%3A%22yadism%22"><img alt="Tests" src="https://github.com/N3PDF/yadism/workflows/yadism/badge.svg"></a>
   <a href='https://yadism.readthedocs.io/en/latest/?badge=latest'><img src='https://readthedocs.org/projects/yadism/badge/?version=latest' alt='Documentation Status' /></a>
   <a href="https://pypi.org/project/yadism/"><img alt="PyPI" src="https://img.shields.io/pypi/v/yadism"/></a>
-  <a href="https://codecov.io/gh/N3PDF/yadism"><img src="https://codecov.io/gh/N3PDF/yadism/branch/master/graph/badge.svg?token=qgCFyUQ6oG" /></a>
-  <a href="https://www.codefactor.io/repository/github/n3pdf/yadism"><img src="https://www.codefactor.io/repository/github/n3pdf/yadism/badge?s=e5a00668b58574b5b056e1aca01c7b25d2c203f8" alt="CodeFactor" /></a>
+  <a href="https://codecov.io/gh/NNPDF/yadism"><img src="https://codecov.io/gh/NNPDF/yadism/branch/master/graph/badge.svg?token=qgCFyUQ6oG" /></a>
+  <a href="https://www.codefactor.io/repository/github/nnpdf/yadism"><img src="https://www.codefactor.io/repository/github/nnpdf/yadism/badge?s=e5a00668b58574b5b056e1aca01c7b25d2c203f8" alt="CodeFactor" /></a>
   <a href="https://zenodo.org/badge/latestdoi/219968694"><img src="https://zenodo.org/badge/219968694.svg" alt="DOI"></a>
 </p>
 
