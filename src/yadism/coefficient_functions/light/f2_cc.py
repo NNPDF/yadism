@@ -13,7 +13,7 @@ class NonSingletEven(f2_nc.NonSinglet):
             n3lo.xc2ns3p.c2np3a,
             n3lo.xc2ns3p.c2ns3b,
             n3lo.xc2ns3p.c2np3c,
-            [self.nf, True],
+            [self.nf, False],
         )
 
 

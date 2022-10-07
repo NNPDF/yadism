@@ -14,11 +14,11 @@ from .xcdiff3p import c3q3dfp, c3q3dfpc
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c3nm3a(y, args):
     nf = args[0]
-    is_sum = args[1]
+    has_color_fact = args[1]
     y1 = 1.0 - y
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
-    if is_sum:
+    if has_color_fact:
         fl02 = 1.0
     else:
         fl02 = 0.0

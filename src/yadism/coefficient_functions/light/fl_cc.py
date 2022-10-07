@@ -11,7 +11,7 @@ class NonSingletEven(fl_nc.NonSinglet):
         return RSL(
             n3lo.xclns3p.clnp3a,
             loc=n3lo.xclns3p.clnp3c,
-            args=dict(reg=[self.nf, True], loc=[self.nf]),
+            args=dict(reg=[self.nf, False], loc=[self.nf]),
         )
 
 
