@@ -96,7 +96,7 @@ class Sandbox(Runner):
                 #{"PTO": 2, "FNS": "FFNS", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-C","NfFF":4,"IC":1,"mc":1.51,"Qmc":1.51,"mb":1e6,"mt":1e7,"ModEv":"TRN","MaxNfPdf":5,"MaxNfAs": 5, "Qmb":4.92,"Qmt":172.5,"alphas":0.118,"alphaqed":0.007496252,"Q0":1.65},
                 #{"PTO": 1, "FNS": "FONLL-A","IC":0},
-                {"PTO": 2, "FNS": "FONLL-C","IC":0},
+                {"PTO": 2, "FNS": "FONLL-C", "IC":0, "XIR": 2., "XIF": .7},
                 #{"PTO": 2, "FNS": "FONLL-B", "mc": 1.51, "NfFF": 4, "kbThr": 100, "ktThr": 100, "alphas": .3, "Qref": 3},
                 #{"PTO": 2, "FNS": "FONLL-B", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 4},
                 #{"PTO": 2, "FNS": "FONLL-C", "mc": 1.95, "mb": 1e6, "mt": 1e8, "NfFF": 4},

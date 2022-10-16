@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-import banana.cfg
 import numpy as np
 import pandas as pd
 from banana.benchmark.runner import BenchmarkRunner
 from banana.data import dfdict
-from eko.strong_coupling import StrongCoupling
+from eko import compatibility as eko_compatibility
+from eko.couplings import Couplings
 
 import yadism
 from yadmark.data import db, observables
@@ -45,8 +45,8 @@ class Runner(BenchmarkRunner):
 
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
         else:
-            new_theory, _ = yadism.input.compatibility.update(theory, ocard)
-            sc = StrongCoupling.from_dict(new_theory)
+            new_eko_theory = eko_compatibility.update_theory(theory)
+            sc = Couplings.from_dict(new_eko_theory)
             alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
 
         alpha_qed = lambda _muR: theory["alphaqed"]

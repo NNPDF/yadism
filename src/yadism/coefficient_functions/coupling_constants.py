@@ -76,7 +76,7 @@ class CouplingConstants:
             leptonic coupling
         """
         # for CC the polarisation are NOT part of the structure functions, but are accounted for on
-        # the cross section level. In order to have a true-trivial LO coeficient function, return
+        # the cross section level. In order to have a true-trivial LO coefficient function, return
         # here 2.
         if mode == "WW":
             return 2

@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
+"""Utilities to help run APFEL."""
 import numpy as np
 from banana.benchmark.external import apfel_utils
 
 
 def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
-    """
-    Set APFEL parameter from ``theory`` dictionary.
+    """Set APFEL parameter from ``theory`` dictionary.
 
     Parameters
     ----------
-        theory : dict
-            theory and process parameters
-        observables : dict
-            observables runcard
-        pdf : str
-            PDF name
+    theory : dict
+        theory and process parameters
+    observables : dict
+        observables runcard
+    pdf : str
+        PDF name
 
     Returns
     -------
-        module
-            loaded apfel wrapper
+    module
+        loaded apfel wrapper
     """
     apfel = apfel_utils.load_apfel(
         theory, observables, pdf, use_external_grid=use_external_grid
@@ -41,23 +41,22 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
     return apfel
 
 
-def compute_apfel_data(theory, observables, pdf):
-    """
-    Run APFEL to compute observables.
+def compute_apfel_data(theory, observables, pdf):  # pylint: disable=too-many-locals
+    """Run APFEL to compute observables.
 
     Parameters
     ----------
-        theory : dict
-            theory runcard
-        observables : dict
-            observables runcard
-        pdf : lahapdf_like
-            PDF set
+    theory : dict
+        theory runcard
+    observables : dict
+        observables runcard
+    pdf : lahapdf_like
+        PDF set
 
     Returns
     -------
-        apf_tab : dict
-            AFPEL numbers
+    dict
+        AFPEL numbers
     """
     # setup APFEL
     apfel = load_apfel(theory, observables, pdf.set().name)
@@ -84,37 +83,37 @@ def compute_apfel_data(theory, observables, pdf):
         "F3": apfel.F3total,
     }
 
-    l = ""
+    lep = ""
     if observables["ProjectileDIS"] == "electron":
-        l = "E"
+        lep = "E"
     elif observables["ProjectileDIS"] == "positron":
-        l = "P"
+        lep = "P"
     elif observables["ProjectileDIS"] == "neutrino":
-        l = "NU"
+        lep = "NU"
     elif observables["ProjectileDIS"] == "antineutrino":
-        l = "NB"
+        lep = "NB"
 
     apfel_fkobservables = {
-        "XSHERANC_light": f"DIS_NC{l}_L",
-        "XSHERANC_charm": f"DIS_NC{l}_CH",
-        "XSHERANC_bottom": f"DIS_NC{l}_BT",
-        "XSHERANC_top": f"DIS_NC{l}_TP",
-        "XSHERANC_total": f"DIS_NC{l}",
-        "XSHERANC": f"DIS_NC{l}",
-        "XSHERANCAVG_charm": f"DIS_NC{l}_CH",
-        "XSHERANCAVG_bottom": f"DIS_NC{l}_BT",
-        "XSHERANCAVG_top": f"DIS_NC{l}_TP",
-        "XSHERACC_light": f"DIS_CC{l}_L",
-        "XSHERACC_charm": f"DIS_CC{l}_CH",
-        "XSHERACC_bottom": f"DIS_CC{l}_BT",
-        "XSHERACC_top": f"DIS_CC{l}_TP",
-        "XSHERACC_total": f"DIS_CC{l}",
-        "XSHERACC": f"DIS_CC{l}",
-        "XSCHORUSCC_light": f"DIS_S{l}_L",
-        "XSCHORUSCC_charm": f"DIS_S{l}_C",
-        "XSCHORUSCC_total": f"DIS_S{l}",
-        "XSCHORUSCC": f"DIS_S{l}",
-        "XSNUTEVCC_charm": f"DIS_DM_{l}",
+        "XSHERANC_light": f"DIS_NC{lep}_L",
+        "XSHERANC_charm": f"DIS_NC{lep}_CH",
+        "XSHERANC_bottom": f"DIS_NC{lep}_BT",
+        "XSHERANC_top": f"DIS_NC{lep}_TP",
+        "XSHERANC_total": f"DIS_NC{lep}",
+        "XSHERANC": f"DIS_NC{lep}",
+        "XSHERANCAVG_charm": f"DIS_NC{lep}_CH",
+        "XSHERANCAVG_bottom": f"DIS_NC{lep}_BT",
+        "XSHERANCAVG_top": f"DIS_NC{lep}_TP",
+        "XSHERACC_light": f"DIS_CC{lep}_L",
+        "XSHERACC_charm": f"DIS_CC{lep}_CH",
+        "XSHERACC_bottom": f"DIS_CC{lep}_BT",
+        "XSHERACC_top": f"DIS_CC{lep}_TP",
+        "XSHERACC_total": f"DIS_CC{lep}",
+        "XSHERACC": f"DIS_CC{lep}",
+        "XSCHORUSCC_light": f"DIS_S{lep}_L",
+        "XSCHORUSCC_charm": f"DIS_S{lep}_C",
+        "XSCHORUSCC_total": f"DIS_S{lep}",
+        "XSCHORUSCC": f"DIS_S{lep}",
+        "XSNUTEVCC_charm": f"DIS_DM_{lep}",
     }
 
     # compute observables with APFEL
@@ -135,7 +134,6 @@ def compute_apfel_data(theory, observables, pdf):
         for kin in kinematics:
             Q2 = kin["Q2"]
             x = kin["x"]
-            y = kin["y"]
 
             # disable APFEL evolution: we are interested in the pure DIS part
             #
@@ -150,7 +148,7 @@ def compute_apfel_data(theory, observables, pdf):
             if obs_name in apfel_structure_functions:
                 result = apfel_structure_functions[obs_name](x)
             else:
-                result = apfel.FKObservables(x, np.sqrt(Q2), y)
+                result = apfel.FKObservables(x, np.sqrt(Q2), kin["y"])
             # take over the kinematics
             r = kin.copy()
             r["result"] = result

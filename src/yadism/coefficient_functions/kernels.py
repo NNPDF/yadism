@@ -45,7 +45,7 @@ class Kernel:
         max_order : int
             if given, silence above this order
         min_order : int
-            if given, silenve below this order
+            if given, silence below this order
     """
 
     def __init__(self, partons, coeff, max_order=None, min_order=None):
@@ -262,9 +262,9 @@ def generate_single_flavor_light(esf, nf, ihq):
     """
     Add a light-like contribution for a single quark flavor.
 
-    The linear dependency to the electric charge is introduce by mulitplying
+    The linear dependency to the electric charge is introduce by multiplying
     and diving by nf. The multiplication is *implicit* inside the coefficient function,
-    the division is *explict* made here.
+    the division is *explicit* made here.
 
     Parameters
     ----------
