@@ -47,7 +47,7 @@ class MockSF:
         self.runner.configs = MockObj()
         self.runner.configs.M2target = 1.0
         self.runner.configs.TMC = tmc
-        self.runner.configs.interpolator = InterpolatorDispatcher(xg, 1, False, False)
+        self.runner.configs.interpolator = InterpolatorDispatcher(xg, 1, False)
 
 
 class TestAbstractTMC:
@@ -159,10 +159,10 @@ class TestAbstractTMC:
             isdelta(pdf_lin)
             # int_const = int_xi^1 du = 1-xi
             integral_with_pdf = np.matmul(res_const.orders[lo][0][0], pdf_lin)
-            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (1.0 - obj.xi)
+            np.testing.assert_allclose(integral_with_pdf, c * (1.0 - obj.xi), rtol=3e-2)
             # int_h2 = int_xi^1 du/u = -ln(xi)
             integral_with_pdf = np.matmul(res_h2.orders[lo][0][0], pdf_lin)
-            assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (-np.log(obj.xi))
+            np.testing.assert_allclose(integral_with_pdf, c * (-np.log(obj.xi)), rtol=3e-2)
 
     def test_convolute_F2_xi_of_domain(self):
         xg = np.array([0.2, 0.6, 1.0])

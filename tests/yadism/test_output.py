@@ -25,6 +25,7 @@ class MockPDFgonly:
 class TestOutput:
     def fake_output(self):
         out = dict()
+        out["xgrid"] = {"grid": np.array([0.5, 1.0]).tolist()}
         out["interpolation_xgrid"] = np.array([0.5, 1.0])
         out["interpolation_polynomial_degree"] = 1
         out["interpolation_is_log"] = True

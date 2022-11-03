@@ -19,7 +19,7 @@ class MockObj:
 
 
 xg = np.linspace(0.2, 1.0, 5)  # 0.2, 0.4, 0.6, 0.8, 1.0
-interpolator = InterpolatorDispatcher(xg, 1, False, False)
+interpolator = InterpolatorDispatcher(xg, 1, False)
 coupling_constants = MockObj()
 coupling_constants.obs_config = dict(process="EM")
 coupling_constants.get_weight = lambda q, q2, t: 1
