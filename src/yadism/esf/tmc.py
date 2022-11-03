@@ -208,14 +208,14 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         """
         # check domain
-        if self.xi < min(self.sf.runner.configs.interpolator.xgrid_raw):
+        if self.xi < min(self.sf.runner.configs.interpolator.xgrid.raw):
             raise ValueError(
                 f"xi outside xgrid - cannot convolute starting from xi={self.xi}"
             )
         # iterate grid
         res = ESFResult(self.xi, self.Q2, None)
         for xj, pj in zip(
-            self.sf.runner.configs.interpolator.xgrid_raw,
+            self.sf.runner.configs.interpolator.xgrid.raw,
             self.sf.runner.configs.interpolator,
         ):
             # basis function does not contribute?

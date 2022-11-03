@@ -72,7 +72,7 @@ class EvaluatedStructureFunction:
         if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
         # check domain
-        if x < min(configs.interpolator.xgrid_raw):
+        if x < min(configs.interpolator.xgrid.raw):
             raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
 
         self.x = x

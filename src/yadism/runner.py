@@ -29,7 +29,7 @@ import rich.panel
 import rich.progress
 from eko import basis_rotation as br
 from eko import thresholds
-from eko.interpolation import InterpolatorDispatcher
+from eko.interpolation import InterpolatorDispatcher, XGrid
 
 from . import log, observable_name
 from .coefficient_functions.coupling_constants import CouplingConstants
@@ -95,7 +95,10 @@ class Runner:
         self._observables = new_observables
 
         # Setup eko stuffs
-        interpolator = InterpolatorDispatcher.from_dict(self._observables, mode_N=False)
+        xgrid = XGrid(self._observables["interpolation_xgrid"])
+        interpolator = InterpolatorDispatcher(
+            xgrid, self._observables["interpolation_polynomial_degree"], mode_N=False
+        )
 
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)

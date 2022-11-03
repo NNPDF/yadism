@@ -134,7 +134,7 @@ class Output(dict):
         # iterate
         ret = PDFOutput()
 
-        xgrid = self["interpolation_xgrid"]
+        xgrid = self["xgrid"]["grid"]
 
         # dispatch onto result
         for obs in self:
