@@ -29,7 +29,7 @@ Note
         F2, FL:
             * odd N: :math:`\nu - \bar{\nu}`, :math:`c_{ns,-} = - \delta + c_{ns,+}`
             * even N: :math:`\nu + \bar{\nu}`, :math:`c_{ns,+}`
-            * In :math:`c_{ns,-}` the term fl11 has to be turned of for CC.
+            * The term fl11 has to be turned of for CC.
 
 """
 
