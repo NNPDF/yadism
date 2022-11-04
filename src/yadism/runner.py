@@ -95,7 +95,10 @@ class Runner:
         self._observables = new_observables
 
         # Setup eko stuffs
-        xgrid = XGrid(self._observables["interpolation_xgrid"])
+        xgrid = XGrid(
+            self._observables["interpolation_xgrid"],
+            self._observables["interpolation_is_log"],
+        )
         interpolator = InterpolatorDispatcher(
             xgrid, self._observables["interpolation_polynomial_degree"], mode_N=False
         )
