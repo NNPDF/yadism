@@ -12,11 +12,11 @@ from .xcdiff3p import c2q3dfp, c2q3dfpc
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2np3a(y, args):
     nf = args[0]
-    is_nc = args[1]
+    has_color_fact = args[1]
     y1 = 1.0 - y
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
-    if is_nc:
+    if has_color_fact:
         fl11 = fl(nf)
     else:
         fl11 = 0.0
@@ -112,9 +112,9 @@ def c2ns3b(y, args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2np3c(y, args):
     nf = args[0]
-    is_nc = args[1]
+    has_color_fact = args[1]
     dl1 = np.log(1.0 - y)
-    if is_nc:
+    if has_color_fact:
         fl11 = fl(nf)
     else:
         fl11 = 0.0

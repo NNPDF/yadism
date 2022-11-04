@@ -14,11 +14,11 @@ from .xcdiff3p import clq3dfp
 @nb.njit("f8(f8,f8[:])", cache=True)
 def clnp3a(y, args):
     nf = args[0]
-    is_nc = args[1]
+    has_color_fact = args[1]
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
     li2 = nielsen(1, 1, y).real
-    if is_nc:
+    if has_color_fact:
         fl11 = fl(nf)
     else:
         fl11 = 0.0
