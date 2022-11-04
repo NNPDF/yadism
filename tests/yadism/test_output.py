@@ -25,7 +25,7 @@ class MockPDFgonly:
 class TestOutput:
     def fake_output(self):
         out = dict()
-        out["interpolation_xgrid"] = np.array([0.5, 1.0])
+        out["xgrid"] = {"grid": [0.5, 1.0], "log": False}
         out["interpolation_polynomial_degree"] = 1
         out["interpolation_is_log"] = True
         out["pids"] = [21, 1]
@@ -89,12 +89,10 @@ class TestOutput:
         # rewind and read again
         stream.seek(0)
         o2 = output.Output.load_yaml(stream)
-        np.testing.assert_almost_equal(
-            o1["interpolation_xgrid"], d["interpolation_xgrid"]
-        )
-        np.testing.assert_almost_equal(
-            o2["interpolation_xgrid"], d["interpolation_xgrid"]
-        )
+        np.testing.assert_almost_equal(o1["xgrid"]["grid"], d["xgrid"]["grid"])
+        assert o1["xgrid"]["log"] == d["xgrid"]["log"]
+        np.testing.assert_almost_equal(o2["xgrid"]["grid"], d["xgrid"]["grid"])
+        assert o2["xgrid"]["log"] == d["xgrid"]["log"]
         # fake output files
         m_out = mock.mock_open(read_data="")
         with mock.patch("builtins.open", m_out) as mock_file:
@@ -108,9 +106,8 @@ class TestOutput:
             fn = "test.yaml"
             o3 = output.Output.load_yaml_from_file(fn)
             mock_file.assert_called_with(fn)
-            np.testing.assert_almost_equal(
-                o3["interpolation_xgrid"], d["interpolation_xgrid"]
-            )
+            np.testing.assert_almost_equal(o3["xgrid"]["grid"], d["xgrid"]["grid"])
+            assert o3["xgrid"]["log"] == d["xgrid"]["log"]
 
     def test_tar_output(self, tmp_path):
         out, obs = self.fake_output()
@@ -122,9 +119,8 @@ class TestOutput:
         # load fake output
         r1 = output.Output.load_tar(actual_path)
         # test they are equal
-        np.testing.assert_almost_equal(
-            o1["interpolation_xgrid"], r1["interpolation_xgrid"]
-        )
+        np.testing.assert_almost_equal(o1["xgrid"]["grid"], r1["xgrid"]["grid"])
+        assert o1["xgrid"]["log"] == r1["xgrid"]["log"]
         np.testing.assert_almost_equal(o1["pids"], r1["pids"])
         np.testing.assert_equal(len(o1), len(r1))
         np.testing.assert_equal(type(o1), type(r1))

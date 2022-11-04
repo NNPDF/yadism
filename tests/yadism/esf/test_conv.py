@@ -4,7 +4,7 @@ Test the DistributionVec class and its methods.
 """
 import numpy as np
 import pytest
-from eko.interpolation import InterpolatorDispatcher
+from eko.interpolation import InterpolatorDispatcher, XGrid
 
 from yadism.esf import conv
 
@@ -118,8 +118,8 @@ class TestConvnd:
 
     @pytest.mark.eko
     def test_basis_function_void(self):
-        xg = np.linspace(0.2, 1.0, 5)  # 0.2, 0.4, 0.6, 0.8, 1.0
-        i = InterpolatorDispatcher(xg, 1, False, False)
+        xg = XGrid(np.linspace(0.2, 1.0, 5), False)  # 0.2, 0.4, 0.6, 0.8, 1.0
+        i = InterpolatorDispatcher(xg, 1, False)
         bf1 = i[0]  # ranges from 0.2 to 0.4
         # they should give the same result
         for x in [0.4, 0.5, 0.6]:  # quad should never trigger
@@ -130,8 +130,8 @@ class TestConvnd:
 
     @pytest.mark.eko
     def test_basis_function_shrink_domain_lin(self):
-        xg = np.linspace(0.2, 1.0, 5)  # 0.2, 0.4, 0.6, 0.8, 1.0
-        i = InterpolatorDispatcher(xg, 1, False, False)
+        xg = XGrid(np.linspace(0.2, 1.0, 5), False)  # 0.2, 0.4, 0.6, 0.8, 1.0
+        i = InterpolatorDispatcher(xg, 1, False)
         # fake eko and test it does the job
         def bf1(x):
             if x > 0.4:
@@ -155,7 +155,7 @@ class TestConvnd:
     @pytest.mark.eko
     def test_basis_function_shrink_domain_log(self):
         xg = np.array([np.exp(-2), np.exp(-1), 1.0])
-        i = InterpolatorDispatcher(xg, 1, True, False)
+        i = InterpolatorDispatcher(xg, 1, True)
         # fake eko and test it does the job
         def bf1(x):
             if np.log(x) > -1:
