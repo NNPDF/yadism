@@ -6,7 +6,7 @@ Test SF and EvaluatedStructureFunction
 import numpy as np
 import pytest
 from eko import thresholds
-from eko.interpolation import InterpolatorDispatcher
+from eko.interpolation import InterpolatorDispatcher, XGrid
 
 from yadism import observable_name
 from yadism.esf import scale_variations as sv
@@ -18,7 +18,7 @@ class MockObj:
     pass
 
 
-xg = np.linspace(0.2, 1.0, 5)  # 0.2, 0.4, 0.6, 0.8, 1.0
+xg = XGrid(np.linspace(0.2, 1.0, 5), False)   # 0.2, 0.4, 0.6, 0.8, 1.0
 interpolator = InterpolatorDispatcher(xg, 1, False)
 coupling_constants = MockObj()
 coupling_constants.obs_config = dict(process="EM")
