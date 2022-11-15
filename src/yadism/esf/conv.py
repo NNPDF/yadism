@@ -187,12 +187,12 @@ def convolute_operator(fnc, interpolator):
         els : np.ndarray
             errors
     """
-    xgrid = interpolator.xgrid_raw
+    xgrid = interpolator.xgrid.raw
     grid_size = len(xgrid)
     op_res = np.zeros((grid_size, grid_size))
     op_err = np.zeros((grid_size, grid_size))
     # iterate output grid
-    for k, xk in enumerate(interpolator.xgrid_raw):
+    for k, xk in enumerate(interpolator.xgrid.raw):
         # iterate basis functions
         for l, bf in enumerate(interpolator):
             if k == l and l == grid_size - 1:

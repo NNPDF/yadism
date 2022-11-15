@@ -134,7 +134,7 @@ class Output(dict):
         # iterate
         ret = PDFOutput()
 
-        xgrid = self["interpolation_xgrid"]
+        xgrid = self["xgrid"]["grid"]
 
         # dispatch onto result
         for obs in self:
@@ -168,8 +168,9 @@ class Output(dict):
             out[f] = copy.copy(self[f])
         out["pids"] = list(self["pids"])
         # make raw lists
-        for k in ["interpolation_xgrid"]:
-            out[k] = self[k].tolist()
+        for k in ["xgrid"]:
+            out[k]["grid"] = self[k]["grid"]
+            out[k]["log"] = self[k]["log"]
         for obs in self:
             if not on.ObservableName.is_valid(obs):
                 continue
@@ -401,8 +402,9 @@ class Output(dict):
         """
         obj = yaml.safe_load(stream)
         # make list numpy
-        for k in ["interpolation_xgrid"]:
-            obj[k] = np.array(obj[k])
+        for k in ["xgrid"]:
+            obj[k]["grid"] = np.array(obj[k]["grid"])
+            obj[k]["log"] = obj[k]["log"]
         for obs in obj:
             if not on.ObservableName.is_valid(obs):
                 continue

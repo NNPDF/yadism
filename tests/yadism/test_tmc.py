@@ -3,7 +3,7 @@ import copy
 
 import numpy as np
 import pytest
-from eko.interpolation import InterpolatorDispatcher
+from eko.interpolation import InterpolatorDispatcher, XGrid
 
 import yadism.esf.tmc as TMC
 from yadism import observable_name
@@ -43,11 +43,12 @@ class MockSF:
     def __init__(self, tmc, xg=None):
         if xg is None:
             xg = np.array([0.2, 0.6, 1.0])
+        xg = XGrid(xg, False)
         self.runner = MockObj()
         self.runner.configs = MockObj()
         self.runner.configs.M2target = 1.0
         self.runner.configs.TMC = tmc
-        self.runner.configs.interpolator = InterpolatorDispatcher(xg, 1, False, False)
+        self.runner.configs.interpolator = InterpolatorDispatcher(xg, 1, False)
 
 
 class TestAbstractTMC:
