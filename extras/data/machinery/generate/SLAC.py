@@ -40,4 +40,5 @@ new_names = {
     "slac_ca_d": "SLACE139_Ca_D",
     "slac_fe_d": "SLACE139_Fe_D",
     "slac_ag_d": "SLACE139_Ag_D",
+    "slac_au_d": "SLACE139_Au_D",
 }
