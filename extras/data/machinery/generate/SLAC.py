@@ -22,7 +22,9 @@ def dump(src_path, target):
     obs["prDIS"] = "NC"
     obs["observables"] = {"F2_total": esf}
     obs["ProjectileDIS"] = "electron"
-    obs["TargetDIS"] = "proton" if "_P_" in target.parent.name else "isoscalar"
+    # Make sure that the nuclear datasets are computed with a `proton`
+    # target even if we have `Deuteron` in the denominator.
+    obs["TargetDIS"] = "isoscalar" if "_D_" in target.parent.name else "proton"
 
     return obs
 
@@ -31,4 +33,5 @@ def dump(src_path, target):
 new_names = {
     "slac_d": "SLAC_NC_EM_D_F2",
     "slac_p": "SLAC_NC_EM_P_F2",
+    "slac_he_d": "SLACE139_HE_D",
 }
