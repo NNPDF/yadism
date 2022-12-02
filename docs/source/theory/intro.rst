@@ -180,6 +180,12 @@ normalization, the following are available in ``yadism``:
       y_{+} &= 1.0 \\
       y_{L} &= \frac{y^2}{2 (y^2/2 + (1-y) - (M_{h} x y/ Q)^2)}
 
+- ``XSFPFCC`` for the FPF projection:
+
+   .. math::
+
+      N = \frac{G_F^2}{8 \pi x ( 1 + Q^2 / M_W^2 )^2}
+
 
 Heavyness
 ---------
