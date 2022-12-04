@@ -5,7 +5,6 @@ from ..observable_name import ObservableName
 from .esf import ESFInfo
 from .result import ESFResult, EXSResult
 
-INV_GEV_TO_PB = 3.8937966e8 # pb
 GEV_CM2_CONV = 3.893793e10
 "Conversion factor from GeV^-2 to 10^-38 cm^2"
 
@@ -69,6 +68,7 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
         yp = 1.0
         yL = y**2 / (2 * (y**2 / 2 + (1 - y) - (mn * x * y) ** 2 / Q2))
     elif kind == "XSFPFCC":
+        INV_GEV_TO_PB = GEV_CM2_CONV / 100.0 # Pb
         norm = (INV_GEV_TO_PB * params["GF"] ** 2) / (4.0 * np.pi)
         norm *= 1.0 / (2.0 * x * (1.0 + Q2 / params["M2W"])**2)
     else:
