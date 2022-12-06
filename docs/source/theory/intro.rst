@@ -184,7 +184,7 @@ normalization, the following are available in ``yadism``:
 
    .. math::
 
-      N = \frac{G_F^2}{8 \pi x ( 1 + Q^2 / M_W^2 )^2}
+      N = \frac{G_F^2}{8 \pi x ( 1 + Q^2 / M_W^2 )^2} y_+
 
 
 Heavyness
