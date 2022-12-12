@@ -11,6 +11,7 @@ xs = [
     "XSNUTEVCC",
     "XSNUTEVNU",
     "FW",
+    "XSFPFCC",
 ]
 kinds = sfs + xs + [fake_kind]
 # external flavors:

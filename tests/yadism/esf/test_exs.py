@@ -51,6 +51,15 @@ def test_xs_coeffs():
     assert fw[0] == 1.0
     assert fw[2] == 0.0
 
+    xsfpfcc = xs_coeffs(
+        "XSFPFCC",
+        x=0.5,
+        Q2=1.0,
+        y=1.0,
+        params=dict(projectilePID=1, M2target=0.0, M2W=1.0, GF=1.0),
+    )
+    assert xsfpfcc[0] == 3.893793e8 / (32.0 * 0.5 * np.pi)
+
     nutev = xs_coeffs(
         "XSNUTEVCC",
         x=0.5,
