@@ -8,8 +8,6 @@ import numpy.typing as npt
 from eko import interpolation
 
 import yadism
-import yadism.log
-from yadmark.benchmark.external import apfel_utils
 
 t = {
     "ID": 400,
@@ -75,58 +73,63 @@ o = {
 }
 
 
-def compute(curobs: list) -> Tuple[npt.ArrayLike, npt.ArrayLike, npt.ArrayLike]:
+def compute(kDISbThrs: list, curobs: list) -> Tuple[npt.ArrayLike, list]:
     """Compute data for given observables"""
-    # run yadism
+    q2s = np.array([esf["Q2"] for esf in curobs])
+    # prepare data
     oo = copy.deepcopy(o)
     oo["observables"]["XSHERANC"] = curobs
-    out = yadism.run_yadism(t, oo)
-
-    # prepare data
+    yads = []
     p = lhapdf.mkPDF("NNPDF40_nnlo_as_01180", 0)
-    yad_data = out.apply_pdf(p)
-    apf_data = apfel_utils.compute_apfel_data(t, oo, p)
-    xs = np.array([esf["x"] for esf in yad_data["XSHERANC"]])
-    yads = np.array([esf["result"] for esf in yad_data["XSHERANC"]])
-    apfs = np.array([esf["result"] for esf in apf_data["XSHERANC"]])
-    return xs, yads, apfs
+    # run yadism
+    for kDISbThr in kDISbThrs:
+        tt = copy.deepcopy(t)
+        # due to https://github.com/NNPDF/yadism/issues/167 we have to hack kqThr
+        tt["kbThr"] = kDISbThr
+        out = yadism.run_yadism(tt, oo)
+        yad_data = out.apply_pdf_alphas_alphaqed_xir_xif(
+            p, p.alphasQ, lambda _muR: t["alphaqed"], 1.0, 1.0
+        )
+        # yad_data = out.apply_pdf(p)
+        yads.append(np.array([esf["result"] for esf in yad_data["XSHERANC"]]))
+    return q2s, yads
 
 
-def plot_x(q2: float, xs: npt.ArrayLike, yads: npt.ArrayLike, apfs: npt.ArrayLike):
-    """Plot with fixed Q2 and varying x"""
+def plot_q2(x: float, q2s: npt.ArrayLike, yads: list, kDISbThrs: list):
+    """Plot with fixed x and varying Q2"""
     fig = plt.figure()
-    fig.suptitle(f"theory 400, NNPDF4.0, Q² = {q2} GeV²")
+    fig.suptitle(f"theory 400, NNPDF4.0, x = {x}")
     ax0 = fig.add_subplot(3, 1, (1, 2))
-    ax0.plot(xs, yads, label="yadism")
-    ax0.plot(xs, apfs, label="APFEL")
+    for kDISbThr, yad in zip(kDISbThrs, yads):
+        ax0.plot(q2s, yad, label=f"{kDISbThr}")
     ax0.set_ylabel(r"$\sigma^{red}$")
     plt.setp(ax0.get_xticklabels(), visible=False)
     ax0.legend()
     ax1 = fig.add_subplot(3, 1, 3, sharex=ax0)
-    ax1.plot(xs, apfs / yads, label="APFEL/yadism")
+    ax1.plot([], [])  # do an empty plot to align the colors
+    for kDISbThr, yad in zip(kDISbThrs[1:], yads[1:]):
+        ax1.plot(q2s, yad / yads[0], label=f"{kDISbThr}")
     ax1.set_ylabel("ratio")
-    ax1.set_xlabel("Bjorken x")
+    ax1.set_xlabel("Virtuality Q² [GeV²]")
     ax1.set_xscale("log")
     ax1.legend()
-    fig.savefig(f"q2_{q2}.pdf")
+    fig.savefig(f"kDISbThr-x_{x}.pdf")
     plt.close(fig)
 
 
-def build_x_obs(q2: float, xs: npt.ArrayLike, s: float = 318.0**2) -> list:
-    """Generate ESF with fixed Q2 and varying x"""
+def build_q2_obs(x: float, q2s: npt.ArrayLike, s: float = 318.0**2) -> list:
+    """Generate ESF with fixed x and varying Q2"""
     obs = []
-    for x in xs:
-        obs.append(dict(Q2=q2, x=float(x), y=q2 / s / float(x)))
+    for q2 in q2s:
+        obs.append(dict(Q2=q2, x=x, y=float(q2) / s / x))
     return obs
 
 
 # doit
-for qq2, xxs in [
-    (10.0, np.geomspace(1e-4, 5e-2, 20)),
-    (18.0, np.geomspace(1e-4, 5e-2, 20)),
-    (27.0, np.geomspace(1e-4, 5e-2, 20)),
-    (45.0, np.geomspace(1e-4, 5e-2, 20)),
-    (120.0, np.geomspace(1e-3, 2e-1, 20)),
-    (400.0, np.geomspace(5e-3, 5e-1, 20)),
+kkDISbThrs = [1, 1.41, 2.0]
+for xx, qq2s in [
+    (1e-3, np.geomspace(18.0, 180.0, 30)),
+    (1e-2, np.geomspace(18.0, 180.0, 30)),
+    (1e-1, np.geomspace(18.0, 180.0, 30)),
 ]:
-    plot_x(qq2, *compute(build_x_obs(qq2, xxs)))
+    plot_q2(xx, *compute(kkDISbThrs, build_q2_obs(xx, qq2s)), kkDISbThrs)
