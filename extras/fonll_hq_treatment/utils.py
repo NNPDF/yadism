@@ -60,10 +60,18 @@ observables_card = {
     "TargetDIS": "proton",
     "interpolation_is_log": True,
     "interpolation_polynomial_degree": 4,
-    "interpolation_xgrid": interpolation.make_lambert_grid(60),
+    "interpolation_xgrid": interpolation.make_lambert_grid(60).tolist(),
     "observables": {"XSHERANC": []},
     "prDIS": "NC",
     "NCPositivityCharge": None,
+}
+
+
+yaml_card = {
+    "conversion_factor": 1.0,
+    "operands": [],
+    "operation": None,
+    "target_dataset": "",
 }
 
 
@@ -79,5 +87,5 @@ def build_q2_obs(x: float, q2s: npt.ArrayLike, s: float = 318.0**2) -> list:
     """Generate ESF with fixed x and varying Q2"""
     obs = []
     for q2 in q2s:
-        obs.append(dict(Q2=q2, x=x, y=float(q2) / s / x))
+        obs.append(dict(Q2=float(q2), x=x, y=float(q2) / s / x))
     return obs
