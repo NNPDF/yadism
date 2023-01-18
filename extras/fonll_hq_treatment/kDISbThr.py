@@ -52,8 +52,40 @@ def compute_grids(kDISbThrs: dict, obs_suffix: str):
         dump_pineappl_to_file(out, gp, "XSHERANC")
 
 
-def plot_q2(kDISbThrs: dict, obs_suffix: str):
-    """Plot with fixed x and varying Q2"""
+def plot_q2_grid(kDISbThrs: dict, obs_suffix: str):
+    """Plot grids with fixed x and varying Q2"""
+    obsfn = obsfn_template.format(obs_suffix=obs_suffix)
+    p = lhapdf.mkPDF("NNPDF40_nnlo_as_01180", 0)
+    fig = plt.figure()
+    ax0 = fig.add_subplot(3, 1, (1, 2))
+    data = []
+    for tid, kDISbThr in kDISbThrs.items():
+        gp = pathlib.Path(f"./grids/{tid}/{obsfn}.pineappl.lz4")
+        g = pineappl.grid.Grid.read(gp)
+        conv = g.convolute_with_one(2212, p.xfxQ2, p.alphasQ2)
+        data.append(conv)
+        q2s = g.bin_left(0)
+        xs = g.bin_left(1)
+        ax0.plot(q2s, conv, label=f"{kDISbThr}")
+    x = xs[0]
+    fig.suptitle(f"theory 400, NNPDF4.0, x = {x}")
+    ax0.set_ylabel(r"$\sigma^{red}$")
+    plt.setp(ax0.get_xticklabels(), visible=False)
+    ax0.legend()
+    ax1 = fig.add_subplot(3, 1, 3, sharex=ax0)
+    ax1.plot([], [])  # do an empty plot to align the colors
+    for kDISbThr, conv in zip(list(kDISbThrs.values())[1:], data[1:]):
+        ax1.plot(q2s, conv / data[0], label=f"{kDISbThr}")
+    ax1.set_ylabel("ratio")
+    ax1.set_xlabel("Virtuality Q² [GeV²]")
+    ax1.set_xscale("log")
+    ax1.legend()
+    fig.savefig(f"kDISbThr-grid-x_{x}.pdf")
+    plt.close(fig)
+
+
+def plot_q2_fk(kDISbThrs: dict, obs_suffix: str):
+    """Plot fk tables with fixed x and varying Q2"""
     obsfn = obsfn_template.format(obs_suffix=obs_suffix)
     p = lhapdf.mkPDF("NNPDF40_nnlo_as_01180", 0)
     fig = plt.figure()
@@ -80,7 +112,7 @@ def plot_q2(kDISbThrs: dict, obs_suffix: str):
     ax1.set_xlabel("Virtuality Q² [GeV²]")
     ax1.set_xscale("log")
     ax1.legend()
-    fig.savefig(f"kDISbThr-x_{x}.pdf")
+    fig.savefig(f"kDISbThr-fk-x_{x}.pdf")
     plt.close(fig)
 
 
@@ -93,4 +125,5 @@ for xx, qq2s, suffix in [
 ]:
     # dump_cards(kkDISbThrs, build_q2_obs(xx, qq2s), suffix)
     # compute_grids(kkDISbThrs, suffix)
-    plot_q2(kkDISbThrs, suffix)
+    # plot_q2_grid(kkDISbThrs, suffix)
+    plot_q2_fk(kkDISbThrs, suffix)
