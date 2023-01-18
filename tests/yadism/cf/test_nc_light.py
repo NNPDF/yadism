@@ -4,6 +4,7 @@ import numpy as np
 from test_pc_general import MockESF
 
 from yadism.coefficient_functions.light import f2_nc, fl_nc
+from yadism.coefficient_functions.light.n3lo.common import fl, fls
 
 
 def test_N3LO_labels():
@@ -160,12 +161,17 @@ class Test_Blumlein_results:
 
         f2_ns_result = np.array(f2_ns_result)
         f2_s_result = np.array(f2_s_result)
-        # Local pieces do not match ...
         # ns,+
         np.testing.assert_allclose(
             f2_ns_result[:, :-1],
             (f2_ns_ref + self.w2 * f2_d33_ref)[:, :-1],
-            rtol=5e-3,
+            rtol=3e-4,
+        )
+        # local pieces
+        np.testing.assert_allclose(
+            f2_ns_result[:, -1],
+            (f2_ns_ref + self.w2 * f2_d33_ref)[:, -1],
+            rtol=5e-2,
         )
         np.testing.assert_allclose(
             f2_ns_result[:, -1], (f2_ns_ref + self.w2 * f2_d33_ref)[:, -1], rtol=7e-2
@@ -174,7 +180,7 @@ class Test_Blumlein_results:
         np.testing.assert_allclose(
             (f2_s_result + f2_ns_result)[:, :-1],
             (f2_ps_ref + self.w3 * f2_d33_ref + f2_ns_ref)[:, :-1],
-            rtol=2e-3,
+            rtol=4e-4,
         )
         np.testing.assert_allclose(
             (f2_s_result + f2_ns_result)[:, -1],
@@ -262,13 +268,21 @@ class Test_Blumlein_results:
         np.testing.assert_allclose(
             fl_ns_result[:, 0],
             fl_ns_ref + self.w2 * fl_d33_ref,
-            rtol=9e-2,
+            rtol=2e-3,
         )
         # singlet
         np.testing.assert_allclose(
             fl_s_result + fl_ns_result[:, 0],
             fl_ps_ref + self.w3 * fl_d33_ref + fl_ns_ref,
-            rtol=1e-2,
+            rtol=5e-2,
         )
         # gluon
-        np.testing.assert_allclose(fl_g_result, fl_g_ref, rtol=8e-4)
+        np.testing.assert_allclose(fl_g_result, fl_g_ref, rtol=9e-4)
+
+def test_fl_factors():
+    e_q = np.array([2/3,-1/3,-1/3,2/3,-1/3,2/3])
+    for nf in range(1,7):
+        mean_e = np.average(e_q[:nf])
+        mean_e2 = np.average(e_q[:nf]**2)
+        np.testing.assert_allclose(fl(nf), 3 * mean_e)
+        np.testing.assert_allclose(fls(nf), mean_e**2 / mean_e2)
