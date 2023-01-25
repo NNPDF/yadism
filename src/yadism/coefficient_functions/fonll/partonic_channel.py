@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numba as nb
 import numpy as np
 from eko import constants
@@ -292,7 +291,11 @@ class FMatchingGluon(FMatching):
 
         # since as and p_qg appear together there is no need to put an explicit as_norm here
         def reg(z, _args):
-            return icl * split.lo.pqg_single(z, np.array([], dtype=float)) * l
+            return (
+                icl
+                * split.lo.pqg_single(z, np.array([], dtype=float))
+                * (l - 2.0 * np.log(z) - 1.0)
+            )
 
         return RSL(reg)
 
