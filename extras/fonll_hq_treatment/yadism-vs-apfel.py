@@ -91,7 +91,8 @@ def plot_q2(
 #     plot_x(*compute(build_x_obs(qq2, xxs)))
 
 for xx, qq2s in [
-    (2e-4, np.geomspace(15, 35, 30)),
-    (2e-3, np.geomspace(15, 35, 30)),
+    # (2e-4, np.geomspace(15, 35, 30)),
+    # (2e-3, np.geomspace(15, 35, 30)),
+    (1e-3, np.geomspace(15, 35, 30)),
 ]:
     plot_q2(*compute(build_q2_obs(xx, qq2s)))

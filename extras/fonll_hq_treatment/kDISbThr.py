@@ -73,6 +73,7 @@ def plot_q2_grid(kDISbThrs: dict, obs_suffix: str):
     plt.setp(ax0.get_xticklabels(), visible=False)
     ax0.legend()
     ax1 = fig.add_subplot(3, 1, 3, sharex=ax0)
+    ax1.hlines(1.0, np.min(q2s), np.max(q2s), colors="#bbbbbb", linestyles="dashed")
     ax1.plot([], [])  # do an empty plot to align the colors
     for kDISbThr, conv in zip(list(kDISbThrs.values())[1:], data[1:]):
         ax1.plot(q2s, conv / data[0], label=f"{kDISbThr}")
@@ -105,6 +106,7 @@ def plot_q2_fk(kDISbThrs: dict, obs_suffix: str):
     plt.setp(ax0.get_xticklabels(), visible=False)
     ax0.legend()
     ax1 = fig.add_subplot(3, 1, 3, sharex=ax0)
+    ax1.hlines(1.0, np.min(q2s), np.max(q2s), colors="#bbbbbb", linestyles="dashed")
     ax1.plot([], [])  # do an empty plot to align the colors
     for kDISbThr, conv in zip(list(kDISbThrs.values())[1:], data[1:]):
         ax1.plot(q2s, conv / data[0], label=f"{kDISbThr}")
@@ -119,11 +121,11 @@ def plot_q2_fk(kDISbThrs: dict, obs_suffix: str):
 # doit
 kkDISbThrs = {0: 1, 1: 1.41, 2: 2.0}
 for xx, qq2s, suffix in [
-    (1e-3, np.geomspace(18.0, 180.0, 3), "1e-3"),
-    (1e-2, np.geomspace(18.0, 180.0, 3), "1e-2"),
-    (1e-1, np.geomspace(18.0, 180.0, 3), "1e-1"),
+    (1e-3, np.geomspace(18.0, 180.0, 30), "1e-3"),
+    (1e-2, np.geomspace(18.0, 180.0, 30), "1e-2"),
+    (1e-1, np.geomspace(18.0, 180.0, 30), "1e-1"),
 ]:
     # dump_cards(kkDISbThrs, build_q2_obs(xx, qq2s), suffix)
     # compute_grids(kkDISbThrs, suffix)
-    # plot_q2_grid(kkDISbThrs, suffix)
+    plot_q2_grid(kkDISbThrs, suffix)
     plot_q2_fk(kkDISbThrs, suffix)
