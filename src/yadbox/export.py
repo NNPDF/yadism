@@ -23,9 +23,9 @@ def dump_pineappl_to_file(output, filename, obsname):
         raise ValueError(f"no ESF {obsname}!")
     import pineappl  # pylint: disable=import-outside-toplevel,import-error
 
-    interpolation_xgrid = output["interpolation_xgrid"]
+    interpolation_xgrid = output["xgrid"]["grid"]
     # interpolation_is_log = self["interpolation_is_log"]
-    interpolation_polynomial_degree = output["interpolation_polynomial_degree"]
+    interpolation_polynomial_degree = output["polynomial_degree"]
     lepton_pid = output["projectilePID"]
 
     # init pineappl objects
