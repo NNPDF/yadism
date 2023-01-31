@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numba as nb
 import numpy as np
 from eko import constants
@@ -6,8 +5,7 @@ from eko import constants
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
 from ..partonic_channel import RSL
-from ..special import li2
-from ..special.nielsen import nielsen
+from ..special import li2, zeta
 from ..splitting_functions import lo
 
 
@@ -15,6 +13,11 @@ class PartonicChannelAsy(pc.PartonicChannel):
     def __init__(self, *args, mu2hq):
         super().__init__(*args)
         self.L = np.log(self.ESF.Q2 / mu2hq)
+        self.k = (
+            self.ESF.info.threshold.thresholds_ratios[self.nf - 3]
+            if self.ESF.info.threshold.thresholds_ratios is not None
+            else 1.0
+        )
 
 
 # we can define those here, since F2=F3=delta(1-z) at LO and FL=0
@@ -78,9 +81,64 @@ def Delta_qq_loc(x):
 
 
 @nb.njit("f8(f8, f8[:])", cache=True)
-def K_qq_sing(z, _args):
+def K_qq_reg(z, args):
     """
-    |ref| implements :eqref:`100`, :cite:`forte-fonll`.
+    |ref| implements :eqref:`B.4`, :cite:`Buza:1996wv`.
+
+    Parameters
+    ----------
+        z : float
+            parton momentum
+
+    Returns
+    -------
+        regular part of : math:`K_qq(z)`
+    """
+    k = np.log(args[0])
+    return (
+        constants.CF
+        * constants.TR
+        * (
+            (
+                ((1.0 + z**2) / (1.0 - z))
+                * (2.0 / 3.0 * np.log(z) ** 2 + 20.0 / 9.0 * np.log(z))
+                + (8.0 / 3.0 * (1.0 - z) * np.log(z))
+                + 44.0 / 27.0
+                - 268.0 / 27.0 * z
+            )
+            + (
+                (8.0 / 3.0) * ((1.0 + z**2) / (1.0 - z)) * np.log(z)
+                + 8.0 / 9.0
+                - 88.0 / 9.0 * z
+            )
+            * (-k)
+            + (-4.0 / 3.0 - 4.0 / 3.0 * z) * (-k) ** 2
+        )
+    )
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def K_qq_omx(args):
+    """
+    |ref| implements :eqref:`B.4`, :cite:`Buza:1996wv`.
+
+    Parameters
+    ----------
+        z : float
+            parton momentum
+
+    Returns
+    -------
+        1/(1-z) part of : math:`K_qq(z)`
+    """
+    k = np.log(args[0])
+    return 224.0 / 27.0 + 80.0 / 9.0 * (-k) + 8.0 / 3.0 * (-k) ** 2
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def K_qq_sing(z, args):
+    """
+    |ref| implements :eqref:`B.4`, :cite:`Buza:1996wv`.
 
     Parameters
     ----------
@@ -91,24 +149,13 @@ def K_qq_sing(z, _args):
     -------
         singular part of : math:`K_qq(z)`
     """
-    as_norm = 4.0
-    return (
-        constants.CF
-        * constants.TR
-        * (
-            (1.0 + z**2)
-            / (1.0 - z)
-            * (1.0 / 6.0 * np.log(z) ** 2 + 5.0 / 9.0 * np.log(z) + 28.0 / 27.0)
-            + (1.0 - z) * (2.0 / 3.0 * np.log(z) + 13.0 / 9.0)
-        )
-        * as_norm
-    )
+    return constants.CF * constants.TR * (K_qq_omx(args) / (1.0 - z))
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def K_qq_loc(x, _args):
+def K_qq_loc(x, args):
     """
-    |ref| implements :eqref:`100`, :cite:`forte-fonll`.
+    |ref| implements :eqref:`B.4`, :cite:`Buza:1996wv`.
 
     Parameters
     ----------
@@ -119,23 +166,17 @@ def K_qq_loc(x, _args):
     -------
         local part of : math:`K_qq(z)`
     """
-    as_norm = 4.0
+    k = np.log(args[0])
     # Integrate[(1+z^2)/(1-z)(1/6 Log[z]^2+5/9Log[z]+28/27)+(1-z)(2/3Log[z]+13/9),{z,0,x},Assumptions->{0<x<1}]
     return (
         constants.CF
         * constants.TR
         * (
-            -40 * np.pi**2
-            - x * (8 + 211 * x)
-            - 6
-            * np.log(x)
-            * (4 * np.pi**2 + x * (-16 + 19 * x) + 3 * x * (2 + x) * np.log(x))
-            + 8 * np.log(1 - x) * (-56 + 9 * np.log(x) ** 2)
-            + 48 * (5 + 3 * np.log(x)) * li2(1 - x)
-            + 144 * nielsen(2, 1, x).real
+            (-8.0 / 3.0 * zeta.zeta3 + 40.0 / 9.0 * zeta.zeta2 + 73.0 / 18.0)
+            + (16.0 / 3.0 * zeta.zeta2 + 2.0 / 3.0) * (-k)
+            + 2.0 * (-k) ** 2
+            + K_qq_omx(args) * np.log(1.0 - x)
         )
-        / 216.0
-        * as_norm
     )
 
 
@@ -189,7 +230,7 @@ class PdfMatchingNLLNonSinglet(PartonicChannelAsy):
 
 class PdfMatchingNNLLNonSinglet(PartonicChannelAsy):
     def NNLO(self):
-        return RSL(sing=K_qq_sing, loc=K_qq_loc, args=[self.L])
+        return RSL(reg=K_qq_reg, sing=K_qq_sing, loc=K_qq_loc, args=[self.k])
 
 
 class PdfMatchingNNNLLNonSinglet(PartonicChannelAsy):
@@ -220,7 +261,7 @@ class FMatching(PartonicChannelAsyIntrinsic):
 
     def __init__(self, *args, m1sq, m2sq, mu2hq):
         super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
-        self.l = np.log(mu2hq / m1sq)
+        self.l = np.log(self.Q2 / m1sq)
 
     def obj(self):
         return self.ffns(self.ESF, self.nf, m1sq=self.m1sq, m2sq=self.m2sq)
@@ -234,6 +275,9 @@ class FMatching(PartonicChannelAsyIntrinsic):
 
 class FMatchingQuark(FMatching):
     def NLO(self):
+        """
+        |ref| implements :eqref:`20a`, :cite:`Ball:2015tna`.
+        """
         icl = self.parent_lo_local()
         if icl is None:
             return None

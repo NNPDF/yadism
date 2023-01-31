@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from eko.thresholds import ThresholdsAtlas
 
@@ -28,12 +27,18 @@ class MockSF:
         self.threshold = ThresholdsAtlas(self.m2hq)
 
 
+class MockInfo:
+    threshold = None
+
+
 class MockESF:
     def __init__(self, sf, x, Q2):
         self.sf = MockSF(sf)
         self.x = x
         self.Q2 = Q2
         self.process = "NC"
+        self.info = MockInfo()
+        self.info.threshold = self.sf.threshold
 
 
 def test_cg():

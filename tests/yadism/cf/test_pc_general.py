@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Test all the partonic coefficient functions
 """
@@ -31,11 +30,20 @@ class MockSF:
     pass
 
 
+class MockThreshold:
+    thresholds_ratios = [1.0, 1.0, 1.0]
+
+
+class MockInfo:
+    threshold = MockThreshold()
+
+
 class MockESF:
     def __init__(self, x, q2):
         self.sf = MockSF()
         self.x = x
         self.Q2 = q2
+        self.info = MockInfo()
 
 
 class TestFloat:
@@ -49,7 +57,7 @@ class TestFloat:
             hf2cc.NonSinglet(MockESF(x, Q2), 3, m2hq=M2hq),
             hf3cc.NonSinglet(MockESF(x, Q2), 4, m2hq=M2hq),
             hflcc.NonSinglet(MockESF(x, Q2), 5, m2hq=M2hq),
-            af2cc.AsyQuark(MockESF(x, Q2), 6, mu2hq=M2hq),
+            af2cc.AsyQuark(MockESF(x, Q2), 5, mu2hq=M2hq),
             af3cc.AsyQuark(MockESF(x, Q2), 3, mu2hq=M2hq),
             lf2cc.NonSingletEven(MockESF(x, Q2), nf=nf),
             lf3cc.NonSingletEven(MockESF(x, Q2), nf=nf),
@@ -100,7 +108,7 @@ class TestFloat:
                 lflcc.Gluon(MockESF(x, Q2), nf=nf),
                 aflcc.AsyGluon(MockESF(x, Q2), 5, mu2hq=M2hq),
                 lflnc.Gluon(MockESF(x, Q2), nf=nf),
-                af2nc.AsyLLGluon(MockESF(x, Q2), 6, mu2hq=M2hq),
+                af2nc.AsyLLGluon(MockESF(x, Q2), 5, mu2hq=M2hq),
                 af2nc.AsyNLLGluon(MockESF(x, Q2), 3, mu2hq=M2hq),
                 aflnc.AsyNLLGluon(MockESF(x, Q2), 3, mu2hq=M2hq),
                 hf2nc.GluonVV(MockESF(x, Q2), 6, m2hq=M2hq),
