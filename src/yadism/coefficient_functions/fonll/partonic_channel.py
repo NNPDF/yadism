@@ -117,7 +117,7 @@ def K_qq_reg(z, args):
     )
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit("f8(f8[:])", cache=True)
 def K_qq_omx(args):
     """
     |ref| implements :eqref:`B.4`, :cite:`Buza:1996wv`.
