@@ -99,6 +99,9 @@
 .. |RSL| replace::
    :abbr:`RSL (Regular - Singular - Local)`
 
+.. |FK| replace::
+   :abbr:`FK (Fast Kernel)`
+
 .. ----------------
    cross references
    ----------------

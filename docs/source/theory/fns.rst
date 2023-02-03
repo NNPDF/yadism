@@ -231,25 +231,61 @@ A common shape for :math:`f_{\textrm{thr}} (x, Q^2)` is then:
 Threshold different from heavy quark mass
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The threshold in |FONLL| plays a relevant role, since it is deciding where (in
-:math:`Q^2`) the match should happen.
-
-A typical choice is to put the threshold on top of the relevant quark mass (also
+The matching scale :math:`\mu^2` seems to play a relevant role in |FONLL|, since it is deciding where (in
+:math:`Q^2`) the conversion between the schemes should happen.
+A typical choice is to put the matching scale on top of the relevant quark mass (also
 in |ZM-VFNS|, mimicking the opening of a new channel). This is **not
-mandatory**, as the threshold is just an |FNS| parameter it can be freely
+mandatory**, as the matching scale is just an |FNS| parameter it can be freely
 chosen.
 
-If the threshold is then chosen *different* from the quark mass, a new scale
-ratio appears, and the expressions might depend also on this one.
-Notice that the threshold is only a parameter of |FONLL|, so it can not affect
-the |FFNS| ingredients of the scheme (which can only depend on the real quark
-masses, through massive propagators).
-Then only the massless limit (the double counting preventing bit) might include
-a threshold dependency, and in practice it will only change the relevant
-logarithm, that:
+However, in practice, choosing the matching scale *different* from the quark masses
+has no effect in |FONLL| since the matching conditions follow the same
+evolution as |PDF| which are inlined in either case. We demonstrate this explicitly in the following.
+We follow the notation of :cite:`forte-fonll` and denote the coefficient functions
+in the massive scheme (with :math:`n_f` light and 1 heavy flavor) by :math:`C^{(n_f)}`
+and the coefficient functions in the mass-less scheme (with :math:`(n_f+1)` light flavors)
+by :math:`B`. For the sake of readability we suppress in the following any dependence
+on parton momenta (i.e. :math:`x` or :math:`z`).
 
-- instead of being the logarithm of the ratio between the process scale and *the
-  mass*
-- is a logarithm of the ratio with *the threshold*
+.. math::
 
-as it is discussed in :cite:`forte-bqZfonll`.
+   F^{(n_f)}(Q^2) &= B \otimes f^{(n_f+1)}(Q^2)\\
+      &= C^{(n_f)}(Q^2) \otimes f^{(n_f)}(Q^2) \\
+      &= C^{(n_f)}(Q^2) \otimes E^{(n_f)}(Q^2 \leftarrow \mu^2) \otimes f^{(n_f)}(\mu^2) \\
+      &= C^{(n_f)}(Q^2) \otimes E^{(n_f)}(Q^2 \leftarrow \mu^2) \otimes K^{-1}(\mu^2/m^2) \otimes f^{(n_f+1)}(\mu^2) \\
+      &= C^{(n_f)}(Q^2) \otimes E^{(n_f)}(Q^2 \leftarrow \mu^2) \otimes K^{-1}(\mu^2/m^2) \otimes E^{(n_f+1)}(\mu^2 \leftarrow Q^2) \otimes f^{(n_f+1)}(Q^2) \\
+   \Rightarrow B &= C^{(n_f)}(Q^2) \otimes E^{(n_f)}(Q^2 \leftarrow \mu^2) \otimes K^{-1}(\mu^2/m^2) \otimes E^{(n_f+1)}(\mu^2 \leftarrow Q^2)
+
+We used the (raw) |EKO| :math:`E` for DGLAP evolution
+
+.. math::
+
+   f^{(n_f)}(Q^2) = E^{(n_f)}(Q^2 \leftarrow \mu^2) f^{(n_f)}(\mu^2)
+
+and the matching conditions :math:`K` to match |PDF| between different number of light flavors
+
+.. math::
+
+   f^{(n_f+1)}(\mu^2) = K(\mu^2/m^2) \otimes f^{(n_f)}(\mu^2)
+
+where we can assume that the matching scale :math:`\mu^2` might be different from the quark mass :math:`m^2`.
+This latter equation we can, however, relate back to the case of :math:`\mu^2=m^2` using |EKO| again:
+
+.. math::
+   f^{(n_f+1)}(\mu^2) &= E^{(n_f+1)}(\mu^2 \leftarrow m^2) \otimes f^{(n_f+1)}(m^2)\\
+      &= E^{(n_f+1)}(\mu^2 \leftarrow m^2) \otimes K(1) \otimes f^{(n_f)}(m^2)\\
+      &= E^{(n_f+1)}(\mu^2 \leftarrow m^2) \otimes K(1) \otimes E^{(n_f)}(m^2 \leftarrow \mu^2) \otimes f^{(n_f)}(\mu^2)\\
+   \Rightarrow K(\mu^2/m^2) &= E^{(n_f+1)}(\mu^2 \leftarrow m^2) \otimes K(1) \otimes E^{(n_f)}(m^2 \leftarrow \mu^2)
+
+Inserting this last equation back into the definition of :math:`B` we find
+
+.. math::
+   B = C^{(n_f)}(Q^2) \otimes E^{(n_f)}(Q^2 \leftarrow m^2) \otimes K^{-1}(1) \otimes E^{(n_f+1)}(m^2 \leftarrow Q^2)
+
+by using the transitive relation of |EKO|. Now, since any |EKO| :math:`E(Q_1^2\leftarrow Q_0^2)` may only depend on
+:math:`\log(Q_1^2/Q_0^2)` (it is exactly resumming that log!) :math:`B` can not depend on the matching scale :math:`\mu^2`.
+
+Note, that while nor :math:`C^{(n_f)}` nor :math:`B` may depend on the matching scale, ``yadism`` still has a dependency on the
+matching scale: this scales decides which quark to actually treat in the |FONLL| prescription.
+Moreover, the physical observable (i.e. the |FK| table) still depends on the matching scale as it simply
+inherits the dependency from the evolution (which has an explicit, higher-order dependency on the matching scale).
