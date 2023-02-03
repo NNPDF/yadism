@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numba as nb
 import numpy as np
 from eko import constants
@@ -220,7 +219,7 @@ class FMatching(PartonicChannelAsyIntrinsic):
 
     def __init__(self, *args, m1sq, m2sq, mu2hq):
         super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
-        self.l = np.log(self.Q2 / mu2hq)
+        self.l = np.log(self.Q2 / m1sq)
 
     def obj(self):
         return self.ffns(self.ESF, self.nf, m1sq=self.m1sq, m2sq=self.m2sq)
