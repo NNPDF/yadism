@@ -44,9 +44,9 @@ def test_cg():
         for z in [1e-1, 1e-2, 1e-3]:
             cg = h_f2_nc.GluonVV(esf, nf, m2hq=m2hq)
             cgasys = [
-                f_f2_nc.AsyLLGluon(esf, nf, mu2hq=m2hq),
-                f_f2_nc.AsyNLLGluon(esf, nf, mu2hq=m2hq),
-                f_f2_nc.AsyNNLLGluon(esf, nf, mu2hq=m2hq),
+                f_f2_nc.AsyLLGluon(esf, nf, m2hq=m2hq),
+                f_f2_nc.AsyNLLGluon(esf, nf, m2hq=m2hq),
+                f_f2_nc.AsyNNLLGluon(esf, nf, m2hq=m2hq),
             ]
             for o in ["NLO", "NNLO"]:
                 order = lambda pc, o=o: pc.__getattribute__(o)()

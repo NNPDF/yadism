@@ -1,4 +1,9 @@
-# -*- coding: utf-8 -*-
+"""Collections implementing the FONLL prescription.
+
+This is strictly following the original reference :cite:`forte-fonll`, and
+implements the prescription at coefficient functions level.
+
+"""
 import numpy as np
 from eko import basis_rotation as br
 from eko.constants import TR
@@ -7,6 +12,7 @@ from .. import heavy, kernels, light
 
 
 def import_pc_module(kind, process, subpkg=None):
+    """Dynamic import implementing module, selected observable."""
     if subpkg is None:
         subpkg = __name__
     else:
@@ -39,8 +45,8 @@ def generate_light(esf, nl, pto_evol):
     # and so we're back to cbar^{(nl)}
     light_elems = light.kernels.generate(esf, nl)
     kind = esf.info.obs_name.kind
-    mu2hq = esf.info.threshold.area_walls[ihq - 3]
-    L = np.log(esf.Q2 / mu2hq)
+    m2hq = esf.info.threshold.area_walls[ihq - 3]
+    L = np.log(esf.Q2 / m2hq)
     fonll_cfs = import_pc_module(kind, esf.process)
 
     if esf.process == "CC":
@@ -59,7 +65,7 @@ def generate_light(esf, nl, pto_evol):
         pdf_matching.append(
             -kernels.Kernel(
                 light_weights["ns"],
-                fonll_cfs.__getattribute__(name)(esf, nl, mu2hq=mu2hq),
+                fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
             )
         )
 
@@ -72,7 +78,7 @@ def generate_light(esf, nl, pto_evol):
             * as_norm
             * kernels.Kernel(
                 light_weights["ns"],
-                fonll_cfs.LightNonSingletShifted(esf, nl, mu2hq=mu2hq),
+                fonll_cfs.LightNonSingletShifted(esf, nl, m2hq=m2hq),
             )
         )
 
@@ -134,12 +140,12 @@ def generate_light_diff(esf, nl, pto_evol):
         asy.append(-e)
     # add in addition it also has the asymptotic limit of missing
     ihq = nl + 1
-    mu2hq = esf.info.threshold.area_walls[ihq - 3]
+    m2hq = esf.info.threshold.area_walls[ihq - 3]
     fonll_cfs = import_pc_module(kind, esf.process)
     for res in range(pto_evol + 1):
         name = "Asy" + ("N" * res) + "LL" + "NonSinglet"
         km = kernels.Kernel(
-            light_weights["ns"], fonll_cfs.__getattribute__(name)(esf, nl, mu2hq=mu2hq)
+            light_weights["ns"], fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq)
         )
         asy.append(-km)
     return (k, *asy)
@@ -174,15 +180,15 @@ def generate_heavy_diff(esf, nl, pto_evol):
     # m2hq = esf.info.m2hq[ihq - 4]
     # but will be done at the proper threshold
     fonll_cfs = import_pc_module(kind, esf.process)
-    mu2hq = esf.info.threshold.area_walls[ihq - 3]
+    m2hq = esf.info.threshold.area_walls[ihq - 3]
     asys = []
     if esf.process == "CC":
         wa = kernels.cc_weights(
             esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], nl
         )
         asys = [
-            -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, mu2hq=mu2hq)),
-            -kernels.Kernel(wa["g"], fonll_cfs.AsyGluon(esf, nl, mu2hq=mu2hq)),
+            -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, m2hq=m2hq)),
+            -kernels.Kernel(wa["g"], fonll_cfs.AsyGluon(esf, nl, m2hq=m2hq)),
         ]
     else:
         asy_weights = heavy.kernels.nc_weights(
@@ -196,7 +202,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
                         asys.append(
                             -kernels.Kernel(
                                 asy_weights[f"{c}{av}"],
-                                fonll_cfs.__getattribute__(name)(esf, nl, mu2hq=mu2hq),
+                                fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
                             )
                         )
 
@@ -226,7 +232,7 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
     ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
     # matching scale
-    mu2hq = esf.info.threshold.area_walls[ihq - 3]
+    m2hq = esf.info.threshold.area_walls[ihq - 3]
     # add normal terms starting from NNLO
     nnlo_terms = generate_heavy_diff(esf, nl, pto_evol)
     for k in nnlo_terms:
@@ -240,21 +246,21 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
             return (
                 -kernels.Kernel(
                     wq,
-                    cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
+                    cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2hq=m2hq),
                 ),
                 -kernels.Kernel(
                     {21: list(wq.values())[0]},
-                    cfs.MatchingGluonRplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
+                    cfs.MatchingGluonRplus(esf, nl, m1sq=m2hq, m2hq=m2hq),
                 ),
                 *nnlo_terms,
             )
         return (
             -kernels.Kernel(
-                wq, cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq)
+                wq, cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2hq=m2hq)
             ),
             -kernels.Kernel(
                 {21: list(wq.values())[0]},
-                cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, mu2hq=mu2hq),
+                cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, m2hq=m2hq),
             ),
             *nnlo_terms,
         )
@@ -267,11 +273,11 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
         return (
             -kernels.Kernel(
                 {ihq: wp, (-ihq): -wp},
-                cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+                cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
             ),
             -kernels.Kernel(
                 {ihq: wm, (-ihq): -wm},
-                cfs.MatchingIntrinsicRminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+                cfs.MatchingIntrinsicRminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
             ),
             *nnlo_terms,
         )
@@ -283,22 +289,22 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
     return (
         -kernels.Kernel(
             {ihq: wp, (-ihq): wp},
-            cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+            cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
         -kernels.Kernel(
             {ihq: wm, (-ihq): wm},
-            cfs.MatchingIntrinsicSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+            cfs.MatchingIntrinsicSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
         # the explicit 2 is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
         # it is coming from the sum over quark and anti-quark (a quark split in
         # both and either of them can interact with the EW boson)
         -kernels.Kernel(
             {21: 2 * wp},
-            cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+            cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
         -kernels.Kernel(
             {21: 2 * wm},
-            cfs.MatchingGluonSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, mu2hq=mu2hq),
+            cfs.MatchingGluonSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
         *nnlo_terms,
     )
