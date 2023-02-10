@@ -98,7 +98,7 @@ yadnav = "yadmark.navigator:launch_navigator"
 
 [tool.poe.tasks]
 coverage = "$BROWSER htmlcov/index.html"
-test = "pytest tests"
+test = "pytest"
 test-cov = ["test", "coverage"]
 lint = "pylint src/ -E"
 lint-warnings = "pylint src/ --exit-zero"
