@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 """Benchmark to xspace_bench (the original FONLL implementation)."""
 import numpy as np
-from eko import compatibility as eko_compatibility
-from eko import couplings as eko_sc
+from eko.couplings import Couplings, couplings_mod_ev
+from eko.io import dictlike, runcards, types
 
 from yadism import observable_name as on
 
@@ -83,13 +82,24 @@ def compute_xspace_bench_data(theory, observables, pdf):
     else:
         raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
 
-    new_eko_theory = eko_compatibility.update_theory(theory)
-    sc = eko_sc.Couplings.from_dict(new_eko_theory)
+    new_eko_theory = runcards.Legacy(theory=theory, operator={}).new_theory
+    method = runcards.Legacy.MOD_EV2METHOD.get(theory["ModEv"], theory["ModEv"])
+    method = dictlike.load_enum(types.EvolutionMethod, method)
+    method = couplings_mod_ev(method)
+    masses = [mq.value**2 for mq in new_eko_theory.quark_masses]
+    thresholds_ratios = np.power(list(iter(new_eko_theory.matching)), 2.0)
+    sc = Couplings(
+        couplings=new_eko_theory.couplings,
+        order=new_eko_theory.order,
+        method=method,
+        masses=masses,
+        hqm_scheme=new_eko_theory.quark_masses_scheme,
+        thresholds_ratios=thresholds_ratios,
+    )
 
     num_tab = {}
     # loop over functions
     for obs_name in observables["observables"]:
-
         # if not on.ObservableName.is_valid(obs):
         #    continue
 
@@ -104,7 +114,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
         # loop over points
         for q2 in q2s:
-
             xs = []
 
             alphas = sc.a_s(q2) * 4.0 * np.pi
@@ -117,7 +126,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
                     xs.append(kin["x"])
 
             for x in xs:
-
                 res = []
                 f3_fact = -1.0
                 if x == 1.0:

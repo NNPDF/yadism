@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
 """
-Output related utilities: for the main output (that is the computed |PDF|
+Output related utilities.
+
+For the main output (that is the computed |PDF|
 independent |DIS| operator) three outputs are provided:
 
 - tar archive, containing metadata and binary :mod:`numpy.lib.format` arrays
@@ -20,8 +21,8 @@ import tempfile
 import numpy as np
 import pandas as pd
 import yaml
-from eko import compatibility as eko_compatibility
-from eko import couplings
+from eko.couplings import Couplings, couplings_mod_ev
+from eko.io import dictlike, runcards, types
 
 from . import observable_name as on
 from .esf.result import ESFResult, EXSResult
@@ -49,13 +50,12 @@ class MaskedPDF:
         return self.parent.__getattribute__(name)
 
     def xfxQ2(self, pid, x, Q2):
+        """Fake lhapdf-like wrapper."""
         return self.parent.xfxQ2(pid, x, Q2) if pid in self.active_pids else 0.0
 
 
 class Output(dict):
-    """Wrapper for the output to help with application to PDFs and dumping to
-    file.
-    """
+    """Wrapper for the output to help with application to PDFs and dumping to file."""
 
     theory = None
     observables = None
@@ -96,8 +96,20 @@ class Output(dict):
             output dictionary with all structure functions for all x, Q2, result and error
 
         """
-        new_eko_theory = eko_compatibility.update_theory(theory)
-        sc = couplings.Couplings.from_dict(new_eko_theory)
+        new_eko_theory = runcards.Legacy(theory=theory, operator={}).new_theory
+        method = runcards.Legacy.MOD_EV2METHOD.get(theory["ModEv"], theory["ModEv"])
+        method = dictlike.load_enum(types.EvolutionMethod, method)
+        method = couplings_mod_ev(method)
+        masses = [mq.value**2 for mq in new_eko_theory.quark_masses]
+        thresholds_ratios = np.power(list(iter(new_eko_theory.matching)), 2.0)
+        sc = Couplings(
+            couplings=new_eko_theory.couplings,
+            order=new_eko_theory.order,
+            method=method,
+            masses=masses,
+            hqm_scheme=new_eko_theory.quark_masses_scheme,
+            thresholds_ratios=thresholds_ratios,
+        )
         alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
         alpha_qed = lambda _muR: theory["alphaqed"]
         return self.apply_pdf_alphas_alphaqed_xir_xif(
@@ -203,7 +215,7 @@ class Output(dict):
         return yaml.dump(out, stream, default_flow_style=None)
 
     def dump_yaml_to_file(self, filename):
-        """Writes YAML representation to a file.
+        """Write YAML representation to a file.
 
         Parameters
         ----------
@@ -216,7 +228,7 @@ class Output(dict):
             result of dump(output, stream), i.e. Null if written sucessfully
 
         """
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding="utf8") as f:
             ret = self.dump_yaml(f)
         return ret
 
@@ -387,7 +399,7 @@ class Output(dict):
 
     @classmethod
     def load_yaml(cls, stream):
-        """Load YAML representation from stream
+        """Load YAML representation from stream.
 
         Parameters
         ----------
@@ -423,7 +435,7 @@ class Output(dict):
 
     @classmethod
     def load_yaml_from_file(cls, filename):
-        """Load YAML representation from file
+        """Load YAML representation from file.
 
         Parameters
         ----------
@@ -446,7 +458,7 @@ class PDFOutput(Output):
     """Wrapper for the PDF output to help with dumping to file."""
 
     def get_raw(self):
-        """Convert the object into a native Python dictionary
+        """Convert the object into a native Python dictionary.
 
         Returns
         -------
@@ -483,7 +495,7 @@ class PDFOutput(Output):
 
     @property
     def tables(self):
-        """Convert data into a mapping structure functions -> :class:`pandas.DataFrame`"""
+        """Convert data into a mapping structure functions -> :class:`pandas.DataFrame`."""
         tables = {}
         for k, v in self.items():
             tables[k] = pd.DataFrame(v)
