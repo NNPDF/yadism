@@ -11,9 +11,9 @@ from ..splitting_functions import lo
 
 
 class PartonicChannelAsy(pc.PartonicChannel):
-    def __init__(self, *args, mu2hq):
+    def __init__(self, *args, m2hq):
         super().__init__(*args)
-        self.L = np.log(self.ESF.Q2 / mu2hq)
+        self.L = np.log(self.ESF.Q2 / m2hq)
 
 
 # we can define those here, since F2=F3=delta(1-z) at LO and FL=0
@@ -217,7 +217,7 @@ class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
 class FMatching(PartonicChannelAsyIntrinsic):
     ffns = lambda *_args, m1sq, m2sq: None
 
-    def __init__(self, *args, m1sq, m2sq, mu2hq):
+    def __init__(self, *args, m1sq, m2sq, m2hq):
         super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
         self.l = np.log(self.Q2 / m1sq)
 
@@ -269,8 +269,8 @@ class FMatchingQuark(FMatching):
 class FMatchingCC(FMatching):
     ffns = lambda *_args, m1sq: None
 
-    def __init__(self, *args, m1sq, mu2hq):
-        super().__init__(*args, m1sq=m1sq, m2sq=0.0, mu2hq=mu2hq)
+    def __init__(self, *args, m1sq, m2hq):
+        super().__init__(*args, m1sq=m1sq, m2sq=0.0, m2hq=m2hq)
 
     def obj(self):
         return self.ffns(self.ESF, self.nf, m1sq=self.m1sq)
