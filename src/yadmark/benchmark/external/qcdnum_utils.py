@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Benchmark to QCDNUM."""
 import pathlib
 
 import numpy as np
@@ -67,7 +67,7 @@ def compute_qcdnum_data(
     if observables["prDIS"] == "CC":
         raise NotImplementedError("Charged current not supported in QCDNUM")
 
-    import QCDNUM  # pylint:disable=import-outside-toplevel
+    import QCDNUM  # pylint:disable=import-outside-toplevel,import-error
 
     # remove QCDNUM cache files
     wname = "unpolarised-py.wgt"
@@ -184,7 +184,6 @@ def compute_qcdnum_data(
 
         # loop over points
         for q2 in q2s:
-
             xs = []
             fs = []
 

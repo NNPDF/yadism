@@ -1,16 +1,18 @@
-# -*- coding: utf-8 -*-
+"""Localized implementation of BenchmarkRunner."""
 import numpy as np
 import pandas as pd
 from banana.benchmark.runner import BenchmarkRunner
 from banana.data import dfdict
-from eko import compatibility as eko_compatibility
-from eko.couplings import Couplings
+from eko.couplings import Couplings, couplings_mod_ev
+from eko.io import dictlike, runcards, types
 
 import yadism
 from yadmark.data import db, observables
 
 
 class Runner(BenchmarkRunner):
+    """Localized implementation of BenchmarkRunner."""
+
     alphas_from_lhapdf = False
     """Use the alpha_s routine provided by the Pdf?"""
 
@@ -18,25 +20,27 @@ class Runner(BenchmarkRunner):
 
     @staticmethod
     def load_ocards(conn, ocard_updates):
+        """Load observable cards."""
         return observables.load(conn, ocard_updates)
 
     def run_me(self, theory, ocard, pdf):
         """
-        Run yadism
+        Run yadism.
 
         Parameters
         ----------
-            theory : dict
-                theory card
-            ocard : dict
-                observable card
-            pdf : lhapdf_like
-                PDF set
+        theory : dict
+            theory card
+        ocard : dict
+            observable card
+        pdf : lhapdf_like
+            PDF set
 
         Returns
         -------
-            out : yadism.output.PDFOutput
-                yadism output
+        out : yadism.output.PDFOutput
+            yadism output
+
         """
         runner = yadism.Runner(theory, ocard)
         # choose alpha_s source
@@ -45,8 +49,20 @@ class Runner(BenchmarkRunner):
 
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
         else:
-            new_eko_theory = eko_compatibility.update_theory(theory)
-            sc = Couplings.from_dict(new_eko_theory)
+            new_eko_theory = runcards.Legacy(theory=theory, operator={}).new_theory
+            method = runcards.Legacy.MOD_EV2METHOD.get(theory["ModEv"], theory["ModEv"])
+            method = dictlike.load_enum(types.EvolutionMethod, method)
+            method = couplings_mod_ev(method)
+            masses = [mq.value**2 for mq in new_eko_theory.quark_masses]
+            thresholds_ratios = np.power(list(iter(new_eko_theory.matching)), 2.0)
+            sc = Couplings(
+                couplings=new_eko_theory.couplings,
+                order=new_eko_theory.order,
+                method=method,
+                masses=masses,
+                hqm_scheme=new_eko_theory.quark_masses_scheme,
+                thresholds_ratios=thresholds_ratios,
+            )
             alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
 
         alpha_qed = lambda _muR: theory["alphaqed"]
@@ -56,21 +72,22 @@ class Runner(BenchmarkRunner):
 
     def run_external(self, theory, ocard, pdf):
         """
-        Run yadism
+        Run external.
 
         Parameters
         ----------
-            theory : dict
-                theory card
-            ocard : dict
-                observable card
-            pdf : lhapdf_like
-                PDF set
+        theory : dict
+            theory card
+        ocard : dict
+            observable card
+        pdf : lhapdf_like
+            PDF set
 
         Returns
         -------
-            dict
-                external output
+        dict
+            external output
+
         """
         observable = ocard
 
@@ -111,6 +128,7 @@ class Runner(BenchmarkRunner):
         raise ValueError("Unknown external")
 
     def log(self, t, o, _pdf, me, ext):
+        """Write log."""
         log_tab = dfdict.DFdict()
         kins = ["x", "Q2"]
 

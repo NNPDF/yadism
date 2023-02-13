@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 import numpy as np
-from eko import harmonics
-from eko.anomalous_dimensions import as1, as2
+from ekore import harmonics
+from ekore.anomalous_dimensions.unpolarized.space_like import as1, as2
 from scipy import integrate
 
 from yadism.coefficient_functions import splitting_functions as sf

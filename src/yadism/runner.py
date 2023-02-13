@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 This module contains the main loop for the DIS calculations.
 
@@ -20,6 +19,7 @@ import io
 import logging
 import time
 
+import numpy as np
 import rich
 import rich.align
 import rich.box
@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 class Runner:
     """
-    Wrapper to compute a process
+    Wrapper to compute a process.
 
     Parameters
     ----------
@@ -115,9 +115,15 @@ class Runner:
         )
 
         # Initialize structure functions
+        masses = np.power([new_theory["mc"], new_theory["mb"], new_theory["mt"]], 2)
+        thresholds_ratios = np.power(
+            [new_theory["kDIScThr"], new_theory["kDISbThr"], new_theory["kDIStThr"]], 2
+        )
         managers = dict(
             interpolator=interpolator,
-            threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
+            threshold=thresholds.ThresholdsAtlas(
+                masses=masses, thresholds_ratios=thresholds_ratios
+            ),
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
         )
@@ -142,7 +148,7 @@ class Runner:
             nf_ff=theory["NfFF"],
             ZMq=(new_theory["ZMc"], new_theory["ZMb"], new_theory["ZMt"]),
             intrinsic_range=intrinsic_range,
-            m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
+            m2hq=masses,
             TMC=theory["TMC"],
             target=new_observables["TargetDIS"],
             GF=theory["GF"],
@@ -196,6 +202,7 @@ class Runner:
         self._output["projectilePID"] = coupling_constants.obs_config["projectilePID"]
 
     def get_sf(self, obs_name):
+        """Return associated SF object."""
         if obs_name.name not in self.observables:
             self.observables[obs_name.name] = SF(obs_name, self)
         return self.observables[obs_name.name]
@@ -281,6 +288,8 @@ class Runner:
 
 
 class RunnerConfigs:
+    """Runner Configuration."""
+
     def __init__(self, theory, managers):
         self.theory = theory
         self.managers = managers

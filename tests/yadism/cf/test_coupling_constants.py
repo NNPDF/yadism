@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 
@@ -315,6 +314,6 @@ class TestCKM2Matrix:
         assert ckm.masked("t").m.sum() == 3
 
     def test_from_str(self):
-        ra = (np.random.rand(9) + 1.0) / 2.0
+        ra = (0.5 * np.random.rand(9) + 1.0) / 1.5
         ra_s = " ".join([str(x) for x in ra])
         assert (coupl.CKM2Matrix(ra**2).m == coupl.CKM2Matrix.from_str(ra_s).m).all()
