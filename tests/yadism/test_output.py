@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import io
 import pathlib
 from unittest import mock
@@ -69,7 +68,6 @@ class TestOutput:
 
         # test factorization scale variation
         for xiF in [0.5, 2.0]:
-
             ret = outp.apply_pdf_alphas_alphaqed_xir_xif(
                 MockPDFgonly(), lambda _muR: 1, lambda _muR: 1, 1.0, xiF
             )
@@ -98,7 +96,7 @@ class TestOutput:
         with mock.patch("builtins.open", m_out) as mock_file:
             fn = "test.yaml"
             o1.dump_yaml_to_file(fn)
-            mock_file.assert_called_with(fn, "w")
+            mock_file.assert_called_with(fn, "w", encoding="utf8")
         # fake input file
         stream.seek(0)
         m_in = mock.mock_open(read_data=stream.getvalue())

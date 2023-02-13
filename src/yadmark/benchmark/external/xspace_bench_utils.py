@@ -24,7 +24,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
     dict
         xspace_bench numbers
     """
-    import xspace_bench  # pylint:disable=import-outside-toplevel
+    import xspace_bench  # pylint:disable=import-outside-toplevel,import-error
 
     # Available targets: PROTON, NEUTRON, ISOSCALAR, IRON
     target = "PROTON"
