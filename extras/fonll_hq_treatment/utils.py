@@ -100,6 +100,15 @@ def build_q2_obs(x: float, q2s: npt.ArrayLike, s: float = 318.0**2) -> list:
     return obs
 
 
+def build_matrix_obs(xs: float, q2s: npt.ArrayLike, s: float = 318.0**2) -> list:
+    """Generate ESF."""
+    obs = []
+    for x in xs:
+        for q2 in q2s:
+            obs.append(dict(Q2=float(q2), x=float(x), y=float(q2) / s / float(x)))
+    return obs
+
+
 def update_theory(upd: dict) -> dict:
     """Create a new theory card from an update."""
     tt = copy.deepcopy(theory_card)
