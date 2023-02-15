@@ -1,7 +1,14 @@
 """Investigation for heavy quark treatment."""
 
+import copy
+import pathlib
+
 import numpy.typing as npt
+import yaml
 from eko import interpolation
+
+import yadism
+from yadbox.export import dump_pineappl_to_file
 
 theory_card = {
     "ID": 400,
@@ -60,7 +67,9 @@ observables_card = {
     "TargetDIS": "proton",
     "interpolation_is_log": True,
     "interpolation_polynomial_degree": 4,
-    "interpolation_xgrid": interpolation.make_lambert_grid(60).tolist(),
+    "interpolation_xgrid": interpolation.lambertgrid(
+        60
+    ).tolist(),  # interpolation.make_lambert_grid(60).tolist(),
     "observables": {"XSHERANC": []},
     "prDIS": "NC",
     "NCPositivityCharge": None,
@@ -76,7 +85,7 @@ yaml_card = {
 
 
 def build_x_obs(q2: float, xs: npt.ArrayLike, s: float = 318.0**2) -> list:
-    """Generate ESF with fixed Q2 and varying x"""
+    """Generate ESF with fixed Q2 and varying x."""
     obs = []
     for x in xs:
         obs.append(dict(Q2=q2, x=float(x), y=q2 / s / float(x)))
@@ -84,8 +93,38 @@ def build_x_obs(q2: float, xs: npt.ArrayLike, s: float = 318.0**2) -> list:
 
 
 def build_q2_obs(x: float, q2s: npt.ArrayLike, s: float = 318.0**2) -> list:
-    """Generate ESF with fixed x and varying Q2"""
+    """Generate ESF with fixed x and varying Q2."""
     obs = []
     for q2 in q2s:
         obs.append(dict(Q2=float(q2), x=x, y=float(q2) / s / x))
     return obs
+
+
+def update_theory(upd: dict) -> dict:
+    """Create a new theory card from an update."""
+    tt = copy.deepcopy(theory_card)
+    tt.update(upd)
+    return tt
+
+
+def dump_theory_cards(upds: dict):
+    """Dump theory cards."""
+    # theory cards
+    for tid, upd in upds.items():
+        tt = update_theory(upd)
+        with open(f"./theory_cards/{tid}.yaml", "w", encoding="utf-8") as fd:
+            yaml.safe_dump(tt, fd)
+
+
+def compute_grids(tids: list, obsfn: str):
+    """Compute data for given observables"""
+    with open(f"./observable_cards/{obsfn}.yaml", encoding="utf-8") as fd:
+        oo = yaml.safe_load(fd)
+    # run yadism
+    for tid in tids:
+        with open(f"./theory_cards/{tid}.yaml", encoding="utf-8") as fd:
+            tt = yaml.safe_load(fd)
+        out = yadism.run_yadism(tt, oo)
+        gp = pathlib.Path(f"./grids/{tid}/{obsfn}.pineappl.lz4")
+        gp.parent.mkdir(exist_ok=True)
+        dump_pineappl_to_file(out, gp, "XSHERANC")

@@ -20,14 +20,19 @@ def compute(
     # run yadism
     oo = copy.deepcopy(observables_card)
     oo["observables"]["XSHERANC"] = curobs
-    out = yadism.run_yadism(theory_card, oo)
+    tt = copy.deepcopy(theory_card)
+    # tt["FNS"] = "ZM-VFNS"
+    # tt["mb"] = 50
+    # tt["MaxNfPdf"] = 4
+    # tt["mt"] = 1e6
+    out = yadism.run_yadism(tt, oo)
     xs = np.array([esf["x"] for esf in curobs])
     q2s = np.array([esf["Q2"] for esf in curobs])
 
     # prepare data
     p = lhapdf.mkPDF("NNPDF40_nnlo_as_01180", 0)
     yad_data = out.apply_pdf(p)
-    apf_data = apfel_utils.compute_apfel_data(theory_card, oo, p)
+    apf_data = apfel_utils.compute_apfel_data(tt, oo, p)
     yads = np.array([esf["result"] for esf in yad_data["XSHERANC"]])
     apfs = np.array([esf["result"] for esf in apf_data["XSHERANC"]])
     return xs, q2s, yads, apfs
@@ -93,6 +98,6 @@ def plot_q2(
 for xx, qq2s in [
     # (2e-4, np.geomspace(15, 35, 30)),
     # (2e-3, np.geomspace(15, 35, 30)),
-    (1e-3, np.geomspace(15, 35, 30)),
+    (1.1e-3, np.geomspace(15, 500, 30)),
 ]:
     plot_q2(*compute(build_q2_obs(xx, qq2s)))

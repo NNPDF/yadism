@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pineappl
 import yaml
-from utils import build_q2_obs, observables_card, theory_card, yaml_card
+from utils import build_q2_obs, dump_theory_cards, observables_card, yaml_card
 
 import yadism
 from yadbox.export import dump_pineappl_to_file
@@ -29,12 +29,13 @@ def dump_cards(kDISbThrs: dict, curobs: list, obs_suffix: str):
     with open(f"./ymldb/{fn}.yaml", "w", encoding="utf-8") as fd:
         yaml.safe_dump(yy, fd)
     # theory cards
+    upds = {}
     for tid, kDISbThr in kDISbThrs.items():
-        tt = copy.deepcopy(theory_card)
+        tt = {}
         # due to https://github.com/NNPDF/yadism/issues/167 we have to hack kqThr
         tt["kbThr"] = float(kDISbThr)
-        with open(f"./theory_cards/{tid}.yaml", "w", encoding="utf-8") as fd:
-            yaml.safe_dump(tt, fd)
+        upds[tid] = tt
+    dump_theory_cards(upds)
 
 
 def compute_grids(kDISbThrs: dict, obs_suffix: str):
