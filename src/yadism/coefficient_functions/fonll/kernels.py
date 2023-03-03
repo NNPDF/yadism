@@ -45,7 +45,7 @@ def generate_light(esf, nl, pto_evol):
     # and so we're back to cbar^{(nl)}
     light_elems = light.kernels.generate(esf, nl)
     kind = esf.info.obs_name.kind
-    m2hq = esf.info.threshold.area_walls[ihq - 3]
+    m2hq = esf.info.m2hq[ihq - 4]
     L = np.log(esf.Q2 / m2hq)
     fonll_cfs = import_pc_module(kind, esf.process)
 
@@ -140,7 +140,7 @@ def generate_light_diff(esf, nl, pto_evol):
         asy.append(-e)
     # add in addition it also has the asymptotic limit of missing
     ihq = nl + 1
-    m2hq = esf.info.threshold.area_walls[ihq - 3]
+    m2hq = esf.info.m2hq[ihq - 4]
     fonll_cfs = import_pc_module(kind, esf.process)
     for res in range(pto_evol + 1):
         name = "Asy" + ("N" * res) + "LL" + "NonSinglet"
@@ -180,7 +180,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
     # m2hq = esf.info.m2hq[ihq - 4]
     # but will be done at the proper threshold
     fonll_cfs = import_pc_module(kind, esf.process)
-    m2hq = esf.info.threshold.area_walls[ihq - 3]
+    m2hq = esf.info.m2hq[ihq - 4]
     asys = []
     if esf.process == "CC":
         wa = kernels.cc_weights(
@@ -231,8 +231,6 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
     cfs = import_pc_module(kind, esf.process)
     ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
-    # matching scale
-    m2hq = esf.info.threshold.area_walls[ihq - 3]
     # add normal terms starting from NNLO
     nnlo_terms = generate_heavy_diff(esf, nl, pto_evol)
     for k in nnlo_terms:
