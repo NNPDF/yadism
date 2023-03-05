@@ -19,6 +19,8 @@ def generate(esf, nf, ihq):
             kinematic point
         nf : int
             number of light flavors
+        ihq : int
+            quark flavor to activate
 
     Returns
     -------
@@ -41,7 +43,7 @@ def generate(esf, nf, ihq):
         # F3 is a non-singlet quantity and hence has neither gluon nor singlet-like contributions
         if kind == "F3":
             return ()
-        weights = nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf)
+        weights = nc_weights(esf.info.coupling_constants, esf.Q2, kind, ihq)
         gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq))
         gAA = kernels.Kernel(weights["gAA"], pcs.GluonAA(esf, nf, m2hq=m2hq))
         sVV = kernels.Kernel(weights["sVV"], pcs.SingletVV(esf, nf, m2hq=m2hq))
@@ -81,7 +83,7 @@ def generate_missing(esf, nf, ihq, icoupl=None):
     return (kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),)
 
 
-def nc_weights(coupling_constants, Q2, kind, nf):
+def nc_weights(coupling_constants, Q2, kind, ihq):
     """
     Compute heavy NC weights.
 
@@ -93,22 +95,21 @@ def nc_weights(coupling_constants, Q2, kind, nf):
             boson virtuality
         kind : str
             structure function kind
-        nf : int
-            number of light flavors
+        ihq : int
+            quark flavor to activate
 
     Returns
     -------
         weights : dict
             mapping pid -> weight
     """
-    ihq = nf + 1
     if kind == "F3":
         return {}
     weight_vv = coupling_constants.get_weight(ihq, Q2, "VV")
     weight_aa = coupling_constants.get_weight(ihq, Q2, "AA")
     sVV = {}
     sAA = {}
-    for q in range(1, nf + 1):
+    for q in range(1, ihq):
         sVV[q] = sVV[-q] = weight_vv
         sAA[q] = sAA[-q] = weight_aa
     return {"gVV": {21: weight_vv}, "gAA": {21: weight_aa}, "sVV": sVV, "sAA": sAA}
