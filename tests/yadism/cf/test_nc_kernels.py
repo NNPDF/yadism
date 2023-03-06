@@ -3,7 +3,6 @@ import pytest
 from eko.thresholds import ThresholdsAtlas
 
 from yadism import observable_name as on
-from yadism.coefficient_functions.coupling_constants import CouplingConstants
 from yadism.coefficient_functions.fonll import kernels as aker
 from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.intrinsic import kernels as iker
