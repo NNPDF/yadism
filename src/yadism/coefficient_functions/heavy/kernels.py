@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Truely heavy structure function kernels."""
 from eko import basis_rotation as br
 
 from .. import kernels
@@ -6,34 +6,48 @@ from ..light.kernels import nc_weights as light_nc_weights
 
 
 def import_pc_module(kind, process):
+    """Import structure function submodule.
+
+    Parameters
+    ----------
+    kind : str
+        structure functions kind
+    process : str
+        DIS process type
+
+    Returns
+    -------
+    module :
+        suitable submodule
+    """
     return kernels.import_local(kind, process, __name__)
 
 
 def generate(esf, nf, ihq):
     """
-    Collect the heavy coefficient functions
+    Collect the heavy coefficient functions.
 
     Parameters
     ----------
-        esf : EvaluatedStructureFunction
-            kinematic point
-        nf : int
-            number of light flavors
-        ihq : int
-            quark flavor to activate
+    esf : EvaluatedStructureFunction
+        kinematic point
+    nf : int
+        number of light flavors
+    ihq : int
+        quark flavor to activate
 
     Returns
     -------
-        elems : list(yadism.kernels.Kernel)
-            list of elements
+    elems : list(yadism.kernels.Kernel)
+        list of elements
+
     """
     kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
-        # TODO: use ihq for couplings
         w = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[nf], nf
+            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], nf
         )
         return (
             kernels.Kernel(w["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),
@@ -53,23 +67,24 @@ def generate(esf, nf, ihq):
 
 def generate_missing(esf, nf, ihq, icoupl=None):
     """
-    Collect the missing coefficient functions
+    Collect the missing coefficient functions.
 
     Parameters
     ----------
-        esf : EvaluatedStructureFunction
-            kinematic point
-        nf : int
-            number of light flavors
-        ihq : int
-            PID of heavy flavor
-        icoupl : None or int
-            PID of the flavor coupling (default: None)
+    esf : EvaluatedStructureFunction
+        kinematic point
+    nf : int
+        number of light flavors
+    ihq : int
+        PID of heavy flavor
+    icoupl : None or int
+        PID of the flavor coupling (default: None)
 
     Returns
     -------
-        elems : list(yadism.kernels.Kernel)
-            list of elements
+    elems : list(yadism.kernels.Kernel)
+        list of elements
+
     """
     kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
@@ -89,21 +104,22 @@ def nc_weights(coupling_constants, Q2, kind, nf, ihq):
 
     Parameters
     ----------
-        coupling_constants : CouplingConstants
-            manager for coupling constants
-        Q2 : float
-            boson virtuality
-        kind : str
-            structure function kind
-        nf : int
-            number of light flavors
-        ihq : int
-            quark flavor to activate
+    coupling_constants : CouplingConstants
+        manager for coupling constants
+    Q2 : float
+        boson virtuality
+    kind : str
+        structure function kind
+    nf : int
+        number of light flavors
+    ihq : int
+        quark flavor to activate
 
     Returns
     -------
-        weights : dict
-            mapping pid -> weight
+    weights : dict
+        mapping pid -> weight
+
     """
     if kind == "F3":
         return {}
