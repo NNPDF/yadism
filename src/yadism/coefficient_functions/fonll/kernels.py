@@ -192,7 +192,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
         ]
     else:
         asy_weights = heavy.kernels.nc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, nl
+            esf.info.coupling_constants, esf.Q2, kind, nl, ihq
         )
         if kind != "F3":
             for c, channel in (("g", "Gluon"), ("s", "Singlet")):
