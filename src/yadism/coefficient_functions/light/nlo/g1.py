@@ -6,11 +6,11 @@ from . import f2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def ns_reg(x, args):
+def ns_reg(z, args):
     return (
         2
         * CF
-        * (-(1 + x) * np.log(1 - x) - (1 + x**2) * np.log(x) / (1 - x) + 2.0 + x)
+        * (-(1 + z) * np.log(1 - z) - (1 + z**2) * np.log(z) / (1 - z) + 2.0 + z)
     )
 
 
