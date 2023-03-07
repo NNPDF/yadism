@@ -12,7 +12,7 @@ def ns_reg(z, args):
     return f2.ns_reg(z, args) - 3
 
 
-# The coefficients are the smame as
+# The coefficients are the same as
 # F2LIGHT_NS
 ns_delta = f2.ns_delta
 ns_omx = f2.ns_omx

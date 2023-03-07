@@ -29,6 +29,7 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
     apfel.SetPropagatorCorrection(observables.get("PropagatorCorrection", 0))
     apfel.SetPolarizationDIS(observables.get("PolarizationDIS", 0))
+    apfel.SetPolarizedEvolution(observables.get("PolarizationDIS", 0))
     apfel.SetProjectileDIS(observables.get("ProjectileDIS", "electron"))
     apfel.SetTargetDIS(observables.get("TargetDIS", "proton"))
     charge = observables.get("NCPositivityCharge")
@@ -81,6 +82,12 @@ def compute_apfel_data(theory, observables, pdf):  # pylint: disable=too-many-lo
         "F2": apfel.F2total,
         "FL": apfel.FLtotal,
         "F3": apfel.F3total,
+        "g1_total": apfel.g1total,
+        "g1": apfel.g1total,
+        "g1_light": apfel.g1light,
+        "g1_charm": apfel.g1charm,
+        "g1_bottom": apfel.g1bottom,
+        "g1_top": apfel.g1top,
     }
 
     lep = ""

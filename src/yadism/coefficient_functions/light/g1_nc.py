@@ -25,18 +25,7 @@ class NonSinglet(pc.LightBase):
         )
 
     def NNLO(self):
-        """
-        |ref| APFEL
-        """
-
         return None
-
-    def N3LO(self):
-        """
-        |ref| APFEL
-        """
-        return None
-
 
 class Gluon(pc.LightBase):
     def NLO(self):
@@ -54,31 +43,10 @@ class Gluon(pc.LightBase):
         return RSL(nlo.g1.gluon_reg, args=[self.nf])
 
     def NNLO(self):
-        """
-        |ref| NONE
-        """
-
-        return None
-
-    def N3LO(self):
-        """
-        |ref| NONE
-        """
-
         return None
 
 
 class Singlet(pc.LightBase):
     def NNLO(self):
-        """
-        |ref| NONE
-        """
-
         return None
 
-    def N3LO(self):
-        """
-        |ref| NONE
-        """
-
-        return None
