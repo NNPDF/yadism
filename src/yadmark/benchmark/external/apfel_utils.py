@@ -25,11 +25,16 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
         theory, observables, pdf, use_external_grid=use_external_grid
     )
 
+    is_polarized = ["g1" in obs_name for obs_name in observables["observables"]]
+    is_polarized = np.unique(is_polarized)
+    if is_polarized.size != 1:
+        raise ValueError("Apfel can't compute polarized and unpolarized observables at the same time.")
+
     # set DIS params
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
     apfel.SetPropagatorCorrection(observables.get("PropagatorCorrection", 0))
     apfel.SetPolarizationDIS(observables.get("PolarizationDIS", 0))
-    apfel.SetPolarizedEvolution(observables.get("PolarizationDIS", 0))
+    apfel.SetPolarizedEvolution(int(is_polarized))
     apfel.SetProjectileDIS(observables.get("ProjectileDIS", "electron"))
     apfel.SetTargetDIS(observables.get("TargetDIS", "proton"))
     charge = observables.get("NCPositivityCharge")
