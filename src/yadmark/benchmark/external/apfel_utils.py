@@ -100,6 +100,12 @@ def compute_apfel_data(theory, observables, pdf):  # pylint: disable=too-many-lo
         "gl_charm": apfel.gLcharm,
         "gl_bottom": apfel.gLbottom,
         "gl_top": apfel.gLtop,
+        "g4_total": apfel.g4total,
+        "g4": apfel.g4total,
+        "g4_bottom": apfel.g4bottom,
+        "g4_charm": apfel.g4charm,
+        "g4_light": apfel.g4light,
+        "g4_top": apfel.g4top,
     }
 
     lep = ""

@@ -220,7 +220,9 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         )
         kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
         obs_updates = observables.build(
-            ["g1_total"], kins, update={"prDIS": ["EM"], "PolarizationDIS": [True]}
+            ["g1_total", "g4_total"],
+            kins,
+            update={"prDIS": ["EM"], "PolarizationDIS": [True]},
         )
         return obs_updates
 
