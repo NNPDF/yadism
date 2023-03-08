@@ -6,7 +6,7 @@ from . import f2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def ns_reg(z, args):
+def ns_reg(z, _args):
     return (
         2
         * CF
