@@ -8,7 +8,7 @@ class NonSinglet(pc.LightBase):
     @staticmethod
     def LO():
         """
-        |ref| APFEL
+        |ref| implements LO-part of :eqref:`A.1`, :cite:`Zijlstra-light-nnlo-pol`.
         """
 
         # leading order is just a delta function
@@ -17,7 +17,8 @@ class NonSinglet(pc.LightBase):
     @staticmethod
     def NLO():
         """
-        |ref| APFEL
+        |ref| implements NLO-part of :eqref:`A.1`, :cite:`Zijlstra-light-nnlo-pol`.
+        For a simpler expression, refer also to :eqref:`15` of :cite:`deFlorian-light-nlo-pol`.
         """
 
         return RSL.from_distr_coeffs(
@@ -30,7 +31,8 @@ class NonSinglet(pc.LightBase):
 class Gluon(pc.LightBase):
     def NLO(self):
         r"""
-        |ref| APFEL
+        |ref| implements NLO-part of :eqref:`A.5`, :cite:`Zijlstra-light-nnlo-pol`.
+        For a simpler expression, refer also to :eqref:`9` of :cite:`deFlorian-light-nlo-pol`.
 
         Note
         ----
