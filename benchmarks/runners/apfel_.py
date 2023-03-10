@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Compare the results with APFEL's
 
@@ -145,7 +144,6 @@ class BenchmarkXS(ApfelBenchmark):
 
 @pytest.mark.skip
 class BenchmarkFlavorNumberScheme(ApfelBenchmark):
-
     # TODO add observable generator
     # the observables eventually need to be taylored to the used theories,
     # i.e. configuration need to be more scattered in this this class.
@@ -226,7 +224,6 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         )
         return obs_updates
 
-
     def benchmark_ffns(self, pto):
         self.run(
             self.theory_updates_ffns(pto),
@@ -295,6 +292,7 @@ class BenchmarkICFONLL(ApfelICBenchmark):
             ["conly", "CT14llo_NF4"],
         )
 
+
 if __name__ == "__main__":
     # plain = BenchmarkPlain()
     # plain.benchmark_pto(0)
@@ -318,6 +316,7 @@ if __name__ == "__main__":
     # xs.benchmark_pto(0)
 
     pol = BenchmarkFlavorNumberScheme()
+    pol.benchmark_polarized(0)
     pol.benchmark_polarized(1)
 
 # def plain_assert_external(theory, obs, sf, yad):

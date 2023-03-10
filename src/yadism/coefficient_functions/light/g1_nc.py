@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from ..partonic_channel import RSL
-from . import n3lo, nlo, nnlo
+from . import nlo
 from . import partonic_channel as pc
 
 
@@ -28,6 +27,7 @@ class NonSinglet(pc.LightBase):
     def NNLO(self):
         return None
 
+
 class Gluon(pc.LightBase):
     def NLO(self):
         r"""
@@ -51,4 +51,3 @@ class Gluon(pc.LightBase):
 class Singlet(pc.LightBase):
     def NNLO(self):
         return None
-

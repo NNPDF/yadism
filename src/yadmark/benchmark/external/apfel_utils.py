@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Utilities to help run APFEL."""
 import numpy as np
 from banana.benchmark.external import apfel_utils
@@ -25,10 +24,12 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
         theory, observables, pdf, use_external_grid=use_external_grid
     )
 
-    is_polarized = ["g1" in obs_name for obs_name in observables["observables"]]
+    is_polarized = ["g" in obs_name for obs_name in observables["observables"]]
     is_polarized = np.unique(is_polarized)
     if is_polarized.size != 1:
-        raise ValueError("Apfel can't compute polarized and unpolarized observables at the same time.")
+        raise ValueError(
+            "Apfel can't compute polarized and unpolarized observables at the same time."
+        )
 
     # set DIS params
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
@@ -93,6 +94,12 @@ def compute_apfel_data(theory, observables, pdf):  # pylint: disable=too-many-lo
         "g1_charm": apfel.g1charm,
         "g1_bottom": apfel.g1bottom,
         "g1_top": apfel.g1top,
+        "gl_total": apfel.gLtotal,
+        "gl": apfel.gLtotal,
+        "gl_light": apfel.gLlight,
+        "gl_charm": apfel.gLcharm,
+        "gl_bottom": apfel.gLbottom,
+        "gl_top": apfel.gLtop,
     }
 
     lep = ""

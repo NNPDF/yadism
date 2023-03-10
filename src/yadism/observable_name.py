@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 fake_kind = "??"
-sfs = ["F2", "FL", "F3", "g1"]
+sfs = ["F2", "FL", "F3", "g1", "gl"]
 # xs = ["XSreduced", "XSyreduced"]
 xs = [
     "XSHERANC",
