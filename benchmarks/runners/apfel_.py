@@ -220,9 +220,9 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         )
         kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
         obs_updates = observables.build(
-            ["g1_total", "g4_total"],
+            ["g4_total"],
             kins,
-            update={"prDIS": ["EM"], "PolarizationDIS": [True]},
+            update={"prDIS": ["NC"], "PolarizationDIS": [True]},
         )
         return obs_updates
 
@@ -244,7 +244,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         self.run(
             [{"PTO": pto, "FNS": "ZM-VFNS"}],
             self.obs_updates_pol(),
-            ["ToyLH"],
+            ["NNPDFpol11_100"],
         )
 
 
@@ -320,6 +320,7 @@ if __name__ == "__main__":
     pol = BenchmarkFlavorNumberScheme()
     pol.benchmark_polarized(0)
     pol.benchmark_polarized(1)
+    # pol.benchmark_zm(2)
 
 # def plain_assert_external(theory, obs, sf, yad):
 #     # APFEL has a discretization in Q2/m2
