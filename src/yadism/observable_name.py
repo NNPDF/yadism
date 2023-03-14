@@ -1,5 +1,5 @@
 fake_kind = "??"
-sfs = ["F2", "FL", "F3", "g1", "gl", "g4"]
+sfs = ["F2", "FL", "F3", "g1", "gL", "g4"]
 # xs = ["XSreduced", "XSyreduced"]
 xs = [
     "XSHERANC",

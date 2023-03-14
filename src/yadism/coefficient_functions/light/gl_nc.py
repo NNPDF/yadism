@@ -12,7 +12,7 @@ class NonSinglet(pc.LightBase):
         |ref| implements NLO-part of :eqref:`A.1`, :cite:`Zijlstra-light-nnlo-pol`.
         """
 
-        return RSL(nlo.gl.ns_reg)
+        return RSL(nlo.fl.ns_reg)
 
     def NNLO(self):
         """
