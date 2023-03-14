@@ -16,8 +16,10 @@ class NonSinglet(pc.LightBase):
     @staticmethod
     def NLO():
         """
-        |ref| implements NLO-part of :eqref:`A.1`, :cite:`Zijlstra-light-nnlo-pol`.
-        For a simpler expression, refer also to :eqref:`15` of :cite:`deFlorian-light-nlo-pol`.
+        |ref| implements the equivalence relation between :math:`g_1` and :math:`F_3`
+        as explained in :eqref:`A.19` (and paragraph below). For the explicit expressions,
+        refer to :eqref:`A.1` of :cite:`Zijlstra-light-nnlo-pol` and :eqref:`15` of
+        :cite:`deFlorian-light-nlo-pol`.
         """
 
         return RSL.from_distr_coeffs(
