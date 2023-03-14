@@ -1,3 +1,4 @@
+from .. import partonic_channel as epc
 from ..partonic_channel import RSL
 from . import nlo, nnlo
 from . import partonic_channel as pc
@@ -23,14 +24,8 @@ class NonSinglet(pc.LightBase):
         )
 
 
-class Gluon(pc.LightBase):
-    def NLO(self):
-        return None
+class Gluon(epc.EmptyPartonicChannel):
+    pass
 
-    def NNLO(self):
-        return None
-
-
-class Singlet(pc.LightBase):
-    def NNLO(self):
-        return None
+class Singlet(epc.EmptyPartonicChannel):
+    pass

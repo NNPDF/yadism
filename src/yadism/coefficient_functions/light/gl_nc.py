@@ -27,7 +27,5 @@ class NonSinglet(pc.LightBase):
 class Gluon(epc.EmptyPartonicChannel):
     pass
 
-
-class Singlet(pc.LightBase):
-    def NNLO(self):
-        return None
+class Singlet(epc.EmptyPartonicChannel):
+    pass
