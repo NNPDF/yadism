@@ -24,7 +24,7 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
         theory, observables, pdf, use_external_grid=use_external_grid
     )
 
-    is_polarized = ["g" in obs_name for obs_name in observables["observables"]]
+    is_polarized = [obs_name.startswith("g") for obs_name in observables["observables"]]
     is_polarized = np.unique(is_polarized)
     if is_polarized.size != 1:
         raise ValueError(
@@ -100,6 +100,12 @@ def compute_apfel_data(theory, observables, pdf):  # pylint: disable=too-many-lo
         "gl_charm": apfel.gLcharm,
         "gl_bottom": apfel.gLbottom,
         "gl_top": apfel.gLtop,
+        "g4_total": apfel.g4total,
+        "g4": apfel.g4total,
+        "g4_bottom": apfel.g4bottom,
+        "g4_charm": apfel.g4charm,
+        "g4_light": apfel.g4light,
+        "g4_top": apfel.g4top,
     }
 
     lep = ""
