@@ -2,7 +2,8 @@ import numpy as np
 from eko.constants import CF, TR
 
 from ..partonic_channel import RSL
-from ..special import li2, nielsen, zeta2
+from ..special import li2, zeta2
+from ..special.nielsen import nielsen
 from . import nlo
 from . import partonic_channel as pc
 
