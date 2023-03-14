@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Utilities to help run APFEL."""
 import numpy as np
 from banana.benchmark.external import apfel_utils
@@ -25,7 +24,10 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
         theory, observables, pdf, use_external_grid=use_external_grid
     )
 
-    is_polarized = ["g" in obs_name for obs_name in observables["observables"]]
+    is_polarized = [
+        any(i in obs_name for i in ["g1", "g4"])
+        for obs_name in observables["observables"]
+    ]
     is_polarized = np.unique(is_polarized)
     if is_polarized.size != 1:
         raise ValueError(
