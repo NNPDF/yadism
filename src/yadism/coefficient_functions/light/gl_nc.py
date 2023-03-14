@@ -16,7 +16,7 @@ class NonSinglet(pc.LightBase):
 
     def NNLO(self):
         """
-        |ref| implements :eqref:`19`, :cite:`deFloarian-light-nnlo-pol`.
+        |ref| implements :eqref:`19`, :cite:`Borsa-light-nnlo-pol`.
         """
 
         return RSL(
