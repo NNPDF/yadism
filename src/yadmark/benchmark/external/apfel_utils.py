@@ -36,7 +36,6 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
     apfel.SetPropagatorCorrection(observables.get("PropagatorCorrection", 0))
     apfel.SetPolarizationDIS(observables.get("PolarizationDIS", 0))
     apfel.SetPolarizedEvolution(int(is_polarized))
-    # apfel.SetPolarizedEvolution(observables.get("PolarizationDIS", 0))
     apfel.SetProjectileDIS(observables.get("ProjectileDIS", "electron"))
     apfel.SetTargetDIS(observables.get("TargetDIS", "proton"))
     charge = observables.get("NCPositivityCharge")
