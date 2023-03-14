@@ -1,4 +1,8 @@
+import numpy as np
+from eko.constants import CF, TR
+
 from ..partonic_channel import RSL
+from ..special import li2, nielsen, zeta2
 from . import nlo
 from . import partonic_channel as pc
 
@@ -52,4 +56,34 @@ class Gluon(pc.LightBase):
 
 class Singlet(pc.LightBase):
     def NNLO(self):
-        return None
+        """
+        |ref| implements |NNLO| massless contribution of :eqref:`A.4`, :cite:`Zijlstra-light-nnlo-pol`.
+
+        """
+
+        def singlet_reg(z, nf):
+            ln = np.log(z)
+            lnm1 = np.log(1 - z)
+            li2m1 = li2(1 - z)
+            li3m1 = nielsen(2, 1, 1 - z)
+            res_lm0 = (1 + z) * (
+                -16 * li3m1
+                + 16 * lnm1 * li2m1
+                - 16 * ln * li2m1
+                - 16 * zeta2 * ln
+                + 8 * ln * lnm1**2
+                - 16 * ln**2 * lnm1
+                + 20 / 3 * ln**3
+            )
+            +(1 - z) * (20 * lnm1**2 - 88 * lnm1 + 808 / 3) - 32 * (
+                1 + 1 / 3 * z**2 + z + 1 / (3 * z)
+            ) * (li2(-z) + ln * np.log(1 + z))
+            (
+                +(58 + 16 / 3 * z**2 - 6 * z) * ln**2
+                - 32 * (2 - z) * ln * lnm1
+                + 4 / 3 * (137 - 19 * z) * ln
+                - (72 + 32 / 3 * z**2 - 40 * z) * zeta2
+            )
+            return nf * CF * TR * (res_lm0)
+
+        return RSL(singlet_reg, args=[self.nf])

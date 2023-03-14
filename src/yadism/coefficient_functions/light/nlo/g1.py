@@ -1,6 +1,6 @@
 import numba as nb
 import numpy as np
-from eko.constants import CF, TR
+from eko.constants import TR
 
 from . import f2, f3
 
