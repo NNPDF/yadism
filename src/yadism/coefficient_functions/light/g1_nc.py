@@ -27,7 +27,16 @@ class NonSinglet(pc.LightBase):
         )
 
     def NNLO(self):
-        return None
+        """
+        |ref| implements the equivalence relation between :math:`g_1` and :math:`F_3`
+        as explained in :eqref:`A.19` (and paragraph below) of :cite:`Borsa-light-nnlo-pol`.
+        For the explicit expressions, refer to :eqref:`A.1` of :cite:`Zijlstra-light-nnlo-pol`
+        and :eqref:`15` of :cite:`deFlorian-light-nlo-pol`.
+        """
+
+        return RSL(
+            nnlo.xc3ns2p.c3np2a, nnlo.xc3ns2p.c3ns2b, nnlo.xc3ns2p.c3np2c, [self.nf]
+        )
 
 
 class Gluon(pc.LightBase):
