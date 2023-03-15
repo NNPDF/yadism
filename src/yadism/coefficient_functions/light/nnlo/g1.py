@@ -1,4 +1,5 @@
 """|NNLO| g1 expressions taken from https://github.com/vbertone/apfelxx/blob/master/src/structurefunctions/zeromasscoefficientfunctionspol_sl.cc"""
+import numba as nb
 import numpy as np
 from eko.constants import CA, CF, TR
 
@@ -6,6 +7,7 @@ from ...special import li2, zeta2, zeta3
 from ...special.nielsen import nielsen
 
 
+@nb.njit("f8(f8,f8[:])", cache=True)
 def singlet_reg(z, args):
     nf = args[0]
     z2 = z**2
@@ -19,7 +21,7 @@ def singlet_reg(z, args):
     lnz3 = lnz**3
     ln1pz = np.log(1 + z)
 
-    singlet_regular = (
+    return (
         nf
         * CF
         * TR
@@ -43,9 +45,8 @@ def singlet_reg(z, args):
         )
     )
 
-    return singlet_regular
 
-
+@nb.njit("f8(f8,f8[:])", cache=True)
 def gluon_reg(z, args):
     nf = args[0]
     z2 = z**2
@@ -66,7 +67,7 @@ def gluon_reg(z, args):
     ln1pz = np.log(1 + z)
     ln1pz2 = ln1pz**2
 
-    gluon_regular = nf * (
+    return nf * (
         CF
         * TR
         * (
@@ -142,5 +143,3 @@ def gluon_reg(z, args):
             - 304 * (1 - z)
         )
     )
-
-    return gluon_regular
