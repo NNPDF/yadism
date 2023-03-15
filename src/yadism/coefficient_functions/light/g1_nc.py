@@ -17,9 +17,9 @@ class NonSinglet(pc.LightBase):
     def NLO():
         """
         |ref| implements the equivalence relation between :math:`g_1` and :math:`F_3`
-        as explained in :eqref:`A.19` (and paragraph below). For the explicit expressions,
-        refer to :eqref:`A.1` of :cite:`Zijlstra-light-nnlo-pol` and :eqref:`15` of
-        :cite:`deFlorian-light-nlo-pol`.
+        as explained in :eqref:`A.19` (and paragraph below) of :cite:`Borsa-light-nnlo-pol`.
+        For the explicit expressions, refer to :eqref:`A.1` of :cite:`Zijlstra-light-nnlo-pol`
+        and :eqref:`15` of :cite:`deFlorian-light-nlo-pol`.
         """
 
         return RSL.from_distr_coeffs(
@@ -53,8 +53,8 @@ class Gluon(pc.LightBase):
         Note
         ----
         The actual implementation is taken from Apfel++ :cite:`Bertone:2017gds`:, see also:
-        
-            https://github.com/vbertone/apfelxx/blob/master/src/structurefunctions/zeromasscoefficientfunctionspol_sl.cc 
+
+            https://github.com/vbertone/apfelxx/blob/master/src/structurefunctions/zeromasscoefficientfunctionspol_sl.cc
 
         """
         return RSL(nnlo.g1.gluon_reg, args=[self.nf])
@@ -69,7 +69,7 @@ class Singlet(pc.LightBase):
         ----
         The actual implementation is taken from Apfel++ :cite:`Bertone:2017gds`:, see also:
 
-            https://github.com/vbertone/apfelxx/blob/master/src/structurefunctions/zeromasscoefficientfunctionspol_sl.cc 
+            https://github.com/vbertone/apfelxx/blob/master/src/structurefunctions/zeromasscoefficientfunctionspol_sl.cc
 
         """
         return RSL(nnlo.g1.singlet_reg, args=[self.nf])
