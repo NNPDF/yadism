@@ -20,7 +20,7 @@ def import_pc_module(kind, process, subpkg=None):
     return kernels.import_local(kind, process, subpkg)
 
 
-def generate_light(esf, nl, pto_evol):
+def generate_light(esf, nl, pto_evol, pto_dis=None):
     r"""
     Collect the light coefficient functions for |FONLL|.
 
@@ -34,6 +34,8 @@ def generate_light(esf, nl, pto_evol):
             number of light flavors
         pto_evol : int
             PTO of evolution
+        pto_dis : int
+            PTO of DIS
 
     Returns
     -------
@@ -44,6 +46,17 @@ def generate_light(esf, nl, pto_evol):
     # rewrite the derivative term back as a sum
     # and so we're back to cbar^{(nl)}
     light_elems = light.kernels.generate(esf, nl)
+
+    # This cancellation is no longer valid for the N3LO contributions
+    # which has to be evaluated with nl+1 active flavors
+    if pto_dis == 3:
+        for l in light_elems:
+            l.max_order = 2
+        n3lo_light_elems = light.kernels.generate(esf, nl + 1, skip_heavylight=True)
+        for n3lo_l in n3lo_light_elems:
+            n3lo_l.min_order = 3
+        light_elems.extend(n3lo_light_elems)
+
     kind = esf.info.obs_name.kind
     m2hq = esf.info.m2hq[ihq - 4]
     L = np.log(esf.Q2 / m2hq)
