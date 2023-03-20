@@ -304,7 +304,7 @@ class CouplingConstants:
         if self.obs_config["process"] == "NC":
             w_ZV = self.vectorial_coupling(pid)
             w_ZA = self.weak_isospin_3[pid]
-            return np.avg(w_ph + w_ZV + w_ZA)
+            return w_ph + w_ZV + w_ZA
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod
