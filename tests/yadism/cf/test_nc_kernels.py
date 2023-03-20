@@ -8,8 +8,9 @@ from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.intrinsic import kernels as iker
 from yadism.coefficient_functions.light import kernels as lker
 
+from test_nc_n3lo_color_fact import MockCouplingConstants as MockCC
 
-class MockCouplingConstants:
+class MockCouplingConstants(MockCC):
     def get_weight(self, _pid, _q2, qct):
         if qct == "VV":
             return 1
