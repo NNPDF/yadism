@@ -24,7 +24,7 @@ Note
         F3:
             * odd N: :math:`\nu + \bar{\nu}`, :math:`c_{ns,-}`
             * even N: :math:`\nu - \bar{\nu}`, :math:`c_{ns,+} = \delta + c_{ns,-}`
-            * In :math:`c_{ns,+}` the term fl02 has to be turned off for CC
+            * In :math:`c_{ns,+}` the term fl02 has to be turned off for CC and NC
 
         F2, FL:
             * odd N: :math:`\nu - \bar{\nu}`, :math:`c_{ns,-} = - \delta + c_{ns,+}`
