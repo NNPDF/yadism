@@ -2,9 +2,10 @@
 
 import numpy as np
 from test_pc_general import MockESF
+from test_nc_n3lo_color_fact import MockCouplingEMConstants as EMcc
 
 from yadism.coefficient_functions.light import f2_nc, fl_nc
-from yadism.coefficient_functions.light.n3lo.common import fl, fls
+from yadism.coefficient_functions.light.n3lo.common import nc_color_factor
 
 
 def test_N3LO_labels():
@@ -12,8 +13,8 @@ def test_N3LO_labels():
     x = 0.1
     esf = MockESF(x, Q2)
     nf = 3
-    fl_ns = fl_nc.NonSinglet(esf, nf)
-    f2_ns = f2_nc.NonSinglet(esf, nf)
+    fl_ns = fl_nc.NonSinglet(esf, nf, fl=0.123)
+    f2_ns = f2_nc.NonSinglet(esf, nf, fl=0.123)
 
     assert fl_ns.N3LO().args["reg"] is not None
     assert fl_ns.N3LO().args["loc"] is not None
@@ -21,15 +22,15 @@ def test_N3LO_labels():
     assert f2_ns.N3LO().args["loc"] is not None
     assert f2_ns.N3LO().args["sing"] is not None
 
-    fl_g = fl_nc.Gluon(esf, nf)
-    f2_g = f2_nc.Gluon(esf, nf)
+    fl_g = fl_nc.Gluon(esf, nf, flg=0.123)
+    f2_g = f2_nc.Gluon(esf, nf, flg=0.123)
 
     assert fl_g.N3LO().args["reg"] is not None
     assert f2_g.N3LO().args["reg"] is not None
     assert f2_g.N3LO().args["loc"] is not None
 
-    fl_s = fl_nc.Singlet(esf, nf)
-    f2_s = f2_nc.Singlet(esf, nf)
+    fl_s = fl_nc.Singlet(esf, nf, fl=0.123, fls=0.456)
+    f2_s = f2_nc.Singlet(esf, nf, fls=0.456)
 
     assert fl_s.N3LO().args["reg"] is not None
     assert f2_s.N3LO().args["reg"] is not None
@@ -140,9 +141,18 @@ class Test_Blumlein_results:
         f2_g_result = []
         for x in self.xgrid:
             esf = MockESF(x, self.Q2)
-            f2_ns = f2_nc.NonSinglet(esf, self.nf).N3LO()
-            f2_s = f2_nc.Singlet(esf, self.nf).N3LO()
-            f2_g = f2_nc.Gluon(esf, self.nf).N3LO()
+            f2_ns = f2_nc.NonSinglet(
+                esf, self.nf, fl=nc_color_factor(EMcc(), self.nf, "ns", False)
+            ).N3LO()
+            f2_s = f2_nc.Singlet(
+                esf,
+                self.nf,
+                fls=nc_color_factor(EMcc(), self.nf, "s", False),
+                fl=nc_color_factor(EMcc(), self.nf, "ns", False),
+            ).N3LO()
+            f2_g = f2_nc.Gluon(
+                esf, self.nf, flg=nc_color_factor(EMcc(), self.nf, "g", False)
+            ).N3LO()
             f2_ns_result.append(
                 [
                     f2_ns.reg(x, f2_ns.args["reg"]),
@@ -245,9 +255,15 @@ class Test_Blumlein_results:
         fl_g_result = []
         for x in self.xgrid:
             esf = MockESF(x, self.Q2)
-            fl_ns = fl_nc.NonSinglet(esf, self.nf).N3LO()
-            fl_s = fl_nc.Singlet(esf, self.nf).N3LO()
-            fl_g = fl_nc.Gluon(esf, self.nf).N3LO()
+            fl_ns = fl_nc.NonSinglet(
+                esf, self.nf, fl=nc_color_factor(EMcc(), self.nf, "ns", False)
+            ).N3LO()
+            fl_s = fl_nc.Singlet(
+                esf, self.nf, fls=nc_color_factor(EMcc(), self.nf, "s", False)
+            ).N3LO()
+            fl_g = fl_nc.Gluon(
+                esf, self.nf, flg=nc_color_factor(EMcc(), self.nf, "g", False)
+            ).N3LO()
             fl_ns_result.append(
                 [
                     fl_ns.reg(x, fl_ns.args["reg"]),
@@ -278,11 +294,3 @@ class Test_Blumlein_results:
         )
         # gluon
         np.testing.assert_allclose(fl_g_result, fl_g_ref, rtol=9e-4)
-
-def test_fl_factors():
-    e_q = np.array([2/3,-1/3,-1/3,2/3,-1/3,2/3])
-    for nf in range(1,7):
-        mean_e = np.average(e_q[:nf])
-        mean_e2 = np.average(e_q[:nf]**2)
-        np.testing.assert_allclose(fl(nf), 3 * mean_e)
-        np.testing.assert_allclose(fls(nf), mean_e**2 / mean_e2)

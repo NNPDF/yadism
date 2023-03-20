@@ -130,6 +130,22 @@ class TestCouplingConstanst:
         with pytest.raises(ValueError, match="Unknown projectile"):
             coupl.CouplingConstants.from_dict(th_d, obs_d)
 
+    def tes_average_partonic_coupling(self):
+        th_d = dict(sin2theta_weak=1.0)
+        obs_d = dict(
+            projectilePID=11,
+            polarization=0.0,
+            process="EM",
+            propagatorCorrection=0,
+            nc_pos_charge=None,
+        )
+        coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
+        for pid in range(-6, 6):
+            np.testing.assert_allclose(
+                coupl_const.average_partonic_coupling(pid),
+                coupl_const.electric_charge(pid),
+            )
+
 
 class TestLeptonicHadronic:
     def test_cc(self):
