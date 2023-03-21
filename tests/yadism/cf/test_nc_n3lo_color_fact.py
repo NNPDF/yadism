@@ -1,5 +1,6 @@
 import numpy as np
 from yadism.coefficient_functions.light.n3lo.common import fl, fls, flg, nc_color_factor
+import yadism.coefficient_functions.coupling_constants as coupl
 
 
 class MockCouplingConstants:
@@ -24,6 +25,24 @@ def test_fl_factors_electromagnetic():
         np.testing.assert_allclose(fls(eq[:nf]), mean_e**2 / mean_e2)
         np.testing.assert_allclose(flg(eq[:nf]), mean_e**2 / mean_e2)
 
+
+def test_fl_factors_cc():
+    th_d = dict(
+        SIN2TW=0.5,
+        MZ=80,
+        CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
+    )
+    obs_d = dict(
+        PolarizationDIS=0.0,
+        prDIS="CC",
+        PropagatorCorrection=0,
+        NCPositivityCharge=None,
+    )
+    coupl_cc = coupl.CouplingConstants.from_dict(th_d, obs_d)
+    for nf in range(1, 7):
+        np.testing.assert_allclose(nc_color_factor(coupl_cc, nf, "ns", False), 0.0)
+        np.testing.assert_allclose(nc_color_factor(coupl_cc, nf, "s", False), 0.0)
+        np.testing.assert_allclose(nc_color_factor(coupl_cc, nf, "g", False), 0.0)
 
 def test_nc_color_factor():
     coupling = MockCouplingConstants()

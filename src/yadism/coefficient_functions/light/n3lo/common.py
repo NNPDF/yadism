@@ -36,6 +36,8 @@ def nc_color_factor(coupling_constants, nf, channel, skip_heavylight):
     # if skip_heavylight the last pid couplig is set to 0
     if skip_heavylight:
         w_pc[-1] = 0
+    if not w_pc.any():
+        return 0
     if channel == "ns":
         return fl(w_pc)
     if channel == "s":
