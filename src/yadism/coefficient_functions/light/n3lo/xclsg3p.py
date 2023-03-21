@@ -9,6 +9,7 @@ from .common import d27, d81
 def cls3a(y, args):
     nf = args[0]
     fls = args[1]
+    fl = args[2]
     dl = np.log(y)
     y1 = 1.0 - y
     dl1 = np.log(1.0 - y)
@@ -40,7 +41,10 @@ def cls3a(y, args):
         + 9.773 * dl
         + y * dl * (363.8 + 68.32 * dl)
     ) * y
-    res = nf * (cls31 + fls * cls3F + nf * cls32)
+    # Note here the source file cointain a typo and the
+    # proper color factor is flps = fls - fl, not just fls.
+    # see https://arxiv.org/pdf/hep-ph/0411112.pdf eq 9.
+    res = nf * (cls31 + ( fls - fl ) * cls3F + nf * cls32)
     return res
 
 
