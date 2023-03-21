@@ -67,4 +67,4 @@ class Singlet(pc.LightBase):
         """
         |ref| implements :eqref:`9`, :cite:`vogt-flnc`.
         """
-        return RSL(n3lo.xclsg3p.cls3a, args=[self.nf, self.fls, self.fl])
+        return RSL(n3lo.xclsg3p.cls3a, args=[self.nf, self.flps])

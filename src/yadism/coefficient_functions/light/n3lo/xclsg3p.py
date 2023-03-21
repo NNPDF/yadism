@@ -8,8 +8,7 @@ from .common import d27, d81
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cls3a(y, args):
     nf = args[0]
-    fls = args[1]
-    fl = args[2]
+    flps = args[1]
     dl = np.log(y)
     y1 = 1.0 - y
     dl1 = np.log(1.0 - y)
@@ -44,7 +43,7 @@ def cls3a(y, args):
     # Note here the source file cointain a typo and the
     # proper color factor is flps = fls - fl, not just fls.
     # see https://arxiv.org/pdf/hep-ph/0411112.pdf eq 9.
-    res = nf * (cls31 + ( fls - fl ) * cls3F + nf * cls32)
+    res = nf * (cls31 + ( flps ) * cls3F + nf * cls32)
     return res
 
 

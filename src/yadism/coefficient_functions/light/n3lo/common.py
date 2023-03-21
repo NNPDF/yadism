@@ -19,7 +19,7 @@ def nc_color_factor(coupling_constants, nf, channel, skip_heavylight):
     nf : int
         number of active flavors
     channel : str
-        partonic channel "ns", "s", "g"
+        partonic channel "ns", "s", "g". Note here "s" means Pure Singlet.
     skip_heavylight : bool
         prevent the last quark to couple to the boson
 
@@ -41,7 +41,7 @@ def nc_color_factor(coupling_constants, nf, channel, skip_heavylight):
     if channel == "ns":
         return fl(w_pc)
     if channel == "s":
-        return fls(w_pc)
+        return fls(w_pc) - fl(w_pc)
     if channel == "g":
         return flg(w_pc)
 

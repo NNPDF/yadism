@@ -29,8 +29,8 @@ def test_N3LO_labels():
     assert f2_g.N3LO().args["reg"] is not None
     assert f2_g.N3LO().args["loc"] is not None
 
-    fl_s = fl_nc.Singlet(esf, nf, fl=0.123, fls=0.456)
-    f2_s = f2_nc.Singlet(esf, nf, fls=0.456)
+    fl_s = fl_nc.Singlet(esf, nf, flps=0.456)
+    f2_s = f2_nc.Singlet(esf, nf, flps=0.456)
 
     assert fl_s.N3LO().args["reg"] is not None
     assert f2_s.N3LO().args["reg"] is not None
@@ -148,8 +148,7 @@ class Test_Blumlein_results:
             f2_s = f2_nc.Singlet(
                 esf,
                 self.nf,
-                fls=nc_color_factor(EMcc(), self.nf, "s", False),
-                fl=nc_color_factor(EMcc(), self.nf, "ns", False),
+                flps=nc_color_factor(EMcc(), self.nf, "s", False),
             ).N3LO()
             f2_g = f2_nc.Gluon(
                 esf, self.nf, flg=nc_color_factor(EMcc(), self.nf, "g", False)
@@ -261,8 +260,7 @@ class Test_Blumlein_results:
             fl_s = fl_nc.Singlet(
                 esf,
                 self.nf,
-                fls=nc_color_factor(EMcc(), self.nf, "s", False),
-                fl=nc_color_factor(EMcc(), self.nf, "ns", False),
+                flps=nc_color_factor(EMcc(), self.nf, "s", False),
             ).N3LO()
             fl_g = fl_nc.Gluon(
                 esf, self.nf, flg=nc_color_factor(EMcc(), self.nf, "g", False)

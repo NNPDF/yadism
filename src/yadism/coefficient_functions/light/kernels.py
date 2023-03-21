@@ -72,8 +72,7 @@ def generate(esf, nf, skip_heavylight=False):
         pcs.Singlet(
             esf,
             nf,
-            fls=nc_color_factor(coupling, nf, "s", skip_heavylight),
-            fl=nc_color_factor(coupling, nf, "ns", skip_heavylight),
+            flps=nc_color_factor(coupling, nf, "s", skip_heavylight),
         ),
     )
     return [ns, g, s]

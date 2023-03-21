@@ -8,8 +8,7 @@ from .common import d9, d81
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2s3a(y, args):
     nf = args[0]
-    fls = args[1]
-    fl = args[2]
+    flps = args[1]
     y1 = 1.0 - y
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
@@ -62,16 +61,15 @@ def c2s3a(y, args):
         - y * dl**2 * (101.8 + 34.79 * dl + 3.070 * dl**2)
         - 9.075 * y * y1 * dl1
     ) * y
-    res = nf * (c2s31 + (fls - fl) * c2s3F + nf * c2s32)
+    res = nf * (c2s31 + flps * c2s3F + nf * c2s32)
     return res
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2s3c(y, args):
     nf = args[0]
-    fls = args[1]
-    fl = args[2]
-    res = -(fls - fl) * nf * 11.8880
+    flps = args[1]
+    res = -flps * nf * 11.8880
     return res
 
 

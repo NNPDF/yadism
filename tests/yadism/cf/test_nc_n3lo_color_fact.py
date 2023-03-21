@@ -55,7 +55,7 @@ def test_nc_color_factor():
             flg(charges[:nf]), nc_color_factor(coupling, nf, "g", False)
         )
         np.testing.assert_allclose(
-            fls(charges[:nf]), nc_color_factor(coupling, nf, "s", False)
+            fls(charges[:nf]) - fl(charges[:nf]), nc_color_factor(coupling, nf, "s", False)
         )
 
     for nf in reversed(range(2, 7)):
@@ -67,6 +67,6 @@ def test_nc_color_factor():
             flg(charges[:nf]), nc_color_factor(coupling, nf, "g", True)
         )
         np.testing.assert_allclose(
-            fls(charges[:nf]), nc_color_factor(coupling, nf, "s", True)
+            fls(charges[:nf]) - fl(charges[:nf]), nc_color_factor(coupling, nf, "s", True)
         )
         charges = charges[:nf]

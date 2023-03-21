@@ -89,5 +89,5 @@ class Singlet(pc.LightBase):
         return RSL(
             n3lo.xc2sg3p.c2s3a,
             loc=n3lo.xc2sg3p.c2s3c,
-            args=[self.nf, self.fls, self.fl],
+            args=[self.nf, self.flps],
         )

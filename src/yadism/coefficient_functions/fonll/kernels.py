@@ -142,9 +142,8 @@ def generate_light_diff(esf, nl, pto_evol):
             esf.info.coupling_constants, esf.Q2, kind, nl + 1, skip_heavylight=True
         )
     s_w = {nl + 1: light_weights["s"][nl + 1], -(nl + 1): light_weights["s"][-(nl + 1)]}
-    fls = light.kernels.nc_color_factor(esf.info.coupling_constants, nl + 1, "s", False)
-    fl = light.kernels.nc_color_factor(esf.info.coupling_constants, nl + 1, "ns", False)
-    k = kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1, fls=fls, fl=fl))
+    flps = light.kernels.nc_color_factor(esf.info.coupling_constants, nl + 1, "s", False)
+    k = kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1, flps=flps))
     k.max_order = pto_evol
 
     # the asy has all the light stuff again, so subtract it back
