@@ -145,7 +145,7 @@ def compute_apfelpy_data(theory, observables, pdf):
                 3,
                 thrs,
             )
-        elif "bottom" in obs_name:
+        elif "charm" in obs_name:
             tab_sf = ap.TabulateObjectD(sfobj[4].Evaluate, nQ, QMin, QMax, 3, thrs)
         elif "bottom" in obs_name:
             tab_sf = ap.TabulateObjectD(sfobj[5].Evaluate, nQ, QMin, QMax, 3, thrs)
