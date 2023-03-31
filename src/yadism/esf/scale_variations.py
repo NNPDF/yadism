@@ -128,9 +128,9 @@ class ScaleVariations:
         """
         beta0 = beta.beta_qcd_as2(nf)
         ren_coeffs = {
-            (2, 1, 1): -beta0,
-            (3, 1, 2): - 2 *beta0,
-            (3, 1, 1): - beta.beta_qcd_as3(nf),
+            (2, 1, 1): + beta0,
+            (3, 1, 2): + 2 *beta0,
+            (3, 1, 1): + beta.beta_qcd_as3(nf),
             (3, 2, 1): + beta0 ** 2
         }
         return dict(filter(lambda item: item[0][0] <= self.order, ren_coeffs.items()))
