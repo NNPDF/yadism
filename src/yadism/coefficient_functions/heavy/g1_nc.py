@@ -15,7 +15,6 @@ class GluonVV(pc.NeutralCurrentBase):
         def cg(z, _args):
             if self.is_below_threshold(z):
                 return 0.0
-            print(LeProHQ.cg0("x2g1", "VV", self._xi, self._eta(z)), z)
             return (
                 self._FHprefactor / z * LeProHQ.cg0("x2g1", "VV", self._xi, self._eta(z))
             )
@@ -165,6 +164,33 @@ class SingletAA(pc.NeutralCurrentBase):
         return RSL(cq)
     
 
+class NonSinglet(pc.NeutralCurrentBase):
+    def NNLO(self):
+        """
+        |ref| implements NLO (heavy) non-singlet coefficient function, :cite:`felix-thesis`.
+
+        This function should be the same in the VV and AA case, and should correspond to the zF3 VA of the unpolarized coefficient function.
+
+        Implements :eqref:`D.64`.
+        """
+
+        def dq(z, _args):
+            if self.is_below_threshold(z):
+                return 0.0
+            eta = self._eta(z)
+            eta = min(eta, 1e5)
+            return (
+                self._FHprefactor
+                / z
+                * (4.0 * np.pi) ** 2
+                * LeProHQ.dq1("x2g1", "VV", self._xi, eta)
+            )
+
+        def Adler(_x, _args):
+            l = quad(dq, 0.0, 1.0, args=np.array([]))
+            return -l[0]
+
+        return RSL(dq, loc=Adler)
 
     
 #todo: write out numerical results for the gluon VV and gluon AA using the results of felix's thesis and then assert equality 
@@ -192,14 +218,3 @@ class SingletAA(pc.NeutralCurrentBase):
 # nc_instance = pc.NeutralCurrentBase(pc_instance, m2hq= 10,)
 # gvv_instance = GluonVV(nc_instance)
 # result = gvv_instance.NLO()
-
-
-
-
-
-
-
-
-
-
-
