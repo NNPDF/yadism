@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .. import splitting_functions as split
 from ..intrinsic import f3_cc as intrinsic
 from ..light import f3_cc as light

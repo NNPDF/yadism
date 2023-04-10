@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Utilities to help run APFEL."""
 import numpy as np
 from banana.benchmark.external import apfel_utils

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from banana import navigator as bnav
 
 from yadism import observable_name as on

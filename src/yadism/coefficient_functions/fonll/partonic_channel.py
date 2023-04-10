@@ -61,7 +61,7 @@ def Delta_qq_loc(x):
     """
     as_norm = 4.0
     # Integrate[(1+z^2)/(1-z)(2/3 Log[z]+10/9)+4/3(1-z),{z,0,x},Assumptions->{0<x<1}]
-    return - (
+    return -(
         constants.CF
         * constants.TR
         * (
@@ -120,7 +120,7 @@ def K_qq_loc(x, _args):
     """
     as_norm = 4.0
     # Integrate[(1+z^2)/(1-z)(1/6 Log[z]^2+5/9Log[z]+28/27)+(1-z)(2/3Log[z]+13/9),{z,0,x},Assumptions->{0<x<1}]
-    return - (
+    return -(
         constants.CF
         * constants.TR
         * (

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Note that here the m refers to odd-N, but it actually corresponds to
 :math:`\nu + \bar{\nu}`. Vice versa for the minus combination.
