@@ -7,7 +7,7 @@ from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
 from yadism.coefficient_functions.heavy import f2_nc as h_f2_nc
 from yadism.coefficient_functions.heavy import f3_nc as h_f3_nc
 import matplotlib.pyplot as plt
-
+#todo: compare results to Daniel de Florian figure 4-6 
 class MockCouplingConstants:
     def get_weight(self, _pid, _q2, qct):
         if qct == "VV":
@@ -84,16 +84,14 @@ def test_dq():
     m2hq = 2
     for nf in [3, 4]:
         for z in [1e-1, 1e-2, 1e-3]:
-            cg_1 = h_g1_nc.NonSinglet(esf1, nf, m2hq=m2hq)
-            cg_2 =  h_f3_nc.NonSinglet(esf2, nf, m2hq=m2hq)   
+            dq_1 = h_g1_nc.NonSinglet(esf1, nf, m2hq=m2hq)
+            dq_2 =  h_f3_nc.NonSinglet(esf2, nf, m2hq=m2hq)   
             order = lambda pc, o="NNLO": pc.__getattribute__("NNLO")()
-            a_1 = order(cg_1).reg(z, order(cg_1).args["reg"])
-            a_2 = order(cg_2).reg(z, order(cg_2).args["reg"])
+            a_1 = order(dq_1).reg(z, order(dq_1).args["reg"])
+            a_2 = order(dq_2).reg(z, order(dq_2).args["reg"])
             np.testing.assert_allclose(a_1,a_2, err_msg='g1 and F3 coefficients should be the same, but are not')
 
 #Note: graph is there to find out what is wrong with gluon VV and why it doesn't follow the relations in the thesis 
-
-
 
 # def test_cg_NNLO_graph():
 #     Q2 = 200
