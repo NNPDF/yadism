@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Implementation of factorization and renormalization scale variations."""
 import logging
 import time
@@ -128,10 +127,10 @@ class ScaleVariations:
         """
         beta0 = beta.beta_qcd_as2(nf)
         ren_coeffs = {
-            (2, 1, 1): + beta0,
-            (3, 1, 2): + 2 *beta0,
-            (3, 1, 1): + beta.beta_qcd_as3(nf),
-            (3, 2, 1): + beta0 ** 2
+            (2, 1, 1): +beta0,
+            (3, 1, 2): +2 * beta0,
+            (3, 1, 1): +beta.beta_qcd_as3(nf),
+            (3, 2, 1): +(beta0**2),
         }
         return dict(filter(lambda item: item[0][0] <= self.order, ren_coeffs.items()))
 
@@ -190,7 +189,7 @@ class ScaleVariations:
             return []
         diff_kers = self.apply_raw_diff_scale_variations(ker_orders, nf)
         ren_kers = []
-        for (o, k) in diff_kers:
+        for o, k in diff_kers:
             # ln((xi_f/xi_r)^2)^n = (ln(xi_f^2) - ln(xi_r^2))^n
             n = o[2]
             for j in range(

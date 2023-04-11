@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Compare the results with QCDNUM
 # import pytest
@@ -39,7 +38,6 @@ class BenchmarkFNS(XspaceBenchmark):
 
     @staticmethod
     def observable_updates(FX, q2_min=None, q2_max=None):
-
         # Bench mark only in physical ranges
         if q2_min is None:
             q2_min = 4.0
@@ -69,7 +67,6 @@ class BenchmarkFNS(XspaceBenchmark):
         return obs_cards
 
     def benchmark_ZM(self):
-
         fnames = ["F2_total", "FL_total", "F3_total"]
         FX = {
             "CC": fnames,
@@ -80,7 +77,6 @@ class BenchmarkFNS(XspaceBenchmark):
         self.run(cartesian_product(fns), self.observable_updates(FX), ["ToyLHAPDF"])
 
     def benchmark_FFNS(self):
-
         fnames = [
             "F2_light",
             "F2_total",
@@ -111,7 +107,6 @@ class BenchmarkFNS(XspaceBenchmark):
         )
 
     def benchmark_FONLL(self):
-
         fnames = [
             "F2_light",
             "F2_total",
@@ -143,7 +138,6 @@ class BenchmarkFNS(XspaceBenchmark):
 
 
 if __name__ == "__main__":
-
     plain = BenchmarkPlain()
     plain.benchmark_lo()
     plain.benchmark_nlo()

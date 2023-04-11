@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 This module contain the implementation of target mass corrections (TMC).
 

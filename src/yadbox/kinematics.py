@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def W2(x, Q2, MP=0.0):
     """Mass squared :math:`W^2` of the proton-boson system.
 

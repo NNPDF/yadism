@@ -58,7 +58,7 @@ scale variations expressions.
 They actually can be organized in powers of the perturbative coupling
 :math:`a_s = \alpha_s(\mu_F) / 4\pi` and the logarithm of the factorization scale
 :math:`L_M = \log(\mu_F^2 / Q^2)` (note the different definition of the log
-with respect to :cite:`AbdulKhalek:2019ihb,nnlo-sv-singlet` that is the reason 
+with respect to :cite:`AbdulKhalek:2019ihb,nnlo-sv-singlet` that is the reason
 of the different minus signs in the next expressions):
 
 .. math::
@@ -122,7 +122,7 @@ with respect to a further different scale :math:`\mu_R^2`.
 
 For this reason the easiest variable in which to express the new contribution is
 actually :math:`L_R = \log(\mu_R^2/\mu_F^2)` (note the different definition of the log
-with respect to :cite:`AbdulKhalek:2019ihb,nnlo-sv-singlet` that is the reason 
+with respect to :cite:`AbdulKhalek:2019ihb,nnlo-sv-singlet` that is the reason
 of the different minus signs in the next expressions), that measures the discrepancy of
 the new scale with respect to the one already considered, and they are expressed
 on top of the expressions built in the previous paragraph:

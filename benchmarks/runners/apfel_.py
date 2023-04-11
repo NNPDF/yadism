@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Compare the results with APFEL's
 
@@ -145,7 +144,6 @@ class BenchmarkXS(ApfelBenchmark):
 
 @pytest.mark.skip
 class BenchmarkFlavorNumberScheme(ApfelBenchmark):
-
     # TODO add observable generator
     # the observables eventually need to be taylored to the used theories,
     # i.e. configuration need to be more scattered in this this class.
