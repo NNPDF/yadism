@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # pylint: skip-file
 import argparse
 import pathlib

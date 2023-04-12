@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """common factors see :cite:`vogt-f2nc` table 2"""
 import numba as nb
 
@@ -11,13 +12,13 @@ d243 = 1.0 / 243.0
 @nb.njit("f8(i4)", cache=True)
 def fl(nf):
     fl = [2.0, 0.5, 0.0, 0.5, 0.2, 0.5]
-    return fl[int(nf - 1)]
+    return fl[int(nf-1)]
 
 
 @nb.njit("f8(i4)", cache=True)
 def fls(nf):
     fls = [1.0, 0.1, 0.0, 0.1, 0.01818181818, 0.1]
-    return fls[int(nf - 1)]
+    return fls[int(nf-1)]
 
 
 @nb.njit("f8(i4)", cache=True)

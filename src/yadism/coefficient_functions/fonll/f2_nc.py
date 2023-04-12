@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numba as nb
 
 from ..intrinsic import f2_nc as intrinsic

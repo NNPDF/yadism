@@ -1,26 +1,25 @@
-import matplotlib.pyplot as plt
+# -*- coding: utf-8 -*-
 import numpy as np
 from eko.thresholds import ThresholdsAtlas
 
 from yadism import observable_name as on
+from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc 
 from yadism.coefficient_functions.heavy import f2_nc as h_f2_nc
 from yadism.coefficient_functions.heavy import f3_nc as h_f3_nc
-from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
-
-
-# todo: compare results to Daniel de Florian figure 4-6
+import matplotlib.pyplot as plt
+#todo: compare results to Daniel de Florian figure 4-6 
 class MockCouplingConstants:
     def get_weight(self, _pid, _q2, qct):
         if qct == "VV":
             return 1
-        if qct == "VA":  # -->  must be 0 due to symmetry reasons
+        if qct == "VA": #-->  must be 0 due to symmetry reasons 
             return 2
-        if qct == "AV":  # -->  must be 0 due to symmetry reasons
+        if qct == "AV": #-->  must be 0 due to symmetry reasons 
             return 4
         if qct == "AA":
             return 8
         raise ValueError(f"Unkown {qct}")
-
+ 
 
 class MockSF:
     def __init__(self, n):
@@ -37,7 +36,6 @@ class MockESF:
         self.Q2 = Q2
         self.process = "NC"
 
-
 def test_cg():
     Q2 = 200
     esf = MockESF("g1_charm", 0.1, Q2)
@@ -45,15 +43,12 @@ def test_cg():
     for nf in [3, 4]:
         for z in [1e-1, 1e-2, 1e-3]:
             cg_1 = h_g1_nc.GluonVV(esf, nf, m2hq=m2hq)
-            cg_2 = h_g1_nc.GluonAA(esf, nf, m2hq=m2hq)
+            cg_2 =  h_g1_nc.GluonAA(esf, nf, m2hq=m2hq)
             for o in ["NLO", "NNLO"]:
                 order = lambda pc, o=o: pc.__getattribute__(o)()
                 a_1 = order(cg_1).reg(z, order(cg_1).args["reg"])
                 a_2 = order(cg_2).reg(z, order(cg_1).args["reg"])
-
-
-# todo: test_cg() requires the FONLL method for g1 to compare values?
-
+ #todo: test_cg() requires the FONLL method for g1 to compare values? 
 
 def test_cg_NLO():
     Q2 = 200
@@ -62,18 +57,11 @@ def test_cg_NLO():
     for nf in [3, 4]:
         for z in [1e-1, 1e-2, 1e-3]:
             cg_1 = h_g1_nc.GluonVV(esf, nf, m2hq=m2hq)
-            cg_2 = h_g1_nc.GluonAA(esf, nf, m2hq=m2hq)
+            cg_2 =  h_g1_nc.GluonAA(esf, nf, m2hq=m2hq)
             order = lambda pc, o="NLO": pc.__getattribute__("NLO")()
             a_1 = order(cg_1).reg(z, order(cg_1).args["reg"])
-            a_2 = order(cg_2).reg(
-                z, order(cg_2).args["reg"]
-            )  # todo:try the other args of the RSL although unlikely to be different
-            np.testing.assert_allclose(
-                a_1,
-                a_2,
-                err_msg="Axial vector-axial vector Coefficients and vector-vector coefficients at NLO should be the same, but are not",
-            )
-
+            a_2 = order(cg_2).reg(z, order(cg_2).args["reg"]) #todo:try the other args of the RSL although unlikely to be different 
+            np.testing.assert_allclose(a_1, a_2, err_msg='Axial vector-axial vector Coefficients and vector-vector coefficients at NLO should be the same, but are not')   
 
 def test_cg_NNLO():
     Q2 = 200
@@ -83,18 +71,13 @@ def test_cg_NNLO():
     for nf in [3, 4]:
         for z in [1e-1, 1e-2, 1e-3]:
             cg_1 = h_g1_nc.GluonVV(esf1, nf, m2hq=m2hq)
-            cg_2 = h_f2_nc.GluonVV(esf2, nf, m2hq=m2hq)
+            cg_2 =  h_f2_nc.GluonVV(esf2, nf, m2hq=m2hq)   
             order = lambda pc, o="NNLO": pc.__getattribute__("NNLO")()
             a_1 = order(cg_1).reg(z, order(cg_1).args["reg"])
             a_2 = order(cg_2).reg(z, order(cg_2).args["reg"])
-            np.testing.assert_allclose(
-                a_1,
-                a_2,
-                err_msg="g1 and F2 coefficients at NNLO should be the same, but are not",
-            )
+            np.testing.assert_allclose(a_1,a_2, err_msg='g1 and F2 coefficients at NNLO should be the same, but are not')
 
-
-def test_dq():
+def test_dq(): 
     Q2 = 200
     esf1 = MockESF("g1_charm", 0.1, Q2)
     esf2 = MockESF("F3_charm", 0.1, Q2)
@@ -102,18 +85,13 @@ def test_dq():
     for nf in [3, 4]:
         for z in [1e-1, 1e-2, 1e-3]:
             dq_1 = h_g1_nc.NonSinglet(esf1, nf, m2hq=m2hq)
-            dq_2 = h_f3_nc.NonSinglet(esf2, nf, m2hq=m2hq)
+            dq_2 =  h_f3_nc.NonSinglet(esf2, nf, m2hq=m2hq)   
             order = lambda pc, o="NNLO": pc.__getattribute__("NNLO")()
             a_1 = order(dq_1).reg(z, order(dq_1).args["reg"])
             a_2 = order(dq_2).reg(z, order(dq_2).args["reg"])
-            np.testing.assert_allclose(
-                a_1,
-                a_2,
-                err_msg="g1 and F3 coefficients should be the same, but are not",
-            )
+            np.testing.assert_allclose(a_1,a_2, err_msg='g1 and F3 coefficients should be the same, but are not')
 
-
-# Note: graph is there to find out what is wrong with gluon VV and why it doesn't follow the relations in the thesis
+#Note: graph is there to find out what is wrong with gluon VV and why it doesn't follow the relations in the thesis 
 
 # def test_cg_NNLO_graph():
 #     Q2 = 200
@@ -126,12 +104,12 @@ def test_dq():
 #         y= [1e-1, 1e-2, 1e-3]
 #         for z in [1e-1, 1e-2, 1e-3]:
 #             cg_1 = h_g1_nc.GluonVV(esf1, nf, m2hq=m2hq)
-#             cg_2 =  h_f2_nc.GluonVV(esf2, nf, m2hq=m2hq)
+#             cg_2 =  h_f2_nc.GluonVV(esf2, nf, m2hq=m2hq)   
 #             for o in ["NLO", "NNLO"]:
 #                 order = lambda pc, o=o: pc.__getattribute__(o)()
 #                 a_1 = order(cg_1).reg(z, order(cg_1).args["reg"])
 #                 a_2 = order(cg_2).reg(z, order(cg_2).args["reg"])
-#                 if o == "NLO":
+#                 if o == "NLO": 
 #                     a_1_NLO.append(a_1)
 #                     a_2_NLO.append(-a_2)
 #                 elif o == "NNLO":

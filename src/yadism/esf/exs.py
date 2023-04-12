@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 
 from ..observable_name import ObservableName
@@ -67,9 +68,9 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
         yp = 1.0
         yL = y**2 / (2 * (y**2 / 2 + (1 - y) - (mn * x * y) ** 2 / Q2))
     elif kind == "XSFPFCC":
-        INV_GEV_TO_PB = GEV_CM2_CONV / 100.0  # pb
+        INV_GEV_TO_PB = GEV_CM2_CONV / 100.0 # pb
         norm = (INV_GEV_TO_PB * params["GF"] ** 2) / (4.0 * np.pi)
-        norm *= 1.0 / (2.0 * x * (1.0 + Q2 / params["M2W"]) ** 2)
+        norm *= 1.0 / (2.0 * x * (1.0 + Q2 / params["M2W"])**2)
     else:
         mn = np.sqrt(params["M2target"])
         m2w = params["M2W"]
@@ -87,7 +88,12 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
             norm = 100.0 / 2.0 / (1.0 + Q2 / m2w) ** 2
         # NUTEV neutrino dis
         if kind == "XSNUTEVNU":
-            norm = GEV_CM2_CONV * params["GF"] ** 2 * mn / (2.0 * np.pi)
+            norm = (
+                GEV_CM2_CONV
+                * params["GF"] ** 2
+                * mn
+                / (2.0 * np.pi)
+            )
     return np.array([yp, -yL, f3sign * ym]) * norm
 
 

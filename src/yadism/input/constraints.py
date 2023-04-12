@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # pylint: skip-file
 import abc
 
@@ -162,7 +163,7 @@ class IntegerArgument(RealArgument):
         value_int = np.round(value)
         if np.abs(value - value_int) > 1e-5:
             self._raise_error(value)
-        super().check_value(value=value_int)
+        super(IntegerArgument, self).check_value(value=value_int)
 
 
 type_class_map = {

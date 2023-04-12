@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # pylint: skip-file
 
 import copy
@@ -10,6 +11,7 @@ from yadmark.data import observables, pineappl_xgrid
 
 
 class Pineappl:
+
     obs_name = "F2_light"
 
     def generate_observables(self):

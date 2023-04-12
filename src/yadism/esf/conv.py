@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Defines :py:class:`DistributionVec` and its API, that are used to represent
 distribution objects in the coefficient function definition and calculation.

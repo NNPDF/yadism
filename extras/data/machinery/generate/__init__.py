@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from . import BCDMS, CHORUS, HERA, NMC, NUTEV, POS, SLAC, utils
 
 exps = {

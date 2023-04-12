@@ -27,6 +27,5 @@ class NonSinglet(pc.LightBase):
 class Gluon(epc.EmptyPartonicChannel):
     pass
 
-
 class Singlet(epc.EmptyPartonicChannel):
     pass

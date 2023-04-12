@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from banana.data import cartesian_product, sql
 from eko import interpolation

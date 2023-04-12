@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import LeProHQ
 import numpy as np
 

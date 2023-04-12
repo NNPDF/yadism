@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This module provides the base class that define the interface for Structure
 Function calculation on a given kinematic point (x, Q2) (that is why they are

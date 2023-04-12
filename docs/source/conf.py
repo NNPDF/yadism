@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
 #
@@ -314,7 +315,6 @@ todo_include_todos = True
 # https://gist.github.com/mgedmin/6052926
 edit_on_github_project = "N3PDF/yadism"
 edit_on_github_branch = "master"
-
 
 # https://github.com/readthedocs/readthedocs.org/issues/1139#issuecomment-312626491
 def run_apidoc(_):

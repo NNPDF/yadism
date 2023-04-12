@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from yadism.esf.esf import ESFInfo
 
 

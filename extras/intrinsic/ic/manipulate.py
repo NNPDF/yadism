@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 
 # Translation table as MMa doesn't like numbers in names

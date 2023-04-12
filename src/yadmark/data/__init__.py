@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 pineappl_xgrid = list(
     reversed(
         [

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # auto-generated module by ic package
 # fmt: off
 # pylint: skip-file

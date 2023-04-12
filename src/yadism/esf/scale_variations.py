@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Implementation of factorization and renormalization scale variations."""
 import logging
 import time
@@ -183,7 +184,7 @@ class ScaleVariations:
             return []
         diff_kers = self.apply_raw_diff_scale_variations(ker_orders, nf)
         ren_kers = []
-        for o, k in diff_kers:
+        for (o, k) in diff_kers:
             # ln((xi_f/xi_r)^2)^n = (ln(xi_f^2) - ln(xi_r^2))^n
             n = o[2]
             for j in range(

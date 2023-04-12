@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Generator for positivity datasets."""
 import copy
 
@@ -50,7 +51,7 @@ def dump(src_path, _target):
         observables dictionary, corresponding to the runcard
     """
     obs = copy.deepcopy(obs_template)
-    with open(src_path, encoding="utf-8") as f:
+    with open(src_path, "r", encoding="utf-8") as f:
         obs_update = yaml.safe_load(f)
     obs["NCPositivityCharge"] = obs_update["NCPositivityCharge"]
     obs["observables"][obs_update["obs"]] = _make_kins()

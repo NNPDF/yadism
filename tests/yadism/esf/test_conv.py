@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Test the DistributionVec class and its methods.
 """
@@ -131,7 +132,6 @@ class TestConvnd:
     def test_basis_function_shrink_domain_lin(self):
         xg = XGrid(np.linspace(0.2, 1.0, 5), False)  # 0.2, 0.4, 0.6, 0.8, 1.0
         i = InterpolatorDispatcher(xg, 1, False)
-
         # fake eko and test it does the job
         def bf1(x):
             if x > 0.4:
@@ -156,7 +156,6 @@ class TestConvnd:
     def test_basis_function_shrink_domain_log(self):
         xg = np.array([np.exp(-2), np.exp(-1), 1.0])
         i = InterpolatorDispatcher(xg, 1, True)
-
         # fake eko and test it does the job
         def bf1(x):
             if np.log(x) > -1:

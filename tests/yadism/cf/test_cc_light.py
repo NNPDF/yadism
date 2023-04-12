@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from test_pc_general import MockESF
 

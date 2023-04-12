@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from ..intrinsic import fl_cc as intrinsic
 from ..light import fl_cc as light
 from ..partonic_channel import RSL, EmptyPartonicChannel

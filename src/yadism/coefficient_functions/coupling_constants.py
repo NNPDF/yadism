@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Coupling between QCD particles and EW particles."""
 import logging
 

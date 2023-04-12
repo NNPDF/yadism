@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Test all the partonic coefficient functions
 """

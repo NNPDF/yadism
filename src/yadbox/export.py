@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Export predictions to PineAPPL."""
 import json
 

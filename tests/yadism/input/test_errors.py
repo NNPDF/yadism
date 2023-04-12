@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pytest
 
 from yadism.input import errors
@@ -8,7 +9,7 @@ def test_domain_error():
         raise errors.DomainError(
             name="test",
             description="test_description",
-            type=int,
+            type=type(3),
             known_as="ciao",
             value=3,
         )

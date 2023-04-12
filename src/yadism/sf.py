@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Defines the :py:class:`StructureFunction` class.
 

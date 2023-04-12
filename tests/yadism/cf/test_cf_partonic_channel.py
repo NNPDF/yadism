@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 import scipy.integrate
@@ -22,6 +23,7 @@ class MockESF:
 
 class TestNeutralCurrentBase:
     def test_is_below_threshold(self):
+
         for Q2 in [0.1, 1000]:
             x = 0.5
             pch = pcheavy.NeutralCurrentBase(MockESF(x, Q2), 3, m2hq=M2hq)
@@ -43,6 +45,7 @@ class TestPartonicChannel:
                 assert pytest.approx(pch.r_integral(x), 1e-8, err) == res
 
     def test_h_q(self):
+
         # TODO: Think a more brilliant test!
         Q2 = 1
         x = 0.5
@@ -57,6 +60,7 @@ class TestPartonicChannel:
         assert rsl.loc(x, [3]) != 0.0
 
     def test_h_g(self):
+
         # TODO: Think a more brilliant test!
         Q2 = 1
         x = 0.5

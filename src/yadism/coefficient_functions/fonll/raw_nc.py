@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # auto-generated module by fonll_nc_nnlo package
 # pylint: skip-file
 # fmt: off

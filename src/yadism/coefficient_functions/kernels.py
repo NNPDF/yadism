@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import copy
 import importlib
 from numbers import Number

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 The coefficient functions definition is given in :eqref:`4.2`,
 :cite:`vogt-f2nc` (that is the main reference for their expression, i.e. all
