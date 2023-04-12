@@ -192,30 +192,3 @@ class NonSinglet(pc.NeutralCurrentBase):
             )
 
         return RSL(dq)
-
-
-# todo: write out numerical results for the gluon VV and gluon AA using the results of felix's thesis and then assert equality
-
-
-# Personal Tests Below --> attribute x is for some reason not part of ESF
-
-# sf = StructureFunction(observable_name.ObservableName("F2_light"),Runner(theory_params, observable_name.ObservableName("FL_light")),)
-
-# kinematics = []
-# kinematics.extend([dict(x=0.1, Q2=20.0, y=0)])
-
-# theory = copy.deepcopy(theories.default_card)
-# observable = copy.deepcopy(observables.default_card)
-# observable["observables"]["F2_light"] = kinematics
-
-
-# run_instance = Runner(theory, observable,)
-# managers = run_instance.get_managers()
-
-# sf =  compute_sf()
-# kinematics = dict(x=0.1, Q2=20.0)
-# esf = ESF(kinematics, sf, configs= managers )
-# pc_instance = PartonicChannel(ESF = esf)
-# nc_instance = pc.NeutralCurrentBase(pc_instance, m2hq= 10,)
-# gvv_instance = GluonVV(nc_instance)
-# result = gvv_instance.NLO()
