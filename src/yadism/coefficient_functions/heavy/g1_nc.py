@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 import LeProHQ
 import numpy as np
 from scipy.integrate import quad
 
 from ..partonic_channel import RSL
 from . import partonic_channel as pc
+
 
 class GluonVV(pc.NeutralCurrentBase):
     def NLO(self):
@@ -16,10 +16,13 @@ class GluonVV(pc.NeutralCurrentBase):
             if self.is_below_threshold(z):
                 return 0.0
             return (
-                self._FHprefactor / z * LeProHQ.cg0("x2g1", "VV", self._xi, self._eta(z))
+                self._FHprefactor
+                / z
+                * LeProHQ.cg0("x2g1", "VV", self._xi, self._eta(z))
             )
+
         return RSL(cg)
-    
+
     def NNLO(self):
         """
         |ref| implements NLO (heavy) gluon coefficient function, :cite:`felix-thesis`.
@@ -49,13 +52,14 @@ class GluonVV(pc.NeutralCurrentBase):
                     * np.log(self._xi)
                 )
             )
+
         return RSL(cg)
-    
+
 
 class GluonAA(GluonVV):
     def NLO(self):
         """
-        |ref| implements :eqref:`D.6`, :cite:`felix-thesis`. 
+        |ref| implements :eqref:`D.6`, :cite:`felix-thesis`.
 
         This is the same result as GluonVV at NLO.
 
@@ -65,7 +69,9 @@ class GluonAA(GluonVV):
             if self.is_below_threshold(z):
                 return 0.0
             return (
-                self._FHprefactor / z * LeProHQ.cg0("x2g1", "AA", self._xi, self._eta(z))
+                self._FHprefactor
+                / z
+                * LeProHQ.cg0("x2g1", "AA", self._xi, self._eta(z))
             )
 
         return RSL(cg)
@@ -84,7 +90,7 @@ class GluonAA(GluonVV):
         The finite 'QED' (abelian) part, :eqref:`D.29`.
 
         This equation is the same as the F3 of the unpolarized case.
-        
+
         """
 
         def cg(z, _args):
@@ -108,8 +114,8 @@ class SingletVV(pc.NeutralCurrentBase):
     def NNLO(self):
         """
         |ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`.
-        
-        The NLO Bethe-Heitler Quark coefficient function :eqref:`D.43` is made up of the following parts: 
+
+        The NLO Bethe-Heitler Quark coefficient function :eqref:`D.43` is made up of the following parts:
 
         The part proportional to ln(beta) :eqref:`D.44`.
         The constant part is defined in :eqref:`D.48`.
@@ -140,7 +146,7 @@ class SingletAA(pc.NeutralCurrentBase):
         """
         |ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`.
 
-        The NLO Bethe-Heitler Quark coefficient function (here denoted by cq1) :eqref:`D.43` is made up of the following parts: 
+        The NLO Bethe-Heitler Quark coefficient function (here denoted by cq1) :eqref:`D.43` is made up of the following parts:
 
         The part proportional to ln(beta) :eqref:`D.44`.
         The constant part is defined in :eqref:`D.46`.
@@ -163,7 +169,7 @@ class SingletAA(pc.NeutralCurrentBase):
             )
 
         return RSL(cq)
-    
+
 
 class NonSinglet(pc.NeutralCurrentBase):
     def NNLO(self):
@@ -187,13 +193,13 @@ class NonSinglet(pc.NeutralCurrentBase):
 
         return RSL(dq)
 
-    
-#todo: write out numerical results for the gluon VV and gluon AA using the results of felix's thesis and then assert equality 
+
+# todo: write out numerical results for the gluon VV and gluon AA using the results of felix's thesis and then assert equality
 
 
-#Personal Tests Below --> attribute x is for some reason not part of ESF
+# Personal Tests Below --> attribute x is for some reason not part of ESF
 
-#sf = StructureFunction(observable_name.ObservableName("F2_light"),Runner(theory_params, observable_name.ObservableName("FL_light")),)
+# sf = StructureFunction(observable_name.ObservableName("F2_light"),Runner(theory_params, observable_name.ObservableName("FL_light")),)
 
 # kinematics = []
 # kinematics.extend([dict(x=0.1, Q2=20.0, y=0)])
@@ -204,7 +210,7 @@ class NonSinglet(pc.NeutralCurrentBase):
 
 
 # run_instance = Runner(theory, observable,)
-# managers = run_instance.get_managers() 
+# managers = run_instance.get_managers()
 
 # sf =  compute_sf()
 # kinematics = dict(x=0.1, Q2=20.0)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Test SF and EvaluatedStructureFunction
 """
@@ -18,7 +17,7 @@ class MockObj:
     pass
 
 
-xg = XGrid(np.linspace(0.2, 1.0, 5), False)   # 0.2, 0.4, 0.6, 0.8, 1.0
+xg = XGrid(np.linspace(0.2, 1.0, 5), False)  # 0.2, 0.4, 0.6, 0.8, 1.0
 interpolator = InterpolatorDispatcher(xg, 1, False)
 coupling_constants = MockObj()
 coupling_constants.obs_config = dict(process="EM")
@@ -90,7 +89,6 @@ class TestStructureFunction:
 @pytest.mark.skip
 class TestEvaluatedStructureFunction:
     def test_init_repr(self):
-
         sf = StructureFunction(
             observable_name.ObservableName("F2_light"),
             MockRunner(),
@@ -111,7 +109,6 @@ class TestEvaluatedStructureFunction:
                 continue
 
     def test_get_result(self):
-
         for scheme in ["FFNS", "ZM-VFNS", "FONLL-A"]:
             r = MockRunner()
             r.theory_params["scheme"] = scheme

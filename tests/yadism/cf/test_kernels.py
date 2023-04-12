@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 
 from yadism.coefficient_functions import kernels
@@ -28,7 +27,6 @@ class Test_operations:
             assert ref_sum.compare(sumr_, x)
 
     def test_add_other(self):
-
         reg0 = [None, lambda x: x, 1]
         others = [
             3,

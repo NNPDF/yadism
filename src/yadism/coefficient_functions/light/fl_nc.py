@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ..partonic_channel import RSL
 from . import n3lo, nlo, nnlo
 from . import partonic_channel as pc

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import collections
 
 from hypothesis import HealthCheck, given, settings

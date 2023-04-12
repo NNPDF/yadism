@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Note, the factor `fl11` is disabled for charged currents according to `xcdiff3p.f`.
 To generate `clnm3a,clnm3c` we follow `xcdiff3p.f` or the reference paper :cite:`Davies:2016ruz`
 """
