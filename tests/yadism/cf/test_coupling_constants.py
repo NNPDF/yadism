@@ -130,7 +130,7 @@ class TestCouplingConstanst:
         with pytest.raises(ValueError, match="Unknown projectile"):
             coupl.CouplingConstants.from_dict(th_d, obs_d)
 
-    def test_average_partonic_coupling(self):
+    def test_linear_partonic_coupling(self):
         th_d = dict(
             SIN2TW=0.5,
             MZ=80,
@@ -146,7 +146,7 @@ class TestCouplingConstanst:
         coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
         for pid in range(1, 7):
             np.testing.assert_allclose(
-                coupl_const.average_partonic_coupling(pid),
+                coupl_const.linear_partonic_coupling(pid),
                 coupl_const.electric_charge[pid],
             )
 

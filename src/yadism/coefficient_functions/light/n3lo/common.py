@@ -31,7 +31,7 @@ def nc_color_factor(coupling_constants, nf, channel, skip_heavylight):
     """
     pids = range(1, nf + 1)
     w_pc = np.array(
-        [coupling_constants.average_partonic_coupling(pid) for pid in pids], dtype=float
+        [coupling_constants.linear_partonic_coupling(pid) for pid in pids], dtype=float
     )
     # if skip_heavylight the last pid couplig is set to 0
     if skip_heavylight:

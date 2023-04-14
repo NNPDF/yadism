@@ -270,8 +270,8 @@ class CouplingConstants:
             return w_phph + w_phZ + w_ZZ
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
-    def average_partonic_coupling(self, pid):
-        """Return the linear average of the partonic coupling. Defined only for |NC|.
+    def linear_partonic_coupling(self, pid):
+        """Return the linear vectorial partonic coupling. Defined only for |NC|.
 
         Parameters
         ----------
@@ -303,8 +303,7 @@ class CouplingConstants:
         # allow Z to be mixed in
         if self.obs_config["process"] == "NC":
             w_ZV = self.vectorial_coupling(pid)
-            w_ZA = self.weak_isospin_3[pid]
-            return w_ph + w_ZV + w_ZA
+            return w_ph + w_ZV
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod

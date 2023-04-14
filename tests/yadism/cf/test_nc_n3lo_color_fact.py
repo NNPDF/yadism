@@ -7,7 +7,7 @@ class MockCouplingConstants:
     def __init__(self):
         self.charges = {pid: np.random.rand() for pid in range(1, 7)}
 
-    def average_partonic_coupling(self, pid):
+    def linear_partonic_coupling(self, pid):
         return self.charges[pid]
 
 
