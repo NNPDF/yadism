@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 See :mod:`f3_cc` docstring for the name conventions.
 """

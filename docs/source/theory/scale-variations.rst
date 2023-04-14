@@ -29,7 +29,7 @@ Description
 
 Following a more in depth description about the structure of the scale
 variations in the theory.
-This is really decoupled from the process itself, and it has been use as a
+This is really decoupled from the process itself, and it has been used as a
 guidance for the implementation itself, whose details are instead described in
 the :ref:`corresponding technical section <implement-sv>`.
 
@@ -56,13 +56,15 @@ Thus the content of the coefficient functions is completely factorized in the
 scale variations expressions.
 
 They actually can be organized in powers of the perturbative coupling
-:math:`a_s = \alpha_s / 4\pi` and the logarithm of the factorization scale
-:math:`L_M = \log(Q^2 / \mu_F^2)`:
+:math:`a_s = \alpha_s(\mu_F) / 4\pi` and the logarithm of the factorization scale
+:math:`L_M = \log(\mu_F^2 / Q^2)` (note the different definition of the log
+with respect to :cite:`AbdulKhalek:2019ihb,nnlo-sv-singlet` that is the reason
+of the different minus signs in the next expressions):
 
 .. math::
   \textbf{C}_a(x, \alpha_s(\mu_R^2), L_M, L_R) \stackrel{\mu_R = \mu_F}{=}
   \textbf{c}_a^{(0)}(x) + \sum_{l=1}^\infty a_s^l \left(\textbf{c}_a^{(l)}(x) +
-  \sum_{m=1}^l \textbf{c}_a^{(l)}(x) L_M^m\right)
+  \sum_{m=1}^l \textbf{c}_a^{(l,m)}(x) L_M^m\right)
 
 Where :math:`a` (:math:`= 1,2,3,L`) is the kind of structure functions considered.
 
@@ -73,18 +75,19 @@ dimension of the two runnings) convoluted with lower order coefficient
 functions:
 
 .. math::
-  \textbf{c}_a^{(1,1)} &= \textbf{c}_a^{(0)} \otimes \textbf{P}^{(0)}\\
-  \textbf{c}_a^{(2,1)} &= \textbf{c}_a^{(0)} \otimes \textbf{P}^{(1)} + \textbf{c}_a^{(1)} \otimes (\textbf{P}^{(0)} - \beta_0 \textbf{1})\\
+  \textbf{c}_a^{(1,1)} &= -\textbf{c}_a^{(0)} \otimes \textbf{P}^{(0)}\\
+  \textbf{c}_a^{(2,1)} &= -\textbf{c}_a^{(0)} \otimes \textbf{P}^{(1)} + \textbf{c}_a^{(1)} \otimes (\textbf{P}^{(0)} - \beta_0 \textbf{1})\\
   \textbf{c}_a^{(2,2)} &= \frac{1}{2} \textbf{c}_a^{(1,1)} \otimes (\textbf{P}^{(0)}- \beta_0 \textbf{1})\\
-  \textbf{c}_a^{(3,1)} &= \textbf{c}_a^{(0)} \otimes \textbf{P}^{(2)} + \textbf{c}_a^{(1)} \otimes (\textbf{P}^{(1)} - \beta_1 \textbf{1}) + \textbf{c}_a^{(2)} \otimes (\textbf{P}^{(0)} - 2 \beta_0 \textbf{1})\\
+  \textbf{c}_a^{(3,1)} &= -\textbf{c}_a^{(0)} \otimes \textbf{P}^{(2)} + \textbf{c}_a^{(1)} \otimes (\textbf{P}^{(1)} - \beta_1 \textbf{1}) + \textbf{c}_a^{(2)} \otimes (\textbf{P}^{(0)} - 2 \beta_0 \textbf{1})\\
   \textbf{c}_a^{(3,2)} &= \frac{1}{2} \left\{ \textbf{c}_a^{(1,1)} \otimes (\textbf{P}^{(1)}-\beta_1 \textbf{1}) + \textbf{c}_a^{(2,1)} \otimes (\textbf{P}^{(0)} - 2 \beta_0 \textbf{1}) \right\}\\
-  \textbf{c}_a^{(3,3)} &= \frac{1}{3} \textbf{c}_a^{(2,2)} \otimes (\textbf{P}^{(0)}- 2 \beta_0 \textbf{1})\\
+  \textbf{c}_a^{(3,3)} &= -\frac{1}{3} \textbf{c}_a^{(2,2)} \otimes (\textbf{P}^{(0)}- 2 \beta_0 \textbf{1})\\
 
 Where :math:`\beta_k` are the coefficient of the :math:`a_s` beta function (pay
 attention to the **normalization**: they are not the ones for the beta function
 of :math:`\alpha_s`) and :math:`\textbf{P}^{(k)}` are the terms of the
 perturbative expansion of the Altarelli-Parisi splitting functions (again
-normalized in :math:`a_s`).
+normalized in :math:`a_s`). Note that when converting the splitting functions to
+the anomalous dimensions, following the |eko| definition, one gets a minus sign.
 
 .. important::
   The equations above have to be read as *vectorial*, indeed the both the
@@ -118,13 +121,15 @@ It is related to the only running of the coupling :math:`\alpha_s(\mu_R^2)`,
 with respect to a further different scale :math:`\mu_R^2`.
 
 For this reason the easiest variable in which to express the new contribution is
-actually :math:`L_R = \log(\mu_F^2/\mu_R^2)`, that measures the discrepancy of
+actually :math:`L_R = \log(\mu_R^2/\mu_F^2)` (note the different definition of the log
+with respect to :cite:`AbdulKhalek:2019ihb,nnlo-sv-singlet` that is the reason
+of the different minus signs in the next expressions), that measures the discrepancy of
 the new scale with respect to the one already considered, and they are expressed
 on top of the expressions built in the previous paragraph:
 
 .. math::
-  \textbf{C}_a^{(2)}(x, L_M, L_R) &= \textbf{C}_a^{(2)}(x, L_M, 0) - \beta_0 L_R \textbf{C}_a^{(1)}(x, L_M)\\
-  \textbf{C}_a^{(3)}(x, L_M, L_R) &= \textbf{C}_a^{(3)}(x, L_M, 0) - 2 \beta_0 L_R \textbf{C}_a^{(2)}(x, L_M, 0) - \{\beta_1 L_R - \beta_0^2 L_R^2\} \textbf{C}_a^{(1)}(x, L_M)
+  \textbf{C}_a^{(2)}(x, L_M, L_R) &= \textbf{C}_a^{(2)}(x, L_M, 0) + \beta_0 L_R \textbf{C}_a^{(1)}(x, L_M)\\
+  \textbf{C}_a^{(3)}(x, L_M, L_R) &= \textbf{C}_a^{(3)}(x, L_M, 0) + 2 \beta_0 L_R \textbf{C}_a^{(2)}(x, L_M, 0) + \{\beta_1 L_R + \beta_0^2 L_R^2\} \textbf{C}_a^{(1)}(x, L_M)
 
 The vectorial character of the equations in this case is present but trivial (no
 off-diagonal contribution, since :math:`\beta_k` are channel independent

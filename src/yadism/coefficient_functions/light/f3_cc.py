@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Note that at |N3LO| the source files in fortran follow :cite:`vogt-f3cc` notation
 where the odd-N moments are called minus even if they correspond to :math:`\nu + \bar{\nu}`.
