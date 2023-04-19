@@ -115,11 +115,7 @@ def compute_apfelpy_data(theory, observables, pdf):
 
         sf_name, heaviness = obs_name.split("_")
         pids = map_heaviness[heaviness]
-        if sf_name in apfelpy_structure_functions:
-            sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
-        else:
-            raise ValueError(f"{sf_name} not implemented in APFEL++")
-
+        
         coupling = fBq
         if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
             coupling = fDq
@@ -140,6 +136,11 @@ def compute_apfelpy_data(theory, observables, pdf):
             # Tabulate PDFs
             tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, nQ, QMin, QMax, 3)
 
+            if sf_name in apfelpy_structure_functions:
+                sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
+            else:
+                raise ValueError(f"{sf_name} not implemented in APFEL++")
+        
             # Initialize structure functions
             sfobj = ap.builders.BuildStructureFunctions(
                 sfobj,
