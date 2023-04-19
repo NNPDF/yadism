@@ -36,8 +36,8 @@ def compute_apfelpy_data(theory, observables, pdf):
     QMin = 1
     QMax = 200
 
-    # TODO: are we passing thr correctly??
-    thrs = [0, 0, 0, theory["mc"], theory["mb"], theory["mt"]]
+    # here we multiply the thr scales
+    thrs = [0, 0, 0, theory["mc"] * theory["kcThr"], theory["mb"]* theory["kbThr"], theory["mt"]* theory["ktThr"]]
 
     fns = theory["FNS"]
     if fns != "ZM-VFNS":
@@ -88,11 +88,15 @@ def compute_apfelpy_data(theory, observables, pdf):
         "total": 0,
     }
 
-    # TODO: how do you set EM only??
     def fBq(Q):
+        if observables["prDIS"] == "EM":
+            # at Q=0 we only have electric charges
+            return ap.utilities.ElectroWeakCharges(0, False, pids)
         return ap.utilities.ElectroWeakCharges(Q, False, pids)
 
     def fDq(Q):
+        if observables["prDIS"] == "EM":
+            return 0.0
         return ap.utilities.ParityViolatingElectroWeakCharges(Q, False, pids)
 
     coupling = fBq
@@ -159,7 +163,6 @@ def compute_apfelpy_data(theory, observables, pdf):
                 tab_sf = ap.TabulateObjectD(sfobj[5].Evaluate, nQ, QMin, QMax, 3, thrs)
 
             # compute the actual result
-            # TODO: pass XIF here ??
             result = tab_sf.EvaluatexQ(x, np.sqrt(Q2))
 
             # take over the kinematics
