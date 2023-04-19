@@ -32,10 +32,10 @@ def generate(esf, ihq):
             esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], ihq
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
-        if kind == "F3":
+        if kind in ["F3", "gL", "g4"]:
             return (kernels.Kernel(wq, cfs.Rplus(esf, ihq - 1, m1sq=m2hq)),)
         return (kernels.Kernel(wq, cfs.Splus(esf, ihq - 1, m1sq=m2hq)),)
-    if kind == "F3":
+    if kind in ["F3", "gL", "g4"]:
         wVA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VA")
         wAV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
         wp = wVA + wAV

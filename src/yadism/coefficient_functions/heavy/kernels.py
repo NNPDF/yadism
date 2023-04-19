@@ -55,7 +55,7 @@ def generate(esf, nf, ihq):
         )
     else:
         # F3 is a non-singlet quantity and hence has neither gluon nor singlet-like contributions
-        if kind == "F3":
+        if kind in ["F3", "gL", "g4"]:
             return ()
         weights = nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf, ihq)
         gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq))
@@ -121,7 +121,7 @@ def nc_weights(coupling_constants, Q2, kind, nf, ihq):
         mapping pid -> weight
 
     """
-    if kind == "F3":
+    if kind in ["F3", "gL", "g4"]:
         return {}
     weight_vv = coupling_constants.get_weight(ihq, Q2, "VV")
     weight_aa = coupling_constants.get_weight(ihq, Q2, "AA")

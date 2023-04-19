@@ -75,7 +75,7 @@ def nc_weights(coupling_constants, Q2, kind, nf, skip_heavylight=False):
         # but still let it take part in the average
         if skip_heavylight and q == nf:
             continue
-        if kind != "F3":
+        if kind not in ["F3", "gL", "g4"]:
             w = coupling_constants.get_weight(
                 q, Q2, "VV"
             ) + coupling_constants.get_weight(q, Q2, "AA")
@@ -84,10 +84,10 @@ def nc_weights(coupling_constants, Q2, kind, nf, skip_heavylight=False):
                 q, Q2, "VA"
             ) + coupling_constants.get_weight(q, Q2, "AV")
         ns_partons[q] = w
-        ns_partons[-q] = w if kind != "F3" else -w
+        ns_partons[-q] = w if kind not in ["F3", "gL", "g4"] else -w
         tot_ch_sq += w
     # gluon coupling = charge average (omitting the *2/2)
-    ch_av = tot_ch_sq / len(pids) if kind != "F3" else 0.0
+    ch_av = tot_ch_sq / len(pids) if kind not in ["F3", "gL", "g4"] else 0.0
     # same for singlet
     s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
     return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons}

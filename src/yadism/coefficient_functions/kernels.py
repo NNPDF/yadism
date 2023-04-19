@@ -147,11 +147,11 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
         # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
-            weights["ns"][sign * q] = w if kind != "F3" else sign * w
+            weights["ns"][sign * q] = w if kind not in ["F3", "gL", "g4"] else sign * w
         # but it contributes to the average
         tot_ch_sq += w
     # gluon coupling = charge sum
-    if rest == 0 and kind == "F3":
+    if rest == 0 and kind in ["F3", "gL", "g4"]:
         tot_ch_sq *= -1
     weights["g"][21] = tot_ch_sq / norm / 2
     # add singlet
@@ -201,8 +201,8 @@ def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf):
         # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
-            weights["ns"][sign * q] = w / 2 * (1 if kind != "F3" else sign)
-            weights["ns"][-sign * q] = w / 2 * (1 if kind != "F3" else sign)
+            weights["ns"][sign * q] = w / 2 * (1 if kind not in ["F3", "gL", "g4"] else sign)
+            weights["ns"][-sign * q] = w / 2 * (1 if kind not in ["F3", "gL", "g4"] else sign)
         # but it contributes to the average
         tot_ch_sq += w
     # gluon coupling = charge sum
@@ -252,8 +252,8 @@ def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf):
         # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
-            weights["ns"][sign * q] = w / 2 * (1 if kind != "F3" else sign)
-            weights["ns"][-sign * q] = -w / 2 * (1 if kind != "F3" else sign)
+            weights["ns"][sign * q] = w / 2 * (1 if kind not in ["F3", "gL", "g4"] else sign)
+            weights["ns"][-sign * q] = -w / 2 * (1 if kind not in ["F3", "gL", "g4"] else sign)
     return weights
 
 
@@ -302,7 +302,7 @@ def generate_single_flavor_light(esf, nf, ihq):
             ),
             Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf)),
         )
-    if kind != "F3":
+    if kind not in ["F3", "gL", "g4"]:
         w = esf.info.coupling_constants.get_weight(
             ihq, esf.Q2, "VV"
         ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
@@ -312,8 +312,8 @@ def generate_single_flavor_light(esf, nf, ihq):
         ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
 
     ns_partons[ihq] = w
-    ns_partons[-ihq] = w if kind != "F3" else -w
-    ch_av = w / (nf) if kind != "F3" else 0.0
+    ns_partons[-ihq] = w if kind not in ["F3", "gL", "g4"] else -w
+    ch_av = w / (nf) if kind not in ["F3", "gL", "g4"] else 0.0
     for pid in range(1, nf):
         s_partons[pid] = ch_av
         s_partons[-pid] = ch_av
