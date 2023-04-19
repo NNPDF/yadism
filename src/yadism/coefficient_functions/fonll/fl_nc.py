@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numba as nb
 
 from ..intrinsic import fl_nc as intrinsic
@@ -87,7 +85,7 @@ def cns_NLL_NNLO(z, args):
 
 class AsyNLLNonSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
-        return RSL(cns_NLL_NNLO)
+        return RSL(cns_NLL_NNLO, args=[self.L])
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)

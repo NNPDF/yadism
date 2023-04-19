@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Difference even N - odd N moments"""
 import numba as nb
 import numpy as np

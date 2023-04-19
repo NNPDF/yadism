@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 This contains all the Fortran expressions needed for IC as given by APFEL.
 """
