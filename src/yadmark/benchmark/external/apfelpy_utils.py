@@ -103,7 +103,7 @@ def compute_apfelpy_data(theory, observables, pdf):
 
     def fDq(Q):
         if observables["prDIS"] == "EM":
-            return 0.0
+            return [0.0]
         return ap.utilities.ParityViolatingElectroWeakCharges(Q, False, pids)
 
     # Initialize DGLAP Object
