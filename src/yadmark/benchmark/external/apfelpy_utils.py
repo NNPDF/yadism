@@ -1,6 +1,6 @@
 """Utilities to help run APFEL++."""
-import numpy as np
 import apfelpy as ap
+import numpy as np
 
 
 def compute_apfelpy_data(theory, observables, pdf):
@@ -79,82 +79,84 @@ def compute_apfelpy_data(theory, observables, pdf):
             "g4": init.Initializeg4NCObjectsZM,
         }
 
-    # TODO: do you need to disable evolution also here?
-    # disable APFEL++ evolution: we are interested in the pure DIS part
-    dglapobj = ap.initializers.InitializeDglapObjectsQCD(xgrid, thrs)
-    # Construct the DGLAP objects
-    evolvedPDFs = ap.builders.BuildDglap(
-        dglapobj, ap.utilities.LHToyPDFs, theory["Q0"], pto, alphas.Evaluate
-    )
-    # Tabulate PDFs
-    tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, nQ, QMin, QMax, 3)
+    # couplings
+    map_heaviness = {
+        "charm": 4,
+        "bottom": 5,
+        "top": 6,
+        "light": 0,
+        "total": 0,
+    }
 
-    # compute observables with APFEL
+    # TODO: how do you set EM only??
+    def fBq(Q):
+        return ap.utilities.ElectroWeakCharges(Q, False, pids)
+
+    def fDq(Q):
+        return ap.utilities.ParityViolatingElectroWeakCharges(Q, False, pids)
+
+    coupling = fBq
+    # Initialize DGLAP Object
+    dglapobj = ap.initializers.InitializeDglapObjectsQCD(xgrid, thrs)
+
     apf_tab = {}
     for obs_name, kinematics in observables["observables"].items():
-
-        sf_name, heaviness = obs_name.split("_")
-        # couplings
-        map_heaviness = {
-            "charm": 4,
-            "bottom": 5,
-            "top": 6,
-            "light": 0, 
-            "total": 0,
-        }
-        pids = map_heaviness[heaviness]
-        # TODO: how do you set EM only??
-        def fBq(Q):
-            return ap.utilities.ElectroWeakCharges(Q, False, pids)
-
-        def fDq(Q):
-            return ap.utilities.ParityViolatingElectroWeakCharges(Q, False, pids)
-
         apf_tab[obs_name] = []
-        
-        if sf_name in apfelpy_structure_functions:
-            sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
-        else:
-            raise ValueError(f"{sf_name} not implemented in APFEL++")
-
-        coupling = fBq
-        if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
-            coupling = fDq
-
-        # Initialize structure functions
-        sfobj = ap.builders.BuildStructureFunctions(
-            sfobj,
-            tabulatedPDFs.EvaluateMapxQ,
-            pto,
-            alphas.Evaluate,
-            coupling,
-            theory["XIR"],
-            theory["XIF"],
-        )
-
-        if "total" in obs_name:
-            tab_sf = ap.TabulateObjectD(sfobj[0].Evaluate, nQ, QMin, QMax, 3, thrs)
-        elif "light" in obs_name:
-            tab_sf = ap.TabulateObjectD(
-                lambda Q: sfobj[1].Evaluate(Q)
-                + sfobj[2].Evaluate(Q)
-                + sfobj[3].Evaluate(Q),
-                nQ,
-                QMin,
-                QMax,
-                3,
-                thrs,
-            )
-        elif "charm" in obs_name:
-            tab_sf = ap.TabulateObjectD(sfobj[4].Evaluate, nQ, QMin, QMax, 3, thrs)
-        elif "bottom" in obs_name:
-            tab_sf = ap.TabulateObjectD(sfobj[5].Evaluate, nQ, QMin, QMax, 3, thrs)
-
         # iterate over input kinematics
         for kin in kinematics:
             Q2 = kin["Q2"]
             x = kin["x"]
 
+            # Construct the DGLAP objects
+            evolvedPDFs = ap.builders.BuildDglap(
+                dglapobj,
+                ap.utilities.LHToyPDFs,
+                np.sqrt(Q2) * theory["XIF"],
+                pto,
+                alphas.Evaluate,
+            )
+            # Tabulate PDFs
+            tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, nQ, QMin, QMax, 3)
+
+            sf_name, heaviness = obs_name.split("_")
+            pids = map_heaviness[heaviness]
+
+            if sf_name in apfelpy_structure_functions:
+                sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
+            else:
+                raise ValueError(f"{sf_name} not implemented in APFEL++")
+
+            if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
+                coupling = fDq
+
+            # Initialize structure functions
+            sfobj = ap.builders.BuildStructureFunctions(
+                sfobj,
+                tabulatedPDFs.EvaluateMapxQ,
+                pto,
+                alphas.Evaluate,
+                coupling,
+                theory["XIR"],
+                theory["XIF"],
+            )
+
+            if "total" in obs_name:
+                tab_sf = ap.TabulateObjectD(sfobj[0].Evaluate, nQ, QMin, QMax, 3, thrs)
+            elif "light" in obs_name:
+                tab_sf = ap.TabulateObjectD(
+                    lambda Q: sfobj[1].Evaluate(Q)
+                    + sfobj[2].Evaluate(Q)
+                    + sfobj[3].Evaluate(Q),
+                    nQ,
+                    QMin,
+                    QMax,
+                    3,
+                    thrs,
+                )
+            elif "charm" in obs_name:
+                tab_sf = ap.TabulateObjectD(sfobj[4].Evaluate, nQ, QMin, QMax, 3, thrs)
+            elif "bottom" in obs_name:
+                tab_sf = ap.TabulateObjectD(sfobj[5].Evaluate, nQ, QMin, QMax, 3, thrs)
 
             # compute the actual result
             # TODO: pass XIF here ??
