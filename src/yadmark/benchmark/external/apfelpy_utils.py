@@ -37,7 +37,14 @@ def compute_apfelpy_data(theory, observables, pdf):
     QMax = 200
 
     # here we multiply the thr scales
-    thrs = [0, 0, 0, theory["mc"] * theory["kcThr"], theory["mb"]* theory["kbThr"], theory["mt"]* theory["ktThr"]]
+    thrs = [
+        0,
+        0,
+        0,
+        theory["mc"] * theory["kcThr"],
+        theory["mb"] * theory["kbThr"],
+        theory["mt"] * theory["ktThr"],
+    ]
 
     fns = theory["FNS"]
     if fns != "ZM-VFNS":
@@ -99,13 +106,24 @@ def compute_apfelpy_data(theory, observables, pdf):
             return 0.0
         return ap.utilities.ParityViolatingElectroWeakCharges(Q, False, pids)
 
-    coupling = fBq
     # Initialize DGLAP Object
     dglapobj = ap.initializers.InitializeDglapObjectsQCD(xgrid, thrs)
 
     apf_tab = {}
     for obs_name, kinematics in observables["observables"].items():
         apf_tab[obs_name] = []
+
+        sf_name, heaviness = obs_name.split("_")
+        pids = map_heaviness[heaviness]
+        if sf_name in apfelpy_structure_functions:
+            sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
+        else:
+            raise ValueError(f"{sf_name} not implemented in APFEL++")
+
+        coupling = fBq
+        if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
+            coupling = fDq
+
         # iterate over input kinematics
         for kin in kinematics:
             Q2 = kin["Q2"]
@@ -121,17 +139,6 @@ def compute_apfelpy_data(theory, observables, pdf):
             )
             # Tabulate PDFs
             tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, nQ, QMin, QMax, 3)
-
-            sf_name, heaviness = obs_name.split("_")
-            pids = map_heaviness[heaviness]
-
-            if sf_name in apfelpy_structure_functions:
-                sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
-            else:
-                raise ValueError(f"{sf_name} not implemented in APFEL++")
-
-            if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
-                coupling = fDq
 
             # Initialize structure functions
             sfobj = ap.builders.BuildStructureFunctions(
