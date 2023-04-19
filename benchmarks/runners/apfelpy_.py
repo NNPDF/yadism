@@ -95,4 +95,4 @@ class BenchmarkZeroMass(ApfelpyBenchmark):
 if __name__ == "__main__":
     obj = BenchmarkZeroMass()
     obj.benchmark_polarized(2)
-    # obj.benchmark_zm(0)
+    # obj.benchmark_zm(2)

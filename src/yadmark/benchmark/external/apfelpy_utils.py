@@ -14,7 +14,7 @@ MAP_HEAVINESS = {
     "charm": 4,
     "bottom": 5,
     "top": 6,
-    "light": 0,
+    "light": 0, # TODO: Check combination
     "total": 0,
 }
 
@@ -102,6 +102,7 @@ def compute_apfelpy_data(theory, observables, pdf):
             "g4": init.Initializeg4NCObjectsZM,
         }
 
+    # Effective charges
     def fBq(Q):
         if observables["prDIS"] == "EM":
             # For Q=0 we only have electric charges
@@ -113,6 +114,10 @@ def compute_apfelpy_data(theory, observables, pdf):
             return [0.0]
         return ap.utilities.ParityViolatingElectroWeakCharges(Q, False, pids)
 
+    # CKM matrix elements
+    def fCKM(Q):
+        return ap.constants.CKM2
+
     # Initialize DGLAP Object
     dglapobj = ap.initializers.InitializeDglapObjectsQCD(xgrid, thrs)
 
@@ -123,9 +128,14 @@ def compute_apfelpy_data(theory, observables, pdf):
         sf_name, heaviness = obs_name.split("_")
         pids = MAP_HEAVINESS[heaviness]
 
-        coupling = fBq
-        if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
-            coupling = fDq
+        if observables["prDIS"] == "CC":
+            coupling = fCKM
+            if obs_name.startswith("g"):
+                raise ValueError("Yadism cannot compute polarised CC yet.")
+        else:
+            coupling = fBq
+            if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
+                coupling = fDq
 
         # iterate over input kinematics
         for kin in kinematics:
