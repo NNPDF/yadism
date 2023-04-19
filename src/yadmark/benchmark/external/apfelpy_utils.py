@@ -1,6 +1,22 @@
-"""Utilities to help run APFEL++."""
+"""
+    Utilities to help run APFEL++ benchmarks.
+"""
 import apfelpy as ap
 import numpy as np
+
+# Q2 knots specs
+NQ = 50
+QMin = 1
+QMax = 200
+
+# Map observables names to APFEL++ methods
+MAP_HEAVINESS = {
+    "charm": 4,
+    "bottom": 5,
+    "top": 6,
+    "light": 0,
+    "total": 0,
+}
 
 
 def compute_apfelpy_data(theory, observables, pdf):
@@ -22,8 +38,7 @@ def compute_apfelpy_data(theory, observables, pdf):
     """
     ap.Banner()
 
-    # setup APFEL
-    # TODO: can we use other grids??
+    # Setup APFEL x-grid
     xgrid = ap.Grid(
         [
             ap.SubGrid(100, 1e-5, 3),
@@ -32,11 +47,8 @@ def compute_apfelpy_data(theory, observables, pdf):
             ap.SubGrid(50, 8e-1, 3),
         ]
     )
-    nQ = 50
-    QMin = 1
-    QMax = 200
 
-    # here we multiply the thr scales
+    # Here we multiply the `thr` scales
     thrs = [
         0,
         0,
@@ -46,15 +58,19 @@ def compute_apfelpy_data(theory, observables, pdf):
         theory["mt"] * theory["ktThr"],
     ]
 
+    # Setting the theory
     fns = theory["FNS"]
     if fns != "ZM-VFNS":
-        raise ValueError("APFEL++ benchmark contains only ZM-VFNS for the time being.")
+        raise ValueError("APFEL++ benchmark contains only ZM-VFNS.")
+
+    # Perturbative Order
     pto = theory["PTO"]
 
+    # Couplings
     alphas = ap.AlphaQCD(theory["alphas"], theory["Qref"], thrs, pto)
-    alphas = ap.TabulateObject(alphas, 2 * nQ, QMin, QMax, 3)
+    alphas = ap.TabulateObject(alphas, 2 * NQ, QMin, QMax, 3)
 
-    # mapping observables names to APFEL++ methods
+    # Map Yadism observables to Apfel++ Objects
     init = ap.initializers
     if observables["prDIS"] == "CC":
         # TODO: CC are not running ... CKM matrix error
@@ -86,18 +102,9 @@ def compute_apfelpy_data(theory, observables, pdf):
             "g4": init.Initializeg4NCObjectsZM,
         }
 
-    # couplings
-    map_heaviness = {
-        "charm": 4,
-        "bottom": 5,
-        "top": 6,
-        "light": 0,
-        "total": 0,
-    }
-
     def fBq(Q):
         if observables["prDIS"] == "EM":
-            # at Q=0 we only have electric charges
+            # For Q=0 we only have electric charges
             return ap.utilities.ElectroWeakCharges(0, False, pids)
         return ap.utilities.ElectroWeakCharges(Q, False, pids)
 
@@ -114,8 +121,8 @@ def compute_apfelpy_data(theory, observables, pdf):
         apf_tab[obs_name] = []
 
         sf_name, heaviness = obs_name.split("_")
-        pids = map_heaviness[heaviness]
-        
+        pids = MAP_HEAVINESS[heaviness]
+
         coupling = fBq
         if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
             coupling = fDq
@@ -134,13 +141,15 @@ def compute_apfelpy_data(theory, observables, pdf):
                 alphas.Evaluate,
             )
             # Tabulate PDFs
-            tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, nQ, QMin, QMax, 3)
+            tabulatedPDFs = ap.TabulateObjectSetD(
+                evolvedPDFs, NQ, QMin, QMax, 3
+            )
 
             if sf_name in apfelpy_structure_functions:
                 sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
             else:
                 raise ValueError(f"{sf_name} not implemented in APFEL++")
-        
+
             # Initialize structure functions
             sfobj = ap.builders.BuildStructureFunctions(
                 sfobj,
@@ -153,22 +162,28 @@ def compute_apfelpy_data(theory, observables, pdf):
             )
 
             if "total" in obs_name:
-                tab_sf = ap.TabulateObjectD(sfobj[0].Evaluate, nQ, QMin, QMax, 3, thrs)
+                tab_sf = ap.TabulateObjectD(
+                    sfobj[0].Evaluate, NQ, QMin, QMax, 3, thrs
+                )
             elif "light" in obs_name:
                 tab_sf = ap.TabulateObjectD(
                     lambda Q: sfobj[1].Evaluate(Q)
                     + sfobj[2].Evaluate(Q)
                     + sfobj[3].Evaluate(Q),
-                    nQ,
+                    NQ,
                     QMin,
                     QMax,
                     3,
                     thrs,
                 )
             elif "charm" in obs_name:
-                tab_sf = ap.TabulateObjectD(sfobj[4].Evaluate, nQ, QMin, QMax, 3, thrs)
+                tab_sf = ap.TabulateObjectD(
+                    sfobj[4].Evaluate, NQ, QMin, QMax, 3, thrs
+                )
             elif "bottom" in obs_name:
-                tab_sf = ap.TabulateObjectD(sfobj[5].Evaluate, nQ, QMin, QMax, 3, thrs)
+                tab_sf = ap.TabulateObjectD(
+                    sfobj[5].Evaluate, NQ, QMin, QMax, 3, thrs
+                )
 
             # compute the actual result
             result = tab_sf.EvaluatexQ(x, np.sqrt(Q2))

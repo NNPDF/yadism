@@ -1,5 +1,5 @@
 """
-Compare the results with APFEL++'s
+    Compare the Yadism results with APFEL++'s.
 """
 import pathlib
 
@@ -33,7 +33,6 @@ class BenchmarkPlain(ApfelpyBenchmark):
 
 @pytest.mark.skip
 class BenchmarkZeroMass(ApfelpyBenchmark):
-
     @staticmethod
     def theory_updates_zm(pto):
         sv = {
@@ -53,7 +52,9 @@ class BenchmarkZeroMass(ApfelpyBenchmark):
                 for x in observables.default_card["interpolation_xgrid"][10::3]
             ]
         )
-        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
+        kins.extend(
+            [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()]
+        )
         obs_updates = observables.build(
             ["F2_total", "F3_total", "FL_total"], kins, update={"prDIS": ["NC"]}
         )
@@ -68,7 +69,9 @@ class BenchmarkZeroMass(ApfelpyBenchmark):
                 for x in observables.default_card["interpolation_xgrid"][10::3]
             ]
         )
-        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
+        kins.extend(
+            [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()]
+        )
         obs_updates = observables.build(
             ["g1_total", "g4_total", "gL_total"], kins, update={"prDIS": ["NC"]}
         )
@@ -90,8 +93,6 @@ class BenchmarkZeroMass(ApfelpyBenchmark):
 
 
 if __name__ == "__main__":
-
-
     obj = BenchmarkZeroMass()
-    # obj.benchmark_polarized(0)
-    obj.benchmark_zm(0)
+    obj.benchmark_polarized(2)
+    # obj.benchmark_zm(0)
