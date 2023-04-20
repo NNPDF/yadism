@@ -25,6 +25,7 @@ def generate(esf, ihq):
     """
 
     kind = esf.info.obs_name.kind
+    is_pv = esf.info.obs_name.is_parity_violating
     cfs = import_pc_module(kind, esf.process)
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
@@ -32,10 +33,11 @@ def generate(esf, ihq):
             esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], ihq
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
-        if kind in ["F3", "gL", "g4"]:
+        if is_pv:
             return (kernels.Kernel(wq, cfs.Rplus(esf, ihq - 1, m1sq=m2hq)),)
         return (kernels.Kernel(wq, cfs.Splus(esf, ihq - 1, m1sq=m2hq)),)
-    if kind in ["F3", "gL", "g4"]:
+
+    if is_pv:
         wVA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VA")
         wAV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
         wp = wVA + wAV

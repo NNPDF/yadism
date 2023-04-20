@@ -170,6 +170,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
             list of elements
     """
     kind = esf.info.obs_name.kind
+    is_pv = esf.info.obs_name.is_parity_violating
     ihq = nl + 1
     # add light contributions
     lights = kernels.generate_single_flavor_light(esf, nl + 1, ihq)
@@ -194,7 +195,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
         asy_weights = heavy.kernels.nc_weights(
             esf.info.coupling_constants, esf.Q2, kind, nl, ihq
         )
-        if kind not in ["F3", "gL", "g4"]:
+        if not is_pv:
             for c, channel in (("g", "Gluon"), ("s", "Singlet")):
                 for res in range(pto_evol + 1):
                     name = "Asy" + ("N" * res) + "LL" + channel
@@ -228,6 +229,7 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
             list of elements
     """
     kind = esf.info.obs_name.kind
+    is_pv = esf.info.obs_name.is_parity_violating
     cfs = import_pc_module(kind, esf.process)
     ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
@@ -240,7 +242,7 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
             esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], ihq
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
-        if kind in ["F3", "gL", "g4"]:
+        if is_pv:
             return (
                 -kernels.Kernel(
                     wq,
@@ -263,7 +265,7 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
             *nnlo_terms,
         )
     # NC
-    if kind in ["F3", "gL", "g4"]:
+    if is_pv:
         wVA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VA")
         wAV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
         wp = wVA + wAV

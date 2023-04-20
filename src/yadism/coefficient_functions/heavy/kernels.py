@@ -43,6 +43,7 @@ def generate(esf, nf, ihq):
 
     """
     kind = esf.info.obs_name.kind
+    is_pv = esf.info.obs_name.is_parity_violating
     pcs = import_pc_module(kind, esf.process)
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
@@ -55,7 +56,7 @@ def generate(esf, nf, ihq):
         )
     else:
         # F3 is a non-singlet quantity and hence has neither gluon nor singlet-like contributions
-        if kind in ["F3", "gL", "g4"]:
+        if is_pv:
             return ()
         weights = nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf, ihq)
         gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq))
