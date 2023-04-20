@@ -19,6 +19,53 @@ MAP_HEAVINESS = {
 }
 
 
+def couplings(pids, proc_type, obs_name):
+    """Return the corresponding coupling given a process type
+    and an observable.
+    
+    Parameters
+    ----------
+    pids: int
+        PDG ID of the projectile
+    proc_type:
+        type of the DIS process
+    obs_name: str
+        name of the Yadism observable
+    
+    Returns
+    -------
+    callable
+        a callable function that computes the coupling as a
+        function of the scale Q
+    """
+    # Effective charges
+    def _fBq(Q):
+        if proc_type == "EM":
+            # For Q=0 we only have electric charges
+            return ap.utilities.ElectroWeakCharges(0, False, pids)
+        return ap.utilities.ElectroWeakCharges(Q, False, pids)
+
+    def _fDq(Q):
+        if proc_type == "EM":
+            return [0.0]
+        return ap.utilities.ParityViolatingElectroWeakCharges(Q, False, pids)
+
+    # CKM matrix elements
+    def _fCKM(Q):
+        return ap.constants.CKM2
+
+    if proc_type == "CC":
+        coupling = _fCKM
+        if obs_name.startswith("g"):
+            raise ValueError("Yadism cannot compute polarised CC yet.")
+    else:
+        coupling = _fBq
+        if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
+            coupling = _fDq
+
+    return coupling
+
+
 def compute_apfelpy_data(theory, observables, pdf):
     """Run APFEL++ to compute observables.
 
@@ -102,22 +149,6 @@ def compute_apfelpy_data(theory, observables, pdf):
             "g4": init.Initializeg4NCObjectsZM,
         }
 
-    # Effective charges
-    def fBq(Q):
-        if observables["prDIS"] == "EM":
-            # For Q=0 we only have electric charges
-            return ap.utilities.ElectroWeakCharges(0, False, pids)
-        return ap.utilities.ElectroWeakCharges(Q, False, pids)
-
-    def fDq(Q):
-        if observables["prDIS"] == "EM":
-            return [0.0]
-        return ap.utilities.ParityViolatingElectroWeakCharges(Q, False, pids)
-
-    # CKM matrix elements
-    def fCKM(Q):
-        return ap.constants.CKM2
-
     # Initialize DGLAP Object
     dglapobj = ap.initializers.InitializeDglapObjectsQCD(xgrid, thrs)
 
@@ -128,14 +159,8 @@ def compute_apfelpy_data(theory, observables, pdf):
         sf_name, heaviness = obs_name.split("_")
         pids = MAP_HEAVINESS[heaviness]
 
-        if observables["prDIS"] == "CC":
-            coupling = fCKM
-            if obs_name.startswith("g"):
-                raise ValueError("Yadism cannot compute polarised CC yet.")
-        else:
-            coupling = fBq
-            if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
-                coupling = fDq
+        # Define the couplings
+        coupling = couplings(pids, observables["prDIS"], obs_name)
 
         # iterate over input kinematics
         for kin in kinematics:
