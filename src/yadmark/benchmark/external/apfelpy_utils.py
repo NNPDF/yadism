@@ -1,7 +1,6 @@
 """
     Utilities to help run APFEL++ benchmarks.
 """
-import apfelpy as ap
 import numpy as np
 
 # Q2 knots specs
@@ -19,7 +18,7 @@ MAP_HEAVINESS = {
 }
 
 
-def couplings(pids, proc_type, obs_name):
+def couplings(ap, pids, proc_type, obs_name):
     """Return the corresponding coupling given a process type
     and an observable.
     
@@ -83,6 +82,7 @@ def compute_apfelpy_data(theory, observables, pdf):
     dict
         AFPEL numbers
     """
+    import apfelpy as ap  # pylint: disable=import-error, import-outside-toplevel
     ap.Banner()
 
     # Setup APFEL x-grid
@@ -160,7 +160,7 @@ def compute_apfelpy_data(theory, observables, pdf):
         pids = MAP_HEAVINESS[heaviness]
 
         # Define the couplings
-        coupling = couplings(pids, observables["prDIS"], obs_name)
+        coupling = couplings(ap, pids, observables["prDIS"], obs_name)
 
         # iterate over input kinematics
         for kin in kinematics:
