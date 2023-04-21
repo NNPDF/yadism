@@ -1,6 +1,6 @@
 import numpy as np
-from test_pc_general import MockESF
 from test_nc_n3lo_color_fact import MockCouplingEMConstants as EMcc
+from test_pc_general import MockESF
 
 from yadism.coefficient_functions.light import f2_nc, fl_nc
 from yadism.coefficient_functions.light.n3lo.common import nc_color_factor

@@ -5,6 +5,7 @@ from . import f2_nc, n3lo, nnlo
 class NonSingletEven(f2_nc.NonSinglet):
     pass
 
+
 class Gluon(f2_nc.Gluon):
     pass
 

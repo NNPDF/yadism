@@ -42,7 +42,7 @@ def cls3a(y, args):
     # Note here the source file cointain a typo and the
     # proper color factor is flps = fls - fl, not just fls.
     # see https://arxiv.org/pdf/hep-ph/0411112.pdf eq 9.
-    res = nf * (cls31 + ( flps ) * cls3F + nf * cls32)
+    res = nf * (cls31 + (flps) * cls3F + nf * cls32)
     return res
 
 

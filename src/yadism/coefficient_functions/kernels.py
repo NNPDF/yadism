@@ -6,6 +6,7 @@ from eko import basis_rotation as br
 
 from .light.n3lo.common import nc_color_factor
 
+
 def import_local(kind, process, sibling):
     """
     Import the suitable subpackage with the actual partonic channel implementation.
