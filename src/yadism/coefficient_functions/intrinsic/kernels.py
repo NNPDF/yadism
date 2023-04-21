@@ -30,7 +30,12 @@ def generate(esf, ihq):
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
         w = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], ihq
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[ihq - 1],
+            ihq,
+            esf.info.obs_name.is_parity_violating,
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if is_pv:

@@ -48,7 +48,12 @@ def generate(esf, nf, ihq):
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
         w = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], nf
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[ihq - 1],
+            nf,
+            esf.info.obs_name.is_parity_violating,
         )
         return (
             kernels.Kernel(w["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),
@@ -58,7 +63,14 @@ def generate(esf, nf, ihq):
         # F3 is a non-singlet quantity and hence has neither gluon nor singlet-like contributions
         if is_pv:
             return ()
-        weights = nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf, ihq)
+        weights = nc_weights(
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            nf,
+            ihq,
+            esf.info.obs_name.is_parity_violating,
+        )
         gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq))
         gAA = kernels.Kernel(weights["gAA"], pcs.GluonAA(esf, nf, m2hq=m2hq))
         sVV = kernels.Kernel(weights["sVV"], pcs.SingletVV(esf, nf, m2hq=m2hq))
@@ -93,13 +105,20 @@ def generate_missing(esf, nf, ihq, icoupl=None):
     # in CC there are no missing diagrams known yet
     if esf.process == "CC":
         return ()
-    weights = light_nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf)
+
+    weights = light_nc_weights(
+        esf.info.coupling_constants,
+        esf.Q2,
+        kind,
+        nf,
+        esf.info.obs_name.is_parity_violating,
+    )
     if icoupl is not None:
         weights["ns"] = {k: v for k, v in weights["ns"].items() if abs(k) == icoupl}
     return (kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),)
 
 
-def nc_weights(coupling_constants, Q2, kind, nf, ihq):
+def nc_weights(coupling_constants, Q2, kind, nf, ihq, is_pv):
     """
     Compute heavy NC weights.
 
@@ -115,6 +134,8 @@ def nc_weights(coupling_constants, Q2, kind, nf, ihq):
         number of light flavors
     ihq : int
         quark flavor to activate
+    is_pv: bool
+        True if observable violates parity conservation
 
     Returns
     -------
@@ -122,7 +143,7 @@ def nc_weights(coupling_constants, Q2, kind, nf, ihq):
         mapping pid -> weight
 
     """
-    if kind in ["F3", "gL", "g4"]:
+    if is_pv:
         return {}
     weight_vv = coupling_constants.get_weight(ihq, Q2, "VV")
     weight_aa = coupling_constants.get_weight(ihq, Q2, "AA")

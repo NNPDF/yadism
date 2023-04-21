@@ -51,11 +51,20 @@ def generate_light(esf, nl, pto_evol):
 
     if esf.process == "CC":
         light_weights = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[:nl], nl
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[:nl],
+            nl,
+            esf.info.obs_name.is_parity_violating,
         )
     else:
         light_weights = light.kernels.nc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, nl
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            nl,
+            esf.info.obs_name.is_parity_violating,
         )
 
     # Pdf matching conditions
@@ -122,11 +131,21 @@ def generate_light_diff(esf, nl, pto_evol):
     light_cfs = import_pc_module(kind, esf.process, "light")
     if esf.process == "CC":
         light_weights = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[:nl], nl + 1
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[:nl],
+            nl + 1,
+            esf.info.obs_name.is_parity_violating,
         )
     else:
         light_weights = light.kernels.nc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, nl + 1, skip_heavylight=True
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            nl + 1,
+            esf.info.obs_name.is_parity_violating,
+            skip_heavylight=True,
         )
     s_w = {nl + 1: light_weights["s"][nl + 1], -(nl + 1): light_weights["s"][-(nl + 1)]}
     k = kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1))
@@ -185,7 +204,12 @@ def generate_heavy_diff(esf, nl, pto_evol):
     asys = []
     if esf.process == "CC":
         wa = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], nl
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[ihq - 1],
+            nl,
+            esf.info.obs_name.is_parity_violating,
         )
         asys = [
             -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, m2hq=m2hq)),
@@ -193,7 +217,12 @@ def generate_heavy_diff(esf, nl, pto_evol):
         ]
     else:
         asy_weights = heavy.kernels.nc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, nl, ihq
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            nl,
+            ihq,
+            esf.info.obs_name.is_parity_violating, 
         )
         if not is_pv:
             for c, channel in (("g", "Gluon"), ("s", "Singlet")):
@@ -239,7 +268,12 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
         k.min_order = 2
     if esf.process == "CC":
         w = kernels.cc_weights(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], ihq
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[ihq - 1],
+            ihq,
+            esf.info.obs_name.is_parity_violating,
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if is_pv:
