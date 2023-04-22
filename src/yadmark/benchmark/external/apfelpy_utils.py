@@ -13,7 +13,7 @@ MAP_HEAVINESS = {
     "charm": 4,
     "bottom": 5,
     "top": 6,
-    "light": 0, # TODO: Check combination
+    "light": 0,  # TODO: Check combination
     "total": 0,
 }
 
@@ -21,7 +21,7 @@ MAP_HEAVINESS = {
 def couplings(ap, pids, proc_type, obs_name):
     """Return the corresponding coupling given a process type
     and an observable.
-    
+
     Parameters
     ----------
     pids: int
@@ -30,13 +30,14 @@ def couplings(ap, pids, proc_type, obs_name):
         type of the DIS process
     obs_name: str
         name of the Yadism observable
-    
+
     Returns
     -------
     callable
         a callable function that computes the coupling as a
         function of the scale Q
     """
+
     # Effective charges
     def _fBq(Q):
         if proc_type == "EM":
@@ -65,6 +66,104 @@ def couplings(ap, pids, proc_type, obs_name):
     return coupling
 
 
+def tabulate_ncc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
+    """Tabulate the NC/EM structure function predictions.
+
+    Parameters
+    ----------
+    obs_name: str
+        name of the observable
+    sfobj: ap.init.InitalizeSFNCOjbectsZM
+        SF objects in Zero-Mass Flavour Number Scheme
+    nq: int
+        number of Q points
+    QMin: float
+        minimal value of Q
+    QMax: float
+        maximal value of Q
+    thrs: list
+        list of quark masses and thresholds
+
+    Returns
+    -------
+    callable:
+        Apfel++ callable functions to evaluate SF from
+    """
+    if "total" in obs_name:
+        tab_sf = ap.TabulateObjectD(sfobj[0].Evaluate, nq, qmin, qmax, 3, thrs)
+    elif "light" in obs_name:
+        tab_sf = ap.TabulateObjectD(
+            lambda Q: sfobj[1].Evaluate(Q)
+            + sfobj[2].Evaluate(Q)
+            + sfobj[3].Evaluate(Q),
+            nq,
+            qmin,
+            qmax,
+            3,
+            thrs,
+        )
+    elif "charm" in obs_name:
+        tab_sf = ap.TabulateObjectD(sfobj[4].Evaluate, nq, qmin, qmax, 3, thrs)
+    elif "bottom" in obs_name:
+        tab_sf = ap.TabulateObjectD(sfobj[5].Evaluate, nq, qmin, qmax, 3, thrs)
+    return tab_sf
+
+
+def tabulate_nc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
+    """Tabulate the CC structure function predictions.
+
+    Parameters
+    ----------
+    obs_name: str
+        name of the observable
+    sfobj: ap.init.InitalizeSFNCOjbectsZM
+        SF objects in Zero-Mass Flavour Number Scheme
+    nq: int
+        number of Q points
+    QMin: float
+        minimal value of Q
+    QMax: float
+        maximal value of Q
+    thrs: list
+        list of quark masses and thresholds
+
+    Returns
+    -------
+    callable:
+        Apfel++ callable functions to evaluate SF from
+    """
+    if "total" in obs_name:
+        tab_sf = ap.TabulateObjectD(sfobj[0].Evaluate, nq, qmin, qmax, 3, thrs)
+    elif "light" in obs_name:
+        tab_sf = ap.TabulateObjectD(
+            lambda Q: sfobj[1].Evaluate(Q) + sfobj[2].Evaluate(Q),
+            nq,
+            qmin,
+            qmax,
+            3,
+            thrs,
+        )
+    elif "charm" in obs_name:
+        tab_sf = ap.TabulateObjectD(
+            lambda Q: sfobj[4].Evaluate(Q) + sfobj[5].Evaluate(Q),
+            nq,
+            qmin,
+            qmax,
+            3,
+            thrs,
+        )
+    elif "bottom" in obs_name:
+        tab_sf = ap.TabulateObjectD(
+            lambda Q: sfobj[3].Evaluate(Q) + sfobj[6].Evaluate(Q),
+            nq,
+            qmin,
+            qmax,
+            3,
+            thrs,
+        )
+    return tab_sf
+
+
 def compute_apfelpy_data(theory, observables, pdf):
     """Run APFEL++ to compute observables.
 
@@ -83,6 +182,7 @@ def compute_apfelpy_data(theory, observables, pdf):
         AFPEL numbers
     """
     import apfelpy as ap  # pylint: disable=import-error, import-outside-toplevel
+
     ap.Banner()
 
     # Setup APFEL x-grid
@@ -196,29 +296,10 @@ def compute_apfelpy_data(theory, observables, pdf):
                 theory["XIF"],
             )
 
-            if "total" in obs_name:
-                tab_sf = ap.TabulateObjectD(
-                    sfobj[0].Evaluate, NQ, QMin, QMax, 3, thrs
-                )
-            elif "light" in obs_name:
-                tab_sf = ap.TabulateObjectD(
-                    lambda Q: sfobj[1].Evaluate(Q)
-                    + sfobj[2].Evaluate(Q)
-                    + sfobj[3].Evaluate(Q),
-                    NQ,
-                    QMin,
-                    QMax,
-                    3,
-                    thrs,
-                )
-            elif "charm" in obs_name:
-                tab_sf = ap.TabulateObjectD(
-                    sfobj[4].Evaluate, NQ, QMin, QMax, 3, thrs
-                )
-            elif "bottom" in obs_name:
-                tab_sf = ap.TabulateObjectD(
-                    sfobj[5].Evaluate, NQ, QMin, QMax, 3, thrs
-                )
+            if observables["prDIS"] == "CC":
+                tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
+            else:
+                tab_sf = tabulate_ncc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
 
             # compute the actual result
             result = tab_sf.EvaluatexQ(x, np.sqrt(Q2))
