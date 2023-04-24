@@ -50,6 +50,13 @@ class ObservableName:
         """joint name"""
         return self.kind + "_" + self.flavor
 
+    @property
+    def is_parity_violating(self):
+        """Check if it is a parity violating observable."""
+        if self.kind in ["F3", "gL", "g4"]:
+            return True
+        return False
+
     def __eq__(self, other):
         """Test equality of kind and flavor"""
         return self.kind == other.kind and self.flavor == other.flavor

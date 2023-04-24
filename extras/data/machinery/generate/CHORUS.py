@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .utils import load, obs_template
 
 Mn = 0.9389

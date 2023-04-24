@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 from test_pc_general import MockESF
 
@@ -279,10 +277,11 @@ class Test_Blumlein_results:
         # gluon
         np.testing.assert_allclose(fl_g_result, fl_g_ref, rtol=9e-4)
 
+
 def test_fl_factors():
-    e_q = np.array([2/3,-1/3,-1/3,2/3,-1/3,2/3])
-    for nf in range(1,7):
+    e_q = np.array([2 / 3, -1 / 3, -1 / 3, 2 / 3, -1 / 3, 2 / 3])
+    for nf in range(1, 7):
         mean_e = np.average(e_q[:nf])
-        mean_e2 = np.average(e_q[:nf]**2)
+        mean_e2 = np.average(e_q[:nf] ** 2)
         np.testing.assert_allclose(fl(nf), 3 * mean_e)
         np.testing.assert_allclose(fls(nf), mean_e**2 / mean_e2)

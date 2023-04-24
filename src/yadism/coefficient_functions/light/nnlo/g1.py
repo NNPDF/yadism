@@ -11,7 +11,7 @@ from ...special.nielsen import nielsen
 def singlet_reg(z, args):
     nf = args[0]
     z2 = z**2
-    Li31mz = nielsen(2, 1, 1 - z)
+    Li31mz = nielsen(2, 1, 1 - z).real
     Li21mz = li2(1 - z)
     Li2mz = li2(-z)
     ln1mz = np.log(1 - z)
@@ -50,12 +50,12 @@ def singlet_reg(z, args):
 def gluon_reg(z, args):
     nf = args[0]
     z2 = z**2
-    S121mz = nielsen(1, 2, 1 - z)
-    S12mz = nielsen(1, 2, -z)
-    Li31mz = nielsen(2, 1, 1 - z)
-    Li3mz = nielsen(2, 1, -z)
-    Li3r = nielsen(2, 1, (1 - z) / (1 + z))
-    Li3mr = nielsen(2, 1, -(1 - z) / (1 + z))
+    S121mz = nielsen(1, 2, 1 - z).real
+    S12mz = nielsen(1, 2, -z).real
+    Li31mz = nielsen(2, 1, 1 - z).real
+    Li3mz = nielsen(2, 1, -z).real
+    Li3r = nielsen(2, 1, (1 - z) / (1 + z)).real
+    Li3mr = nielsen(2, 1, -(1 - z) / (1 + z)).real
     Li21mz = li2(1 - z)
     Li2mz = li2(-z)
     ln1mz = np.log(1 - z)

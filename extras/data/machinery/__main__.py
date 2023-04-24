@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import argparse
 
 from . import benchmark, generate
