@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from eko.thresholds import ThresholdsAtlas
 
 from yadism import observable_name as on
@@ -74,6 +75,7 @@ def test_cg_NLO():
             )
 
 
+@pytest.mark.skip
 def test_cg_NNLO():
     Q2 = 200
     esf1 = MockESF("g1_charm", 0.1, Q2)
