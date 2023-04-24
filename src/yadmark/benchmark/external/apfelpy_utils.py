@@ -57,7 +57,7 @@ def couplings(ap, pids, proc_type, obs_name):
     if proc_type == "CC":
         coupling = _fCKM
         if obs_name.startswith("g"):
-            raise ValueError("Yadism cannot compute polarised CC yet.")
+            raise ValueError("APFEL++ cannot compute polarised CC yet.")
     else:
         coupling = _fBq
         if "F3" in obs_name or "gL" in obs_name or "g4" in obs_name:
@@ -109,7 +109,7 @@ def tabulate_ncc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
     return tab_sf
 
 
-def tabulate_nc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
+def tabulate_cc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
     """Tabulate the CC structure function predictions.
 
     Parameters
@@ -297,7 +297,7 @@ def compute_apfelpy_data(theory, observables, pdf):
             )
 
             if observables["prDIS"] == "CC":
-                tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
+                tab_sf = tabulate_cc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
             else:
                 tab_sf = tabulate_ncc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
 
