@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 import yadism.coefficient_functions.coupling_constants as coupl
 from yadism.coefficient_functions.light.n3lo.common import fl, flg, fls, nc_color_factor
@@ -74,3 +75,6 @@ def test_nc_color_factor():
             nc_color_factor(coupling, nf, "s", True),
         )
         charges = charges[:nf]
+
+    with pytest.raises(ValueError):
+        nc_color_factor(coupling, nf, "blabla", False)

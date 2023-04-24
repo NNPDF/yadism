@@ -44,6 +44,8 @@ def nc_color_factor(coupling_constants, nf, channel, skip_heavylight):
         return fls(w_pc) - fl(w_pc)
     if channel == "g":
         return flg(w_pc)
+    else:
+        raise ValueError(f"NC color factor {channel} is not defined.")
 
 
 @nb.njit("f8(f8[:])", cache=True)
