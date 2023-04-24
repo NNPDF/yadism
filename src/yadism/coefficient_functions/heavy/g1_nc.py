@@ -25,18 +25,8 @@ class GluonVV(pc.NeutralCurrentBase):
 
     def NNLO(self):
         """
-        |ref| implements NLO (heavy) gluon coefficient function, :cite:`felix-thesis`.
-
-        The equation is composed of the coefficient function (here denoted by cg1) :eqref:`D.14` and the scaling coefficient function (here denoted by cgBar1) :eqref:`D.35`.
-
-        The different parts of the coefficient function are as follows:
-
-        The part proportional to ln^2(beta), :eqref:`D.15`.
-        The part proportional to ln(beta), :eqref:`D.16`.
-        The finite 'OK' (non-abelian) part, :eqref:`D.20`.
-        The finite 'QED' (abelian) part, :eqref:`D.26`.
-
-        This equation is the same as the F3 and F2 of the unpolarized case.
+        |ref| implements |NNLO| (heavy) gluon coefficient function,
+        :eqref:`D.14` of :cite:`felix-thesis`.
         """
 
         def cg(z, _args):
@@ -60,9 +50,6 @@ class GluonAA(GluonVV):
     def NLO(self):
         """
         |ref| implements :eqref:`D.6`, :cite:`felix-thesis`.
-
-        This is the same result as GluonVV at NLO.
-
         """
 
         def cg(z, _args):
@@ -78,19 +65,8 @@ class GluonAA(GluonVV):
 
     def NNLO(self):
         """
-        |ref| implements NLO (heavy) gluon coefficient function, :cite:`felix-thesis`.
-
-        The equation is composed of the coefficient function (here denoted by cg1) :eqref:`D.14` and the scaling coefficient function (here denoted by cgBar1) :eqref:`D.38`.
-
-        The different parts of the coefficient function are as follows:
-
-        The part proportional to ln^2(beta), :eqref:`D.15`.
-        The part proportional to ln(beta), :eqref:`D.16`.
-        The finite 'OK' (non-abelian) part, :eqref:`D.23`.
-        The finite 'QED' (abelian) part, :eqref:`D.29`.
-
-        This equation is the same as the F3 of the unpolarized case.
-
+        |ref| implements |NNLO| (heavy) gluon coefficient function,
+        :eqref:`D.14` of :cite:`felix-thesis`.
         """
 
         def cg(z, _args):
@@ -113,15 +89,8 @@ class GluonAA(GluonVV):
 class SingletVV(pc.NeutralCurrentBase):
     def NNLO(self):
         """
-        |ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`.
-
-        The NLO Bethe-Heitler Quark coefficient function :eqref:`D.43` is made up of the following parts:
-
-        The part proportional to ln(beta) :eqref:`D.44`.
-        The constant part is defined in :eqref:`D.48`.
-
-        The NLO Bethe-Heitler quark scaling coefficient functions :eqref:`D.51` is denoted by cqBarF1.
-
+        |ref| implements |NNLO| (heavy) singlet coefficient function,
+        :eqref:`D.43` of :cite:`felix-thesis`.
         """
 
         def cq(z, _args):
@@ -144,14 +113,8 @@ class SingletVV(pc.NeutralCurrentBase):
 class SingletAA(pc.NeutralCurrentBase):
     def NNLO(self):
         """
-        |ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`.
-
-        The NLO Bethe-Heitler Quark coefficient function (here denoted by cq1) :eqref:`D.43` is made up of the following parts:
-
-        The part proportional to ln(beta) :eqref:`D.44`.
-        The constant part is defined in :eqref:`D.46`.
-
-        The NLO Bethe-Heitler quark scaling coefficient function :eqref:`D.54` is denoted by cqBarF1.
+        |ref| implements |NNLO| (heavy) singlet coefficient function,
+        :eqref:`D.43` of :cite:`felix-thesis`.
         """
 
         def cq(z, _args):
@@ -174,11 +137,8 @@ class SingletAA(pc.NeutralCurrentBase):
 class NonSinglet(pc.NeutralCurrentBase):
     def NNLO(self):
         """
-        |ref| implements NLO (heavy) non-singlet coefficient function, :cite:`felix-thesis`.
-
-        This function should be the same in the VV and AA case, and should correspond to the zF3 VA of the unpolarized coefficient function.
-
-        Implements :eqref:`D.64`.
+        |ref| implements |NNLO| (heavy) NS coefficient function,
+        :eqref:`D.64` of :cite:`felix-thesis`.
         """
 
         def dq(z, _args):

@@ -9,9 +9,8 @@ from . import partonic_channel as pc
 class NonSinglet(pc.NeutralCurrentBase):
     def NNLO(self):
         """
-        |ref| implements NLO (heavy) non-singlet coefficient function :eqref:`D.59`, :cite:`felix-thesis`.
-
-        This equation is the same as FL in the unpolarized case with an additional factor of -1.
+        |ref| implements |NNLO| (heavy) NS coefficient function,
+        :eqref:`D.59` of :cite:`felix-thesis`.
         """
 
         def dq(z, _args):
