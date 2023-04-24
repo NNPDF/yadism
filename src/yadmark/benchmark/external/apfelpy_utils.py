@@ -66,7 +66,7 @@ def couplings(ap, pids, proc_type, obs_name):
     return coupling
 
 
-def tabulate_ncc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
+def tabulate_nc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
     """Tabulate the NC/EM structure function predictions.
 
     Parameters
@@ -276,9 +276,7 @@ def compute_apfelpy_data(theory, observables, pdf):
                 alphas.Evaluate,
             )
             # Tabulate PDFs
-            tabulatedPDFs = ap.TabulateObjectSetD(
-                evolvedPDFs, NQ, QMin, QMax, 3
-            )
+            tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, NQ, QMin, QMax, 3)
 
             if sf_name in apfelpy_structure_functions:
                 sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
@@ -299,7 +297,7 @@ def compute_apfelpy_data(theory, observables, pdf):
             if observables["prDIS"] == "CC":
                 tab_sf = tabulate_cc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
             else:
-                tab_sf = tabulate_ncc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
+                tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
 
             # compute the actual result
             result = tab_sf.EvaluatexQ(x, np.sqrt(Q2))
