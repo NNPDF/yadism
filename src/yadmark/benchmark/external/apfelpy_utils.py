@@ -1,7 +1,6 @@
-"""
-    Utilities to help run APFEL++ benchmarks.
-"""
+"""Utilities to help run APFEL++ benchmarks."""
 import numpy as np
+from eko import basis_rotation as br
 
 # Q2 knots specs
 NQ = 50
@@ -19,8 +18,7 @@ MAP_HEAVINESS = {
 
 
 def couplings(ap, pids, proc_type, obs_name):
-    """Return the corresponding coupling given a process type
-    and an observable.
+    """Return the corresponding coupling given a process type and an observable.
 
     Parameters
     ----------
@@ -36,8 +34,8 @@ def couplings(ap, pids, proc_type, obs_name):
     callable
         a callable function that computes the coupling as a
         function of the scale Q
-    """
 
+    """
     # Effective charges
     def _fBq(Q):
         if proc_type == "EM":
@@ -268,9 +266,15 @@ def compute_apfelpy_data(theory, observables, pdf):
             x = kin["x"]
 
             # Construct the DGLAP objects
+            if "ToyLH" in pdf.name:
+                pdf_xfxQ = lambda x, mu: ap.utilities.PhysToQCDEv(
+                    {pid: pdf.xfxQ(pid, x, mu) for pid in br.flavor_basis_pids}
+                )
+            else:
+                pdf_xfxQ = lambda x, mu: ap.utilities.PhysToQCDEv(pdf.xfxQ(x, mu))
             evolvedPDFs = ap.builders.BuildDglap(
                 dglapobj,
-                ap.utilities.LHToyPDFs,
+                pdf_xfxQ,
                 np.sqrt(Q2) * theory["XIF"],
                 pto,
                 alphas.Evaluate,

@@ -52,9 +52,7 @@ class BenchmarkZeroMass(ApfelpyBenchmark):
                 for x in observables.default_card["interpolation_xgrid"][10::3]
             ]
         )
-        kins.extend(
-            [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()]
-        )
+        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
         obs_updates = observables.build(
             ["F2_total", "F3_total", "FL_total"], kins, update={"prDIS": ["NC"]}
         )
@@ -69,9 +67,7 @@ class BenchmarkZeroMass(ApfelpyBenchmark):
                 for x in observables.default_card["interpolation_xgrid"][10::3]
             ]
         )
-        kins.extend(
-            [dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()]
-        )
+        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
         obs_updates = observables.build(
             ["g1_total", "g4_total", "gL_total"], kins, update={"prDIS": ["NC"]}
         )
@@ -88,7 +84,7 @@ class BenchmarkZeroMass(ApfelpyBenchmark):
         self.run(
             self.theory_updates_zm(pto),
             self.obs_updates_pol(),
-            ["ToyLH"],
+            ["ToyLH_polarized"],
         )
 
 
