@@ -287,7 +287,7 @@ def compute_apfelpy_data(theory, observables, pdf):
             x = kin["x"]
 
             # Construct the DGLAP objects
-            if "ToyLH" in pdf.name:
+            if "ToyLH" in pdf.set().name:
                 pdf_xfxQ = lambda x, mu: ap.utilities.PhysToQCDEv(
                     {pid: pdf.xfxQ(pid, x, mu) for pid in br.flavor_basis_pids}
                 )
