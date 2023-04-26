@@ -36,6 +36,7 @@ def couplings(ap, pids, proc_type, obs_name):
         function of the scale Q
 
     """
+
     # Effective charges
     def _fBq(Q):
         if proc_type == "EM":
@@ -114,8 +115,8 @@ def tabulate_cc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
     ----------
     obs_name: str
         name of the observable
-    sfobj: ap.init.InitalizeSFNCOjbectsZM
-        SF objects in Zero-Mass Flavour Number Scheme
+    sfobj: list(ap.init.InitalizeSFNCOjbectsZM)
+        list of SF objects in Zero-Mass Flavour Number Scheme
     nq: int
         number of Q points
     QMin: float
@@ -130,11 +131,24 @@ def tabulate_cc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
     callable:
         Apfel++ callable functions to evaluate SF from
     """
+    sfp, sfm = sfobj
     if "total" in obs_name:
-        tab_sf = ap.TabulateObjectD(sfobj[0].Evaluate, nq, qmin, qmax, 3, thrs)
+        tab_sf = ap.TabulateObjectD(
+            lambda Q: 2 * (sfp[0].Evaluate(Q) - sfm[0].Evaluate(Q)),
+            nq,
+            qmin,
+            qmax,
+            3,
+            thrs,
+        )
     elif "light" in obs_name:
         tab_sf = ap.TabulateObjectD(
-            lambda Q: sfobj[1].Evaluate(Q) + sfobj[2].Evaluate(Q),
+            lambda Q: 2
+            * (
+                sfp[1].Evaluate(Q)
+                + sfp[2].Evaluate(Q)
+                - (sfm[1].Evaluate(Q) + sfm[2].Evaluate(Q))
+            ),
             nq,
             qmin,
             qmax,
@@ -143,7 +157,12 @@ def tabulate_cc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
         )
     elif "charm" in obs_name:
         tab_sf = ap.TabulateObjectD(
-            lambda Q: sfobj[4].Evaluate(Q) + sfobj[5].Evaluate(Q),
+            lambda Q: 2
+            * (
+                sfp[4].Evaluate(Q)
+                + sfp[5].Evaluate(Q)
+                - (sfm[4].Evaluate(Q) + sfm[5].Evaluate(Q))
+            ),
             nq,
             qmin,
             qmax,
@@ -152,7 +171,12 @@ def tabulate_cc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
         )
     elif "bottom" in obs_name:
         tab_sf = ap.TabulateObjectD(
-            lambda Q: sfobj[3].Evaluate(Q) + sfobj[6].Evaluate(Q),
+            lambda Q: 2
+            * (
+                sfp[3].Evaluate(Q)
+                + sfp[6].Evaluate(Q)
+                - (sfm[3].Evaluate(Q) + sfm[6].Evaluate(Q))
+            ),
             nq,
             qmin,
             qmax,
@@ -227,15 +251,12 @@ def compute_apfelpy_data(theory, observables, pdf):
         }
         if projectile_pids[observables["ProjectileDIS"]] > 0:
             apfelpy_structure_functions = {
-                "F2": init.InitializeF2CCMinusObjectsZM,
-                "FL": init.InitializeFLCCMinusObjectsZM,
-                "F3": init.InitializeF3CCMinusObjectsZM,
-            }
-        else:
-            apfelpy_structure_functions = {
-                "F2": init.InitializeF2CCPlusObjectsZM,
-                "FL": init.InitializeFLCCPlusObjectsZM,
-                "F3": init.InitializeF3CCPlusObjectsZM,
+                "F2m": init.InitializeF2CCMinusObjectsZM,
+                "FLm": init.InitializeFLCCMinusObjectsZM,
+                "F3m": init.InitializeF3CCMinusObjectsZM,
+                "F2p": init.InitializeF2CCPlusObjectsZM,
+                "FLp": init.InitializeFLCCPlusObjectsZM,
+                "F3p": init.InitializeF3CCPlusObjectsZM,
             }
     else:
         apfelpy_structure_functions = {
@@ -282,25 +303,36 @@ def compute_apfelpy_data(theory, observables, pdf):
             # Tabulate PDFs
             tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, NQ, QMin, QMax, 3)
 
-            if sf_name in apfelpy_structure_functions:
-                sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
-            else:
-                raise ValueError(f"{sf_name} not implemented in APFEL++")
-
             # Initialize structure functions
-            sfobj = ap.builders.BuildStructureFunctions(
-                sfobj,
-                tabulatedPDFs.EvaluateMapxQ,
-                pto,
-                alphas.Evaluate,
-                coupling,
-                theory["XIR"],
-                theory["XIF"],
-            )
-
             if observables["prDIS"] == "CC":
+                sfobj = []
+                for sign in ["p", "m"]:
+                    tmp_sf = apfelpy_structure_functions[f"{sf_name}{sign}"](
+                        xgrid, thrs
+                    )
+                    sfobj.append(
+                        ap.builders.BuildStructureFunctions(
+                            tmp_sf,
+                            tabulatedPDFs.EvaluateMapxQ,
+                            pto,
+                            alphas.Evaluate,
+                            coupling,
+                            theory["XIR"],
+                            theory["XIF"],
+                        )
+                    )
                 tab_sf = tabulate_cc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
             else:
+                sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
+                sfobj = ap.builders.BuildStructureFunctions(
+                    sfobj,
+                    tabulatedPDFs.EvaluateMapxQ,
+                    pto,
+                    alphas.Evaluate,
+                    coupling,
+                    theory["XIR"],
+                    theory["XIF"],
+                )
                 tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
 
             # compute the actual result
