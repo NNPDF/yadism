@@ -23,8 +23,9 @@ class Test_Blumlein_results:
 
       c_ns = c_{ns} + c_{q,d33}
 
+    Where c_{q,d33} is the part proportional to fl02.
     Reference numbers are obtained with the notebook provided in the arxiv.
-    Tables follow the syntax reg, sing, loc
+    Tables follow the syntax reg, sing, loc.
     """
 
     Q2 = 10
@@ -100,11 +101,19 @@ class Test_Blumlein_results:
                 ]
             )
 
-        # ns,+, sing and reg parts
+        # ns,+, reg part
         np.testing.assert_allclose(
-            np.array(f3_ns_result)[:, :-1], (f3_ns_ref + f3_d33_ref)[:, :-1], rtol=3e-4
+            np.array(f3_ns_result)[:, 0], (f3_ns_ref + f3_d33_ref)[:, 0], rtol=3e-4
+        )
+        # ns,+, sing part
+        np.testing.assert_allclose(
+            np.array(f3_ns_result)[:, 1], (f3_ns_ref + f3_d33_ref)[:, 1], rtol=2e-6
         )
         # ns,+ local part
+        # Vogt results are shifted, while Bluemlein are exact
+        shift = +22.80 + 0.386 * self.nf - 0.0081 * self.nf**2
         np.testing.assert_allclose(
-            np.array(f3_ns_result)[:, -1], (f3_ns_ref + f3_d33_ref)[:, -1], rtol=5e-2
+            np.array(f3_ns_result)[:, -1] - shift,
+            (f3_ns_ref + f3_d33_ref)[:, -1],
+            rtol=8e-3,
         )

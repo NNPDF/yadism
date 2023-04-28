@@ -4,21 +4,17 @@ To generate `c2nm3a,c2nm3c` we follow `xcdiff3p.f` or the reference paper :cite:
 import numba as nb
 import numpy as np
 
-from .common import d3, d27, d81, d243, fl
+from .common import d3, d27, d81, d243
 from .xcdiff3p import c2q3dfp, c2q3dfpc
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2np3a(y, args):
     nf = args[0]
-    has_color_fact = args[1]
+    fl11 = args[1]
     y1 = 1.0 - y
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
-    if has_color_fact:
-        fl11 = fl(nf)
-    else:
-        fl11 = 0.0
     res = (
         -4926.0
         + 7725.0 * y
@@ -111,13 +107,8 @@ def c2ns3b(y, args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2np3c(y, args):
     nf = args[0]
-    has_color_fact = args[1]
+    fl11 = args[1]
     dl1 = np.log(1.0 - y)
-    if has_color_fact:
-        fl11 = fl(nf)
-    else:
-        fl11 = 0.0
-
     res = (
         +256.0 * d81 * dl1**6
         - 3264.0 * d81 * dl1**5
