@@ -242,7 +242,6 @@ def compute_apfelpy_data(theory, observables, pdf):
     # Map Yadism observables to Apfel++ Objects
     init = ap.initializers
     if observables["prDIS"] == "CC":
-        # TODO: CC are not running ... CKM matrix error
         projectile_pids = {
             "electron": 11,
             "positron": -11,
