@@ -141,6 +141,10 @@
 
    <a href="https://lhapdf.hepforge.org/"><abbr title="LHAPDF">lhapdf</abbr></a>
 
+.. |APFEL++| raw:: html
+
+   <a href="https://github.com/vbertone/apfelxx"><abbr title="A PDF evolution library in C++">APFEL++</abbr></a>
+
 .. -----------
    not physics
    -----------
