@@ -4,6 +4,8 @@ from numbers import Number
 
 from eko import basis_rotation as br
 
+from .light.n3lo.common import nc_color_factor
+
 
 def import_local(kind, process, sibling):
     """
@@ -334,8 +336,11 @@ def generate_single_flavor_light(esf, nf, ihq):
     for pid in range(1, nf):
         s_partons[pid] = ch_av
         s_partons[-pid] = ch_av
+    fl = nc_color_factor(esf.info.coupling_constants, nf, "ns", False)
+    flps = nc_color_factor(esf.info.coupling_constants, nf, "s", False)
+    flg = nc_color_factor(esf.info.coupling_constants, nf, "g", False)
     return (
-        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
-        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),
-        Kernel(s_partons, light_cfs.Singlet(esf, nf)),
+        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf, fl=fl)),
+        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf, flg=flg)),
+        Kernel(s_partons, light_cfs.Singlet(esf, nf, flps=flps)),
     )
