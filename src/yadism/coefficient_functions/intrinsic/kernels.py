@@ -35,7 +35,7 @@ def generate(esf, ihq):
             kind,
             br.quark_names[ihq - 1],
             ihq,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if is_pv:

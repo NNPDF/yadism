@@ -53,7 +53,7 @@ def generate(esf, nf, ihq):
             kind,
             br.quark_names[ihq - 1],
             nf,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         return (
             kernels.Kernel(w["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),
@@ -69,7 +69,7 @@ def generate(esf, nf, ihq):
             kind,
             nf,
             ihq,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq))
         gAA = kernels.Kernel(weights["gAA"], pcs.GluonAA(esf, nf, m2hq=m2hq))

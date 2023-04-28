@@ -225,7 +225,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
             kind,
             br.quark_names[ihq - 1],
             nl,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         asys = [
             -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, m2hq=m2hq)),
@@ -238,7 +238,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
             kind,
             nl,
             ihq,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         if not is_pv:
             for c, channel in (("g", "Gluon"), ("s", "Singlet")):
@@ -289,7 +289,7 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
             kind,
             br.quark_names[ihq - 1],
             ihq,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if is_pv:

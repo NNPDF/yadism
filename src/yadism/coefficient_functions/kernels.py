@@ -302,7 +302,7 @@ def generate_single_flavor_light(esf, nf, ihq):
             kind,
             br.quark_names[ihq - 1],
             nf,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         w_odd = cc_weights_odd(
             esf.info.coupling_constants,
@@ -310,7 +310,7 @@ def generate_single_flavor_light(esf, nf, ihq):
             kind,
             br.quark_names[ihq - 1],
             nf,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         return (
             Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf)),
