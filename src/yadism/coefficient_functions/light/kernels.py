@@ -60,7 +60,7 @@ def generate(esf, nf, skip_heavylight=False):
         kind,
         nf,
         esf.info.obs_name.is_parity_violating,
-        skip_heavylight=skip_heavylight
+        skip_heavylight=skip_heavylight,
     )
 
     # remove also singlet contributions which is added by generate_light_diff

@@ -238,7 +238,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
             kind,
             nl,
             ihq,
-            esf.info.obs_name.is_parity_violating, 
+            esf.info.obs_name.is_parity_violating,
         )
         if not is_pv:
             for c, channel in (("g", "Gluon"), ("s", "Singlet")):

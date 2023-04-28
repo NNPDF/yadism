@@ -92,30 +92,26 @@ class Runner(BenchmarkRunner):
         observable = ocard
 
         if self.external.upper() == "APFEL":
-            from .external import (  # pylint:disable=import-error,import-outside-toplevel
-                apfel_utils,
-            )
+            from .external import \
+                apfel_utils  # pylint:disable=import-error,import-outside-toplevel
 
             return apfel_utils.compute_apfel_data(theory, observable, pdf)
 
         elif self.external.upper() == "QCDNUM":
-            from .external import (  # pylint:disable=import-error,import-outside-toplevel
-                qcdnum_utils,
-            )
+            from .external import \
+                qcdnum_utils  # pylint:disable=import-error,import-outside-toplevel
 
             return qcdnum_utils.compute_qcdnum_data(theory, observable, pdf)
 
         elif self.external.lower() == "xspace_bench":
-            from .external import (  # pylint:disable=import-error,import-outside-toplevel
-                xspace_bench_utils,
-            )
+            from .external import \
+                xspace_bench_utils  # pylint:disable=import-error,import-outside-toplevel
 
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
 
         elif self.external.upper() == "APFEL++":
-            from .external import (
-                apfelpy_utils,
-            )
+            from .external import apfelpy_utils
+
             return apfelpy_utils.compute_apfelpy_data(theory, observable, pdf)
 
         elif self.external.lower() == "void":

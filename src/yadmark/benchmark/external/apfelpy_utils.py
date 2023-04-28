@@ -3,7 +3,7 @@ import numpy as np
 from eko import basis_rotation as br
 
 # Q2 knots specs
-NQ = 50
+NQ = 1000
 QMin = 1
 QMax = 200
 
