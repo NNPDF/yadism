@@ -1,13 +1,14 @@
 from eko import basis_rotation as br
 
 from .. import kernels
+from .n3lo.common import nc_color_factor
 
 
 def import_pc_module(kind, process):
     return kernels.import_local(kind, process, __name__)
 
 
-def generate(esf, nf):
+def generate(esf, nf, skip_heavylight=False):
     """
     Collect the light coefficient functions
 
@@ -17,34 +18,84 @@ def generate(esf, nf):
             kinematic point
         nf : int
             number of light flavors
+        skip_heavylight: bool
+            prevent the last quark to couple to the boson
 
     Returns
     -------
         elems : list(yadism.kernels.Kernel)
             list of elements
     """
+    nl = nf
+    if skip_heavylight:
+        nl = nf - 1
     kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
+    coupling = esf.info.coupling_constants
     if esf.process == "CC":
         weights_even = kernels.cc_weights_even(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[:nf], nf
+            coupling,
+            esf.Q2,
+            kind,
+            br.quark_names[:nf],
+            nf,
+            esf.info.obs_name.is_parity_violating,
         )
         ns_even = kernels.Kernel(weights_even["ns"], pcs.NonSingletEven(esf, nf))
         g = kernels.Kernel(weights_even["g"], pcs.Gluon(esf, nf))
         s = kernels.Kernel(weights_even["s"], pcs.Singlet(esf, nf))
         weights_odd = kernels.cc_weights_odd(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[:nf], nf
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[:nf],
+            nf,
+            esf.info.obs_name.is_parity_violating,
         )
         ns_odd = kernels.Kernel(weights_odd["ns"], pcs.NonSingletOdd(esf, nf))
         return (ns_even, g, s, ns_odd)
-    weights = nc_weights(esf.info.coupling_constants, esf.Q2, kind, nf)
-    ns = kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf))
-    g = kernels.Kernel(weights["g"], pcs.Gluon(esf, nf))
-    s = kernels.Kernel(weights["s"], pcs.Singlet(esf, nf))
-    return (ns, g, s)
+    weights = nc_weights(
+        esf.info.coupling_constants,
+        esf.Q2,
+        kind,
+        nf,
+        esf.info.obs_name.is_parity_violating,
+        skip_heavylight=skip_heavylight,
+    )
+
+    # remove also singlet contributions which is added by generate_light_diff
+    if skip_heavylight:
+        weights["s"][nl + 1] = 0
+        weights["s"][-nl - 1] = 0
+
+    ns = kernels.Kernel(
+        weights["ns"],
+        pcs.NonSinglet(
+            esf,
+            nf,
+            fl=nc_color_factor(coupling, nf, "ns", skip_heavylight),
+        ),
+    )
+    g = kernels.Kernel(
+        weights["g"],
+        pcs.Gluon(
+            esf,
+            nf,
+            flg=nc_color_factor(coupling, nf, "g", skip_heavylight),
+        ),
+    )
+    s = kernels.Kernel(
+        weights["s"],
+        pcs.Singlet(
+            esf,
+            nf,
+            flps=nc_color_factor(coupling, nf, "s", skip_heavylight),
+        ),
+    )
+    return [ns, g, s]
 
 
-def nc_weights(coupling_constants, Q2, kind, nf, skip_heavylight=False):
+def nc_weights(coupling_constants, Q2, kind, nf, is_pv, skip_heavylight=False):
     """
     Compute light NC weights.
 
@@ -58,6 +109,8 @@ def nc_weights(coupling_constants, Q2, kind, nf, skip_heavylight=False):
             structure function kind
         nf : int
             number of light flavors
+        is_pv: bool
+            True if observable violates parity conservation
         skip_heavylight : bool
             prevent the last quark to couple to the boson
 
@@ -75,7 +128,7 @@ def nc_weights(coupling_constants, Q2, kind, nf, skip_heavylight=False):
         # but still let it take part in the average
         if skip_heavylight and q == nf:
             continue
-        if kind != "F3":
+        if not is_pv:
             w = coupling_constants.get_weight(
                 q, Q2, "VV"
             ) + coupling_constants.get_weight(q, Q2, "AA")
@@ -84,10 +137,10 @@ def nc_weights(coupling_constants, Q2, kind, nf, skip_heavylight=False):
                 q, Q2, "VA"
             ) + coupling_constants.get_weight(q, Q2, "AV")
         ns_partons[q] = w
-        ns_partons[-q] = w if kind != "F3" else -w
+        ns_partons[-q] = w if not is_pv else -w
         tot_ch_sq += w
     # gluon coupling = charge average (omitting the *2/2)
-    ch_av = tot_ch_sq / len(pids) if kind != "F3" else 0.0
+    ch_av = tot_ch_sq / len(pids) if not is_pv else 0.0
     # same for singlet
     s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
     return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons}

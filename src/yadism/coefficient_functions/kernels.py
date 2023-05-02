@@ -4,6 +4,8 @@ from numbers import Number
 
 from eko import basis_rotation as br
 
+from .light.n3lo.common import nc_color_factor
+
 
 def import_local(kind, process, sibling):
     """
@@ -107,7 +109,7 @@ class Kernel:
         )
 
 
-def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
+def cc_weights(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
     """
     Collect the weights of the partons.
 
@@ -123,6 +125,8 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
             participating flavors on the CKM matrix
         nf : int
             number of light flavors
+        is_pv: bool
+            True if observable violates parity conservation
 
     Returns
     -------
@@ -147,11 +151,11 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
         # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
-            weights["ns"][sign * q] = w if kind != "F3" else sign * w
+            weights["ns"][sign * q] = w if not is_pv else sign * w
         # but it contributes to the average
         tot_ch_sq += w
     # gluon coupling = charge sum
-    if rest == 0 and kind == "F3":
+    if rest == 0 and is_pv:
         tot_ch_sq *= -1
     weights["g"][21] = tot_ch_sq / norm / 2
     # add singlet
@@ -161,7 +165,7 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf):
     return weights
 
 
-def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf):
+def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
     """
     Collect the weights of the partons.
 
@@ -177,6 +181,8 @@ def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf):
             participating flavors on the CKM matrix
         nf : int
             number of light flavors
+        is_pv: bool
+            True if observable violates parity conservation
 
     Returns
     -------
@@ -201,8 +207,8 @@ def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf):
         # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
-            weights["ns"][sign * q] = w / 2 * (1 if kind != "F3" else sign)
-            weights["ns"][-sign * q] = w / 2 * (1 if kind != "F3" else sign)
+            weights["ns"][sign * q] = w / 2 * (1 if not is_pv else sign)
+            weights["ns"][-sign * q] = w / 2 * (1 if not is_pv else sign)
         # but it contributes to the average
         tot_ch_sq += w
     # gluon coupling = charge sum
@@ -214,7 +220,7 @@ def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf):
     return weights
 
 
-def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf):
+def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
     """
     Collect the weights of the partons.
 
@@ -230,6 +236,8 @@ def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf):
             participating flavors on the CKM matrix
         nf : int
             number of light flavors
+        is_pv: bool
+            True if observable violates parity conservation
 
     Returns
     -------
@@ -252,8 +260,8 @@ def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf):
         # NOTE: intrinsic abuse this statement with nf -> nf + 1
         if q <= nf:
             # @F3-sign@
-            weights["ns"][sign * q] = w / 2 * (1 if kind != "F3" else sign)
-            weights["ns"][-sign * q] = -w / 2 * (1 if kind != "F3" else sign)
+            weights["ns"][sign * q] = w / 2 * (1 if not is_pv else sign)
+            weights["ns"][-sign * q] = -w / 2 * (1 if not is_pv else sign)
     return weights
 
 
@@ -280,6 +288,7 @@ def generate_single_flavor_light(esf, nf, ihq):
             list of elements
     """
     kind = esf.info.obs_name.kind
+    is_pv = esf.info.obs_name.is_parity_violating
     light_cfs = import_local(
         kind, esf.process, ".".join(__name__.split(".")[:-1] + ["light", ""])
     )
@@ -288,10 +297,20 @@ def generate_single_flavor_light(esf, nf, ihq):
     s_partons = {}
     if esf.process == "CC":
         w_even = cc_weights_even(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], nf
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[ihq - 1],
+            nf,
+            is_pv,
         )
         w_odd = cc_weights_odd(
-            esf.info.coupling_constants, esf.Q2, kind, br.quark_names[ihq - 1], nf
+            esf.info.coupling_constants,
+            esf.Q2,
+            kind,
+            br.quark_names[ihq - 1],
+            nf,
+            is_pv,
         )
         return (
             Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf)),
@@ -302,7 +321,7 @@ def generate_single_flavor_light(esf, nf, ihq):
             ),
             Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf)),
         )
-    if kind != "F3":
+    if not is_pv:
         w = esf.info.coupling_constants.get_weight(
             ihq, esf.Q2, "VV"
         ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
@@ -312,13 +331,16 @@ def generate_single_flavor_light(esf, nf, ihq):
         ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
 
     ns_partons[ihq] = w
-    ns_partons[-ihq] = w if kind != "F3" else -w
-    ch_av = w / (nf) if kind != "F3" else 0.0
+    ns_partons[-ihq] = w if not is_pv else -w
+    ch_av = w / (nf) if not is_pv else 0.0
     for pid in range(1, nf):
         s_partons[pid] = ch_av
         s_partons[-pid] = ch_av
+    fl = nc_color_factor(esf.info.coupling_constants, nf, "ns", False)
+    flps = nc_color_factor(esf.info.coupling_constants, nf, "s", False)
+    flg = nc_color_factor(esf.info.coupling_constants, nf, "g", False)
     return (
-        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
-        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),
-        Kernel(s_partons, light_cfs.Singlet(esf, nf)),
+        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf, fl=fl)),
+        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf, flg=flg)),
+        Kernel(s_partons, light_cfs.Singlet(esf, nf, flps=flps)),
     )
