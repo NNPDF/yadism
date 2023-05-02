@@ -66,16 +66,16 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
     classes. In particular here are defined:
 
         - shifted kinematics :math:`\xi` and other aux variables
-          (:math:`\mu` and :math:`\rho`, see :cite:`tmc-iranian`)
+          (:math:`\mu` and :math:`\rho`, see :cite:`Goharipour:2020gsw`)
         - integration layout and two common integrals of structure
-          functions, :math:`h_2` and :math:`g_2` (see :cite:`tmc-review`)
+          functions, :math:`h_2` and :math:`g_2` (see :cite:`Schienbein:2007gr`)
         - an interface for picking up the chosen formulas between:
 
             1. *APFEL*
             2. *approximate*
             3. *exact*
 
-          (see :cite:`tmc-iranian`)
+          (see :cite:`Goharipour:2020gsw`)
 
     Parameters
     ----------
@@ -121,8 +121,8 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         """
         This method is defined by subclasses to provide the implementation
         of TMC calculation according to the approximate formula defined in
-        :eqref:`4` in :cite:`tmc-iranian`, and already presented in
-        :cite:`tmc-review`.
+        :eqref:`4` in :cite:`Goharipour:2020gsw`, and already presented in
+        :cite:`Schienbein:2007gr`.
 
         The convenience of this formula is that the integration is
         approximate by a simple evaluation of the integrand in a suitable
@@ -130,7 +130,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         (because integration yields an array of evaluations, ranging from 1
         to the `xgrid` length).
         Despite the approximation the formula is quite in a good agreement
-        with the exact one (for comparison see :cite:`tmc-review`).
+        with the exact one (for comparison see :cite:`Schienbein:2007gr`).
 
         """
 
@@ -139,8 +139,8 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         """
         This method is defined by subclasses to provide the implementation
         of TMC calculation according to the exact formula defined in
-        :eqref:`2` in :cite:`tmc-iranian`, and already presented in
-        :cite:`tmc-review` and older literature like :cite:`tmc-georgi`.
+        :eqref:`2` in :cite:`Goharipour:2020gsw`, and already presented in
+        :cite:`Schienbein:2007gr` and older literature like :cite:`tmc-georgi`.
 
         Note
         ----
@@ -310,7 +310,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
             Returns
             -------
-                g1 : dict
+                k1 : dict
                     ESF output for the integral
 
         """
@@ -325,9 +325,9 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 :nowrap:
 
                 \begin{align*}
-                k_2(\xi,Q^2) &= \int_\xi^1 \log(\frac{v}{\xi}) du
+                k_2(\xi,Q^2) &= \int_\xi^1 du \log(\frac{v}{\xi})
                              \frac{g_1(u,Q^2)}{u}\\
-                             &= - \int_\xi^1 \log(\frac{\xi}{v}) du
+                             &= - \int_\xi^1 du \log(\frac{\xi}{v})
                              \frac{g_1(u,Q^2)}{u}\\
                              &= ((z\to -\log(z)) \otimes g_1(z))(\xi)
                 \end{align*}
@@ -543,8 +543,8 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
     for parity conserving polarized structure function g1, for the two kinds
     described in the parent class :py:class:`EvaluatedStructureFunctionTMC`.
 
-    The formula in question can be found in :cite:`tmc-g1-accardi`,
-    :cite:`tmc-g1-iranian`, and references therein.
+    The formula in question can be found in :cite:`Accardi:2008pc`,
+    :cite:`Khanpour:2017cha`, and references therein.
 
     Parameters
     ----------
