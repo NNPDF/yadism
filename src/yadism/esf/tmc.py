@@ -593,7 +593,8 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
         )
 
     def _get_result_APFEL(self):
-        """APFEL does not implement polarized TMC"""
+        raise NotImplementedError("APFEL does not implement polarized TMC")
+        
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL, "F3": ESFTMC_F3, "g1": ESFTMC_g1}
