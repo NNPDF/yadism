@@ -325,9 +325,9 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 :nowrap:
 
                 \begin{align*}
-                k_2(\xi,Q^2) &= \int_\xi^1 du \log(\frac{v}{\xi})
+                k_2(\xi,Q^2) &= \int_\xi^1 du \log(\frac{u}{\xi})
                              \frac{g_1(u,Q^2)}{u}\\
-                             &= - \int_\xi^1 du \log(\frac{\xi}{v})
+                             &= - \int_\xi^1 du \log(\frac{\xi}{u})
                              \frac{g_1(u,Q^2)}{u}\\
                              &= ((z\to -\log(z)) \otimes g_1(z))(\xi)
                 \end{align*}
@@ -543,8 +543,8 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
     for parity conserving polarized structure function g1, for the two kinds
     described in the parent class :py:class:`EvaluatedStructureFunctionTMC`.
 
-    The formula in question can be found in :cite:`Accardi:2008pc`,
-    :cite:`Khanpour:2017cha`, and references therein.
+    The formula in question can be found in :eqref:`D.26` of :cite:`Accardi:2008pc`,
+    :eqref:`D.10` of :cite:`Khanpour:2017cha`, and references therein.
 
     Parameters
     ----------
