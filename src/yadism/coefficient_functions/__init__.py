@@ -59,7 +59,8 @@ class Combiner:
             comps.extend(self.heavylight_components())
         if family in ["heavy", "total"]:
             comps.extend(self.heavy_components())
-
+        if family == "asy":
+            comps.extend(self.asy_components())
         return comps
 
     def light_component(self):
@@ -169,6 +170,47 @@ class Combiner:
                         heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
                     )
             comps.append(heavy_comps[sfh])
+
+        return comps
+
+    def asy_components(self):
+        nf = self.nf
+        hq = self.obs_name.hqnumber
+        masses = self.masses
+
+        comps = []
+
+        asy_comps = {}
+        for sfh in range(nf, 7):
+            # exclude sfh=3, since heavy contributions are there for [4,5,6]
+            # if it's ZM you don't even have the component
+            if sfh not in masses or not masses[sfh]:
+                continue
+
+            asy_comps[sfh] = Component(sfh)
+            if hq not in (0, sfh):
+                continue
+
+            nl = nf - 1
+            if sfh not in self.intrinsic:
+                asy_comps[sfh].extend(
+                    self.damp_elems(
+                        nl,
+                        fonll.kernels.generate_heavy_diff(
+                            self.esf, nl, self.esf.info.theory["pto_evol"]
+                        ),
+                    )
+                )
+            else:
+                asy_comps[sfh].extend(
+                    self.damp_elems(
+                        nl,
+                        fonll.kernels.generate_heavy_intrinsic_diff(
+                            self.esf, nl, self.esf.info.theory["pto_evol"]
+                        ),
+                    )
+                )
+            comps.append(asy_comps[sfh])
 
         return comps
 

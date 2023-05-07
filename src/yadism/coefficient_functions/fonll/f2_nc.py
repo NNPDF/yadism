@@ -37,6 +37,7 @@ def cg_NNLL_NNLO(z, _args):
 
 class AsyLLGluon(pc.PartonicChannelAsy):
     def NLO(self):
+        # import ipdb; ipdb.set_trace()
         return RSL(cg_LL_NLO, args=[self.L])
 
     def NNLO(self):

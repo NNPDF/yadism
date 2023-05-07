@@ -153,32 +153,40 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
     @staticmethod
     def theory_updates_ffns(pto):
         sv = {
-            "XIR": [0.5, 2.0],
-            "XIF": [0.5, 2.0],
+            # "XIR": [0.5, 2.0],
+            # "XIF": [0.5, 2.0],
             "PTO": [pto],
             "FNS": ["FFNS"],
-            "mb": 1e6,
-            "mt": 1e6,
+            # "mb": 1e6,
+            # "mt": 1e6,
         }
-        theory_updates = cartesian_product(sv)
+        # theory_updates = cartesian_product(sv)
         # add FONLL
-        sv["FNS"] = ["FONLL-A"]
-        sv["NfFF"] = [4]
-        theory_updates.append(cartesian_product(sv))
-        return theory_updates
+        # sv["FNS"] = ["FONLL-A"]
+        sv["NfFF"] = [5]
+        # theory_updates.append(cartesian_product(sv))
+        return cartesian_product(sv)
 
     @staticmethod
     def obs_updates_ffns():
         kins = []
-        kins.extend(
-            [
-                dict(x=x, Q2=10.0)
-                for x in observables.default_card["interpolation_xgrid"][3::3]
-            ]
-        )
-        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(5, 22, 10).tolist()])
+        # kins.extend(
+        #     [
+        #         dict(x=x, Q2=10.0)
+        #         for x in observables.default_card["interpolation_xgrid"][3::3]
+        #     ]
+        # )
+        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(5, 1e3, 10).tolist()])
         obs_updates = observables.build(
-            ["F2total", "F2charm", "FLtotal", "FLcharm", "F3total", "F3charm"],
+            [
+            # "F2_total",
+            # "F2charm",
+            "F2_bottom"
+            # "FLtotal",
+            # "FLcharm",
+            # "F3total",
+            # "F3charm"
+            ],
             kins,
             update={"prDIS": ["NC", "CC"]},
         )
@@ -187,8 +195,8 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
     @staticmethod
     def theory_updates_zm(pto):
         sv = {
-            "XIR": [0.5, 2.0],
-            "XIF": [0.5, 2.0],
+            # "XIR": [0.5, 2.0],
+            # "XIF": [0.5, 2.0],
             "PTO": [pto],
             "FNS": ["ZM-VFNS"],
         }
@@ -197,32 +205,44 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
     @staticmethod
     def obs_updates_zm():
         kins = []
-        kins.extend(
-            [
-                dict(x=x, Q2=10.0)
-                for x in observables.default_card["interpolation_xgrid"][10::3]
-            ]
-        )
-        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
+        # kins.extend(
+        #     [
+        #         dict(x=x, Q2=10.0)
+        #         for x in observables.default_card["interpolation_xgrid"][3::3]
+        #     ]
+        # )
+        kins.extend([dict(x=0.01, Q2=Q2) for Q2 in np.geomspace(5, 1e4, 10).tolist()])
         obs_updates = observables.build(
             ["F2_total", "F3_total", "FL_total"], kins, update={"prDIS": ["NC", "CC"]}
         )
         return obs_updates
 
     @staticmethod
-    def obs_updates_pol():
+    def theory_updates_ffn0(pto):
+        sv = {
+            # "XIR": [0.5, 2.0],
+            # "XIF": [0.5, 2.0],
+            "NfFF": [3],
+            "PTO": [pto],
+            "FNS": ["FFN0"],
+        }
+        return cartesian_product(sv)
+
+    @staticmethod
+    def obs_updates_ffn0():
         kins = []
-        kins.extend(
-            [
-                dict(x=x, Q2=10.0)
-                for x in observables.default_card["interpolation_xgrid"][10::3]
-            ]
-        )
-        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
+        # kins.extend(
+        #     [
+        #         dict(x=x, Q2=10.0)
+        #         for x in observables.default_card["interpolation_xgrid"][3::3]
+        #     ]
+        # )
+        kins.extend([dict(x=0.001, Q2=Q**2) for Q in np.geomspace(3, 1e3, 10).tolist()])
         obs_updates = observables.build(
-            ["g1_total"], kins, update={"prDIS": ["EM"], "PolarizationDIS": [True]}
+            ["F2_charm"], kins, update={"prDIS": ["NC", "CC"]}
         )
         return obs_updates
+
 
     def benchmark_ffns(self, pto):
         self.run(
@@ -238,10 +258,10 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             ["ToyLH"],
         )
 
-    def benchmark_polarized(self, pto):
+    def benchmark_ffn0(self, pto):
         self.run(
-            [{"PTO": pto, "FNS": "ZM-VFNS"}],
-            self.obs_updates_pol(),
+            self.theory_updates_ffn0(pto),
+            self.obs_updates_ffn0(),
             ["ToyLH"],
         )
 
@@ -305,6 +325,14 @@ if __name__ == "__main__":
     # pos = BenchmarkPositivity()
     # pos.benchmark_pto(0)
     # pos.benchmark_pto(1)
+
+    pol = BenchmarkFlavorNumberScheme()
+    # pol.benchmark_zm(0)
+    # pol.benchmark_zm(1)
+    # pol.benchmark_zm(2)
+    # pol.benchmark_ffns(1)
+    # pol.benchmark_ffn0(0)
+    pol.benchmark_ffn0(1)
 
     # ffns = BenchmarkICFFNS()
     # ffns.benchmark_lo()
