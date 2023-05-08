@@ -593,8 +593,14 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
         )
 
     def _get_result_APFEL(self):
-        raise NotImplementedError("APFEL does not implement polarized TMC")
-        
+        # collect g1 results
+        g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
+        # Call to the raw integrals
+        k1out = self._k1()
+        # Combine the expressions
+        return (
+            self._factor_shifted * g1out + self._factor_k1_k2 * self._factor_k1 * k1out
+        )
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL, "F3": ESFTMC_F3, "g1": ESFTMC_g1}
