@@ -38,23 +38,6 @@ class MockESF:
         self.process = "NC"
 
 
-def test_cg():
-    Q2 = 200
-    esf = MockESF("g1_charm", 0.1, Q2)
-    m2hq = 2
-    for nf in [3, 4]:
-        for z in [1e-1, 1e-2, 1e-3]:
-            cg_1 = h_g1_nc.GluonVV(esf, nf, m2hq=m2hq)
-            cg_2 = h_g1_nc.GluonAA(esf, nf, m2hq=m2hq)
-            for o in ["NLO", "NNLO"]:
-                order = lambda pc, o=o: pc.__getattribute__(o)()
-                a_1 = order(cg_1).reg(z, order(cg_1).args["reg"])
-                a_2 = order(cg_2).reg(z, order(cg_1).args["reg"])
-
-
-# todo: test_cg() requires the FONLL method for g1 to compare values?
-
-
 def test_cg_NLO():
     Q2 = 200
     esf = MockESF("g1_charm", 0.1, Q2)
