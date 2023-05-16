@@ -48,7 +48,6 @@ def g2_ker(z, _args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def k1_ker(_z, _args):
-    # TODO: Check that following makes sense
     return 1
 
 
