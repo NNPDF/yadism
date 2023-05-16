@@ -41,9 +41,6 @@ def h2_ker(z, args):
     return 1 / xi * z
 
 
-h3_ker = h2_ker
-
-
 @nb.njit("f8(f8,f8[:])", cache=True)
 def g2_ker(z, _args):
     return 1 - z
@@ -58,6 +55,9 @@ def k1_ker(_z, _args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def k2_ker(z, _args):
     return np.log(1 / z)
+
+
+h3_ker = k1_ker
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
