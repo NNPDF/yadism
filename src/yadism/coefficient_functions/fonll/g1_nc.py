@@ -64,3 +64,28 @@ class AsyNNLLGluon(pc.PartonicChannelAsy):
     def NNLO(self):
         """NNLL term of massive asymptotic polarized gluonic Wilson coefficient."""
         return RSL(raw.c2g_NNLL_reg, args=[self.L])
+
+
+class PdfMatchingLLNonSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        pass
+        # TODO: inset here the LL (L**2) terms for the matching
+        # NOTE: if equals to the unpolarized case, just import from there.
+        # you can use the syntax:
+        # return RSL(sing=A_qq_sing, loc=A_qq_loc, args=[self.L])
+
+
+class PdfMatchingNLLNonSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        pass
+        # TODO: inset here the NLL (L) terms for the matching
+
+
+class PdfMatchingNNLLNonSinglet(pc.PartonicChannelAsy):
+    def NNLO(self):
+        pass
+        # TODO: inset here the NNLL (L) terms for the matching
+
+
+class PdfMatchingNNNLLNonSinglet(pc.PartonicChannelAsy):
+    pass
