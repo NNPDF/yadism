@@ -129,6 +129,19 @@ def c2ps_NNLL_reg(z, _args):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
+def c1g_LL_reg(z, args):
+    """|ref| implements :eqref:`29`, :cite:`Bierenbaum:2022biv`."""
+    L = args[0]
+    return 2 * (2 * z - 1) * L
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def c1g_NLL_reg(z, _args):
+    """|ref| implements :eqref:`29`, :cite:`Bierenbaum:2022biv`."""
+    return 2 * ((3 - 4 * z) + (2 * z - 1) * np.log((1 - z) / z))
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
 def c2g_LL_reg(z, args):
     """|ref| implements :eqref:`273`, :cite:`Bierenbaum:2022biv`."""
     l = np.log(z)

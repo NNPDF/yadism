@@ -43,12 +43,18 @@ class AsyNNLLPureSinglet(pc.PartonicChannelAsy):
 
 
 class AsyLLGluon(pc.PartonicChannelAsy):
+    def NLO(self):
+        return RSL(raw.c1g_LL_reg, args=[self.L])
+
     def NNLO(self):
         """LL term of massive asymptotic polarized gluonic Wilson coefficient."""
         return RSL(raw.c2g_LL_reg, args=[self.L])
 
 
 class AsyNLLGluon(pc.PartonicChannelAsy):
+    def NLO(self):
+        return RSL(raw.c1g_NLL_reg, args=[self.L])
+
     def NNLO(self):
         """NLL term of massive asymptotic polarized gluonic Wilson coefficient."""
         return RSL(raw.c2g_NLL_reg, args=[self.L])
