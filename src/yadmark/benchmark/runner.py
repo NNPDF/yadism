@@ -112,6 +112,11 @@ class Runner(BenchmarkRunner):
 
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
 
+        elif self.external.upper() == "APFEL++":
+            from .external import apfelpy_utils
+
+            return apfelpy_utils.compute_apfelpy_data(theory, observable, pdf)
+
         elif self.external.lower() == "void":
             # set all ESF simply to 0
             res = {}

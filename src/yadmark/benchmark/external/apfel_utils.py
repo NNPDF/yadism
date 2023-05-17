@@ -24,10 +24,18 @@ def load_apfel(theory, observables, pdf="ToyLH", use_external_grid=False):
         theory, observables, pdf, use_external_grid=use_external_grid
     )
 
+    is_polarized = [obs_name.startswith("g") for obs_name in observables["observables"]]
+    is_polarized = np.unique(is_polarized)
+    if is_polarized.size != 1:
+        raise ValueError(
+            "Apfel can't compute polarized and unpolarized observables at the same time."
+        )
+
     # set DIS params
     apfel.SetProcessDIS(observables.get("prDIS", "EM"))
     apfel.SetPropagatorCorrection(observables.get("PropagatorCorrection", 0))
     apfel.SetPolarizationDIS(observables.get("PolarizationDIS", 0))
+    apfel.SetPolarizedEvolution(int(is_polarized))
     apfel.SetProjectileDIS(observables.get("ProjectileDIS", "electron"))
     apfel.SetTargetDIS(observables.get("TargetDIS", "proton"))
     charge = observables.get("NCPositivityCharge")
@@ -80,6 +88,24 @@ def compute_apfel_data(theory, observables, pdf):  # pylint: disable=too-many-lo
         "F2": apfel.F2total,
         "FL": apfel.FLtotal,
         "F3": apfel.F3total,
+        "g1_total": apfel.g1total,
+        "g1": apfel.g1total,
+        "g1_light": apfel.g1light,
+        "g1_charm": apfel.g1charm,
+        "g1_bottom": apfel.g1bottom,
+        "g1_top": apfel.g1top,
+        "gL_total": apfel.gLtotal,
+        "gL": apfel.gLtotal,
+        "gL_light": apfel.gLlight,
+        "gL_charm": apfel.gLcharm,
+        "gL_bottom": apfel.gLbottom,
+        "gL_top": apfel.gLtop,
+        "g4_total": apfel.g4total,
+        "g4": apfel.g4total,
+        "g4_bottom": apfel.g4bottom,
+        "g4_charm": apfel.g4charm,
+        "g4_light": apfel.g4light,
+        "g4_top": apfel.g4top,
     }
 
     lep = ""

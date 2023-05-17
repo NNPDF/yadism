@@ -1,5 +1,6 @@
 """
-This module contain the implementation of target mass corrections (TMC).
+This module contain the implementation of target mass corrections (TMC) for
+both the unpolarized and polarized structure functions.
 
 Three classes are here defined:
 
@@ -8,8 +9,10 @@ Three classes are here defined:
     - :py:class:`ESFTMC_F2`, :py:class:`ESFTMC_FL`, and :py:class:`ESFTMC_F3`
       implements the previous one, making use of its machinery as building blocks
       for the actual expressions for TMC
+    - :py:class:`ESFTMC_g1`, :py:class:`ESFTMC_g4`, and :py:class:`ESFTMC_gL`
+      refer to spin-dependent counterparts.
 
-The three structures presented play together the role of an intermediate block
+The structures presented play together the role of an intermediate block
 between the :py:class:`StructureFunction` interface (used to manage user request
 for DIS observables) the actual calculator
 :py:class:`EvaluatedStructureFunction`, or even better they can be seen as a
@@ -38,12 +41,22 @@ def h2_ker(z, args):
     return 1 / xi * z
 
 
-h3_ker = h2_ker
-
-
 @nb.njit("f8(f8,f8[:])", cache=True)
 def g2_ker(z, _args):
     return 1 - z
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def k1_ker(_z, _args):
+    return 1
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def k2_ker(z, _args):
+    return np.log(1 / z)
+
+
+h3_ker = k1_ker
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
@@ -52,16 +65,16 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
     classes. In particular here are defined:
 
         - shifted kinematics :math:`\xi` and other aux variables
-          (:math:`\mu` and :math:`\rho`, see :cite:`tmc-iranian`)
+          (:math:`\mu` and :math:`\rho`, see :cite:`Goharipour:2020gsw`)
         - integration layout and two common integrals of structure
-          functions, :math:`h_2` and :math:`g_2` (see :cite:`tmc-review`)
+          functions, :math:`h_2` and :math:`g_2` (see :cite:`Schienbein:2007gr`)
         - an interface for picking up the chosen formulas between:
 
             1. *APFEL*
             2. *approximate*
             3. *exact*
 
-          (see :cite:`tmc-iranian`)
+          (see :cite:`Goharipour:2020gsw`)
 
     Parameters
     ----------
@@ -107,8 +120,8 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         """
         This method is defined by subclasses to provide the implementation
         of TMC calculation according to the approximate formula defined in
-        :eqref:`4` in :cite:`tmc-iranian`, and already presented in
-        :cite:`tmc-review`.
+        :eqref:`4` in :cite:`Goharipour:2020gsw`, and already presented in
+        :cite:`Schienbein:2007gr`.
 
         The convenience of this formula is that the integration is
         approximate by a simple evaluation of the integrand in a suitable
@@ -116,7 +129,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         (because integration yields an array of evaluations, ranging from 1
         to the `xgrid` length).
         Despite the approximation the formula is quite in a good agreement
-        with the exact one (for comparison see :cite:`tmc-review`).
+        with the exact one (for comparison see :cite:`Schienbein:2007gr`).
 
         """
 
@@ -125,8 +138,8 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         """
         This method is defined by subclasses to provide the implementation
         of TMC calculation according to the exact formula defined in
-        :eqref:`2` in :cite:`tmc-iranian`, and already presented in
-        :cite:`tmc-review` and older literature like :cite:`tmc-georgi`.
+        :eqref:`2` in :cite:`Goharipour:2020gsw`, and already presented in
+        :cite:`Schienbein:2007gr` and older literature like :cite:`tmc-georgi`.
 
         Note
         ----
@@ -281,6 +294,50 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # so to achieve a total (z-xi)/z^2 we need to convolute with 1-z
         # as we get a 1/z by the measure and an evaluation of 1-xi/z
         return self._convolute_FX("F2", g2_ker)
+
+    def _k1(self):
+        r"""
+            Compute the raw integral that enters the computation of `g`
+            making use of :py:meth:`_convolute_FX`.
+
+            .. math::
+                :nowrap:
+
+                \begin{align*}
+                k_1(\xi,Q^2) &= \int_\xi^1 du \frac{g_1(u,Q^2)}{u}\\
+                \end{align*}
+
+            Returns
+            -------
+                k1 : dict
+                    ESF output for the integral
+
+        """
+        return self._convolute_FX("g1", k1_ker)
+
+    def _k2(self):
+        r"""
+            Compute the raw integral that enters the computation of `g`
+            making use of :py:meth:`_convolute_FX`.
+
+            .. math::
+                :nowrap:
+
+                \begin{align*}
+                k_2(\xi,Q^2) &= \int_\xi^1 du \log(\frac{u}{\xi})
+                             \frac{g_1(u,Q^2)}{u}\\
+                             &= - \int_\xi^1 du \log(\frac{\xi}{u})
+                             \frac{g_1(u,Q^2)}{u}\\
+                             &= ((z\to -\log(z)) \otimes g_1(z))(\xi)
+                \end{align*}
+
+            Returns
+            -------
+                k2 : dict
+                    ESF output for the integral
+
+        """
+        return self._convolute_FX("g1", k2_ker)
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
@@ -479,7 +536,73 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
         return self._factor_shifted * F3out + self._factor_h3 * h3out
 
 
-ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL, "F3": ESFTMC_F3}
+class ESFTMC_g1(EvaluatedStructureFunctionTMC):
+    """
+    This function implements the actual formula for target mass corrections
+    for parity conserving polarized structure function g1, for the two kinds
+    described in the parent class :py:class:`EvaluatedStructureFunctionTMC`.
+
+    The formula in question can be found in :eqref:`D.26` of :cite:`Accardi:2008pc`,
+    :eqref:`D.10` of :cite:`Khanpour:2017cha`, and references therein.
+
+    Parameters
+    ----------
+    SF : StructureFunction
+        the interface object representing the structure function kind he
+        belongs to
+    kinematics : dict
+        requested kinematic point
+
+    """
+
+    def __init__(self, SF, kinematics):
+        super().__init__(SF, kinematics)
+        # Kinematic factor for ZM g1
+        self._factor_shifted = self.x**2 / (self.xi * self.rho**3)
+        # Kinematic factor for common for `k1` & `k2` integral
+        self._factor_k1_k2 = (4 * self.x**2 * self.mu) / self.rho**3
+        # Kinematic factor specific for `k1` integral
+        self._factor_k1 = (self.x + self.xi) / self.xi
+        # Kinematic factor specific for `k2` integral
+        self._factor_k2 = (self.rho**2 - 3) / (2 * self.rho)
+
+    def _get_result_approx(self):
+        # NOTE: The approximations are evaluated at the lower
+        # integral limit; ie by integrating the factors of `g1^0`
+        approx_k1 = 1 - self.xi
+        approx_k2 = self.xi - 1 - np.log(self.xi)
+        # collect g1 results
+        g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
+        # Combine the expressions
+        return g1out * (
+            self._factor_shifted
+            + self._factor_k1_k2
+            * (self._factor_k1 * approx_k1 + self._factor_k2 * approx_k2)
+        )
+
+    def _get_result_exact(self):
+        # collect g1 results
+        g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
+        # Call to the raw integrals
+        k1out = self._k1()
+        k2out = self._k2()
+        # Combine the expressions
+        return self._factor_shifted * g1out + self._factor_k1_k2 * (
+            self._factor_k1 * k1out + self._factor_k2 * k2out
+        )
+
+    def _get_result_APFEL(self):
+        # collect g1 results
+        g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
+        # Call to the raw integrals
+        k1out = self._k1()
+        # Combine the expressions
+        return (
+            self._factor_shifted * g1out + self._factor_k1_k2 * self._factor_k1 * k1out
+        )
+
+
+ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL, "F3": ESFTMC_F3, "g1": ESFTMC_g1}
 """dict: mapping kind to ESF TMC classes
 
 This dictionary is used to redirect to the correct class from a string

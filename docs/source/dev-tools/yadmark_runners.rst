@@ -94,5 +94,12 @@ In ``benchmarks/runners`` we provide a list of established benchmarks
     run of this script will benchmark yadism against all the compatible |xspace-bench| features.
   - the necessary python bindings are provided by us externally
 
+- ``apfelpy_bench.py``:
+
+  - it is used by the corresponding workflow to
+    run the established benchmarks against |APFEL++|. The complete
+    run of this script will benchmark yadism against all the compatible |APFEL++| features.
+  - the necessary python bindings are provided by the |APFEL++| itself
+
 All of them are examples useful to understand how to use the
 `yadmark` package for benchmarking.

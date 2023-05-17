@@ -200,12 +200,27 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         kins.extend(
             [
                 dict(x=x, Q2=10.0)
-                for x in observables.default_card["interpolation_xgrid"][3::3]
+                for x in observables.default_card["interpolation_xgrid"][10::3]
             ]
         )
         kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
         obs_updates = observables.build(
-            ["F2total", "F3total", "FLtotal"], kins, update={"prDIS": ["NC", "CC"]}
+            ["F2_total", "F3_total", "FL_total"], kins, update={"prDIS": ["NC", "CC"]}
+        )
+        return obs_updates
+
+    @staticmethod
+    def obs_updates_pol():
+        kins = []
+        kins.extend(
+            [
+                dict(x=x, Q2=10.0)
+                for x in observables.default_card["interpolation_xgrid"][10::3]
+            ]
+        )
+        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(3, 1e4, 10).tolist()])
+        obs_updates = observables.build(
+            ["g1_total"], kins, update={"prDIS": ["EM"], "PolarizationDIS": [True]}
         )
         return obs_updates
 
@@ -220,6 +235,13 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         self.run(
             self.theory_updates_zm(pto),
             self.obs_updates_zm(),
+            ["ToyLH"],
+        )
+
+    def benchmark_polarized(self, pto):
+        self.run(
+            [{"PTO": pto, "FNS": "ZM-VFNS"}],
+            self.obs_updates_pol(),
             ["ToyLH"],
         )
 
@@ -280,9 +302,9 @@ if __name__ == "__main__":
     # proj.benchmark_pto(0)
     # proj.benchmark_pto(1)
 
-    pos = BenchmarkPositivity()
-    pos.benchmark_pto(0)
-    pos.benchmark_pto(1)
+    # pos = BenchmarkPositivity()
+    # pos.benchmark_pto(0)
+    # pos.benchmark_pto(1)
 
     # ffns = BenchmarkICFFNS()
     # ffns.benchmark_lo()
@@ -292,6 +314,10 @@ if __name__ == "__main__":
 
     # xs = BenchmarkXS()
     # xs.benchmark_pto(0)
+
+    pol = BenchmarkFlavorNumberScheme()
+    pol.benchmark_polarized(0)
+    pol.benchmark_polarized(1)
 
 # def plain_assert_external(theory, obs, sf, yad):
 #     # APFEL has a discretization in Q2/m2
