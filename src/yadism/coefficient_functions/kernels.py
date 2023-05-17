@@ -109,7 +109,7 @@ class Kernel:
         )
 
 
-def cc_weights(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
+def cc_weights(coupling_constants, Q2, cc_mask, nf, is_pv):
     """
     Collect the weights of the partons.
 
@@ -119,8 +119,6 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
             manager for coupling constants
         Q2 : float
             W virtuality
-        kind : str
-            structure function kind
         cc_mask : str
             participating flavors on the CKM matrix
         nf : int
@@ -165,7 +163,7 @@ def cc_weights(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
     return weights
 
 
-def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
+def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     """
     Collect the weights of the partons.
 
@@ -175,8 +173,6 @@ def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
             manager for coupling constants
         Q2 : float
             W virtuality
-        kind : str
-            structure function kind
         cc_mask : str
             participating flavors on the CKM matrix
         nf : int
@@ -220,7 +216,7 @@ def cc_weights_even(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
     return weights
 
 
-def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
+def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
     """
     Collect the weights of the partons.
 
@@ -230,8 +226,6 @@ def cc_weights_odd(coupling_constants, Q2, kind, cc_mask, nf, is_pv):
             manager for coupling constants
         Q2 : float
             W virtuality
-        kind : str
-            structure function kind
         cc_mask : str
             participating flavors on the CKM matrix
         nf : int
@@ -299,7 +293,6 @@ def generate_single_flavor_light(esf, nf, ihq):
         w_even = cc_weights_even(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[ihq - 1],
             nf,
             is_pv,
@@ -307,7 +300,6 @@ def generate_single_flavor_light(esf, nf, ihq):
         w_odd = cc_weights_odd(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[ihq - 1],
             nf,
             is_pv,

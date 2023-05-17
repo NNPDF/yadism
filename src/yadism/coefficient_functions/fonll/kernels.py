@@ -66,7 +66,6 @@ def generate_light(esf, nl, pto_evol, pto_dis=None):
         light_weights = kernels.cc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[:nl],
             nl,
             esf.info.obs_name.is_parity_violating,
@@ -75,7 +74,6 @@ def generate_light(esf, nl, pto_evol, pto_dis=None):
         light_weights = light.kernels.nc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             nl,
             esf.info.obs_name.is_parity_violating,
         )
@@ -146,7 +144,6 @@ def generate_light_diff(esf, nl, pto_evol):
         light_weights = kernels.cc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[:nl],
             nl + 1,
             esf.info.obs_name.is_parity_violating,
@@ -155,7 +152,6 @@ def generate_light_diff(esf, nl, pto_evol):
         light_weights = light.kernels.nc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             nl + 1,
             esf.info.obs_name.is_parity_violating,
             skip_heavylight=True,
@@ -222,7 +218,6 @@ def generate_heavy_diff(esf, nl, pto_evol):
         wa = kernels.cc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[ihq - 1],
             nl,
             is_pv,
@@ -235,7 +230,6 @@ def generate_heavy_diff(esf, nl, pto_evol):
         asy_weights = heavy.kernels.nc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             nl,
             ihq,
             is_pv,
@@ -286,7 +280,6 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
         w = kernels.cc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[ihq - 1],
             ihq,
             is_pv,

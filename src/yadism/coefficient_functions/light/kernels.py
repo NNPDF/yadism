@@ -36,7 +36,6 @@ def generate(esf, nf, skip_heavylight=False):
         weights_even = kernels.cc_weights_even(
             coupling,
             esf.Q2,
-            kind,
             br.quark_names[:nf],
             nf,
             esf.info.obs_name.is_parity_violating,
@@ -47,7 +46,6 @@ def generate(esf, nf, skip_heavylight=False):
         weights_odd = kernels.cc_weights_odd(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[:nf],
             nf,
             esf.info.obs_name.is_parity_violating,
@@ -57,7 +55,6 @@ def generate(esf, nf, skip_heavylight=False):
     weights = nc_weights(
         esf.info.coupling_constants,
         esf.Q2,
-        kind,
         nf,
         esf.info.obs_name.is_parity_violating,
         skip_heavylight=skip_heavylight,
@@ -95,7 +92,7 @@ def generate(esf, nf, skip_heavylight=False):
     return [ns, g, s]
 
 
-def nc_weights(coupling_constants, Q2, kind, nf, is_pv, skip_heavylight=False):
+def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False):
     """
     Compute light NC weights.
 
@@ -105,8 +102,6 @@ def nc_weights(coupling_constants, Q2, kind, nf, is_pv, skip_heavylight=False):
             manager for coupling constants
         Q2 : float
             W virtuality
-        kind : str
-            structure function kind
         nf : int
             number of light flavors
         is_pv: bool
