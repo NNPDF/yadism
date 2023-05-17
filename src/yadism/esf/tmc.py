@@ -542,13 +542,8 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
     for parity conserving polarized structure function g1, for the two kinds
     described in the parent class :py:class:`EvaluatedStructureFunctionTMC`.
 
-<<<<<<< HEAD
-    The formula in question can be found in :cite:`Accardi:2008pc`,
-    :cite:`Khanpour:2017cha`, and references therein.
-=======
     The formula in question can be found in :eqref:`D.26` of :cite:`Accardi:2008pc`,
     :eqref:`D.10` of :cite:`Khanpour:2017cha`, and references therein.
->>>>>>> master
 
     Parameters
     ----------
