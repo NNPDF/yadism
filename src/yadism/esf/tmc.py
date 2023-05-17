@@ -41,9 +41,6 @@ def h2_ker(z, args):
     return 1 / xi * z
 
 
-h3_ker = h2_ker
-
-
 @nb.njit("f8(f8,f8[:])", cache=True)
 def g2_ker(z, _args):
     return 1 - z
@@ -51,13 +48,15 @@ def g2_ker(z, _args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def k1_ker(_z, _args):
-    # TODO: Check that following makes sense
     return 1
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def k2_ker(z, _args):
     return np.log(1 / z)
+
+
+h3_ker = k1_ker
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
@@ -325,9 +324,9 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 :nowrap:
 
                 \begin{align*}
-                k_2(\xi,Q^2) &= \int_\xi^1 du \log(\frac{v}{\xi})
+                k_2(\xi,Q^2) &= \int_\xi^1 du \log(\frac{u}{\xi})
                              \frac{g_1(u,Q^2)}{u}\\
-                             &= - \int_\xi^1 du \log(\frac{\xi}{v})
+                             &= - \int_\xi^1 du \log(\frac{\xi}{u})
                              \frac{g_1(u,Q^2)}{u}\\
                              &= ((z\to -\log(z)) \otimes g_1(z))(\xi)
                 \end{align*}
@@ -543,8 +542,13 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
     for parity conserving polarized structure function g1, for the two kinds
     described in the parent class :py:class:`EvaluatedStructureFunctionTMC`.
 
+<<<<<<< HEAD
     The formula in question can be found in :cite:`Accardi:2008pc`,
     :cite:`Khanpour:2017cha`, and references therein.
+=======
+    The formula in question can be found in :eqref:`D.26` of :cite:`Accardi:2008pc`,
+    :eqref:`D.10` of :cite:`Khanpour:2017cha`, and references therein.
+>>>>>>> master
 
     Parameters
     ----------
@@ -593,7 +597,14 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
         )
 
     def _get_result_APFEL(self):
-        """APFEL does not implement polarized TMC"""
+        # collect g1 results
+        g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
+        # Call to the raw integrals
+        k1out = self._k1()
+        # Combine the expressions
+        return (
+            self._factor_shifted * g1out + self._factor_k1_k2 * self._factor_k1 * k1out
+        )
 
 
 ESFTMCmap = {"F2": ESFTMC_F2, "FL": ESFTMC_FL, "F3": ESFTMC_F3, "g1": ESFTMC_g1}
