@@ -1,9 +1,10 @@
 name: regression
 
 on:
-  push:
-    branches-ignore:
-      - "*docs*"
+  workflow_dispatch:
+  # push:
+  #   branches-ignore:
+  #     - "*docs*"
 
 jobs:
   regression:
