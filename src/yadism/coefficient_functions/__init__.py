@@ -186,7 +186,12 @@ class Combiner:
 
         nl = nf - 1
         asy_comps[0].extend(
-            fonll.kernels.generate_light(self.esf, nl, self.esf.info.theory["pto_evol"])
+            fonll.kernels.generate_light(
+                self.esf,
+                nl,
+                self.esf.info.theory["pto_evol"],
+                self.esf.info.theory["pto"],
+            )
         )
         asy_comps[0].extend(heavy.kernels.generate_missing(self.esf, nl, nl + 1))
         asy_comps[0].extend(
