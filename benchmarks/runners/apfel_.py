@@ -179,13 +179,13 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(5, 1e3, 10).tolist()])
         obs_updates = observables.build(
             [
-            # "F2_total",
-            # "F2charm",
-            "F2_bottom"
-            # "FLtotal",
-            # "FLcharm",
-            # "F3total",
-            # "F3charm"
+                # "F2_total",
+                # "F2charm",
+                "F2_bottom"
+                # "FLtotal",
+                # "FLcharm",
+                # "F3total",
+                # "F3charm"
             ],
             kins,
             update={"prDIS": ["NC", "CC"]},
@@ -222,7 +222,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         sv = {
             # "XIR": [0.5, 2.0],
             # "XIF": [0.5, 2.0],
-            "NfFF": [3],
+            "NfFF": [5],
             "PTO": [pto],
             "FNS": ["FFN0"],
         }
@@ -237,12 +237,13 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         #         for x in observables.default_card["interpolation_xgrid"][3::3]
         #     ]
         # )
-        kins.extend([dict(x=0.001, Q2=Q**2) for Q in np.geomspace(3, 1e3, 10).tolist()])
+        kins.extend(
+            [dict(x=0.001, Q2=Q**2) for Q in np.geomspace(3, 1e3, 10).tolist()]
+        )
         obs_updates = observables.build(
             ["F2_charm"], kins, update={"prDIS": ["NC", "CC"]}
         )
         return obs_updates
-
 
     def benchmark_ffns(self, pto):
         self.run(

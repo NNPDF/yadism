@@ -32,7 +32,9 @@ def update(theory, observables):
     if "QED" in new_theory:
         new_theory["order"] = (new_theory["PTO"] + 1, new_theory.pop("QED"))
     if new_theory["FNS"] == "FFN0":
-        new_obs["observables"] = {key+"asy": value for key,value in new_obs["observables"].items()}
+        new_obs["observables"] = {
+            key + "asy": value for key, value in new_obs["observables"].items()
+        }
     return new_theory, new_obs
 
 
