@@ -32,7 +32,6 @@ def generate(esf, ihq):
         w = kernels.cc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[ihq - 1],
             ihq,
             is_pv,

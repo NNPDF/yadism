@@ -50,7 +50,6 @@ def generate(esf, nf, ihq):
         w = kernels.cc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             br.quark_names[ihq - 1],
             nf,
             is_pv,
@@ -66,7 +65,6 @@ def generate(esf, nf, ihq):
         weights = nc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            kind,
             nf,
             ihq,
             is_pv,
@@ -109,7 +107,6 @@ def generate_missing(esf, nf, ihq, icoupl=None):
     weights = light_nc_weights(
         esf.info.coupling_constants,
         esf.Q2,
-        kind,
         nf,
         esf.info.obs_name.is_parity_violating,
     )
@@ -118,7 +115,7 @@ def generate_missing(esf, nf, ihq, icoupl=None):
     return (kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),)
 
 
-def nc_weights(coupling_constants, Q2, kind, nf, ihq, is_pv):
+def nc_weights(coupling_constants, Q2, nf, ihq, is_pv):
     """
     Compute heavy NC weights.
 
@@ -128,8 +125,6 @@ def nc_weights(coupling_constants, Q2, kind, nf, ihq, is_pv):
         manager for coupling constants
     Q2 : float
         boson virtuality
-    kind : str
-        structure function kind
     nf : int
         number of light flavors
     ihq : int
