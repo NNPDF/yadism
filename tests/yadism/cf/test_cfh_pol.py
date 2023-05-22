@@ -54,27 +54,7 @@ def test_cg_NLO():
             np.testing.assert_allclose(
                 a_1,
                 a_2,
-                err_msg="Axial vector-axial vector Coefficients and vector-vector coefficients at NLO should be the same, but are not",
-            )
-
-
-@pytest.mark.skip
-def test_cg_NNLO():
-    Q2 = 200
-    esf1 = MockESF("g1_charm", 0.1, Q2)
-    esf2 = MockESF("F2_charm", 0.1, Q2)
-    m2hq = 2
-    for nf in [3, 4]:
-        for z in [1e-1, 1e-2, 1e-3]:
-            cg_1 = h_g1_nc.GluonVV(esf1, nf, m2hq=m2hq)
-            cg_2 = h_f2_nc.GluonVV(esf2, nf, m2hq=m2hq)
-            order = lambda pc, o="NNLO": pc.__getattribute__("NNLO")()
-            a_1 = order(cg_1).reg(z, order(cg_1).args["reg"])
-            a_2 = order(cg_2).reg(z, order(cg_2).args["reg"])
-            np.testing.assert_allclose(
-                a_1,
-                a_2,
-                err_msg="g1 and F2 coefficients at NNLO should be the same, but are not",
+                err_msg="Gluon VV & AA coefficients at NLO should be the same, but are not",
             )
 
 
@@ -97,7 +77,7 @@ def test_dq():
             )
 
 
-def test_cg_NNLO():
+def test_cg_NNLO_NS_glfl():
     Q2 = 200
     esf1 = MockESF("gL_charm", 0.1, Q2)
     esf2 = MockESF("FL_charm", 0.1, Q2)
@@ -116,7 +96,7 @@ def test_cg_NNLO():
             )
 
 
-def test_cg_NNLO():
+def test_cg_NNLO_NS_g4f2():
     Q2 = 200
     esf1 = MockESF("g4_charm", 0.1, Q2)
     esf2 = MockESF("F2_charm", 0.1, Q2)
