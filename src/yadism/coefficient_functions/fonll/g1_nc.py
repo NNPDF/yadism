@@ -58,23 +58,31 @@ class AsyNNLLGluon(pc.PartonicChannelAsy):
 
 class PdfMatchingLLNonSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
-        pass
-        # TODO: inset here the LL (L**2) terms for the matching
-        # NOTE: if equals to the unpolarized case, just import from there.
-        # you can use the syntax:
-        # return RSL(sing=A_qq_sing, loc=A_qq_loc, args=[self.L])
+        return RSL(
+            raw.pdf_matching_LL_reg,
+            raw.pdf_matching_LL_sing,
+            raw.pdf_matching_LL_loc,
+            args=[self.L],
+        )
 
 
 class PdfMatchingNLLNonSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
-        pass
-        # TODO: inset here the NLL (L) terms for the matching
+        return RSL(
+            raw.pdf_matching_NLL_reg,
+            raw.pdf_matching_NLL_sing,
+            raw.pdf_matching_NLL_loc,
+            args=[self.L],
+        )
 
 
 class PdfMatchingNNLLNonSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
-        pass
-        # TODO: inset here the NNLL (L) terms for the matching
+        return RSL(
+            raw.pdf_matching_NNLL_reg,
+            raw.pdf_matching_NNLL_sing,
+            raw.pdf_matching_NNLL_loc,
+        )
 
 
 class PdfMatchingNNNLLNonSinglet(pc.PartonicChannelAsy):
