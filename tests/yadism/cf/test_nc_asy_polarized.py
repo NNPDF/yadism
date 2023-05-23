@@ -5,7 +5,7 @@ from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
 from yadism.coefficient_functions.fonll import g1_nc_raw
 
 
-from test_nc_asy import MockESF
+from utils import MockESF
 
 
 class Test_g1_raw:

@@ -3,7 +3,6 @@
 This is strictly following the original reference :cite:`forte-fonll`, and
 implements the prescription at coefficient functions level.
 
-# TODO: Implement Polarized FONLL
 
 """
 import numpy as np
