@@ -96,9 +96,7 @@ class Test_g1_raw:
             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
             np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
 
-    def test_g(
-        self,
-    ):
+    def test_g(self):
         refs_LL = [
             178.94641371183462,
             29.519837613005762,
