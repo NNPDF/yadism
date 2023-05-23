@@ -49,19 +49,15 @@ class Combiner:
         comps = []
 
         family = self.obs_name.flavor_family
-
-        if family == "asy":
-            comps.extend(self.asy_components())
-        else:
-            # Adding light component
-            if family in ["light", "total"]:
-                comps.append(self.light_component())
-            if family == "heavy":
-                #  the only case in which an heavy contribution is not present in those
-                #  accounted for in total, it's whene heavy already became heavylight
-                comps.extend(self.heavylight_components())
-            if family in ["heavy", "total"]:
-                comps.extend(self.heavy_components())
+        # Adding light component
+        if family in ["light", "total"]:
+            comps.append(self.light_component())
+        if family == "heavy" and not self.esf.info.obs_name.is_asy:
+            #  the only case in which an heavy contribution is not present in those
+            #  accounted for in total, it's whene heavy already became heavylight
+            comps.extend(self.heavylight_components())
+        if family in ["heavy", "total"]:
+            comps.extend(self.heavy_components())
         return comps
 
     def light_component(self):
@@ -132,7 +128,27 @@ class Combiner:
             if hq not in (0, sfh):
                 continue
 
-            if sfh == nf:
+            if self.esf.info.obs_name.is_asy:
+                nl = nf - 1
+                if sfh not in self.intrinsic:
+                    heavy_comps[sfh].extend(
+                        self.damp_elems(
+                            nl,
+                            fonll.kernels.generate_heavy_diff(
+                                self.esf, nl, self.esf.info.theory["pto_evol"]
+                            ),
+                        )
+                    )
+                else:
+                    heavy_comps[sfh].extend(
+                        self.damp_elems(
+                            nl,
+                            fonll.kernels.generate_heavy_intrinsic_diff(
+                                self.esf, nl, self.esf.info.theory["pto_evol"]
+                            ),
+                        )
+                    )
+            elif sfh == nf:
                 # then it is FONLL
                 nl = nf - 1
                 heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nl, ihq=sfh))
@@ -164,77 +180,12 @@ class Combiner:
                     heavy_comps[sfh].extend(
                         intrinsic.kernels.generate(self.esf, ihq=sfh)
                     )
-
             for ihq in range(sfh + 1, 7):
-                if masses[ihq]:
+                if masses[ihq] and not self.esf.info.obs_name.is_asy:
                     heavy_comps[sfh].extend(
                         heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
                     )
             comps.append(heavy_comps[sfh])
-
-        return comps
-
-    def asy_components(self):
-        nf = self.nf
-        hq = self.obs_name.hqnumber
-        masses = self.masses
-
-        comps = []
-        asy_comps = {}
-
-        asy_comps[0] = Component(0)
-
-        nl = nf - 1
-        asy_comps[0].extend(
-            fonll.kernels.generate_light(
-                self.esf,
-                nl,
-                self.esf.info.theory["pto_evol"],
-                self.esf.info.theory["pto"],
-            )
-        )
-        asy_comps[0].extend(heavy.kernels.generate_missing(self.esf, nl, nl + 1))
-        asy_comps[0].extend(
-            self.damp_elems(
-                nl,
-                fonll.kernels.generate_light_diff(
-                    self.esf,
-                    nl,
-                    self.esf.info.theory["pto_evol"],
-                ),
-            )
-        )
-        comps.append(asy_comps[0])
-
-        for sfh in range(nf, 7):
-            # exclude sfh=3, since heavy contributions are there for [4,5,6]
-            # if it's ZM you don't even have the component
-            if sfh not in masses or not masses[sfh]:
-                continue
-
-            asy_comps[sfh] = Component(sfh)
-            if hq not in (0, sfh):
-                continue
-
-            if sfh not in self.intrinsic:
-                asy_comps[sfh].extend(
-                    self.damp_elems(
-                        nl,
-                        fonll.kernels.generate_heavy_diff(
-                            self.esf, nl, self.esf.info.theory["pto_evol"]
-                        ),
-                    )
-                )
-            else:
-                asy_comps[sfh].extend(
-                    self.damp_elems(
-                        nl,
-                        fonll.kernels.generate_heavy_intrinsic_diff(
-                            self.esf, nl, self.esf.info.theory["pto_evol"]
-                        ),
-                    )
-                )
-            comps.append(asy_comps[sfh])
         return comps
 
     def damp_elems(self, nl, elems):

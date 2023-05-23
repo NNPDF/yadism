@@ -14,7 +14,8 @@ xs = [
 kinds = sfs + xs + [fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
-asys = [h + "asy" for h in heavys]
+heavyasys = [h + "asy" for h in heavys]
+asys = heavyasys + ["lightasy", "totalasy"]
 heavylights = [h + "light" for h in heavys]
 external_flavors = heavys + ["light", "total"] + asys + heavylights
 # internally we allow in addition for the flavor families
@@ -125,12 +126,12 @@ class ObservableName:
     @property
     def is_raw_heavy(self):
         """Is it a raw heavy flavor? i.e. charm, bottom, or, top"""
-        return self.flavor in heavys
+        return self.flavor in heavys or self.flavor in heavyasys
 
     @property
     def is_asy(self):
-        """Is it a asymptotic raw heavy flavor? i.e. charmasy, bottomasy, or, topasy"""
-        return self.flavor in asys
+        """Is it a asymptotic flavor? i.e. charmasy, bottomasy, topasy, totalasy, or lightasy"""
+        return "asy" in self.flavor
 
     @property
     def is_heavylight(self):
@@ -147,8 +148,8 @@ class ObservableName:
         """Abstract flavor family name"""
         if self.is_raw_heavy:
             return "heavy"
-        if self.is_asy:
-            return "asy"
+        # if self.is_asy:
+        #     return "asy"
         if self.is_heavylight:
             return "light"
         return self.flavor

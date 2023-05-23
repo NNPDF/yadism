@@ -245,8 +245,8 @@ def generate_heavy_diff(esf, nl, pto_evol):
                                 fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
                             )
                         )
-    if esf.info.obs_name.flavor_family == "asy":
-        return tuple([asy for asy in asys])
+    if esf.info.obs_name.is_asy:
+        return asys
     return (*lights, *asys)
 
 
