@@ -2,7 +2,7 @@ import numba as nb
 import numpy as np
 from eko import constants, interpolation
 from eko.mellin import Path
-from ekore.harmonics import compute_cache
+from ekore.harmonics import cache
 from ekore.operator_matrix_elements.unpolarized.space_like import as2
 from numpy.testing import assert_allclose
 from scipy.integrate import quad
@@ -47,10 +47,9 @@ def yad_convolute(x, q):
 def inverse_mellin(x):
     def quad_ker_talbot(u, func):
         path = Path(u, np.log(x), True)
-        sx = compute_cache(path.n, 3, True)
-        sx = [np.array(s) for s in sx]
+        sx_cache = cache.reset()
         integrand = path.prefactor * x ** (-path.n) * path.jac
-        gamma = func(path.n, sx, L=0) * mellin_f(path.n)
+        gamma = func(path.n, sx_cache, L=0) * mellin_f(path.n)
         return np.real(gamma * integrand)
 
     return quad(

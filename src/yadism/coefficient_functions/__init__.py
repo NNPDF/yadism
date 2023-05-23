@@ -1,4 +1,5 @@
 import numpy as np
+from eko.matchings import nf_default
 
 from . import fonll, heavy, intrinsic, kernels, light
 from .partonic_channel import EmptyPartonicChannel
@@ -41,7 +42,7 @@ class Combiner:
         self.masses = {4 + i: not mass for i, mass in enumerate(esf.info.ZMq)}
         self.intrinsic = esf.info.intrinsic_range
         self.obs_name = esf.info.obs_name
-        self.nf = esf.info.threshold.nf(esf.Q2)
+        self.nf = nf_default(esf.Q2, esf.info.threshold)
         self.target = esf.info.target
 
     def collect(self):

@@ -23,6 +23,8 @@ import pandas as pd
 import yaml
 from eko.couplings import Couplings, couplings_mod_ev
 from eko.io import dictlike, runcards, types
+from eko.matchings import Atlas, nf_default
+from eko.quantities.heavy_quarks import MatchingScales
 
 from . import observable_name as on
 from .esf.result import ESFResult, EXSResult
@@ -100,17 +102,25 @@ class Output(dict):
         method = runcards.Legacy.MOD_EV2METHOD.get(theory["ModEv"], theory["ModEv"])
         method = dictlike.load_enum(types.EvolutionMethod, method)
         method = couplings_mod_ev(method)
-        masses = [mq.value**2 for mq in new_eko_theory.quark_masses]
-        thresholds_ratios = np.power(list(iter(new_eko_theory.matching)), 2.0)
+        masses = [mq**2 for mq, _ in new_eko_theory.heavy.masses]
+        thresholds_ratios = np.power(new_eko_theory.heavy.matching_ratios, 2)
         sc = Couplings(
             couplings=new_eko_theory.couplings,
             order=new_eko_theory.order,
             method=method,
             masses=masses,
-            hqm_scheme=new_eko_theory.quark_masses_scheme,
-            thresholds_ratios=thresholds_ratios,
+            hqm_scheme=new_eko_theory.heavy.masses_scheme,
+            thresholds_ratios=thresholds_ratios.tolist(),
         )
-        alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
+        atlas = Atlas(
+            matching_scales=MatchingScales(masses * thresholds_ratios),
+            origin=(theory["Q0"] ** 2, theory["nf0"]),
+        )
+        alpha_s = (
+            lambda muR: sc.a_s(muR**2, nf_to=nf_default(muR**2, atlas))
+            * 4.0
+            * np.pi
+        )
         alpha_qed = lambda _muR: theory["alphaqed"]
         return self.apply_pdf_alphas_alphaqed_xir_xif(
             lhapdf_like, alpha_s, alpha_qed, theory["XIR"], theory["XIF"]
