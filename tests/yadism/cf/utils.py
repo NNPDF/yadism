@@ -1,6 +1,6 @@
 from eko.thresholds import ThresholdsAtlas
-from yadism import observable_name as on
 
+from yadism import observable_name as on
 
 
 class MockCouplingConstants:
