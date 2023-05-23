@@ -423,7 +423,7 @@ def pdf_matching_NLL_loc(z, args):
             - 3 * np.log(1 - z) ** 2
             - 6 * Li2m1
         )
-    )
+    ).real
     L = args[0]
     return 1 / 2 * L * pqq_nf1_loc
 
@@ -465,7 +465,7 @@ def pdf_matching_NNLL_loc(z, args):
             + 18 * l * Li2
             - 18 * Li3
         )
-    )
+    ).real
     return TR * CF * aqq_loc - 1 / 4 * beta0Q * lo.pqq_local(z, args) * zeta2
 
 

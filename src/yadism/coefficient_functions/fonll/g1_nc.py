@@ -1,6 +1,7 @@
 from ..partonic_channel import RSL
 from . import g1_nc_raw as raw
 from . import partonic_channel as pc
+from ..light import g1_nc as light
 
 
 class AsyLLNonSinglet(pc.PartonicChannelAsy):
@@ -87,3 +88,8 @@ class PdfMatchingNNLLNonSinglet(pc.PartonicChannelAsy):
 
 class PdfMatchingNNNLLNonSinglet(pc.PartonicChannelAsy):
     pass
+
+
+class LightNonSingletShifted(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return light.NonSinglet(self.ESF, self.nf).NLO()
