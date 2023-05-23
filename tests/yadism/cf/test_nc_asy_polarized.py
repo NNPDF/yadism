@@ -1,42 +1,44 @@
 import numpy as np
+from utils import MockESF
 
 from yadism.coefficient_functions.fonll import g1_nc as f_g1_nc
-from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
 from yadism.coefficient_functions.fonll import g1_nc_raw
-
-
-from test_nc_asy import MockESF
+from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
 
 
 class Test_g1_raw:
     zs = [0.00001, 0.0123, 0.345, 0.678]
     Ls = [0, 1, 10]
 
-    def test_NS(
+    def test_ns(
         self,
     ):
         refs_LL = [
-            [0.888897777955557, 4 / 3],
-            [0.9000945316279121, 4 / 3],
-            [1.5186089906700588, 4 / 3],
-            [4.029493443754314, 4 / 3],
+            [-0.8888977777777778, 1.777795555733335, 4 / 3 - 0.000017777866667178354],
+            [-0.8998222222222222, 1.7999167538501342, 4 / 3 - 0.02200225967654294],
+            [-1.1955555555555555, 2.7141645462256148, 4 / 3 - 0.7522134103944623],
+            [-1.4915555555555555, 5.52104899930987, 4 / 3 - 2.014584415000407],
         ]
         refs_NLL = [
-            [-13.94911513397478, 4 / 9],
-            [-1.405375031934304, 4 / 9],
-            [4.158678491934721, 4 / 9],
-            [11.444746997216804, 4 / 9],
+            [21.060155130473856, -35.00927026444863, 4 / 9 + 0.00038564659661443766],
+            [8.42753185589569, -9.832906887829992, 4 / 9 + 0.16406642957947518],
+            [0.88835012027934, 3.2703283716553795, 4 / 9 + 0.44640613270293217],
+            [-2.667702147019777, 14.11244914423658, 4 / 9 - 2.119895055120172],
         ]
         refs_NNLL = [
-            [220.83984745527997, 530 / 27],
-            [5.728614886433739, 530 / 27],
-            [-4.654411613177409, 530 / 27],
-            [23.537168252038146, 530 / 27],
+            [-263.5626521950901, 484.40249965037003, 530 / 27 - 0.005980198364992292],
+            [-16.386701538397148, 22.11531642483089, 530 / 27 - 0.735761055979515],
+            [3.5128057221033555, -8.167217335280759, 530 / 27 + 2.5735901303492197],
+            [-15.611471367997643, 39.14863962003579, 530 / 27 - 0.2596281753250294],
         ]
         vals_NNLL = []
         for z in self.zs:
             vals_NNLL.append(
-                [g1_nc_raw.c2ns_NNLL_reg(z, [0]), g1_nc_raw.c2ns_NNLL_loc(z, [0])]
+                [
+                    g1_nc_raw.c2ns_NNLL_reg(z, [0]),
+                    g1_nc_raw.c2ns_NNLL_sing(z, [0]),
+                    g1_nc_raw.c2ns_NNLL_loc(z, [0]),
+                ]
             )
         np.testing.assert_allclose(vals_NNLL, refs_NNLL)
         for L in self.Ls:
@@ -44,15 +46,23 @@ class Test_g1_raw:
             vals_NLL = []
             for z in self.zs:
                 vals_LL.append(
-                    [g1_nc_raw.c2ns_LL_reg(z, [L]), g1_nc_raw.c2ns_LL_loc(z, [L])]
+                    [
+                        g1_nc_raw.c2ns_LL_reg(z, [L]),
+                        g1_nc_raw.c2ns_LL_sing(z, [L]),
+                        g1_nc_raw.c2ns_LL_loc(z, [L]),
+                    ]
                 )
                 vals_NLL.append(
-                    [g1_nc_raw.c2ns_NLL_reg(z, [L]), g1_nc_raw.c2ns_NLL_loc(z, [L])]
+                    [
+                        g1_nc_raw.c2ns_NLL_reg(z, [L]),
+                        g1_nc_raw.c2ns_NLL_sing(z, [L]),
+                        g1_nc_raw.c2ns_NLL_loc(z, [L]),
+                    ]
                 )
             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
             np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
 
-    def test_PS(
+    def test_ps(
         self,
     ):
         refs_LL = [
@@ -149,3 +159,22 @@ class Test_limits:
                 np.testing.assert_allclose(
                     heavy, asy, rtol=2.5e-1, err_msg=f"nf={nf}, o={o}"
                 )
+
+    def test_cps(self):
+        for nf in [3, 4]:
+            cps = h_g1_nc.SingletVV(self.esf, nf, m2hq=self.m2hq)
+            cpsasys = [
+                f_g1_nc.AsyLLSinglet(self.esf, nf, m2hq=self.m2hq),
+                f_g1_nc.AsyNLLSinglet(self.esf, nf, m2hq=self.m2hq),
+                f_g1_nc.AsyNNLLSinglet(self.esf, nf, m2hq=self.m2hq),
+            ]
+            heavy = []
+            asy = []
+            for z in self.zs:
+                order = lambda pc: pc.__getattribute__("NNLO")()
+                heavy.append(order(cps).reg(z, order(cps).args["reg"]))
+                b = 0.0
+                for cpsasy in cpsasys:
+                    b += order(cpsasy).reg(z, order(cpsasy).args["reg"])
+                asy.append(b)
+            np.testing.assert_allclose(heavy, asy, rtol=2.1e-1, err_msg=f"nf={nf}")
