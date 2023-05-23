@@ -20,17 +20,17 @@ class AsyNNLLNonSinglet(pc.PartonicChannelAsy):
         )
 
 
-class AsyLLPureSinglet(pc.PartonicChannelAsy):
+class AsyLLSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
         return RSL(raw.c2ps_LL_reg, args=[self.L])
 
 
-class AsyNLLPureSinglet(pc.PartonicChannelAsy):
+class AsyNLLSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
         return RSL(raw.c2ps_NLL_reg, args=[self.L])
 
 
-class AsyNNLLPureSinglet(pc.PartonicChannelAsy):
+class AsyNNLLSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
         return RSL(raw.c2ps_NNLL_reg, args=[self.L])
 

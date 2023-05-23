@@ -159,3 +159,24 @@ class Test_limits:
                 np.testing.assert_allclose(
                     heavy, asy, rtol=2.5e-1, err_msg=f"nf={nf}, o={o}"
                 )
+    def test_cps(self):
+        for nf in [3, 4]:
+            cps = h_g1_nc.SingletVV(self.esf, nf, m2hq=self.m2hq)
+            cpsasys = [
+                f_g1_nc.AsyLLSinglet(self.esf, nf, m2hq=self.m2hq),
+                f_g1_nc.AsyNLLSinglet(self.esf, nf, m2hq=self.m2hq),
+                f_g1_nc.AsyNNLLSinglet(self.esf, nf, m2hq=self.m2hq),
+            ]
+            heavy = []
+            asy = []
+            for z in self.zs:
+                    order = lambda pc: pc.__getattribute__("NNLO")()
+                    heavy.append(order(cps).reg(z, order(cps).args["reg"]))
+                    b = 0.0
+                    for cpsasy in cpsasys:
+                        if order(cpsasy):
+                            b += order(cpsasy).reg(z, order(cpsasy).args["reg"])
+                    asy.append(b)
+            np.testing.assert_allclose(
+                heavy, asy, rtol=2.1e-1, err_msg=f"nf={nf}"
+            )
