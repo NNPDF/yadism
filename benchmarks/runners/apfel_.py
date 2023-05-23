@@ -222,7 +222,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         sv = {
             # "XIR": [0.5, 2.0],
             # "XIF": [0.5, 2.0],
-            "NfFF": [4],
+            "NfFF": [5],
             "PTO": [pto],
             "FNS": ["FFN0"],
         }
@@ -241,7 +241,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             [dict(x=0.001, Q2=Q**2) for Q in np.geomspace(3, 1e3, 10).tolist()]
         )
         obs_updates = observables.build(
-            ["F2_bottom"], kins, update={"prDIS": ["NC", "CC"]}
+            ["F2_charm"], kins, update={"prDIS": ["NC", "CC"]}
         )
         return obs_updates
 

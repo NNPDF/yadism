@@ -121,7 +121,11 @@ class Combiner:
         for sfh in range(nf, 7):
             # exclude sfh=3, since heavy contributions are there for [4,5,6]
             # if it's ZM you don't even have the component
-            if sfh not in masses or not masses[sfh]:
+            if sfh not in masses:
+                continue
+
+            # There is no massive heavy contribution for ZM
+            if not masses[sfh]:
                 continue
 
             heavy_comps[sfh] = Component(sfh)
@@ -129,22 +133,21 @@ class Combiner:
                 continue
 
             if self.esf.info.obs_name.is_asy:
-                nl = nf - 1
                 if sfh not in self.intrinsic:
                     heavy_comps[sfh].extend(
                         self.damp_elems(
-                            nl,
+                            nf,
                             fonll.kernels.generate_heavy_diff(
-                                self.esf, nl, self.esf.info.theory["pto_evol"]
+                                self.esf, nf, self.esf.info.theory["pto_evol"]
                             ),
                         )
                     )
                 else:
                     heavy_comps[sfh].extend(
                         self.damp_elems(
-                            nl,
+                            nf,
                             fonll.kernels.generate_heavy_intrinsic_diff(
-                                self.esf, nl, self.esf.info.theory["pto_evol"]
+                                self.esf, nf, self.esf.info.theory["pto_evol"]
                             ),
                         )
                     )

@@ -126,8 +126,19 @@ def update_fns(theory):
                 theory[f"k{fl}Thr"] = 0.0
                 theory[f"ZM{fl}"] = True
             else:
+                # for these flavours the massive contribution is calculated,
+                # but they do not contribute to the number of running flavors?
                 theory[f"k{fl}Thr"] = np.inf
                 theory[f"ZM{fl}"] = False
+    # elif "FFN0" in fns:
+    #     # enforce correct settings moving all thresholds to 0 or oo
+    #     for k, fl in enumerate(hqfl):
+    #         if k + 4 <= nf:
+    #             theory[f"k{fl}Thr"] = 0.0
+    #             theory[f"ZM{fl}"] = False
+    #         else:
+    #             theory[f"k{fl}Thr"] = np.inf
+    #             theory[f"ZM{fl}"] = True
     else:
         raise ValueError(f"Scheme '{fns}' not recognized.")
 
