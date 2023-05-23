@@ -1,8 +1,5 @@
 import numpy as np
-import pytest
-from eko.thresholds import ThresholdsAtlas
 
-from yadism import observable_name as obs
 from yadism.coefficient_functions.heavy import f2_nc as h_f2_nc
 from yadism.coefficient_functions.heavy import f3_nc as h_f3_nc
 from yadism.coefficient_functions.heavy import fl_nc as h_fl_nc
@@ -10,34 +7,7 @@ from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
 from yadism.coefficient_functions.heavy import g4_nc as h_g4_nc
 from yadism.coefficient_functions.heavy import gl_nc as h_gl_nc
 
-
-class MockCouplingConstants:
-    def get_weight(self, _pid, _q2, qct):
-        if qct == "VV":
-            return 1
-        if qct == "VA":  # -->  must be 0 due to symmetry reasons
-            return 2
-        if qct == "AV":  # -->  must be 0 due to symmetry reasons
-            return 4
-        if qct == "AA":
-            return 8
-        raise ValueError(f"Unkown {qct}")
-
-
-class MockSF:
-    def __init__(self, n):
-        self.obs_name = obs.ObservableName(n)
-        self.coupling_constants = MockCouplingConstants()
-        self.m2hq = [1.0, 2.0, 3.0]
-        self.threshold = ThresholdsAtlas(self.m2hq)
-
-
-class MockESF:
-    def __init__(self, sf, x, Q2):
-        self.sf = MockSF(sf)
-        self.x = x
-        self.Q2 = Q2
-        self.process = "NC"
+from utils import MockESF
 
 
 def test_cg_NLO():
