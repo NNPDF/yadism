@@ -118,6 +118,9 @@ class Combiner:
         comps = []
 
         heavy_comps = {}
+        # The loop starts at nf because nf counts the number of quarks of which
+        # we are above the mass threshold. For these quarks the masses are not
+        # considered.
         for sfh in range(nf, 7):
             # exclude sfh=3, since heavy contributions are there for [4,5,6]
             # if it's ZM you don't even have the component
@@ -129,6 +132,10 @@ class Combiner:
                 continue
 
             heavy_comps[sfh] = Component(sfh)
+
+            # calculate only the contribution corresponding tho the observable
+            # i.e. charm for F_charm, bottom for F_bottom. In the case of
+            # F_total (if hq=0), sum over all massive contributions.
             if hq not in (0, sfh):
                 continue
 
@@ -154,7 +161,9 @@ class Combiner:
             elif sfh == nf:
                 # then it is FONLL
                 nl = nf - 1
-                heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nl, ihq=sfh))
+                heavy_comps[sfh].extend(
+                    heavy.kernels.generate(self.esf, nl, ihq=sfh)
+                )  # FFNS3
                 if sfh not in self.intrinsic:
                     heavy_comps[sfh].extend(
                         self.damp_elems(

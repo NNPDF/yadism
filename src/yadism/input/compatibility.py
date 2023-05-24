@@ -113,13 +113,16 @@ def update_fns(theory):
     nf = theory["NfFF"]
 
     if "FONLL" in fns:
+        # above kbThr threshold FONLL is the same as ZM-VFNS,
+        # between kcThr and kbThr the structure function is defined as F3 + Fd
+        # below kcThr FFNS with nf=3 flavours is employed
         theory["ZMc"] = False
         theory["ZMb"] = False
         theory["ZMt"] = True
     elif fns == "ZM-VFNS":
         for fl in hqfl:
             theory[f"ZM{fl}"] = True
-    elif "FFN" in fns:
+    elif "FFNS" in fns:
         # enforce correct settings moving all thresholds to 0 or oo
         for k, fl in enumerate(hqfl):
             if k + 4 <= nf:
@@ -130,15 +133,18 @@ def update_fns(theory):
                 # but they do not contribute to the number of running flavors?
                 theory[f"k{fl}Thr"] = np.inf
                 theory[f"ZM{fl}"] = False
-    # elif "FFN0" in fns:
-    #     # enforce correct settings moving all thresholds to 0 or oo
-    #     for k, fl in enumerate(hqfl):
-    #         if k + 4 <= nf:
-    #             theory[f"k{fl}Thr"] = 0.0
-    #             theory[f"ZM{fl}"] = False
-    #         else:
-    #             theory[f"k{fl}Thr"] = np.inf
-    #             theory[f"ZM{fl}"] = True
+    elif "FFN0" in fns:
+        # enforce correct settings moving all thresholds to 0 or oo
+        for k, fl in enumerate(hqfl):
+            if k + 4 <= nf:
+                import ipdb
+
+                ipdb.set_trace()
+                theory[f"k{fl}Thr"] = 0.0
+                theory[f"ZM{fl}"] = False
+            else:
+                theory[f"k{fl}Thr"] = np.inf
+                theory[f"ZM{fl}"] = True
     else:
         raise ValueError(f"Scheme '{fns}' not recognized.")
 
