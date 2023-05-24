@@ -179,6 +179,8 @@ def generate_light_diff(esf, nl, pto_evol):
             light_weights["ns"], fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq)
         )
         asy.append(-km)
+    if esf.info.obs_name.is_asy:
+        return [-a for a in asy]
     return (k, *asy)
 
 
@@ -246,7 +248,7 @@ def generate_heavy_diff(esf, nl, pto_evol):
                             )
                         )
     if esf.info.obs_name.is_asy:
-        return asys
+        return [-asy for asy in asys]
     return (*lights, *asys)
 
 

@@ -222,7 +222,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         sv = {
             # "XIR": [0.5, 2.0],
             # "XIF": [0.5, 2.0],
-            "NfFF": [5],
+            "NfFF": [3],
             "PTO": [pto],
             "FNS": ["FFN0"],
         }

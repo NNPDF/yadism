@@ -115,14 +115,19 @@ def update_fns(theory):
     if "FONLL" in fns:
         # above kbThr threshold FONLL is the same as ZM-VFNS,
         # between kcThr and kbThr the structure function is defined as F3 + Fd
-        # below kcThr FFNS with nf=3 flavours is employed
+        # below kcThr FFNS with nf=3 flavours is employed due to theta function
+        # prepended to Fd
+
+        # because of this we call the resutling FONLL function F3 even above
+        # kcThr, namely it is not ZM everywhere
         theory["ZMc"] = False
+
         theory["ZMb"] = False
         theory["ZMt"] = True
     elif fns == "ZM-VFNS":
         for fl in hqfl:
             theory[f"ZM{fl}"] = True
-    elif "FFNS" in fns:
+    elif "FFN" in fns:
         # enforce correct settings moving all thresholds to 0 or oo
         for k, fl in enumerate(hqfl):
             if k + 4 <= nf:
@@ -130,18 +135,9 @@ def update_fns(theory):
                 theory[f"ZM{fl}"] = True
             else:
                 # for these flavours the massive contribution is calculated,
-                # but they do not contribute to the number of running flavors?
+                # but they do not contribute to the number of running flavors
                 theory[f"k{fl}Thr"] = np.inf
                 theory[f"ZM{fl}"] = False
-    elif "FFN0" in fns:
-        # enforce correct settings moving all thresholds to 0 or oo
-        for k, fl in enumerate(hqfl):
-            if k + 4 <= nf:
-                theory[f"k{fl}Thr"] = 0.0
-                theory[f"ZM{fl}"] = False
-            else:
-                theory[f"k{fl}Thr"] = np.inf
-                theory[f"ZM{fl}"] = True
     else:
         raise ValueError(f"Scheme '{fns}' not recognized.")
 
@@ -151,7 +147,7 @@ def update_fns(theory):
 
     # fix FONLL-B and introduce PTODIS
     if fns == "FONLL-B":
-        theory["PTODIS"] = 2
-        theory["PTO"] = 1
+        theory["PTODIS"] = 2  # massive
+        theory["PTO"] = 1  # massless (thus evolution) and asy
     else:
         theory["PTODIS"] = theory["PTO"]
