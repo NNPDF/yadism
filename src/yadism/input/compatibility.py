@@ -137,9 +137,6 @@ def update_fns(theory):
         # enforce correct settings moving all thresholds to 0 or oo
         for k, fl in enumerate(hqfl):
             if k + 4 <= nf:
-                import ipdb
-
-                ipdb.set_trace()
                 theory[f"k{fl}Thr"] = 0.0
                 theory[f"ZM{fl}"] = False
             else:
