@@ -28,8 +28,9 @@ import rich.markdown
 import rich.panel
 import rich.progress
 from eko import basis_rotation as br
-from eko import thresholds
+from eko import matchings
 from eko.interpolation import InterpolatorDispatcher, XGrid
+from eko.quantities.heavy_quarks import MatchingScales
 
 from . import log, observable_name
 from .coefficient_functions.coupling_constants import CouplingConstants
@@ -121,8 +122,9 @@ class Runner:
         )
         managers = dict(
             interpolator=interpolator,
-            threshold=thresholds.ThresholdsAtlas(
-                masses=masses, thresholds_ratios=thresholds_ratios
+            threshold=matchings.Atlas(
+                matching_scales=MatchingScales(list(masses * thresholds_ratios)),
+                origin=(new_theory["Q0"] ** 2, new_theory["nf0"]),
             ),
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,

@@ -1,5 +1,5 @@
 import pytest
-from eko.thresholds import ThresholdsAtlas
+from eko.matchings import Atlas
 from test_nc_n3lo_color_fact import MockCouplingConstants as MockCC
 
 from yadism import observable_name as on
@@ -27,7 +27,7 @@ class MockSF:
         self.obs_name = on.ObservableName(n)
         self.coupling_constants = MockCouplingConstants()
         self.m2hq = [1.0, 2.0, 3.0]
-        self.threshold = ThresholdsAtlas(self.m2hq)
+        self.threshold = Atlas(matching_scales=self.m2hq, origin=(1.65**2, 4))
 
 
 class MockESF:

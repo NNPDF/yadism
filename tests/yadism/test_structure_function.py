@@ -4,8 +4,8 @@ Test SF and EvaluatedStructureFunction
 
 import numpy as np
 import pytest
-from eko import thresholds
 from eko.interpolation import InterpolatorDispatcher, XGrid
+from eko.matchings import Atlas
 
 from yadism import observable_name
 from yadism.esf import scale_variations as sv
@@ -22,7 +22,7 @@ interpolator = InterpolatorDispatcher(xg, 1, False)
 coupling_constants = MockObj()
 coupling_constants.obs_config = dict(process="EM")
 coupling_constants.get_weight = lambda q, q2, t: 1
-threshold = thresholds.ThresholdsAtlas([50.0, np.inf, np.inf])
+threshold = Atlas(matching_scales=[50.0, np.inf, np.inf], origin=(1.65**2, 4))
 sv_manager = sv.ScaleVariations(
     order=0, interpolator=interpolator, activate_ren=False, activate_fact=False
 )

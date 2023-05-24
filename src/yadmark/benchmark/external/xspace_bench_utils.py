@@ -2,6 +2,8 @@
 import numpy as np
 from eko.couplings import Couplings, couplings_mod_ev
 from eko.io import dictlike, runcards, types
+from eko.matchings import Atlas, nf_default
+from eko.quantities.heavy_quarks import MatchingScales
 
 from yadism import observable_name as on
 
@@ -86,17 +88,20 @@ def compute_xspace_bench_data(theory, observables, pdf):
     method = runcards.Legacy.MOD_EV2METHOD.get(theory["ModEv"], theory["ModEv"])
     method = dictlike.load_enum(types.EvolutionMethod, method)
     method = couplings_mod_ev(method)
-    masses = [mq.value**2 for mq in new_eko_theory.quark_masses]
-    thresholds_ratios = np.power(list(iter(new_eko_theory.matching)), 2.0)
+    masses = [mq**2 for mq, _ in new_eko_theory.heavy.masses]
+    thresholds_ratios = np.power(new_eko_theory.heavy.matching_ratios, 2)
     sc = Couplings(
         couplings=new_eko_theory.couplings,
         order=new_eko_theory.order,
         method=method,
         masses=masses,
-        hqm_scheme=new_eko_theory.quark_masses_scheme,
-        thresholds_ratios=thresholds_ratios,
+        hqm_scheme=new_eko_theory.heavy.masses_scheme,
+        thresholds_ratios=thresholds_ratios.tolist(),
     )
-
+    atlas = Atlas(
+        matching_scales=MatchingScales(masses * thresholds_ratios),
+        origin=(theory["Qref"] ** 2, theory["nfref"]),
+    )
     num_tab = {}
     # loop over functions
     for obs_name in observables["observables"]:
@@ -116,7 +121,7 @@ def compute_xspace_bench_data(theory, observables, pdf):
         for q2 in q2s:
             xs = []
 
-            alphas = sc.a_s(q2) * 4.0 * np.pi
+            alphas = sc.a_s(q2, nf_to=nf_default(q2, atlas)) * 4.0 * np.pi
             y = 0.5
             f = 0.0
 
