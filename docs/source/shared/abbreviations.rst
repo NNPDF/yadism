@@ -61,6 +61,15 @@
 .. |N3LO| replace::
    :abbr:`N3LO (Next-to-Next-to-Next-to-Leading Order)`
 
+.. |LL| replace::
+   :abbr:`LL (Leading Log)`
+
+.. |NLL| replace::
+   :abbr:`NLL (Next-to-Leading Log)`
+
+.. |NNLL| replace::
+   :abbr:`NNLL (Next-to-Next-to-Leading Log)`
+
 .. -------
    objects
    -------
