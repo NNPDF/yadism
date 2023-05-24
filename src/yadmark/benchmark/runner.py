@@ -67,7 +67,7 @@ class Runner(BenchmarkRunner):
             )
             atlas = Atlas(
                 matching_scales=MatchingScales(masses * thresholds_ratios),
-                origin=(theory["Q0"] ** 2, theory["nf0"]),
+                origin=(theory["Qref"] ** 2, theory["nfref"]),
             )
             alpha_s = (
                 lambda muR: sc.a_s(muR**2, nf_to=nf_default(muR**2, atlas))
