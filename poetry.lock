@@ -3133,4 +3133,4 @@ pineappl = ["pineappl"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "79a2635e9adb126f376e866d2246c59fdb73c41f53286aebf0fe8e0908332b0a"
+content-hash = "b85a8ef84e69defed3a48fbd1c3836dc60992651756ebd50d15a315b0ce56265"
