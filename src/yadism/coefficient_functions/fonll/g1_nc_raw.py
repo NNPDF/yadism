@@ -1,3 +1,4 @@
+"""Polarized, asymptotic coefficient functions from :cite:`Bierenbaum:2022biv`."""
 import numba as nb
 import numpy as np
 
@@ -11,28 +12,28 @@ beta0Q = -4 / 3 * TR
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_LL_reg(z, args):
-    """|ref| implements LL regular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |LL| regular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     return 2 / 3 * (-4 / 3 - 4 * z / 3) * L**2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_LL_loc(z, args):
-    """|ref| implements LL local part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |LL| local part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     return (4 / 3 + 16 / 9 * np.log(1 - z)) * L**2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_LL_sing(z, args):
-    """|ref| implements LL singular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |LL| singular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     return 16 / (9 * (1 - z)) * L**2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_NLL_reg(z, args):
-    """|ref| implements NLL regular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NLL| regular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     return (
         (2 / 3) * (8 / 9 - 88 * z / 9 - 8 * np.log(z) / 3 - 8 / 3 * z * np.log(z)) * L
@@ -41,7 +42,7 @@ def c2ns_NLL_reg(z, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_NLL_loc(z, args):
-    """|ref| implements NLL local part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NLL| local part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     Li2m1 = li2(1 / (1 - z))
     return L * (
@@ -58,14 +59,14 @@ def c2ns_NLL_loc(z, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_NLL_sing(z, args):
-    """|ref| implements NLL singular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NLL| singular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     return (2 / 3) * (+80 / 9 + 16 * np.log(z) / 3) / (1 - z) * L
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_NNLL_reg(z, _args):
-    """|ref| implements NNLL regular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NNLL| regular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     l = np.log(z)
     l2 = l**2
     lm = np.log(1 - z)
@@ -93,7 +94,7 @@ def c2ns_NNLL_reg(z, _args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_NNLL_loc(z, _args):
-    """|ref| implements NNLL local part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NNLL| local part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     l = np.log(z)
     l2 = l**2
     lm = np.log(1 - z)
@@ -132,7 +133,7 @@ def c2ns_NNLL_loc(z, _args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns_NNLL_sing(z, _args):
-    """|ref| implements NNLL sigular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NNLL| sigular part of :eqref:`254`, :cite:`Bierenbaum:2022biv`."""
     l = np.log(z)
     l2 = l**2
     lm = np.log(1 - z)
@@ -156,14 +157,14 @@ def c2ns_NNLL_sing(z, _args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ps_LL_reg(z, args):
-    """|ref| implements LL part of :eqref:`261`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |LL| part of :eqref:`261`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     return 2 / 3 * (20 * (-1 + z) - 8 * (1 + z) * np.log(z)) * L**2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ps_NLL_reg(z, args):
-    """|ref| implements NLL part of :eqref:`261`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NLL| part of :eqref:`261`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     return (
         2
@@ -175,7 +176,7 @@ def c2ps_NLL_reg(z, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2ps_NNLL_reg(z, _args):
-    """|ref| implements NNLL part of :eqref:`261`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NNLL| part of :eqref:`261`, :cite:`Bierenbaum:2022biv`."""
     l = np.log(z)
     l2 = l**2
     lm = np.log(1 - z)
@@ -205,20 +206,20 @@ def c2ps_NNLL_reg(z, _args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c1g_LL_reg(z, args):
-    """|ref| implements LL part of :eqref:`29`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |LL| part of :eqref:`29`, :cite:`Bierenbaum:2022biv`."""
     L = args[0]
     return 2 * (2 * z - 1) * L
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c1g_NLL_reg(z, _args):
-    """|ref| implements NLL part of :eqref:`29`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NLL| part of :eqref:`29`, :cite:`Bierenbaum:2022biv`."""
     return 2 * ((3 - 4 * z) + (2 * z - 1) * np.log((1 - z) / z))
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2g_LL_reg(z, args):
-    """|ref| implements LL part of :eqref:`273`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |LL| part of :eqref:`273`, :cite:`Bierenbaum:2022biv`."""
     l = np.log(z)
     lm = np.log(1 - z)
     L = args[0]
@@ -229,7 +230,7 @@ def c2g_LL_reg(z, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2g_NLL_reg(z, args):
-    """|ref| implements NLL part of :eqref:`273`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NLL| part of :eqref:`273`, :cite:`Bierenbaum:2022biv`."""
     l = np.log(z)
     l2 = l**2
     lm = np.log(1 - z)
@@ -262,7 +263,7 @@ def c2g_NLL_reg(z, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2g_NNLL_reg(z, _args):
-    """|ref| implements NNLL part of :eqref:`273`, :cite:`Bierenbaum:2022biv`."""
+    """|ref| implements |NNLL| part of :eqref:`273`, :cite:`Bierenbaum:2022biv`."""
     l = np.log(z)
     l2 = l**2
     lm = np.log(1 - z)

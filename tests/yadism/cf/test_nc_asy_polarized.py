@@ -10,9 +10,7 @@ class Test_g1_raw:
     zs = [0.00001, 0.0123, 0.345, 0.678]
     Ls = [0, 1, 10]
 
-    def test_ns(
-        self,
-    ):
+    def test_ns(self):
         refs_LL = [
             [-0.8888977777777778, 1.777795555733335, 4 / 3 - 0.000017777866667178354],
             [-0.8998222222222222, 1.7999167538501342, 4 / 3 - 0.02200225967654294],
@@ -96,9 +94,7 @@ class Test_g1_raw:
             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
             np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
 
-    def test_g(
-        self,
-    ):
+    def test_g(self):
         refs_LL = [
             178.94641371183462,
             29.519837613005762,
