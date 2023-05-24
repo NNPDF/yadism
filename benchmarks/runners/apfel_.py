@@ -222,9 +222,9 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         sv = {
             # "XIR": [0.5, 2.0],
             # "XIF": [0.5, 2.0],
-            "NfFF": [3],
+            "NfFF": [6],
             "PTO": [pto],
-            "FNS": ["FFN0"],
+            "FNS": ["FFN06"],
         }
         return cartesian_product(sv)
 
