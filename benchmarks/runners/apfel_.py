@@ -231,17 +231,23 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
     @staticmethod
     def obs_updates_ffn0():
         kins = []
-        # kins.extend(
-        #     [
-        #         dict(x=x, Q2=10.0)
-        #         for x in observables.default_card["interpolation_xgrid"][3::3]
-        #     ]
-        # )
+        kins.extend(
+            [
+                dict(x=x, Q2=10.0)
+                for x in observables.default_card["interpolation_xgrid"][12::3]
+            ]
+        )
         kins.extend(
             [dict(x=0.001, Q2=Q**2) for Q in np.geomspace(3, 1e3, 10).tolist()]
         )
         obs_updates = observables.build(
-            ["F2_charm"], kins, update={"prDIS": ["NC", "CC"]}
+            [
+                "F2_charm",
+                "F2_bottom",
+                "F2_top",
+            ],
+            kins,
+            update={"prDIS": ["NC", "CC"]},
         )
         return obs_updates
 
