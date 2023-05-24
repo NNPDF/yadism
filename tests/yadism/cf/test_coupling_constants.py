@@ -336,4 +336,6 @@ class TestCKM2Matrix:
     def test_from_str(self):
         ra = (0.5 * np.random.rand(9) + 1.0) / 1.5
         ra_s = " ".join([str(x) for x in ra])
-        assert (coupl.CKM2Matrix(ra**2).m == coupl.CKM2Matrix.from_str(ra_s).m).all()
+        np.testing.assert_allclose(
+            coupl.CKM2Matrix(ra**2).m, coupl.CKM2Matrix.from_str(ra_s).m
+        )
