@@ -31,7 +31,7 @@ def update(theory, observables):
     # TODO: update Yadism syntax and remove PTO everywhere?
     if "QED" in new_theory:
         new_theory["order"] = (new_theory["PTO"] + 1, new_theory.pop("QED"))
-    if new_theory["FNS"] == "FFN0":
+    if "FFN0" in new_theory["FNS"]:
         new_obs["observables"] = {
             key + "asy": value for key, value in new_obs["observables"].items()
         }
