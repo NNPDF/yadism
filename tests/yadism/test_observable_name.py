@@ -67,7 +67,7 @@ class TestObservableName:
         # check asy
         oa = o.apply_asy()
         assert oa.is_asy
-        assert oa.flavor_family == "asy"
+        assert oa.flavor_family == "heavy"
         assert oa.hqnumber == 4
 
         # check heavylight
