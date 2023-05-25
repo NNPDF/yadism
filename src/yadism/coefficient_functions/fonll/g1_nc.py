@@ -1,7 +1,7 @@
+from ..light import g1_nc as light
 from ..partonic_channel import RSL
 from . import g1_nc_raw as raw
 from . import partonic_channel as pc
-from ..light import g1_nc as light
 
 
 class AsyLLNonSinglet(pc.PartonicChannelAsy):
@@ -59,26 +59,28 @@ class AsyNNLLGluon(pc.PartonicChannelAsy):
 
 class PdfMatchingLLNonSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
+        # NOTE: the LL contribution is the same as the unpolarized one.
         return RSL(
-            raw.pdf_matching_LL_reg,
-            raw.pdf_matching_LL_sing,
-            raw.pdf_matching_LL_loc,
+            pc.pdf_matching_LL_reg,
+            pc.pdf_matching_LL_sing,
+            pc.pdf_matching_LL_loc,
             args=[self.L],
         )
 
 
 class PdfMatchingNLLNonSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
+        # NOTE: the NLL contribution is the same as the unpolarized one.
         return RSL(
-            raw.pdf_matching_NLL_reg,
-            raw.pdf_matching_NLL_sing,
-            raw.pdf_matching_NLL_loc,
+            sing=pc.pdf_matching_NLL_sing,
+            loc=pc.pdf_matching_NLL_loc,
             args=[self.L],
         )
 
 
 class PdfMatchingNNLLNonSinglet(pc.PartonicChannelAsy):
     def NNLO(self):
+        # NOTE: the NNLL contribution is differs from the unpolarized one.
         return RSL(
             raw.pdf_matching_NNLL_reg,
             raw.pdf_matching_NNLL_sing,

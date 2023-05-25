@@ -1,8 +1,8 @@
 """Polarized, asymptotic coefficient functions from :cite:`Bierenbaum:2022biv`."""
 import numba as nb
 import numpy as np
+from eko.constants import CF, TR
 
-from eko.constants import TR, CF
 from ..special import li2, zeta2, zeta3
 from ..special.nielsen import nielsen
 from ..splitting_functions import lo
@@ -395,55 +395,6 @@ def c2g_NNLL_reg(z, _args):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_LL_loc(_z, args):
-    L = args[0]
-    return 1 / 4 * beta0Q * lo.pqq_local(_z, args) * L**2
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_LL_reg(z, args):
-    L = args[0]
-    return 1 / 4 * beta0Q * lo.pqq_reg(z, args) * L**2
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_LL_sing(z, args):
-    L = args[0]
-    return 1 / 4 * beta0Q * lo.pqq_sing(z, args) * L**2
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_NLL_loc(z, args):
-    Li2m1 = li2(1 / (1 - z))
-    pqq_nf1_loc = (4 / 9 * CF * TR) * (
-        -3
-        + 4
-        * (
-            np.pi**2
-            + (-10 + 6 * 1j * np.pi) * np.log(1 - z)
-            - 3 * np.log(1 - z) ** 2
-            - 6 * Li2m1
-        )
-    ).real
-    L = args[0]
-    return 1 / 2 * L * pqq_nf1_loc
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_NLL_reg(z, args):
-    pqq_nf1_reg = 16 / 9 * CF * TR * (-1 + 11 * z + 3 * (1 + z) * np.log(z))
-    L = args[0]
-    return 1 / 2 * L * pqq_nf1_reg
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_NLL_sing(z, args):
-    pqq_nf1_sing = CF * TR * (160 / 9 + 32 * np.log(z) / 3) / (z - 1)
-    L = args[0]
-    return 1 / 2 * L * pqq_nf1_sing
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
 def pdf_matching_NNLL_loc(z, args):
     l = np.log(z)
     l2 = l**2
@@ -467,7 +418,7 @@ def pdf_matching_NNLL_loc(z, args):
             - 18 * Li3
         )
     ).real
-    return TR * CF * aqq_loc - 1 / 4 * beta0Q * lo.pqq_local(z, args) * zeta2
+    return TR * CF * aqq_loc + 1 / 4 * beta0Q * 2 * lo.pqq_local(z, args) * zeta2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
@@ -479,7 +430,7 @@ def pdf_matching_NNLL_reg(z, args):
         + (-6 + 66 * z) * np.log(z)
         + 9 * (1 + z) * np.log(z) ** 2
     )
-    return TR * CF * aqq_reg - 1 / 4 * beta0Q * lo.pqq_reg(z, args) * zeta2
+    return TR * CF * aqq_reg + 1 / 4 * beta0Q * 2 * lo.pqq_reg(z, args) * zeta2
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
@@ -487,4 +438,4 @@ def pdf_matching_NNLL_sing(z, args):
     aqq_sing = (
         -224 / 27 - 4 / 9 * np.pi**2 - 40 * np.log(z) / 9 - 4 * np.log(z) ** 2 / 3
     ) / (z - 1)
-    return TR * CF * aqq_sing - 1 / 4 * beta0Q * lo.pqq_sing(z, args) * zeta2
+    return TR * CF * aqq_sing + 1 / 4 * beta0Q * 2 * lo.pqq_sing(z, args) * zeta2
