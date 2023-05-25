@@ -60,7 +60,7 @@ observables_card = {
     "TargetDIS": "proton",
     "interpolation_is_log": True,
     "interpolation_polynomial_degree": 4,
-    "interpolation_xgrid": interpolation.make_lambert_grid(60).tolist(),
+    "interpolation_xgrid": interpolation.lambertgrid(60).tolist(),
     "observables": {"XSHERANC": []},
     "prDIS": "NC",
     "NCPositivityCharge": None,
