@@ -151,48 +151,6 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
     # and thus we can NOT probe as low Q2 as before.
 
     @staticmethod
-    def theory_updates_ffns(pto):
-        sv = {
-            # "XIR": [0.5, 2.0],
-            # "XIF": [0.5, 2.0],
-            "PTO": [pto],
-            "FNS": ["FFNS"],
-            # "mb": 1e6,
-            # "mt": 1e6,
-        }
-        # theory_updates = cartesian_product(sv)
-        # add FONLL
-        # sv["FNS"] = ["FONLL-A"]
-        sv["NfFF"] = [5]
-        # theory_updates.append(cartesian_product(sv))
-        return cartesian_product(sv)
-
-    @staticmethod
-    def obs_updates_ffns():
-        kins = []
-        # kins.extend(
-        #     [
-        #         dict(x=x, Q2=10.0)
-        #         for x in observables.default_card["interpolation_xgrid"][3::3]
-        #     ]
-        # )
-        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(5, 1e3, 10).tolist()])
-        obs_updates = observables.build(
-            [
-                # "F2_total",
-                # "F2charm",
-                "F2_bottom"
-                # "FLtotal",
-                # "FLcharm",
-                # "F3total",
-                # "F3charm"
-            ],
-            kins,
-            update={"prDIS": ["NC", "CC"]},
-        )
-        return obs_updates
-
-    @staticmethod
     def theory_updates_zm(pto):
         sv = {
             # "XIR": [0.5, 2.0],
@@ -217,14 +175,70 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         )
         return obs_updates
 
+    def benchmark_zm(self, pto):
+        self.run(
+            self.theory_updates_zm(pto),
+            self.obs_updates_zm(),
+            ["ToyLH"],
+        )
+
+    @staticmethod
+    def theory_updates_ffns(pto):
+        sv = {
+            # "XIR": [0.5, 2.0],
+            # "XIF": [0.5, 2.0],
+            "PTO": [pto],
+            "FNS": ["FFNS"],
+            # "mb": 1e6,
+            # "mt": 1e6,
+        }
+        # theory_updates = cartesian_product(sv)
+        # add FONLL
+        # sv["FNS"] = ["FONLL-A"]
+        sv["NfFF"] = [5]
+        # theory_updates.append(cartesian_product(sv))
+        return cartesian_product(sv)
+
+    @staticmethod
+    def obs_updates_ffns():
+        kins = []
+        kins.extend(
+            [
+                dict(x=x, Q2=10.0)
+                for x in observables.default_card["interpolation_xgrid"][12::3]
+            ]
+        )
+        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(5, 1e3, 10).tolist()])
+        obs_updates = observables.build(
+            [
+                # "F2_total",
+                # "F2charm",
+                "F2_bottom"
+                # "FLtotal",
+                # "FLcharm",
+                # "F3total",
+                # "F3charm"
+            ],
+            kins,
+            update={"prDIS": ["NC", "CC"]},
+        )
+        return obs_updates
+
+    def benchmark_ffns(self, pto):
+        self.run(
+            self.theory_updates_ffns(pto),
+            self.obs_updates_ffns(),
+            ["ToyLH"],
+        )
+
     @staticmethod
     def theory_updates_ffn0(pto):
         sv = {
             # "XIR": [0.5, 2.0],
             # "XIF": [0.5, 2.0],
-            "NfFF": [4],
+            "NfFF": [3],
             "PTO": [pto],
-            "FNS": ["FFN04"],
+            "FNS": ["FFN03"],
         }
         return cartesian_product(sv)
 
@@ -249,23 +263,14 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
                 # "F2_total",
             ],
             kins,
-            update={"prDIS": ["NC", "CC"]},
+            update={
+                "prDIS": [
+                    "NC",
+                    # "CC",
+                ]
+            },
         )
         return obs_updates
-
-    def benchmark_ffns(self, pto):
-        self.run(
-            self.theory_updates_ffns(pto),
-            self.obs_updates_ffns(),
-            ["ToyLH"],
-        )
-
-    def benchmark_zm(self, pto):
-        self.run(
-            self.theory_updates_zm(pto),
-            self.obs_updates_zm(),
-            ["ToyLH"],
-        )
 
     def benchmark_ffn0(self, pto):
         self.run(
@@ -290,7 +295,7 @@ class ApfelICBenchmark(ApfelBenchmark):
         obs = [
             {
                 "prDIS": "NC",
-                "observables": {f: kinematics for f in ["F2charm", "FLcharm"]},
+                "observables": {f: kinematics for f in ["F2_charm", "FL_charm"]},
             },
         ]
         if allow_cc:
@@ -298,7 +303,7 @@ class ApfelICBenchmark(ApfelBenchmark):
                 {
                     "prDIS": "CC",
                     "observables": {
-                        f: kinematics for f in ["F2charm", "FLcharm", "F3charm"]
+                        f: kinematics for f in ["F2_charm", "FL_charm", "F3_charm"]
                     },
                 }
             )
@@ -307,10 +312,10 @@ class ApfelICBenchmark(ApfelBenchmark):
 
 class BenchmarkICFFNS(ApfelICBenchmark):
     def benchmark_lo(self):
-        self.run([{"IC": 1}], self.obs_updates(True), ["conly", "CT14llo_NF4"])
+        self.run([{"IC": 1}], self.obs_updates(True), ["CT14llo_NF4"])
 
     def benchmark_nlo(self):
-        self.run([{"PTO": 1, "IC": 1}], self.obs_updates(), ["conly", "CT14llo_NF4"])
+        self.run([{"PTO": 1, "IC": 1}], self.obs_updates(), ["CT14llo_NF4"])
 
 
 class BenchmarkICFONLL(ApfelICBenchmark):
@@ -318,7 +323,7 @@ class BenchmarkICFONLL(ApfelICBenchmark):
         self.run(
             [{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4}],
             self.obs_updates(),
-            ["conly", "CT14llo_NF4"],
+            ["CT14llo_NF4"],
         )
 
 
@@ -335,13 +340,13 @@ if __name__ == "__main__":
     # pos.benchmark_pto(0)
     # pos.benchmark_pto(1)
 
-    pol = BenchmarkFlavorNumberScheme()
-    # pol.benchmark_zm(0)
-    # pol.benchmark_zm(1)
-    # pol.benchmark_zm(2)
-    # pol.benchmark_ffns(1)
-    # pol.benchmark_ffn0(0)
-    pol.benchmark_ffn0(1)
+    ffn0bench = BenchmarkFlavorNumberScheme()
+    # ffn0bench.benchmark_zm(0)
+    # ffn0bench.benchmark_zm(1)
+    # ffn0bench.benchmark_zm(2)
+    ffn0bench.benchmark_ffns(1)
+    # ffn0bench.benchmark_ffn0(0)
+    # ffn0bench.benchmark_ffn0(1)
 
     # ffns = BenchmarkICFFNS()
     # ffns.benchmark_lo()
