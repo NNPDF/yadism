@@ -189,13 +189,16 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             # "XIF": [0.5, 2.0],
             "PTO": [pto],
             "FNS": ["FFNS"],
-            # "mb": 1e6,
-            # "mt": 1e6,
+            "mb": [1e7],
+            "mt": [1e8],
+            "NfFF": [3],
+            "Qref": [1.9],
+            "nfref": [3],
         }
         # theory_updates = cartesian_product(sv)
         # add FONLL
         # sv["FNS"] = ["FONLL-A"]
-        sv["NfFF"] = [5]
+        # sv["NfFF"] = [5]
         # theory_updates.append(cartesian_product(sv))
         return cartesian_product(sv)
 
@@ -208,12 +211,12 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
                 for x in observables.default_card["interpolation_xgrid"][12::3]
             ]
         )
-        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(5, 1e3, 10).tolist()])
+        kins.extend([dict(x=0.001, Q2=Q2) for Q2 in np.geomspace(10, 20, 5).tolist()])
         obs_updates = observables.build(
             [
                 # "F2_total",
-                # "F2charm",
-                "F2_bottom"
+                "F2_charm",
+                # "F2_bottom",
                 # "FLtotal",
                 # "FLcharm",
                 # "F3total",
@@ -228,7 +231,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         self.run(
             self.theory_updates_ffns(pto),
             self.obs_updates_ffns(),
-            ["ToyLH"],
+            ["NNPDF40_nnlo_as_01180"],
         )
 
     @staticmethod
@@ -236,9 +239,13 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         sv = {
             # "XIR": [0.5, 2.0],
             # "XIF": [0.5, 2.0],
-            "NfFF": [3],
             "PTO": [pto],
-            "FNS": ["FFN03"],
+            "FNS": ["FFN0"],
+            "mb": [1e7],
+            "mt": [1e8],
+            "NfFF": [3],
+            "Qref": [1.9],
+            "nfref": [3],
         }
         return cartesian_product(sv)
 
@@ -252,12 +259,12 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             ]
         )
         kins.extend(
-            [dict(x=0.001, Q2=Q**2) for Q in np.geomspace(3, 1e3, 10).tolist()]
+            [dict(x=0.001, Q2=Q**2) for Q in np.geomspace(10, 20, 5).tolist()]
         )
         obs_updates = observables.build(
             [
                 "F2_charm",
-                "F2_bottom",
+                # "F2_bottom",
                 # "F2_top",
                 # "F2_light",
                 # "F2_total",
@@ -266,7 +273,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             update={
                 "prDIS": [
                     "NC",
-                    # "CC",
+                    "CC",
                 ]
             },
         )
@@ -344,9 +351,11 @@ if __name__ == "__main__":
     # ffn0bench.benchmark_zm(0)
     # ffn0bench.benchmark_zm(1)
     # ffn0bench.benchmark_zm(2)
-    ffn0bench.benchmark_ffns(1)
+    # ffn0bench.benchmark_ffns(1)
+    # ffn0bench.benchmark_ffns(2)
     # ffn0bench.benchmark_ffn0(0)
     # ffn0bench.benchmark_ffn0(1)
+    ffn0bench.benchmark_ffn0(2)
 
     # ffns = BenchmarkICFFNS()
     # ffns.benchmark_lo()
