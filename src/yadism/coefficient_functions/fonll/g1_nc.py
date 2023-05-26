@@ -60,14 +60,16 @@ class AsyNNLLGluon(pc.PartonicChannelAsy):
 # NOTE: the qq NS matching is the same as the unpolarized one due to
 # Ward identites.
 class PdfMatchingLLNonSinglet(pc.PdfMatchingLLNonSinglet):
-   pass
+    pass
 
 
 class PdfMatchingNLLNonSinglet(pc.PdfMatchingNLLNonSinglet):
     pass
 
+
 class PdfMatchingNNLLNonSinglet(pc.PdfMatchingNNLLNonSinglet):
     pass
+
 
 class PdfMatchingNNNLLNonSinglet(pc.PdfMatchingNNNLLNonSinglet):
     pass
