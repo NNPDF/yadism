@@ -3,7 +3,7 @@ import numpy as np
 from eko import constants, interpolation
 from eko.mellin import Path
 from ekore.harmonics import cache
-from ekore.operator_matrix_elements.unpolarized.space_like import as2 as as2_pol
+from ekore.operator_matrix_elements.polarized.space_like import as2 as as2_pol
 from ekore.operator_matrix_elements.unpolarized.space_like import as2 as as2_unp
 from numpy.testing import assert_allclose
 from scipy.integrate import quad
