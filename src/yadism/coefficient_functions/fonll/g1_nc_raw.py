@@ -1,13 +1,9 @@
 """Polarized, asymptotic coefficient functions from :cite:`Bierenbaum:2022biv`."""
 import numba as nb
 import numpy as np
-from eko.constants import CF, TR
 
 from ..special import li2, zeta2, zeta3
 from ..special.nielsen import nielsen
-from ..splitting_functions import lo
-
-beta0Q = -4 / 3 * TR
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
