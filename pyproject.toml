@@ -73,8 +73,8 @@ virtualenv = "^20.13.2"
 optional = true
 
 [tool.poetry.group.test.dependencies]
-pytest = "^6.2.4"
-pytest-cov = "^2.12.1"
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
 pytest-env = "^0.6.2"
 hypothesis = "^6.39.3"
 
