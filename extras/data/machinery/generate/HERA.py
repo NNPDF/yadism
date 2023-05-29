@@ -45,6 +45,7 @@ def dump_HERACOMB_heavy(src_path):
     """
     obs = obs_template.copy()
     raw_esfs = load(src_path, 36, ["Q2", "x"])
+    # y has to be computed instead - see DataInfo on the respective file
     esfs = []
     for raw_esf in raw_esfs:
         raw_esf.update({"y": raw_esf["Q2"] / 318.0**2 / raw_esf["x"]})
