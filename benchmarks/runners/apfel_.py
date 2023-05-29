@@ -182,6 +182,10 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             ["ToyLH"],
         )
 
+    # ============================================================================ #
+    #                               FFNS                                           #
+    # ============================================================================ #
+
     @staticmethod
     def theory_updates_ffns(pto):
         sv = {
@@ -215,15 +219,17 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         obs_updates = observables.build(
             [
                 # "F2_total",
-                "F2_charm",
+                # "F2_charm",
                 # "F2_bottom",
-                # "FLtotal",
-                # "FLcharm",
-                # "F3total",
-                # "F3charm"
+                "F2_light"
             ],
             kins,
-            update={"prDIS": ["NC", "CC"]},
+            update={
+                "prDIS": [
+                    "NC",
+                    # "CC"
+                ]
+            },
         )
         return obs_updates
 
@@ -233,6 +239,10 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             self.obs_updates_ffns(),
             ["NNPDF40_nnlo_as_01180"],
         )
+
+    # ============================================================================ #
+    #                               FFN0                                           #
+    # ============================================================================ #
 
     @staticmethod
     def theory_updates_ffn0(pto):
@@ -254,12 +264,12 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         kins = []
         kins.extend(
             [
-                dict(x=x, Q2=10.0)
+                dict(x=x, Q2=10**2)
                 for x in observables.default_card["interpolation_xgrid"][12::3]
             ]
         )
         kins.extend(
-            [dict(x=0.001, Q2=Q**2) for Q in np.geomspace(10, 20, 5).tolist()]
+            [dict(x=0.001, Q2=Q**2) for Q in np.geomspace(1, 1e4, 5).tolist()]
         )
         obs_updates = observables.build(
             [
@@ -273,7 +283,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             update={
                 "prDIS": [
                     "NC",
-                    "CC",
+                    # "CC",
                 ]
             },
         )
@@ -285,6 +295,11 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             self.obs_updates_ffn0(),
             ["ToyLH"],
         )
+
+
+# ============================================================================ #
+#                                  IC                                          #
+# ============================================================================ #
 
 
 class ApfelICBenchmark(ApfelBenchmark):

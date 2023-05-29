@@ -66,8 +66,19 @@ class Combiner:
 
         comp = Component(0)
 
-        # the first condition essentially checks nf != 3
-        if nf in masses and masses[nf]:
+        if self.esf.info.obs_name.is_asy:
+            comp.extend(
+                self.damp_elems(
+                    nf,
+                    fonll.kernels.generate_light_asy(
+                        self.esf,
+                        nf,
+                        self.esf.info.theory["pto_evol"],
+                    ),
+                )
+            )
+        elif nf in masses and masses[nf]:
+            # the first condition essentially checks nf != 3
             nl = nf - 1
             comp.extend(
                 fonll.kernels.generate_light(
@@ -81,7 +92,7 @@ class Combiner:
             comp.extend(
                 self.damp_elems(
                     nl,
-                    fonll.kernels.generate_light_diff(
+                    fonll.kernels.generate_light_asy(
                         self.esf,
                         nl,
                         self.esf.info.theory["pto_evol"],
@@ -144,7 +155,7 @@ class Combiner:
                     heavy_comps[sfh].extend(
                         self.damp_elems(
                             nf,
-                            fonll.kernels.generate_heavy_diff(
+                            fonll.kernels.generate_heavy_asy(
                                 self.esf, nf, self.esf.info.theory["pto_evol"]
                             ),
                         )
@@ -158,45 +169,19 @@ class Combiner:
                             ),
                         )
                     )
-            elif sfh == nf:
-                # then it is FONLL
-                nl = nf - 1
-                heavy_comps[sfh].extend(
-                    heavy.kernels.generate(self.esf, nl, ihq=sfh)
-                )  # FFNS3
-                if sfh not in self.intrinsic:
-                    heavy_comps[sfh].extend(
-                        self.damp_elems(
-                            nl,
-                            fonll.kernels.generate_heavy_diff(
-                                self.esf, nl, self.esf.info.theory["pto_evol"]
-                            ),
-                        )
-                    )
-                else:
-                    heavy_comps[sfh].extend(
-                        intrinsic.kernels.generate(self.esf, ihq=sfh)
-                    )
-                    heavy_comps[sfh].extend(
-                        self.damp_elems(
-                            nl,
-                            fonll.kernels.generate_heavy_intrinsic_diff(
-                                self.esf, nl, self.esf.info.theory["pto_evol"]
-                            ),
-                        )
-                    )
             else:
-                # then it is *not* FONLL
                 heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
                 if sfh in self.intrinsic:
                     heavy_comps[sfh].extend(
                         intrinsic.kernels.generate(self.esf, ihq=sfh)
                     )
-            for ihq in range(sfh + 1, 7):
-                if masses[ihq] and not self.esf.info.obs_name.is_asy:
-                    heavy_comps[sfh].extend(
-                        heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
-                    )
+                for ihq in range(sfh + 1, 7):
+                    if masses[ihq]:
+                        heavy_comps[sfh].extend(
+                            heavy.kernels.generate_missing(
+                                self.esf, nf, ihq, icoupl=sfh
+                            )
+                        )
             comps.append(heavy_comps[sfh])
         return comps
 

@@ -60,7 +60,7 @@ def generate(esf, nf, skip_heavylight=False):
         skip_heavylight=skip_heavylight,
     )
 
-    # remove also singlet contributions which is added by generate_light_diff
+    # remove also singlet contributions which is added by generate_light_asy
     if skip_heavylight:
         weights["s"][nl + 1] = 0
         weights["s"][-nl - 1] = 0

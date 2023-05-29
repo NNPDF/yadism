@@ -20,7 +20,7 @@ def import_pc_module(kind, process, subpkg=None):
     return kernels.import_local(kind, process, subpkg)
 
 
-def generate_light(esf, nl, pto_evol, pto_dis=None):
+def generate_light(esf, nl, _pto_evol, pto_dis=None):
     r"""
     Collect the light coefficient functions for |FONLL|.
 
@@ -42,7 +42,7 @@ def generate_light(esf, nl, pto_evol, pto_dis=None):
         elems : list(yadism.kernels.Kernel)
             list of elements
     """
-    ihq = nl + 1
+    # ihq = nl + 1
     # rewrite the derivative term back as a sum
     # and so we're back to cbar^{(nl)}
     light_elems = light.kernels.generate(esf, nl)
@@ -57,62 +57,62 @@ def generate_light(esf, nl, pto_evol, pto_dis=None):
             n3lo_l.min_order = 3
         light_elems.extend(n3lo_light_elems)
 
-    kind = esf.info.obs_name.kind
-    m2hq = esf.info.m2hq[ihq - 4]
-    L = np.log(esf.Q2 / m2hq)
-    fonll_cfs = import_pc_module(kind, esf.process)
+    # kind = esf.info.obs_name.kind
+    # m2hq = esf.info.m2hq[ihq - 4]
+    # L = np.log(esf.Q2 / m2hq)
+    # fonll_cfs = import_pc_module(kind, esf.process)
 
-    if esf.process == "CC":
-        light_weights = kernels.cc_weights(
-            esf.info.coupling_constants,
-            esf.Q2,
-            br.quark_names[:nl],
-            nl,
-            esf.info.obs_name.is_parity_violating,
-        )
-    else:
-        light_weights = light.kernels.nc_weights(
-            esf.info.coupling_constants,
-            esf.Q2,
-            nl,
-            esf.info.obs_name.is_parity_violating,
-        )
+    # if esf.process == "CC":
+    #     light_weights = kernels.cc_weights(
+    #         esf.info.coupling_constants,
+    #         esf.Q2,
+    #         br.quark_names[:nl],
+    #         nl,
+    #         esf.info.obs_name.is_parity_violating,
+    #     )
+    # else:
+    #     light_weights = light.kernels.nc_weights(
+    #         esf.info.coupling_constants,
+    #         esf.Q2,
+    #         nl,
+    #         esf.info.obs_name.is_parity_violating,
+    #     )
 
-    # Pdf matching conditions
-    pdf_matching = []
-    for res in range(pto_evol + 1):
-        name = "PdfMatching" + ("N" * res) + "LL" + "NonSinglet"
-        pdf_matching.append(
-            -kernels.Kernel(
-                light_weights["ns"],
-                fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
-            )
-        )
+    # # Pdf matching conditions
+    # pdf_matching = []
+    # for res in range(pto_evol + 1):
+    #     name = "PdfMatching" + ("N" * res) + "LL" + "NonSinglet"
+    #     pdf_matching.append(
+    #         -kernels.Kernel(
+    #             light_weights["ns"],
+    #             fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
+    #         )
+    #     )
 
-    # alpha s matching condition
-    as_norm = 2.0
-    alphas_matching = []
-    if pto_evol >= 1:  # contributes at NLL
-        alphas_matching.append(
-            -(2.0 / 3.0 * TR * L)
-            * as_norm
-            * kernels.Kernel(
-                light_weights["ns"],
-                fonll_cfs.LightNonSingletShifted(esf, nl, m2hq=m2hq),
-            )
-        )
+    # # alpha s matching condition
+    # as_norm = 2.0
+    # alphas_matching = []
+    # if pto_evol >= 1:  # contributes at NLL
+    #     alphas_matching.append(
+    #         -(2.0 / 3.0 * TR * L)
+    #         * as_norm
+    #         * kernels.Kernel(
+    #             light_weights["ns"],
+    #             fonll_cfs.LightNonSingletShifted(esf, nl, m2hq=m2hq),
+    #         )
+    #     )
 
     return (
         # true light contributions
         *light_elems,
         # matching
-        *pdf_matching,
-        *alphas_matching,
+        # *pdf_matching,
+        # *alphas_matching,
         # missing is dealt above in order to reuse this method in diff
     )
 
 
-def generate_light_diff(esf, nl, pto_evol):
+def generate_light_asy(esf, nl, pto_evol):
     r"""
     Collect the light diff coefficient functions for |FONLL|.
 
@@ -139,7 +139,6 @@ def generate_light_diff(esf, nl, pto_evol):
             list of elements
     """
     kind = esf.info.obs_name.kind
-    light_cfs = import_pc_module(kind, esf.process, "light")
     if esf.process == "CC":
         light_weights = kernels.cc_weights(
             esf.info.coupling_constants,
@@ -156,19 +155,13 @@ def generate_light_diff(esf, nl, pto_evol):
             esf.info.obs_name.is_parity_violating,
             skip_heavylight=True,
         )
-    s_w = {nl + 1: light_weights["s"][nl + 1], -(nl + 1): light_weights["s"][-(nl + 1)]}
-    flps = light.kernels.nc_color_factor(
-        esf.info.coupling_constants, nl + 1, "s", False
-    )
-    k = kernels.Kernel(s_w, light_cfs.Singlet(esf, nl + 1, flps=flps))
-    k.max_order = pto_evol
 
     # the asy has all the light stuff again, so subtract it back
-    asy = []
+    asys = []
     light_elems = generate_light(esf, nl, pto_evol)
     for e in light_elems:
         e.min_order = pto_evol + 1
-        asy.append(-e)
+        asys.append(e)
     # add in addition it also has the asymptotic limit of missing
     ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
@@ -178,13 +171,11 @@ def generate_light_diff(esf, nl, pto_evol):
         km = kernels.Kernel(
             light_weights["ns"], fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq)
         )
-        asy.append(-km)
-    if esf.info.obs_name.is_asy:
-        return [-a for a in asy]
-    return (k, *asy)
+        asys.append(km)
+    return [a for a in asys]
 
 
-def generate_heavy_diff(esf, nl, pto_evol):
+def generate_heavy_asy(esf, nl, pto_evol):
     """
     |ref| implements :eqref:`89`, :cite:`forte-fonll`.
 
@@ -206,9 +197,9 @@ def generate_heavy_diff(esf, nl, pto_evol):
     is_pv = esf.info.obs_name.is_parity_violating
     ihq = nl + 1
     # add light contributions
-    lights = kernels.generate_single_flavor_light(esf, nl + 1, ihq)
-    for e in lights:
-        e.max_order = pto_evol
+    # lights = kernels.generate_single_flavor_light(esf, nl + 1, ihq)
+    # for e in lights:
+    #     e.max_order = pto_evol
     # add asymptotic contributions
     # The matching does not necessarily happen at the quark mass
     # m2hq = esf.info.m2hq[ihq - 4]
@@ -225,8 +216,8 @@ def generate_heavy_diff(esf, nl, pto_evol):
             is_pv,
         )
         asys = [
-            -kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, m2hq=m2hq)),
-            -kernels.Kernel(wa["g"], fonll_cfs.AsyGluon(esf, nl, m2hq=m2hq)),
+            kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, m2hq=m2hq)),
+            kernels.Kernel(wa["g"], fonll_cfs.AsyGluon(esf, nl, m2hq=m2hq)),
         ]
     else:
         asy_weights = heavy.kernels.nc_weights(
@@ -242,14 +233,12 @@ def generate_heavy_diff(esf, nl, pto_evol):
                     name = "Asy" + ("N" * res) + "LL" + channel
                     for av in ("AA", "VV"):
                         asys.append(
-                            -kernels.Kernel(
+                            kernels.Kernel(
                                 asy_weights[f"{c}{av}"],
                                 fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
                             )
                         )
-    if esf.info.obs_name.is_asy:
-        return [-asy for asy in asys]
-    return (*lights, *asys)
+    return [asy for asy in asys]
 
 
 def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
@@ -276,7 +265,7 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
     ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
     # add normal terms starting from NNLO
-    nnlo_terms = generate_heavy_diff(esf, nl, pto_evol)
+    nnlo_terms = generate_heavy_asy(esf, nl, pto_evol)
     for k in nnlo_terms:
         k.min_order = 2
     if esf.process == "CC":

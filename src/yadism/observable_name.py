@@ -121,12 +121,12 @@ class ObservableName:
             is_heavy : bool
                 is a heavy flavor?
         """
-        return self.flavor != "light"
+        return "light" not in self.flavor
 
     @property
     def is_raw_heavy(self):
         """Is it a raw heavy flavor? i.e. charm, bottom, or, top"""
-        return self.flavor in heavys or self.flavor in heavyasys
+        return self.flavor in heavys
 
     @property
     def is_asy(self):
@@ -141,7 +141,19 @@ class ObservableName:
     @property
     def is_composed(self):
         """Is it a composed flavor? i.e. total"""
-        return self.flavor == "total"
+        return "total" in self.flavor
+
+    @property
+    def is_heavyasy(self):
+        return self.flavor in heavyasys
+
+    @property
+    def is_lightasy(self):
+        return self.flavor == "lightasy"
+
+    @property
+    def is_totalasy(self):
+        return self.flavor == "totalasy"
 
     @property
     def flavor_family(self):
@@ -151,6 +163,12 @@ class ObservableName:
         # if self.is_asy:
         #     return "asy"
         if self.is_heavylight:
+            return "light"
+        if self.is_heavyasy:
+            return "heavy"
+        if self.is_lightasy:
+            return "light"
+        if self.is_totalasy:
             return "light"
         return self.flavor
 
