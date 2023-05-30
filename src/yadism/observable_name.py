@@ -127,6 +127,8 @@ class ObservableName:
         """Abstract flavor family name"""
         if self.is_raw_heavy:
             return "heavy"
+        if self.is_heavylight:
+            return "light"
         return self.flavor
 
     def apply_flavor_family(self):
