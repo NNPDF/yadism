@@ -44,7 +44,7 @@ class Combiner:
         self.obs_name = esf.info.obs_name
         self.nf = nf_default(esf.Q2, esf.info.threshold)
         self.target = esf.info.target
-        self.scheme = self.esf.info.scheme
+        self.scheme = esf.info.scheme
 
     def collect(self):
         comps = []
@@ -77,34 +77,12 @@ class Combiner:
                     ),
                 )
             )
-        elif nf in masses and masses[nf]:
-            # the first condition essentially checks nf != 3
-            nl = nf - 1
-            comp.extend(
-                asy.kernels.generate_light(
-                    self.esf,
-                    nl,
-                    self.esf.info.theory["pto_evol"],
-                    self.esf.info.theory["pto"],
-                )
-            )
-            comp.extend(heavy.kernels.generate_missing(self.esf, nl, nl + 1))
-            comp.extend(
-                self.damp_elems(
-                    nl,
-                    asy.kernels.generate_light_asy(
-                        self.esf,
-                        nl,
-                        self.esf.info.theory["pto_evol"],
-                    ),
-                )
-            )
         else:
             comp.extend(light.kernels.generate(self.esf, nf))
+            for ihq in range(nf + 1, 7):
+                if masses[ihq]:
+                    comp.extend(heavy.kernels.generate_missing(self.esf, nf, ihq))
 
-        for ihq in range(nf + 1, 7):
-            if masses[ihq]:
-                comp.extend(heavy.kernels.generate_missing(self.esf, nf, ihq))
         return comp
 
     def heavylight_components(self):
@@ -164,7 +142,7 @@ class Combiner:
                     heavy_comps[sfh].extend(
                         self.damp_elems(
                             nf,
-                            asy.kernels.generate_heavy_intrinsic_diff(
+                            asy.kernels.generate_heavy_intrinsic_asy(
                                 self.esf, nf, self.esf.info.theory["pto_evol"]
                             ),
                         )

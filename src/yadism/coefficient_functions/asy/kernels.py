@@ -20,103 +20,14 @@ def import_pc_module(kind, process, subpkg=None):
     return kernels.import_local(kind, process, subpkg)
 
 
-def generate_light(esf, nl, _pto_evol, pto_dis=None):
-    r"""
-    Collect the light coefficient functions for |FONLL|.
-
-    |ref| implements :eqref:`96`, :cite:`forte-fonll`.
-
-    Parameters
-    ----------
-        esf : EvaluatedStructureFunction
-            kinematic point
-        nl : int
-            number of light flavors
-        pto_evol : int
-            PTO of evolution
-        pto_dis : int
-            PTO of DIS
-
-    Returns
-    -------
-        elems : list(yadism.kernels.Kernel)
-            list of elements
-    """
-    # ihq = nl + 1
-    # rewrite the derivative term back as a sum
-    # and so we're back to cbar^{(nl)}
-    light_elems = light.kernels.generate(esf, nl)
-
-    # This cancellation is no longer valid for the N3LO contributions
-    # which has to be evaluated with nl+1 active flavors
-    if pto_dis == 3:
-        for l in light_elems:
-            l.max_order = 2
-        n3lo_light_elems = light.kernels.generate(esf, nl + 1, skip_heavylight=True)
-        for n3lo_l in n3lo_light_elems:
-            n3lo_l.min_order = 3
-        light_elems.extend(n3lo_light_elems)
-
-    # kind = esf.info.obs_name.kind
-    # m2hq = esf.info.m2hq[ihq - 4]
-    # L = np.log(esf.Q2 / m2hq)
-    # asy_cfs = import_pc_module(kind, esf.process)
-
-    # if esf.process == "CC":
-    #     light_weights = kernels.cc_weights(
-    #         esf.info.coupling_constants,
-    #         esf.Q2,
-    #         br.quark_names[:nl],
-    #         nl,
-    #         esf.info.obs_name.is_parity_violating,
-    #     )
-    # else:
-    #     light_weights = light.kernels.nc_weights(
-    #         esf.info.coupling_constants,
-    #         esf.Q2,
-    #         nl,
-    #         esf.info.obs_name.is_parity_violating,
-    #     )
-
-    # # Pdf matching conditions
-    # pdf_matching = []
-    # for res in range(pto_evol + 1):
-    #     name = "PdfMatching" + ("N" * res) + "LL" + "NonSinglet"
-    #     pdf_matching.append(
-    #         -kernels.Kernel(
-    #             light_weights["ns"],
-    #             asy_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
-    #         )
-    #     )
-
-    # # alpha s matching condition
-    # as_norm = 2.0
-    # alphas_matching = []
-    # if pto_evol >= 1:  # contributes at NLL
-    #     alphas_matching.append(
-    #         -(2.0 / 3.0 * TR * L)
-    #         * as_norm
-    #         * kernels.Kernel(
-    #             light_weights["ns"],
-    #             asy_cfs.LightNonSingletShifted(esf, nl, m2hq=m2hq),
-    #         )
-    #     )
-
-    return (
-        # true light contributions
-        *light_elems,
-        # matching
-        # *pdf_matching,
-        # *alphas_matching,
-        # missing is dealt above in order to reuse this method in diff
-    )
-
-
-def generate_light_asy(esf, nl, pto_evol):
+def generate_light_asy(esf, nl, pto_evol, pto_dis=None):
     r"""
     Collect the light diff coefficient functions for |FONLL|.
 
-    |ref| implements :eqref:`95`, :cite:`forte-fonll`.
+    |ref| implements the massless limit of the massive scheme
+    coefficient functions, i.e. the :math:`B_{i.l}^{(0),2}` component of
+    :eqref:`64, :cite:`forte-fonll`. This is needed to calculate
+    :math:`F_l^{(d)}` in :eqref:`95`.
 
     Following the reference we have to collect the
     contributions of the *incoming* would-be-heavy quarks to the light
@@ -156,9 +67,21 @@ def generate_light_asy(esf, nl, pto_evol):
             skip_heavylight=True,
         )
 
-    # the asy has all the light stuff again, so subtract it back
+    # rewrite the derivative term back as a sum
+    # and so we're back to cbar^{(nl)}
+    light_elems = light.kernels.generate(esf, nl)
+
+    # This cancellation is no longer valid for the N3LO contributions
+    # which has to be evaluated with nl+1 active flavors
+    if pto_dis == 3:
+        for l in light_elems:
+            l.max_order = 2
+        n3lo_light_elems = light.kernels.generate(esf, nl + 1, skip_heavylight=True)
+        for n3lo_l in n3lo_light_elems:
+            n3lo_l.min_order = 3
+        light_elems.extend(n3lo_light_elems)
+
     asys = []
-    light_elems = generate_light(esf, nl, pto_evol)
     for e in light_elems:
         e.min_order = pto_evol + 1
         asys.append(e)
@@ -172,7 +95,7 @@ def generate_light_asy(esf, nl, pto_evol):
             light_weights["ns"], asy_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq)
         )
         asys.append(km)
-    return [a for a in asys]
+    return asys
 
 
 def generate_heavy_asy(esf, nl, pto_evol):
@@ -196,14 +119,6 @@ def generate_heavy_asy(esf, nl, pto_evol):
     kind = esf.info.obs_name.kind
     is_pv = esf.info.obs_name.is_parity_violating
     ihq = nl + 1
-    # add light contributions
-    # lights = kernels.generate_single_flavor_light(esf, nl + 1, ihq)
-    # for e in lights:
-    #     e.max_order = pto_evol
-    # add asymptotic contributions
-    # The matching does not necessarily happen at the quark mass
-    # m2hq = esf.info.m2hq[ihq - 4]
-    # but will be done at the proper threshold
     asy_cfs = import_pc_module(kind, esf.process)
     m2hq = esf.info.m2hq[ihq - 4]
     asys = []
@@ -238,10 +153,10 @@ def generate_heavy_asy(esf, nl, pto_evol):
                                 asy_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
                             )
                         )
-    return [asy for asy in asys]
+    return asys
 
 
-def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
+def generate_heavy_intrinsic_asy(esf, nl, pto_evol):
     """
     |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
 
@@ -279,21 +194,21 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
         wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
         if is_pv:
             return (
-                -kernels.Kernel(
+                kernels.Kernel(
                     wq,
                     cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2hq=m2hq),
                 ),
-                -kernels.Kernel(
+                kernels.Kernel(
                     {21: list(wq.values())[0]},
                     cfs.MatchingGluonRplus(esf, nl, m1sq=m2hq, m2hq=m2hq),
                 ),
                 *nnlo_terms,
             )
         return (
-            -kernels.Kernel(
+            kernels.Kernel(
                 wq, cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2hq=m2hq)
             ),
-            -kernels.Kernel(
+            kernels.Kernel(
                 {21: list(wq.values())[0]},
                 cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, m2hq=m2hq),
             ),
@@ -306,11 +221,11 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
         wp = wVA + wAV
         wm = wVA - wAV
         return (
-            -kernels.Kernel(
+            kernels.Kernel(
                 {ihq: wp, (-ihq): -wp},
                 cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
             ),
-            -kernels.Kernel(
+            kernels.Kernel(
                 {ihq: wm, (-ihq): -wm},
                 cfs.MatchingIntrinsicRminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
             ),
@@ -322,22 +237,22 @@ def generate_heavy_intrinsic_diff(esf, nl, pto_evol):
     wp = wVV + wAA
     wm = wVV - wAA
     return (
-        -kernels.Kernel(
+        kernels.Kernel(
             {ihq: wp, (-ihq): wp},
             cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
-        -kernels.Kernel(
+        kernels.Kernel(
             {ihq: wm, (-ihq): wm},
             cfs.MatchingIntrinsicSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
         # the explicit 2 is coming from Eq. (B.25) of :cite:`luca-intrinsic`.
         # it is coming from the sum over quark and anti-quark (a quark split in
         # both and either of them can interact with the EW boson)
-        -kernels.Kernel(
+        kernels.Kernel(
             {21: 2 * wp},
             cfs.MatchingGluonSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
-        -kernels.Kernel(
+        kernels.Kernel(
             {21: 2 * wm},
             cfs.MatchingGluonSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
