@@ -3,16 +3,13 @@ import numpy as np
 from eko import constants, interpolation
 from eko.mellin import Path
 from ekore.harmonics import cache
-from ekore.operator_matrix_elements.unpolarized.space_like import as2
+from ekore.operator_matrix_elements.polarized.space_like import as2 as as2_pol
+from ekore.operator_matrix_elements.unpolarized.space_like import as2 as as2_unp
 from numpy.testing import assert_allclose
 from scipy.integrate import quad
 from test_pc_general import MockESF
 
-from yadism.coefficient_functions.fonll.partonic_channel import (
-    K_qq_loc,
-    K_qq_sing,
-    PdfMatchingNNLLNonSinglet,
-)
+from yadism.coefficient_functions.fonll import partonic_channel as pc
 from yadism.coefficient_functions.partonic_channel import RSL
 from yadism.coefficient_functions.special import zeta
 from yadism.esf import conv
@@ -31,25 +28,39 @@ def mellin_f(n):
 
 
 # x-space convolution
-def yad_convolute(x, q):
+def yad_convolute(x, q, pc):
     esf = MockESF(x, q**2)
-    match = PdfMatchingNNLLNonSinglet(esf, nf, m2hq=q**2).NNLO()
-    loc = match.loc(x, match.args["loc"]) * f(x)
-    sing = quad(
-        lambda z: match.sing(z, match.args["sing"]) * (f(x / z) / z - f(x)),
-        x,
-        1,
-    )[0]
-    return sing + loc
+    result = 0
+    for matchfunc in [
+        pc.PdfMatchingNNLLNonSinglet,
+        pc.PdfMatchingNLLNonSinglet,
+        pc.PdfMatchingLLNonSinglet,
+    ]:
+        match = matchfunc(esf, nf, m2hq=mhq**2).NNLO()
+        loc = match.loc(x, match.args["loc"]) * f(x)
+        sing = quad(
+            lambda z: match.sing(z, match.args["sing"]) * (f(x / z) / z - f(x)),
+            x,
+            1,
+        )[0]
+        reg = 0
+        if match.reg is not None:
+            reg = quad(
+                lambda z: match.reg(z, match.args["reg"]) * f(x / z) / z,
+                x,
+                1,
+            )[0]
+        result += sing + loc + reg
+    return result
 
 
 # n-space convolution
-def inverse_mellin(x):
+def inverse_mellin(x, q, as2):
     def quad_ker_talbot(u, func):
         path = Path(u, np.log(x), True)
         sx_cache = cache.reset()
         integrand = path.prefactor * x ** (-path.n) * path.jac
-        gamma = func(path.n, sx_cache, L=0) * mellin_f(path.n)
+        gamma = func(path.n, sx_cache, L=np.log(q**2 / mhq**2)) * mellin_f(path.n)
         return np.real(gamma * integrand)
 
     return quad(
@@ -67,13 +78,22 @@ class Test_Matching_qq:
     xs = [0.0001, 0.001, 0.01, 0.1, 0.2, 0.456, 0.7]
     Qs = [5, 10, 20]
 
-    def test_nnlo(self):
+    def test_nnlo_unpolarized(self):
         my = []
         eko = []
         for q in self.Qs:
             for x in self.xs:
-                my.append(yad_convolute(x, q))
-                eko.append(inverse_mellin(x))
+                my.append(yad_convolute(x, q, pc))
+                eko.append(inverse_mellin(x, q, as2_unp))
+        assert_allclose(my, eko)
+
+    def test_nnlo_polarized(self):
+        my = []
+        eko = []
+        for q in self.Qs:
+            for x in self.xs:
+                my.append(yad_convolute(x, q, pc))
+                eko.append(inverse_mellin(x, q, as2_pol))
         assert_allclose(my, eko)
 
 
@@ -169,7 +189,7 @@ def K_qq_loc_Buza(x, args):
 
 
 def test_K_qq():
-    old = RSL(sing=K_qq_sing, loc=K_qq_loc, args=[])
+    old = RSL(sing=pc.K_qq_sing, loc=pc.K_qq_loc, args=[])
     buza = RSL(reg=K_qq_reg_Buza, sing=K_qq_sing_Buza, loc=K_qq_loc_Buza, args=[1.0])
     xg = interpolation.lambertgrid(60)
     ipd = interpolation.InterpolatorDispatcher(xg, 4, mode_N=False)

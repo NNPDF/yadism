@@ -1,3 +1,4 @@
+from ..light import g1_nc as light
 from ..partonic_channel import RSL
 from . import g1_nc_raw as raw
 from . import partonic_channel as pc
@@ -54,3 +55,26 @@ class AsyNLLGluon(pc.PartonicChannelAsy):
 class AsyNNLLGluon(pc.PartonicChannelAsy):
     def NNLO(self):
         return RSL(raw.c2g_NNLL_reg, args=[self.L])
+
+
+# NOTE: the qq NS matching is the same as the unpolarized one due to
+# Ward identites.
+class PdfMatchingLLNonSinglet(pc.PdfMatchingLLNonSinglet):
+    pass
+
+
+class PdfMatchingNLLNonSinglet(pc.PdfMatchingNLLNonSinglet):
+    pass
+
+
+class PdfMatchingNNLLNonSinglet(pc.PdfMatchingNNLLNonSinglet):
+    pass
+
+
+class PdfMatchingNNNLLNonSinglet(pc.PdfMatchingNNNLLNonSinglet):
+    pass
+
+
+class LightNonSingletShifted(pc.PartonicChannelAsy):
+    def NNLO(self):
+        return light.NonSinglet(self.ESF, self.nf).NLO()
