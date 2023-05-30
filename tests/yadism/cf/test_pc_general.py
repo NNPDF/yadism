@@ -2,11 +2,11 @@
 Test all the partonic coefficient functions
 """
 
-from yadism.coefficient_functions.fonll import f2_cc as af2cc
-from yadism.coefficient_functions.fonll import f2_nc as af2nc
-from yadism.coefficient_functions.fonll import f3_cc as af3cc
-from yadism.coefficient_functions.fonll import fl_cc as aflcc
-from yadism.coefficient_functions.fonll import fl_nc as aflnc
+from yadism.coefficient_functions.asy import f2_cc as af2cc
+from yadism.coefficient_functions.asy import f2_nc as af2nc
+from yadism.coefficient_functions.asy import f3_cc as af3cc
+from yadism.coefficient_functions.asy import fl_cc as aflcc
+from yadism.coefficient_functions.asy import fl_nc as aflnc
 from yadism.coefficient_functions.heavy import f2_cc as hf2cc
 from yadism.coefficient_functions.heavy import f2_nc as hf2nc
 from yadism.coefficient_functions.heavy import f3_cc as hf3cc

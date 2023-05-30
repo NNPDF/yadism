@@ -5,7 +5,7 @@ import copy
 import numpy as np
 import pytest
 
-from yadism.coefficient_functions.fonll import partonic_channel
+from yadism.coefficient_functions.asy import partonic_channel
 from yadism.coefficient_functions.intrinsic import raw_nc
 
 

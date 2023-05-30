@@ -108,19 +108,7 @@ def update_fns(theory):
     fns = theory["FNS"]
     nf = theory["NfFF"]
 
-    if "FONLL" in fns:
-        # above kbThr threshold FONLL is the same as ZM-VFNS,
-        # between kcThr and kbThr the structure function is defined as F3 + Fd
-        # below kcThr FFNS with nf=3 flavours is employed due to theta function
-        # prepended to Fd
-
-        # because of this we call the resutling FONLL function F3 even above
-        # kcThr, namely it is not ZM everywhere
-        theory["ZMc"] = False
-
-        theory["ZMb"] = False
-        theory["ZMt"] = True
-    elif fns == "ZM-VFNS":
+    if fns == "ZM-VFNS":
         for fl in hqfl:
             theory[f"ZM{fl}"] = True
     elif "FFN" in fns:
@@ -141,9 +129,4 @@ def update_fns(theory):
     for fl in hqfl:
         theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
 
-    # fix FONLL-B and introduce PTODIS
-    if fns == "FONLL-B":
-        theory["PTODIS"] = 2  # massive
-        theory["PTO"] = 1  # massless (thus evolution) and asy
-    else:
-        theory["PTODIS"] = theory["PTO"]
+    theory["PTODIS"] = theory["PTO"]

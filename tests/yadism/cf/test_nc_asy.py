@@ -1,7 +1,8 @@
 import numpy as np
 from utils import MockESF
 
-from yadism.coefficient_functions.fonll import f2_nc as f_f2_nc
+from yadism import observable_name as on
+from yadism.coefficient_functions.asy import f2_nc as f_f2_nc
 from yadism.coefficient_functions.heavy import f2_nc as h_f2_nc
 
 

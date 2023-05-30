@@ -60,7 +60,7 @@ def generate_light(esf, nl, _pto_evol, pto_dis=None):
     # kind = esf.info.obs_name.kind
     # m2hq = esf.info.m2hq[ihq - 4]
     # L = np.log(esf.Q2 / m2hq)
-    # fonll_cfs = import_pc_module(kind, esf.process)
+    # asy_cfs = import_pc_module(kind, esf.process)
 
     # if esf.process == "CC":
     #     light_weights = kernels.cc_weights(
@@ -85,7 +85,7 @@ def generate_light(esf, nl, _pto_evol, pto_dis=None):
     #     pdf_matching.append(
     #         -kernels.Kernel(
     #             light_weights["ns"],
-    #             fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
+    #             asy_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
     #         )
     #     )
 
@@ -98,7 +98,7 @@ def generate_light(esf, nl, _pto_evol, pto_dis=None):
     #         * as_norm
     #         * kernels.Kernel(
     #             light_weights["ns"],
-    #             fonll_cfs.LightNonSingletShifted(esf, nl, m2hq=m2hq),
+    #             asy_cfs.LightNonSingletShifted(esf, nl, m2hq=m2hq),
     #         )
     #     )
 
@@ -165,11 +165,11 @@ def generate_light_asy(esf, nl, pto_evol):
     # add in addition it also has the asymptotic limit of missing
     ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
-    fonll_cfs = import_pc_module(kind, esf.process)
+    asy_cfs = import_pc_module(kind, esf.process)
     for res in range(pto_evol + 1):
         name = "Asy" + ("N" * res) + "LL" + "NonSinglet"
         km = kernels.Kernel(
-            light_weights["ns"], fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq)
+            light_weights["ns"], asy_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq)
         )
         asys.append(km)
     return [a for a in asys]
@@ -204,7 +204,7 @@ def generate_heavy_asy(esf, nl, pto_evol):
     # The matching does not necessarily happen at the quark mass
     # m2hq = esf.info.m2hq[ihq - 4]
     # but will be done at the proper threshold
-    fonll_cfs = import_pc_module(kind, esf.process)
+    asy_cfs = import_pc_module(kind, esf.process)
     m2hq = esf.info.m2hq[ihq - 4]
     asys = []
     if esf.process == "CC":
@@ -216,8 +216,8 @@ def generate_heavy_asy(esf, nl, pto_evol):
             is_pv,
         )
         asys = [
-            kernels.Kernel(wa["ns"], fonll_cfs.AsyQuark(esf, nl, m2hq=m2hq)),
-            kernels.Kernel(wa["g"], fonll_cfs.AsyGluon(esf, nl, m2hq=m2hq)),
+            kernels.Kernel(wa["ns"], asy_cfs.AsyQuark(esf, nl, m2hq=m2hq)),
+            kernels.Kernel(wa["g"], asy_cfs.AsyGluon(esf, nl, m2hq=m2hq)),
         ]
     else:
         asy_weights = heavy.kernels.nc_weights(
@@ -235,7 +235,7 @@ def generate_heavy_asy(esf, nl, pto_evol):
                         asys.append(
                             kernels.Kernel(
                                 asy_weights[f"{c}{av}"],
-                                fonll_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
+                                asy_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
                             )
                         )
     return [asy for asy in asys]

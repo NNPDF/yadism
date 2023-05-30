@@ -109,7 +109,7 @@ class TestEvaluatedStructureFunction:
                 continue
 
     def test_get_result(self):
-        for scheme in ["FFNS", "ZM-VFNS", "FONLL-A"]:
+        for scheme in ["FFNS", "ZM-VFNS", "FFN0"]:
             r = MockRunner()
             r.theory_params["scheme"] = scheme
             r.theory_params["target"] = {"Z": 1, "A": 1}

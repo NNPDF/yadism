@@ -1,7 +1,7 @@
 import pytest
 
 from yadism import observable_name as on
-from yadism.coefficient_functions.fonll import kernels as aker
+from yadism.coefficient_functions.asy import kernels as aker
 from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.light import kernels as lker
 

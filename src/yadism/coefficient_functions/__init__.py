@@ -1,7 +1,7 @@
 import numpy as np
 from eko.matchings import nf_default
 
-from . import fonll, heavy, intrinsic, kernels, light
+from . import asy, heavy, intrinsic, kernels, light
 from .partonic_channel import EmptyPartonicChannel
 
 
@@ -70,7 +70,7 @@ class Combiner:
             comp.extend(
                 self.damp_elems(
                     nf,
-                    fonll.kernels.generate_light_asy(
+                    asy.kernels.generate_light_asy(
                         self.esf,
                         nf,
                         self.esf.info.theory["pto_evol"],
@@ -81,7 +81,7 @@ class Combiner:
             # the first condition essentially checks nf != 3
             nl = nf - 1
             comp.extend(
-                fonll.kernels.generate_light(
+                asy.kernels.generate_light(
                     self.esf,
                     nl,
                     self.esf.info.theory["pto_evol"],
@@ -92,7 +92,7 @@ class Combiner:
             comp.extend(
                 self.damp_elems(
                     nl,
-                    fonll.kernels.generate_light_asy(
+                    asy.kernels.generate_light_asy(
                         self.esf,
                         nl,
                         self.esf.info.theory["pto_evol"],
@@ -155,7 +155,7 @@ class Combiner:
                     heavy_comps[sfh].extend(
                         self.damp_elems(
                             nf,
-                            fonll.kernels.generate_heavy_asy(
+                            asy.kernels.generate_heavy_asy(
                                 self.esf, nf, self.esf.info.theory["pto_evol"]
                             ),
                         )
@@ -164,7 +164,7 @@ class Combiner:
                     heavy_comps[sfh].extend(
                         self.damp_elems(
                             nf,
-                            fonll.kernels.generate_heavy_intrinsic_diff(
+                            asy.kernels.generate_heavy_intrinsic_diff(
                                 self.esf, nf, self.esf.info.theory["pto_evol"]
                             ),
                         )

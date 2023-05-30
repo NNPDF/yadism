@@ -9,7 +9,12 @@ from numpy.testing import assert_allclose
 from scipy.integrate import quad
 from test_pc_general import MockESF
 
-from yadism.coefficient_functions.fonll import partonic_channel as pc
+from yadism.coefficient_functions.asy import partonic_channel as pc
+from yadism.coefficient_functions.asy.partonic_channel import (
+    K_qq_loc,
+    K_qq_sing,
+    PdfMatchingNNLLNonSinglet,
+)
 from yadism.coefficient_functions.partonic_channel import RSL
 from yadism.coefficient_functions.special import zeta
 from yadism.esf import conv
