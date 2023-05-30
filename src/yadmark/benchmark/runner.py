@@ -164,8 +164,7 @@ class Runner(BenchmarkRunner):
             # Sort the point using yadism order since yadism list can be different from ext
             for yad in me[sf]:
                 cnt = 0
-                sf_ext = sf.strip("asy") if sf.endswith("asy") else sf
-                for oth in ext[sf_ext]:
+                for oth in ext[sf]:
                     if all([yad[k] == oth[k] for k in obs_kins]):
                         # add common values
                         esf = {}

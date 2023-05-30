@@ -33,7 +33,7 @@ class Combiner:
 
     Parameters
     ----------
-        esf : EvaluateStructureFunction
+        esf : EvaluatedStructureFunction
             current ESF
     """
 
@@ -44,15 +44,15 @@ class Combiner:
         self.obs_name = esf.info.obs_name
         self.nf = nf_default(esf.Q2, esf.info.threshold)
         self.target = esf.info.target
+        self.scheme = self.esf.info.scheme
 
     def collect(self):
         comps = []
-
         family = self.obs_name.flavor_family
         # Adding light component
         if family in ["light", "total"]:
             comps.append(self.light_component())
-        if family == "heavy" and not self.esf.info.obs_name.is_asy:
+        if family == "heavy" and self.scheme != "FFN0":
             #  the only case in which an heavy contribution is not present in those
             #  accounted for in total, it's whene heavy already became heavylight
             comps.extend(self.heavylight_components())
@@ -66,7 +66,7 @@ class Combiner:
 
         comp = Component(0)
 
-        if self.esf.info.obs_name.is_asy:
+        if self.scheme == "FFN0":
             comp.extend(
                 self.damp_elems(
                     nf,
@@ -150,7 +150,7 @@ class Combiner:
             if hq not in (0, sfh):
                 continue
 
-            if self.esf.info.obs_name.is_asy:
+            if self.scheme == "FFN0":
                 if sfh not in self.intrinsic:
                     heavy_comps[sfh].extend(
                         self.damp_elems(

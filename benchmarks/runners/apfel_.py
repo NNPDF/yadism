@@ -249,6 +249,9 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
         sv = {
             # "XIR": [0.5, 2.0],
             # "XIF": [0.5, 2.0],
+            # "kcThr": [np.inf],
+            # "kbThr": [np.inf],
+            # "ktThr": [np.inf],
             "PTO": [pto],
             "FNS": ["FFN0"],
             "mb": [1e7],
