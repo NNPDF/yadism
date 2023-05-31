@@ -1,14 +1,18 @@
+"""Benchmark yadism against apfel."""
 import pathlib
 
 dataroot = pathlib.Path(__file__).parents[2]
 
 
-def benchmark(theory, observables):
+def benchmark(theory: dict, observables: dict, pdf: str):
+    """Run a given benchmark against apfel."""
     # import banana and yadmark here to be able still to run generate outside
     # the environment
-    from banana import register
+    from banana import register  # pylint: disable=import-outside-toplevel
 
-    from yadmark.benchmark.runner import Runner
+    from yadmark.benchmark.runner import (  # pylint: disable=import-outside-toplevel
+        Runner,
+    )
 
     register(dataroot)
 
@@ -20,4 +24,4 @@ def benchmark(theory, observables):
             filter(lambda esf: esf["Q2"] > 1.0, esfs)
         )
 
-    runner.run([theory], [observables], ["ToyLH"])
+    runner.run([theory], [observables], [pdf])
