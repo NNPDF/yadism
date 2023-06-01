@@ -19,22 +19,6 @@ class AsyGluon(pc.PartonicChannelAsy):
         return RSL(reg)
 
 
-class PdfMatchingLLNonSinglet(EmptyPartonicChannel):
-    pass
-
-
-class PdfMatchingNLLNonSinglet(EmptyPartonicChannel):
-    pass
-
-
-class PdfMatchingNNLLNonSinglet(EmptyPartonicChannel):
-    pass
-
-
-class PdfMatchingNNNLLNonSinglet(EmptyPartonicChannel):
-    pass
-
-
 class AsyLLNonSinglet(EmptyPartonicChannel):
     pass
 

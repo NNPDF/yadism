@@ -4,9 +4,7 @@ This is strictly following the original reference :cite:`forte-fonll`, and
 implements the prescription at coefficient functions level.
 
 """
-import numpy as np
 from eko import basis_rotation as br
-from eko.constants import TR
 
 from .. import heavy, kernels, light
 
@@ -100,7 +98,7 @@ def generate_light_asy(esf, nl, pto_evol, pto_dis=None):
 
 def generate_heavy_asy(esf, nl, pto_evol):
     """
-    |ref| implements :eqref:`89`, :cite:`forte-fonll`.
+    |ref| implements :eqref:`91`, :cite:`forte-fonll`.
 
     Parameters
     ----------

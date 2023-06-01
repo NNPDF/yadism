@@ -4,22 +4,6 @@ from ..partonic_channel import EmptyPartonicChannel
 from . import partonic_channel as pc
 
 
-class PdfMatchingLLNonSinglet(pc.PdfMatchingLLNonSinglet):
-    pass
-
-
-class PdfMatchingNLLNonSinglet(pc.PdfMatchingNLLNonSinglet):
-    pass
-
-
-class PdfMatchingNNLLNonSinglet(pc.PdfMatchingNNLLNonSinglet):
-    pass
-
-
-class PdfMatchingNNNLLNonSinglet(pc.PdfMatchingNNNLLNonSinglet):
-    pass
-
-
 class LightNonSingletShifted(pc.PartonicChannelAsy):
     def NNLO(self):
         return light.NonSinglet(self.ESF, self.nf).NLO()

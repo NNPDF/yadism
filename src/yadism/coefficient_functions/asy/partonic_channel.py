@@ -138,63 +138,6 @@ def K_qq_loc(x, _args):
     )
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_LL_reg(z, args):
-    L = args[0]
-    as_norm = 2.0
-    return L**2 / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_reg(z, args)
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_LL_sing(z, args):
-    L = args[0]
-    as_norm = 2.0
-    return +(L**2) / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_sing(z, args)
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_LL_loc(z, args):
-    L = args[0]
-    as_norm = 2.0
-    return +(L**2) / 2.0 * 2.0 * constants.TR / 3 * as_norm * lo.pqq_local(z, args)
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_NLL_sing(z, args):
-    L = args[0]
-    return -L * Delta_qq_sing(z)
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def pdf_matching_NLL_loc(z, args):
-    L = args[0]
-    return -L * Delta_qq_loc(z)
-
-
-class PdfMatchingLLNonSinglet(PartonicChannelAsy):
-    def NNLO(self):
-        return RSL(
-            pdf_matching_LL_reg,
-            pdf_matching_LL_sing,
-            pdf_matching_LL_loc,
-            args=[self.L],
-        )
-
-
-class PdfMatchingNLLNonSinglet(PartonicChannelAsy):
-    def NNLO(self):
-        return RSL(sing=pdf_matching_NLL_sing, loc=pdf_matching_NLL_loc, args=[self.L])
-
-
-class PdfMatchingNNLLNonSinglet(PartonicChannelAsy):
-    def NNLO(self):
-        return RSL(sing=K_qq_sing, loc=K_qq_loc, args=[self.L])
-
-
-class PdfMatchingNNNLLNonSinglet(PartonicChannelAsy):
-    pass
-
-
 class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
     def __init__(self, *args, m1sq, m2sq):
         super().__init__(*args)

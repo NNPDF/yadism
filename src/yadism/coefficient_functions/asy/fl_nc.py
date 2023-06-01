@@ -102,22 +102,6 @@ class AsyNNNLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
-class PdfMatchingLLNonSinglet(EmptyPartonicChannel):
-    pass
-
-
-class PdfMatchingNLLNonSinglet(EmptyPartonicChannel):
-    pass
-
-
-class PdfMatchingNNLLNonSinglet(EmptyPartonicChannel):
-    pass
-
-
-class PdfMatchingNNNLLNonSinglet(EmptyPartonicChannel):
-    pass
-
-
 class LightNonSingletShifted(pc.PartonicChannelAsy):
     def NNLO(self):
         return light.NonSinglet(self.ESF, self.nf).NLO()

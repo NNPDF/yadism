@@ -171,22 +171,6 @@ class LightNonSingletShifted(pc.PartonicChannelAsy):
         return light.NonSinglet(self.ESF, self.nf).NLO()
 
 
-class PdfMatchingLLNonSinglet(pc.PdfMatchingLLNonSinglet):
-    pass
-
-
-class PdfMatchingNLLNonSinglet(pc.PdfMatchingNLLNonSinglet):
-    pass
-
-
-class PdfMatchingNNLLNonSinglet(pc.PdfMatchingNNLLNonSinglet):
-    pass
-
-
-class PdfMatchingNNNLLNonSinglet(pc.PdfMatchingNNNLLNonSinglet):
-    pass
-
-
 class MatchingIntrinsicSplus(pc.FMatchingQuark):
     ffns = intrinsic.Splus
 
