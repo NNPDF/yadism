@@ -105,7 +105,7 @@ class ObservableName:
             is_heavy : bool
                 is a heavy flavor?
         """
-        return "light" not in self.flavor
+        return self.flavor != "light"
 
     @property
     def is_raw_heavy(self):
@@ -120,7 +120,7 @@ class ObservableName:
     @property
     def is_composed(self):
         """Is it a composed flavor? i.e. total"""
-        return "total" in self.flavor
+        return self.flavor == "total"
 
     @property
     def flavor_family(self):
