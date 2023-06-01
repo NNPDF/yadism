@@ -18,20 +18,9 @@ def import_pc_module(kind, process, subpkg=None):
     return kernels.import_local(kind, process, subpkg)
 
 
-def generate_light_asy(esf, nl, pto_evol, pto_dis=None):
+def generate_missing_asy(esf, nl, ihq, pto_evol):
     r"""
-    Collect the light diff coefficient functions for |FONLL|.
-
-    |ref| implements the massless limit of the massive scheme
-    coefficient functions, i.e. the :math:`B_{i.l}^{(0),2}` component of
-    :eqref:`64, :cite:`forte-fonll`. This is needed to calculate
-    :math:`F_l^{(d)}` in :eqref:`95`.
-
-    Following the reference we have to collect the
-    contributions of the *incoming* would-be-heavy quarks to the light
-    structure function, where light means only non-heavy charges are active.
-    So the incoming line can *not* be the one coupling to the photon, i.e. we
-    are left with the singlet-like contributions.
+    Collect the high-virtuality limit of missing.
 
     Parameters
     ----------
@@ -39,6 +28,8 @@ def generate_light_asy(esf, nl, pto_evol, pto_dis=None):
             kinematic point
         nl : int
             number of light flavors
+        ihq : int
+            heavy quark
         pto_evol : int
             PTO of evolution
 
@@ -65,26 +56,7 @@ def generate_light_asy(esf, nl, pto_evol, pto_dis=None):
             skip_heavylight=True,
         )
 
-    # rewrite the derivative term back as a sum
-    # and so we're back to cbar^{(nl)}
-    light_elems = light.kernels.generate(esf, nl)
-
-    # This cancellation is no longer valid for the N3LO contributions
-    # which has to be evaluated with nl+1 active flavors
-    if pto_dis == 3:
-        for l in light_elems:
-            l.max_order = 2
-        n3lo_light_elems = light.kernels.generate(esf, nl + 1, skip_heavylight=True)
-        for n3lo_l in n3lo_light_elems:
-            n3lo_l.min_order = 3
-        light_elems.extend(n3lo_light_elems)
-
     asys = []
-    for e in light_elems:
-        e.min_order = pto_evol + 1
-        asys.append(e)
-    # add in addition it also has the asymptotic limit of missing
-    ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
     asy_cfs = import_pc_module(kind, esf.process)
     for res in range(pto_evol + 1):

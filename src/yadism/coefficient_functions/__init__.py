@@ -53,8 +53,8 @@ class Combiner:
         if family in ["light", "total"]:
             comps.append(self.light_component())
         if family == "heavy" and self.scheme != "FFN0":
-            #  the only case in which an heavy contribution is not present in those
-            #  accounted for in total, it's whene heavy already became heavylight
+            # the only case in which an heavy contribution is not present in those
+            # accounted for in total, it's when heavy already became heavylight
             comps.extend(self.heavylight_components())
         if family in ["heavy", "total"]:
             comps.extend(self.heavy_components())
@@ -65,22 +65,24 @@ class Combiner:
         masses = self.masses
 
         comp = Component(0)
-
-        if self.scheme == "FFN0":
-            comp.extend(
-                self.damp_elems(
-                    nf,
-                    asy.kernels.generate_light_asy(
-                        self.esf,
-                        nf,
-                        self.esf.info.theory["pto_evol"],
-                    ),
-                )
-            )
-        else:
-            comp.extend(light.kernels.generate(self.esf, nf))
-            for ihq in range(nf + 1, 7):
-                if masses[ihq]:
+        # light does not contain any mass effects and so is just always there
+        comp.extend(light.kernels.generate(self.esf, nf))
+        # instead missing encodes mass effects and so we need to fork:
+        for ihq in range(nf + 1, 7):
+            if masses[ihq]:
+                if self.scheme == "FFN0":
+                    comp.extend(
+                        self.damp_elems(
+                            nf,
+                            asy.kernels.generate_missing_asy(
+                                self.esf,
+                                nf,
+                                ihq,
+                                self.esf.info.theory["pto_evol"],
+                            ),
+                        )
+                    )
+                else:
                     comp.extend(heavy.kernels.generate_missing(self.esf, nf, ihq))
 
         return comp
