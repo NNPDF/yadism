@@ -124,7 +124,7 @@ class Combiner:
 
             heavy_comps[sfh] = Component(sfh)
 
-            # calculate only the contribution corresponding tho the observable
+            # calculate only the contribution corresponding to the observable
             # i.e. charm for F_charm, bottom for F_bottom. In the case of
             # F_total (if hq=0), sum over all massive contributions.
             if hq not in (0, sfh):
