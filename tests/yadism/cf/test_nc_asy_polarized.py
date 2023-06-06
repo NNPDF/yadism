@@ -5,125 +5,126 @@ from yadism.coefficient_functions.asy import g1_nc as f_g1_nc
 from yadism.coefficient_functions.asy import g1_nc_raw
 from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
 
-# class Test_g1_raw:
-#     zs = [0.00001, 0.0123, 0.345, 0.678]
-#     Ls = [0, 1, 10]
 
-#     def test_ns(self):
-#         refs_LL = [
-#             [-0.8888977777777778, 1.777795555733335, 4 / 3 - 0.000017777866667178354],
-#             [-0.8998222222222222, 1.7999167538501342, 4 / 3 - 0.02200225967654294],
-#             [-1.1955555555555555, 2.7141645462256148, 4 / 3 - 0.7522134103944623],
-#             [-1.4915555555555555, 5.52104899930987, 4 / 3 - 2.014584415000407],
-#         ]
-#         refs_NLL = [
-#             [21.060155130473856, -35.00927026444863, 4 / 9 + 0.00038564659661443766],
-#             [8.42753185589569, -9.832906887829992, 4 / 9 + 0.16406642957947518],
-#             [0.88835012027934, 3.2703283716553795, 4 / 9 + 0.44640613270293217],
-#             [-2.667702147019777, 14.11244914423658, 4 / 9 - 2.119895055120172],
-#         ]
-#         refs_NNLL = [
-#             [-263.5626521950901, 484.40249965037003, 530 / 27 - 0.005980198364992292],
-#             [-16.386701538397148, 22.11531642483089, 530 / 27 - 0.735761055979515],
-#             [3.5128057221033555, -8.167217335280759, 530 / 27 + 2.5735901303492197],
-#             [-15.611471367997643, 39.14863962003579, 530 / 27 - 0.2596281753250294],
-#         ]
-#         vals_NNLL = []
-#         for z in self.zs:
-#             vals_NNLL.append(
-#                 [
-#                     g1_nc_raw.c2ns_NNLL_reg(z, [0]),
-#                     g1_nc_raw.c2ns_NNLL_sing(z, [0]),
-#                     g1_nc_raw.c2ns_NNLL_loc(z, [0]),
-#                 ]
-#             )
-#         np.testing.assert_allclose(vals_NNLL, refs_NNLL)
-#         for L in self.Ls:
-#             vals_LL = []
-#             vals_NLL = []
-#             for z in self.zs:
-#                 vals_LL.append(
-#                     [
-#                         g1_nc_raw.c2ns_LL_reg(z, [L]),
-#                         g1_nc_raw.c2ns_LL_sing(z, [L]),
-#                         g1_nc_raw.c2ns_LL_loc(z, [L]),
-#                     ]
-#                 )
-#                 vals_NLL.append(
-#                     [
-#                         g1_nc_raw.c2ns_NLL_reg(z, [L]),
-#                         g1_nc_raw.c2ns_NLL_sing(z, [L]),
-#                         g1_nc_raw.c2ns_NLL_loc(z, [L]),
-#                     ]
-#                 )
-#             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
-#             np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
+class Test_g1_raw:
+    zs = [0.00001, 0.0123, 0.345, 0.678]
+    Ls = [0, 1, 10]
 
-#     def test_ps(
-#         self,
-#     ):
-#         refs_LL = [
-#             48.06968316919936,
-#             10.576017789909288,
-#             -1.0993940836064255,
-#             -0.8155508855037752,
-#         ]
-#         refs_NLL = [
-#             -640.1931101828336,
-#             -76.57675059123939,
-#             -4.829440429929221,
-#             -1.777204251596132,
-#         ]
-#         refs_NNLL = [
-#             -1255.2437541612783,
-#             148.82388396760942,
-#             8.499990421142337,
-#             9.185464893221521,
-#         ]
-#         vals_NNLL = []
-#         for z in self.zs:
-#             vals_NNLL.append(g1_nc_raw.c2ps_NNLL_reg(z, [0]))
-#         np.testing.assert_allclose(vals_NNLL, refs_NNLL)
-#         for L in self.Ls:
-#             vals_LL = []
-#             vals_NLL = []
-#             for z in self.zs:
-#                 vals_LL.append(g1_nc_raw.c2ps_LL_reg(z, [L]))
-#                 vals_NLL.append(g1_nc_raw.c2ps_NLL_reg(z, [L]))
-#             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
-#             np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
+    def test_ns(self):
+        refs_LL = [
+            [-0.8888977777777778, 1.777795555733335, 4 / 3 - 0.000017777866667178354],
+            [-0.8998222222222222, 1.7999167538501342, 4 / 3 - 0.02200225967654294],
+            [-1.1955555555555555, 2.7141645462256148, 4 / 3 - 0.7522134103944623],
+            [-1.4915555555555555, 5.52104899930987, 4 / 3 - 2.014584415000407],
+        ]
+        refs_NLL = [
+            [21.060155130473856, -35.00927026444863, 4 / 9 + 0.00038564659661443766],
+            [8.42753185589569, -9.832906887829992, 4 / 9 + 0.16406642957947518],
+            [0.88835012027934, 3.2703283716553795, 4 / 9 + 0.44640613270293217],
+            [-2.667702147019777, 14.11244914423658, 4 / 9 - 2.119895055120172],
+        ]
+        refs_NNLL = [
+            [-263.5626521950901, 484.40249965037003, 530 / 27 - 0.005980198364992292],
+            [-16.386701538397148, 22.11531642483089, 530 / 27 - 0.735761055979515],
+            [3.5128057221033555, -8.167217335280759, 530 / 27 + 2.5735901303492197],
+            [-15.611471367997643, 39.14863962003579, 530 / 27 - 0.2596281753250294],
+        ]
+        vals_NNLL = []
+        for z in self.zs:
+            vals_NNLL.append(
+                [
+                    g1_nc_raw.c2ns_NNLL_reg(z, [0]),
+                    g1_nc_raw.c2ns_NNLL_sing(z, [0]),
+                    g1_nc_raw.c2ns_NNLL_loc(z, [0]),
+                ]
+            )
+        np.testing.assert_allclose(vals_NNLL, refs_NNLL)
+        for L in self.Ls:
+            vals_LL = []
+            vals_NLL = []
+            for z in self.zs:
+                vals_LL.append(
+                    [
+                        g1_nc_raw.c2ns_LL_reg(z, [L]),
+                        g1_nc_raw.c2ns_LL_sing(z, [L]),
+                        g1_nc_raw.c2ns_LL_loc(z, [L]),
+                    ]
+                )
+                vals_NLL.append(
+                    [
+                        g1_nc_raw.c2ns_NLL_reg(z, [L]),
+                        g1_nc_raw.c2ns_NLL_sing(z, [L]),
+                        g1_nc_raw.c2ns_NLL_loc(z, [L]),
+                    ]
+                )
+            np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
+            np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
 
-#     def test_g(self):
-#         refs_LL = [
-#             178.94641371183462,
-#             29.519837613005762,
-#             -10.148135778358451,
-#             -0.950256937912481,
-#         ]
-#         refs_NLL = [
-#             -1970.4003195041385,
-#             -168.56223866849194,
-#             16.559901373764724,
-#             2.863933384688224,
-#         ]
-#         refs_NNLL = [
-#             -4344.077339368944,
-#             476.4713474675223,
-#             -51.14898264499218,
-#             83.66969562398963,
-#         ]
-#         vals_NNLL = []
-#         for z in self.zs:
-#             vals_NNLL.append(g1_nc_raw.c2g_NNLL_reg(z, [0]))
-#         np.testing.assert_allclose(vals_NNLL, refs_NNLL)
-#         for L in self.Ls:
-#             vals_LL = []
-#             vals_NLL = []
-#             for z in self.zs:
-#                 vals_LL.append(g1_nc_raw.c2g_LL_reg(z, [L]))
-#                 vals_NLL.append(g1_nc_raw.c2g_NLL_reg(z, [L]))
-#             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
-#             np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
+    def test_ps(
+        self,
+    ):
+        refs_LL = [
+            48.06968316919936,
+            10.576017789909288,
+            -1.0993940836064255,
+            -0.8155508855037752,
+        ]
+        refs_NLL = [
+            -640.1931101828336,
+            -76.57675059123939,
+            -4.829440429929221,
+            -1.777204251596132,
+        ]
+        refs_NNLL = [
+            -1255.2437541612783,
+            148.82388396760942,
+            8.499990421142337,
+            9.185464893221521,
+        ]
+        vals_NNLL = []
+        for z in self.zs:
+            vals_NNLL.append(g1_nc_raw.c2ps_NNLL_reg(z, [0]))
+        np.testing.assert_allclose(vals_NNLL, refs_NNLL)
+        for L in self.Ls:
+            vals_LL = []
+            vals_NLL = []
+            for z in self.zs:
+                vals_LL.append(g1_nc_raw.c2ps_LL_reg(z, [L]))
+                vals_NLL.append(g1_nc_raw.c2ps_NLL_reg(z, [L]))
+            np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
+            np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
+
+    def test_g(self):
+        refs_LL = [
+            178.94641371183462,
+            29.519837613005762,
+            -10.148135778358451,
+            -0.950256937912481,
+        ]
+        refs_NLL = [
+            -1970.4003195041385,
+            -168.56223866849194,
+            16.559901373764724,
+            2.863933384688224,
+        ]
+        refs_NNLL = [
+            -4344.077339368944,
+            476.4713474675223,
+            -51.14898264499218,
+            83.66969562398963,
+        ]
+        vals_NNLL = []
+        for z in self.zs:
+            vals_NNLL.append(g1_nc_raw.c2g_NNLL_reg(z, [0]))
+        np.testing.assert_allclose(vals_NNLL, refs_NNLL)
+        for L in self.Ls:
+            vals_LL = []
+            vals_NLL = []
+            for z in self.zs:
+                vals_LL.append(g1_nc_raw.c2g_LL_reg(z, [L]))
+                vals_NLL.append(g1_nc_raw.c2g_NLL_reg(z, [L]))
+            np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
+            np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
 
 
 class Test_limits:
