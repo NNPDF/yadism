@@ -129,16 +129,6 @@ class Runner:
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
         )
-        # FONLL damping powers
-        FONLL_damping = bool(theory["DAMP"])
-        if FONLL_damping:
-            damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
-            damping_powers = [
-                theory.get(f"DAMPPOWER{quark}", damping_power)
-                for quark in ("CHARM", "BOTTOM", "TOP")
-            ]
-        else:
-            damping_powers = [2] * 3
         # pass theory params
         intrinsic_range = []
         if theory["IC"] == 1:
@@ -156,8 +146,6 @@ class Runner:
             GF=theory["GF"],
             M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
-            FONLL_damping=FONLL_damping,
-            damping_powers=damping_powers,
         )
         logger.info(
             "PTO: %d, PTO@evolution: %d, process: %s",

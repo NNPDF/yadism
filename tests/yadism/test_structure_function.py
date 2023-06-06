@@ -36,9 +36,7 @@ class MockRunner:
         coupling_constants=coupling_constants,
         sv_manager=sv_manager,
     )
-    theory_params = dict(
-        pto=0, scheme="FFNS", target=dict(Z=1, A=1), TMC=0, nf_ff=4, FONLL_damping=False
-    )
+    theory_params = dict(pto=0, scheme="FFNS", target=dict(Z=1, A=1), TMC=0, nf_ff=4)
 
 
 @pytest.mark.skip

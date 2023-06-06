@@ -72,14 +72,11 @@ class Combiner:
             if masses[ihq]:
                 if self.scheme == "FFN0":
                     comp.extend(
-                        self.damp_elems(
+                        asy.kernels.generate_missing_asy(
+                            self.esf,
                             nf,
-                            asy.kernels.generate_missing_asy(
-                                self.esf,
-                                nf,
-                                ihq,
-                                self.esf.info.theory["pto_evol"],
-                            ),
+                            ihq,
+                            self.esf.info.theory["pto_evol"],
                         )
                     )
                 else:
@@ -133,21 +130,15 @@ class Combiner:
             if self.scheme == "FFN0":
                 if sfh not in self.intrinsic:
                     heavy_comps[sfh].extend(
-                        self.damp_elems(
-                            nf,
-                            asy.kernels.generate_heavy_asy(
-                                self.esf, nf, self.esf.info.theory["pto_evol"]
-                            ),
+                        asy.kernels.generate_heavy_asy(
+                            self.esf, nf, self.esf.info.theory["pto_evol"]
                         )
                     )
                 else:
                     heavy_comps[sfh].extend(
-                        self.damp_elems(
-                            nf,
-                            asy.kernels.generate_heavy_intrinsic_asy(
-                                self.esf, nf, self.esf.info.theory["pto_evol"]
-                            ),
-                        )
+                        asy.kernels.generate_heavy_intrinsic_asy(
+                            self.esf, nf, self.esf.info.theory["pto_evol"]
+                        ),
                     )
             else:
                 heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
@@ -164,34 +155,6 @@ class Combiner:
                         )
             comps.append(heavy_comps[sfh])
         return comps
-
-    def damp_elems(self, nl, elems):
-        """
-        Damp FONLL difference contributions if necessary.
-
-        Parameters
-        ----------
-            nl : int
-                number of *light* flavors
-            elems : list(Kernel)
-                kernels to be modified
-
-        Returns
-        -------
-            elems : list(Kernel)
-                modified kernels
-        """
-        if not self.esf.info.FONLL_damping:
-            return elems
-        nhq = nl + 1
-        # TODO: replace mass with threshold?
-        m2hq = self.esf.info.m2hq[nhq - 4]
-        power = self.esf.info.damping_powers[nhq - 4]
-        if self.esf.Q2 > m2hq:
-            damp = np.power(1.0 - m2hq / self.esf.Q2, power)
-        else:
-            damp = 0.0
-        return (damp * e for e in elems)
 
     @staticmethod
     def apply_isospin(full, z, a):

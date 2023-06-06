@@ -141,6 +141,10 @@ class BenchmarkXS(ApfelBenchmark):
         )
         self.run([{"PTO": pto}], obs_updates, ["ToyLH"])
 
+    # ============================================================================ #
+    #                               ZM-VFNS                                        #
+    # ============================================================================ #
+
 
 @pytest.mark.skip
 class BenchmarkFlavorNumberScheme(ApfelBenchmark):

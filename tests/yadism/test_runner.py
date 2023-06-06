@@ -85,7 +85,6 @@ class TestRunner:
             MP=1.0,
             Q0=2.0,
             HQ="POLE",
-            DAMP=1,
             IC=1,
             TMC=0,
             RenScaleVar=True,
@@ -117,7 +116,6 @@ class TestRunner:
         assert full_runner._theory["PTO"] == theory["PTO"]
 
         log.silent_mode = True
-        theory["DAMP"] = 0
 
         full_runner = runner.Runner(theory, observables)
 

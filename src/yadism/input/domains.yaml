@@ -141,24 +141,6 @@
   domain:
     - 3 <= nf <= 6
 
-# TODO: convert to boolean?
-- name: DampingFONLL
-  known_as: DAMP
-  runcard: theory
-  description: >
-    Damping FONLL
-  type: integer
-  metavar: damp
-  domain:
-    - 0 <= damp <= 1
-
-# TODO: missing in our runcards, but should be present!
-#- name: DampPowerFONLL
-#known_as: DampPowerFONLL
-#description: >
-#Damping FONLL (APFEL choice: (2,2,2), ours: currently not in use)
-#type: string
-
 - name: CharmThresholdRatio
   known_as: kDIScThr
   runcard: theory
