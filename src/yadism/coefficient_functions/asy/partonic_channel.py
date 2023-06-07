@@ -36,7 +36,6 @@ class FMatching(PartonicChannelAsyIntrinsic):
 
     def __init__(self, *args, m1sq, m2sq, m2hq):
         super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
-        self.l = np.log(self.Q2 / m1sq)
 
     def obj(self):
         return self.ffns(self.ESF, self.nf, m1sq=self.m1sq, m2sq=self.m2sq)
@@ -54,7 +53,6 @@ class FMatchingQuark(FMatching):
         if icl is None:
             return None
         asnorm = 2.0
-        l = self.l
 
         def sing(z, _args):
             # this coefficient function is *almost* proportional to P_qq
@@ -63,7 +61,7 @@ class FMatchingQuark(FMatching):
                 asnorm
                 * icl
                 * constants.CF
-                * ((1.0 + z**2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
+                * ((1.0 + z**2) / (1.0 - z) * (-2.0 * np.log(1.0 - z) - 1.0))
             )
 
         # MMa:
@@ -74,9 +72,8 @@ class FMatchingQuark(FMatching):
                 * icl
                 * constants.CF
                 * (
-                    -(x * (4.0 + l * (2.0 + x))) / 2.0
-                    + np.log(1.0 - x)
-                    * (-1.0 - 2.0 * l + x * (2.0 + x) + 2.0 * np.log(1.0 - x))
+                    -x * 2.0
+                    + np.log(1.0 - x) * (-1.0 + x * (2.0 + x) + 2.0 * np.log(1.0 - x))
                 )
             )
 
