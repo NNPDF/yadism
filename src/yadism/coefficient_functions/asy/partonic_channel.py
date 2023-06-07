@@ -1,141 +1,15 @@
-import numba as nb
 import numpy as np
 from eko import constants
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
 from ..partonic_channel import RSL
-from ..special import li2
-from ..special.nielsen import nielsen
-from ..splitting_functions import lo
 
 
 class PartonicChannelAsy(pc.PartonicChannel):
     def __init__(self, *args, m2hq):
         super().__init__(*args)
         self.L = np.log(self.ESF.Q2 / m2hq)
-
-
-# we can define those here, since F2=F3=delta(1-z) at LO and FL=0
-
-
-@nb.njit("f8(f8)", cache=True)
-def Delta_qq_sing(z):
-    r"""
-    |ref| implements :eqref:`101`, :cite:`forte-fonll`.
-
-    Parameters
-    ----------
-        z : float
-            parton momentum
-
-    Returns
-    -------
-        singular part of : math:`\Delta_qq(z)`
-    """
-    as_norm = 4.0
-    return (
-        constants.CF
-        * constants.TR
-        * (
-            (1.0 + z**2) / (1.0 - z) * (2.0 / 3.0 * np.log(z) + 10.0 / 9.0)
-            + 4.0 / 3.0 * (1.0 - z)
-        )
-        * as_norm
-    )
-
-
-@nb.njit("f8(f8)", cache=True)
-def Delta_qq_loc(x):
-    r"""
-    |ref| implements :eqref:`101`, :cite:`forte-fonll`.
-
-    Parameters
-    ----------
-        x : float
-            Bjorken x
-
-    Returns
-    -------
-        local part of : math:`\Delta_qq(z)`
-    """
-    as_norm = 4.0
-    # Integrate[(1+z^2)/(1-z)(2/3 Log[z]+10/9)+4/3(1-z),{z,0,x},Assumptions->{0<x<1}]
-    return -(
-        constants.CF
-        * constants.TR
-        * (
-            -4 * np.pi**2
-            + (16 - 19 * x) * x
-            - 40 * np.log(1 - x)
-            - 6 * x * (2 + x) * np.log(x)
-            + 24 * li2(1 - x)
-        )
-        / 18.0
-        * as_norm
-    )
-
-
-@nb.njit("f8(f8, f8[:])", cache=True)
-def K_qq_sing(z, _args):
-    """
-    |ref| implements :eqref:`100`, :cite:`forte-fonll`.
-
-    Parameters
-    ----------
-        z : float
-            parton momentum
-
-    Returns
-    -------
-        singular part of : math:`K_qq(z)`
-    """
-    as_norm = 4.0
-    return (
-        constants.CF
-        * constants.TR
-        * (
-            (1.0 + z**2)
-            / (1.0 - z)
-            * (1.0 / 6.0 * np.log(z) ** 2 + 5.0 / 9.0 * np.log(z) + 28.0 / 27.0)
-            + (1.0 - z) * (2.0 / 3.0 * np.log(z) + 13.0 / 9.0)
-        )
-        * as_norm
-    )
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def K_qq_loc(x, _args):
-    """
-    |ref| implements :eqref:`100`, :cite:`forte-fonll`.
-
-    Parameters
-    ----------
-        x : float
-            Bjorken x
-
-    Returns
-    -------
-        local part of : math:`K_qq(z)`
-    """
-    as_norm = 4.0
-    # Integrate[(1+z^2)/(1-z)(1/6 Log[z]^2+5/9Log[z]+28/27)+(1-z)(2/3Log[z]+13/9),{z,0,x},Assumptions->{0<x<1}]
-    return -(
-        constants.CF
-        * constants.TR
-        * (
-            -40 * np.pi**2
-            - x * (8 + 211 * x)
-            - 6
-            * np.log(x)
-            * (4 * np.pi**2 + x * (-16 + 19 * x) + 3 * x * (2 + x) * np.log(x))
-            + 8 * np.log(1 - x) * (-56 + 9 * np.log(x) ** 2)
-            + 48 * (5 + 3 * np.log(x)) * li2(1 - x)
-            + 144 * nielsen(2, 1, x).real
-        )
-        / 216.0
-        * as_norm
-    )
 
 
 class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
