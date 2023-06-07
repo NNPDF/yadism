@@ -52,7 +52,7 @@ class Combiner:
         # Adding light component
         if family in ["light", "total"]:
             comps.append(self.light_component())
-        if family == "heavy" and self.scheme != "FFN0":
+        if family == "heavy":
             # the only case in which an heavy contribution is not present in those
             # accounted for in total, it's when heavy already became heavylight
             comps.extend(self.heavylight_components())
