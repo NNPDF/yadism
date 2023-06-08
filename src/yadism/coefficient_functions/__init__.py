@@ -1,3 +1,4 @@
+"""Collect all kernels for given |FNS|."""
 import numpy as np
 from eko.matchings import nf_default
 
@@ -6,9 +7,7 @@ from .partonic_channel import EmptyPartonicChannel
 
 
 class Component(list):
-    """
-    Used for organize elements and debugging purpose.
-    """
+    """Used for organize elements and debugging purpose."""
 
     heavyness = {0: "light", 4: "charm", 5: "bottom", 6: "top"}
 
@@ -27,14 +26,13 @@ class Component(list):
 
 
 class Combiner:
-    """
-    Does the matching between coefficient functions and partons with their approptiate coupling
-    strength.
+    """Does the matching between coefficient functions and partons with their approptiate coupling strength.
 
     Parameters
     ----------
-        esf : EvaluatedStructureFunction
-            current ESF
+    esf : EvaluatedStructureFunction
+        current ESF
+
     """
 
     def __init__(self, esf):
@@ -47,6 +45,7 @@ class Combiner:
         self.scheme = esf.info.scheme
 
     def collect(self):
+        """Collect all kernels."""
         comps = []
         family = self.obs_name.flavor_family
         # Adding light component
@@ -61,6 +60,7 @@ class Combiner:
         return comps
 
     def light_component(self):
+        """Collect massless kernels."""
         nf = self.nf
         masses = self.masses
 
@@ -85,6 +85,7 @@ class Combiner:
         return comp
 
     def heavylight_components(self):
+        """Collect single-flavor massless kernels."""
         nf = self.nf
         hq = self.obs_name.hqnumber
         masses = self.masses
@@ -99,6 +100,7 @@ class Combiner:
         return comps
 
     def heavy_components(self):
+        """Collect amssive kernels."""
         nf = self.nf
         hq = self.obs_name.hqnumber
         masses = self.masses
@@ -127,8 +129,17 @@ class Combiner:
             if hq not in (0, sfh):
                 continue
 
-            if self.scheme == "FFN0":
-                if sfh not in self.intrinsic:
+            if sfh in self.intrinsic:  # heavy quark is intrinsic
+                if self.scheme == "FFN0":
+                    heavy_comps[sfh].extend(
+                        asy.kernels.generate_intrinsic_asy(self.esf, nf),
+                    )
+                else:
+                    heavy_comps[sfh].extend(
+                        intrinsic.kernels.generate(self.esf, ihq=sfh)
+                    )
+            else:  # heavy quark is not intrinsic
+                if self.scheme == "FFN0":
                     heavy_comps[sfh].extend(
                         asy.kernels.generate_heavy_asy(
                             self.esf, nf, self.esf.info.theory["pto_evol"]
@@ -136,39 +147,39 @@ class Combiner:
                     )
                 else:
                     heavy_comps[sfh].extend(
-                        asy.kernels.generate_heavy_intrinsic_asy(
-                            self.esf, nf, self.esf.info.theory["pto_evol"]
-                        ),
+                        heavy.kernels.generate(self.esf, nf, ihq=sfh)
                     )
-            else:
-                heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
-                if sfh in self.intrinsic:
+
+            # Add missing contributions
+            for ihq in range(sfh + 1, 7):
+                if not masses[ihq]:
+                    continue
+                if self.scheme == "FFN0":
                     heavy_comps[sfh].extend(
-                        intrinsic.kernels.generate(self.esf, ihq=sfh)
-                    )
-                for ihq in range(sfh + 1, 7):
-                    if masses[ihq]:
-                        heavy_comps[sfh].extend(
-                            heavy.kernels.generate_missing(
-                                self.esf, nf, ihq, icoupl=sfh
-                            )
+                        asy.kernels.generate_missing_asy(
+                            self.esf, nf, ihq, self.esf.info.theory["pto_evol"]
                         )
+                    )
+                else:
+                    heavy_comps[sfh].extend(
+                        heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
+                    )
             comps.append(heavy_comps[sfh])
         return comps
 
     @staticmethod
     def apply_isospin(full, z, a):
-        """
-        Apply isospin symmetry to u and d distributions.
+        """Apply isospin symmetry to u and d distributions.
 
         Parameters
         ----------
-            full : list(yadism.kernels.Kernel)
-                all participants
-            z : float
-                number of protons
-            a : float
-                atomic mass number
+        full : list(yadism.kernels.Kernel)
+            all participants
+        z : float
+            number of protons
+        a : float
+            atomic mass number
+
         """
         nucl_factors = np.array([[z, a - z], [a - z, z]]) / a
         for ker in full:
@@ -180,18 +191,18 @@ class Combiner:
 
     @staticmethod
     def drop_empty(full):
-        """
-        Drop kernels with :class:`EmptyPartonicChannel` or its partons with empty weight.
+        """Drop kernels with :class:`EmptyPartonicChannel` or its partons with empty weight.
 
         Parameters
         ----------
-            elems : list(yadism.kernels.Kernel)
-                all participants
+        elems : list(yadism.kernels.Kernel)
+            all participants
 
         Returns
         -------
-            filtered_kernels : list(yadism.kernels.Kernel)
-                improved participants
+        filtered_kernels : list(yadism.kernels.Kernel)
+            improved participants
+
         """
         filtered_kernels = []
         for ker in full:
@@ -201,13 +212,13 @@ class Combiner:
         return filtered_kernels
 
     def collect_elems(self):
-        """
-        Collects all kernels according to the |FNS|.
+        """Collect all kernels according to the |FNS|.
 
         Returns
         -------
-            elems : list(yadism.kernels.Kernel)
-                all participants
+        elems : list(yadism.kernels.Kernel)
+            all participants
+
         """
         components = self.collect()
 

@@ -126,7 +126,7 @@ def generate_heavy_asy(esf, nl, pto_evol):
     return asys
 
 
-def generate_heavy_intrinsic_asy(esf, nl, pto_evol):
+def generate_intrinsic_asy(esf, nl):
     """
     |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
 
@@ -136,8 +136,6 @@ def generate_heavy_intrinsic_asy(esf, nl, pto_evol):
             kinematic point
         nl : int
             number of light flavors
-        pto_evol : int
-            PTO of evolution
 
     Returns
     -------
@@ -149,10 +147,6 @@ def generate_heavy_intrinsic_asy(esf, nl, pto_evol):
     cfs = import_pc_module(kind, esf.process)
     ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
-    # add normal terms starting from NNLO
-    nnlo_terms = generate_heavy_asy(esf, nl, pto_evol)
-    for k in nnlo_terms:
-        k.min_order = 2
     if esf.process == "CC":
         w = kernels.cc_weights(
             esf.info.coupling_constants,
@@ -168,13 +162,11 @@ def generate_heavy_intrinsic_asy(esf, nl, pto_evol):
                     wq,
                     cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2hq=m2hq),
                 ),
-                *nnlo_terms,
             )
         return (
             kernels.Kernel(
                 wq, cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2hq=m2hq)
             ),
-            *nnlo_terms,
         )
     # NC
     if is_pv:
@@ -191,7 +183,6 @@ def generate_heavy_intrinsic_asy(esf, nl, pto_evol):
                 {ihq: wm, (-ihq): -wm},
                 cfs.MatchingIntrinsicRminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
             ),
-            *nnlo_terms,
         )
     # add matching terms
     wVV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VV")
@@ -207,5 +198,4 @@ def generate_heavy_intrinsic_asy(esf, nl, pto_evol):
             {ihq: wm, (-ihq): wm},
             cfs.MatchingIntrinsicSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
         ),
-        *nnlo_terms,
     )
