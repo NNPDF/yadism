@@ -109,10 +109,12 @@ class LightNonSingletShifted(pc.PartonicChannelAsy):
 
 class MatchingIntrinsicSplus(pc.FMatchingQuark):
     ffns = intrinsic.Splus
+    lo_delta = 0.0
 
 
 class MatchingIntrinsicSminus(pc.FMatchingQuark):
     ffns = intrinsic.Sminus
+    lo_delta = 0.0
 
 
 class MatchingGluonSplus(pc.FMatchingGluon):

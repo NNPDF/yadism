@@ -33,12 +33,17 @@ class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
 
 class FMatching(PartonicChannelAsyIntrinsic):
     ffns = lambda *_args, m1sq, m2sq: None
+    lo_delta = 1.0
 
     def __init__(self, *args, m1sq, m2sq, m2hq):
         super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
+        self.l = np.log(self.Q2 / m1sq)
 
     def obj(self):
         return self.ffns(self.ESF, self.nf, m1sq=self.m1sq, m2sq=self.m2sq)
+
+    def LO(self):
+        return RSL.from_delta(self.lo_delta)
 
     def parent_lo_local(self):
         parent_LO = self.obj().LO()
@@ -53,6 +58,7 @@ class FMatchingQuark(FMatching):
         if icl is None:
             return None
         asnorm = 2.0
+        l = self.l
 
         def sing(z, _args):
             # this coefficient function is *almost* proportional to P_qq
@@ -61,7 +67,7 @@ class FMatchingQuark(FMatching):
                 asnorm
                 * icl
                 * constants.CF
-                * ((1.0 + z**2) / (1.0 - z) * (-2.0 * np.log(1.0 - z) - 1.0))
+                * ((1.0 + z**2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
             )
 
         # MMa:
@@ -73,7 +79,8 @@ class FMatchingQuark(FMatching):
                 * constants.CF
                 * (
                     -x * 2.0
-                    + np.log(1.0 - x) * (-1.0 + x * (2.0 + x) + 2.0 * np.log(1.0 - x))
+                    + np.log(1.0 - x)
+                    * (-1.0 - 2.0 * l + x * (2.0 + x) + 2.0 * np.log(1.0 - x))
                 )
             )
 
