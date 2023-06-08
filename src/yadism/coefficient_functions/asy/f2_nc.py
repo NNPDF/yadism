@@ -181,6 +181,7 @@ class MatchingIntrinsicSminus(pc.FMatchingQuark):
 
 class MatchingGluonSplus(pc.FMatchingGluon):
     ffns = intrinsic.Splus
+    lo_delta = 1.0
 
 
 class MatchingGluonSminus(pc.FMatchingGluon):

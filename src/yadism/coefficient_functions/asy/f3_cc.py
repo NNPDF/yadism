@@ -41,6 +41,7 @@ class LightNonSingletShifted(EmptyPartonicChannel):
 
 class MatchingIntrinsicRplus(pc.FMatchingQuarkCC):
     ffns = intrinsic.Rplus
+    lo_delta = 1.0
 
 
 class MatchingGluonRplus(pc.FMatchingGluonCC):

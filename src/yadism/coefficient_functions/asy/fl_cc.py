@@ -42,9 +42,7 @@ class AsyNNNLLNonSinglet(EmptyPartonicChannel):
 
 class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):
     ffns = intrinsic.Splus
-    lo_delta = 0.0
 
 
 class MatchingGluonSplus(pc.FMatchingGluonCC):
     ffns = intrinsic.Splus
-    lo_delta = 0.0

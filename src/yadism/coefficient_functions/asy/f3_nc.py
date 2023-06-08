@@ -11,6 +11,7 @@ class LightNonSingletShifted(pc.PartonicChannelAsy):
 
 class MatchingIntrinsicRplus(pc.FMatchingQuark):
     ffns = intrinsic.Rplus
+    lo_delta = 1.0
 
 
 class MatchingIntrinsicRminus(pc.FMatchingQuark):

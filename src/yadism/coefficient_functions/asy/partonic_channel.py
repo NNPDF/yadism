@@ -33,7 +33,7 @@ class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
 
 class FMatching(PartonicChannelAsyIntrinsic):
     ffns = lambda *_args, m1sq, m2sq: None
-    lo_delta = 1.0
+    lo_delta = 0.0
 
     def __init__(self, *args, m1sq, m2sq, m2hq):
         super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
