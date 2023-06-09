@@ -126,9 +126,9 @@ def generate_heavy_asy(esf, nl, pto_evol):
     return asys
 
 
-def generate_intrinsic_asy(esf, nl):
+def generate_intrinsic_asy(esf, nl, pto_evol):
     """
-    |ref| implements :eqref:`B.24-26`, :cite:`luca-intrinsic`.
+    |ref| implements :eqref:`10` of :cite:`nnpdf-intrinsic`.
 
     Parameters
     ----------
@@ -136,6 +136,8 @@ def generate_intrinsic_asy(esf, nl):
             kinematic point
         nl : int
             number of light flavors
+        pto_evol : int
+            PTO of evolution
 
     Returns
     -------
@@ -155,47 +157,38 @@ def generate_intrinsic_asy(esf, nl):
             ihq,
             is_pv,
         )
-        wq = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
+        weights = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
+    else:  # NC
         if is_pv:
-            return (
+            wVA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VA")
+            wAV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+            wp = wVA + wAV
+            # Rminus ~ wm = wVA - wAV does not contribute to asy
+            weights = {ihq: wp, (-ihq): -wp}
+        else:
+            wVV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VV")
+            wAA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+            wp = wVV + wAA
+            # Sminus ~ wm = wVV - wAA does not contribute to asy
+            weights = {ihq: wp, (-ihq): wp}
+
+    asys = [
+        kernels.Kernel(
+            weights,
+            cfs.AsyLLIntrinsic(esf, nl, m2hq=m2hq),
+        )
+    ]
+    if pto_evol > 0:
+        asys.extend(
+            [
                 kernels.Kernel(
-                    wq,
-                    cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2hq=m2hq),
+                    weights,
+                    cfs.AsyNLLIntrinsicMatching(esf, nl, m2hq=m2hq),
                 ),
-            )
-        return (
-            kernels.Kernel(
-                wq, cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2hq=m2hq)
-            ),
+                kernels.Kernel(
+                    weights,
+                    cfs.AsyNLLIntrinsicLight(esf, nl, m2hq=m2hq),
+                ),
+            ]
         )
-    # NC
-    if is_pv:
-        wVA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VA")
-        wAV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
-        wp = wVA + wAV
-        wm = wVA - wAV
-        return (
-            kernels.Kernel(
-                {ihq: wp, (-ihq): -wp},
-                cfs.MatchingIntrinsicRplus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
-            ),
-            kernels.Kernel(
-                {ihq: wm, (-ihq): -wm},
-                cfs.MatchingIntrinsicRminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
-            ),
-        )
-    # add matching terms
-    wVV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VV")
-    wAA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
-    wp = wVV + wAA
-    wm = wVV - wAA
-    return (
-        kernels.Kernel(
-            {ihq: wp, (-ihq): wp},
-            cfs.MatchingIntrinsicSplus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
-        ),
-        kernels.Kernel(
-            {ihq: wm, (-ihq): wm},
-            cfs.MatchingIntrinsicSminus(esf, nl, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq),
-        ),
-    )
+    return asys

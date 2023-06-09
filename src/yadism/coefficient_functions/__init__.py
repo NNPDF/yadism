@@ -132,7 +132,9 @@ class Combiner:
             if sfh in self.intrinsic:  # heavy quark is intrinsic
                 if self.scheme == "FFN0":
                     heavy_comps[sfh].extend(
-                        asy.kernels.generate_intrinsic_asy(self.esf, nf),
+                        asy.kernels.generate_intrinsic_asy(
+                            self.esf, nf, self.esf.info.theory["pto_evol"]
+                        ),
                     )
                 else:
                     heavy_comps[sfh].extend(
