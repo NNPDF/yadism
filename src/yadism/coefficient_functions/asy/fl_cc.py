@@ -20,10 +20,6 @@ class AsyGluon(pc.PartonicChannelAsy):
         return RSL(reg)
 
 
-class LightNonSingletShifted(EmptyPartonicChannel):
-    pass
-
-
 class AsyLLNonSinglet(EmptyPartonicChannel):
     pass
 
@@ -40,9 +36,13 @@ class AsyNNNLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
-class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):
-    ffns = intrinsic.Splus
+class AsyLLIntrinsic(pc.PartonicChannelAsyLLIntrinsic):
+    light_cls = light.NonSingletEven
 
 
-class MatchingGluonSplus(pc.FMatchingGluonCC):
-    ffns = intrinsic.Splus
+class AsyNLLIntrinsicMatching(pc.PartonicChannelAsyNLLIntrinsicMatching):
+    light_cls = light.NonSingletEven
+
+
+class AsyNLLIntrinsicLight(pc.PartonicChannelAsyNLLIntrinsicLight):
+    light_cls = light.NonSingletEven

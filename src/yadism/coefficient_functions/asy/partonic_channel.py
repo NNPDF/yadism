@@ -12,110 +12,106 @@ class PartonicChannelAsy(pc.PartonicChannel):
         self.L = np.log(self.ESF.Q2 / m2hq)
 
 
-class PartonicChannelAsyIntrinsic(pc.PartonicChannel):
-    def __init__(self, *args, m1sq, m2sq):
-        super().__init__(*args)
-        self.Q2 = self.ESF.Q2
-        self.x = self.ESF.x
-        self.m1sq = m1sq
-        self.m2sq = m2sq
-        self.sigma_pm = self.Q2 + self.m2sq - self.m1sq
-        self.delta = self.kinematic_delta(self.m1sq, self.m2sq, -self.Q2)
-        self.eta = 2.0 * self.Q2 / (self.sigma_pm + self.delta)
+class PartonicChannelAsyLLIntrinsic(PartonicChannelAsy):
+    """|ref| implements |LL| part of :eqref:`10` of :cite:`nnpdf-intrinsic` from matching."""
 
-    @staticmethod
-    def kinematic_delta(a, b, c):
-        return np.sqrt(a**2 + b**2 + c**2 - 2 * (a * b + b * c + c * a))
-
-    def convolution_point(self):
-        return self.x / self.eta
-
-
-class FMatching(PartonicChannelAsyIntrinsic):
-    ffns = lambda *_args, m1sq, m2sq: None
-    lo_delta = 0.0
-
-    def __init__(self, *args, m1sq, m2sq, m2hq):
-        super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
-        self.l = np.log(self.Q2 / m1sq)
-
-    def obj(self):
-        return self.ffns(self.ESF, self.nf, m1sq=self.m1sq, m2sq=self.m2sq)
+    light_cls = None
 
     def LO(self):
-        return RSL.from_delta(self.lo_delta)
+        """Return |LO| from light."""
+        return self.light_cls(self.ESF, self.nf).LO()
 
-    def parent_lo_local(self):
-        parent_LO = self.obj().LO()
-        if parent_LO is None:
+    def lo_local(self):
+        """Collect LO delta coefficient."""
+        # don't rely on self.LO() since is overwritten in NLL
+        lo = self.light_cls(self.ESF, self.nf).LO()
+        # check LO is not vanishing
+        if lo is None:
             return None
-        return parent_LO.args["loc"][0]
+        # now, then it can only be a delta - and the delta is coming from the arguments
+        return lo.args["loc"][0]
 
-
-class FMatchingQuark(FMatching):
     def NLO(self):
-        icl = self.parent_lo_local()
-        if icl is None:
+        """|ref| implements :eqref:`10` of :cite:`nnpdf-intrinsic`."""
+        lo_local = self.lo_local()
+        if lo_local is None:
+            return None
+        l = self.L
+
+        # since LO is a delta it is sufficient to multiply with its coefficient
+        def reg(z, args):
+            return lo_local * l * split.lo.pqq_reg(z, args)
+
+        def sing(z, args):
+            return lo_local * l * split.lo.pqq_sing(z, args)
+
+        def loc(x, args):
+            return lo_local * l * split.lo.pqq_local(x, args)
+
+        return RSL(reg, sing, loc)
+
+    @staticmethod
+    def NNLO():
+        """Empty, because intrinsic is only known up to |NLO|."""
+        return None
+
+    @staticmethod
+    def N3LO():
+        """Empty, because intrinsic is only known up to |NLO|."""
+        return None
+
+
+class PartonicChannelAsyNLLIntrinsicMatching(PartonicChannelAsyLLIntrinsic):
+    @staticmethod
+    def LO():
+        """Empty, because |NLL| only starts at |NLO|."""
+        return None
+
+    def NLO(self):
+        """|ref| implements |NLL| part of :eqref:`10` of :cite:`nnpdf-intrinsic` from matching."""
+        lo_local = self.lo_local()
+        if lo_local is None:
             return None
         asnorm = 2.0
-        l = self.l
 
+        # again, convolution with LO is trivial as it is a delta
         def sing(z, _args):
-            # this coefficient function is *almost* proportional to P_qq
+            # this coefficient function is proportional to P_qq
             # i.e. 2CF * (1.0 + z ** 2) / (1.0 - z) is the "bare" P_qq
             return (
-                asnorm
-                * icl
+                lo_local
+                * asnorm
                 * constants.CF
-                * ((1.0 + z**2) / (1.0 - z) * (l - 2.0 * np.log(1.0 - z) - 1.0))
+                * ((1.0 + z**2) / (1.0 - z) * (-2.0 * np.log(1.0 - z) - 1.0))
             )
 
         # MMa:
-        # FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (l - 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}] # pylint: disable=line-too-long
+        # FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (- 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}] # pylint: disable=line-too-long
         def loc(x, _args):
             return (
-                -asnorm
-                * icl
+                -lo_local
+                * asnorm
                 * constants.CF
                 * (
                     -x * 2.0
-                    + np.log(1.0 - x)
-                    * (-1.0 - 2.0 * l + x * (2.0 + x) + 2.0 * np.log(1.0 - x))
+                    + np.log(1.0 - x) * (-1.0 + x * (2.0 + x) + 2.0 * np.log(1.0 - x))
                 )
             )
 
         return RSL(sing=sing, loc=loc)
 
 
-class FMatchingCC(FMatching):
-    ffns = lambda *_args, m1sq: None
+class PartonicChannelAsyNLLIntrinsicLight(PartonicChannelAsyLLIntrinsic):
+    """|ref| implements |NLL| part of :eqref:`10` of :cite:`nnpdf-intrinsic` from light.
 
-    def __init__(self, *args, m1sq, m2hq):
-        super().__init__(*args, m1sq=m1sq, m2sq=0.0, m2hq=m2hq)
+    In practice it echos the |NLO| light coefficient function only.
+    """
 
-    def obj(self):
-        return self.ffns(self.ESF, self.nf, m1sq=self.m1sq)
+    @staticmethod
+    def LO():
+        """Empty, because |NLL| only starts at |NLO|."""
+        return None
 
-
-class FMatchingQuarkCC(FMatchingCC, FMatchingQuark):
-    pass
-
-
-class FMatchingGluon(FMatching):
     def NLO(self):
-        return self.mk_nlo_raw(self.l)
-
-    def mk_nlo_raw(self, l):
-        icl = self.parent_lo_local()
-        if icl is None:
-            return None
-
-        # since as and p_qg appear together there is no need to put an explicit as_norm here
-        def reg(z, _args):
-            return icl * split.lo.pqg_single(z, np.array([], dtype=float)) * l
-
-        return RSL(reg)
-
-
-class FMatchingGluonCC(FMatchingCC, FMatchingGluon):
-    pass
+        """|ref| implements |NLL| part of :eqref:`10` of :cite:`nnpdf-intrinsic` from light."""
+        return self.light_cls(self.ESF, self.nf).NLO()

@@ -6,11 +6,25 @@ from ..partonic_channel import RSL, PartonicChannel
 from . import raw_nc
 
 
-class NeutralCurrentBase(pc.PartonicChannelAsyIntrinsic):
+class NeutralCurrentBase(PartonicChannel):
     def __init__(self, *args, m1sq, m2sq):
-        super().__init__(*args, m1sq=m1sq, m2sq=m2sq)
+        super().__init__(*args)
+        self.Q2 = self.ESF.Q2
+        self.x = self.ESF.x
+        self.m1sq = m1sq
+        self.m2sq = m2sq
         self.sigma_pp = self.Q2 + self.m2sq + self.m1sq
         self.sigma_mp = self.Q2 - self.m2sq + self.m1sq
+        self.sigma_pm = self.Q2 + self.m2sq - self.m1sq
+        self.delta = self.kinematic_delta(self.m1sq, self.m2sq, -self.Q2)
+        self.eta = 2.0 * self.Q2 / (self.sigma_pm + self.delta)
+
+    @staticmethod
+    def kinematic_delta(a, b, c):
+        return np.sqrt(a**2 + b**2 + c**2 - 2 * (a * b + b * c + c * a))
+
+    def convolution_point(self):
+        return self.x / self.eta
 
     def init_nlo_vars(self):
         self.I1 = raw_nc.I1(self)

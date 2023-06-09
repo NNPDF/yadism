@@ -45,14 +45,13 @@ class AsyNNNLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
-class LightNonSingletShifted(EmptyPartonicChannel):
-    pass
+class AsyLLIntrinsic(pc.PartonicChannelAsyLLIntrinsic):
+    light_cls = light.NonSingletEven
 
 
-class MatchingIntrinsicSplus(pc.FMatchingQuarkCC):
-    ffns = intrinsic.Splus
-    lo_delta = 1.0
+class AsyNLLIntrinsicMatching(pc.PartonicChannelAsyNLLIntrinsicMatching):
+    light_cls = light.NonSingletEven
 
 
-class MatchingGluonSplus(pc.FMatchingGluonCC):
-    ffns = intrinsic.Splus
+class AsyNLLIntrinsicLight(pc.PartonicChannelAsyNLLIntrinsicLight):
+    light_cls = light.NonSingletEven

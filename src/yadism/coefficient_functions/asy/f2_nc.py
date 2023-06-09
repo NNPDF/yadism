@@ -166,23 +166,13 @@ class AsyNNNLLNonSinglet(pc.PartonicChannelAsy):
     pass
 
 
-class LightNonSingletShifted(pc.PartonicChannelAsy):
-    def NNLO(self):
-        return light.NonSinglet(self.ESF, self.nf).NLO()
+class AsyLLIntrinsic(pc.PartonicChannelAsyLLIntrinsic):
+    light_cls = light.NonSinglet
 
 
-class MatchingIntrinsicSplus(pc.FMatchingQuark):
-    ffns = intrinsic.Splus
-    lo_delta = 1.0
+class AsyNLLIntrinsicMatching(pc.PartonicChannelAsyNLLIntrinsicMatching):
+    light_cls = light.NonSinglet
 
 
-class MatchingIntrinsicSminus(pc.FMatchingQuark):
-    ffns = intrinsic.Sminus
-
-
-class MatchingGluonSplus(pc.FMatchingGluon):
-    ffns = intrinsic.Splus
-
-
-class MatchingGluonSminus(pc.FMatchingGluon):
-    ffns = intrinsic.Sminus
+class AsyNLLIntrinsicLight(pc.PartonicChannelAsyNLLIntrinsicLight):
+    light_cls = light.NonSinglet

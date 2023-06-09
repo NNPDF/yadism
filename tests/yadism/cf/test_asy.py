@@ -43,71 +43,104 @@ def test_h_g():
 
 
 INTRINSIC_NC_MAP = {
-    i_f2_nc.Splus: f_f2_nc.MatchingIntrinsicSplus,
-    i_f2_nc.Sminus: f_f2_nc.MatchingIntrinsicSminus,
-    i_fl_nc.Splus: f_fl_nc.MatchingIntrinsicSplus,
-    i_fl_nc.Sminus: f_fl_nc.MatchingIntrinsicSminus,
-    i_f3_nc.Rplus: f_f3_nc.MatchingIntrinsicRplus,
-    i_f3_nc.Rminus: f_f3_nc.MatchingIntrinsicRminus,
+    i_f2_nc.Splus: [
+        f_f2_nc.AsyLLIntrinsic,
+        f_f2_nc.AsyNLLIntrinsicMatching,
+        f_f2_nc.AsyNLLIntrinsicLight,
+    ],
+    i_f2_nc.Sminus: None,
+    i_fl_nc.Splus: [
+        f_fl_nc.AsyLLIntrinsic,
+        f_fl_nc.AsyNLLIntrinsicMatching,
+        f_fl_nc.AsyNLLIntrinsicLight,
+    ],
+    i_fl_nc.Sminus: None,
+    i_f3_nc.Rplus: [
+        f_f3_nc.AsyLLIntrinsic,
+        f_f3_nc.AsyNLLIntrinsicMatching,
+        f_f3_nc.AsyNLLIntrinsicLight,
+    ],
+    i_f3_nc.Rminus: None,
 }
-
-
-def test_intrinsic_nc_LO():
-    Q2 = 2e3
-    esf = MockESF("F2_charm", 0.1, Q2)
-    m2hq = 2
-    for nf in [3, 4]:
-        for z in [1e-1, 1e-2, 1e-3]:
-            for cgcls, cgasycls in INTRINSIC_NC_MAP.items():
-                cg = cgcls(esf, nf, m1sq=m2hq, m2sq=m2hq)
-                cgasy = cgasycls(esf, nf, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq)
-                arsl = cg.LO()
-                a = arsl.loc(z, arsl.args["loc"]) if arsl else 0.0
-                brsl = cgasy.LO()
-                b = brsl.loc(z, brsl.args["loc"]) if brsl else 0.0
-                np.testing.assert_allclose(
-                    a, b, rtol=2e-3, atol=2e-3, err_msg=f"{nf=},{z=}"
-                )
 
 
 INTRINSIC_CC_MAP = {
-    i_f2_cc.Splus: f_f2_cc.MatchingIntrinsicSplus,
-    i_fl_cc.Splus: f_fl_cc.MatchingIntrinsicSplus,
-    i_f3_cc.Rplus: f_f3_cc.MatchingIntrinsicRplus,
+    i_f2_cc.Splus: [
+        f_f2_cc.AsyLLIntrinsic,
+        f_f2_cc.AsyNLLIntrinsicMatching,
+        f_f2_cc.AsyNLLIntrinsicLight,
+    ],
+    i_fl_cc.Splus: [
+        f_fl_cc.AsyLLIntrinsic,
+        f_fl_cc.AsyNLLIntrinsicMatching,
+        f_fl_cc.AsyNLLIntrinsicLight,
+    ],
+    i_f3_cc.Rplus: [
+        f_f3_cc.AsyLLIntrinsic,
+        f_f3_cc.AsyNLLIntrinsicMatching,
+        f_f3_cc.AsyNLLIntrinsicLight,
+    ],
 }
 
 
-def test_intrinsic_cc_LO():
+def test_intrinsic_LO():
     Q2 = 2e3
     esf = MockESF("F2_charm", 0.1, Q2)
     m2hq = 2
     for nf in [3, 4]:
         for z in [1e-1, 1e-2, 1e-3]:
-            for cgcls, cgasycls in INTRINSIC_CC_MAP.items():
-                cg = cgcls(esf, nf, m1sq=m2hq)
-                cgasy = cgasycls(esf, nf, m1sq=m2hq, m2hq=m2hq)
-                arsl = cg.LO()
-                a = arsl.loc(z, arsl.args["loc"]) if arsl else 0.0
-                brsl = cgasy.LO()
-                b = brsl.loc(z, brsl.args["loc"]) if brsl else 0.0
-                np.testing.assert_allclose(
-                    a, b, rtol=2e-3, atol=2e-3, err_msg=f"{nf=},{z=}"
-                )
+            for is_nc, imap in [(True, INTRINSIC_NC_MAP), (False, INTRINSIC_CC_MAP)]:
+                for icls, iasyclss in imap.items():
+                    if is_nc:
+                        iobj = icls(esf, nf, m1sq=m2hq, m2sq=m2hq)
+                    else:
+                        iobj = icls(esf, nf, m1sq=m2hq)
+                    arsl = iobj.LO()
+                    a = arsl.loc(z, arsl.args["loc"]) if arsl else 0.0
+                    b = 0.0
+                    if iasyclss:
+                        for iasycls in iasyclss:
+                            iasyobj = iasycls(esf, nf, m2hq=m2hq)
+                            brsl = iasyobj.LO()
+                            b += brsl.loc(z, brsl.args["loc"]) if brsl else 0.0
+                    np.testing.assert_allclose(
+                        a, b, rtol=2e-3, atol=2e-3, err_msg=f"{nf=},{z=}"
+                    )
 
 
-# def test_i_Sp():
-#     Q2 = 2e5
-#     esf = MockESF("F2_charm", 0.1, Q2)
-#     interp = interpolation.InterpolatorDispatcher(interpolation.lambertgrid(50),4,False)
-#     m2hq = 2
-#     for nf in [3, 4]:
-#         for z in [1e-4]:
-#             cg = i_f2_nc.Splus(esf, nf, m1sq=m2hq, m2sq=m2hq)
-#             cgasy = f_f2_nc.MatchingIntrinsicSplus(esf, nf, m1sq=m2hq, m2sq=m2hq, m2hq=m2hq)
-#             for o in ["LO", "NLO"]:
-#                 order = lambda pc, o=o: pc.__getattribute__(o)()
-#                 a = conv.convolute_vector(order(cg),interp,z)[0]
-#                 b = conv.convolute_vector(order(cgasy),interp,z)[0]
-#                 np.testing.assert_allclose(
-#                     a, b, rtol=7e-2, err_msg=f"{nf=},{z=},{o=}"
-#                 )
+def test_intrinsic_nlo():
+    Q2 = 2e4
+    esf = MockESF("F2_charm", 0.1, Q2)
+    interp = interpolation.InterpolatorDispatcher(
+        interpolation.lambertgrid(50), 4, False
+    )
+    m2hq = 2
+    for nf in [3, 4]:
+        for z in [1e-4]:
+            for o in ["LO", "NLO"]:
+                for is_nc, imap in [
+                    (True, INTRINSIC_NC_MAP),
+                    (False, INTRINSIC_CC_MAP),
+                ]:
+                    for icls, iasyclss in imap.items():
+                        if is_nc:
+                            iobj = icls(esf, nf, m1sq=m2hq, m2sq=m2hq)
+                        else:
+                            iobj = icls(esf, nf, m1sq=m2hq)
+                        order = lambda pc, o=o: pc.__getattribute__(o)()
+                        a = (
+                            conv.convolute_vector(order(iobj), interp, z)[0]
+                            if order(iobj)
+                            else 0.0
+                        )
+                        b = 0.0
+                        if iasyclss:
+                            for iasycls in iasyclss:
+                                iasyobj = iasycls(esf, nf, m2hq=m2hq)
+                                if order(iasyobj):
+                                    b += conv.convolute_vector(
+                                        order(iasyobj), interp, z
+                                    )[0]
+                        np.testing.assert_allclose(
+                            a, b, rtol=7e-3, atol=3e-2, err_msg=f"{nf=},{z=},{o=}"
+                        )

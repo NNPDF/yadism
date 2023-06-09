@@ -4,20 +4,6 @@ from ..partonic_channel import EmptyPartonicChannel
 from . import partonic_channel as pc
 
 
-class LightNonSingletShifted(pc.PartonicChannelAsy):
-    def NNLO(self):
-        return light.NonSinglet(self.ESF, self.nf).NLO()
-
-
-class MatchingIntrinsicRplus(pc.FMatchingQuark):
-    ffns = intrinsic.Rplus
-    lo_delta = 1.0
-
-
-class MatchingIntrinsicRminus(pc.FMatchingQuark):
-    ffns = intrinsic.Rminus
-
-
 # TODO extract coefficient function from Buza/LeProHQ: see Eq. B.4 of Nucl. Phys. B485-420
 # and remember that in the non-singlet case d_{2xg1} = d_{xF3}
 class AsyLLNonSinglet(EmptyPartonicChannel):
@@ -34,3 +20,15 @@ class AsyNNLLNonSinglet(EmptyPartonicChannel):
 
 class AsyNNNLLNonSinglet(EmptyPartonicChannel):
     pass
+
+
+class AsyLLIntrinsic(pc.PartonicChannelAsyLLIntrinsic):
+    light_cls = light.NonSinglet
+
+
+class AsyNLLIntrinsicMatching(pc.PartonicChannelAsyNLLIntrinsicMatching):
+    light_cls = light.NonSinglet
+
+
+class AsyNLLIntrinsicLight(pc.PartonicChannelAsyNLLIntrinsicLight):
+    light_cls = light.NonSinglet
