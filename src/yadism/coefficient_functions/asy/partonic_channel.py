@@ -1,3 +1,5 @@
+"""Partonic channels of the massless limit."""
+
 import numpy as np
 from eko import constants
 
@@ -7,6 +9,8 @@ from ..partonic_channel import RSL
 
 
 class PartonicChannelAsy(pc.PartonicChannel):
+    """Massless limit of a coeficient function."""
+
     def __init__(self, *args, m2hq):
         super().__init__(*args)
         self.L = np.log(self.ESF.Q2 / m2hq)
@@ -15,7 +19,7 @@ class PartonicChannelAsy(pc.PartonicChannel):
 class PartonicChannelAsyLLIntrinsic(PartonicChannelAsy):
     """|ref| implements |LL| part of :eqref:`10` of :cite:`nnpdf-intrinsic` from matching."""
 
-    light_cls = None
+    light_cls = lambda _esf, _nf: None
 
     def LO(self):
         """Return |LO| from light."""
@@ -62,6 +66,8 @@ class PartonicChannelAsyLLIntrinsic(PartonicChannelAsy):
 
 
 class PartonicChannelAsyNLLIntrinsicMatching(PartonicChannelAsyLLIntrinsic):
+    """|ref| implements |NLL| part of :eqref:`10` of :cite:`nnpdf-intrinsic` from matching."""
+
     @staticmethod
     def LO():
         """Empty, because |NLL| only starts at |NLO|."""
@@ -89,7 +95,8 @@ class PartonicChannelAsyNLLIntrinsicMatching(PartonicChannelAsyLLIntrinsic):
         # FortranForm@FullSimplify@Integrate[(1 + z^2)/(1 - z) (- 2 Log[1 - z] - 1), {z, 0, x}, Assumptions -> {0 < x < 1}] # pylint: disable=line-too-long
         def loc(x, _args):
             return (
-                -lo_local
+                -1.0
+                * lo_local
                 * asnorm
                 * constants.CF
                 * (
