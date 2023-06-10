@@ -86,7 +86,9 @@ class Kernel:
             return "singlet"
         elif "Gluon" in cls:
             return "gluon"
-        elif any([x in cls for x in ["Splus", "Sminus", "Rplus", "Rminus"]]):
+        elif any(
+            [x in cls for x in ["Intrinsic", "Splus", "Sminus", "Rplus", "Rminus"]]
+        ):
             return "intrinsic"
         else:
             raise ValueError(f"Class '{cls}' does not correspond to a known channel")
