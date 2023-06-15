@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Coupling between QCD particles and EW particles."""
 import logging
 
@@ -268,6 +267,42 @@ class CouplingConstants:
                 * self.partonic_coupling("ZZ", pid, quark_coupling_type)
             )
             return w_phph + w_phZ + w_ZZ
+        raise ValueError(f"Unknown process: {self.obs_config['process']}")
+
+    def linear_partonic_coupling(self, pid):
+        """Return the linear vectorial partonic coupling. Defined only for |NC|.
+
+        Parameters
+        ----------
+        pid : int
+            particle identifier
+
+        Returns
+        -------
+        float
+            weight
+        """
+        if self.obs_config["process"] == "CC":
+            return 0.0
+        # NC or EM
+        # are we in positivity mode?
+        if (
+            self.obs_config["nc_pos_charge"] is not None
+            and self.obs_config["nc_pos_charge"] != "all"
+        ):
+            pos = self.obs_config["nc_pos_charge"][0]
+            pos_pid = 1 + br.quark_names.index(pos)
+            if abs(pid) != pos_pid:
+                return 0.0
+
+        w_ph = self.electric_charge[pid]
+        # pure EM charge
+        if self.obs_config["process"] == "EM":
+            return w_ph
+        # allow Z to be mixed in
+        if self.obs_config["process"] == "NC":
+            w_ZV = self.vectorial_coupling(pid)
+            return w_ph + w_ZV
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod

@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
 import pytest
-from eko.thresholds import ThresholdsAtlas
+from eko.matchings import Atlas
+from test_nc_n3lo_color_fact import MockCouplingConstants as MockCC
 
 from yadism import observable_name as on
 from yadism.coefficient_functions.fonll import kernels as aker
@@ -9,7 +9,7 @@ from yadism.coefficient_functions.intrinsic import kernels as iker
 from yadism.coefficient_functions.light import kernels as lker
 
 
-class MockCouplingConstants:
+class MockCouplingConstants(MockCC):
     def get_weight(self, _pid, _q2, qct):
         if qct == "VV":
             return 1
@@ -27,12 +27,12 @@ class MockSF:
         self.obs_name = on.ObservableName(n)
         self.coupling_constants = MockCouplingConstants()
         self.m2hq = [1.0, 2.0, 3.0]
-        self.threshold = ThresholdsAtlas(self.m2hq)
+        self.threshold = Atlas(matching_scales=self.m2hq, origin=(1.65**2, 4))
 
 
 class MockESF:
     def __init__(self, sf, x, Q2):
-        self.sf = MockSF(sf)
+        self.info = MockSF(sf)
         self.x = x
         self.Q2 = Q2
         self.process = "NC"
@@ -54,10 +54,9 @@ def mkpv(nf, w):  # pv = parity violating
 def check(ps, w):
     assert len(w) == len(ps)
     for e, k in zip(ps, w):
-        assert pytest.approx(e) == k.partons
+        assert e == k.partons
 
 
-@pytest.mark.skip
 def test_generate_light_pc():
     esf = MockESF("F2_light", 0.1, 10)
     for nf in [3, 5]:
@@ -67,7 +66,6 @@ def test_generate_light_pc():
         check(ps, w)
 
 
-@pytest.mark.skip
 def test_generate_light_pv():  # pc = parity violating
     esf = MockESF("F3_light", 0.1, 10)
     for nf in [3, 5]:
@@ -77,11 +75,11 @@ def test_generate_light_pv():  # pc = parity violating
         check(ps, w)
 
 
-@pytest.mark.skip
 def test_generate_heavy():
-    esf = MockESF("F2_charm", 0.1, 10)
+    esf = MockESF("F2_bottom", 0.1, 10)
+    ihq = 5
     for nf in [3, 5]:
-        w = hker.generate(esf, nf)
+        w = hker.generate(esf, nf, ihq=ihq)
         # gVV, gAA, sVV, sAA
         ps = [{21: 1}, {21: 8}, mkpc(nf, 1), mkpc(nf, 8)]
         check(ps, w)
@@ -136,7 +134,6 @@ def test_generate_heavy_fonll_diff_pv():
         check(ps, w)
 
 
-@pytest.mark.skip
 def test_generate_intrinsic_pc():
     esf = MockESF("F2_charm", 0.1, 10)
     for nhq in [3, 5]:
@@ -146,7 +143,6 @@ def test_generate_intrinsic_pc():
         check(ps, w)
 
 
-@pytest.mark.skip
 def test_generate_intrinsic_pv():
     esf = MockESF("F3_charm", 0.1, 10)
     for nhq in [3, 5]:

@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-
 import numba as nb
 import numpy as np
 
-from .common import d27, d81, flg, fls
+from .common import d27, d81
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def cls3a(y, args):
     nf = args[0]
+    flps = args[1]
     dl = np.log(y)
     y1 = 1.0 - y
     dl1 = np.log(1.0 - y)
@@ -39,13 +39,17 @@ def cls3a(y, args):
         + 9.773 * dl
         + y * dl * (363.8 + 68.32 * dl)
     ) * y
-    res = nf * (cls31 + fls(nf) * cls3F + nf * cls32)
+    # Note here the source file cointain a typo and the
+    # proper color factor is flps = fls - fl, not just fls.
+    # see https://arxiv.org/pdf/hep-ph/0411112.pdf eq 9.
+    res = nf * (cls31 + (flps) * cls3F + nf * cls32)
     return res
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def clg3a(y, args):
     nf = args[0]
+    flg = args[1]
     dl = np.log(y)
     y1 = 1.0 - y
     dl1 = np.log(1.0 - y)
@@ -97,5 +101,5 @@ def clg3a(y, args):
         - (15.40 - 2.201 * y) * y * dl**2
         - (71.66 - 0.121 * y) * y * dl
     )
-    res = nf * (clg31 + nf * (clg32 + flg(nf) * clg3F))
+    res = nf * (clg31 + nf * (clg32 + flg * clg3F))
     return res

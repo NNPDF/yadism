@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The coefficient functions definition is given in :eqref:`4.2`,
 :cite:`vogt-f2nc` (that is the main reference for their expression, i.e. all
@@ -24,7 +23,7 @@ Note
         F3:
             * odd N: :math:`\nu + \bar{\nu}`, :math:`c_{ns,-}`
             * even N: :math:`\nu - \bar{\nu}`, :math:`c_{ns,+} = \delta + c_{ns,-}`
-            * In :math:`c_{ns,+}` the term fl02 has to be turned of for CC
+            * In :math:`c_{ns,+}` the term fl02 has to be turned off for CC and NC
 
         F2, FL:
             * odd N: :math:`\nu - \bar{\nu}`, :math:`c_{ns,-} = - \delta + c_{ns,+}`

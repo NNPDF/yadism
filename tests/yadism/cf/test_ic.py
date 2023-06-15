@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # pylint: disable=attribute-defined-outside-init
 
 import copy

@@ -1,18 +1,9 @@
-# -*- coding: utf-8 -*-
 from ..partonic_channel import RSL
 from . import fl_nc, n3lo, nnlo
 
 
 class NonSingletEven(fl_nc.NonSinglet):
-    def N3LO(self):
-        """
-        |ref| implements :eqref:`2.10`, :cite:`Davies:2016ruz`
-        """
-        return RSL(
-            n3lo.xclns3p.clnp3a,
-            loc=n3lo.xclns3p.clnp3c,
-            args=dict(reg=[self.nf, False], loc=[self.nf]),
-        )
+    pass
 
 
 class Gluon(fl_nc.Gluon):
@@ -40,5 +31,5 @@ class NonSingletOdd(fl_nc.NonSinglet):
         return RSL(
             n3lo.xclns3p.clnm3a,
             loc=n3lo.xclns3p.clnm3c,
-            args=dict(reg=[self.nf, False]),
+            args=dict(reg=[self.nf, 0]),
         )

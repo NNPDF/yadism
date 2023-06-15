@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 See :mod:`f3_cc` docstring for the name conventions.
 """
@@ -37,7 +36,7 @@ class NonSinglet(f2_nc.NonSinglet):
             n3lo.xc3ns3p.c3np3a,
             n3lo.xc3ns3p.c3ns3b,
             n3lo.xc3ns3p.c3np3c,
-            [self.nf, True],
+            [self.nf, False],
         )
 
 

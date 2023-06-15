@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from scipy.special import zeta
 
 zeta2 = zeta(2)

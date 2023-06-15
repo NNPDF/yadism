@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ...partonic_channel import RSL
 from . import convolutions as conv
 from . import non_singlet as ns

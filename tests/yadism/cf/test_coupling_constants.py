@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 
@@ -130,6 +129,26 @@ class TestCouplingConstanst:
         obs_d["ProjectileDIS"] = 0
         with pytest.raises(ValueError, match="Unknown projectile"):
             coupl.CouplingConstants.from_dict(th_d, obs_d)
+
+    def test_linear_partonic_coupling(self):
+        th_d = dict(
+            SIN2TW=0.5,
+            MZ=80,
+            CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
+        )
+        obs_d = dict(
+            projectilePID=11,
+            PolarizationDIS=0.0,
+            prDIS="EM",
+            PropagatorCorrection=0,
+            NCPositivityCharge=None,
+        )
+        coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
+        for pid in range(1, 7):
+            np.testing.assert_allclose(
+                coupl_const.linear_partonic_coupling(pid),
+                coupl_const.electric_charge[pid],
+            )
 
 
 class TestLeptonicHadronic:
@@ -315,6 +334,8 @@ class TestCKM2Matrix:
         assert ckm.masked("t").m.sum() == 3
 
     def test_from_str(self):
-        ra = (np.random.rand(9) + 1.0) / 2.0
+        ra = (0.5 * np.random.rand(9) + 1.0) / 1.5
         ra_s = " ".join([str(x) for x in ra])
-        assert (coupl.CKM2Matrix(ra**2).m == coupl.CKM2Matrix.from_str(ra_s).m).all()
+        np.testing.assert_allclose(
+            coupl.CKM2Matrix(ra**2).m, coupl.CKM2Matrix.from_str(ra_s).m
+        )

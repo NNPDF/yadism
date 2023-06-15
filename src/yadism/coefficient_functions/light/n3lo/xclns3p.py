@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Note, the factor `fl11` is disabled for charged currents according to `xcdiff3p.f`.
 To generate `clnm3a,clnm3c` we follow `xcdiff3p.f` or the reference paper :cite:`Davies:2016ruz`
 """
@@ -7,22 +6,17 @@ import numpy as np
 
 from ...special.nielsen import nielsen
 from ...special.zeta import zeta2
-from .common import d81, fl
+from .common import d81
 from .xcdiff3p import clq3dfp
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def clnp3a(y, args):
     nf = args[0]
-    has_color_fact = args[1]
+    fl11 = args[1]
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
     li2 = nielsen(1, 1, y).real
-    if has_color_fact:
-        fl11 = fl(nf)
-    else:
-        fl11 = 0.0
-
     res = (
         -2220.5
         - 7884.0 * y

@@ -61,6 +61,15 @@
 .. |N3LO| replace::
    :abbr:`N3LO (Next-to-Next-to-Next-to-Leading Order)`
 
+.. |LL| replace::
+   :abbr:`LL (Leading Log)`
+
+.. |NLL| replace::
+   :abbr:`NLL (Next-to-Leading Log)`
+
+.. |NNLL| replace::
+   :abbr:`NNLL (Next-to-Next-to-Leading Log)`
+
 .. -------
    objects
    -------
@@ -98,6 +107,9 @@
 
 .. |RSL| replace::
    :abbr:`RSL (Regular - Singular - Local)`
+
+.. |FK| replace::
+   :abbr:`FK (Fast Kernel)`
 
 .. ----------------
    cross references
@@ -137,6 +149,10 @@
 .. |lhapdf| raw:: html
 
    <a href="https://lhapdf.hepforge.org/"><abbr title="LHAPDF">lhapdf</abbr></a>
+
+.. |APFEL++| raw:: html
+
+   <a href="https://github.com/vbertone/apfelxx"><abbr title="A PDF evolution library in C++">APFEL++</abbr></a>
 
 .. -----------
    not physics

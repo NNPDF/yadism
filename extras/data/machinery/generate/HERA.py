@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .utils import load, obs_template
 
 
@@ -45,14 +44,20 @@ def dump_HERACOMB_heavy(src_path):
             target path
     """
     obs = obs_template.copy()
-    esf = load(src_path, 36, ["Q2", "x", "y"])
+    raw_esfs = load(src_path, 36, ["Q2", "x"])
+    # y has to be computed instead - see DataInfo on the respective file
+    esfs = []
+    for raw_esf in raw_esfs:
+        raw_esf.update({"y": raw_esf["Q2"] / 318.0**2 / raw_esf["x"]})
+        esfs.append(raw_esf)
+
     obs["prDIS"] = "NC"
     xs = "XSHERANCAVG"
     if "Charm" in str(src_path):
         xs += "_charm"
     elif "Beauty" in str(src_path):
         xs += "_bottom"
-    obs["observables"] = {xs: esf}
+    obs["observables"] = {xs: esfs}
     obs["ProjectileDIS"] = "electron"
 
     return obs

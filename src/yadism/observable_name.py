@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 fake_kind = "??"
-sfs = ["F2", "FL", "F3"]
+sfs = ["F2", "FL", "F3", "g1", "gL", "g4"]
 # xs = ["XSreduced", "XSyreduced"]
 xs = [
     "XSHERANC",
@@ -11,6 +9,7 @@ xs = [
     "XSNUTEVCC",
     "XSNUTEVNU",
     "FW",
+    "XSFPFCC",
 ]
 kinds = sfs + xs + [fake_kind]
 # external flavors:
@@ -50,6 +49,13 @@ class ObservableName:
     def name(self):
         """joint name"""
         return self.kind + "_" + self.flavor
+
+    @property
+    def is_parity_violating(self):
+        """Check if it is a parity violating observable."""
+        if self.kind in ["F3", "gL", "g4"]:
+            return True
+        return False
 
     def __eq__(self, other):
         """Test equality of kind and flavor"""

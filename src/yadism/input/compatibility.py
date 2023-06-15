@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 
 hqfl = "cbt"
@@ -90,8 +88,8 @@ def update_target(obs):
         obs["TargetDIS"] = {"Z": 10.0, "A": 20.0}
         obs["TargetDISid"] = "1000100200"
     elif target == "marble":
-        A = 40 + 3 * 16 + 12  # A(CaCO3): Atomic MAss
-        Z = 20 + 3 * 8 + 6  # Z(CaCO3): Atomic Number
+        A = (40 + 3 * 16 + 12) / 5  # A(CaCO3): average atomic mass
+        Z = (20 + 3 * 8 + 6) / 5  # Z(CaCO3): avaerage atomic number
         obs["TargetDIS"] = {"Z": Z, "A": A}
         obs["TargetDISid"] = f"1000{str(Z)}{str(A)}0"
     else:

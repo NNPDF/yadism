@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ..partonic_channel import RSL
 from . import n3lo, nlo, nnlo
 from . import partonic_channel as pc
@@ -41,7 +40,7 @@ class NonSinglet(pc.LightBase):
             n3lo.xc2ns3p.c2np3a,
             n3lo.xc2ns3p.c2ns3b,
             n3lo.xc2ns3p.c2np3c,
-            [self.nf, True],
+            [self.nf, self.fl],
         )
 
 
@@ -71,8 +70,7 @@ class Gluon(pc.LightBase):
         """
         |ref| implements :eqref:`4.13`, :cite:`vogt-f2nc`.
         """
-
-        return RSL(n3lo.xc2sg3p.c2g3a, loc=n3lo.xc2sg3p.c2g3c, args=[self.nf])
+        return RSL(n3lo.xc2sg3p.c2g3a, loc=n3lo.xc2sg3p.c2g3c, args=[self.nf, self.flg])
 
 
 class Singlet(pc.LightBase):
@@ -87,5 +85,8 @@ class Singlet(pc.LightBase):
         """
         |ref| implements :eqref:`4.12`, :cite:`vogt-f2nc`.
         """
-
-        return RSL(n3lo.xc2sg3p.c2s3a, loc=n3lo.xc2sg3p.c2s3c, args=[self.nf])
+        return RSL(
+            n3lo.xc2sg3p.c2s3a,
+            loc=n3lo.xc2sg3p.c2s3c,
+            args=[self.nf, self.flps],
+        )

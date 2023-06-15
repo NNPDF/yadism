@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ..intrinsic import f3_nc as intrinsic
 from ..light import f3_nc as light
 from ..partonic_channel import EmptyPartonicChannel
