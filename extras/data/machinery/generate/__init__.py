@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from . import BCDMS, CHORUS, HERA, NMC, NUTEV, POS, SLAC, utils
+from . import BCDMS, CHORUS, HERA, EMC, NMC, NUTEV, POS, SLAC, utils
 
 exps = {
     getattr(m, "__name__").rsplit(".", maxsplit=1)[-1]: m
-    for m in [BCDMS, CHORUS, HERA, NMC, NUTEV, POS, SLAC]
+    for m in [BCDMS, CHORUS, HERA, EMC, NMC, NUTEV, POS, SLAC]
 }
 
 
