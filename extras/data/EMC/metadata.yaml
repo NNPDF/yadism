@@ -16,18 +16,18 @@ EMC90_Ca_D:
 
 EMC93_Cu_D:
   description: EMC NC structure function for Nuclear data
-  nnpdf_id: EMC90CuD
+  nnpdf_id: EMC93CuD
   y_label: F2p
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
 
 EMC97_Fe_D:
   description: EMC NC structure function for Nuclear data
-  nnpdf_id: EMC90FeD
+  nnpdf_id: EMC97FeD
   y_label: F2p
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
 
 EMC88_Sn_D:
   description: EMC NC structure function for Nuclear data
-  nnpdf_id: EMC90SnD
+  nnpdf_id: EMC88SnD
   y_label: F2p
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
