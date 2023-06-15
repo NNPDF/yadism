@@ -61,7 +61,7 @@ new_names = {
     "nmc_ca_d": "NMC95RE_Ca_D",
     "nmc_ca_li": "NMC95RE_Ca_Li",
     "nmc_fe_c": "NMC96_Fe_C",
-    "nmc_he_c": "NMC96_He_C",
+    "nmc_he_d": "NMC96_He_D",
     "nmc_li_d": "NMC96_Li_D",
     "nmc_pb_c": "NMC96_Pb_C",
     "nmc_sn_c": "NMC96_Sn_C",
