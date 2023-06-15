@@ -12,3 +12,51 @@ SLAC_NC_EM_D_F2:
   nnpdf_id: SLACD
   y_label: F2d
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+SLACE139_Ag_D:
+  description: SLAC NC structure function, nuclear data
+  nnpdf_id: SLACE139AgD
+  y_label: F2d
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+SLACE139_Al_D:
+  description: SLAC NC structure function, nuclear data
+  nnpdf_id: SLACE139AlD
+  y_label: F2d
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+SLACE139_Au_D:
+  description: SLAC NC structure function, nuclear data
+  nnpdf_id: SLACE139AuD
+  y_label: F2d
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+SLACE139_Be_D:
+  description: SLAC NC structure function, nuclear data
+  nnpdf_id: SLACE139BeD
+  y_label: F2d
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+SLACE139_C_D:
+  description: SLAC NC structure function, nuclear data
+  nnpdf_id: SLACE139CD
+  y_label: F2d
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+SLACE139_Ca_D:
+  description: SLAC NC structure function, nuclear data
+  nnpdf_id: SLACE139CaD
+  y_label: F2d
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+SLACE139_Fe_D:
+  description: SLAC NC structure function, nuclear data
+  nnpdf_id: SLACE139FeD
+  y_label: F2d
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+SLACE139_He_D:
+  description: SLAC NC structure function, nuclear data
+  nnpdf_id: SLACE139HeD
+  y_label: F2d
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
