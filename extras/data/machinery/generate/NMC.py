@@ -35,11 +35,12 @@ def dump(src_path, target):
         obs["TargetDIS"] = "proton"
     else:
         if len(src.stem.split("_")) == 3:
-            data =load(str(src), 1, ["-", "x", "Q2"])
+            data =load(str(src), 1, ["-", "x", "Q2", "y"])
+            esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
         else:
             data = load(str(src), 0, ["x", "Q2"])
+            esf = [dict(x=d["x"], y=1.0, Q2=d["Q2"]) for d in data]
 
-        esf = [dict(x=d["x"], y=1.0, Q2=d["Q2"]) for d in data]
         obs["observables"] = {"F2_total": esf}
         obs["TargetDIS"] = "isoscalar" if "_D_" in target.parent.name else "proton"
 
