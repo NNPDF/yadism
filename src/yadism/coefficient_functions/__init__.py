@@ -140,17 +140,15 @@ class Combiner:
                     heavy_comps[sfh].extend(
                         intrinsic.kernels.generate(self.esf, ihq=sfh)
                     )
-            else:  # heavy quark is not intrinsic
-                if self.scheme == "FFN0":
-                    heavy_comps[sfh].extend(
-                        asy.kernels.generate_heavy_asy(
-                            self.esf, nf, self.esf.info.theory["pto_evol"]
-                        )
+
+            if self.scheme == "FFN0":
+                heavy_comps[sfh].extend(
+                    asy.kernels.generate_heavy_asy(
+                        self.esf, nf, self.esf.info.theory["pto_evol"]
                     )
-                else:
-                    heavy_comps[sfh].extend(
-                        heavy.kernels.generate(self.esf, nf, ihq=sfh)
-                    )
+                )
+            else:
+                heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
 
             # Add missing contributions
             for ihq in range(sfh + 1, 7):
