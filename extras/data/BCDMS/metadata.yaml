@@ -1,11 +1,25 @@
 arxiv: null
+
 BCDMS_NC_EM_P_F2:
   description: BCDMS NC proton data
   nnpdf_id: BCDMSP
   y_label: F2p
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+
 BCDMS_NC_EM_D_F2:
   description: BCDMS NC deuteron data
   nnpdf_id: BCDMSD
   y_label: F2d
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+
+BCDMS85_Fe_D:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS85FeD
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+
+BCDMS85_N_D:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS85ND
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
