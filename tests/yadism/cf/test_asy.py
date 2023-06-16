@@ -1,6 +1,5 @@
 import numpy as np
 from eko import interpolation
-from utils import MockESF
 
 from yadism.coefficient_functions.asy import f2_cc as f_f2_cc
 from yadism.coefficient_functions.asy import f2_nc as f_f2_nc
@@ -16,6 +15,8 @@ from yadism.coefficient_functions.intrinsic import f3_nc as i_f3_nc
 from yadism.coefficient_functions.intrinsic import fl_cc as i_fl_cc
 from yadism.coefficient_functions.intrinsic import fl_nc as i_fl_nc
 from yadism.esf import conv
+
+from .utils import MockESF
 
 
 def test_h_g():
