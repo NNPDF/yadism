@@ -1,7 +1,8 @@
 import numpy as np
-from test_pc_general import MockESF
 
 from yadism.coefficient_functions.light import f3_cc
+
+from .test_pc_general import MockESF
 
 
 def test_N3LO_labels():
