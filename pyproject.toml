@@ -46,13 +46,6 @@ rich = "^12.4.4"
 LeProHQ = "^0.2.3"
 # pineappl dependency
 pineappl = { version = "0.5.6", optional = true }
-# docs dependencies (for readthedocs, https://github.com/readthedocs/readthedocs.org/issues/4912#issuecomment-664002569)
-Sphinx = { version = "^4.1.1", optional = true }
-sphinx-rtd-theme = { version = "^0.5.2", optional = true }
-recommonmark = { version = "^0.7.1", optional = true }
-sphinxcontrib-bibtex = { version = "^2.3.0", optional = true }
-sphinxcontrib-details-directive = { version = "^0.1.0", optional = true }
-nbsphinx = { version = "^0.8.6", optional = true }
 # yadmark
 banana-hep = { version = "^0.6.6", optional = true }
 sqlalchemy = { version = "^1.4.21", optional = true }
