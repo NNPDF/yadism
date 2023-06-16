@@ -1,5 +1,3 @@
-
-# -*- coding: utf-8 -*-
 from .utils import load, obs_template
 
 
@@ -36,6 +34,6 @@ def dump(src_path, target):
 new_names = {
     "fnal_c_d": "FNALE665_C_D",
     "fnal_ca_d": "FNALE665_Ca_D",
-    "fnal_pdb_d": "FNALE665_Pb_D",
+    "fnal_pb_d": "FNALE665_Pb_D",
     "fnal_xe_d": "FNALE665_Xe_D",
 }
