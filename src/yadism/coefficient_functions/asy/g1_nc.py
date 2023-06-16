@@ -55,8 +55,3 @@ class AsyNLLGluon(pc.PartonicChannelAsy):
 class AsyNNLLGluon(pc.PartonicChannelAsy):
     def NNLO(self):
         return RSL(raw.c2g_NNLL_reg, args=[self.L])
-
-
-class LightNonSingletShifted(pc.PartonicChannelAsy):
-    def NNLO(self):
-        return light.NonSinglet(self.ESF, self.nf).NLO()
