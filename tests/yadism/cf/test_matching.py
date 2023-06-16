@@ -7,12 +7,13 @@ from ekore.operator_matrix_elements.polarized.space_like import as2 as as2_pol
 from ekore.operator_matrix_elements.unpolarized.space_like import as2 as as2_unp
 from numpy.testing import assert_allclose
 from scipy.integrate import quad
-from test_pc_general import MockESF
 
 from yadism.coefficient_functions.fonll import partonic_channel as pc
 from yadism.coefficient_functions.partonic_channel import RSL
 from yadism.coefficient_functions.special import zeta
 from yadism.esf import conv
+
+from .test_pc_general import MockESF
 
 nf = 4
 mhq = 1.51
