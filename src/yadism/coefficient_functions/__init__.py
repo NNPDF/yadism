@@ -100,7 +100,7 @@ class Combiner:
         return comps
 
     def heavy_components(self):
-        """Collect amssive kernels."""
+        """Collect massive kernels."""
         nf = self.nf
         hq = self.obs_name.hqnumber
         masses = self.masses
@@ -109,7 +109,7 @@ class Combiner:
 
         heavy_comps = {}
         # The loop starts at nf because nf counts the number of quarks of which
-        # we are above the mass threshold. For these quarks the masses are not
+        # are above the mass threshold. For these quarks the masses are not
         # considered.
         for sfh in range(nf, 7):
             # exclude sfh=3, since heavy contributions are there for [4,5,6]

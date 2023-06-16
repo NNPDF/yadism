@@ -1,4 +1,4 @@
-"""Collections implementing the FONLL prescription.
+"""Collections implementing the asymptotic components for FONLL prescription.
 
 This is strictly following the original reference :cite:`forte-fonll`, and
 implements the prescription at coefficient functions level.
