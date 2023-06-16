@@ -19,7 +19,7 @@ def dump(src_path, target):
     del target
 
     obs = obs_template.copy()
-    data = load(src_path, 1, ["-", "x", "Q2", "y"])
+    data = load(src_path, 0, ["-", "x", "Q2", "y"])
     esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
 
     obs["prDIS"] = "NC"
