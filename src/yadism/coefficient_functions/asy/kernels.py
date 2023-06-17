@@ -68,7 +68,7 @@ def generate_missing_asy(esf, nl, ihq, pto_evol):
     return asys
 
 
-def generate_heavy_asy(esf, nl, pto_evol):
+def generate_heavy_asy(esf, nl, pto_evol, ihq):
     """
     |ref| implements :eqref:`91`, :cite:`forte-fonll`.
 
@@ -88,7 +88,6 @@ def generate_heavy_asy(esf, nl, pto_evol):
     """
     kind = esf.info.obs_name.kind
     is_pv = esf.info.obs_name.is_parity_violating
-    ihq = nl + 1
     asy_cfs = import_pc_module(kind, esf.process)
     m2hq = esf.info.m2hq[ihq - 4]
     asys = []
