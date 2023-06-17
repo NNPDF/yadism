@@ -44,14 +44,14 @@ def generate_missing_asy(esf, nl, ihq, pto_evol):
             esf.info.coupling_constants,
             esf.Q2,
             br.quark_names[:nl],
-            nl + 1,
+            nl,
             esf.info.obs_name.is_parity_violating,
         )
     else:
         light_weights = light.kernels.nc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            nl + 1,
+            nl,
             esf.info.obs_name.is_parity_violating,
             skip_heavylight=True,
         )
