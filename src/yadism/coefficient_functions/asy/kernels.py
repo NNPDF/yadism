@@ -126,7 +126,7 @@ def generate_heavy_asy(esf, nl, pto_evol):
     return asys
 
 
-def generate_intrinsic_asy(esf, nl, pto_evol):
+def generate_intrinsic_asy(esf, nl, pto_evol, ihq):
     """
     |ref| implements :eqref:`10` of :cite:`nnpdf-intrinsic`.
 
@@ -147,7 +147,6 @@ def generate_intrinsic_asy(esf, nl, pto_evol):
     kind = esf.info.obs_name.kind
     is_pv = esf.info.obs_name.is_parity_violating
     cfs = import_pc_module(kind, esf.process)
-    ihq = nl + 1
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
         w = kernels.cc_weights(

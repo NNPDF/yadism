@@ -133,7 +133,7 @@ class Combiner:
                 if self.scheme == "FFN0":
                     heavy_comps[sfh].extend(
                         asy.kernels.generate_intrinsic_asy(
-                            self.esf, nf, self.esf.info.theory["pto_evol"]
+                            self.esf, nf, self.esf.info.theory["pto_evol"], ihq=sfh
                         ),
                     )
                 else:
