@@ -32,7 +32,7 @@ def dump(src_path, _target):
                 data = load(ntf.name, 0, ["x", "y", "Q2"])
                 esf += [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
     else:
-        data =load(str(src), 0, ["-", "x", "Q2", "y"])
+        data = load(str(src), 0, ["-", "x", "Q2", "y"])
         esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
 
     obs["prDIS"] = "NC"

@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from . import BCDMS, CHORUS, FNAL, HERA, EMC, NMC, NUTEV, POS, SLAC, utils
+from . import BCDMS, CHORUS, EMC, FNAL, HERA, NMC, NUTEV, POS, SLAC, utils
 
 exps = {
     getattr(m, "__name__").rsplit(".", maxsplit=1)[-1]: m
