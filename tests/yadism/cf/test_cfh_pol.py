@@ -1,5 +1,4 @@
 import numpy as np
-from utils import MockESF
 
 from yadism.coefficient_functions.heavy import f2_nc as h_f2_nc
 from yadism.coefficient_functions.heavy import f3_nc as h_f3_nc
@@ -7,6 +6,8 @@ from yadism.coefficient_functions.heavy import fl_nc as h_fl_nc
 from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
 from yadism.coefficient_functions.heavy import g4_nc as h_g4_nc
 from yadism.coefficient_functions.heavy import gl_nc as h_gl_nc
+
+from .utils import MockESF
 
 
 def test_cg_NLO():

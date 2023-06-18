@@ -1,9 +1,10 @@
 import numpy as np
-from utils import MockESF
 
 from yadism.coefficient_functions.fonll import g1_nc as f_g1_nc
 from yadism.coefficient_functions.fonll import g1_nc_raw
 from yadism.coefficient_functions.heavy import g1_nc as h_g1_nc
+
+from .utils import MockESF
 
 
 class Test_g1_raw:

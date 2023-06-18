@@ -1,12 +1,13 @@
 import pytest
 from eko.matchings import Atlas
-from test_nc_n3lo_color_fact import MockCouplingConstants as MockCC
 
 from yadism import observable_name as on
 from yadism.coefficient_functions.fonll import kernels as aker
 from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.intrinsic import kernels as iker
 from yadism.coefficient_functions.light import kernels as lker
+
+from .test_nc_n3lo_color_fact import MockCouplingConstants as MockCC
 
 
 class MockCouplingConstants(MockCC):
