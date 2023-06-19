@@ -8,6 +8,7 @@ from yadism.coefficient_functions.asy import f3_nc as f_f3_nc
 from yadism.coefficient_functions.asy import fl_cc as f_fl_cc
 from yadism.coefficient_functions.asy import fl_nc as f_fl_nc
 from yadism.coefficient_functions.heavy import f2_nc as h_f2_nc
+from yadism.coefficient_functions.heavy import fl_nc as h_fl_nc
 from yadism.coefficient_functions.intrinsic import f2_cc as i_f2_cc
 from yadism.coefficient_functions.intrinsic import f2_nc as i_f2_nc
 from yadism.coefficient_functions.intrinsic import f3_cc as i_f3_cc
@@ -18,6 +19,14 @@ from yadism.esf import conv
 
 from .utils import MockESF
 
+HEAVY_NC_MAP = {
+    h_f2_nc.GluonVV: [
+        f_f2_nc.AsyLLGluon,
+        f_f2_nc.AsyNLLGluon,
+        f_f2_nc.AsyNNLLGluon,
+    ],
+}
+
 
 def test_h_g():
     Q2 = 200
@@ -25,22 +34,62 @@ def test_h_g():
     m2hq = 2
     for nf in [3, 4]:
         for z in [1e-1, 1e-2, 1e-3]:
-            cg = h_f2_nc.GluonVV(esf, nf, m2hq=m2hq)
-            cgasys = [
-                f_f2_nc.AsyLLGluon(esf, nf, m2hq=m2hq),
-                f_f2_nc.AsyNLLGluon(esf, nf, m2hq=m2hq),
-                f_f2_nc.AsyNNLLGluon(esf, nf, m2hq=m2hq),
-            ]
             for o in ["NLO", "NNLO"]:
-                order = lambda pc, o=o: pc.__getattribute__(o)()
-                a = order(cg).reg(z, order(cg).args["reg"])
-                b = 0.0
-                for cgasy in cgasys:
-                    if order(cgasy):
-                        b += order(cgasy).reg(z, order(cgasy).args["reg"])
-                np.testing.assert_allclose(
-                    a, b, rtol=7e-2, err_msg=f"nf={nf}, z={z},o={o}"
-                )
+                for hcls, hasyclss in HEAVY_NC_MAP.items():
+                    hobj = hcls(esf, nf, m2hq=m2hq)
+                    order = lambda pc, o=o: pc.__getattribute__(o)()
+                    a = order(hobj).reg(z, order(hobj).args["reg"])
+                    b = 0.0
+                    for hasycls in hasyclss:
+                        cgasy = hasycls(esf, nf, m2hq=m2hq)
+                        if order(cgasy):
+                            b += order(cgasy).reg(z, order(cgasy).args["reg"])
+                    np.testing.assert_allclose(
+                        a, b, rtol=7e-2, err_msg=f"nf={nf}, z={z},o={o}"
+                    )
+
+
+MISSING_NC_MAP = {
+    # h_f2_nc.NonSinglet: [
+    #     f_f2_nc.AsyLLNonSinglet,
+    #     f_f2_nc.AsyNLLNonSinglet,
+    #     f_f2_nc.AsyNNLLNonSinglet,
+    # ],
+    h_fl_nc.NonSinglet: [
+        f_fl_nc.AsyLLNonSinglet,
+        f_fl_nc.AsyNLLNonSinglet,
+        f_fl_nc.AsyNNLLNonSinglet,
+    ]
+}
+
+
+def test_missing_nnlo():
+    Q2 = 2e4
+    esf = MockESF("F2_charm", 0.1, Q2)
+    interp = interpolation.InterpolatorDispatcher(
+        interpolation.lambertgrid(50), 4, False
+    )
+    m2hq = 2
+    for nf in [3, 4]:
+        for z in [1e-4]:
+            for o in ["NNLO"]:
+                for icls, iasyclss in MISSING_NC_MAP.items():
+                    iobj = icls(esf, nf, m2hq=m2hq)
+                    order = lambda pc, o=o: pc.__getattribute__(o)()
+                    a = (
+                        conv.convolute_vector(order(iobj), interp, z)[0]
+                        if order(iobj)
+                        else 0.0
+                    )
+                    b = 0.0
+                    if iasyclss:
+                        for iasycls in iasyclss:
+                            iasyobj = iasycls(esf, nf, m2hq=m2hq)
+                            if order(iasyobj):
+                                b += conv.convolute_vector(order(iasyobj), interp, z)[0]
+                    np.testing.assert_allclose(
+                        a, b, rtol=7e-3, atol=3e-2, err_msg=f"{nf=},{z=},{o=}"
+                    )
 
 
 INTRINSIC_NC_MAP = {
