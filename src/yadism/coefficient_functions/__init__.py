@@ -69,7 +69,7 @@ class Combiner:
         comp.extend(light.kernels.generate(self.esf, nf))
         # instead missing encodes mass effects and so we need to fork:
         for ihq in range(nf + 1, 7):
-            if not masses[ihq]:
+            if masses[ihq]:
                 if self.scheme == "FFN0":
                     comp.extend(
                         asy.kernels.generate_missing_asy(
