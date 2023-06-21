@@ -83,8 +83,8 @@ sphinxcontrib-details-directive = "^0.1.0"
 nbsphinx = "^0.8.6"
 
 [tool.poetry.extras]
-pineappl = ["pineappl"]
 mark = ["banana-hep", "sqlalchemy", "a3b2bbc3ced97675ac3a71df45f55ba"]
+box = ["pineappl"]
 docs = [
   "sphinx",
   "sphinx-rtd-theme",
@@ -161,7 +161,7 @@ extension-pkg-whitelist = [
   "xspace_bench",
   "scipy.special",
   "pineappl",
-  "apfelpy"
+  "apfelpy",
 ]
 ignore-paths = ["benchmarks/", "docs/", "tests/"]
 jobs = 1 # has to be 1 as pylint is NOT threadsafe
