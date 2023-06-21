@@ -8,6 +8,7 @@ on:
 jobs:
   publish:
     uses: N3PDF/workflows/.github/workflows/python-poetry-pypi.yml@v2
+    with:
+      poetry-extras: "-E mark -E box"
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-      poetry-extras: "-E mark -E box"
