@@ -1,3 +1,10 @@
+"""High level interface to the observable names.
+
+Wrap the name of the observables in order to perform operations on
+them. For instance, it checks what kind of observable is being dealt
+with and whether or not the given flavor is heavy.
+
+"""
 fake_kind = "??"
 sfs = ["F2", "FL", "F3", "g1", "gL", "g4"]
 # xs = ["XSreduced", "XSyreduced"]
@@ -23,13 +30,13 @@ flavors = external_flavors + flavor_families
 
 
 class ObservableName:
-    """
-    Wrapper to observable names to easy split them into two parts.
+    r"""Wrapper to observable names to easy split them into two parts.
 
     Parameters
     ----------
-        name : str
-            full observable name
+    name : str
+        full observable name
+
     """
 
     def __init__(self, name):
@@ -47,7 +54,7 @@ class ObservableName:
 
     @property
     def name(self):
-        """joint name"""
+        """Return joint name."""
         return self.kind + "_" + self.flavor
 
     @property
@@ -58,93 +65,109 @@ class ObservableName:
         return False
 
     def __eq__(self, other):
-        """Test equality of kind and flavor"""
+        """Test equality of kind and flavor."""
         return self.kind == other.kind and self.flavor == other.flavor
 
     def apply_kind(self, kind):
-        """
-        Create new object with given kind and our flavor
+        r"""Create new object with given kind and our flavor.
 
         Parameters
         ----------
-            kind : str
-                new kind
+        kind : str
+            new kind
 
         Returns
         -------
-            apply_kind : type(self)
-                new kind and our flavor
+        apply_kind : type(self)
+            new kind and our flavor
+
         """
         return type(self)(kind + "_" + self.flavor)
 
     def apply_asy(self):
-        """
-        Computes the asymptotic heavy correspondent.
+        r"""Compute the asymptotic heavy correspondent.
 
         Returns
         -------
-            apply_asy : type(self)
-                asymptotic heavy correspondent
+        apply_asy : type(self)
+            asymptotic heavy correspondent
+
         """
         if self.flavor not in heavys:
             raise ValueError(f"observable is not heavy! [{self}]")
         return self.apply_flavor(self.flavor + "asy")
 
     def __repr__(self):
-        """The full name is the representation"""
+        """Return the full representation name."""
         return self.name
 
     def apply_flavor(self, flavor):
-        """
-        Create new object with given flavor and our kind
+        r"""Create new object with given flavor and our kind.
 
         Parameters
         ----------
-            flavor : str
-                new flavor
+        flavor : str
+            new flavor
 
         Returns
         -------
-            apply_flavor : type(self)
-                our kind and new flavor
+        apply_flavor : type(self)
+            our kind and new flavor
+
         """
         return type(self)(self.kind + "_" + flavor)
 
     @property
     def is_heavy(self):
-        """
-        Is it a heavy flavor?
+        r"""Check if the given flavor is heavy.
 
         Returns
         -------
-            is_heavy : bool
-                is a heavy flavor?
+        is_heavy : bool
+            is a heavy flavor?
+
         """
         return self.flavor != "light"
 
     @property
     def is_raw_heavy(self):
-        """Is it a raw heavy flavor? i.e. charm, bottom, or, top"""
+        """Check if it is a raw heavy flavor.
+
+        i.e. charm, bottom, or, top.
+
+        """
         return self.flavor in heavys
 
     @property
     def is_asy(self):
-        """Is it a asymptotic raw heavy flavor? i.e. charmasy, bottomasy, or, topasy"""
+        """Check if it is an asymptotic raw heavy flavor.
+
+        i.e. charmasy, bottomasy, or, topasy.
+
+        """
         return self.flavor in asys
 
     @property
     def is_heavylight(self):
-        """Is it a heavylight flavor? i.e. charmlight, bottomlight, or, toplight"""
+        """Check if it is a heavylight flavor.
+
+        i.e. charmlight, bottomlight, or, toplight.
+
+        """
         return self.flavor in heavylights
 
     @property
     def is_composed(self):
-        """Is it a composed flavor? i.e. total"""
+        """Check if it is a composed flavor.
+
+        i.e. total.
+
+        """
         return self.flavor == "total"
 
     @property
     def flavor_family(self):
-        """Abstract flavor family name"""
+        """Return abstract flavor family name."""
         if self.is_raw_heavy:
             return "heavy"
         if self.is_asy:
@@ -154,19 +177,19 @@ class ObservableName:
         return self.flavor
 
     def apply_flavor_family(self):
-        """
-        Return name with abstract flavor family name
+        r"""Return name with abstract flavor family name.
 
         Returns
         -------
-            apply_flavor_family : type(self)
-                new ObservableName
+        apply_flavor_family : type(self)
+            new ObservableName
+
         """
         return self.apply_flavor(self.flavor_family)
 
     @property
     def hqnumber(self):
-        """Heavy quark flavor number"""
+        """Return heavy quark flavor number."""
         if self.is_asy:
             idx = asys.index(self.flavor)
         elif self.is_heavylight:
@@ -179,25 +202,25 @@ class ObservableName:
 
     @property
     def raw_flavor(self):
-        """underlying raw flavor"""
+        """Return underlying raw flavor."""
         if self.flavor == "light":
             return self.flavor
         return heavys[self.hqnumber - 4]
 
     @classmethod
     def has_heavies(cls, names):
-        """
-        Are there any heavy objects in names?
+        r"""Check if there are any heavy objects in names.
 
         Parameters
         ----------
-            names : list(str)
-                names to check
+        names : list(str)
+            names to check
 
         Returns
         -------
-            has_heavies : bool
-                are there heavy obs in names?
+        has_heavies : bool
+            are there heavy obs in names?
+
         """
         for n in names:
             if not cls.is_valid(n):
@@ -209,18 +232,18 @@ class ObservableName:
 
     @classmethod
     def has_lights(cls, names):
-        """
-        Are there any light objects in names?
+        r"""Check if there are any light objects in names.
 
         Parameters
         ----------
-            names : list(str)
-                names to check
+        names : list(str)
+            names to check
 
         Returns
         -------
-            has_lights : bool
-                are there light obs in names?
+        has_lights : bool
+            are there light obs in names?
+
         """
         for n in names:
             if not cls.is_valid(n):
@@ -232,7 +255,7 @@ class ObservableName:
 
     @property
     def mass_label(self):
-        """Mass label in the theory runcard"""
+        """Add mass label in the theory runcard."""
         if self.flavor == "light":
             return None
         else:
@@ -240,13 +263,13 @@ class ObservableName:
 
     @classmethod
     def is_valid(cls, name):
-        """
-        Tests whether the name is a valid observable name
+        r"""Test whether the name is a valid observable name.
 
         Returns
         -------
-            is_valid : bool
-                is valid name?
+        is_valid : bool
+            is valid name?
+
         """
         try:
             cls(name)

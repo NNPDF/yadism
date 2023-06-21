@@ -1,8 +1,8 @@
-"""
-Defines the :py:class:`StructureFunction` class.
+"""High-level interface to Structure Function.
 
 .. todo::
     refer to the sf-esf overview
+
 """
 import logging
 
@@ -12,8 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class StructureFunction:
-    """
-    Represents an abstract structure function.
+    r"""Represent an abstract structure function.
 
     This class acts as an intermediate handler between the :py:class:`Runner`
     exposed to the outside and the :py:class:`EvaluatedStructureFunction`
@@ -21,10 +20,11 @@ class StructureFunction:
 
     Parameters
     ----------
-        obs_name : ObservableName
-            name
-        runner : yadism.runner.Runner
-            parent reference
+    obs_name : ObservableName
+        name
+    runner : yadism.runner.Runner
+        parent reference
+
     """
 
     def __init__(self, obs_name, runner):
@@ -42,13 +42,13 @@ class StructureFunction:
         return len(self.esfs)
 
     def load(self, kinematic_configs):
-        """
-        Loads all kinematic configurations from the run card.
+        r"""Load all kinematic configurations from the run card.
 
         Parameters
         ----------
             kinematic_configs : list(dict)
                 run card input
+
         """
         self.esfs = []
         # iterate F* configurations
@@ -56,8 +56,7 @@ class StructureFunction:
             self.esfs.append(self.get_esf(self.obs_name, kinematics, use_raw=False))
 
     def get_esf(self, obs_name, kinematics, *args, use_raw=True, force_local=False):
-        """
-        Returns a :py:class:`EvaluatedStructureFunction` instance.
+        """Return a :py:class:`EvaluatedStructureFunction` instance.
 
         This wrappers allows
 
@@ -69,19 +68,20 @@ class StructureFunction:
 
         Parameters
         ----------
-            obs_name : .observable_name.ObservableName
-                structure function name
-            kinematics : dict
-                kinematic configuration
-            args : any
-                further arguments passed down to the instance
-            use_raw : bool
-                eventually use the ESFTMC? (or just the uncorrected one)
+        obs_name : .observable_name.ObservableName
+            structure function name
+        kinematics : dict
+            kinematic configuration
+        args : any
+            further arguments passed down to the instance
+        use_raw : bool
+            eventually use the ESFTMC? (or just the uncorrected one)
 
         Returns
         -------
-            obj : EvaluatedStructureFunction
-                created object
+        obj : EvaluatedStructureFunction
+            created object
+
         """
         # TODO rethink and refactor method - only used by TMC
         # TODO remove force_local
@@ -118,16 +118,17 @@ class StructureFunction:
 
     @property
     def elements(self):
+        """Collect the computed observables."""
         return self.esfs
 
     def get_result(self):
-        """
-        Collects the results from all childrens.
+        r"""Collect the results from all childrens.
 
         Returns
         -------
-            output : list(ESFResult)
-                all children outputs
+        output : list(ESFResult)
+            all children outputs
+
         """
         return list(elem.get_result() for elem in self.elements)
 

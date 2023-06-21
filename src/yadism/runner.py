@@ -1,18 +1,11 @@
+r"""Main module for DIS calculations.
+
+This module contains the main loop for the DIS calculations. It
+contains the``Runner`` class which provides a runner that gets
+the *theory* and *observables* descriptions as input and manage the
+whole observables' calculation process
+
 """
-This module contains the main loop for the DIS calculations.
-
-There are two ways of using ``yadism``:
-
-* ``Runner``: this class provides a runner that get the *theory* and
-  *observables* descriptions as input and manage the whole observables'
-  calculation process
-* ``run_dis``: a function that wraps the construction of a ``Runner`` object
-  and calls the proper method to get the requested output
-
-.. todo::
-    decide about ``run_dis`` and document it properly in module header
-"""
-
 import copy
 import inspect
 import io
@@ -44,8 +37,7 @@ logger = logging.getLogger(__name__)
 
 
 class Runner:
-    """
-    Wrapper to compute a process.
+    """Wrapper to compute a process.
 
     Parameters
     ----------
@@ -220,8 +212,7 @@ class Runner:
                 obs.drop_cache()
 
     def get_result(self):
-        """
-        Compute coefficient functions grid for requested kinematic points.
+        """Compute coefficient functions grid for requested kinematic points.
 
         Returns
         -------
