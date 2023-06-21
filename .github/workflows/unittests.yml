@@ -1,6 +1,5 @@
 name: unit tests
 
-
 on: push
 
 jobs:
@@ -13,4 +12,4 @@ jobs:
     uses: N3PDF/workflows/.github/workflows/python-poetry-tests.yml@v2
     with:
       python-version: ${{ matrix.python-version }}
-      poetry-extras: "-E mark -E pineappl"
+      poetry-extras: "-E mark -E box"
