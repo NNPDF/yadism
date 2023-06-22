@@ -18,7 +18,7 @@ def import_pc_module(kind, process, subpkg=None):
     return kernels.import_local(kind, process, subpkg)
 
 
-def generate_missing_asy(esf, nl, ihq, pto_evol):
+def generate_missing_asy(esf, nf, ihq, pto_evol):
     r"""
     Collect the high-virtuality limit of missing.
 
@@ -26,7 +26,7 @@ def generate_missing_asy(esf, nl, ihq, pto_evol):
     ----------
         esf : EvaluatedStructureFunction
             kinematic point
-        nl : int
+        nf : int
             number of light flavors
         ihq : int
             heavy quark
@@ -43,15 +43,15 @@ def generate_missing_asy(esf, nl, ihq, pto_evol):
         light_weights = kernels.cc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            br.quark_names[:nl],
-            nl,
+            br.quark_names[:nf],
+            nf + 1,
             esf.info.obs_name.is_parity_violating,
         )
     else:
         light_weights = light.kernels.nc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            nl,
+            nf + 1,
             esf.info.obs_name.is_parity_violating,
             skip_heavylight=True,
         )
@@ -62,13 +62,13 @@ def generate_missing_asy(esf, nl, ihq, pto_evol):
     for res in range(pto_evol + 1):
         name = "Asy" + ("N" * res) + "LL" + "NonSinglet"
         km = kernels.Kernel(
-            light_weights["ns"], asy_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq)
+            light_weights["ns"], asy_cfs.__getattribute__(name)(esf, nf, m2hq=m2hq)
         )
         asys.append(km)
     return asys
 
 
-def generate_heavy_asy(esf, nl, pto_evol, ihq):
+def generate_heavy_asy(esf, nf, pto_evol, ihq):
     """
     |ref| implements :eqref:`91`, :cite:`forte-fonll`.
 
@@ -76,7 +76,7 @@ def generate_heavy_asy(esf, nl, pto_evol, ihq):
     ----------
         esf : EvaluatedStructureFunction
             kinematic point
-        nl : int
+        nf : int
             number of light flavors
         pto_evol : int
             PTO of evolution
@@ -96,18 +96,18 @@ def generate_heavy_asy(esf, nl, pto_evol, ihq):
             esf.info.coupling_constants,
             esf.Q2,
             br.quark_names[ihq - 1],
-            nl,
+            nf,
             is_pv,
         )
         asys = [
-            kernels.Kernel(wa["ns"], asy_cfs.AsyQuark(esf, nl, m2hq=m2hq)),
-            kernels.Kernel(wa["g"], asy_cfs.AsyGluon(esf, nl, m2hq=m2hq)),
+            kernels.Kernel(wa["ns"], asy_cfs.AsyQuark(esf, nf, m2hq=m2hq)),
+            kernels.Kernel(wa["g"], asy_cfs.AsyGluon(esf, nf, m2hq=m2hq)),
         ]
     else:
         asy_weights = heavy.kernels.nc_weights(
             esf.info.coupling_constants,
             esf.Q2,
-            nl,
+            nf,
             ihq,
             is_pv,
         )
@@ -119,13 +119,13 @@ def generate_heavy_asy(esf, nl, pto_evol, ihq):
                         asys.append(
                             kernels.Kernel(
                                 asy_weights[f"{c}{av}"],
-                                asy_cfs.__getattribute__(name)(esf, nl, m2hq=m2hq),
+                                asy_cfs.__getattribute__(name)(esf, nf, m2hq=m2hq),
                             )
                         )
     return asys
 
 
-def generate_intrinsic_asy(esf, nl, pto_evol, ihq):
+def generate_intrinsic_asy(esf, nf, pto_evol, ihq):
     """
     |ref| implements :eqref:`10` of :cite:`nnpdf-intrinsic`.
 
@@ -133,7 +133,7 @@ def generate_intrinsic_asy(esf, nl, pto_evol, ihq):
     ----------
         esf : EvaluatedStructureFunction
             kinematic point
-        nl : int
+        nf : int
             number of light flavors
         pto_evol : int
             PTO of evolution
@@ -173,7 +173,7 @@ def generate_intrinsic_asy(esf, nl, pto_evol, ihq):
     asys = [
         kernels.Kernel(
             weights,
-            cfs.AsyLLIntrinsic(esf, nl, m2hq=m2hq),
+            cfs.AsyLLIntrinsic(esf, nf, m2hq=m2hq),
         )
     ]
     if pto_evol > 0:
@@ -181,11 +181,11 @@ def generate_intrinsic_asy(esf, nl, pto_evol, ihq):
             [
                 kernels.Kernel(
                     weights,
-                    cfs.AsyNLLIntrinsicMatching(esf, nl, m2hq=m2hq),
+                    cfs.AsyNLLIntrinsicMatching(esf, nf, m2hq=m2hq),
                 ),
                 kernels.Kernel(
                     weights,
-                    cfs.AsyNLLIntrinsicLight(esf, nl, m2hq=m2hq),
+                    cfs.AsyNLLIntrinsicLight(esf, nf, m2hq=m2hq),
                 ),
             ]
         )
