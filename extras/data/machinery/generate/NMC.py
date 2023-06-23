@@ -52,7 +52,7 @@ def dump(src_path, target):
 # renaming
 new_names = {
     "nmc_p": "NMC_NC_EM_P_SIGMARED",
-    "nmc_f2df2p": ["NMC_NC_EM_P_F2", "NMC_NC_EM_D_F2"],
+    "nmc_f2df2p": ["NMC_NC_EM_P_F2", "NMC_NC_EM_D_F2", "NMC_p_D"],
     "nmc_al_c": "NMC96_Al_C",
     "nmc_be_c": "NMC96_Be_C",
     "nmc_c_d": "NMC95_C_D",
