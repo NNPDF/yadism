@@ -1,3 +1,5 @@
+import pathlib
+
 from .utils import load, obs_template
 
 Mn = 0.9389
@@ -17,11 +19,18 @@ def dump(src_path, _target):
         observables dictionary, corresponding to the runcard
 
     """
+    src = pathlib.Path(src_path)
     obs = obs_template.copy()
-    data = load(src_path, 0, ["Enu", "x", "y"])
-    esf = [
-        dict(x=d["x"], y=d["y"], Q2=2.0 * Mn * d["x"] * d["y"] * d["Enu"]) for d in data
-    ]
+
+    if src.stem.split("_")[-1] == "Pb":
+        data = load(str(src), 0, ["-", "x", "Q2", "y"])
+        esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
+    else:
+        data = load(src_path, 0, ["Enu", "x", "y"])
+        esf = [
+            dict(x=d["x"], y=d["y"], Q2=2.0 * Mn * d["x"] * d["y"] * d["Enu"])
+            for d in data
+        ]
     is_nu = "nu" in src_path.stem
     obs["prDIS"] = "CC"
     xs = "XSCHORUSCC"
@@ -36,4 +45,6 @@ def dump(src_path, _target):
 new_names = {
     "x-sec_shift_nb": "CHORUS_CC_NB_PB_SIGMARED",
     "x-sec_shift_nu": "CHORUS_CC_NU_PB_SIGMARED",
+    "chorus_nb_pb": "CHORUS_NB_PB",
+    "chorus_nu_pb": "CHORUS_NU_PB",
 }

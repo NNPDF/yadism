@@ -2,9 +2,19 @@ arxiv: null
 y_label: sigr_ch_pb
 y_label_tex: $\sigma^\mathrm{CHORUS}_{\mathrm{red},\mathrm{Pb}}$
 hepdata: 10.17182/hepdata.6187.v1
+
 CHORUS_CC_NB_PB_SIGMARED:
   description: CHORUS reduced cross section antineutrino-nucleon scattering on lead
   nnpdf_id: CHORUSNBPb
+
 CHORUS_CC_NU_PB_SIGMARED:
   description: CHORUS reduced cross section neutrino-nucleon scattering on lead
   nnpdf_id: CHORUSNUPb
+
+CHORUS_NU_PB:
+  description: CHORUS reduced cross section neutrino-nucleon scattering on lead
+  nnpdf_id: CHORUS_NU_Pb
+
+CHORUS_NB_PB:
+  description: CHORUS reduced cross section antineutrino-nucleon scattering on lead
+  nnpdf_id: CHORUS_NB_Pb
