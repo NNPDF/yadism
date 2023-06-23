@@ -31,6 +31,7 @@ def dump(src_path, target):
 # renaming
 new_names = {
     "slac_d": "SLAC_NC_EM_D_F2",
+    "slac_d": "SLAC_D",
     "slac_p": "SLAC_NC_EM_P_F2",
     "slac_he_d": "SLACE139_He_D",
     "slac_be_d": "SLACE139_Be_D",
