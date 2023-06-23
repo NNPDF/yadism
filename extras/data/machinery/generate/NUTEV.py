@@ -1,3 +1,5 @@
+import pathlib
+
 from .utils import load, obs_template
 
 mn = 0.938
@@ -17,11 +19,19 @@ def dump(src_path, _target):
         observables dictionary, corresponding to the runcard
 
     """
+    src = pathlib.Path(src_path)
     obs = obs_template.copy()
-    data = load(src_path, 0, ["-", "Enu", "y", "x"])
-    esf = [
-        dict(x=d["x"], y=d["y"], Q2=2.0 * mn * d["x"] * d["y"] * d["Enu"]) for d in data
-    ]
+
+    if src.stem.split("_")[-1] == "Fe":
+        data = load(str(src), 0, ["-", "x", "Q2", "y"])
+        esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
+    else:
+        data = load(src_path, 0, ["-", "Enu", "y", "x"])
+        esf = [
+            dict(x=d["x"], y=d["y"], Q2=2.0 * mn * d["x"] * d["y"] * d["Enu"])
+            for d in data
+        ]
+
     is_nu = "NU" in src_path.stem
     obs["prDIS"] = "CC"
     xs = "XSNUTEVCC_charm"
@@ -36,4 +46,6 @@ def dump(src_path, _target):
 new_names = {
     "NTVNBDMNFe": "NUTEV_CC_NB_FE_SIGMARED",
     "NTVNUDMNFe": "NUTEV_CC_NU_FE_SIGMARED",
+    "NUTEV_NB_Fe": "NUTEV_NB_Fe",
+    "NUTEV_NU_Fe": "NUTEV_NU_Fe",
 }
