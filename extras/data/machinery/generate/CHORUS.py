@@ -47,6 +47,6 @@ def dump(src_path, _target):
 new_names = {
     "x-sec_shift_nb": "CHORUS_CC_NB_PB_SIGMARED",
     "x-sec_shift_nu": "CHORUS_CC_NU_PB_SIGMARED",
-    "chorus_nb_pb": "CHORUS_NB_PB",
-    "chorus_nu_pb": "CHORUS_NU_PB",
+    "chorus_nb_pb": "CHORUS_NB_Pb",
+    "chorus_nu_pb": "CHORUS_NU_Pb",
 }
