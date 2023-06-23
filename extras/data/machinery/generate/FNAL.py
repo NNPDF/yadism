@@ -1,7 +1,7 @@
 from .utils import load, obs_template
 
 
-def dump(src_path, target):
+def dump(src_path, _target):
     """Compute SLAC observables.
 
     Parameters
@@ -15,7 +15,6 @@ def dump(src_path, target):
         observables dictionary, corresponding to the runcard
 
     """
-    del target
 
     obs = obs_template.copy()
     data = load(src_path, 0, ["-", "x", "Q2", "y"])
