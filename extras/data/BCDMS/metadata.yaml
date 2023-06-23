@@ -23,3 +23,9 @@ BCDMS85_N_D:
   nnpdf_id: BCDMS85ND
   y_label: F2p
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+
+BCDMS_D:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS_D
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$

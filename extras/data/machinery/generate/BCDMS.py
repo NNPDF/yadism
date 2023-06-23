@@ -39,14 +39,10 @@ def dump(src_path, _target):
     obs["observables"] = {"F2_total": esf}
     obs["ProjectileDIS"] = "electron"
 
-    if "bcd_p" in src.stem:
-        obs["TargetDIS"] = "proton"
-    elif "bcd_d" in src.stem:
+    if "bcd_d" in src.stem:
         obs["TargetDIS"] = "isoscalar"
-    elif len(src.stem.split("_")) == 3:
-        obs["TargetDIS"] = "proton"
     else:
-        raise ValueError("BCDMS unknown data")
+        obs["TargetDIS"] = "proton"
 
     return obs
 
@@ -57,4 +53,5 @@ new_names = {
     "bcd_p": "BCDMS_NC_EM_P_F2",
     "bcdms_fe_d": "BCDMS85_Fe_D",
     "bcdms_n_d": "BCDMS85_N_D",
+    "bcdms_d": "BCDMS_D",
 }
