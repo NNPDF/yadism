@@ -25,19 +25,20 @@ def dump(src_path, _target):
     if src.stem.split("_")[-1] == "Fe":
         data = load(str(src), 0, ["-", "x", "Q2", "y"])
         esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
+        obs["TargetDIS"] = "proton"
     else:
         data = load(src_path, 0, ["-", "Enu", "y", "x"])
         esf = [
             dict(x=d["x"], y=d["y"], Q2=2.0 * mn * d["x"] * d["y"] * d["Enu"])
             for d in data
         ]
+        obs["TargetDIS"] = "iron"
 
     is_nu = "NU" in src_path.stem
     obs["prDIS"] = "CC"
     xs = "XSNUTEVCC_charm"
     obs["observables"] = {xs: esf}
     obs["ProjectileDIS"] = "neutrino" if is_nu else "antineutrino"
-    obs["TargetDIS"] = "iron"
 
     return obs
 

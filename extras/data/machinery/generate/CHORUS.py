@@ -22,21 +22,23 @@ def dump(src_path, _target):
     src = pathlib.Path(src_path)
     obs = obs_template.copy()
 
-    if src.stem.split("_")[-1] == "Pb":
+    if src.stem.split("_")[-1] == "pb":
         data = load(str(src), 0, ["-", "x", "Q2", "y"])
         esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
+        obs["TargetDIS"] = "proton"
     else:
         data = load(src_path, 0, ["Enu", "x", "y"])
         esf = [
             dict(x=d["x"], y=d["y"], Q2=2.0 * Mn * d["x"] * d["y"] * d["Enu"])
             for d in data
         ]
+        obs["TargetDIS"] = "lead"
+
     is_nu = "nu" in src_path.stem
     obs["prDIS"] = "CC"
     xs = "XSCHORUSCC"
     obs["observables"] = {xs: esf}
     obs["ProjectileDIS"] = "neutrino" if is_nu else "antineutrino"
-    obs["TargetDIS"] = "lead"
 
     return obs
 
