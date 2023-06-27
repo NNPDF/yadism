@@ -18,51 +18,50 @@ def import_pc_module(kind, process, subpkg=None):
     return kernels.import_local(kind, process, subpkg)
 
 
-def generate_missing_asy(esf, nf, ihq, pto_evol):
+def generate_missing_asy(esf, nf, ihq, pto_evol, icoupl=None):
     r"""
     Collect the high-virtuality limit of missing.
 
     Parameters
     ----------
-        esf : EvaluatedStructureFunction
-            kinematic point
-        nf : int
-            number of light flavors
-        ihq : int
-            heavy quark
-        pto_evol : int
-            PTO of evolution
+    esf : EvaluatedStructureFunction
+        kinematic point
+    nf : int
+        number of light flavors
+    ihq : int
+        heavy quark
+    pto_evol : int
+        PTO of evolution
+    icoupl : None or int
+        PID of the flavor coupling (default: None)
 
     Returns
     -------
-        elems : list(yadism.kernels.Kernel)
-            list of elements
+    elems : list(yadism.kernels.Kernel)
+        list of elements
     """
-    kind = esf.info.obs_name.kind
+    # in CC there are no missing diagrams known yet
     if esf.process == "CC":
-        light_weights = kernels.cc_weights(
-            esf.info.coupling_constants,
-            esf.Q2,
-            br.quark_names[:nf],
-            nf + 1,
-            esf.info.obs_name.is_parity_violating,
-        )
-    else:
-        light_weights = light.kernels.nc_weights(
-            esf.info.coupling_constants,
-            esf.Q2,
-            nf + 1,
-            esf.info.obs_name.is_parity_violating,
-            skip_heavylight=True,
-        )
+        return ()
+    # only NC
+    weights = light.kernels.nc_weights(
+        esf.info.coupling_constants,
+        esf.Q2,
+        nf,
+        esf.info.obs_name.is_parity_violating,
+        skip_heavylight=True,
+    )
+    if icoupl is not None:
+        weights["ns"] = {k: v for k, v in weights["ns"].items() if abs(k) == icoupl}
 
-    asys = []
-    m2hq = esf.info.m2hq[ihq - 4]
+    kind = esf.info.obs_name.kind
     asy_cfs = import_pc_module(kind, esf.process)
+    m2hq = esf.info.m2hq[ihq - 4]
+    asys = []
     for res in range(pto_evol + 1):
         name = "Asy" + ("N" * res) + "LL" + "NonSinglet"
         km = kernels.Kernel(
-            light_weights["ns"], asy_cfs.__getattribute__(name)(esf, nf, m2hq=m2hq)
+            weights["ns"], asy_cfs.__getattribute__(name)(esf, nf, m2hq=m2hq)
         )
         asys.append(km)
     return asys

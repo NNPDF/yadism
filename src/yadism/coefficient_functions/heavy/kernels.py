@@ -97,13 +97,10 @@ def generate_missing(esf, nf, ihq, icoupl=None):
         list of elements
 
     """
-    kind = esf.info.obs_name.kind
-    pcs = import_pc_module(kind, esf.process)
-    m2hq = esf.info.m2hq[ihq - 4]
     # in CC there are no missing diagrams known yet
     if esf.process == "CC":
         return ()
-
+    # only NC
     weights = light_nc_weights(
         esf.info.coupling_constants,
         esf.Q2,
@@ -112,6 +109,9 @@ def generate_missing(esf, nf, ihq, icoupl=None):
     )
     if icoupl is not None:
         weights["ns"] = {k: v for k, v in weights["ns"].items() if abs(k) == icoupl}
+    kind = esf.info.obs_name.kind
+    pcs = import_pc_module(kind, esf.process)
+    m2hq = esf.info.m2hq[ihq - 4]
     return (kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),)
 
 
