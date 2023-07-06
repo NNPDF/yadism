@@ -1,0 +1,26 @@
+arxiv: null
+hepdata: null
+
+FNALE665_C_D:
+  description: FNAL NC structure function for Nuclear data
+  nnpdf_id: FNALE665CD
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+
+FNALE665_Ca_D:
+  description: FNAL NC structure function for Nuclear data
+  nnpdf_id: FNALE665CaD
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+
+FNALE665_Pb_D:
+  description: FNAL NC structure function for Nuclear data
+  nnpdf_id: FNALE665PbD
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+
+FNALE665_Xe_D:
+  description: FNAL NC structure function for Nuclear data
+  nnpdf_id: FNALE665XeD
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$

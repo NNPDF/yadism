@@ -1,10 +1,12 @@
 hepdata: 10.17182/hepdata.32750.v1
+
 NMC_NC_EM_P_SIGMARED:
   arxiv: hep-ph/9610231
   y_label: sigr
   y_label_tex: $\sigma_\mathrm{red}$
   description: NMC reduced cross section, scattering on proton
   nnpdf_id: NMC
+
 NMC_NC_EM_P_F2:
   arxiv: hep-ex/9611022
   y_label: F2p
@@ -12,6 +14,7 @@ NMC_NC_EM_P_F2:
   description: NMC F2 structure function, proton data
   nnpdf_id: NMCPD
   fktable_id: NMCPD_P
+
 NMC_NC_EM_D_F2:
   arxiv: hep-ex/9611022
   y_label: F2d
@@ -19,3 +22,75 @@ NMC_NC_EM_D_F2:
   description: NMC F2 structure function, deuteron data
   nnpdf_id: NMCPD
   fktable_id: NMCPD_D
+
+NMC96_Al_C:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96AlC
+
+NMC96_Be_C:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96BeC
+
+NMC95_C_D:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC95CD
+
+NMC96RE_C_Li:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96RECLI
+
+NMC96_Ca_C:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96CaC
+
+NMC95RE_Ca_D:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC95RECAD
+
+NMC96RE_Ca_Li:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96RECaLi
+
+NMC96_Fe_C:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96FeC
+
+NMC95RE_He_D:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC95REHeD
+
+NMC95_Li_D:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC95LiD
+
+NMC96_Pb_C:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96PbC
+
+NMC96_Sn_C:
+  y_label: F2p
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96SnC
