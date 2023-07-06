@@ -2,6 +2,7 @@ from ..intrinsic import f3_nc as intrinsic
 from ..light import f3_nc as light
 from ..partonic_channel import EmptyPartonicChannel
 from . import partonic_channel as pc
+from . import g1_nc
 
 
 class PdfMatchingLLNonSinglet(pc.PdfMatchingLLNonSinglet):
@@ -33,17 +34,16 @@ class MatchingIntrinsicRminus(pc.FMatchingQuark):
     ffns = intrinsic.Rminus
 
 
-# TODO extract coefficient function from Buza/LeProHQ: see Eq. B.4 of Nucl. Phys. B485-420
-# and remember that in the non-singlet case d_{2xg1} = d_{xF3}
-class AsyLLNonSinglet(EmptyPartonicChannel):
+# NOTE in the non-singlet case d_{2xg1} = d_{xF3}
+class AsyLLNonSinglet(g1_nc.AsyLLNonSinglet):
     pass
 
 
-class AsyNLLNonSinglet(EmptyPartonicChannel):
+class AsyNLLNonSinglet(g1_nc.AsyNLLNonSinglet):
     pass
 
 
-class AsyNNLLNonSinglet(EmptyPartonicChannel):
+class AsyNNLLNonSinglet(g1_nc.AsyNNLLNonSinglet):
     pass
 
 
