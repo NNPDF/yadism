@@ -1,8 +1,8 @@
 from ..intrinsic import f3_nc as intrinsic
 from ..light import f3_nc as light
 from ..partonic_channel import EmptyPartonicChannel
-from . import partonic_channel as pc
 from . import g1_nc
+from . import partonic_channel as pc
 
 
 class PdfMatchingLLNonSinglet(pc.PdfMatchingLLNonSinglet):
