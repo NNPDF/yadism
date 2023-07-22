@@ -134,7 +134,7 @@ class NonSinglet(pc.NeutralCurrentBase):
                 return 0.0
             # TODO move this hack into LeProHQ
             eta = self._eta(z)
-            eta = min(eta, 1e9)
+            eta = min(eta, 1e5)
             r = (
                 self._FHprefactor
                 / z
