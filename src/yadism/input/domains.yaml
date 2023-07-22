@@ -130,6 +130,8 @@
     - ZM-VFNS
     - FFNS
     - FFN0
+    - FONLL-FFNS
+    - FONLL-FFN0
 
 - name: Nf_FF
   known_as: NfFF

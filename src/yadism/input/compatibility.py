@@ -111,7 +111,7 @@ def update_fns(theory):
     if fns == "ZM-VFNS":
         for fl in hqfl:
             theory[f"ZM{fl}"] = True
-    elif fns == "FFNS" or fns == "FFN0":
+    elif "FFN" in fns:
         # enforce correct settings moving all thresholds to 0 or oo
         for k, fl in enumerate(hqfl):
             if k + 4 <= nf:

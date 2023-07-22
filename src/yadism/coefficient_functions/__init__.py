@@ -70,7 +70,7 @@ class Combiner:
         # instead missing encodes mass effects and so we need to fork:
         for ihq in range(nf + 1, 7):
             if masses[ihq]:
-                if self.scheme == "FFN0":
+                if "FFN0" in self.scheme:
                     comp.extend(
                         asy.kernels.generate_missing_asy(
                             self.esf,
@@ -129,8 +129,13 @@ class Combiner:
             if hq not in (0, sfh):
                 continue
 
+            # To prevent double counting of heavy mass effects in FONLL only one
+            # heavy mass should be considered
+            if "FONLL" in self.scheme and sfh != nf + 1:
+                continue
+
             if sfh in self.intrinsic:  # heavy quark is intrinsic
-                if self.scheme == "FFN0":
+                if "FFN0" in self.scheme:
                     heavy_comps[sfh].extend(
                         asy.kernels.generate_intrinsic_asy(
                             self.esf, nf, self.esf.info.theory["pto_evol"], ihq=sfh
@@ -141,7 +146,7 @@ class Combiner:
                         intrinsic.kernels.generate(self.esf, ihq=sfh)
                     )
 
-            if self.scheme == "FFN0":
+            if "FFN0" in self.scheme:
                 heavy_comps[sfh].extend(
                     asy.kernels.generate_heavy_asy(
                         self.esf, nf, self.esf.info.theory["pto_evol"], ihq=sfh
@@ -154,7 +159,7 @@ class Combiner:
             for ihq in range(sfh + 1, 7):
                 if not masses[ihq]:
                     continue
-                if self.scheme == "FFN0":
+                if "FFN0" in self.scheme:
                     heavy_comps[sfh].extend(
                         asy.kernels.generate_missing_asy(
                             self.esf,

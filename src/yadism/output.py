@@ -117,7 +117,7 @@ class Output(dict):
             origin=(theory["Qref"] ** 2, theory["nfref"]),
         )
         fns = theory["FNS"]
-        if fns == "FFNS" or fns == "FFN0":
+        if "FFNS" in fns or "FFN0" in fns:
             alpha_s = lambda muR: sc.a_s(muR**2, nf_to=theory["NfFF"]) * 4.0 * np.pi
         elif fns == "ZM-VFNS":
             alpha_s = (
