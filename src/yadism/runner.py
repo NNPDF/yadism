@@ -146,6 +146,7 @@ class Runner:
             GF=theory["GF"],
             M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
+            fonll_parts=theory["fonll-parts"],
         )
         logger.info(
             "PTO: %d, PTO@evolution: %d, process: %s",

@@ -133,6 +133,18 @@
     - FONLL-FFNS
     - FONLL-FFN0
 
+- name: FONLLParts
+  known_as: fonll-parts
+  runcard: theory
+  description: >
+    Caclulate only the ZM or massive contributions, or both
+    Application: FONLL
+  type: enum
+  domain:
+    - massless
+    - massive
+    - full
+
 - name: Nf_FF
   known_as: NfFF
   runcard: theory

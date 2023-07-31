@@ -43,6 +43,7 @@ class Combiner:
         self.nf = nf_default(esf.Q2, esf.info.threshold)
         self.target = esf.info.target
         self.scheme = esf.info.scheme
+        self.fonll_parts = esf.info.fonll_parts
 
     def collect(self):
         """Collect all kernels."""
@@ -51,11 +52,11 @@ class Combiner:
         # Adding light component
         if family in ["light", "total"]:
             comps.append(self.light_component())
-        if family == "heavy":
+        if family == "heavy" and self.fonll_parts in ["massless", "full"]:
             # the only case in which an heavy contribution is not present in those
             # accounted for in total, it's when heavy already became heavylight
             comps.extend(self.heavylight_components())
-        if family in ["heavy", "total"]:
+        if family in ["heavy", "total"] and self.fonll_parts in ["massive", "full"]:
             comps.extend(self.heavy_components())
         return comps
 
