@@ -50,7 +50,7 @@ class Combiner:
         comps = []
         family = self.obs_name.flavor_family
         # Adding light component
-        if family in ["light", "total"]:
+        if family in ["light", "total"] and self.fonll_parts in ["massless", "full"]:
             comps.append(self.light_component())
         if family == "heavy" and self.fonll_parts in ["massless", "full"]:
             # the only case in which an heavy contribution is not present in those
