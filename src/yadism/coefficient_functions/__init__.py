@@ -43,20 +43,20 @@ class Combiner:
         self.nf = nf_default(esf.Q2, esf.info.threshold)
         self.target = esf.info.target
         self.scheme = esf.info.scheme
-        self.fonll_parts = esf.info.fonll_parts
+        self.fonllparts = esf.info.fonllparts
 
     def collect(self):
         """Collect all kernels."""
         comps = []
         family = self.obs_name.flavor_family
         # Adding light component
-        if family in ["light", "total"] and self.fonll_parts in ["massless", "full"]:
+        if family in ["light", "total"] and self.fonllparts in ["massless", "full"]:
             comps.append(self.light_component())
-        if family == "heavy" and self.fonll_parts in ["massless", "full"]:
+        if family == "heavy" and self.fonllparts in ["massless", "full"]:
             # the only case in which an heavy contribution is not present in those
             # accounted for in total, it's when heavy already became heavylight
             comps.extend(self.heavylight_components())
-        if family in ["heavy", "total"] and self.fonll_parts in ["massive", "full"]:
+        if family in ["heavy", "total"] and self.fonllparts in ["massive", "full"]:
             comps.extend(self.heavy_components())
         return comps
 

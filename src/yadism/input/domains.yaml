@@ -134,7 +134,7 @@
     - FONLL-FFN0
 
 - name: FONLLParts
-  known_as: fonll-parts
+  known_as: FONLLParts
   runcard: theory
   description: >
     Caclulate only the ZM or massive contributions, or both

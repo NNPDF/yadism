@@ -93,6 +93,7 @@ class TestRunner:
             MW=100.0,
             MZ=100.0,
             GF=1.0,
+            FONLLParts="full",
         )
         xgrid = np.geomspace(1e-5, 1.0, 6)
         observables = dict(

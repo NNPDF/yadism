@@ -43,6 +43,7 @@ class TestInspector:
             "GF": 1.1663787e-05,
             "SIN2TW": 0.23126,
             "ModEv": "EXA",
+            "FONLLParts": "full",
         }
 
         obs_dict = dict(
