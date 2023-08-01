@@ -12,7 +12,7 @@ class NeutralCurrentBase(pc.PartonicChannel):
     thresholds.
     """
 
-    def __init__(self, *args, m2hq):
+    def __init__(self, *args, m2hq, n3lo_cf_variation=0):
         self.m2hq = m2hq
         super().__init__(*args)
         # FH - Vogt comparison prefactor
@@ -21,6 +21,7 @@ class NeutralCurrentBase(pc.PartonicChannel):
         # common variables
         self._xi = self.ESF.Q2 / m2hq
         self._eta = lambda z: self._xi / 4.0 * (1.0 / z - 1.0) - 1.0
+        self.n3lo_cf_variation = n3lo_cf_variation
 
     def decorator(self, f):
         """
