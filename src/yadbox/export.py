@@ -4,6 +4,7 @@ import json
 import numpy as np
 
 import yadism
+from yadism import observable_name
 
 
 def dump_pineappl_to_file(output, filename, obsname):
@@ -45,6 +46,8 @@ def dump_pineappl_to_file(output, filename, obsname):
 
     grid = pineappl.grid.Grid.create(lumi_entries, orders, bin_limits, params)
     limits = []
+    on = observable_name.ObservableName(obsname)
+    is_xs = on.kind in observable_name.xs
 
     # add each ESF as a bin
     for bin_, obs in enumerate(output[obsname]):
@@ -53,6 +56,8 @@ def dump_pineappl_to_file(output, filename, obsname):
 
         limits.append((Q2, Q2))
         limits.append((x, x))
+        if is_xs:
+            limits.append((obs.y, obs.y))
 
         # add all orders
         for o, (v, _e) in obs.orders.items():
@@ -92,6 +97,10 @@ def dump_pineappl_to_file(output, filename, obsname):
     grid.set_key_value("x2_label", "x")
     grid.set_key_value("x2_label_tex", "$x$")
     grid.set_key_value("x2_unit", "")
+    if is_xs:
+        grid.set_key_value("x3_label", "y")
+        grid.set_key_value("x3_label_tex", "$y$")
+        grid.set_key_value("x3_unit", "")
     grid.set_key_value("y_label", obsname)
 
     # dump file
