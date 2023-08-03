@@ -111,6 +111,20 @@ def update_fns(theory):
     if fns == "ZM-VFNS":
         for fl in hqfl:
             theory[f"ZM{fl}"] = True
+    elif "FONLL" in fns:
+        # enforce correct settings moving all thresholds to 0 or oo
+        for k, fl in enumerate(hqfl):
+            if k + 4 <= nf:
+                theory[f"k{fl}Thr"] = 0.0
+                theory[f"ZM{fl}"] = True
+            elif k + 4 > nf + 1:
+                theory[f"k{fl}Thr"] = np.inf
+                theory[f"ZM{fl}"] = True
+            else:
+                # for these flavours the massive contribution is calculated,
+                # but they do not contribute to the number of running flavors
+                theory[f"k{fl}Thr"] = np.inf
+                theory[f"ZM{fl}"] = False
     elif "FFN" in fns:
         # enforce correct settings moving all thresholds to 0 or oo
         for k, fl in enumerate(hqfl):
