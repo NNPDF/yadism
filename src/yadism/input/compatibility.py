@@ -121,8 +121,9 @@ def update_fns(theory):
                 theory[f"k{fl}Thr"] = np.inf
                 theory[f"ZM{fl}"] = True
             else:
-                # for these flavours the massive contribution is calculated,
-                # but they do not contribute to the number of running flavors
+                # We only consider a single massive contribution. This is to
+                # prevent double counting when different FNS are combined
+                # to produce FONLL
                 theory[f"k{fl}Thr"] = np.inf
                 theory[f"ZM{fl}"] = False
     elif "FFN" in fns:
