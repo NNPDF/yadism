@@ -1,7 +1,6 @@
 import numpy as np
 from eko import constants
 
-from ..asy import partonic_channel as pc
 from ..partonic_channel import RSL, PartonicChannel
 from . import raw_nc
 
