@@ -14,6 +14,7 @@ class PartonicChannelAsy(pc.PartonicChannel):
 
     def __init__(self, *args, m2hq):
         super().__init__(*args)
+        self.m2hq = m2hq
         self.L = np.log(self.ESF.Q2 / m2hq)
 
 
@@ -134,3 +135,23 @@ class PartonicChannelAsyNLLIntrinsicLight(PartonicChannelAsyLLIntrinsic):
     def NLO(self):
         """|ref| implements |NLL| part of :eqref:`10` of :cite:`nnpdf-intrinsic` from light."""
         return self.light_cls(self.ESF, self.nf).NLO()
+
+
+class NeutralCurrentBaseAsy(pc.PartonicChannelAsy):
+    def decorator(self, f):
+        """
+        Apply hadronic threshold
+
+        Parameters
+        ----------
+            f : callable
+                input
+
+        Returns
+        -------
+            f : callable
+                output
+        """
+        if self.is_below_threshold(self.ESF.x):
+            return lambda: pc.RSL()
+        return f

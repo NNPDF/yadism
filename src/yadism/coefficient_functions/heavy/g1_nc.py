@@ -1,6 +1,5 @@
 import LeProHQ
 import numpy as np
-from scipy.integrate import quad
 
 from ..partonic_channel import RSL
 from . import partonic_channel as pc
