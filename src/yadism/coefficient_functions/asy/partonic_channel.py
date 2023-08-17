@@ -13,8 +13,8 @@ class PartonicChannelAsy(pc.PartonicChannel):
     """Massless limit of a coeficient function."""
 
     def __init__(self, *args, m2hq):
-        super().__init__(*args)
         self.m2hq = m2hq
+        super().__init__(*args)
         self.L = np.log(self.ESF.Q2 / m2hq)
 
 
@@ -137,7 +137,7 @@ class PartonicChannelAsyNLLIntrinsicLight(PartonicChannelAsyLLIntrinsic):
         return self.light_cls(self.ESF, self.nf).NLO()
 
 
-class NeutralCurrentBaseAsy(pc.PartonicChannelAsy):
+class NeutralCurrentBaseAsy(PartonicChannelAsy):
     def decorator(self, f):
         """
         Apply hadronic threshold
