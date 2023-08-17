@@ -40,6 +40,27 @@ class NeutralCurrentBase(pc.PartonicChannel):
             return lambda: pc.RSL()
         return f
 
+    def is_below_pair_threshold(self, z):
+        """
+        Checks if the available energy is below production threshold or not
+
+        Parameters
+        ----------
+            z : float
+                partonic momentum fraction
+
+        Returns
+        -------
+            is_below_pair_threshold : bool
+                is the partonic energy sufficient to create the heavy quark
+                pair?
+
+        .. todo::
+            use threshold on shat or using FH's zmax?
+        """
+        shat = self.ESF.Q2 * (1 - z) / z
+        return shat <= 4 * self.m2hq
+
 
 class ChargedCurrentBase(pc.PartonicChannel):
     r"""
