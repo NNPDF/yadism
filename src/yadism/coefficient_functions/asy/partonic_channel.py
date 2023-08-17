@@ -152,6 +152,6 @@ class NeutralCurrentBaseAsy(PartonicChannelAsy):
             f : callable
                 output
         """
-        if self.is_below_threshold(self.ESF.x):
+        if self.is_below_pair_threshold(self.ESF.x):
             return lambda: pc.RSL()
         return f

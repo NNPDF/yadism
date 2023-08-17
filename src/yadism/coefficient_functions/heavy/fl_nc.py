@@ -12,7 +12,7 @@ class GluonVV(pc.NeutralCurrentBase):
         """
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor / z * LeProHQ.cg0("FL", "VV", self._xi, self._eta(z))
@@ -26,7 +26,7 @@ class GluonVV(pc.NeutralCurrentBase):
         """
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -49,7 +49,7 @@ class GluonAA(GluonVV):
         """
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor / z * LeProHQ.cg0("FL", "AA", self._xi, self._eta(z))
@@ -63,7 +63,7 @@ class GluonAA(GluonVV):
         """
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -86,7 +86,7 @@ class SingletVV(pc.NeutralCurrentBase):
         """
 
         def cq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -109,7 +109,7 @@ class SingletAA(pc.NeutralCurrentBase):
         """
 
         def cq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -132,7 +132,7 @@ class NonSinglet(pc.NeutralCurrentBase):
         """
 
         def dq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor

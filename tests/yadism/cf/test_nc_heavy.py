@@ -16,7 +16,7 @@ class OldF2(pc.NeutralCurrentBase):
         """|ref| implements NLO (heavy) non-singlet coefficient function, :cite:`felix-thesis`."""
 
         def dq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             # TODO move this hack into LeProHQ
             eta = self._eta(z)

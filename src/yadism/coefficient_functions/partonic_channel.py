@@ -150,7 +150,7 @@ class PartonicChannel(dict):
         """
         return f
 
-    def is_below_threshold(self, z):
+    def is_below_pair_threshold(self, z):
         """
         Checks if the available energy is below production threshold or not
 
@@ -161,7 +161,7 @@ class PartonicChannel(dict):
 
         Returns
         -------
-            is_below_threshold : bool
+            is_below_pair_threshold : bool
                 is the partonic energy sufficient to create the heavy quark
                 pair?
 

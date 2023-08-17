@@ -21,7 +21,7 @@ class MockESF:
 
 
 class TestNeutralCurrentBase:
-    def test_is_below_threshold(self):
+    def test_is_below_pair_threshold(self):
         for Q2 in [0.1, 1000]:
             x = 0.5
             pch = pcheavy.NeutralCurrentBase(MockESF(x, Q2), 3, m2hq=M2hq)
