@@ -17,6 +17,8 @@ def test_pineappl_sf(tmp_path: pathlib.Path):
         "F2_light": [{"x": 0.1, "Q2": 10.0}],
         "F2_total": [{"x": 0.2, "Q2": 20.0}],
     }
+    # TODO: move this to banana
+    theory_card["FONLLParts"] = "full"
     out = run_yadism(theory_card, oo)
     dump_pineappl_to_file(out, pl, "F2_light")
     # try read
@@ -35,6 +37,8 @@ def test_pineappl_xs(tmp_path: pathlib.Path):
     oo["observables"] = {
         "XSCHORUSCC": [{"x": 0.1, "Q2": 10.0, "y": 0.3}],
     }
+    # TODO: move this to banana
+    theory_card["FONLLParts"] = "full"
     out = run_yadism(theory_card, oo)
     dump_pineappl_to_file(out, pl, "XSCHORUSCC")
     # try read
