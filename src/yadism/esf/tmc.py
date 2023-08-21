@@ -303,10 +303,10 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
                 \begin{align*}
                 k_2(\xi,Q^2) &= \int_\xi^1 du \log(\frac{u}{\xi})
-                             \frac{g_1(u,Q^2)}{u}\\
+                             \frac{g_1(u,Q^2)}{u^2}\\
                              &= - \int_\xi^1 du \log(\frac{\xi}{u})
-                             \frac{g_1(u,Q^2)}{u}\\
-                             &= ((z\to -\log(z)) \otimes g_1(z))(\xi)
+                             \frac{g_1(u,Q^2)}{u^2}\\
+                             &= ((z\to - \frac{z}{\xi} \log(z)) \otimes g_1(z))(\xi)
                 \end{align*}
 
             Returns
