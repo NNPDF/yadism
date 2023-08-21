@@ -47,16 +47,14 @@ def g2_ker(z, _args):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def k1_ker(_z, _args):
+def h3_ker(_z, _args):
     return 1
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def k2_ker(z, _args):
-    return np.log(1 / z)
-
-
-h3_ker = k1_ker
+def k2_ker(z, args):
+    xi = args[0]
+    return z * np.log(1 / z) / xi
 
 
 class EvaluatedStructureFunctionTMC(abc.ABC):
@@ -294,26 +292,6 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # so to achieve a total (z-xi)/z^2 we need to convolute with 1-z
         # as we get a 1/z by the measure and an evaluation of 1-xi/z
         return self._convolute_FX("F2", g2_ker)
-
-    def _k1(self):
-        r"""
-            Compute the raw integral that enters the computation of `g`
-            making use of :py:meth:`_convolute_FX`.
-
-            .. math::
-                :nowrap:
-
-                \begin{align*}
-                k_1(\xi,Q^2) &= \int_\xi^1 du \frac{g_1(u,Q^2)}{u}\\
-                \end{align*}
-
-            Returns
-            -------
-                k1 : dict
-                    ESF output for the integral
-
-        """
-        return self._convolute_FX("g1", k1_ker)
 
     def _k2(self):
         r"""
@@ -557,48 +535,72 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
 
     def __init__(self, SF, kinematics):
         super().__init__(SF, kinematics)
-        # Kinematic factor for ZM g1
-        self._factor_shifted = self.x**2 / (self.xi * self.rho**3)
+        # Kinematic factor for ZM g1. Must be divided by `2\xi` to undo def.
+        self._factor_shifted = self.x / (self.xi * self.rho**3) / 2 / self.xi
         # Kinematic factor for common for `k1` & `k2` integral
-        self._factor_k1_k2 = (4 * self.x**2 * self.mu) / self.rho**3
+        self._factor_k1_k2 = (4 * self.x**2 * self.mu) / self.rho**4
+
+        # Extra (1/2) appears when undoing the `2x` in the definition.
         # Kinematic factor specific for `k1` integral
-        self._factor_k1 = (self.x + self.xi) / self.xi
+        self._factor_k1 = (self.x + self.xi) / self.xi / 2
         # Kinematic factor specific for `k2` integral
-        self._factor_k2 = (self.rho**2 - 3) / (2 * self.rho)
+        self._factor_k2 = (self.rho**2 - 3) / (2 * self.rho) / 2
 
     def _get_result_approx(self):
-        # NOTE: The approximations are evaluated at the lower
-        # integral limit; ie by integrating the factors of `g1^0`
-        approx_k1 = 1 - self.xi
-        approx_k2 = self.xi - 1 - np.log(self.xi)
-        # collect g1 results
+        # Collect g1 result.
         g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
-        # Combine the expressions
-        return g1out * (
-            self._factor_shifted
-            + self._factor_k1_k2
-            * (self._factor_k1 * approx_k1 + self._factor_k2 * approx_k2)
+
+        # NOTE: The approximations are evaluated at the lower integral
+        # limit; ie by integrating the factors of `g1^0` from xi to 1.
+        # (1/2) appears when undoing the `2x` in the definition.
+        approx_k1 = (1 - self.xi) / self.xi
+        approx_k2 = 1 / self.xi - 1 + np.log(self.xi)
+
+        # Combine the expressions and putting back `2\xi`
+        return (
+            2
+            * self.xi
+            * (
+                self._factor_shifted * g1out
+                + self._factor_k1_k2
+                * (self._factor_k1 * approx_k1 + self._factor_k2 * approx_k2)
+            )
         )
 
     def _get_result_exact(self):
-        # collect g1 results
+        # Collect g1 result.
         g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
+
         # Call to the raw integrals
-        k1out = self._k1()
+        k1out = self._h2()
         k2out = self._k2()
-        # Combine the expressions
-        return self._factor_shifted * g1out + self._factor_k1_k2 * (
-            self._factor_k1 * k1out + self._factor_k2 * k2out
+
+        # Combine the expressions and putting back `2\xi`
+        return (
+            2
+            * self.xi
+            * (
+                self._factor_shifted * g1out
+                + self._factor_k1_k2
+                * (self._factor_k1 * k1out + self._factor_k2 * k2out)
+            )
         )
 
     def _get_result_APFEL(self):
-        # collect g1 results
+        # Collect g1 result.
         g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
+
         # Call to the raw integrals
-        k1out = self._k1()
-        # Combine the expressions
+        k1out = self._h2()
+
+        # Combine the expressions and putting back `2\xi`
         return (
-            self._factor_shifted * g1out + self._factor_k1_k2 * self._factor_k1 * k1out
+            2
+            * self.xi
+            * (
+                self._factor_shifted * g1out
+                + self._factor_k1_k2 * self._factor_k1 * k1out
+            )
         )
 
 
