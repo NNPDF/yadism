@@ -557,15 +557,16 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
         approx_k2 = 1 / self.xi - 1 + np.log(self.xi)
 
         # Combine the expressions and putting back `2\xi`
-        return (
+        factors = (
             2
             * self.xi
             * (
-                self._factor_shifted * g1out
+                self._factor_shifted
                 + self._factor_k1_k2
                 * (self._factor_k1 * approx_k1 + self._factor_k2 * approx_k2)
             )
         )
+        return factors * g1out
 
     def _get_result_exact(self):
         # Collect g1 result.
