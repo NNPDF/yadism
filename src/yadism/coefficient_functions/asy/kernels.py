@@ -111,6 +111,7 @@ def generate_heavy_asy(esf, nf, pto_evol, ihq):
             is_pv,
         )
         if not is_pv:
+            n3lo_cf_variation = esf.info.theory["n3lo_cf_variation"]
             for c, channel in (("g", "Gluon"), ("s", "Singlet")):
                 for res in range(pto_evol + 1):
                     name = "Asy" + ("N" * res) + "LL" + channel
@@ -118,7 +119,7 @@ def generate_heavy_asy(esf, nf, pto_evol, ihq):
                         asys.append(
                             kernels.Kernel(
                                 asy_weights[f"{c}{av}"],
-                                asy_cfs.__getattribute__(name)(esf, nf, m2hq=m2hq),
+                                asy_cfs.__getattribute__(name)(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_cf_variation),
                             )
                         )
     return asys
