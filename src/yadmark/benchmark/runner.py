@@ -47,7 +47,7 @@ class Runner(BenchmarkRunner):
         runner = yadism.Runner(theory, ocard)
         # choose alpha_s source
         if self.alphas_from_lhapdf:
-            import lhapdf  # pylint:disable=import-outside-toplevel
+            import lhapdf  # pylint:disable=E0401,C0415
 
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
         else:

@@ -1,4 +1,3 @@
-from ..light import g1_nc as light
 from ..partonic_channel import RSL
 from . import g1_nc_raw as raw
 from . import partonic_channel as pc

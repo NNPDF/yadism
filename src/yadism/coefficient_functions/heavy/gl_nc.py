@@ -14,7 +14,7 @@ class NonSinglet(pc.NeutralCurrentBase):
         """
 
         def dq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor

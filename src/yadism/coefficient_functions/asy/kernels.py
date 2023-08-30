@@ -147,6 +147,7 @@ def generate_intrinsic_asy(esf, nf, pto_evol, ihq):
     cfs = import_pc_module(kind, esf.process)
     m2hq = esf.info.m2hq[ihq - 4]
     if esf.process == "CC":
+        m1sq, m2sq = 0.0, m2hq
         w = kernels.cc_weights(
             esf.info.coupling_constants,
             esf.Q2,
@@ -156,6 +157,7 @@ def generate_intrinsic_asy(esf, nf, pto_evol, ihq):
         )
         weights = {k: v for k, v in w["ns"].items() if abs(k) == ihq}
     else:  # NC
+        m1sq, m2sq = m2hq, m2hq
         if is_pv:
             wVA = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "VA")
             wAV = esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
@@ -172,7 +174,7 @@ def generate_intrinsic_asy(esf, nf, pto_evol, ihq):
     asys = [
         kernels.Kernel(
             weights,
-            cfs.AsyLLIntrinsic(esf, nf, m2hq=m2hq),
+            cfs.AsyLLIntrinsic(esf, nf, m1sq=m1sq, m2sq=m2sq),
         )
     ]
     if pto_evol > 0:
@@ -180,11 +182,11 @@ def generate_intrinsic_asy(esf, nf, pto_evol, ihq):
             [
                 kernels.Kernel(
                     weights,
-                    cfs.AsyNLLIntrinsicMatching(esf, nf, m2hq=m2hq),
+                    cfs.AsyNLLIntrinsicMatching(esf, nf, m1sq=m1sq, m2sq=m2sq),
                 ),
                 kernels.Kernel(
                     weights,
-                    cfs.AsyNLLIntrinsicLight(esf, nf, m2hq=m2hq),
+                    cfs.AsyNLLIntrinsicLight(esf, nf, m1sq=m1sq, m2sq=m2sq),
                 ),
             ]
         )

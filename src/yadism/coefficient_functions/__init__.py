@@ -130,11 +130,6 @@ class Combiner:
             if hq not in (0, sfh):
                 continue
 
-            # To prevent double counting of heavy mass effects in FONLL only one
-            # heavy mass should be considered
-            if "FONLL" in self.scheme and sfh != nf + 1:
-                continue
-
             if sfh in self.intrinsic:  # heavy quark is intrinsic
                 if "FFN0" in self.scheme:
                     heavy_comps[sfh].extend(

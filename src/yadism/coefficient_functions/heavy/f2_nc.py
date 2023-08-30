@@ -14,7 +14,7 @@ class GluonVV(pc.NeutralCurrentBase):
         """|ref| implements :eqref:`D.1`, :cite:`felix-thesis`."""
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor / z * LeProHQ.cg0("F2", "VV", self._xi, self._eta(z))
@@ -26,7 +26,7 @@ class GluonVV(pc.NeutralCurrentBase):
         """|ref| implements NLO (heavy) gluon coefficient function, :cite:`felix-thesis`."""
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -59,7 +59,7 @@ class GluonAA(GluonVV):
         """|ref| implements :eqref:`D.4`, :cite:`felix-thesis`."""
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor / z * LeProHQ.cg0("F2", "AA", self._xi, self._eta(z))
@@ -71,7 +71,7 @@ class GluonAA(GluonVV):
         """|ref| implements NLO (heavy) gluon coefficient function, :cite:`felix-thesis`."""
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -93,7 +93,7 @@ class SingletVV(pc.NeutralCurrentBase):
         """|ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`."""
 
         def cq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -127,7 +127,7 @@ class SingletAA(pc.NeutralCurrentBase):
         """|ref| implements NLO (heavy) singlet coefficient function, :cite:`felix-thesis`."""
 
         def cq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -150,7 +150,7 @@ class NonSinglet(pc.NeutralCurrentBase):
         """|ref| implements NLO (heavy) non-singlet coefficient function, :cite:`felix-thesis`."""
 
         def dq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             # TODO move this hack into LeProHQ
             eta = self._eta(z)

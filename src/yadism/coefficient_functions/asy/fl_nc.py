@@ -1,75 +1,72 @@
-import numba as nb
-
-from ..intrinsic import fl_nc as intrinsic
 from ..light import fl_nc as light
 from ..partonic_channel import RSL, EmptyPartonicChannel
 from . import partonic_channel as pc
 from . import raw_nc
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cg_NLL_NLO(z, _args):
-    return raw_nc.clg1am0_a0(z)
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cg_NLL_NNLO(z, args):
-    L = args[0]
-    return (raw_nc.clg2am0_aq(z) - raw_nc.clg2am0_af(z)) * L
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cg_NNLL_NNLO(z, _args):
-    return raw_nc.clg2am0_a0(z)
-
-
 class AsyLLGluon(EmptyPartonicChannel):
     pass
 
 
-class AsyNLLGluon(pc.PartonicChannelAsy):
+class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
     def NLO(self):
+        def cg_NLL_NLO(z, _args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            return raw_nc.clg1am0_a0(z)
+
         return RSL(cg_NLL_NLO, args=[self.L])
 
     def NNLO(self):
+        def cg_NLL_NNLO(z, args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            L = args[0]
+            return (raw_nc.clg2am0_aq(z) - raw_nc.clg2am0_af(z)) * L
+
         return RSL(cg_NLL_NNLO, args=[self.L])
 
 
-class AsyNNLLGluon(pc.PartonicChannelAsy):
+class AsyNNLLGluon(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
+        def cg_NNLL_NNLO(z, _args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            return raw_nc.clg2am0_a0(z)
+
         return RSL(cg_NNLL_NNLO)
 
 
-class AsyNNNLLGluon(pc.PartonicChannelAsy):
+class AsyNNNLLGluon(pc.NeutralCurrentBaseAsy):
     pass
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cps_NLL_NNLO(z, args):
-    L = args[0]
-    return (raw_nc.clps2am0_aq(z) - raw_nc.clps2am0_af(z)) * L
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cps_NNLL_NNLO(z, _args):
-    return raw_nc.clps2am0_a0(z)
 
 
 class AsyLLSinglet(EmptyPartonicChannel):
     pass
 
 
-class AsyNLLSinglet(pc.PartonicChannelAsy):
+class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
+        def cps_NLL_NNLO(z, args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            L = args[0]
+            return (raw_nc.clps2am0_aq(z) - raw_nc.clps2am0_af(z)) * L
+
         return RSL(cps_NLL_NNLO, args=[self.L])
 
 
-class AsyNNLLSinglet(pc.PartonicChannelAsy):
+class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
+        def cps_NNLL_NNLO(z, _args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            return raw_nc.clps2am0_a0(z)
+
         return RSL(cps_NNLL_NNLO)
 
 
-class AsyNNNLLSinglet(pc.PartonicChannelAsy):
+class AsyNNNLLSinglet(pc.NeutralCurrentBaseAsy):
     pass
 
 
@@ -77,24 +74,24 @@ class AsyLLNonSinglet(EmptyPartonicChannel):
     pass
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cns_NLL_NNLO(z, args):
-    L = args[0]
-    return raw_nc.clns2am0_aq(z) * L
-
-
-class AsyNLLNonSinglet(pc.PartonicChannelAsy):
+class AsyNLLNonSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
+        def cns_NLL_NNLO(z, args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            L = args[0]
+            return raw_nc.clns2am0_aq(z) * L
+
         return RSL(cns_NLL_NNLO, args=[self.L])
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
-def cns_NNLL_NNLO(z, _args):
-    return raw_nc.clns2am0_a0(z)
-
-
-class AsyNNLLNonSinglet(pc.PartonicChannelAsy):
+class AsyNNLLNonSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
+        def cns_NNLL_NNLO(z, _args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            return raw_nc.clns2am0_a0(z)
+
         return RSL(cns_NNLL_NNLO)
 
 
