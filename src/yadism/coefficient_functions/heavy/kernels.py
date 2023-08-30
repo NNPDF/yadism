@@ -70,9 +70,9 @@ def generate(esf, nf, ihq):
             is_pv,
         )
         n3lo_cf_variation = esf.info.theory["n3lo_cf_variation"]
-        gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_cf_variation)),
+        gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_cf_variation))
         gAA = kernels.Kernel(weights["gAA"], pcs.GluonAA(esf, nf, m2hq=m2hq))
-        sVV = kernels.Kernel(weights["sVV"], pcs.SingletVV(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_cf_variation)),
+        sVV = kernels.Kernel(weights["sVV"], pcs.SingletVV(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_cf_variation))
         sAA = kernels.Kernel(weights["sAA"], pcs.SingletAA(esf, nf, m2hq=m2hq))
         return (gVV, gAA, sVV, sAA)
 

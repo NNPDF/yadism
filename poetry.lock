@@ -3278,4 +3278,4 @@ mark = ["banana-hep", "sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "6565ba962d736a6f9770680d5c50f7d604bfa6bdb8c95a129c43f569bd5d6f16"
+content-hash = "3801bfe37a805e32ebfacfdc9534ba4d71eab18e1aec1dff80de47d354ea48b8"
