@@ -45,7 +45,7 @@ class GluonVV(pc.NeutralCurrentBase):
 
         coeff_iterpol = interpolator("C2g", nf=self.nf, variation=self.n3lo_cf_variation)
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return coeff_iterpol(self._xi, z)
 
@@ -113,7 +113,7 @@ class SingletVV(pc.NeutralCurrentBase):
 
         coeff_iterpol = interpolator("C2q", nf=self.nf, variation=self.n3lo_cf_variation)
         def cq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return coeff_iterpol(self._xi, z)
 
