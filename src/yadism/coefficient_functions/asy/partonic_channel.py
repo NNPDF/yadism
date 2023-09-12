@@ -138,23 +138,23 @@ class PartonicChannelAsyNLLIntrinsicLight(PartonicChannelAsyLLIntrinsic):
 
 
 class NeutralCurrentBaseAsy(PartonicChannelAsy):
-    def decorator(self, f):
-        """
-        Apply hadronic threshold
+    # def decorator(self, f):
+    #     """
+    #     Apply hadronic threshold
 
-        Parameters
-        ----------
-            f : callable
-                input
+    #     Parameters
+    #     ----------
+    #         f : callable
+    #             input
 
-        Returns
-        -------
-            f : callable
-                output
-        """
-        if self.is_below_pair_threshold(self.ESF.x):
-            return lambda: pc.RSL()
-        return f
+    #     Returns
+    #     -------
+    #         f : callable
+    #             output
+    #     """
+    #     if self.is_below_pair_threshold(self.ESF.x):
+    #         return lambda: pc.RSL()
+    #     return f
 
     def is_below_pair_threshold(self, z):
         """

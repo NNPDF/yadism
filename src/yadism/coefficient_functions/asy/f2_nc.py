@@ -7,8 +7,8 @@ from . import raw_nc
 class AsyLLGluon(pc.NeutralCurrentBaseAsy):
     def NLO(self):
         def cg_LL_NLO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return raw_nc.c2g1am0_aq(z) * L
 
@@ -16,8 +16,8 @@ class AsyLLGluon(pc.NeutralCurrentBaseAsy):
 
     def NNLO(self):
         def cg_LL_NNLO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return (raw_nc.c2g2am0_aq2(z) - raw_nc.c2g2am0_aqf(z)) * L**2
 
@@ -27,16 +27,16 @@ class AsyLLGluon(pc.NeutralCurrentBaseAsy):
 class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
     def NLO(self):
         def cg_NLL_NLO(z, _args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             return raw_nc.c2g1am0_a0(z)
 
         return RSL(cg_NLL_NLO, args=[self.L])
 
     def NNLO(self):
         def cg_NLL_NNLO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return (raw_nc.c2g2am0_aq(z) - raw_nc.c2g2am0_af(z)) * L
 
@@ -46,8 +46,8 @@ class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
 class AsyNNLLGluon(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
         def cg_NNLL_NNLO(z, _args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             return raw_nc.c2g2am0_a0(z)
 
         return RSL(cg_NNLL_NNLO)
@@ -60,8 +60,8 @@ class AsyNNNLLGluon(pc.NeutralCurrentBaseAsy):
 class AsyLLSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
         def cps_LL_NNLO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return (raw_nc.c2ps2am0_aq2(z) - raw_nc.c2ps2am0_aqf(z)) * L**2
 
@@ -71,8 +71,8 @@ class AsyLLSinglet(pc.NeutralCurrentBaseAsy):
 class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
         def cps_NLL_NNLO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return (raw_nc.c2ps2am0_aq(z) - raw_nc.c2ps2am0_af(z)) * L
 
@@ -82,8 +82,8 @@ class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
 class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
         def cps_NNLL_NNLO(z, _args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             return raw_nc.c2ps2am0_a0(z)
 
         return RSL(cps_NNLL_NNLO)
@@ -96,20 +96,20 @@ class AsyNNNLLSinglet(pc.NeutralCurrentBaseAsy):
 class AsyLLNonSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
         def cns_LL_NNLO_reg(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return raw_nc.c2ns2am0_aq2(z) * L**2
 
         def cns_LL_NNLO_sing(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return raw_nc.c2ns2bm0_aq2(z) * L**2
 
         def cns_LL_NNLO_loc(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return raw_nc.c2ns2cm0_aq2(z) * L**2
 
@@ -119,20 +119,20 @@ class AsyLLNonSinglet(pc.NeutralCurrentBaseAsy):
 class AsyNLLNonSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
         def cns_NLL_NNLO_reg(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return raw_nc.c2ns2am0_aq(z) * L
 
         def cns_NLL_NNLO_sing(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return raw_nc.c2ns2bm0_aq(z) * L
 
         def cns_NLL_NNLO_loc(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             L = args[0]
             return raw_nc.c2ns2cm0_aq(z) * L
 
@@ -142,18 +142,18 @@ class AsyNLLNonSinglet(pc.NeutralCurrentBaseAsy):
 class AsyNNLLNonSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
         def cns_NNLL_NNLO_reg(z, _args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             return raw_nc.c2ns2am0_a0(z)
 
         def cns_NNLL_NNLO_sing(z, _args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             return raw_nc.c2ns2bm0_a0(z)
 
         def cns_NNLL_NNLO_loc(z, _args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
+#            if self.is_below_pair_threshold(z):
+#                return 0.0
             return raw_nc.c2ns2cm0_a0(z)
 
         return RSL(cns_NNLL_NNLO_reg, cns_NNLL_NNLO_sing, cns_NNLL_NNLO_loc)
