@@ -5,7 +5,7 @@ from eko import constants
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
-from ..intrinsic.partonic_channel import NeutralCurrentBase as incb
+# from ..intrinsic.partonic_channel import NeutralCurrentBase as incb
 from ..partonic_channel import RSL
 
 
@@ -23,16 +23,16 @@ class PartonicChannelAsyLLIntrinsic(PartonicChannelAsy):
 
     light_cls = lambda _esf, _nf: None
 
-    def __init__(self, *args, m1sq, m2sq):
-        super().__init__(*args, m2hq=m2sq)
-        self.m1sq = m1sq
-        self.m2sq = m2sq
+    # def __init__(self, *args, m1sq, m2sq):
+    #     super().__init__(*args, m2hq=m2sq)
+    #     self.m1sq = m1sq
+    #     self.m2sq = m2sq
 
-    def convolution_point(self):
-        sigma_pm = self.ESF.Q2 + self.m2sq - self.m1sq
-        delta = incb.kinematic_delta(self.m1sq, self.m2sq, -self.ESF.Q2)
-        eta = 2.0 * self.ESF.Q2 / (sigma_pm + delta)
-        return self.ESF.x / eta
+    # def convolution_point(self):
+    #     sigma_pm = self.ESF.Q2 + self.m2sq - self.m1sq
+    #     delta = incb.kinematic_delta(self.m1sq, self.m2sq, -self.ESF.Q2)
+    #     eta = 2.0 * self.ESF.Q2 / (sigma_pm + delta)
+    #     return self.ESF.x / eta
 
     def LO(self):
         """Return |LO| from light."""
