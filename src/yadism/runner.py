@@ -147,7 +147,7 @@ class Runner:
             M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
             fonllparts=theory["FONLLParts"],
-            n3lo_cf_variation=theory.get("n3lo_cf_variation",0)
+            n3lo_cf_variation=theory["n3lo_cf_variation"]
         )
         logger.info(
             "PTO: %d, PTO@evolution: %d, process: %s",
