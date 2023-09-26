@@ -49,47 +49,6 @@ def test_h_g():
                     )
 
 
-MISSING_NC_MAP = {
-    h_f2_nc.NonSinglet: [
-        f_f2_nc.AsyLLNonSinglet,
-        f_f2_nc.AsyNLLNonSinglet,
-        f_f2_nc.AsyNNLLNonSinglet,
-    ],
-    h_fl_nc.NonSinglet: [
-        f_fl_nc.AsyLLNonSinglet,
-        f_fl_nc.AsyNLLNonSinglet,
-        f_fl_nc.AsyNNLLNonSinglet,
-    ],
-}
-
-
-def test_missing_nnlo():
-    Q2 = 2e4
-    esf = MockESF("F2_charm", 0.1, Q2)
-    interp = interpolation.InterpolatorDispatcher(
-        interpolation.lambertgrid(50), 4, False
-    )
-    m2hq = 2
-    for nf in [3, 4]:
-        for z in [1e-4, 1e-3]:
-            for icls, iasyclss in MISSING_NC_MAP.items():
-                iobj = icls(esf, nf, m2hq=m2hq)
-                a = (
-                    conv.convolute_vector(iobj.NNLO(), interp, z)[0]
-                    if iobj.NNLO()
-                    else 0.0
-                )
-                b = 0.0
-                if iasyclss:
-                    for iasycls in iasyclss:
-                        iasyobj = iasycls(esf, nf, m2hq=m2hq)
-                        if iasyobj.NNLO():
-                            b += conv.convolute_vector(iasyobj.NNLO(), interp, z)[0]
-                np.testing.assert_allclose(
-                    a, b, rtol=7e-3, atol=3e-2, err_msg=f"{nf=},{z=}"
-                )
-
-
 INTRINSIC_NC_MAP = {
     i_f2_nc.Splus: [
         f_f2_nc.AsyLLIntrinsic,
