@@ -119,7 +119,12 @@ def generate_heavy_asy(esf, nf, pto_evol, ihq):
                         asys.append(
                             kernels.Kernel(
                                 asy_weights[f"{c}{av}"],
-                                asy_cfs.__getattribute__(name)(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_cf_variation),
+                                asy_cfs.__getattribute__(name)(
+                                    esf,
+                                    nf,
+                                    m2hq=m2hq,
+                                    n3lo_cf_variation=n3lo_cf_variation,
+                                ),
                             )
                         )
     return asys

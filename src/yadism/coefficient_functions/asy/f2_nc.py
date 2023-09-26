@@ -23,13 +23,12 @@ class AsyLLGluon(pc.NeutralCurrentBaseAsy):
 
     def N3LO(self):
         def cg_LL_N3LO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
-            L = - args[0]
+            L = -args[0]
             nf = int(args[1])
-            return adani.C2_g3_highscale_LL(z, nf) * L ** 3
+            return adani.C2_g3_highscale_LL(z, nf) * L**3
 
         return RSL(cg_LL_N3LO, args=[self.L, self.nf])
+
 
 class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
     def NLO(self):
@@ -47,13 +46,12 @@ class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
 
     def N3LO(self):
         def cg_NLL_N3LO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
-            L = - args[0]
+            L = -args[0]
             nf = int(args[1])
-            return adani.C2_g3_highscale_NLL(z, nf) * L ** 2
+            return adani.C2_g3_highscale_NLL(z, nf) * L**2
 
         return RSL(cg_NLL_N3LO, args=[self.L, self.nf])
+
 
 class AsyNNLLGluon(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
@@ -64,20 +62,16 @@ class AsyNNLLGluon(pc.NeutralCurrentBaseAsy):
 
     def N3LO(self):
         def cg_NNLL_N3LO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
-            L = - args[0]
+            L = -args[0]
             nf = int(args[1])
             return adani.C2_g3_highscale_N2LL(z, nf) * L
 
         return RSL(cg_NNLL_N3LO, args=[self.L, self.nf])
 
-class AsyNNNLLGluon(pc.NeutralCurrentBaseAsy):
 
+class AsyNNNLLGluon(pc.NeutralCurrentBaseAsy):
     def N3LO(self):
         def cg_NNNLL_N3LO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
             nf = int(args[0])
             variation = int(args[1])
             return adani.C2_g3_highscale_N3LL(z, nf, variation)
@@ -95,13 +89,12 @@ class AsyLLSinglet(pc.NeutralCurrentBaseAsy):
 
     def N3LO(self):
         def cps_LL_N3LO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
-            L = - args[0]
+            L = -args[0]
             nf = int(args[1])
-            return adani.C2_ps3_highscale_LL(z, nf) * L ** 3
+            return adani.C2_ps3_highscale_LL(z, nf) * L**3
 
         return RSL(cps_LL_N3LO, args=[self.L, self.nf])
+
 
 class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
@@ -113,13 +106,12 @@ class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
 
     def N3LO(self):
         def cps_NLL_N3LO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
-            L = - args[0]
+            L = -args[0]
             nf = int(args[1])
-            return adani.C2_ps3_highscale_NLL(z, nf) * L ** 2
+            return adani.C2_ps3_highscale_NLL(z, nf) * L**2
 
         return RSL(cps_NLL_N3LO, args=[self.L, self.nf])
+
 
 class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
     def NNLO(self):
@@ -130,20 +122,16 @@ class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
 
     def N3LO(self):
         def cps_NNLL_N3LO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
-            L = - args[0]
+            L = -args[0]
             nf = int(args[1])
             return adani.C2_ps3_highscale_N2LL(z, nf) * L
 
         return RSL(cps_NNLL_N3LO, args=[self.L, self.nf])
 
-class AsyNNNLLSinglet(pc.NeutralCurrentBaseAsy):
 
+class AsyNNNLLSinglet(pc.NeutralCurrentBaseAsy):
     def N3LO(self):
         def cps_NNNLL_N3LO(z, args):
-            if self.is_below_pair_threshold(z):
-                return 0.0
             nf = int(args[0])
             return adani.C2_ps3_highscale_N3LL(z, nf)
 
