@@ -12,7 +12,6 @@ class PartonicChannelAsy(pc.PartonicChannel):
     """Massless limit of a coeficient function."""
 
     def __init__(self, *args, m2hq):
-        self.m2hq = m2hq
         super().__init__(*args)
         self.L = np.log(self.ESF.Q2 / m2hq)
 
