@@ -5,7 +5,6 @@ from eko import constants
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
-# from ..intrinsic.partonic_channel import NeutralCurrentBase as incb
 from ..partonic_channel import RSL
 
 
@@ -22,17 +21,6 @@ class PartonicChannelAsyLLIntrinsic(PartonicChannelAsy):
     """|ref| implements |LL| part of :eqref:`10` of :cite:`nnpdf-intrinsic` from matching."""
 
     light_cls = lambda _esf, _nf: None
-
-    # def __init__(self, *args, m1sq, m2sq):
-    #     super().__init__(*args, m2hq=m2sq)
-    #     self.m1sq = m1sq
-    #     self.m2sq = m2sq
-
-    # def convolution_point(self):
-    #     sigma_pm = self.ESF.Q2 + self.m2sq - self.m1sq
-    #     delta = incb.kinematic_delta(self.m1sq, self.m2sq, -self.ESF.Q2)
-    #     eta = 2.0 * self.ESF.Q2 / (sigma_pm + delta)
-    #     return self.ESF.x / eta
 
     def LO(self):
         """Return |LO| from light."""
@@ -138,41 +126,4 @@ class PartonicChannelAsyNLLIntrinsicLight(PartonicChannelAsyLLIntrinsic):
 
 
 class NeutralCurrentBaseAsy(PartonicChannelAsy):
-    # def decorator(self, f):
-    #     """
-    #     Apply hadronic threshold
-
-    #     Parameters
-    #     ----------
-    #         f : callable
-    #             input
-
-    #     Returns
-    #     -------
-    #         f : callable
-    #             output
-    #     """
-    #     if self.is_below_pair_threshold(self.ESF.x):
-    #         return lambda: pc.RSL()
-    #     return f
-
-    def is_below_pair_threshold(self, z):
-        """
-        Checks if the available energy is below production threshold or not
-
-        Parameters
-        ----------
-            z : float
-                partonic momentum fraction
-
-        Returns
-        -------
-            is_below_pair_threshold : bool
-                is the partonic energy sufficient to create the heavy quark
-                pair?
-
-        .. todo::
-            use threshold on shat or using FH's zmax?
-        """
-        shat = self.ESF.Q2 * (1 - z) / z
-        return shat <= 4 * self.m2hq
+    pass
