@@ -143,5 +143,3 @@ def update_fns(theory):
     # here there is no difference between DGLAP and DIS
     for fl in hqfl:
         theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
-
-    theory["PTODIS"] = theory["PTO"]
