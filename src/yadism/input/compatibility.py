@@ -144,4 +144,5 @@ def update_fns(theory):
     for fl in hqfl:
         theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
 
-    theory["PTODIS"] = theory["PTO"]
+    if "PTODIS" not in theory:
+        theory["PTODIS"] = theory["PTO"]
