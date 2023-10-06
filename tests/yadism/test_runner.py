@@ -70,7 +70,7 @@ class TestRunner:
 
         pto = data.draw(st.integers(0, 3))
         masses = {f"m{q}": v + 2.0 for v, q in enumerate("cbt")}
-        kthr = {f"kDIS{q}Thr": v + 2.0 for v, q in enumerate("cbt")}
+        kthr = {f"k{q}Thr": v + 2.0 for v, q in enumerate("cbt")}
         zm_masses = {f"ZM{q}": True for q in "cbt"}
         theory = dict(
             PTO=pto,

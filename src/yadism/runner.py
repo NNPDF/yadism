@@ -118,7 +118,7 @@ class Runner:
         # Initialize structure functions
         masses = np.power([new_theory["mc"], new_theory["mb"], new_theory["mt"]], 2)
         thresholds_ratios = np.power(
-            [new_theory["kDIScThr"], new_theory["kDISbThr"], new_theory["kDIStThr"]], 2
+            [new_theory["kcThr"], new_theory["kbThr"], new_theory["ktThr"]], 2
         )
         managers = dict(
             interpolator=interpolator,
