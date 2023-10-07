@@ -66,7 +66,7 @@ class Inspector:
 
             # check value provided by user
             try:
-                # retroeve the checker from available checkers and value from
+                # retrieve the checker from available checkers and value from
                 # user input, apply the first on the latter
                 name = dom_def["known_as"] if "known_as" in dom_def else dom_def["name"]
                 checker.check_value(

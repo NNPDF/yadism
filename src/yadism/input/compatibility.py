@@ -98,7 +98,7 @@ def update_target(obs):
 
 def update_fns(theory):
     """
-    Shifts kcThr around and add the kDIScThr parameter (likewise for all heavy quarks).
+    Sets k{fl}Thr and  ZM{fl} for all heavy flavours depending on the scheme.
 
     Parameters
     ----------
@@ -140,9 +140,8 @@ def update_fns(theory):
     else:
         raise ValueError(f"Scheme '{fns}' not recognized.")
 
-    # here there is no difference between DGLAP and DIS
-    for fl in hqfl:
-        theory[f"kDIS{fl}Thr"] = theory[f"k{fl}Thr"]
-
     if "PTODIS" not in theory:
         theory["PTODIS"] = theory["PTO"]
+
+    if "FONLLParts" not in theory:
+        theory["FONLLParts"] = "full"
