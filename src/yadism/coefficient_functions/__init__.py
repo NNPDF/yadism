@@ -26,7 +26,7 @@ class Component(list):
 
 
 class Combiner:
-    """Does the matching between coefficient functions and partons with their approptiate coupling strength.
+    """Does the matching between coefficient functions and partons with their appropriate coupling strength.
 
     Parameters
     ----------
