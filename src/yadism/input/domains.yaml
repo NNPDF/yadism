@@ -216,7 +216,7 @@
   known_as: IC
   runcard: theory
   description: >
-    Damping FONLL
+    Allow for intrinsic charm
   type: integer
   metavar: ic
   domain:
