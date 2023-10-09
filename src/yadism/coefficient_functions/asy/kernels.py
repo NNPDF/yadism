@@ -1,9 +1,4 @@
-"""Collections implementing the asymptotic components for FONLL prescription.
-
-This is strictly following the original reference :cite:`forte-fonll`, and
-implements the prescription at coefficient functions level.
-
-"""
+"""The asymptotic components for the FONLL prescription."""
 from eko import basis_rotation as br
 
 from .. import heavy, kernels, light
