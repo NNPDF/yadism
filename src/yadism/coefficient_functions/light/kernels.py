@@ -8,7 +8,7 @@ def import_pc_module(kind, process):
     return kernels.import_local(kind, process, __name__)
 
 
-def generate(esf, nf, skip_heavylight=False):
+def generate(esf, nf):
     """
     Collect the light coefficient functions
 
@@ -26,9 +26,6 @@ def generate(esf, nf, skip_heavylight=False):
         elems : list(yadism.kernels.Kernel)
             list of elements
     """
-    nl = nf
-    if skip_heavylight:
-        nl = nf - 1
     kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
     coupling = esf.info.coupling_constants
@@ -57,20 +54,14 @@ def generate(esf, nf, skip_heavylight=False):
         esf.Q2,
         nf,
         esf.info.obs_name.is_parity_violating,
-        skip_heavylight=skip_heavylight,
     )
-
-    # remove also singlet contributions which is added while subtracting light_asy with light
-    if skip_heavylight:
-        weights["s"][nl + 1] = 0
-        weights["s"][-nl - 1] = 0
 
     ns = kernels.Kernel(
         weights["ns"],
         pcs.NonSinglet(
             esf,
             nf,
-            fl=nc_color_factor(coupling, nf, "ns", skip_heavylight),
+            fl=nc_color_factor(coupling, nf, "ns", False),
         ),
     )
     g = kernels.Kernel(
@@ -78,7 +69,7 @@ def generate(esf, nf, skip_heavylight=False):
         pcs.Gluon(
             esf,
             nf,
-            flg=nc_color_factor(coupling, nf, "g", skip_heavylight),
+            flg=nc_color_factor(coupling, nf, "g", False),
         ),
     )
     s = kernels.Kernel(
@@ -86,7 +77,7 @@ def generate(esf, nf, skip_heavylight=False):
         pcs.Singlet(
             esf,
             nf,
-            flps=nc_color_factor(coupling, nf, "s", skip_heavylight),
+            flps=nc_color_factor(coupling, nf, "s", False),
         ),
     )
     return [ns, g, s]

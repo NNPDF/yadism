@@ -204,8 +204,6 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
             "nfref": [3],
         }
         # theory_updates = cartesian_product(sv)
-        # add FONLL
-        # sv["FNS"] = ["FONLL-A"]
         # sv["NfFF"] = [5]
         # theory_updates.append(cartesian_product(sv))
         return cartesian_product(sv)
@@ -347,15 +345,6 @@ class BenchmarkICFFNS(ApfelICBenchmark):
         self.run([{"PTO": 1, "IC": 1}], self.obs_updates(), ["CT14llo_NF4"])
 
 
-class BenchmarkICFONLL(ApfelICBenchmark):
-    def benchmark_nlo(self):
-        self.run(
-            [{"PTO": 1, "IC": 1, "FNS": "FONLL-A", "NfFF": 4}],
-            self.obs_updates(),
-            ["CT14llo_NF4"],
-        )
-
-
 if __name__ == "__main__":
     # plain = BenchmarkPlain()
     # plain.benchmark_pto(0)
@@ -382,8 +371,6 @@ if __name__ == "__main__":
     # ffns = BenchmarkICFFNS()
     # ffns.benchmark_lo()
     # ffns.benchmark_nlo()
-    # fonll = BenchmarkICFONLL()
-    # fonll.benchmark_nlo()
 
     # xs = BenchmarkXS()
     # xs.benchmark_pto(0)
@@ -447,15 +434,4 @@ if __name__ == "__main__":
 #                 and yad["Q2"] < theory["mb"] ** 2
 #             ):
 #                 return False
-#             return None
-
-#         def fonll_assert(theory, _obs, sf, yad):
-#             if (
-#                 sf == "FLbottom"
-#                 and theory["mb"] ** 2 / 4 < yad["Q2"] < theory["mb"] ** 2
-#             ):
-#                 # APFEL has a discreization in Q2/m2
-#                 return dict(abs=5e-6)
-#             if sf == "FLcharm" and yad["Q2"] < 7 and theory["DAMP"] == 1:
-#                 return dict(abs=2e-5)
 #             return None

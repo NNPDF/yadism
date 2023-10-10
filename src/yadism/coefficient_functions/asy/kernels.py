@@ -1,9 +1,4 @@
-"""Collections implementing the asymptotic components for FONLL prescription.
-
-This is strictly following the original reference :cite:`forte-fonll`, and
-implements the prescription at coefficient functions level.
-
-"""
+"""The asymptotic components for the FONLL prescription."""
 from eko import basis_rotation as br
 
 from .. import heavy, kernels, light
@@ -69,7 +64,7 @@ def generate_missing_asy(esf, nf, ihq, pto_evol, icoupl=None):
 
 def generate_heavy_asy(esf, nf, pto_evol, ihq):
     """
-    |ref| implements :eqref:`91`, :cite:`forte-fonll`.
+     Collect the high-virtuality limit of heavy.
 
     Parameters
     ----------
@@ -132,7 +127,7 @@ def generate_heavy_asy(esf, nf, pto_evol, ihq):
 
 def generate_intrinsic_asy(esf, nf, pto_evol, ihq):
     """
-    |ref| implements :eqref:`10` of :cite:`nnpdf-intrinsic`.
+     Collect the high-virtuality limit of intrinsic, see also  :eqref:`10` of :cite:`nnpdf-intrinsic`.
 
     Parameters
     ----------
