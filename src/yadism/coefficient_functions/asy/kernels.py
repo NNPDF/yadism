@@ -64,7 +64,7 @@ def generate_missing_asy(esf, nf, ihq, pto_evol, icoupl=None):
 
 def generate_heavy_asy(esf, nf, pto_evol, ihq):
     """
-    |ref| implements :eqref:`91`, :cite:`forte-fonll`.
+     Collect the high-virtuality limit of heavy.
 
     Parameters
     ----------
@@ -121,7 +121,7 @@ def generate_heavy_asy(esf, nf, pto_evol, ihq):
 
 def generate_intrinsic_asy(esf, nf, pto_evol, ihq):
     """
-    |ref| implements :eqref:`10` of :cite:`nnpdf-intrinsic`.
+     Collect the high-virtuality limit of intrinsic, see also  :eqref:`10` of :cite:`nnpdf-intrinsic`.
 
     Parameters
     ----------
