@@ -28,6 +28,10 @@ def load(path, skiprows, fields):
         list(dict)
             list of datapoints
     """
+    if path.suffix == ".yaml":
+        infile = yaml.safe_load(path.read_text())
+        return infile["bins"]
+
     data = np.loadtxt(path, skiprows=skiprows)
     data = data[:, : len(fields)]
     return [dict(zip(fields, d.tolist())) for d in data]
