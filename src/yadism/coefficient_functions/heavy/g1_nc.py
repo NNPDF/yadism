@@ -150,4 +150,8 @@ class NonSinglet(pc.NeutralCurrentBase):
                 * (LeProHQ.dq1("x2g1", "VV", self._xi, self._eta(z)))
             )
 
-        return RSL(dq)
+        def Adler(_x, _args):
+            # add minus sign
+            return -LeProHQ.Adler("x2g1", "VV", self._xi)
+
+        return RSL(dq, loc=Adler)
