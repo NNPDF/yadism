@@ -102,6 +102,7 @@ def dump_pineappl_to_file(output, filename, obsname):
         grid.set_key_value("x3_label_tex", "$y$")
         grid.set_key_value("x3_unit", "")
     grid.set_key_value("y_label", obsname)
+    grid.set_key_value("polarized", str(obsname.startswith("g")))
 
     # dump file
     grid.optimize()

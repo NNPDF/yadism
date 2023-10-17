@@ -50,6 +50,17 @@ def test_xs_coeffs():
     assert fw[0] == 1.0
     assert fw[2] == 0.0
 
+    f1 = xs_coeffs(
+        "F1",
+        x=0.5,
+        Q2=1.0,
+        y=0.0,
+        params=dict(projectilePID=1, M2target=0.0, M2W=1.0),
+    )
+    assert f1[0] == 1.0
+    assert f1[1] == -1.0
+    assert f1[2] == 0.0
+
     xsfpfcc = xs_coeffs(
         "XSFPFCC",
         x=0.5,

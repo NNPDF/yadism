@@ -9,6 +9,7 @@ xs = [
     "XSNUTEVCC",
     "XSNUTEVNU",
     "FW",
+    "F1",
     "XSFPFCC",
 ]
 kinds = sfs + xs + [fake_kind]
