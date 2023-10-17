@@ -46,3 +46,20 @@ def test_pineappl_xs(tmp_path: pathlib.Path):
     np.testing.assert_allclose(g.bin_left(0), np.array([10.0]))
     np.testing.assert_allclose(g.bin_left(1), np.array([0.1]))
     np.testing.assert_allclose(g.bin_left(2), np.array([0.3]))
+
+
+def test_pineappl_pol(tmp_path: pathlib.Path):
+    pl = tmp_path / "polarized.pineappl.lz4"
+    oo = copy.deepcopy(obs_card)
+    oo["observables"] = {
+        "g1_light": [{"x": 0.1, "Q2": 10.0}],
+        "F2_total": [{"x": 0.2, "Q2": 20.0}],
+    }
+    out = run_yadism(theory_card, oo)
+    dump_pineappl_to_file(out, pl, "g1_light")
+    g = pineappl.grid.Grid.read(pl)
+    assert g.key_values()["polarized"] == "True"
+
+    dump_pineappl_to_file(out, pl, "F2_total")
+    f = pineappl.grid.Grid.read(pl)
+    assert f.key_values()["polarized"] == "False"
