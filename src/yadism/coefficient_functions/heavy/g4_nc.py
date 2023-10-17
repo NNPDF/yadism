@@ -1,6 +1,5 @@
 import LeProHQ
 import numpy as np
-from scipy.integrate import quad
 
 from ..partonic_channel import RSL
 from . import partonic_channel as pc
@@ -26,7 +25,7 @@ class NonSinglet(pc.NeutralCurrentBase):
             )
 
         def Adler(_x, _args):
-            l = quad(dq, 0.0, 1.0, args=np.array([]))
-            return -l[0]
+            # add minus sign
+            return -LeProHQ.Adler("g4", "VA", self._xi)
 
         return RSL(dq, loc=Adler)
