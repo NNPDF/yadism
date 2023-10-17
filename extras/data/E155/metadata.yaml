@@ -3,3 +3,8 @@ E155_NC_9GEV_EP_G1F1RATIO:
   nnpdf_id: E155
   y_label: A1
   y_label_tex: $g_1 / F_1$
+E155_NC_9GEV_EN_G1F1RATIO:
+  description: Measurements with Polarised electron-neutron beams
+  nnpdf_id: E155
+  y_label: A1
+  y_label_tex: $g_1 / F_1$

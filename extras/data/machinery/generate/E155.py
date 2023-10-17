@@ -18,21 +18,23 @@ def dump(src_path, _target):
     obs = obs_template.copy()
     data = load(src_path, 0, ["x", "Q2"])
     dict_kins = [
-        dict(x=d["x"]["mid"], y=d["y"]["mid"], Q2=d["Q2"]["mid"])
-        for d in data
+        dict(x=d["x"]["mid"], y=d["y"]["mid"], Q2=d["Q2"]["mid"]) for d in data
     ]
-
     # Details regarding the observables
     obs["prDIS"] = "NC"
     obs["ProjectileDIS"] = "electron"
     obs["PolarizationDIS"] = 1.0
-    obs["TargetDIS"] = "proton"
     obs["observables"] = {"g1_total": dict_kins}
+    if "_ep_" in str(src_path.stem):
+        obs["TargetDIS"] = "proton"
+    elif "_en_" in str(src_path.stem):
+        obs["TargetDIS"] = "neutron"
 
     return obs
 
 
 # renaming
 new_names = {
-    "e155_g1f1": "E155_NC_9GEV_EP_G1F1RATIO",
+    "e155_ep_g1f1": "E155_NC_9GEV_EP_G1F1RATIO",
+    "e155_en_g1f1": "E155_NC_9GEV_EN_G1F1RATIO",
 }
