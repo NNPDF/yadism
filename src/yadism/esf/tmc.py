@@ -293,6 +293,20 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
         # as we get a 1/z by the measure and an evaluation of 1-xi/z
         return self._convolute_FX("F2", g2_ker)
 
+    def _k1(self):
+        r"""
+        Compute the raw integral that enters the computation of `g`.
+
+        The form of the integrall is exactly the same as for `h2`.
+
+        Returns
+        -------
+            k1 : dict
+                ESF output for the integral
+
+        """
+        return self._h2()
+
     def _k2(self):
         r"""
             Compute the raw integral that enters the computation of `g`
@@ -573,7 +587,7 @@ class ESFTMC_g1(EvaluatedStructureFunctionTMC):
         g1out = self.sf.get_esf(self.sf.obs_name, self._shifted_kinematics).get_result()
 
         # Call to the raw integrals
-        k1out = self._h2()
+        k1out = self._k1()
         k2out = self._k2()
 
         # Combine the expressions and putting back `2\xi`
