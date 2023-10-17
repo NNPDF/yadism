@@ -1,10 +1,23 @@
-E155_NC_9GEV_EP_G1F1RATIO:
+E155_NC_9GEV_EP_G1:
   description: Measurements with Polarised electron-proton beams
   nnpdf_id: E155
-  y_label: A1
-  y_label_tex: $g_1 / F_1$
-E155_NC_9GEV_EN_G1F1RATIO:
+  y_label: G1
+  y_label_tex: $g_1$
+
+E155_NC_9GEV_EP_F1:
+  description: Measurements with Polarised electron-proton beams
+  nnpdf_id: E155
+  y_label: F1
+  y_label_tex: $F_1$
+
+E155_NC_9GEV_EN_G1:
   description: Measurements with Polarised electron-neutron beams
   nnpdf_id: E155
-  y_label: A1
-  y_label_tex: $g_1 / F_1$
+  y_label: G1
+  y_label_tex: $g_1$
+
+E155_NC_9GEV_EN_F1:
+  description: Measurements with Polarised electron-neutron beams
+  nnpdf_id: E155
+  y_label: F1
+  y_label_tex: $F_1$
