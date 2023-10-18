@@ -52,7 +52,7 @@ def test_xs_coeffs():
 
     f1 = xs_coeffs(
         "F1",
-        x=0.5,
+        x=1.0,
         Q2=1.0,
         y=0.0,
         params=dict(projectilePID=1, M2target=0.0, M2W=1.0),

@@ -67,7 +67,7 @@ def xs_coeffs(kind, y, x=None, Q2=None, params=None):
         yp = 1.0
         yL = y**2 / (2 * (y**2 / 2 + (1 - y) - (mn * x * y) ** 2 / Q2))
     elif kind == "F1":
-        return np.array([1 / (2 * x), -1 / (2 * x), 0])
+        return np.array([1, -1, 0])
     elif kind == "XSFPFCC":
         INV_GEV_TO_PB = GEV_CM2_CONV / 100.0  # pb
         norm = (INV_GEV_TO_PB * params["GF"] ** 2) / (2.0 * np.pi)
