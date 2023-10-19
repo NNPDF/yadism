@@ -85,17 +85,17 @@ Structure Function Kind
 -----------------------
 
 ``yadism`` allows to compute different structure functions, to which we refer to as **kind**.
-In the unpolarized |DIS| we have: 
+In the unpolarized |DIS| we have:
 
 .. math ::
 
-  F_2,~ F_L = F_2 - 2xF_1,~ xF_3
+  F_2,~F_L = F_2 - 2xF_1,~xF_3
 
 while their counter parts for the polarized case are:
 
 .. math ::
 
-  g_4,~ g_L = g_4 - 2xg_5,~ 2xg_1
+  g_4,~g_L = g_4 - 2xg_5,~2xg_1
 
 The reasons to chose such basis are:
 
@@ -109,7 +109,7 @@ The reasons to chose such basis are:
 
     This normalization also follows the native scaling in the full cross section.
 
-  - computing :math:`F_L` instead of :math:`F_1` is adventagous due to the Callan-Gross relation
+  - computing :math:`F_L` instead of :math:`F_1` is advantageous due to the Callan-Gross relation
     :cite:`Callan:1969uq` :math:`F_L=0` in the naive parton model
 
   - finally notice that the :math:`F_L` definition it's not exactly the one above, but
