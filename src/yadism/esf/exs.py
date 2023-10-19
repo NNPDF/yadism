@@ -9,7 +9,7 @@ GEV_CM2_CONV = 3.893793e10
 
 
 def xs_coeffs_polarized(kind):
-    """Compute coefficients in the definition of a polarized given cross section.
+    """Compute coefficients in the definition of a given polarized cross section.
 
     Parameters
     ----------
@@ -29,7 +29,7 @@ def xs_coeffs_polarized(kind):
 
 
 def xs_coeffs_unpolarized(kind, y, x=None, Q2=None, params=None):
-    """Compute coefficients in the definition of a unpolarized given cross section.
+    """Compute coefficients in the definition of a given unpolarized cross section.
 
     Parameters
     ----------

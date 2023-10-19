@@ -118,7 +118,7 @@ The reasons to chose such basis are:
 
 .. note::
 
-   :math:`F_1` and :math:`2xg_5` are also provided as they are treated as a derived quantity, like
+   :math:`2xF_1` and :math:`2xg_5` are also provided as they are treated as a derived quantity, like
    the cross sections in the following section.
 
 Cross sections
