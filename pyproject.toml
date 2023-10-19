@@ -162,6 +162,7 @@ extension-pkg-whitelist = [
   "scipy.special",
   "pineappl",
   "apfelpy",
+  "adani"
 ]
 ignore-paths = ["benchmarks/", "docs/", "tests/"]
 jobs = 1 # has to be 1 as pylint is NOT threadsafe
