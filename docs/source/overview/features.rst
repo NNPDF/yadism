@@ -12,7 +12,10 @@ The implemented observables consist of:
 
 - the |DIS| unpolarized :ref:`structure functions
   <theory/intro:structure function kind>`: :math:`F_2`, :math:`F_L`, and
-  :math:`F_3` (the structure function :math:`F_1` is not directly provided)
+  :math:`x F_3` (the structure function :math:`2 x F_1` is also provided)
+- the |DIS| polarized :ref:`structure functions
+  <theory/intro:structure function kind>`: :math:`g_4`, :math:`g_L`, and
+  :math:`2 x g_1` (the structure function :math:`2 x g_5` is also provided)
 - the |DIS| reduced :ref:`cross sections <theory/intro:cross sections>`
   (with various normalizations)
 
