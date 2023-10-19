@@ -27,6 +27,7 @@ def xs_coeffs_polarized(kind):
         return np.array([1.0, -1.0, 0.0])
     raise ValueError(f"'{kind}' cross section is not available.")
 
+
 def xs_coeffs_unpolarized(kind, y, x=None, Q2=None, params=None):
     """Compute coefficients in the definition of a unpolarized given cross section.
 
@@ -153,11 +154,17 @@ class EvaluatedCrossSection:
             )
             sf1, sf2, sf3 = "g4", "gL", "g1"
 
-        basic_sf1 = self.get_esf(ObservableName(f"{sf1}_{flavor}"), self.kin).get_result()
-        basic_sf2 = self.get_esf(ObservableName(f"{sf2}_{flavor}"), self.kin).get_result()
+        basic_sf1 = self.get_esf(
+            ObservableName(f"{sf1}_{flavor}"), self.kin
+        ).get_result()
+        basic_sf2 = self.get_esf(
+            ObservableName(f"{sf2}_{flavor}"), self.kin
+        ).get_result()
         # skip F3, g1 if it is not required
         if linear_coeffs[2] != 0.0:
-            basic_sf3 = self.get_esf(ObservableName(f"{sf3}_{flavor}"), self.kin).get_result()
+            basic_sf3 = self.get_esf(
+                ObservableName(f"{sf3}_{flavor}"), self.kin
+            ).get_result()
         else:
             basic_sf3 = ESFResult(self.x, self.Q2, basic_sf1.nf)
 
