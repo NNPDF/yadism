@@ -21,9 +21,9 @@ Notebook[{
 
 Cell[CellGroupData[{
 Cell["Unpolarised Functions (Checks)", "Section",
- CellChangeTimes->{{3.891942612667219*^9, 3.891942619980386*^9}, 
+ CellChangeTimes->{{3.891942612667219*^9, 3.891942619980386*^9},
    3.8919426553087873`*^9, {3.892516811557219*^9, 3.892516813458126*^9}, {
-   3.90151881315241*^9, 
+   3.90151881315241*^9,
    3.901518814149658*^9}},ExpressionUUID->"98c37df0-07d4-4c4e-9a4a-\
 43acc8561205"],
 
@@ -31,16 +31,16 @@ Cell[CellGroupData[{
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"Integrate", "[", 
+  RowBox[{"Integrate", "[",
    RowBox[{
-    FractionBox["1", 
-     SuperscriptBox["u", "2"]], ",", 
-    RowBox[{"{", 
-     RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",", " ", 
-    RowBox[{"GenerateConditions", "->", " ", "False"}]}], "]"}], "//", 
+    FractionBox["1",
+     SuperscriptBox["u", "2"]], ",",
+    RowBox[{"{",
+     RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",", " ",
+    RowBox[{"GenerateConditions", "->", " ", "False"}]}], "]"}], "//",
   "Together"}]], "Input",
  CellChangeTimes->{{3.891941832062599*^9, 3.891941898524683*^9}, {
-  3.891942040623999*^9, 3.8919420747225847`*^9}, {3.891942141369632*^9, 
+  3.891942040623999*^9, 3.8919420747225847`*^9}, {3.891942141369632*^9,
   3.8919421542366467`*^9}, {3.891942187331708*^9, 3.8919421944400454`*^9}, {
   3.891942264563486*^9, 3.891942271275709*^9}},
  CellLabel->"In[5]:=",ExpressionUUID->"8e026d2d-9a30-48f3-85c2-9148babf0736"],
@@ -48,7 +48,7 @@ Cell[BoxData[
 Cell[BoxData[
  FractionBox[
   RowBox[{"1", "-", "\[Xi]"}], "\[Xi]"]], "Output",
- CellChangeTimes->{{3.891941890036215*^9, 3.891941899479545*^9}, 
+ CellChangeTimes->{{3.891941890036215*^9, 3.891941899479545*^9},
    3.891942080009358*^9, 3.891942191152946*^9, 3.891942272600092*^9},
  CellLabel->"Out[5]=",ExpressionUUID->"4865a70c-5164-4263-a65b-c42f01f01439"]
 }, Open  ]],
@@ -56,22 +56,22 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Integrate", "[", 
+ RowBox[{"Integrate", "[",
   RowBox[{
    RowBox[{
-    RowBox[{"(", 
-     RowBox[{"u", "-", "\[Xi]"}], ")"}], 
-    FractionBox["1", 
-     SuperscriptBox["u", "2"]]}], ",", 
-   RowBox[{"{", 
-    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",", 
+    RowBox[{"(",
+     RowBox[{"u", "-", "\[Xi]"}], ")"}],
+    FractionBox["1",
+     SuperscriptBox["u", "2"]]}], ",",
+   RowBox[{"{",
+    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",",
    RowBox[{"GenerateConditions", "->", "False"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.891942290828051*^9, 3.891942312163238*^9}},
  CellLabel->"In[6]:=",ExpressionUUID->"f5448ba8-7182-4134-a81a-f67c7a767df4"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"-", "1"}], "+", "\[Xi]", "-", 
+  RowBox[{"-", "1"}], "+", "\[Xi]", "-",
   RowBox[{"Log", "[", "\[Xi]", "]"}]}]], "Output",
  CellChangeTimes->{3.891942313093822*^9},
  CellLabel->"Out[6]=",ExpressionUUID->"bc225ade-0788-4fcd-8812-eedbd1129674"]
@@ -80,18 +80,18 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Integrate", "[", 
+ RowBox[{"Integrate", "[",
   RowBox[{
    RowBox[{
-    RowBox[{"(", 
+    RowBox[{"(",
      FractionBox[
-      RowBox[{"x", "+", "\[Xi]"}], "\[Xi]"], ")"}], 
-    RowBox[{"(", 
-     RowBox[{"u", "-", "\[Xi]"}], ")"}], 
-    FractionBox["1", 
-     SuperscriptBox["u", "2"]]}], ",", 
-   RowBox[{"{", 
-    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",", 
+      RowBox[{"x", "+", "\[Xi]"}], "\[Xi]"], ")"}],
+    RowBox[{"(",
+     RowBox[{"u", "-", "\[Xi]"}], ")"}],
+    FractionBox["1",
+     SuperscriptBox["u", "2"]]}], ",",
+   RowBox[{"{",
+    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",",
    RowBox[{"GenerateConditions", "->", "False"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.891942404997665*^9, 3.8919424295571127`*^9}},
  CellLabel->"In[8]:=",ExpressionUUID->"92dd93ca-0849-40d0-ae77-c7cd7e9ff6ad"],
@@ -99,11 +99,11 @@ Cell[BoxData[
 Cell[BoxData[
  FractionBox[
   RowBox[{
-   RowBox[{"(", 
-    RowBox[{"x", "+", "\[Xi]"}], ")"}], " ", 
-   RowBox[{"(", 
+   RowBox[{"(",
+    RowBox[{"x", "+", "\[Xi]"}], ")"}], " ",
+   RowBox[{"(",
     RowBox[{
-     RowBox[{"-", "1"}], "+", "\[Xi]", "-", 
+     RowBox[{"-", "1"}], "+", "\[Xi]", "-",
      RowBox[{"Log", "[", "\[Xi]", "]"}]}], ")"}]}], "\[Xi]"]], "Output",
  CellChangeTimes->{3.891942430581559*^9},
  CellLabel->"Out[8]=",ExpressionUUID->"6aeeba22-5377-4bbe-8e57-ffac9c8e9178"]
@@ -113,27 +113,27 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell["Polarised Functions", "Section",
- CellChangeTimes->{{3.891942612667219*^9, 3.891942619980386*^9}, 
+ CellChangeTimes->{{3.891942612667219*^9, 3.891942619980386*^9},
    3.8919426553087873`*^9},ExpressionUUID->"780617a0-a13e-446e-a41f-\
 794ebc9e0101"],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Integrate", "[", 
+ RowBox[{"Integrate", "[",
   RowBox[{
-   RowBox[{"Log", "[", 
-    FractionBox["u", "\[Xi]"], "]"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",", 
+   RowBox[{"Log", "[",
+    FractionBox["u", "\[Xi]"], "]"}], ",",
+   RowBox[{"{",
+    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",",
    RowBox[{"GenerateConditions", "->", "False"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.8919425637989187`*^9, 3.891942579222939*^9}},
  CellLabel->"In[9]:=",ExpressionUUID->"3943c43c-e295-47a3-8de4-4e289e870625"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"-", "1"}], "+", "\[Xi]", "+", 
-  RowBox[{"Log", "[", 
+  RowBox[{"-", "1"}], "+", "\[Xi]", "+",
+  RowBox[{"Log", "[",
    FractionBox["1", "\[Xi]"], "]"}]}]], "Output",
  CellChangeTimes->{3.8919425822250967`*^9},
  CellLabel->"Out[9]=",ExpressionUUID->"c781e1f5-c759-4434-a46a-fbbbe6550643"]
@@ -142,10 +142,10 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Integrate", "[", 
-  RowBox[{"1", ",", 
-   RowBox[{"{", 
-    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",", 
+ RowBox[{"Integrate", "[",
+  RowBox[{"1", ",",
+   RowBox[{"{",
+    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",",
    RowBox[{"GenerateConditions", "->", "False"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.8919423299320927`*^9, 3.891942339866638*^9}},
  CellLabel->"In[7]:=",ExpressionUUID->"77b044a9-7991-4cff-bf51-d55516c4bda3"],
@@ -159,23 +159,23 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Integrate", "[", 
+ RowBox[{"Integrate", "[",
   RowBox[{
    RowBox[{
-    FractionBox["1", "u"], 
-    RowBox[{"Log", "[", 
-     FractionBox["u", "\[Xi]"], "]"}]}], ",", 
-   RowBox[{"{", 
-    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",", 
+    FractionBox["1", "u"],
+    RowBox[{"Log", "[",
+     FractionBox["u", "\[Xi]"], "]"}]}], ",",
+   RowBox[{"{",
+    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",",
    RowBox[{"GenerateConditions", "->", "False"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.901518922183077*^9, 3.901518929858604*^9}},
  CellLabel->"In[1]:=",ExpressionUUID->"c5f88b03-cbba-421b-93d7-d27eb5daa2a8"],
 
 Cell[BoxData[
  RowBox[{
-  FractionBox["1", "2"], " ", 
+  FractionBox["1", "2"], " ",
   SuperscriptBox[
-   RowBox[{"Log", "[", 
+   RowBox[{"Log", "[",
     FractionBox["1", "\[Xi]"], "]"}], "2"]}]], "Output",
  CellChangeTimes->{3.901518940734714*^9},
  CellLabel->"Out[1]=",ExpressionUUID->"84113684-a972-408f-809f-45357f5024a3"]
@@ -184,24 +184,24 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Integrate", "[", 
+ RowBox[{"Integrate", "[",
   RowBox[{
    RowBox[{
-    FractionBox["1", 
-     SuperscriptBox["u", "2"]], 
-    RowBox[{"Log", "[", 
-     FractionBox["u", "\[Xi]"], "]"}]}], ",", 
-   RowBox[{"{", 
-    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",", 
+    FractionBox["1",
+     SuperscriptBox["u", "2"]],
+    RowBox[{"Log", "[",
+     FractionBox["u", "\[Xi]"], "]"}]}], ",",
+   RowBox[{"{",
+    RowBox[{"u", ",", "\[Xi]", ",", "1"}], "}"}], ",",
    RowBox[{"GenerateConditions", "->", "False"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.901533073319585*^9, 3.9015330763135347`*^9}},
  CellLabel->"In[2]:=",ExpressionUUID->"3f636281-ff2b-4641-b401-94e302e4232b"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"-", "1"}], "+", 
-  FractionBox["1", "\[Xi]"], "-", 
-  RowBox[{"Log", "[", 
+  RowBox[{"-", "1"}], "+",
+  FractionBox["1", "\[Xi]"], "-",
+  RowBox[{"Log", "[",
    FractionBox["1", "\[Xi]"], "]"}]}]], "Output",
  CellChangeTimes->{3.901533077931086*^9},
  CellLabel->"Out[2]=",ExpressionUUID->"d77d09b8-a6f8-4c99-8eec-d760751af40e"]
@@ -262,4 +262,3 @@ Cell[6345, 199, 279, 7, 74, "Output",ExpressionUUID->"d77d09b8-a6f8-4c99-8eec-d7
 }
 ]
 *)
-
