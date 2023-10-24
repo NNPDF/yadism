@@ -275,21 +275,7 @@ class Runner:
         self.console.print(f"[cyan]took {diff:.2f} s")
 
         out = copy.deepcopy(self._output)
-        out2 = hack_nans(out)
-        return out2
-
-
-def hack_nans(out):
-    out2 = copy.deepcopy(out)
-    for point in range(len(out2['FL_total'])):
-        for key in out2['FL_total'][point].orders.keys():
-            for tup in range(len(out2['FL_total'][point].orders[key])):
-                for rows in range(out2['FL_total'][point].orders[key][tup].shape[0]):
-                    for columns in range(out2['FL_total'][point].orders[key][tup].shape[1]):
-                        if not np.isfinite(out2['FL_total'][point].orders[key][tup][rows][columns]):
-                            # set nan and inf to 0. 
-                            out2['FL_total'][point].orders[key][tup][rows][columns] = 0.
-    return out2
+        return out
 
 
 class RunnerConfigs:
