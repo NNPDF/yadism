@@ -281,14 +281,17 @@ class Runner:
 
 def hack_nans(out):
     out2 = copy.deepcopy(out)
-    for point in range(len(out2['FL_total'])):
-        for key in out2['FL_total'][point].orders.keys():
-            for tup in range(len(out2['FL_total'][point].orders[key])):
-                for rows in range(out2['FL_total'][point].orders[key][tup].shape[0]):
-                    for columns in range(out2['FL_total'][point].orders[key][tup].shape[1]):
-                        if not np.isfinite(out2['FL_total'][point].orders[key][tup][rows][columns]):
-                            # set nan and inf to 0. 
-                            out2['FL_total'][point].orders[key][tup][rows][columns] = 0.
+    for process in out2.keys():
+        if process in ['xgrid', 'polynomial_degree', 'is_log', 'pids', 'projectilePID']:
+            continue
+        for point in range(len(out2[process])):
+            for key in out2[process][point].orders.keys():
+                for tup in range(len(out2[process][point].orders[key])):
+                    for rows in range(out2[process][point].orders[key][tup].shape[0]):
+                        for columns in range(out2[process][point].orders[key][tup].shape[1]):
+                            if not np.isfinite(out2[process][point].orders[key][tup][rows][columns]):
+                                # set nan and inf to 0. 
+                                out2[process][point].orders[key][tup][rows][columns] = 0.
     return out2
 
 
