@@ -13,7 +13,7 @@ from ..special.zeta import zeta2, zeta3
 
 @nb.njit("f8(i8,i8,f8)", cache=True)
 def wgplg(m,n,z):
-   return nielsen(m,n,z).real
+    return nielsen(m,n,z).real
 
 @nb.njit("f8(f8)", cache=True)
 def clg1am0_a0(x):

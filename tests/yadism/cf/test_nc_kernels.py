@@ -2,7 +2,7 @@ import pytest
 from eko.matchings import Atlas
 
 from yadism import observable_name as on
-from yadism.coefficient_functions.fonll import kernels as aker
+from yadism.coefficient_functions.asy import kernels as aker
 from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.intrinsic import kernels as iker
 from yadism.coefficient_functions.light import kernels as lker
@@ -90,7 +90,7 @@ def test_generate_heavy():
 def test_generate_light_fonll_diff_pc():
     esf = MockESF("F2_light", 0.1, 10)
     for nl in [3, 5]:
-        w = aker.generate_light_diff(esf, nl)
+        w = aker.generate_light_asy(esf, nl)
         # c/t as light
         # TODO check values
         ps = [{-(nl + 1): 6.75 if nl == 3 else 7.5, (nl + 1): 6.75 if nl == 3 else 7.5}]
@@ -101,7 +101,7 @@ def test_generate_light_fonll_diff_pc():
 def test_generate_light_fonll_diff_pv():
     esf = MockESF("F3_light", 0.1, 10)
     for nl in [3, 5]:
-        w = aker.generate_light_diff(esf, nl)
+        w = aker.generate_light_asy(esf, nl)
         # c/t as light
         ps = [{-(nl + 1): 0, (nl + 1): 0}]
         check(ps, w)
@@ -111,7 +111,7 @@ def test_generate_light_fonll_diff_pv():
 def test_generate_heavy_fonll_diff_pc():
     esf = MockESF("F2_charm", 0.1, 10)
     for nl in [3, 5]:
-        w = aker.generate_heavy_diff(esf, nl)
+        w = aker.generate_heavy_asy(esf, nl)
         # light part + asy
         ps = [
             {-(nl + 1): 9, (nl + 1): 9},
@@ -129,7 +129,7 @@ def test_generate_heavy_fonll_diff_pc():
 def test_generate_heavy_fonll_diff_pv():
     esf = MockESF("F3_charm", 0.1, 10)
     for nl in [3, 5]:
-        w = aker.generate_heavy_diff(esf, nl)
+        w = aker.generate_heavy_asy(esf, nl)
         # light part + asy
         ps = [{-(nl + 1): -6, (nl + 1): 6}, {21: 0}, mkpv(nl, 0)]
         check(ps, w)

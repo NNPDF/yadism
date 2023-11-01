@@ -36,11 +36,11 @@ class NeutralCurrentBase(pc.PartonicChannel):
             f : callable
                 output
         """
-        if self.is_below_threshold(self.ESF.x):
+        if self.is_below_pair_threshold(self.ESF.x):
             return lambda: pc.RSL()
         return f
 
-    def is_below_threshold(self, z):
+    def is_below_pair_threshold(self, z):
         """
         Checks if the available energy is below production threshold or not
 
@@ -51,7 +51,7 @@ class NeutralCurrentBase(pc.PartonicChannel):
 
         Returns
         -------
-            is_below_threshold : bool
+            is_below_pair_threshold : bool
                 is the partonic energy sufficient to create the heavy quark
                 pair?
 

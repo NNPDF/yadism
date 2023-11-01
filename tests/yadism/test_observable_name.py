@@ -26,7 +26,6 @@ class TestObservableName:
 
         assert not o.is_heavy
         assert not o.is_raw_heavy
-        assert not o.is_asy
         assert not o.is_composed
 
         assert o != ON("FL" + "_" + f)
@@ -35,10 +34,6 @@ class TestObservableName:
         assert ON.is_valid(n)
         assert ON.has_lights(["abc", n])
         assert not ON.has_heavies(["abc", n])
-
-        # check asy
-        with pytest.raises(ValueError):
-            o.apply_asy()
 
     def test_fxc(self):
         k = "F2"
@@ -55,7 +50,6 @@ class TestObservableName:
 
         assert o.is_heavy
         assert o.is_raw_heavy
-        assert not o.is_asy
         assert not o.is_composed
 
         assert o != ON("FL" + "_" + f)
@@ -63,12 +57,6 @@ class TestObservableName:
         assert ON.is_valid(n)
         assert not ON.has_lights(["abc", n])
         assert ON.has_heavies(["abc", n])
-
-        # check asy
-        oa = o.apply_asy()
-        assert oa.is_asy
-        assert oa.flavor_family == "asy"
-        assert oa.hqnumber == 4
 
         # check heavylight
         ohl = o.apply_flavor(on.heavylights[o.hqnumber - 4])

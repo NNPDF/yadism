@@ -118,7 +118,7 @@ class Runner:
         # Initialize structure functions
         masses = np.power([new_theory["mc"], new_theory["mb"], new_theory["mt"]], 2)
         thresholds_ratios = np.power(
-            [new_theory["kDIScThr"], new_theory["kDISbThr"], new_theory["kDIStThr"]], 2
+            [new_theory["kcThr"], new_theory["kbThr"], new_theory["ktThr"]], 2
         )
         managers = dict(
             interpolator=interpolator,
@@ -129,16 +129,6 @@ class Runner:
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
         )
-        # FONLL damping powers
-        FONLL_damping = bool(theory["DAMP"])
-        if FONLL_damping:
-            damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
-            damping_powers = [
-                theory.get(f"DAMPPOWER{quark}", damping_power)
-                for quark in ("CHARM", "BOTTOM", "TOP")
-            ]
-        else:
-            damping_powers = [2] * 3
         # pass theory params
         intrinsic_range = []
         if theory["IC"] == 1:
@@ -156,8 +146,7 @@ class Runner:
             GF=theory["GF"],
             M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
-            FONLL_damping=FONLL_damping,
-            damping_powers=damping_powers,
+            fonllparts=new_theory["FONLLParts"],
         )
         logger.info(
             "PTO: %d, PTO@evolution: %d, process: %s",
