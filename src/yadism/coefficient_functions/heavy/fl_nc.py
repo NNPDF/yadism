@@ -41,11 +41,14 @@ class GluonVV(pc.NeutralCurrentBase):
             )
 
         return RSL(cg)
-    
+
     def N3LO(self):
         """|ref| implements NNLO (heavy) gluon coefficient function, from N.Laurenti thesis."""
 
-        coeff_iterpol = interpolator("CLg", nf=self.nf, variation=self.n3lo_cf_variation)
+        coeff_iterpol = interpolator(
+            "CLg", nf=self.nf, variation=self.n3lo_cf_variation
+        )
+
         def cg(z, _args):
             if self.is_below_pair_threshold(z):
                 return 0.0
@@ -112,11 +115,14 @@ class SingletVV(pc.NeutralCurrentBase):
             )
 
         return RSL(cq)
-    
+
     def N3LO(self):
         """|ref| implements NNLO (heavy) singlet coefficient function, from N.Laurenti thesis."""
 
-        coeff_iterpol = interpolator("CLq", nf=self.nf, variation=self.n3lo_cf_variation)
+        coeff_iterpol = interpolator(
+            "CLq", nf=self.nf, variation=self.n3lo_cf_variation
+        )
+
         def cq(z, _args):
             if self.is_below_pair_threshold(z):
                 return 0.0

@@ -1,6 +1,6 @@
-import numpy as np 
 import pathlib
 
+import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
 grid_path = pathlib.Path(__file__).parent / "grids"
@@ -9,6 +9,7 @@ x_grid = np.load(grid_path / "x.npy")
 xi_grid = np.load(grid_path / "xi.npy")
 
 interpolators = {}
+
 
 def interpolator(coeff, nf, variation):
     grid_name = f"{coeff}_nf{int(nf)}_var{int(variation)}.npy"
