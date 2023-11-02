@@ -7,7 +7,7 @@ from rich.logging import RichHandler
 log_level = int(os.environ.get("YADISM_LOG_LEVEL", logging.INFO))
 log_to_stdout = bool(os.environ.get("YADISM_LOG_STDOUT", True))
 log_file = os.environ.get("YADISM_LOG_FILE")
-silent_mode = bool(os.environ.get("YADISM_SILENT_MODE", 1))
+silent_mode = bool(os.environ.get("YADISM_SILENT_MODE", False))
 
 debug = bool(os.environ.get("DEBUG", False))
 
