@@ -79,14 +79,6 @@ nbsphinx = "^0.8.6"
 [tool.poetry.extras]
 mark = ["banana-hep", "sqlalchemy"]
 box = ["pineappl"]
-docs = [
-  "sphinx",
-  "sphinx-rtd-theme",
-  "recommonmark",
-  "sphinxcontrib-bibtex",
-  "sphinxcontrib-details-directive",
-  "nbsphinx",
-]
 
 [tool.poetry.scripts]
 yadnav = "yadmark.navigator:launch_navigator"
