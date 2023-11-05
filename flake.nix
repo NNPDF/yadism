@@ -33,7 +33,7 @@
           inherit inputs pkgs;
           modules = [
             {
-              packages = with pkgs; [pre-commit];
+              packages = with pkgs; [pre-commit poethepoet];
 
               languages.python = {
                 enable = true;
