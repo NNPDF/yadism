@@ -3,6 +3,7 @@ import numpy as np
 
 from ..partonic_channel import RSL
 from . import partonic_channel as pc
+from .n3lo import interpolator
 
 
 class GluonVV(pc.NeutralCurrentBase):
@@ -38,6 +39,20 @@ class GluonVV(pc.NeutralCurrentBase):
                     * np.log(self._xi)
                 )
             )
+
+        return RSL(cg)
+
+    def N3LO(self):
+        """|ref| implements NNLO (heavy) gluon coefficient function, from N.Laurenti thesis."""
+
+        coeff_iterpol = interpolator(
+            "CLg", nf=self.nf, variation=self.n3lo_cf_variation
+        )
+
+        def cg(z, _args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            return coeff_iterpol(self._xi, z)
 
         return RSL(cg)
 
@@ -98,6 +113,20 @@ class SingletVV(pc.NeutralCurrentBase):
                     * np.log(self._xi)
                 )
             )
+
+        return RSL(cq)
+
+    def N3LO(self):
+        """|ref| implements NNLO (heavy) singlet coefficient function, from N.Laurenti thesis."""
+
+        coeff_iterpol = interpolator(
+            "CLq", nf=self.nf, variation=self.n3lo_cf_variation
+        )
+
+        def cq(z, _args):
+            if self.is_below_pair_threshold(z):
+                return 0.0
+            return coeff_iterpol(self._xi, z)
 
         return RSL(cq)
 

@@ -133,6 +133,29 @@
     - FONLL-FFNS
     - FONLL-FFN0
 
+- name: FONLLParts
+  known_as: FONLLParts
+  runcard: theory
+  description: >
+    Caclulate only the ZM or massive contributions, or both
+    Application: FONLL
+  type: enum
+  domain:
+    - massless
+    - massive
+    - full
+
+- name: n3lo_cf_variation
+  known_as: n3lo_cf_variation
+  runcard: theory
+  description: >
+    Variation of the approximate N3LO massive coefficient function
+  type: enum
+  domain:
+    - 0
+    - 1
+    - -1
+
 - name: Nf_FF
   known_as: NfFF
   runcard: theory
