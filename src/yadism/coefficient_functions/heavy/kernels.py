@@ -69,9 +69,16 @@ def generate(esf, nf, ihq):
             ihq,
             is_pv,
         )
-        gVV = kernels.Kernel(weights["gVV"], pcs.GluonVV(esf, nf, m2hq=m2hq))
+        n3lo_cf_variation = esf.info.theory["n3lo_cf_variation"]
+        gVV = kernels.Kernel(
+            weights["gVV"],
+            pcs.GluonVV(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_cf_variation),
+        )
         gAA = kernels.Kernel(weights["gAA"], pcs.GluonAA(esf, nf, m2hq=m2hq))
-        sVV = kernels.Kernel(weights["sVV"], pcs.SingletVV(esf, nf, m2hq=m2hq))
+        sVV = kernels.Kernel(
+            weights["sVV"],
+            pcs.SingletVV(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_cf_variation),
+        )
         sAA = kernels.Kernel(weights["sAA"], pcs.SingletAA(esf, nf, m2hq=m2hq))
         return (gVV, gAA, sVV, sAA)
 
@@ -97,13 +104,10 @@ def generate_missing(esf, nf, ihq, icoupl=None):
         list of elements
 
     """
-    kind = esf.info.obs_name.kind
-    pcs = import_pc_module(kind, esf.process)
-    m2hq = esf.info.m2hq[ihq - 4]
     # in CC there are no missing diagrams known yet
     if esf.process == "CC":
         return ()
-
+    # only NC
     weights = light_nc_weights(
         esf.info.coupling_constants,
         esf.Q2,
@@ -112,6 +116,9 @@ def generate_missing(esf, nf, ihq, icoupl=None):
     )
     if icoupl is not None:
         weights["ns"] = {k: v for k, v in weights["ns"].items() if abs(k) == icoupl}
+    kind = esf.info.obs_name.kind
+    pcs = import_pc_module(kind, esf.process)
+    m2hq = esf.info.m2hq[ihq - 4]
     return (kernels.Kernel(weights["ns"], pcs.NonSinglet(esf, nf, m2hq=m2hq)),)
 
 

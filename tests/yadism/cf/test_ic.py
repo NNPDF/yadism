@@ -5,8 +5,7 @@ import copy
 import numpy as np
 import pytest
 
-from yadism.coefficient_functions.fonll import partonic_channel
-from yadism.coefficient_functions.intrinsic import raw_nc
+from yadism.coefficient_functions.intrinsic import partonic_channel, raw_nc
 
 
 class MockObj:
@@ -100,7 +99,7 @@ def test_CRm():
         assert not np.isfinite(raw_nc.CRm(ppc))
     pc.sigma_pp = 0  # deny contributions
     pc.Q2 = pc.m1sq = pc.m2sq
-    pc.delta = partonic_channel.PartonicChannelAsyIntrinsic.kinematic_delta(
+    pc.delta = partonic_channel.NeutralCurrentBase.kinematic_delta(
         pc.m1sq, pc.m2sq, -pc.Q2
     )
     pc.sigma_mp *= pc.delta  # Sigma_mp < delta otherwise the Li2 become undefined

@@ -16,17 +16,17 @@ xs = [
     "XSNUTEVCC",
     "XSNUTEVNU",
     "FW",
+    "F1",
+    "g5",
     "XSFPFCC",
 ]
 kinds = sfs + xs + [fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
-asys = [h + "asy" for h in heavys]
 heavylights = [h + "light" for h in heavys]
-external_flavors = heavys + ["light", "total"] + asys + heavylights
+external_flavors = heavys + ["light", "total"] + heavylights
 # internally we allow in addition for the flavor families
-flavor_families = ["asy", "heavy"]
-flavors = external_flavors + flavor_families
+flavors = external_flavors + ["heavy"]
 
 
 class ObservableName:
@@ -84,19 +84,6 @@ class ObservableName:
         """
         return type(self)(kind + "_" + self.flavor)
 
-    def apply_asy(self):
-        r"""Compute the asymptotic heavy correspondent.
-
-        Returns
-        -------
-        apply_asy : type(self)
-            asymptotic heavy correspondent
-
-        """
-        if self.flavor not in heavys:
-            raise ValueError(f"observable is not heavy! [{self}]")
-        return self.apply_flavor(self.flavor + "asy")
-
     def __repr__(self):
         """Return the full representation name."""
         return self.name
@@ -139,15 +126,6 @@ class ObservableName:
         return self.flavor in heavys
 
     @property
-    def is_asy(self):
-        """Check if it is an asymptotic raw heavy flavor.
-
-        i.e. charmasy, bottomasy, or, topasy.
-
-        """
-        return self.flavor in asys
-
-    @property
     def is_heavylight(self):
         """Check if it is a heavylight flavor.
 
@@ -170,8 +148,6 @@ class ObservableName:
         """Return abstract flavor family name."""
         if self.is_raw_heavy:
             return "heavy"
-        if self.is_asy:
-            return "asy"
         if self.is_heavylight:
             return "light"
         return self.flavor
@@ -189,10 +165,8 @@ class ObservableName:
 
     @property
     def hqnumber(self):
-        """Return heavy quark flavor number."""
-        if self.is_asy:
-            idx = asys.index(self.flavor)
-        elif self.is_heavylight:
+        """Return Heavy quark flavor number"""
+        if self.is_heavylight:
             idx = heavylights.index(self.flavor)
         elif self.flavor_family in ["light", "total"]:
             idx = -4

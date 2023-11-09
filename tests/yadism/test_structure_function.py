@@ -36,9 +36,7 @@ class MockRunner:
         coupling_constants=coupling_constants,
         sv_manager=sv_manager,
     )
-    theory_params = dict(
-        pto=0, scheme="FFNS", target=dict(Z=1, A=1), TMC=0, nf_ff=4, FONLL_damping=False
-    )
+    theory_params = dict(pto=0, scheme="FFNS", target=dict(Z=1, A=1), TMC=0, nf_ff=4)
 
 
 @pytest.mark.skip
@@ -109,7 +107,7 @@ class TestEvaluatedStructureFunction:
                 continue
 
     def test_get_result(self):
-        for scheme in ["FFNS", "ZM-VFNS", "FONLL-A"]:
+        for scheme in ["FFNS", "ZM-VFNS", "FFN0"]:
             r = MockRunner()
             r.theory_params["scheme"] = scheme
             r.theory_params["target"] = {"Z": 1, "A": 1}

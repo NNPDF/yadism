@@ -1,7 +1,7 @@
 import pytest
 
 from yadism import observable_name as on
-from yadism.coefficient_functions.fonll import kernels as aker
+from yadism.coefficient_functions.asy import kernels as aker
 from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.light import kernels as lker
 
@@ -124,7 +124,7 @@ def check(ps, w):
 #             MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10),
 #         ]:
 #             for nf in [3, 4, 5]:
-#                 w = aker.generate_light_diff(esf, nf)
+#                 w = aker.generate_light_asy(esf, nf)
 #                 # TODO fix
 #                 qnorm = {3: 2.5 / 3, 4: 2.25, 5: 4.2}[nf]
 #                 kindsgn = esf.sf.obs_name.kind == "F3"
@@ -141,7 +141,7 @@ def check(ps, w):
 #     for sgn in [True, False]:
 #         esf = MockESF("F2charm", 11 * (1 if sgn else -1), 0.1, 10)
 #         for nl in [3, 4, 5]:
-#             w = kernels.generate_heavy_diff(esf, nl)
+#             w = kernels.generate_heavy_asy(esf, nl)
 #             norm = {3: 2, 4: 4, 5: 8}[nl]
 #             # light - asy
 #             ps = [

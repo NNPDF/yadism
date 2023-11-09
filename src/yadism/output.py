@@ -115,11 +115,17 @@ class Output(dict):
             matching_scales=MatchingScales(masses * thresholds_ratios),
             origin=(theory["Qref"] ** 2, theory["nfref"]),
         )
-        alpha_s = (
-            lambda muR: sc.a_s(muR**2, nf_to=nf_default(muR**2, atlas))
-            * 4.0
-            * np.pi
-        )
+        fns = theory["FNS"]
+        if "FFNS" in fns or "FFN0" in fns:
+            alpha_s = lambda muR: sc.a_s(muR**2, nf_to=theory["NfFF"]) * 4.0 * np.pi
+        elif fns == "ZM-VFNS":
+            alpha_s = (
+                lambda muR: sc.a_s(muR**2, nf_to=nf_default(muR**2, atlas))
+                * 4.0
+                * np.pi
+            )
+        else:
+            raise ValueError(f"Scheme '{fns}' not recognized.")
         alpha_qed = lambda _muR: theory["alphaqed"]
         return self.apply_pdf_alphas_alphaqed_xir_xif(
             lhapdf_like, alpha_s, alpha_qed, theory["XIR"], theory["XIF"]
