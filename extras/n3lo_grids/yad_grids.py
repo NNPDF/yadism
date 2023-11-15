@@ -21,10 +21,15 @@ mufrac = 1.0
 verbose = True
 
 
+def x_eta(eta, m2Q2):
+    return 1. / (1. + 4. * m2Q2 * (eta + 1))
+
+
 def function_to_exe_in_parallel(pair):
-    x, xi = pair
+    eta, xi = pair
     m2Q2 = 1 / xi
     m2mu2 = 1 / xi
+    x = x_eta(eta, m2Q2)
     if order == 3:
         if channel == "2g":
             return adani.C2_g3_approximation(
@@ -66,11 +71,11 @@ def function_to_exe_in_parallel(pair):
             raise ValueError("Set channel to one of these: 2g 2q Lg Lq")
 
 
-def run(n_threads, x_grid, xi_grid):
+def run(n_threads, eta_grid, xi_grid):
     grid = []
     for xi in xi_grid:
-        for x in x_grid:
-            grid.append((x, xi))
+        for eta in eta_grid:
+            grid.append((eta, xi))
     args = (function_to_exe_in_parallel, grid)
     with Pool(n_threads) as pool:
         result = pool.map(*args)
@@ -79,8 +84,8 @@ def run(n_threads, x_grid, xi_grid):
 
 if __name__ == "__main__":
     output_file = f"C{channel}_nf{nf}_var{variation}.npy"
-    xfname = here / "x.npy"
-    x_grid = np.load(xfname)
+    etafname = here / "eta.npy"
+    eta_grid = np.load(etafname)
     xifname = here / "xi.npy"
     xi_grid = np.load(xifname)
 
@@ -88,18 +93,18 @@ if __name__ == "__main__":
         print(
             f"Computation of the grid for the coefficient function C{channel} for nf = {nf}, and µ/Q = {mufrac}, variation = {variation}"
         )
-        print(f"Size of the grid (x,xi) = ({len(x_grid)},{len(xi_grid)})")
+        print(f"Size of the grid (eta,xi) = ({len(eta_grid)},{len(xi_grid)})")
         print(
             "This may take a while (depending on the number of threads you choose). In order to spend this time, I would suggest you this interesting view:"
         )
         print("https://www.youtube.com/watch?v=53pG68KCUMI")
 
     start = time.perf_counter()
-    res_vec = np.array(run(n_threads, x_grid, xi_grid))
+    res_vec = np.array(run(n_threads, eta_grid, xi_grid))
     if verbose:
         print("total running time: ", time.perf_counter() - start)
 
-    res_mat = res_vec.reshape(len(xi_grid), len(x_grid))
+    res_mat = res_vec.reshape(len(xi_grid), len(eta_grid))
     if verbose:
         print("Saving grid in ", output_file)
     np.save(here / output_file, res_mat)
