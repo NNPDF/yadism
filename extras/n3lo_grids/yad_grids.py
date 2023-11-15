@@ -22,7 +22,7 @@ verbose = True
 
 
 def x_eta(eta, m2Q2):
-    return 1. / (1. + 4. * m2Q2 * (eta + 1))
+    return 1.0 / (1.0 + 4.0 * m2Q2 * (eta + 1))
 
 
 def function_to_exe_in_parallel(pair):
@@ -45,6 +45,7 @@ def function_to_exe_in_parallel(pair):
             return adani.CL_ps3_approximation(x, m2Q2, m2mu2, nf, v=variation)
         else:
             raise ValueError("Set channel to one of these: 2g 2q Lg Lq")
+    # TODO: do we really want this?
     ## NNLO approximated
     elif order == 2:
         if channel == "2g":
