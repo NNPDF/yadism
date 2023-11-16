@@ -52,7 +52,7 @@ class GluonVV(pc.NeutralCurrentBase):
         def cg(z, _args):
             if self.is_below_pair_threshold(z):
                 return 0.0
-            return coeff_iterpol(self._xi, z)
+            return coeff_iterpol(self._xi, self._eta(z))
 
         return RSL(cg)
 
@@ -126,7 +126,7 @@ class SingletVV(pc.NeutralCurrentBase):
         def cq(z, _args):
             if self.is_below_pair_threshold(z):
                 return 0.0
-            return coeff_iterpol(self._xi, z)
+            return coeff_iterpol(self._xi, self._eta(z))
 
         return RSL(cq)
 
