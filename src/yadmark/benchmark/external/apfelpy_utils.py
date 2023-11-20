@@ -68,16 +68,14 @@ def map_apfelpy_sf(init, observables, fns):
             "antineutrino": -12,
         }
         if projectile_pids[observables["ProjectileDIS"]] > 0:
-            apfelpy_structure_functions = MAP_ZM_CC
+            return MAP_ZM_CC
     else:
         if fns == "ZM-VFNS":
-            apfelpy_structure_functions = MAP_ZM_NC
-        elif fns == "FFNS":
-            apfelpy_structure_functions = MAP_FFNS_NC
-        elif fns == "FFNS0":
-            apfelpy_structure_functions = MAP_FFNS0_NC
-
-    return apfelpy_structure_functions
+            return MAP_ZM_NC
+        if fns == "FFNS":
+            return MAP_FFNS_NC
+        if fns == "FFNS0":
+            return MAP_FFNS0_NC
 
 
 def couplings(ap, pids, proc_type, obs_name):
