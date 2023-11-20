@@ -70,7 +70,7 @@ def map_apfelpy_sf(init, observables, fns):
     if observables["prDIS"] == "CC":
         if PROJECTILE_PIDS[observables["ProjectileDIS"]] > 0:
             return MAP_ZM_CC
-        return ValueError(f"{observables['ProjectileDIS']} not available in Apfel++")
+        raise ValueError(f"{observables['ProjectileDIS']} not available in Apfel++")
 
     if fns == "ZM-VFNS":
         return MAP_ZM_NC
