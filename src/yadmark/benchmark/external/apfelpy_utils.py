@@ -3,9 +3,9 @@ import numpy as np
 from eko import basis_rotation as br
 
 # Q2 knots specs
-NQ = 1200
-QMin = 1
-QMax = 100
+NQ = 250
+QMIN = 1
+QMAX = 200
 
 # Map observables names to APFEL++ methods
 MAP_HEAVINESS = {
@@ -14,6 +14,13 @@ MAP_HEAVINESS = {
     "top": 6,
     "light": 0,  # TODO: Check combination
     "total": 0,
+}
+
+PROJECTILE_PIDS = {
+    "electron": 11,
+    "positron": -11,
+    "neutrino": 12,
+    "antineutrino": -12,
 }
 
 
@@ -61,21 +68,16 @@ def map_apfelpy_sf(init, observables, fns):
     }
 
     if observables["prDIS"] == "CC":
-        projectile_pids = {
-            "electron": 11,
-            "positron": -11,
-            "neutrino": 12,
-            "antineutrino": -12,
-        }
-        if projectile_pids[observables["ProjectileDIS"]] > 0:
+        if PROJECTILE_PIDS[observables["ProjectileDIS"]] > 0:
             return MAP_ZM_CC
-    else:
-        if fns == "ZM-VFNS":
-            return MAP_ZM_NC
-        if fns == "FFNS":
-            return MAP_FFNS_NC
-        if fns == "FFNS0":
-            return MAP_FFNS0_NC
+        return ValueError(f"{observables['ProjectileDIS']} not available in Apfel++")
+
+    if fns == "ZM-VFNS":
+        return MAP_ZM_NC
+    if fns == "FFNS":
+        return MAP_FFNS_NC
+    if fns == "FFNS0":
+        return MAP_FFNS0_NC
 
 
 def couplings(ap, pids, proc_type, obs_name):
@@ -137,9 +139,9 @@ def tabulate_nc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
         SF objects in Zero-Mass Flavour Number Scheme
     nq: int
         number of Q points
-    QMin: float
+    qmin: float
         minimal value of Q
-    QMax: float
+    qmax: float
         maximal value of Q
     thrs: list
         list of quark masses and thresholds
@@ -180,9 +182,9 @@ def tabulate_cc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
         list of SF objects in Zero-Mass Flavour Number Scheme
     nq: int
         number of Q points
-    QMin: float
+    qmin: float
         minimal value of Q
-    QMax: float
+    qmax: float
         maximal value of Q
     thrs: list
         list of quark masses and thresholds
@@ -306,7 +308,7 @@ def compute_apfelpy_data(theory, observables, pdf):
 
     # Couplings
     alphas = ap.AlphaQCD(theory["alphas"], theory["Qref"], masses, thrs, pto)
-    alphas = ap.TabulateObject(alphas, 2 * NQ, QMin, QMax, 3)
+    alphas = ap.TabulateObject(alphas, 2 * NQ, QMIN, QMAX, 3)
 
     # Map Yadism observables to Apfel++ Objects
     apfelpy_structure_functions = map_apfelpy_sf(ap.initializers, observables, fns)
@@ -348,7 +350,7 @@ def compute_apfelpy_data(theory, observables, pdf):
                 alphas.Evaluate,
             )
             # Tabulate PDFs
-            tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, NQ, QMin, QMax, 3)
+            tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, NQ, QMIN, QMAX, 3)
 
             # Initialize structure functions
             eff_thrs = thrs if fns == "ZM_VFNS" else masses
@@ -369,7 +371,7 @@ def compute_apfelpy_data(theory, observables, pdf):
                             theory["XIF"],
                         )
                     )
-                tab_sf = tabulate_cc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
+                tab_sf = tabulate_cc(ap, obs_name, sfobj, NQ, QMIN, QMAX, thrs)
             else:
                 sfobj = apfelpy_structure_functions[sf_name](xgrid, eff_thrs)
                 sfobj = ap.builders.BuildStructureFunctions(
@@ -381,15 +383,15 @@ def compute_apfelpy_data(theory, observables, pdf):
                     theory["XIR"],
                     theory["XIF"],
                 )
-                tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
+                tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMIN, QMAX, thrs)
 
             # shift convolution for massive
-            x_eval = 1.0
+            x_eval = x
             if fns == "FFNS":
                 m_h = masses[3] if heaviness == "charm" else masses[4]
-                x_eval = Q2 / (Q2 + 4 * m_h**2)
+                x_eval = x / (Q2 / (Q2 + 4 * m_h**2))
             # compute the actual result
-            result = tab_sf.EvaluatexQ(x / x_eval, np.sqrt(Q2))
+            result = tab_sf.EvaluatexQ(x_eval, np.sqrt(Q2))
 
             # take over the kinematics
             r = kin.copy()
