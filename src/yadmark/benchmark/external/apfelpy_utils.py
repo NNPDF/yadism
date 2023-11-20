@@ -387,8 +387,8 @@ def compute_apfelpy_data(theory, observables, pdf):
 
             # shift convolution for massive
             x_eval = x
-            if fns == "FFNS":
-                m_h = masses[3] if heaviness == "charm" else masses[4]
+            if fns == "FFNS" and heaviness != "light":
+                m_h = masses[MAP_HEAVINESS[heaviness] - 1]
                 eta = Q2 / (Q2 + 4 * m_h**2)
                 x_eval = x / eta
             # compute the actual result
