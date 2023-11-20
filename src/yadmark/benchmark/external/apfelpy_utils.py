@@ -389,7 +389,8 @@ def compute_apfelpy_data(theory, observables, pdf):
             x_eval = x
             if fns == "FFNS":
                 m_h = masses[3] if heaviness == "charm" else masses[4]
-                x_eval = x / (Q2 / (Q2 + 4 * m_h**2))
+                eta = Q2 / (Q2 + 4 * m_h**2)
+                x_eval = x / eta
             # compute the actual result
             result = tab_sf.EvaluatexQ(x_eval, np.sqrt(Q2))
 
