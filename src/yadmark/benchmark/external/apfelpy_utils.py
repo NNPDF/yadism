@@ -3,9 +3,9 @@ import numpy as np
 from eko import basis_rotation as br
 
 # Q2 knots specs
-NQ = 250
+NQ = 1200
 QMin = 1
-QMax = 200
+QMax = 100
 
 # Map observables names to APFEL++ methods
 MAP_HEAVINESS = {
@@ -386,12 +386,12 @@ def compute_apfelpy_data(theory, observables, pdf):
                 tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
 
             # shift convolution for massive
-            eta = 1.0
+            x_eval = 1.0
             if fns == "FFNS":
                 m_h = masses[3] if heaviness == "charm" else masses[4]
-                eta = Q2 / (Q2 + 4 * m_h**2)
+                x_eval = Q2 / (Q2 + 4 * m_h**2)
             # compute the actual result
-            result = tab_sf.EvaluatexQ(x / eta, np.sqrt(Q2))
+            result = tab_sf.EvaluatexQ(x / x_eval, np.sqrt(Q2))
 
             # take over the kinematics
             r = kin.copy()
