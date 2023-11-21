@@ -1,0 +1,254 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      7897,        245]
+NotebookOptionsPosition[      7431,        225]
+NotebookOutlinePosition[      7768,        240]
+CellTagsIndexPosition[      7725,        237]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", "definitions", " ", "*)"}], "\[IndentingNewLine]",
+  RowBox[{
+   RowBox[{
+    RowBox[{"r", "[",
+     RowBox[{"x_", ",", "\[Rho]_"}], "]"}], ":=",
+    RowBox[{"Sqrt", "[",
+     RowBox[{"1", "+",
+      RowBox[{"4",
+       RowBox[{"x", "^", "2"}], " ", "\[Rho]"}]}], "]"}]}],
+   "\[IndentingNewLine]",
+   RowBox[{
+    RowBox[{"\[Xi]", "[",
+     RowBox[{"x_", ",", "\[Rho]_"}], "]"}], ":=",
+    RowBox[{"2",
+     RowBox[{"x", "/",
+      RowBox[{"(",
+       RowBox[{"1", "+",
+        RowBox[{"r", "[",
+         RowBox[{"x", ",", "\[Rho]"}], "]"}]}], ")"}]}]}]}],
+   "\[IndentingNewLine]",
+   RowBox[{
+    RowBox[{"\[Tau]", "[",
+     RowBox[{"x_", ",", "\[Rho]_"}], "]"}], ":=",
+    RowBox[{
+     RowBox[{"r", "[",
+      RowBox[{"x", ",", "\[Rho]"}], "]"}], "^", "2"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.8013742642697144`*^9, 3.801374325270932*^9}, {
+  3.801374787130302*^9, 3.801374794131617*^9}, {3.8013748609261436`*^9,
+  3.801374872654228*^9}, {3.801375063733512*^9, 3.8013750834632187`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ",
+   RowBox[{"Schienbein", ":", " ",
+    RowBox[{
+     RowBox[{"Eq", ".", " ", "26"}], " ", "of", " ",
+     RowBox[{"arXiv", ":", "0709.1775"}]}]}], " ", "*)"}],
+  "\[IndentingNewLine]",
+  RowBox[{
+   RowBox[{"fLs", "[",
+    RowBox[{"x_", ",", "\[Rho]_"}], "]"}], " ", ":=", " ",
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"x", "^", "2"}], "/",
+       RowBox[{
+        RowBox[{"\[Xi]", "[",
+         RowBox[{"x", ",", "\[Rho]"}], "]"}], "^", "2"}]}], "/",
+      RowBox[{"r", "[",
+       RowBox[{"x", ",", "\[Rho]"}], "]"}]}], "*",
+     RowBox[{"fL0", "[",
+      RowBox[{"\[Xi]", "[",
+       RowBox[{"x", ",", "\[Rho]"}], "]"}], "]"}]}], "+",
+    RowBox[{"4", "\[Rho]", " ",
+     RowBox[{
+      RowBox[{"x", "^", "3"}], "/",
+      RowBox[{
+       RowBox[{"r", "[",
+        RowBox[{"x", ",", "\[Rho]"}], "]"}], "^", "2"}]}],
+     RowBox[{"h2", "[",
+      RowBox[{"\[Xi]", "[",
+       RowBox[{"x", ",", "\[Rho]"}], "]"}], "]"}]}]}]}]}]], "Input",
+ CellChangeTimes->{{3.8013743463528957`*^9, 3.801374420228072*^9}, {
+  3.801374623075295*^9, 3.8013746245507717`*^9}, {3.8013751970542603`*^9,
+  3.801375222908934*^9}, {3.8013752827628613`*^9, 3.8013753096548223`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ",
+   RowBox[{"NNPDF", "/",
+    RowBox[{"APFEL", ":", " ",
+     RowBox[{
+      RowBox[{"(", "corrected", ")"}], " ",
+      RowBox[{"Eq", ".", " ", "85"}], " ", "of", " ",
+      RowBox[{"arXiv", ":", "0808.1231"}]}]}]}], " ", "*)"}],
+  "\[IndentingNewLine]",
+  RowBox[{
+   RowBox[{"fLa", "[",
+    RowBox[{"x_", ",", "\[Rho]_"}], "]"}], ":=",
+   RowBox[{
+    RowBox[{"fL0", "[",
+     RowBox[{"\[Xi]", "[",
+      RowBox[{"x", ",", "\[Rho]"}], "]"}], "]"}], "+",
+    RowBox[{
+     RowBox[{"x", "^", "2"}],
+     RowBox[{
+      RowBox[{
+       RowBox[{"(",
+        RowBox[{"1", "-",
+         RowBox[{"\[Tau]", "[",
+          RowBox[{"x", ",", "\[Rho]"}], "]"}]}], ")"}], "/",
+       RowBox[{
+        RowBox[{"\[Tau]", "[",
+         RowBox[{"x", ",", "\[Rho]"}], "]"}], "^",
+        RowBox[{"(",
+         RowBox[{"3", "/", "2"}], ")"}]}]}], "/",
+      RowBox[{
+       RowBox[{"\[Xi]", "[",
+        RowBox[{"x", ",", "\[Rho]"}], "]"}], "^", "2"}]}],
+     RowBox[{"f20", "[",
+      RowBox[{"\[Xi]", "[",
+       RowBox[{"x", ",", "\[Rho]"}], "]"}], "]"}]}], "+",
+    RowBox[{"2", "\[Rho]", " ",
+     RowBox[{"x", "^", "3"}],
+     RowBox[{
+      RowBox[{"(",
+       RowBox[{"3", "-",
+        RowBox[{"\[Tau]", "[",
+         RowBox[{"x", ",", "\[Rho]"}], "]"}]}], ")"}], "/",
+      RowBox[{
+       RowBox[{"\[Tau]", "[",
+        RowBox[{"x", ",", "\[Rho]"}], "]"}], "^", "2"}]}], " ",
+     RowBox[{"h2", "[",
+      RowBox[{"\[Xi]", "[",
+       RowBox[{"x", ",", "\[Rho]"}], "]"}], "]"}]}]}]}]}]], "Input",
+ CellChangeTimes->{{3.801374407907442*^9, 3.801374516244416*^9}, {
+  3.8013746080303497`*^9, 3.8013746217990227`*^9}, {3.801374852376685*^9,
+  3.8013749212340307`*^9}, {3.8013752256702023`*^9, 3.801375277334792*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Series", "[",
+  RowBox[{
+   RowBox[{"fLs", "[",
+    RowBox[{"x", ",", "\[Rho]"}], "]"}], ",",
+   RowBox[{"{",
+    RowBox[{"\[Rho]", ",", "0", ",", "1"}], "}"}]}],
+  "]"}], "\[IndentingNewLine]",
+ RowBox[{"Series", "[",
+  RowBox[{
+   RowBox[{"fLa", "[",
+    RowBox[{"x", ",", "\[Rho]"}], "]"}], ",",
+   RowBox[{"{",
+    RowBox[{"\[Rho]", ",", "0", ",", "1"}], "}"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.801374583313982*^9, 3.801374601831258*^9}, {
+  3.8013746369650593`*^9, 3.801374646387714*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   RowBox[{"fL0", "[", "x", "]"}], "+",
+   RowBox[{
+    RowBox[{"(",
+     RowBox[{
+      RowBox[{"4", " ",
+       SuperscriptBox["x", "3"], " ",
+       RowBox[{"h2", "[", "x", "]"}]}], "-",
+      RowBox[{
+       SuperscriptBox["x", "3"], " ",
+       RowBox[{
+        SuperscriptBox["fL0", "\[Prime]",
+         MultilineFunction->None], "[", "x", "]"}]}]}], ")"}], " ",
+    "\[Rho]"}], "+",
+   InterpretationBox[
+    SuperscriptBox[
+     RowBox[{"O", "[", "\[Rho]", "]"}], "2"],
+    SeriesData[$CellContext`\[Rho], 0, {}, 0, 2, 1],
+    Editable->False]}],
+  SeriesData[$CellContext`\[Rho], 0, {
+    $CellContext`fL0[$CellContext`x],
+    4 $CellContext`x^3 $CellContext`h2[$CellContext`x] - $CellContext`x^3
+    Derivative[1][$CellContext`fL0][$CellContext`x]}, 0, 2, 1],
+  Editable->False]], "Output",
+ CellChangeTimes->{{3.801374591929924*^9, 3.8013746020864773`*^9}, {
+   3.801374634292407*^9, 3.801374646606181*^9}, 3.801374925564608*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   RowBox[{"fL0", "[", "x", "]"}], "+",
+   RowBox[{
+    RowBox[{"(",
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "4"}], " ",
+       SuperscriptBox["x", "2"], " ",
+       RowBox[{"f20", "[", "x", "]"}]}], "+",
+      RowBox[{"4", " ",
+       SuperscriptBox["x", "3"], " ",
+       RowBox[{"h2", "[", "x", "]"}]}], "-",
+      RowBox[{
+       SuperscriptBox["x", "3"], " ",
+       RowBox[{
+        SuperscriptBox["fL0", "\[Prime]",
+         MultilineFunction->None], "[", "x", "]"}]}]}], ")"}], " ",
+    "\[Rho]"}], "+",
+   InterpretationBox[
+    SuperscriptBox[
+     RowBox[{"O", "[", "\[Rho]", "]"}], "2"],
+    SeriesData[$CellContext`\[Rho], 0, {}, 0, 2, 1],
+    Editable->False]}],
+  SeriesData[$CellContext`\[Rho], 0, {
+    $CellContext`fL0[$CellContext`x], (-4) $CellContext`x^2 \
+$CellContext`f20[$CellContext`x] +
+    4 $CellContext`x^3 $CellContext`h2[$CellContext`x] - $CellContext`x^3
+    Derivative[1][$CellContext`fL0][$CellContext`x]}, 0, 2, 1],
+  Editable->False]], "Output",
+ CellChangeTimes->{{3.801374591929924*^9, 3.8013746020864773`*^9}, {
+   3.801374634292407*^9, 3.801374646606181*^9}, 3.80137492556557*^9}]
+}, Open  ]]
+},
+WindowSize->{740, 867},
+WindowMargins->{{Automatic, 170}, {Automatic, 59}},
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (October 10, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 1060, 30, 88, "Input"],
+Cell[1620, 52, 1253, 35, 69, "Input"],
+Cell[2876, 89, 1789, 51, 88, "Input"],
+Cell[CellGroupData[{
+Cell[4690, 144, 537, 15, 50, "Input"],
+Cell[5230, 161, 995, 27, 33, "Output"],
+Cell[6228, 190, 1187, 32, 33, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
