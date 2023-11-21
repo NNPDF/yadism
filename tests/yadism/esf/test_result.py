@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import pytest
 
-from yadism.esf.result import ESFResult
+from yadism.esf.result import ESFResult, EXSResult
 
 lo = (0, 0, 0, 0)
 
@@ -34,6 +32,9 @@ class TestESFResult:
         )
         r = ESFResult.from_document(d)
         assert len(list(r.orders.values())[0]) == len(d["orders"][0]["values"])
+
+        rr = ESFResult.from_document(r.get_raw())
+        assert len(list(rr.orders.values())[0]) == len(d["orders"][0]["values"])
 
     def test_get_raw(self):
         a = dict(
@@ -134,3 +135,29 @@ class TestESFResult:
                 1.0,
                 1.0,
             )
+
+
+class TestEXSResult:
+    def test_from_document(self):
+        d = dict(
+            x=0.5,
+            Q2=10,
+            orders=[
+                dict(
+                    order=list(lo),
+                    values=np.random.rand(2, 2),
+                    errors=np.random.rand(2, 2),
+                )
+            ],
+            nf=3,
+        )
+        with pytest.raises(KeyError, match="y"):
+            _missing_y = EXSResult.from_document(d)
+        d["y"] = 0.123
+        r = EXSResult.from_document(d)
+        assert len(list(r.orders.values())[0]) == len(d["orders"][0]["values"])
+        assert r.y == 0.123
+
+        rr = EXSResult.from_document(r.get_raw())
+        assert len(list(rr.orders.values())[0]) == len(d["orders"][0]["values"])
+        assert rr.y == 0.123

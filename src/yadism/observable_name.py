@@ -1,18 +1,25 @@
-# -*- coding: utf-8 -*-
-
 fake_kind = "??"
-sfs = ["F2", "FL", "F3"]
+sfs = ["F2", "FL", "F3", "g1", "gL", "g4"]
 # xs = ["XSreduced", "XSyreduced"]
-xs = ["XSHERANC", "XSHERANCAVG", "XSHERACC", "XSCHORUSCC", "XSNUTEVCC"]
+xs = [
+    "XSHERANC",
+    "XSHERANCAVG",
+    "XSHERACC",
+    "XSCHORUSCC",
+    "XSNUTEVCC",
+    "XSNUTEVNU",
+    "FW",
+    "F1",
+    "g5",
+    "XSFPFCC",
+]
 kinds = sfs + xs + [fake_kind]
 # external flavors:
 heavys = ["charm", "bottom", "top"]
-asys = [h + "asy" for h in heavys]
 heavylights = [h + "light" for h in heavys]
-external_flavors = heavys + ["light", "total"] + asys + heavylights
+external_flavors = heavys + ["light", "total"] + heavylights
 # internally we allow in addition for the flavor families
-flavor_families = ["asy", "heavy"]
-flavors = external_flavors + flavor_families
+flavors = external_flavors + ["heavy"]
 
 
 class ObservableName:
@@ -43,6 +50,13 @@ class ObservableName:
         """joint name"""
         return self.kind + "_" + self.flavor
 
+    @property
+    def is_parity_violating(self):
+        """Check if it is a parity violating observable."""
+        if self.kind in ["F3", "gL", "g4"]:
+            return True
+        return False
+
     def __eq__(self, other):
         """Test equality of kind and flavor"""
         return self.kind == other.kind and self.flavor == other.flavor
@@ -62,19 +76,6 @@ class ObservableName:
                 new kind and our flavor
         """
         return type(self)(kind + "_" + self.flavor)
-
-    def apply_asy(self):
-        """
-        Computes the asymptotic heavy correspondend.
-
-        Returns
-        -------
-            apply_asy : type(self)
-                asymptotic heavy correspondend
-        """
-        if self.flavor not in heavys:
-            raise ValueError(f"observable is not heavy! [{self}]")
-        return self.apply_flavor(self.flavor + "asy")
 
     def __repr__(self):
         """The full name is the representation"""
@@ -114,11 +115,6 @@ class ObservableName:
         return self.flavor in heavys
 
     @property
-    def is_asy(self):
-        """Is it a asymptotic raw heavy flavor? i.e. charmasy, bottomasy, or, topasy"""
-        return self.flavor in asys
-
-    @property
     def is_heavylight(self):
         """Is it a heavylight flavor? i.e. charmlight, bottomlight, or, toplight"""
         return self.flavor in heavylights
@@ -133,8 +129,6 @@ class ObservableName:
         """Abstract flavor family name"""
         if self.is_raw_heavy:
             return "heavy"
-        if self.is_asy:
-            return "asy"
         if self.is_heavylight:
             return "light"
         return self.flavor
@@ -153,9 +147,7 @@ class ObservableName:
     @property
     def hqnumber(self):
         """Heavy quark flavor number"""
-        if self.is_asy:
-            idx = asys.index(self.flavor)
-        elif self.is_heavylight:
+        if self.is_heavylight:
             idx = heavylights.index(self.flavor)
         elif self.flavor_family in ["light", "total"]:
             idx = -4

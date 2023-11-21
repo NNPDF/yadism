@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from banana.data import cartesian_product, sql
 from eko import interpolation
@@ -14,6 +13,7 @@ default_card = dict(
     PolarizationDIS=0,
     PropagatorCorrection=0,
     TargetDIS="proton",
+    NCPositivityCharge=None,
     observables={},
 )
 default_card = dict(sorted(default_card.items()))

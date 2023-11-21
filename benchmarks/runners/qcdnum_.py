@@ -1,13 +1,18 @@
-# -*- coding: utf-8 -*-
 #
 # Compare the results with QCDNUM
 
 # import pytest
+import pathlib
+
+import banana
 import numpy as np
 from banana.data import cartesian_product
 
 from yadmark.benchmark.runner import Runner
 from yadmark.data import observables
+
+here = pathlib.Path(__file__).parent
+banana.register(here.parent)
 
 
 class QCDNUMBenchmark(Runner):
@@ -25,7 +30,6 @@ class BenchmarkPlain(QCDNUMBenchmark):
         self.run([{}], observables.build(**(observables.default_config[0])), ["ToyLH"])
 
     def benchmark_nlo(self):
-
         fnames = {
             "observable_names": ["F2_light", "FL_light", "F3_light"],
         }
@@ -45,7 +49,6 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
 
     @staticmethod
     def observable_updates():
-
         kinematics = []
         kinematics.extend(
             [dict(x=x, Q2=90.0) for x in np.geomspace(0.0001, 0.75, 10).tolist()]
@@ -98,9 +101,15 @@ class BenchmarkScaleVariations(QCDNUMBenchmark):
         )
 
     def benchmark_nlo(self, FNS=0):
-
         self.run(
             self.theory_updates(1, FNS),
+            self.observable_updates(),
+            ["ToyLH"],
+        )
+
+    def benchmark_nnlo(self, FNS=0):
+        self.run(
+            self.theory_updates(2, FNS),
             self.observable_updates(),
             ["ToyLH"],
         )
@@ -112,7 +121,6 @@ class BenchmarkFNS(QCDNUMBenchmark):
 
     @staticmethod
     def observable_updates(fnames, q2s=None):
-
         if q2s is None:
             q2min = 4.0
             q2max = 1000.0
@@ -141,7 +149,6 @@ class BenchmarkFNS(QCDNUMBenchmark):
         return observables.build(**(obs_card))
 
     def benchmark_ZM(self):
-
         fnames = [
             "F2_light",
             "FL_light",
@@ -152,7 +159,6 @@ class BenchmarkFNS(QCDNUMBenchmark):
         self.run(cartesian_product(fns), self.observable_updates(fnames), ["ToyLH"])
 
     def benchmark_FFNS(self):
-
         light_fnames = [
             "F2_light",
             "FL_light",
@@ -203,7 +209,8 @@ if __name__ == "__main__":
 
     # You can benchmark FNS and SV for FXlight with FNS = 1
     sv = BenchmarkScaleVariations()
-    sv.benchmark_nlo(FNS=0)
+    sv.benchmark_nlo(FNS=1)
+    sv.benchmark_nnlo(FNS=1)
 
     fns = BenchmarkFNS()
     fns.benchmark_ZM()

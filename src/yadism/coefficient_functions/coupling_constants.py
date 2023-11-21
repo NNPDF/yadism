@@ -1,17 +1,25 @@
-# -*- coding: utf-8 -*-
+"""Coupling between QCD particles and EW particles."""
 import logging
 
 import numpy as np
+from eko import basis_rotation as br
 
 logger = logging.getLogger(__name__)
 
 
 class CouplingConstants:
-    """
-    Defines the coupling constants between the QCD particles and the EW particles
-    """
+    """Defines the coupling constants between the QCD particles and the EW particles."""
 
     def __init__(self, theory_config, obs_config):
+        """Create from dictionaries.
+
+        Parameters
+        ----------
+        theory_config : dict
+            theory settings
+        obs_config : dic
+            observable settings
+        """
         self.theory_config = theory_config
         self.obs_config = obs_config
         # electric charges ----------------------------------------------------
@@ -40,35 +48,34 @@ class CouplingConstants:
         self.log()
 
     def log(self):
-        """Write current configuration to log"""
+        """Write current configuration to log."""
         logger.info(self.theory_config)
         logger.info(self.obs_config)
 
     def vectorial_coupling(self, pid):
-        """Combine the vectorial coupling from electric and weak charges"""
+        """Combine the vectorial coupling from electric and weak charges."""
         return (
             self.weak_isospin_3[pid]
             - 2.0 * self.electric_charge[pid] * self.theory_config["sin2theta_weak"]
         )
 
     def leptonic_coupling(self, mode, quark_coupling_type):
-        """
-        Computes the coupling of the boson to the lepton
+        """Compute the coupling of the boson to the lepton.
 
         Parameters
         ----------
-            mode : str
-                scattered bosons
-            quark_coupling_type : str
-                (axial-)vectorial/(axial-)vectorial coupling
+        mode : str
+            scattered bosons
+        quark_coupling_type : str
+            (axial-)vectorial/(axial-)vectorial coupling
 
         Returns
         -------
-            leptonic_coupling : float
-                leptonic coupling
+        float
+            leptonic coupling
         """
         # for CC the polarisation are NOT part of the structure functions, but are accounted for on
-        # the cross section level. In order to have a true-trivial LO coeficient function, return
+        # the cross section level. In order to have a true-trivial LO coefficient function, return
         # here 2.
         if mode == "WW":
             return 2
@@ -116,25 +123,24 @@ class CouplingConstants:
         raise ValueError(f"Unknown mode: {mode}")
 
     def partonic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
-        """
-        Computes the coupling of the boson to the parton
+        """Compute the coupling of the boson to the parton.
 
         Parameters
         ----------
-            mode : str
-                scattered bosons
-            pid : int
-                parton identifier
-            quark_coupling_type : str
-                flag to distinguish for heavy quarks between vectorial and axial-vectorial
-                coupling
-            cc_mask : str
-                observable flavor to determine the heavy flavour couplings in F3
+        mode : str
+            scattered bosons
+        pid : int
+            parton identifier
+        quark_coupling_type : str
+            flag to distinguish for heavy quarks between vectorial and axial-vectorial
+            coupling
+        cc_mask : str
+            observable flavor to determine the heavy flavour couplings in F3
 
         Returns
         -------
-            partonic_coupling : float
-                partonic coupling
+        float
+            partonic coupling
         """
         # for quarks only the flavor does matter
         pid = abs(pid)
@@ -158,20 +164,19 @@ class CouplingConstants:
         raise ValueError(f"Unknown mode: {mode}")
 
     def propagator_factor(self, mode, Q2):
-        """
-        Propagator correction to account for different bosons (:math:`\\eta` in PDG)
+        r"""Compute propagator correction to account for different bosons (:math:`\\eta` in PDG).
 
         Parameters
         ----------
-            mode : str
-                scattered bosons
-            Q2 : float
-                virtuality of the process
+        mode : str
+            scattered bosons
+        Q2 : float
+            virtuality of the process
 
         Returns
         -------
-            propagator_factor : float
-                propagator shift
+        float
+            propagator shift
         """
         if mode == "phph":
             return 1
@@ -195,34 +200,49 @@ class CouplingConstants:
         raise ValueError(f"Unknown mode: {mode}")
 
     def get_weight(self, pid, Q2, quark_coupling_type, cc_mask=None):
-        """
-        Compute the weight for the pid contributions to the structure function.
+        """Compute the weight for the pid contributions to the structure function.
 
         Combine the charges, both on the leptonic side and the hadronic side, as well
         as propagator changes and/or corrections.
 
         Parameters
         ----------
-            pid : int
-                particle identifier
-            Q2 : float
-                DIS virtuality
-            quark_coupling_type : str
-                flag to distinguish for heavy quarks between vectorial and axial-vectorial
-                coupling
-            cc_mask : str
-                observable flavor to determine the heavy flavour couplings in F3
+        pid : int
+            particle identifier
+        Q2 : float
+            DIS virtuality
+        quark_coupling_type : str
+            flag to distinguish for heavy quarks between vectorial and axial-vectorial
+            coupling
+        cc_mask : str
+            observable flavor to determine the heavy flavour couplings in F3
 
         Returns
         -------
-            w : float
-                weight
+        float
+            weight
         """
         # CC = WW
         if self.obs_config["process"] == "CC":
             return self.leptonic_coupling(
                 "WW", quark_coupling_type
             ) * self.partonic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
+        # NC or EM
+        # are we in positivity mode?
+        # Note that for yadism the values None and "all" are equivalent
+        # (they both mean no restriction on the couplings),
+        # but this might be not the case for the caller (e.g. pinefarm)
+        # since he may want to do further adjustments (such as deactivate TMC
+        # in the theory).
+        if (
+            self.obs_config["nc_pos_charge"] is not None
+            and self.obs_config["nc_pos_charge"] != "all"
+        ):
+            pos = self.obs_config["nc_pos_charge"][0]
+            pos_pid = 1 + br.quark_names.index(pos)
+            if abs(pid) != pos_pid:
+                return 0.0
+
         w_phph = (
             self.leptonic_coupling("phph", quark_coupling_type)
             * self.propagator_factor("phph", Q2)
@@ -249,22 +269,57 @@ class CouplingConstants:
             return w_phph + w_phZ + w_ZZ
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
-    @classmethod
-    def from_dict(cls, theory, observables):
-        """
-        Creates the object from the theory dictionary
+    def linear_partonic_coupling(self, pid):
+        """Return the linear vectorial partonic coupling. Defined only for |NC|.
 
         Parameters
         ----------
-            theory : dict
-                theory dictionary
-            observables : dict
-                observables dictionary
+        pid : int
+            particle identifier
 
         Returns
         -------
-            o : CouplingConstants
-                created object
+        float
+            weight
+        """
+        if self.obs_config["process"] == "CC":
+            return 0.0
+        # NC or EM
+        # are we in positivity mode?
+        if (
+            self.obs_config["nc_pos_charge"] is not None
+            and self.obs_config["nc_pos_charge"] != "all"
+        ):
+            pos = self.obs_config["nc_pos_charge"][0]
+            pos_pid = 1 + br.quark_names.index(pos)
+            if abs(pid) != pos_pid:
+                return 0.0
+
+        w_ph = self.electric_charge[pid]
+        # pure EM charge
+        if self.obs_config["process"] == "EM":
+            return w_ph
+        # allow Z to be mixed in
+        if self.obs_config["process"] == "NC":
+            w_ZV = self.vectorial_coupling(pid)
+            return w_ph + w_ZV
+        raise ValueError(f"Unknown process: {self.obs_config['process']}")
+
+    @classmethod
+    def from_dict(cls, theory, observables):
+        """Create the object from the theory dictionary.
+
+        Parameters
+        ----------
+        theory : dict
+            theory dictionary
+        observables : dict
+            observables dictionary
+
+        Returns
+        -------
+        CouplingConstants
+            created object
         """
         theory_config = {
             "MZ2": theory.get("MZ", 91.1876)
@@ -301,20 +356,14 @@ class CouplingConstants:
             "projectilePID": projectile_pids[proj],
             "polarization": observables["PolarizationDIS"],
             "propagatorCorrection": observables["PropagatorCorrection"],
+            "nc_pos_charge": observables["NCPositivityCharge"],
         }
         o = cls(theory_config, obs_config)
         return o
 
 
 class CKM2Matrix:
-    """
-    Wrapper for the CKM matrix
-
-    Parameters
-    ----------
-        elems : list(float)
-            squared elements in row order
-    """
+    """Wrapper for the CKM matrix."""
 
     flav_rows = ["u", "c", "t"]
     pid_rows = [2, 4, 6]
@@ -322,25 +371,32 @@ class CKM2Matrix:
     pid_cols = [1, 3, 5]
 
     def __init__(self, elems):
+        """Create from matrix.
+
+        Parameters
+        ----------
+            elems : list(float)
+                squared elements in row order
+        """
         self.m = np.array(elems).reshape(3, 3)
         # TODO maybe raise warning if non-unitarian
 
     def __repr__(self):
+        """Return string representation."""
         return "CKM(" + str(self.m).replace("\n", "") + ")"
 
     def __getitem__(self, key):
-        """
-        Allows pid and strings as key
+        """Allow pid and strings as key.
 
         Parameters
         ----------
-            key :
-                input key
+        key : int or str
+            input key
 
         Returns
         -------
-            item :
-                element(s)
+        float or list
+            element(s)
         """
         nkey = []
         if not isinstance(key, tuple):
@@ -359,63 +415,60 @@ class CKM2Matrix:
         return self.m[tuple(nkey)]
 
     def __call__(self, pid):
-        """
-        Get column and row depending on pid
+        """Get column and row depending on pid.
 
         Parameters
         ----------
-            pid : int
-                particle identifier
+        pid : int
+            particle identifier
 
         Returns
         -------
-            elems : list(float)
-                row or column
+        list(float)
+            row or column
         """
         if pid % 2 == 0:
             return self[pid]
         return self[:, pid]
 
-    def masked(self, flavors):
-        """
-        Apply a mask according to the flavor
+    def masked(self, flavs):
+        """Apply a mask according to the flavor.
 
         Parameters
         ----------
-            flavors : str
-                participating flavors as single characters
+        flavs : str
+            participating flavors as single characters
 
         Returns
         -------
-            matrix : CKMMatrix
-                masked matrix
+        CKMMatrix
+            masked matrix
         """
         op = np.zeros((3, 3))
-        if "dus" in flavors:
+        if "dus" in flavs:
             op += np.array([[1, 1, 0], [0, 0, 0], [0, 0, 0]])
-        if "c" in flavors:
+        if "c" in flavs:
             op += np.array([[0, 0, 0], [1, 1, 0], [0, 0, 0]])
-        if "b" in flavors:
+        if "b" in flavs:
             op += np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
-        if "t" in flavors:
+        if "t" in flavs:
             op += np.array([[0, 0, 0], [0, 0, 0], [1, 1, 1]])
         return type(self)(self.m * op)
 
     @classmethod
     def from_str(cls, theory_string):
-        """
-        Create the object from a string representation
+        """Create the object from a string representation.
 
         Parameters
         ----------
-            theory_string : str
-                all elements rowwise in a string
+        theory_string : str
+            all elements rowwise in a string
 
 
         Returns
         -------
-            m : CKMMatrix
-                created object
+        CKMMatrix
+            created object
         """
         elems = theory_string.split(" ")
         return cls(np.power(np.array(elems, dtype=float), 2))

@@ -39,7 +39,7 @@
     DIS perturbative order (in the strong coupling expansion)
   type: integer
   domain:
-    - 0 <= PTO <= 2
+    - 0 <= PTO <= 3
 
 # Strong Coupling
 # ---------------
@@ -129,9 +129,32 @@
   domain:
     - ZM-VFNS
     - FFNS
-    - FONLL-A
-    - FONLL-B
-    - FONLL-C
+    - FFN0
+    - FONLL-FFNS
+    - FONLL-FFN0
+
+- name: FONLLParts
+  known_as: FONLLParts
+  runcard: theory
+  description: >
+    Caclulate only the ZM or massive contributions, or both
+    Application: FONLL
+  type: enum
+  domain:
+    - massless
+    - massive
+    - full
+
+- name: n3lo_cf_variation
+  known_as: n3lo_cf_variation
+  runcard: theory
+  description: >
+    Variation of the approximate N3LO massive coefficient function
+  type: enum
+  domain:
+    - 0
+    - 1
+    - -1
 
 - name: Nf_FF
   known_as: NfFF
@@ -142,54 +165,6 @@
   metavar: nf
   domain:
     - 3 <= nf <= 6
-
-# TODO: convert to boolean?
-- name: DampingFONLL
-  known_as: DAMP
-  runcard: theory
-  description: >
-    Damping FONLL
-  type: integer
-  metavar: damp
-  domain:
-    - 0 <= damp <= 1
-
-# TODO: missing in our runcards, but should be present!
-#- name: DampPowerFONLL
-#known_as: DampPowerFONLL
-#description: >
-#Damping FONLL (APFEL choice: (2,2,2), ours: currently not in use)
-#type: string
-
-- name: CharmThresholdRatio
-  known_as: kDIScThr
-  runcard: theory
-  description: >
-    Ratio between the charm threshold for VFNS and the specified value for
-    charm mass `mc`
-  type: real
-  domain:
-    - kDIScThr > 0
-
-- name: BottomThresholdRatio
-  known_as: kDISbThr
-  runcard: theory
-  description: >
-    Ratio between the bottom threshold for VFNS and the specified value for
-    bottom mass `mb`
-  type: real
-  domain:
-    - kDISbThr > 0
-
-- name: TopThresholdRatio
-  known_as: kDIStThr
-  runcard: theory
-  description: >
-    Ratio between the top threshold for VFNS and the specified value for top
-    mass `mt`
-  type: real
-  domain:
-    - kDIStThr > 0
 
 # Masses
 # ~~~~~~
@@ -264,7 +239,7 @@
   known_as: IC
   runcard: theory
   description: >
-    Damping FONLL
+    Allow for intrinsic charm
   type: integer
   metavar: ic
   domain:

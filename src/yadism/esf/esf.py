@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 This module provides the base class that define the interface for Structure
 Function calculation on a given kinematic point (x, Q2) (that is why they are
@@ -72,7 +71,7 @@ class EvaluatedStructureFunction:
         if kinematics["Q2"] <= 0:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
         # check domain
-        if x < min(configs.interpolator.xgrid_raw):
+        if x < min(configs.interpolator.xgrid.raw):
             raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
 
         self.x = x
@@ -82,7 +81,10 @@ class EvaluatedStructureFunction:
         self.res = ESFResult(self.x, self.Q2, None)
         self._computed = False
         # select available partonic coefficient functions
-        self.orders = list(filter(lambda e: e <= configs.theory["pto"], range(2 + 1)))
+        max_orders = 3
+        self.orders = list(
+            filter(lambda e: e <= configs.theory["pto"], range(max_orders + 1))
+        )
         self.info = ESFInfo(obs_name, configs)
 
         logger.debug("Init %s", self)
@@ -104,7 +106,7 @@ class EvaluatedStructureFunction:
     def compute_local(self):
         """
         Here is where the local caching is actually implemented: if the
-        coefficient functions are already computed don't do nothing,
+        coefficient functions are already computed don't do anything,
         otherwise call :py:meth:`_compute_component` (checks are per flavour).
 
         In any case no output is provided, but the result is stored in
@@ -114,11 +116,12 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         cfc = cf.Combiner(self)
-        full_orders = [(o, 0, 0, 0) for o in self.orders]
         # prepare scale variations
         sv_manager = self.info.configs.managers["sv_manager"]
         if sv_manager is not None:
             full_orders = sv.build_orders(self.info.configs.theory["pto"])
+        else:
+            full_orders = [(o, 0, 0, 0) for o in self.orders]
         # init orders with 0
         for o in full_orders:
             self.res.orders[o] = [self.zeros, self.zeros]

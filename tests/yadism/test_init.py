@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Test the interface provided for the user.
 """
@@ -36,9 +35,6 @@ theory_dict = {
     "kcThr": 1.0,
     "kbThr": 1.0,
     "ktThr": 1.0,
-    "kDIScThr": 1.0,
-    "kDISbThr": 1.0,
-    "kDIStThr": 1.0,
     "MaxNfPdf": 6,
     "MaxNfAs": 6,
     "MZ": 91.1876,

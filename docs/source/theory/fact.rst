@@ -53,7 +53,7 @@ with :math:`g_V^e = -\frac 1 2 + 2\sin^2(\theta_w)` and :math:`g_A^e = -\frac 1 
 and axial-vectorial coupling between the Z boson and the lepton with charge :math:`e=\pm 1` and
 helicity :math:`\lambda=\pm 1`.
 
-The hadronic tensor is given by:
+For the unpolarized scattering, the hadronic tensor is given by:
 
 .. math ::
     W_{\mu\nu} = \left(-g_{\mu\nu} + \frac{q_\mu q_\nu}{q^2}\right) F_1(x,Q^2)
@@ -82,7 +82,10 @@ interferences between different bosons. The structure functions are given by
     F_k^{NC} &= F_k^{\gamma\gamma} - (g_V^e \pm \lambda g_A^e) \eta_{\gamma Z} F_k^{\gamma Z} + \left((g_V^e)^2 + (g_A^e)^2  \pm 2 \lambda g_V^e g_A^e \right) \eta_{ZZ} F_k^{ZZ}~,~ k\in\{1,2,L\} \\
     x F_3^{NC} &= -(g_A^e \pm g_V^e) \eta_{\gamma Z} x F_3^{\gamma Z} + \left(2g_V^e g_A^e \pm \lambda((g_V^e)^2 + (g_A^e)^2)\right) x F_3^{ZZ}
 
-Implementation: :meth:`~yadism.coupling_constants.CouplingConstants.leptonic_coupling`
+Implementation: :meth:`~yadism.coupling_constants.CouplingConstants.leptonic_coupling`.
+
+Similar decompositions holds also in the polarized |DIS|, where the hadronic tensor :math:`W_{\mu\nu}`
+can be decomposed to other basic structure functions called :math:`g_4,g_L,g_1`.
 
 Collinear Factorization
 -----------------------

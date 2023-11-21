@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 The purpose of this module is to provide a runner that implements the semantics
 for the input restrictions defined in the following files:
@@ -48,11 +47,11 @@ class Inspector:
         self.observables = observables_runcard
 
         domain_file = here / "domains.yaml"
-        with open(domain_file, "r") as file:
+        with open(domain_file) as file:
             self.domains = yaml.safe_load(file)
 
         cross_constraints_file = here / "cross_constraints.yaml"
-        with open(cross_constraints_file, "r") as file:
+        with open(cross_constraints_file) as file:
             self.cross_constraints = yaml.safe_load(file)
 
     def check_domains(self):
@@ -61,14 +60,13 @@ class Inspector:
         immediately raise an error if any input is found outside the boundaries.
 
         """
-
         for dom_def in self.domains:
             # load checker with domain definition
             checker = constraints.type_class_map[dom_def["type"]](**dom_def)
 
             # check value provided by user
             try:
-                # retroeve the checker from available checkers and value from
+                # retrieve the checker from available checkers and value from
                 # user input, apply the first on the latter
                 name = dom_def["known_as"] if "known_as" in dom_def else dom_def["name"]
                 checker.check_value(

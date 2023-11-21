@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 """
 Test all the partonic coefficient functions
 """
 
-from yadism.coefficient_functions.fonll import f2_cc as af2cc
-from yadism.coefficient_functions.fonll import f2_nc as af2nc
-from yadism.coefficient_functions.fonll import f3_cc as af3cc
-from yadism.coefficient_functions.fonll import fl_cc as aflcc
-from yadism.coefficient_functions.fonll import fl_nc as aflnc
+from yadism.coefficient_functions.asy import f2_cc as af2cc
+from yadism.coefficient_functions.asy import f2_nc as af2nc
+from yadism.coefficient_functions.asy import f3_cc as af3cc
+from yadism.coefficient_functions.asy import fl_cc as aflcc
+from yadism.coefficient_functions.asy import fl_nc as aflnc
 from yadism.coefficient_functions.heavy import f2_cc as hf2cc
 from yadism.coefficient_functions.heavy import f2_nc as hf2nc
 from yadism.coefficient_functions.heavy import f3_cc as hf3cc
@@ -49,8 +48,8 @@ class TestFloat:
             hf2cc.NonSinglet(MockESF(x, Q2), 3, m2hq=M2hq),
             hf3cc.NonSinglet(MockESF(x, Q2), 4, m2hq=M2hq),
             hflcc.NonSinglet(MockESF(x, Q2), 5, m2hq=M2hq),
-            af2cc.AsyQuark(MockESF(x, Q2), 6, mu2hq=M2hq),
-            af3cc.AsyQuark(MockESF(x, Q2), 3, mu2hq=M2hq),
+            af2cc.AsyQuark(MockESF(x, Q2), 6, m2hq=M2hq),
+            af3cc.AsyQuark(MockESF(x, Q2), 3, m2hq=M2hq),
             lf2cc.NonSingletEven(MockESF(x, Q2), nf=nf),
             lf3cc.NonSingletEven(MockESF(x, Q2), nf=nf),
             lf2cc.NonSingletOdd(MockESF(x, Q2), nf=nf),
@@ -68,7 +67,7 @@ class TestFloat:
 
         # LO=0
         for pc in [
-            aflcc.AsyQuark(MockESF(x, Q2), 3, mu2hq=M2hq),
+            aflcc.AsyQuark(MockESF(x, Q2), 3, m2hq=M2hq),
             lflcc.NonSingletEven(MockESF(x, Q2), nf=nf),
             lflcc.NonSingletOdd(MockESF(x, Q2), nf=nf),
         ]:
@@ -83,8 +82,8 @@ class TestFloat:
         for z in [x, 0.9]:
             # non trivial LO + NLO*
             for pc in [
-                af2cc.AsyGluon(MockESF(x, Q2), 4, mu2hq=M2hq),
-                af3cc.AsyGluon(MockESF(x, Q2), 5, mu2hq=M2hq),
+                af2cc.AsyGluon(MockESF(x, Q2), 4, m2hq=M2hq),
+                af3cc.AsyGluon(MockESF(x, Q2), 5, m2hq=M2hq),
                 hf2cc.Gluon(MockESF(x, Q2), 6, m2hq=M2hq),
                 hf3cc.Gluon(MockESF(x, Q2), 3, m2hq=M2hq),
                 hflcc.Gluon(MockESF(x, Q2), 4, m2hq=M2hq),
@@ -98,11 +97,11 @@ class TestFloat:
             # LO=0
             for pc in [
                 lflcc.Gluon(MockESF(x, Q2), nf=nf),
-                aflcc.AsyGluon(MockESF(x, Q2), 5, mu2hq=M2hq),
+                aflcc.AsyGluon(MockESF(x, Q2), 5, m2hq=M2hq),
                 lflnc.Gluon(MockESF(x, Q2), nf=nf),
-                af2nc.AsyLLGluon(MockESF(x, Q2), 6, mu2hq=M2hq),
-                af2nc.AsyNLLGluon(MockESF(x, Q2), 3, mu2hq=M2hq),
-                aflnc.AsyNLLGluon(MockESF(x, Q2), 3, mu2hq=M2hq),
+                af2nc.AsyLLGluon(MockESF(x, Q2), 6, m2hq=M2hq),
+                af2nc.AsyNLLGluon(MockESF(x, Q2), 3, m2hq=M2hq),
+                aflnc.AsyNLLGluon(MockESF(x, Q2), 3, m2hq=M2hq),
                 hf2nc.GluonVV(MockESF(x, Q2), 6, m2hq=M2hq),
                 hf2nc.GluonAA(MockESF(x, Q2), 3, m2hq=M2hq),
                 hflnc.GluonVV(MockESF(x, Q2), 4, m2hq=M2hq),

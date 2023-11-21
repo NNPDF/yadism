@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from banana.data.db import Base
 from sqlalchemy import Column, Integer, Text
 
@@ -15,3 +14,4 @@ class Observable(Base):
     observables = Column(Text)
     prDIS = Column(Text)
     TargetDIS = Column(Text)
+    NCPositivityCharge = Column(Text)

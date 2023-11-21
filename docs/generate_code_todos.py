@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import argparse
 import pathlib
 import re
@@ -38,7 +36,7 @@ def search_file(path):
             list of tuples with (linenumber, text)
     """
     todos = []
-    with open(path, "r") as o:
+    with open(path) as o:
         j = 1
         for l in o:
             m = re.search(r"\s*#\s+TODO\s+(.+)$", l)  # TODO grep sourdings?

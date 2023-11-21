@@ -84,25 +84,41 @@ given set of scattering bosons:
 Structure Function Kind
 -----------------------
 
-``yadism`` allows to compute three different structure functions, to which we refer to as **kind**:
+``yadism`` allows to compute different structure functions, to which we refer to as **kind**.
+In the unpolarized |DIS| we have:
 
 .. math ::
 
-  F_2,~ F_L = F_2 - 2xF_1,~ xF_3
+  F_2,~F_L = F_2 - 2xF_1,~xF_3
 
-- to compute :math:`F_L` instead of :math:`F_1` is adventagous due to the Callan-Gross relation
-  :cite:`Callan:1969uq` :math:`F_L=0` in the naive parton model
+while their counter parts for the polarized case are:
 
-  - notice that the :math:`F_L` definition it's not exactly the one above, but
+.. math ::
+
+  g_4,~g_L = g_4 - 2xg_5,~2xg_1
+
+The reasons to chose such basis are:
+
+  - the normalization is such that they have similar representation in the parton model.
+    I.e. at |LO| they are all proportional to various combination of :math:`x f(x)`.
+
+    .. math ::
+
+      F_2 & \propto x \sum_q (q + \bar{q}) \\
+      x F_3 & \propto x \sum_q (q - \bar{q})
+
+    This normalization also follows the native scaling in the full cross section.
+
+  - computing :math:`F_L` instead of :math:`F_1` is advantageous due to the Callan-Gross relation
+    :cite:`Callan:1969uq` :math:`F_L=0` in the naive parton model
+
+  - finally notice that the :math:`F_L` definition it's not exactly the one above, but
     it may be corrected (actually :math:`F_L` it's the object involved in
     Callan-Gross relation, for more information see :ref:`fl-corrections`)
 
-- Note that we compute :math:`xF_3` instead of the bare structure function to respect the native
-  scaling in the full cross section
-
 .. note::
 
-   Even :math:`F_1` is provided, but it is treated as a derived quantity, like
+   :math:`2xF_1` and :math:`2xg_5` are also provided as they are treated as a derived quantity, like
    the cross sections in the following section.
 
 Cross sections
@@ -120,7 +136,7 @@ normalization, the following are available in ``yadism``:
 
 .. math::
 
-   \sigma = N \left( F_2 - \frac{y_L}{y_+} F_L + (-1)^\ell \frac{y_-}{y_+} F_3 \right)
+   \sigma = N \left( F_2 - \frac{y_L}{y_+} F_L + (-1)^\ell \frac{y_-}{y_+} x F_3 \right)
 
 - ``XSHERANC`` where:
 
@@ -152,8 +168,9 @@ normalization, the following are available in ``yadism``:
    and :math:`M_h` is the mass of the scattered hadron, the other variables as
    above.
    This definition is consistent also with the ``CDHSW`` experiment.
+   Note that a conversion factor from :math:`GeV^{-2} \to cm^2` is required.
 
-- ``XSNUTEVCC``
+- ``XSNUTEVCC`` :cite:`CHORUS:2005cpn`:
 
    .. math::
 
@@ -161,14 +178,29 @@ normalization, the following are available in ``yadism``:
 
    the other variables as ``XSCHORUSCC``.
 
-- ``FW`` from the `CDHSW` experiment:
+- ``XSNUTEVNU`` :cite:`NuTeV:2005wsg`:
 
    .. math::
 
-      N &= 1.0 \\ 
+      N = \frac{G_F^2 M_h}{2 \pi } y_+
+
+   the other variables as ``XSCHORUSCC``.
+   Also in this case a conversion factor from :math:`GeV^{-2} \to cm^2` is required.
+
+- ``FW`` from the ``CDHSW`` experiment :cite:`Berge:1989hr`:
+
+   .. math::
+
+      N &= 1.0 \\
       y_{-} &= 0 \\
       y_{+} &= 1.0 \\
-      y_{L} &= \frac{y^2}{2 (y^2/2 + (1-y) - M_{n} (x y/ Q2)^2)}
+      y_{L} &= \frac{y^2}{2 (y^2/2 + (1-y) - (M_{h} x y/ Q)^2)}
+
+- ``XSFPFCC`` for the FPF projection:
+
+   .. math::
+
+      N = \frac{G_F^2}{8 \pi x ( 1 + Q^2 / M_W^2 )^2} y_+
 
 
 Heavyness

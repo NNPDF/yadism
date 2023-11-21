@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import collections
 import contextlib
 import dataclasses
@@ -71,9 +70,9 @@ class TestRunner:
         monkeypatch.setattr(yadism.input.inspector, "Inspector", FakeInspector)
         monkeypatch.setattr(yadism.input.compatibility, "update", fake_update)
 
-        pto = data.draw(st.integers(0, 2))
+        pto = data.draw(st.integers(0, 3))
         masses = {f"m{q}": v + 2.0 for v, q in enumerate("cbt")}
-        kthr = {f"kDIS{q}Thr": v + 2.0 for v, q in enumerate("cbt")}
+        kthr = {f"k{q}Thr": v + 2.0 for v, q in enumerate("cbt")}
         zm_masses = {f"ZM{q}": True for q in "cbt"}
         theory = dict(
             PTO=pto,
@@ -88,7 +87,6 @@ class TestRunner:
             MP=1.0,
             Q0=2.0,
             HQ="POLE",
-            DAMP=1,
             IC=1,
             TMC=0,
             RenScaleVar=True,
@@ -97,6 +95,8 @@ class TestRunner:
             MW=100.0,
             MZ=100.0,
             GF=1.0,
+            FONLLParts="full",
+            n3lo_cf_variation=0,
         )
         xgrid = np.geomspace(1e-5, 1.0, 6)
         observables = dict(
@@ -108,6 +108,7 @@ class TestRunner:
             ProjectileDIS="electron",
             PolarizationDIS=0.0,
             PropagatorCorrection=0.0,
+            NCPositivityCharge=None,
             observables={
                 "F2_charm": [dict(x=0.1, Q2=10.0)],
                 "XSCHORUSCC": [dict(x=0.1, y=0.5, Q2=10.0)],
@@ -119,7 +120,6 @@ class TestRunner:
         assert full_runner._theory["PTO"] == theory["PTO"]
 
         log.silent_mode = True
-        theory["DAMP"] = 0
 
         full_runner = runner.Runner(theory, observables)
 

@@ -18,7 +18,6 @@ NfFF: 4
 PTO: 2
 Q0: 1.65
 QED: 0
-Qedref: 1.777
 Qmb: 4.92
 Qmc: 1.51
 Qmt: 172.5
@@ -32,7 +31,7 @@ XIR: 1.0
 alphaqed: 0.007496252
 alphas: 0.118
 global_nx: 0
-kbThr: 1.0
+kbThr: 4.0
 kcThr: 1.0
 ktThr: 1.0
 mb: 4.92
@@ -40,7 +39,6 @@ mc: 1.51
 mt: 172.5
 nfref: null
 nf0: null
-fact_to_ren_scale_ratio: 1.0
-kDISbThr: 1.0
+kDISbThr: 4.0
 kDIScThr: 1.0
 kDIStThr: 1.0

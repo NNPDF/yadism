@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # pylint: skip-file
 # fmt: off
 import numba as nb
@@ -306,24 +305,23 @@ A[17,10-1] =  .00000_00000_0001e0
 
 @nb.njit("c16(i8,i8,f8)", cache=True)
 def nielsen(N, M, X):
-    """
-    Compute Nielsen's Generalized Polylogarithm.
+    """Compute Nielsen's Generalized Polylogarithm.
 
     Reimplementation of CGPLG (C321) from CERNlib :cite:`cernlib`.
 
-    Paramters
-    ---------
-        N : int
-            first index
-        M : int
-            second index
-        X : complex
-            argument
+    Parameters
+    ----------
+    N : int
+        first index
+    M : int
+        second index
+    X : complex
+        argument
 
     Returns
     -------
-        complex
-            :math:`S_{n,m}(x)`
+    complex
+        :math:`S_{n,m}(x)`
 
     """
     U = np.full(5,np.nan*1j) # U(0:4), so keep indices

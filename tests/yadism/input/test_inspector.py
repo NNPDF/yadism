@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Test the Input Inspector.
 """
@@ -36,14 +35,13 @@ class TestInspector:
             "kcThr": 1.0,
             "kbThr": 1.0,
             "ktThr": 1.0,
-            "kDIScThr": 1.0,
-            "kDISbThr": 1.0,
-            "kDIStThr": 1.0,
             "MZ": 91.1876,
             "MW": 90.398,
             "GF": 1.1663787e-05,
             "SIN2TW": 0.23126,
             "ModEv": "EXA",
+            "FONLLParts": "full",
+            "n3lo_cf_variation": 0,
         }
 
         obs_dict = dict(

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
 #
@@ -22,7 +21,7 @@ here = pathlib.Path(__file__).parent
 # -- Project information -----------------------------------------------------
 
 project = "yadism"
-copyright = "2019-2021, the N3PDF team"  # pylint: disable=redefined-builtin
+copyright = "2019-2022, the N3PDF team"  # pylint: disable=redefined-builtin
 author = "N3PDF team"
 
 # -- General configuration ---------------------------------------------------
@@ -315,6 +314,7 @@ todo_include_todos = True
 # https://gist.github.com/mgedmin/6052926
 edit_on_github_project = "N3PDF/yadism"
 edit_on_github_branch = "master"
+
 
 # https://github.com/readthedocs/readthedocs.org/issues/1139#issuecomment-312626491
 def run_apidoc(_):

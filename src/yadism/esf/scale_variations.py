@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Implementation of factorization and renormalization scale variations."""
 import logging
 import time
 
@@ -36,18 +36,22 @@ def build_orders(order):
 
 
 class ScaleVariations:
-    """
-    Apply scale variations.
+    """Manager for scale variations."""
 
-    Parameters
-    ----------
+    def __init__(self, order, interpolator, activate_ren, activate_fact):
+        """Inizialize manager.
+
+        Parameters
+        ----------
         order : int
             perturbative order
         interpolator : eko.interpolation.InterpolationDispatcher
             interpolation basis functions
-    """
-
-    def __init__(self, order, interpolator, activate_ren, activate_fact):
+        activate_ren : bool
+            activate renormalization scale variation
+        activate_fact : bool
+            activate factorization scale variation
+        """
         self.order = order
         self.interpolator = interpolator
         self.activate_ren = activate_ren
@@ -82,19 +86,17 @@ class ScaleVariations:
                 )
 
     def fact_matrices(self, nf):
-        r"""
-        Compute all matrices related to factorization scale variation,
-        i.e. :math:`\ln(Q^2/\mu_F^2)`.
+        r"""Compute all matrices related to factorization scale variation, i.e. :math:`\ln(Q^2/\mu_F^2)`.
 
         Parameters
         ----------
-            nf : int
-                number of active flavors
+        nf : int
+            number of active flavors
 
         Returns
         -------
-            dict :
-                map with `(target, lnf, src) -> np.ndarray`
+        dict :
+            map with `(target, lnf, src) -> np.ndarray`
         """
         self.compute_raw(nf)
         # load mappings
@@ -111,22 +113,25 @@ class ScaleVariations:
         return fact_matrices
 
     def ren_coeffs(self, nf):
-        r"""
-        Provide the renormalization scale variation coefficients,
-        i.e. :math:`\ln(\mu_F^2/\mu_R^2)`.
+        r"""Provide the renormalization scale variation coefficients, i.e. :math:`\ln(\mu_F^2/\mu_R^2)`.
 
         Parameters
         ----------
-            nf : int
-                number of active flavors
+        nf : int
+            number of active flavors
 
         Returns
         -------
-            dict :
-                map with `(target, lnf2r, src) -> np.ndarray`
-
+        dict :
+            map with `(target, lnf2r, src) -> np.ndarray`
         """
-        ren_coeffs = {(2, 1, 1): -beta.beta_0(nf)}
+        beta0 = beta.beta_qcd_as2(nf)
+        ren_coeffs = {
+            (2, 1, 1): +beta0,
+            (3, 1, 2): +2 * beta0,
+            (3, 1, 1): +beta.beta_qcd_as3(nf),
+            (3, 2, 1): +(beta0**2),
+        }
         return dict(filter(lambda item: item[0][0] <= self.order, ren_coeffs.items()))
 
     def apply_common_scale_variations(self, ker_orders, nf):
@@ -149,7 +154,7 @@ class ScaleVariations:
             return []
         # get the two ingredients: matrices and projectors
         fmatrices = self.fact_matrices(nf)
-        projectors = br.ad_projectors(nf)
+        projectors = br.ad_projectors(nf, False)
         # join everything together
         added_ker_sv = []
         for (o, oqed, _, _), ker in ker_orders:
@@ -184,7 +189,7 @@ class ScaleVariations:
             return []
         diff_kers = self.apply_raw_diff_scale_variations(ker_orders, nf)
         ren_kers = []
-        for (o, k) in diff_kers:
+        for o, k in diff_kers:
             # ln((xi_f/xi_r)^2)^n = (ln(xi_f^2) - ln(xi_r^2))^n
             n = o[2]
             for j in range(

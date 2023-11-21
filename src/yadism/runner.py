@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 This module contains the main loop for the DIS calculations.
 
@@ -20,6 +19,7 @@ import io
 import logging
 import time
 
+import numpy as np
 import rich
 import rich.align
 import rich.box
@@ -28,8 +28,9 @@ import rich.markdown
 import rich.panel
 import rich.progress
 from eko import basis_rotation as br
-from eko import thresholds
-from eko.interpolation import InterpolatorDispatcher
+from eko import matchings
+from eko.interpolation import InterpolatorDispatcher, XGrid
+from eko.quantities.heavy_quarks import MatchingScales
 
 from . import log, observable_name
 from .coefficient_functions.coupling_constants import CouplingConstants
@@ -44,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 class Runner:
     """
-    Wrapper to compute a process
+    Wrapper to compute a process.
 
     Parameters
     ----------
@@ -95,7 +96,13 @@ class Runner:
         self._observables = new_observables
 
         # Setup eko stuffs
-        interpolator = InterpolatorDispatcher.from_dict(self._observables, mode_N=False)
+        xgrid = XGrid(
+            self._observables["interpolation_xgrid"],
+            self._observables["interpolation_is_log"],
+        )
+        interpolator = InterpolatorDispatcher(
+            xgrid, self._observables["interpolation_polynomial_degree"], mode_N=False
+        )
 
         # Non-eko theory
         coupling_constants = CouplingConstants.from_dict(theory, self._observables)
@@ -109,22 +116,19 @@ class Runner:
         )
 
         # Initialize structure functions
+        masses = np.power([new_theory["mc"], new_theory["mb"], new_theory["mt"]], 2)
+        thresholds_ratios = np.power(
+            [new_theory["kcThr"], new_theory["kbThr"], new_theory["ktThr"]], 2
+        )
         managers = dict(
             interpolator=interpolator,
-            threshold=thresholds.ThresholdsAtlas.from_dict(new_theory, "kDIS"),
+            threshold=matchings.Atlas(
+                matching_scales=MatchingScales(list(masses * thresholds_ratios)),
+                origin=(new_theory["Q0"] ** 2, new_theory["nf0"]),
+            ),
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
         )
-        # FONLL damping powers
-        FONLL_damping = bool(theory["DAMP"])
-        if FONLL_damping:
-            damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
-            damping_powers = [
-                theory.get(f"DAMPPOWER{quark}", damping_power)
-                for quark in ("CHARM", "BOTTOM", "TOP")
-            ]
-        else:
-            damping_powers = [2] * 3
         # pass theory params
         intrinsic_range = []
         if theory["IC"] == 1:
@@ -136,14 +140,14 @@ class Runner:
             nf_ff=theory["NfFF"],
             ZMq=(new_theory["ZMc"], new_theory["ZMb"], new_theory["ZMt"]),
             intrinsic_range=intrinsic_range,
-            m2hq=(theory["mc"] ** 2, theory["mb"] ** 2, theory["mt"] ** 2),
+            m2hq=masses,
             TMC=theory["TMC"],
             target=new_observables["TargetDIS"],
             GF=theory["GF"],
             M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
-            FONLL_damping=FONLL_damping,
-            damping_powers=damping_powers,
+            fonllparts=new_theory["FONLLParts"],
+            n3lo_cf_variation=theory["n3lo_cf_variation"],
         )
         logger.info(
             "PTO: %d, PTO@evolution: %d, process: %s",
@@ -190,6 +194,7 @@ class Runner:
         self._output["projectilePID"] = coupling_constants.obs_config["projectilePID"]
 
     def get_sf(self, obs_name):
+        """Return associated SF object."""
         if obs_name.name not in self.observables:
             self.observables[obs_name.name] = SF(obs_name, self)
         return self.observables[obs_name.name]
@@ -275,6 +280,8 @@ class Runner:
 
 
 class RunnerConfigs:
+    """Runner Configuration."""
+
     def __init__(self, theory, managers):
         self.theory = theory
         self.managers = managers

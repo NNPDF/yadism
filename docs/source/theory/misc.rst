@@ -4,7 +4,7 @@ Miscellanea
 Target Mass Corrections
 -----------------------
 
-Following :cite:`tmc-review`, :cite:`tmc-iranian` we provide three options:
+Following :cite:`Schienbein:2007gr`, :cite:`Goharipour:2020gsw` we provide three options:
 
 - **exact**: is the full and involves integration
 - **approximate**: is stemming from the exact, but the strcture functions in
@@ -23,7 +23,7 @@ Following :cite:`tmc-review`, :cite:`tmc-iranian` we provide three options:
 
 Also the definition of :math:`F_L` is corrected by the presence of a proton
 mass.
-The explicit expression is given in :eqref:`26` of :cite:`tmc-review`:
+The explicit expression is given in :eqref:`26` of :cite:`Schienbein:2007gr`:
 
 .. math::
 

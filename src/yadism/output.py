@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
 """
-Output related utilities: for the main output (that is the computed |PDF|
+Output related utilities.
+
+For the main output (that is the computed |PDF|
 independent |DIS| operator) three outputs are provided:
 
 - tar archive, containing metadata and binary :mod:`numpy.lib.format` arrays
@@ -13,7 +14,6 @@ independent |DIS| operator) three outputs are provided:
 
 """
 import copy
-import json
 import pathlib
 import tarfile
 import tempfile
@@ -21,12 +21,13 @@ import tempfile
 import numpy as np
 import pandas as pd
 import yaml
-from eko import strong_coupling
+from eko.couplings import Couplings, couplings_mod_ev
+from eko.io import dictlike, runcards, types
+from eko.matchings import Atlas, nf_default
+from eko.quantities.heavy_quarks import MatchingScales
 
 from . import observable_name as on
 from .esf.result import ESFResult, EXSResult
-from .input import compatibility
-from .version import __version__
 
 
 class MaskedPDF:
@@ -51,13 +52,12 @@ class MaskedPDF:
         return self.parent.__getattribute__(name)
 
     def xfxQ2(self, pid, x, Q2):
+        """Fake lhapdf-like wrapper."""
         return self.parent.xfxQ2(pid, x, Q2) if pid in self.active_pids else 0.0
 
 
 class Output(dict):
-    """Wrapper for the output to help with application to PDFs and dumping to
-    file.
-    """
+    """Wrapper for the output to help with application to PDFs and dumping to file."""
 
     theory = None
     observables = None
@@ -98,9 +98,35 @@ class Output(dict):
             output dictionary with all structure functions for all x, Q2, result and error
 
         """
-        new_theory, _ = compatibility.update(theory, dict(TargetDIS="proton"))
-        sc = strong_coupling.StrongCoupling.from_dict(new_theory)
-        alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
+        new_eko_theory = runcards.Legacy(theory=theory, operator={}).new_theory
+        method = runcards.Legacy.MOD_EV2METHOD.get(theory["ModEv"], theory["ModEv"])
+        method = dictlike.load_enum(types.EvolutionMethod, method)
+        method = couplings_mod_ev(method)
+        masses = [mq**2 for mq, _ in new_eko_theory.heavy.masses]
+        thresholds_ratios = np.power(new_eko_theory.heavy.matching_ratios, 2)
+        sc = Couplings(
+            couplings=new_eko_theory.couplings,
+            order=new_eko_theory.order,
+            method=method,
+            masses=masses,
+            hqm_scheme=new_eko_theory.heavy.masses_scheme,
+            thresholds_ratios=thresholds_ratios.tolist(),
+        )
+        atlas = Atlas(
+            matching_scales=MatchingScales(masses * thresholds_ratios),
+            origin=(theory["Qref"] ** 2, theory["nfref"]),
+        )
+        fns = theory["FNS"]
+        if "FFNS" in fns or "FFN0" in fns:
+            alpha_s = lambda muR: sc.a_s(muR**2, nf_to=theory["NfFF"]) * 4.0 * np.pi
+        elif fns == "ZM-VFNS":
+            alpha_s = (
+                lambda muR: sc.a_s(muR**2, nf_to=nf_default(muR**2, atlas))
+                * 4.0
+                * np.pi
+            )
+        else:
+            raise ValueError(f"Scheme '{fns}' not recognized.")
         alpha_qed = lambda _muR: theory["alphaqed"]
         return self.apply_pdf_alphas_alphaqed_xir_xif(
             lhapdf_like, alpha_s, alpha_qed, theory["XIR"], theory["XIF"]
@@ -136,7 +162,7 @@ class Output(dict):
         # iterate
         ret = PDFOutput()
 
-        xgrid = self["interpolation_xgrid"]
+        xgrid = self["xgrid"]["grid"]
 
         # dispatch onto result
         for obs in self:
@@ -170,8 +196,9 @@ class Output(dict):
             out[f] = copy.copy(self[f])
         out["pids"] = list(self["pids"])
         # make raw lists
-        for k in ["interpolation_xgrid"]:
-            out[k] = self[k].tolist()
+        for k in ["xgrid"]:
+            out[k]["grid"] = self[k]["grid"]
+            out[k]["log"] = self[k]["log"]
         for obs in self:
             if not on.ObservableName.is_valid(obs):
                 continue
@@ -181,102 +208,6 @@ class Output(dict):
             for kin in self[obs]:
                 out[obs].append(kin.get_raw())
         return out
-
-    def dump_pineappl_to_file(self, filename, obsname):
-        """Write output on a PineAPPL grid file.
-
-        Parameters
-        ----------
-        filename : str
-            output file name
-        obsname : str
-            observable to be dumped
-
-        """
-        # pylint: disable=no-member, too-many-locals
-        if len(self[obsname]) <= 0:
-            raise ValueError(f"no ESF {obsname}!")
-
-        filename = pathlib.Path(filename)
-        if not any(
-            filename.name.endswith(ext) for ext in [".pineappl", ".pineappl.lz4"]
-        ):
-            raise ValueError(f"Invalid extension in {filename.name}")
-
-        import pineappl  # pylint: disable=import-outside-toplevel,import-error
-
-        interpolation_xgrid = self["interpolation_xgrid"]
-        # interpolation_is_log = self["interpolation_is_log"]
-        interpolation_polynomial_degree = self["interpolation_polynomial_degree"]
-        lepton_pid = self["projectilePID"]
-
-        # init pineappl objects
-        lumi_entries = [
-            pineappl.lumi.LumiEntry([(pid, lepton_pid, 1.0)]) for pid in self["pids"]
-        ]
-        first_esf_result = self[obsname][0]
-        orders = [pineappl.grid.Order(*o) for o in first_esf_result.orders]
-        bins = len(self[obsname])
-        bin_limits = list(map(float, range(0, bins + 1)))
-        # subgrid params
-        params = pineappl.subgrid.SubgridParams()
-        params.set_reweight(False)
-        params.set_x_bins(len(interpolation_xgrid))
-        params.set_x_max(interpolation_xgrid[-1])
-        params.set_x_min(interpolation_xgrid[0])
-        params.set_x_order(interpolation_polynomial_degree)
-
-        grid = pineappl.grid.Grid.create(lumi_entries, orders, bin_limits, params)
-        limits = []
-
-        # add each ESF as a bin
-        for bin_, obs in enumerate(self[obsname]):
-            x = obs.x
-            Q2 = obs.Q2
-
-            limits.append((Q2, Q2))
-            limits.append((x, x))
-
-            # add all orders
-            for o, (v, _e) in obs.orders.items():
-                order_index = list(first_esf_result.orders.keys()).index(o)
-                prefactor = (
-                    ((1.0 / (4.0 * np.pi)) ** o[0])
-                    * ((-1.0) ** o[2])
-                    * ((-1.0) ** o[3])
-                )
-                # add for each pid/lumi
-                for pid_index, pid_values in enumerate(v):
-                    pid_values = prefactor * pid_values
-                    # grid is empty? skip
-                    if not any(np.array(pid_values) != 0):
-                        continue
-                    subgrid = pineappl.import_only_subgrid.ImportOnlySubgridV1(
-                        pid_values[np.newaxis, :, np.newaxis],
-                        [Q2],
-                        interpolation_xgrid,
-                        [1.0],
-                    )
-                    grid.set_subgrid(order_index, bin_, pid_index, subgrid)
-        # set the correct observables
-        normalizations = [1.0] * bins
-        remapper = pineappl.bin.BinRemapper(normalizations, limits)
-        grid.set_remapper(remapper)
-
-        # set the initial state PDF ids for the grid
-        grid.set_key_value("initial_state_1", "2212")
-        grid.set_key_value("initial_state_2", str(lepton_pid))
-        grid.set_key_value("theory", json.dumps(self.theory))
-        grid.set_key_value("runcard", json.dumps(self.observables))
-        grid.set_key_value("yadism_version", __version__)
-        grid.set_key_value("lumi_id_types", "pdg_mc_ids")
-
-        # dump file
-        grid.optimize()
-        if filename.suffix == ".lz4":
-            grid.write_lz4(filename)
-        else:
-            grid.write(filename)
 
     def dump_yaml(self, stream=None):
         """Serialize result as YAML.
@@ -300,7 +231,7 @@ class Output(dict):
         return yaml.dump(out, stream, default_flow_style=None)
 
     def dump_yaml_to_file(self, filename):
-        """Writes YAML representation to a file.
+        """Write YAML representation to a file.
 
         Parameters
         ----------
@@ -313,7 +244,7 @@ class Output(dict):
             result of dump(output, stream), i.e. Null if written sucessfully
 
         """
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding="utf8") as f:
             ret = self.dump_yaml(f)
         return ret
 
@@ -484,7 +415,7 @@ class Output(dict):
 
     @classmethod
     def load_yaml(cls, stream):
-        """Load YAML representation from stream
+        """Load YAML representation from stream.
 
         Parameters
         ----------
@@ -499,8 +430,9 @@ class Output(dict):
         """
         obj = yaml.safe_load(stream)
         # make list numpy
-        for k in ["interpolation_xgrid"]:
-            obj[k] = np.array(obj[k])
+        for k in ["xgrid"]:
+            obj[k]["grid"] = np.array(obj[k]["grid"])
+            obj[k]["log"] = obj[k]["log"]
         for obs in obj:
             if not on.ObservableName.is_valid(obs):
                 continue
@@ -519,7 +451,7 @@ class Output(dict):
 
     @classmethod
     def load_yaml_from_file(cls, filename):
-        """Load YAML representation from file
+        """Load YAML representation from file.
 
         Parameters
         ----------
@@ -542,7 +474,7 @@ class PDFOutput(Output):
     """Wrapper for the PDF output to help with dumping to file."""
 
     def get_raw(self):
-        """Convert the object into a native Python dictionary
+        """Convert the object into a native Python dictionary.
 
         Returns
         -------
@@ -579,7 +511,7 @@ class PDFOutput(Output):
 
     @property
     def tables(self):
-        """Convert data into a mapping structure functions -> :class:`pandas.DataFrame`"""
+        """Convert data into a mapping structure functions -> :class:`pandas.DataFrame`."""
         tables = {}
         for k, v in self.items():
             tables[k] = pd.DataFrame(v)

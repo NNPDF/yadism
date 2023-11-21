@@ -1,16 +1,20 @@
-# -*- coding: utf-8 -*-
-import banana.cfg
+"""Localized implementation of BenchmarkRunner."""
 import numpy as np
 import pandas as pd
 from banana.benchmark.runner import BenchmarkRunner
 from banana.data import dfdict
-from eko.strong_coupling import StrongCoupling
+from eko.couplings import Couplings, couplings_mod_ev
+from eko.io import dictlike, runcards, types
+from eko.matchings import Atlas, nf_default
+from eko.quantities.heavy_quarks import MatchingScales
 
 import yadism
 from yadmark.data import db, observables
 
 
 class Runner(BenchmarkRunner):
+    """Localized implementation of BenchmarkRunner."""
+
     alphas_from_lhapdf = False
     """Use the alpha_s routine provided by the Pdf?"""
 
@@ -18,36 +22,58 @@ class Runner(BenchmarkRunner):
 
     @staticmethod
     def load_ocards(conn, ocard_updates):
+        """Load observable cards."""
         return observables.load(conn, ocard_updates)
 
     def run_me(self, theory, ocard, pdf):
         """
-        Run yadism
+        Run yadism.
 
         Parameters
         ----------
-            theory : dict
-                theory card
-            ocard : dict
-                observable card
-            pdf : lhapdf_like
-                PDF set
+        theory : dict
+            theory card
+        ocard : dict
+            observable card
+        pdf : lhapdf_like
+            PDF set
 
         Returns
         -------
-            out : yadism.output.PDFOutput
-                yadism output
+        out : yadism.output.PDFOutput
+            yadism output
+
         """
         runner = yadism.Runner(theory, ocard)
         # choose alpha_s source
         if self.alphas_from_lhapdf:
-            import lhapdf  # pylint:disable=import-outside-toplevel
+            import lhapdf  # pylint:disable=E0401,C0415
 
             alpha_s = lambda muR: lhapdf.mkAlphaS(pdf.set().name).alphasQ(muR)
         else:
-            new_theory, _ = yadism.input.compatibility.update(theory, ocard)
-            sc = StrongCoupling.from_dict(new_theory)
-            alpha_s = lambda muR: sc.a_s(muR**2) * 4.0 * np.pi
+            new_eko_theory = runcards.Legacy(theory=theory, operator={}).new_theory
+            method = runcards.Legacy.MOD_EV2METHOD.get(theory["ModEv"], theory["ModEv"])
+            method = dictlike.load_enum(types.EvolutionMethod, method)
+            method = couplings_mod_ev(method)
+            masses = [mq**2 for mq, _ in new_eko_theory.heavy.masses]
+            thresholds_ratios = np.power(new_eko_theory.heavy.matching_ratios, 2)
+            sc = Couplings(
+                couplings=new_eko_theory.couplings,
+                order=new_eko_theory.order,
+                method=method,
+                masses=masses,
+                hqm_scheme=new_eko_theory.heavy.masses_scheme,
+                thresholds_ratios=thresholds_ratios.tolist(),
+            )
+            atlas = Atlas(
+                matching_scales=MatchingScales(masses * thresholds_ratios),
+                origin=(theory["Qref"] ** 2, theory["nfref"]),
+            )
+            alpha_s = (
+                lambda muR: sc.a_s(muR**2, nf_to=nf_default(muR**2, atlas))
+                * 4.0
+                * np.pi
+            )
 
         alpha_qed = lambda _muR: theory["alphaqed"]
         return runner.get_result().apply_pdf_alphas_alphaqed_xir_xif(
@@ -56,21 +82,22 @@ class Runner(BenchmarkRunner):
 
     def run_external(self, theory, ocard, pdf):
         """
-        Run yadism
+        Run external.
 
         Parameters
         ----------
-            theory : dict
-                theory card
-            ocard : dict
-                observable card
-            pdf : lhapdf_like
-                PDF set
+        theory : dict
+            theory card
+        ocard : dict
+            observable card
+        pdf : lhapdf_like
+            PDF set
 
         Returns
         -------
-            dict
-                external output
+        dict
+            external output
+
         """
         observable = ocard
 
@@ -95,6 +122,11 @@ class Runner(BenchmarkRunner):
 
             return xspace_bench_utils.compute_xspace_bench_data(theory, observable, pdf)
 
+        elif self.external.upper() == "APFEL++":
+            from .external import apfelpy_utils
+
+            return apfelpy_utils.compute_apfelpy_data(theory, observable, pdf)
+
         elif self.external.lower() == "void":
             # set all ESF simply to 0
             res = {}
@@ -111,6 +143,7 @@ class Runner(BenchmarkRunner):
         raise ValueError("Unknown external")
 
     def log(self, t, o, _pdf, me, ext):
+        """Write log."""
         log_tab = dfdict.DFdict()
         kins = ["x", "Q2"]
 
@@ -120,6 +153,11 @@ class Runner(BenchmarkRunner):
             esfs = []
 
             obs_kins = kins.copy()
+
+            # skip if it is empty
+            if len(me[sf]) == 0:
+                continue
+
             if "y" in me[sf][0]:
                 obs_kins += ["y"]
 

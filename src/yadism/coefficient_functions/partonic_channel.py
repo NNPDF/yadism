@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import copy
 
 import numba as nb
@@ -127,6 +126,7 @@ class PartonicChannel(dict):
         self[0] = self.decorator(self.LO)
         self[1] = self.decorator(self.NLO)
         self[2] = self.decorator(self.NNLO)
+        self[3] = self.decorator(self.N3LO)
 
     def convolution_point(self):
         """
@@ -160,6 +160,10 @@ class PartonicChannel(dict):
 
     @staticmethod
     def NNLO():
+        return None
+
+    @staticmethod
+    def N3LO():
         return None
 
 

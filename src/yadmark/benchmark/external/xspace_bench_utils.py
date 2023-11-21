@@ -1,31 +1,32 @@
-# -*- coding: utf-8 -*-
-import eko.strong_coupling as eko_sc
+"""Benchmark to xspace_bench (the original FONLL implementation)."""
 import numpy as np
+from eko.couplings import Couplings, couplings_mod_ev
+from eko.io import dictlike, runcards, types
+from eko.matchings import Atlas, nf_default
+from eko.quantities.heavy_quarks import MatchingScales
 
 from yadism import observable_name as on
-from yadism.input import compatibility
 
 
 def compute_xspace_bench_data(theory, observables, pdf):
-
     """
     Run xspace_bench to compute observables.
 
     Parameters
     ----------
-        theory : dict
-            theory runcard
-        observables : dict
-            observables runcard
-        pdf : lhapdf_like
-            PDF set
+    theory : dict
+        theory runcard
+    observables : dict
+        observables runcard
+    pdf : lhapdf_like
+        PDF set
 
     Returns
     -------
-        num_tab : dict
-            xspace_bench numbers
+    dict
+        xspace_bench numbers
     """
-    import xspace_bench  # pylint:disable=import-outside-toplevel
+    import xspace_bench  # pylint:disable=import-outside-toplevel,import-error
 
     # Available targets: PROTON, NEUTRON, ISOSCALAR, IRON
     target = "PROTON"
@@ -65,7 +66,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
     # select scheme
     scheme = theory["FNS"]
-    new_theory = compatibility.update(theory)
 
     if scheme == "ZM-VFNS":
         scheme = "ZMVN"
@@ -84,12 +84,27 @@ def compute_xspace_bench_data(theory, observables, pdf):
     else:
         raise NotImplementedError(f"{scheme} is not implemented in xspace_bench.")
 
-    sc = eko_sc.StrongCoupling.from_dict(new_theory)
-
+    new_eko_theory = runcards.Legacy(theory=theory, operator={}).new_theory
+    method = runcards.Legacy.MOD_EV2METHOD.get(theory["ModEv"], theory["ModEv"])
+    method = dictlike.load_enum(types.EvolutionMethod, method)
+    method = couplings_mod_ev(method)
+    masses = [mq**2 for mq, _ in new_eko_theory.heavy.masses]
+    thresholds_ratios = np.power(new_eko_theory.heavy.matching_ratios, 2)
+    sc = Couplings(
+        couplings=new_eko_theory.couplings,
+        order=new_eko_theory.order,
+        method=method,
+        masses=masses,
+        hqm_scheme=new_eko_theory.heavy.masses_scheme,
+        thresholds_ratios=thresholds_ratios.tolist(),
+    )
+    atlas = Atlas(
+        matching_scales=MatchingScales(masses * thresholds_ratios),
+        origin=(theory["Qref"] ** 2, theory["nfref"]),
+    )
     num_tab = {}
     # loop over functions
     for obs_name in observables["observables"]:
-
         # if not on.ObservableName.is_valid(obs):
         #    continue
 
@@ -104,10 +119,9 @@ def compute_xspace_bench_data(theory, observables, pdf):
 
         # loop over points
         for q2 in q2s:
-
             xs = []
 
-            alphas = sc.a_s(q2) * 4.0 * np.pi
+            alphas = sc.a_s(q2, nf_to=nf_default(q2, atlas)) * 4.0 * np.pi
             y = 0.5
             f = 0.0
 
@@ -117,7 +131,6 @@ def compute_xspace_bench_data(theory, observables, pdf):
                     xs.append(kin["x"])
 
             for x in xs:
-
                 res = []
                 f3_fact = -1.0
                 if x == 1.0:
