@@ -52,9 +52,7 @@ class ResultsRunner(runner.Runner):
 
 class TestRunner:
     @given(st.data())
-    @settings(
-        suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=None
-    )
+    @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
     def test_init(self, monkeypatch, data):
         @dataclasses.dataclass
         class FakeInspector:
