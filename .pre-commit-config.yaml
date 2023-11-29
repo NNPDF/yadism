@@ -13,8 +13,8 @@ repos:
       - id: check-merge-conflict
       - id: debug-statements
         exclude: "debug.py"
-  - repo: https://github.com/psf/black
-    rev: 23.10.1
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 23.11.0
     hooks:
       - id: black
   - repo: https://github.com/asottile/blacken-docs
@@ -31,7 +31,7 @@ repos:
     hooks:
       - id: pyupgrade
   - repo: https://github.com/hadialqattan/pycln
-    rev: v2.3.0
+    rev: v2.4.0
     hooks:
       - id: pycln
         args: [--config=pyproject.toml]
