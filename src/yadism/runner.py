@@ -1,5 +1,4 @@
-"""
-This module contains the main loop for the DIS calculations.
+"""This module contains the main loop for the DIS calculations.
 
 There are two ways of using ``yadism``:
 
@@ -35,7 +34,7 @@ from eko.quantities.heavy_quarks import MatchingScales
 from . import log, observable_name
 from .coefficient_functions.coupling_constants import CouplingConstants
 from .esf import scale_variations as sv
-from .input import compatibility, inspector
+from .input import compatibility
 from .output import Output
 from .sf import StructureFunction as SF
 from .xs import CrossSection as XS
@@ -44,8 +43,7 @@ logger = logging.getLogger(__name__)
 
 
 class Runner:
-    """
-    Wrapper to compute a process.
+    """Wrapper to compute a process.
 
     Parameters
     ----------
@@ -64,7 +62,6 @@ class Runner:
     .. todo::
         * reference on theory template
         * detailed description of dis_observables entries
-
     """
 
     banner = rich.align.Align(
@@ -86,9 +83,6 @@ class Runner:
     )
 
     def __init__(self, theory: dict, observables: dict):
-        # Validate inputs and improve if necessary
-        insp = inspector.Inspector(theory, observables)
-        insp.perform_all_checks()
         new_theory, new_observables = compatibility.update(theory, observables)
 
         # Store inputs
@@ -202,16 +196,15 @@ class Runner:
     def drop_cache(self):
         """Drop the whole cache for all observables.
 
-        This preserves final results, since they are not part of the cache.
-
+        This preserves final results, since they are not part of the
+        cache.
         """
         for obs in self.observables.values():
             if isinstance(obs, SF):
                 obs.drop_cache()
 
     def get_result(self):
-        """
-        Compute coefficient functions grid for requested kinematic points.
+        """Compute coefficient functions grid for requested kinematic points.
 
         Returns
         -------
@@ -219,7 +212,6 @@ class Runner:
             output object, it will store the coefficient functions grid
             (flavour, interpolation-index) for each requested kinematic
             point (x, Q2)
-
         """
         self.console.print(self.banner)
 
