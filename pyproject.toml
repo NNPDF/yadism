@@ -52,15 +52,8 @@ banana-hep = { version = "^0.6.11", optional = true }
 sqlalchemy = { version = "^1.4.21", optional = true }
 
 [tool.poetry.group.dev.dependencies]
-poethepoet = "^0.10.0"
-# code review
-pylint = "^2.9.3"
-# debug / explore
 pdbpp = "^0.10.3"
 ipython = "^8.10.0"
-# benchmark
-asv = "^0.4.2"
-virtualenv = "^20.13.2"
 
 [tool.poetry.group.test]
 optional = true
@@ -70,6 +63,8 @@ pytest = "^7.2.0"
 pytest-cov = "^4.0.0"
 pytest-env = "^0.6.2"
 hypothesis = "^6.39.3"
+asv = "^0.4.2"
+pylint = "^2.9.3"
 
 [tool.poetry.group.docs]
 optional = true
@@ -85,14 +80,6 @@ nbsphinx = "^0.8.6"
 [tool.poetry.extras]
 mark = ["banana-hep", "sqlalchemy"]
 box = ["pineappl"]
-docs = [
-  "sphinx",
-  "sphinx-rtd-theme",
-  "recommonmark",
-  "sphinxcontrib-bibtex",
-  "sphinxcontrib-details-directive",
-  "nbsphinx",
-]
 
 [tool.poetry.scripts]
 yadnav = "yadmark.navigator:launch_navigator"
