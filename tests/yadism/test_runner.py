@@ -84,6 +84,7 @@ class TestRunner:
             MZ=100.0,
             GF=1.0,
             FONLLParts="full",
+            n3lo_cf_variation=0,
         )
         xgrid = np.geomspace(1e-5, 1.0, 6)
         observables = dict(
