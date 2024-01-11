@@ -1,8 +1,45 @@
-from . import BCDMS, CHORUS, E155, HERA, NMC, NUTEV, POS, SLAC, utils
+from . import (
+    BCDMS,
+    CHORUS,
+    E142,
+    E155,
+    E154,
+    E143,
+    EMC,
+    SMC,
+    COMPASS,
+    HERMES,
+    HERMES97,
+    HERA,
+    NMC,
+    NUTEV,
+    POS,
+    SLAC,
+    JLAB,
+    utils,
+)
 
 exps = {
     getattr(m, "__name__").rsplit(".", maxsplit=1)[-1]: m
-    for m in [BCDMS, CHORUS, E155, HERA, NMC, NUTEV, POS, SLAC]
+    for m in [
+        BCDMS,
+        CHORUS,
+        E142,
+        E155,
+        E154,
+        E143,
+        EMC,
+        SMC,
+        COMPASS,
+        HERMES,
+        HERMES97,
+        HERA,
+        NMC,
+        NUTEV,
+        POS,
+        SLAC,
+        JLAB,
+    ]
 }
 
 
