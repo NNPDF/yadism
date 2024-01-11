@@ -48,9 +48,6 @@ theory_card = {
     "Comments": "NNPDF4.0 NNLO alphas=0.118",
     "global_nx": 0,
     "EScaleVar": 1,
-    "kDIScThr": 1.0,
-    "kDISbThr": 1.0,
-    "kDIStThr": 1.0,
 }
 
 observables_card = {

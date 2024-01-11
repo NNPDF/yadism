@@ -84,25 +84,41 @@ given set of scattering bosons:
 Structure Function Kind
 -----------------------
 
-``yadism`` allows to compute three different structure functions, to which we refer to as **kind**:
+``yadism`` allows to compute different structure functions, to which we refer to as **kind**.
+In the unpolarized |DIS| we have:
 
 .. math ::
 
-  F_2,~ F_L = F_2 - 2xF_1,~ xF_3
+  F_2,~F_L = F_2 - 2xF_1,~xF_3
 
-- to compute :math:`F_L` instead of :math:`F_1` is adventagous due to the Callan-Gross relation
-  :cite:`Callan:1969uq` :math:`F_L=0` in the naive parton model
+while their counter parts for the polarized case are:
 
-  - notice that the :math:`F_L` definition it's not exactly the one above, but
+.. math ::
+
+  g_4,~g_L = g_4 - 2xg_5,~2xg_1
+
+The reasons to chose such basis are:
+
+  - the normalization is such that they have similar representation in the parton model.
+    I.e. at |LO| they are all proportional to various combination of :math:`x f(x)`.
+
+    .. math ::
+
+      F_2 & \propto x \sum_q (q + \bar{q}) \\
+      x F_3 & \propto x \sum_q (q - \bar{q})
+
+    This normalization also follows the native scaling in the full cross section.
+
+  - computing :math:`F_L` instead of :math:`F_1` is advantageous due to the Callan-Gross relation
+    :cite:`Callan:1969uq` :math:`F_L=0` in the naive parton model
+
+  - finally notice that the :math:`F_L` definition it's not exactly the one above, but
     it may be corrected (actually :math:`F_L` it's the object involved in
     Callan-Gross relation, for more information see :ref:`fl-corrections`)
 
-- Note that we compute :math:`xF_3` instead of the bare structure function to respect the native
-  scaling in the full cross section
-
 .. note::
 
-   Even :math:`F_1` is provided, but it is treated as a derived quantity, like
+   :math:`2xF_1` and :math:`2xg_5` are also provided as they are treated as a derived quantity, like
    the cross sections in the following section.
 
 Cross sections

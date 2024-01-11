@@ -1,3 +1,8 @@
+"""Coefficient function kernels.
+
+Kernels are a combination of the coupling structure (which parton with which weight)
+and the respective 'raw' mathematical coefficient function.
+"""
 import copy
 import importlib
 from numbers import Number
@@ -8,22 +13,21 @@ from .light.n3lo.common import nc_color_factor
 
 
 def import_local(kind, process, sibling):
-    """
-    Import the suitable subpackage with the actual partonic channel implementation.
+    """Import the suitable subpackage with the actual partonic channel implementation.
 
     Parameters
     ----------
-        kind : str
-            structure function kind
-        process : str
-            DIS process type: "EM","NC","CC"
-        sibling : str
-            relative parent to import from
+    kind : str
+        structure function kind
+    process : str
+        DIS process type: "EM","NC","CC"
+    sibling : str
+        relative parent to import from
 
     Returns
     -------
-        module : module
-            module
+    module : module
+        module
     """
     kind = kind.lower()
     process = process.lower()
@@ -34,19 +38,18 @@ def import_local(kind, process, sibling):
 
 
 class Kernel:
-    """
-    Combination of partons with their weights and their mathematical expression in this channel.
+    """Combination of partons with their weights and their mathematical expression in this channel.
 
     Parameters
     ----------
-        partons : dict
-            mapping pid -> weight
-        coeff : PartonicChannel
-            mathematical expression
-        max_order : int
-            if given, silence above this order
-        min_order : int
-            if given, silence below this order
+    partons : dict
+        mapping pid -> weight
+    coeff : PartonicChannel
+        mathematical expression
+    max_order : int
+        if given, silence above this order
+    min_order : int
+        if given, silence below this order
     """
 
     def __init__(self, partons, coeff, max_order=None, min_order=None):
@@ -56,18 +59,17 @@ class Kernel:
         self.min_order = min_order
 
     def has_order(self, order):
-        """
-        Is current order active?
+        """Is current order active.
 
         Parameters
         ----------
-            order : int
-                order
+        order : int
+            order
 
         Returns
         -------
-            bool :
-                is active?
+        bool :
+            is active?
         """
         if self.min_order and order < self.min_order:
             return False
@@ -77,6 +79,7 @@ class Kernel:
 
     @property
     def channel(self):
+        """Abstract classification in physical channels."""
         cls = str(type(self.coeff)).split("'")[1].split(".")[-1]
 
         # TODO: remove AsyQuark for AsyNonSinglet
@@ -86,7 +89,9 @@ class Kernel:
             return "singlet"
         elif "Gluon" in cls:
             return "gluon"
-        elif any([x in cls for x in ["Splus", "Sminus", "Rplus", "Rminus"]]):
+        elif any(
+            [x in cls for x in ["Intrinsic", "Splus", "Sminus", "Rplus", "Rminus"]]
+        ):
             return "intrinsic"
         else:
             raise ValueError(f"Class '{cls}' does not correspond to a known channel")
@@ -110,26 +115,25 @@ class Kernel:
 
 
 def cc_weights(coupling_constants, Q2, cc_mask, nf, is_pv):
-    """
-    Collect the weights of the partons.
+    """Collect the weights of the partons.
 
     Parameters
     ----------
-        coupling_constants : CouplingConstants
-            manager for coupling constants
-        Q2 : float
-            W virtuality
-        cc_mask : str
-            participating flavors on the CKM matrix
-        nf : int
-            number of light flavors
-        is_pv: bool
-            True if observable violates parity conservation
+    coupling_constants : CouplingConstants
+        manager for coupling constants
+    Q2 : float
+        W virtuality
+    cc_mask : str
+        participating flavors on the CKM matrix
+    nf : int
+        number of light flavors
+    is_pv: bool
+        True if observable violates parity conservation
 
     Returns
     -------
-        weights : dict
-            mapping pid -> weight for q and g channel
+    weights : dict
+        mapping pid -> weight for q and g channel
     """
     weights = {"ns": {}, "g": {}, "s": {}}
     # determine couplings
@@ -164,26 +168,25 @@ def cc_weights(coupling_constants, Q2, cc_mask, nf, is_pv):
 
 
 def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
-    """
-    Collect the weights of the partons.
+    """Collect the weights of the partons.
 
     Parameters
     ----------
-        coupling_constants : CouplingConstants
-            manager for coupling constants
-        Q2 : float
-            W virtuality
-        cc_mask : str
-            participating flavors on the CKM matrix
-        nf : int
-            number of light flavors
-        is_pv: bool
-            True if observable violates parity conservation
+    coupling_constants : CouplingConstants
+        manager for coupling constants
+    Q2 : float
+        W virtuality
+    cc_mask : str
+        participating flavors on the CKM matrix
+    nf : int
+        number of light flavors
+    is_pv: bool
+        True if observable violates parity conservation
 
     Returns
     -------
-        weights : dict
-            mapping pid -> weight for q and g channel
+    weights : dict
+        mapping pid -> weight for q and g channel
     """
     weights = {"ns": {}, "g": {}, "s": {}}
     # determine couplings
@@ -217,26 +220,25 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
 
 
 def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
-    """
-    Collect the weights of the partons.
+    """Collect the weights of the partons.
 
     Parameters
     ----------
-        coupling_constants : CouplingConstants
-            manager for coupling constants
-        Q2 : float
-            W virtuality
-        cc_mask : str
-            participating flavors on the CKM matrix
-        nf : int
-            number of light flavors
-        is_pv: bool
-            True if observable violates parity conservation
+    coupling_constants : CouplingConstants
+        manager for coupling constants
+    Q2 : float
+        W virtuality
+    cc_mask : str
+        participating flavors on the CKM matrix
+    nf : int
+        number of light flavors
+    is_pv: bool
+        True if observable violates parity conservation
 
     Returns
     -------
-        weights : dict
-            mapping pid -> weight for q and g channel
+    weights : dict
+        mapping pid -> weight for q and g channel
     """
     weights = {"ns": {}}
     # determine couplings
@@ -260,8 +262,7 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
 
 
 def generate_single_flavor_light(esf, nf, ihq):
-    """
-    Add a light-like contribution for a single quark flavor.
+    """Add a light-like contribution for a single quark flavor.
 
     The linear dependency to the electric charge is introduce by multiplying
     and diving by nf. The multiplication is *implicit* inside the coefficient function,
@@ -269,26 +270,23 @@ def generate_single_flavor_light(esf, nf, ihq):
 
     Parameters
     ----------
-        esf : EvaluatedStructureFunction
-            kinematic point
-        nf : int
-            number of light flavors
-        ihq : int
-            quark flavor to activate
+    esf : EvaluatedStructureFunction
+        kinematic point
+    nf : int
+        number of light flavors
+    ihq : int
+        quark flavor to activate
 
     Returns
     -------
-        elems : list(yadism.kernels.Kernel)
-            list of elements
+    elems : list(yadism.kernels.Kernel)
+        list of elements
     """
     kind = esf.info.obs_name.kind
     is_pv = esf.info.obs_name.is_parity_violating
     light_cfs = import_local(
         kind, esf.process, ".".join(__name__.split(".")[:-1] + ["light", ""])
     )
-    ns_partons = {}
-    ch_av = 0
-    s_partons = {}
     if esf.process == "CC":
         w_even = cc_weights_even(
             esf.info.coupling_constants,
@@ -313,6 +311,8 @@ def generate_single_flavor_light(esf, nf, ihq):
             ),
             Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf)),
         )
+
+    # NC
     if not is_pv:
         w = esf.info.coupling_constants.get_weight(
             ihq, esf.Q2, "VV"
@@ -321,11 +321,13 @@ def generate_single_flavor_light(esf, nf, ihq):
         w = esf.info.coupling_constants.get_weight(
             ihq, esf.Q2, "VA"
         ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
-
+    ns_partons = {}
     ns_partons[ihq] = w
     ns_partons[-ihq] = w if not is_pv else -w
-    ch_av = w / (nf) if not is_pv else 0.0
-    for pid in range(1, nf):
+    ch_av = w / nf if not is_pv else 0.0  # omitting again *2/2
+    # all quarks from 1 up to and including nf form the singlet
+    s_partons = {}
+    for pid in range(1, nf + 1):
         s_partons[pid] = ch_av
         s_partons[-pid] = ch_av
     fl = nc_color_factor(esf.info.coupling_constants, nf, "ns", False)

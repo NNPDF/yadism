@@ -1,5 +1,4 @@
-"""
-This module contains the main loop for the DIS calculations.
+"""This module contains the main loop for the DIS calculations.
 
 There are two ways of using ``yadism``:
 
@@ -35,7 +34,7 @@ from eko.quantities.heavy_quarks import MatchingScales
 from . import log, observable_name
 from .coefficient_functions.coupling_constants import CouplingConstants
 from .esf import scale_variations as sv
-from .input import compatibility, inspector
+from .input import compatibility
 from .output import Output
 from .sf import StructureFunction as SF
 from .xs import CrossSection as XS
@@ -44,8 +43,7 @@ logger = logging.getLogger(__name__)
 
 
 class Runner:
-    """
-    Wrapper to compute a process.
+    """Wrapper to compute a process.
 
     Parameters
     ----------
@@ -64,7 +62,6 @@ class Runner:
     .. todo::
         * reference on theory template
         * detailed description of dis_observables entries
-
     """
 
     banner = rich.align.Align(
@@ -86,9 +83,6 @@ class Runner:
     )
 
     def __init__(self, theory: dict, observables: dict):
-        # Validate inputs and improve if necessary
-        insp = inspector.Inspector(theory, observables)
-        insp.perform_all_checks()
         new_theory, new_observables = compatibility.update(theory, observables)
 
         # Store inputs
@@ -118,7 +112,7 @@ class Runner:
         # Initialize structure functions
         masses = np.power([new_theory["mc"], new_theory["mb"], new_theory["mt"]], 2)
         thresholds_ratios = np.power(
-            [new_theory["kDIScThr"], new_theory["kDISbThr"], new_theory["kDIStThr"]], 2
+            [new_theory["kcThr"], new_theory["kbThr"], new_theory["ktThr"]], 2
         )
         managers = dict(
             interpolator=interpolator,
@@ -129,16 +123,6 @@ class Runner:
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
         )
-        # FONLL damping powers
-        FONLL_damping = bool(theory["DAMP"])
-        if FONLL_damping:
-            damping_power = theory.get("DAMPPOWER", 2)  # TODO remove defaults?
-            damping_powers = [
-                theory.get(f"DAMPPOWER{quark}", damping_power)
-                for quark in ("CHARM", "BOTTOM", "TOP")
-            ]
-        else:
-            damping_powers = [2] * 3
         # pass theory params
         intrinsic_range = []
         if theory["IC"] == 1:
@@ -156,8 +140,8 @@ class Runner:
             GF=theory["GF"],
             M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
-            FONLL_damping=FONLL_damping,
-            damping_powers=damping_powers,
+            fonllparts=new_theory["FONLLParts"],
+            n3lo_cf_variation=theory["n3lo_cf_variation"],
         )
         logger.info(
             "PTO: %d, PTO@evolution: %d, process: %s",
@@ -212,16 +196,15 @@ class Runner:
     def drop_cache(self):
         """Drop the whole cache for all observables.
 
-        This preserves final results, since they are not part of the cache.
-
+        This preserves final results, since they are not part of the
+        cache.
         """
         for obs in self.observables.values():
             if isinstance(obs, SF):
                 obs.drop_cache()
 
     def get_result(self):
-        """
-        Compute coefficient functions grid for requested kinematic points.
+        """Compute coefficient functions grid for requested kinematic points.
 
         Returns
         -------
@@ -229,7 +212,6 @@ class Runner:
             output object, it will store the coefficient functions grid
             (flavour, interpolation-index) for each requested kinematic
             point (x, Q2)
-
         """
         self.console.print(self.banner)
 

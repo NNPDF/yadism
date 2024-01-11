@@ -21,20 +21,14 @@ def dump(src_path, _target):
     obs = obs_template.copy()
     src = pathlib.Path(src_path)
 
-    if src.stem == "bcd_d" or src.stem == "bcd_p":
-        esf = []
-        for sub in sorted(src.glob("*")):
-            text = sub.read_text()
-            with tempfile.NamedTemporaryFile(mode="w") as ntf:
-                cut_text = "\n".join(text.splitlines()[::2])
-                ntf.write(cut_text)
-                ntf.flush()
-                data = load(ntf.name, 0, ["x", "y", "Q2"])
-                esf += [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
-    else:
-        data = load(str(src), 0, ["-", "x", "Q2", "y"])
-        esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
-
+    esf = []
+    text = src.read_text()
+    with tempfile.NamedTemporaryFile(mode="w") as ntf:
+        cut_text = "\n".join(text.splitlines()[::2])
+        ntf.write(cut_text)
+        ntf.flush()
+        data = load(ntf.name, 0, ["x", "y", "Q2"])
+        esf += [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
     obs["prDIS"] = "NC"
     obs["observables"] = {"F2_total": esf}
     obs["ProjectileDIS"] = "electron"
@@ -49,9 +43,11 @@ def dump(src_path, _target):
 
 # renaming
 new_names = {
-    "bcd_d": "BCDMS_NC_EM_D_F2",
-    "bcd_p": "BCDMS_NC_EM_P_F2",
-    "bcdms_fe_d": "BCDMS85_Fe_D",
-    "bcdms_n_d": "BCDMS85_N_D",
-    "bcdms_d": "BCDMS_D",
+    "bcd_d120": "BCDMS_NC_100GEV_EM_D_F2",
+    "bcd_d200": "BCDMS_NC_200GEV_EM_D_F2",
+    "bcd_d280": "BCDMS_NC_280GEV_EM_D_F2",
+    "bcd_p100": "BCDMS_NC_100GEV_EM_P_F2",
+    "bcd_p120": "BCDMS_NC_120GEV_EM_P_F2",
+    "bcd_p200": "BCDMS_NC_200GEV_EM_P_F2",
+    "bcd_p280": "BCDMS_NC_280GEV_EM_P_F2",
 }

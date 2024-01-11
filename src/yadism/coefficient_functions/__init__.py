@@ -1,14 +1,13 @@
+"""Collect all kernels for given |FNS|."""
 import numpy as np
 from eko.matchings import nf_default
 
-from . import fonll, heavy, intrinsic, kernels, light
+from . import asy, heavy, intrinsic, kernels, light
 from .partonic_channel import EmptyPartonicChannel
 
 
 class Component(list):
-    """
-    Used for organize elements and debugging purpose.
-    """
+    """Used for organize elements and debugging purpose."""
 
     heavyness = {0: "light", 4: "charm", 5: "bottom", 6: "top"}
 
@@ -27,14 +26,13 @@ class Component(list):
 
 
 class Combiner:
-    """
-    Does the matching between coefficient functions and partons with their approptiate coupling
-    strength.
+    """Does the matching between coefficient functions and partons with their appropriate coupling strength.
 
     Parameters
     ----------
-        esf : EvaluateStructureFunction
-            current ESF
+    esf : EvaluatedStructureFunction
+        current ESF
+
     """
 
     def __init__(self, esf):
@@ -44,61 +42,51 @@ class Combiner:
         self.obs_name = esf.info.obs_name
         self.nf = nf_default(esf.Q2, esf.info.threshold)
         self.target = esf.info.target
+        self.scheme = esf.info.scheme
+        self.fonllparts = esf.info.fonllparts
 
     def collect(self):
+        """Collect all kernels."""
         comps = []
-
         family = self.obs_name.flavor_family
-
         # Adding light component
-        if family in ["light", "total"]:
+        if family in ["light", "total"] and self.fonllparts in ["massless", "full"]:
             comps.append(self.light_component())
-        if family == "heavy":
-            #  the only case in which an heavy contribution is not present in those
-            #  accounted for in total, it's whene heavy already became heavylight
+        if family == "heavy" and self.fonllparts in ["massless", "full"]:
+            # the only case in which an heavy contribution is not present in those
+            # accounted for in total, it's when heavy already became heavylight
             comps.extend(self.heavylight_components())
-        if family in ["heavy", "total"]:
+        if family in ["heavy", "total"] and self.fonllparts in ["massive", "full"]:
             comps.extend(self.heavy_components())
-
         return comps
 
     def light_component(self):
+        """Collect massless kernels."""
         nf = self.nf
         masses = self.masses
 
         comp = Component(0)
-
-        # the first condition essentially checks nf != 3
-        if nf in masses and masses[nf]:
-            nl = nf - 1
-            comp.extend(
-                fonll.kernels.generate_light(
-                    self.esf,
-                    nl,
-                    self.esf.info.theory["pto_evol"],
-                    self.esf.info.theory["pto"],
-                )
-            )
-            comp.extend(heavy.kernels.generate_missing(self.esf, nl, nl + 1))
-            comp.extend(
-                self.damp_elems(
-                    nl,
-                    fonll.kernels.generate_light_diff(
-                        self.esf,
-                        nl,
-                        self.esf.info.theory["pto_evol"],
-                    ),
-                )
-            )
-        else:
-            comp.extend(light.kernels.generate(self.esf, nf))
-
+        # light does not contain any mass effects and so is just always there
+        comp.extend(light.kernels.generate(self.esf, nf))
+        # instead missing encodes mass effects and so we need to fork:
         for ihq in range(nf + 1, 7):
             if masses[ihq]:
-                comp.extend(heavy.kernels.generate_missing(self.esf, nf, ihq))
+                if "FFN0" in self.scheme:
+                    comp.extend(
+                        asy.kernels.generate_missing_asy(
+                            self.esf,
+                            nf,
+                            ihq,
+                            self.esf.info.theory["pto_evol"],
+                        )
+                    )
+                else:
+                    comp.extend(heavy.kernels.generate_missing(self.esf, nf, ihq))
+
         return comp
 
     def heavylight_components(self):
+        """Collect single-flavor massless kernels."""
         nf = self.nf
         hq = self.obs_name.hqnumber
         masses = self.masses
@@ -113,6 +101,7 @@ class Combiner:
         return comps
 
     def heavy_components(self):
+        """Collect massive kernels."""
         nf = self.nf
         hq = self.obs_name.hqnumber
         masses = self.masses
@@ -120,99 +109,64 @@ class Combiner:
         comps = []
 
         heavy_comps = {}
+        # The loop starts at nf because nf counts the number of quarks of which
+        # are above the mass threshold. For these quarks the masses are not
+        # considered.
         for sfh in range(nf, 7):
             # exclude sfh=3, since heavy contributions are there for [4,5,6]
             # if it's ZM you don't even have the component
-            if sfh not in masses or not masses[sfh]:
+            if sfh not in masses:
+                continue
+
+            # There is no massive heavy contribution for ZM
+            if not masses[sfh]:
                 continue
 
             heavy_comps[sfh] = Component(sfh)
+
+            # calculate only the contribution corresponding to the observable
+            # i.e. charm for F_charm, bottom for F_bottom. In the case of
+            # F_total (if hq=0), sum over all massive contributions.
             if hq not in (0, sfh):
                 continue
 
-            if sfh == nf:
-                # then it is FONLL
-                nl = nf - 1
-                heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nl, ihq=sfh))
-                if sfh not in self.intrinsic:
+            if sfh in self.intrinsic:  # heavy quark is intrinsic
+                if "FFN0" in self.scheme:
                     heavy_comps[sfh].extend(
-                        self.damp_elems(
-                            nl,
-                            fonll.kernels.generate_heavy_diff(
-                                self.esf, nl, self.esf.info.theory["pto_evol"]
-                            ),
-                        )
+                        asy.kernels.generate_intrinsic_asy(
+                            self.esf, nf, self.esf.info.theory["pto_evol"], ihq=sfh
+                        ),
                     )
                 else:
                     heavy_comps[sfh].extend(
                         intrinsic.kernels.generate(self.esf, ihq=sfh)
                     )
-                    heavy_comps[sfh].extend(
-                        self.damp_elems(
-                            nl,
-                            fonll.kernels.generate_heavy_intrinsic_diff(
-                                self.esf, nl, self.esf.info.theory["pto_evol"]
-                            ),
-                        )
+
+            if "FFN0" in self.scheme:
+                heavy_comps[sfh].extend(
+                    asy.kernels.generate_heavy_asy(
+                        self.esf, nf, self.esf.info.theory["pto_evol"], ihq=sfh
                     )
+                )
             else:
-                # then it is *not* FONLL
                 heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
-                if sfh in self.intrinsic:
-                    heavy_comps[sfh].extend(
-                        intrinsic.kernels.generate(self.esf, ihq=sfh)
-                    )
 
-            for ihq in range(sfh + 1, 7):
-                if masses[ihq]:
-                    heavy_comps[sfh].extend(
-                        heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
-                    )
             comps.append(heavy_comps[sfh])
-
         return comps
-
-    def damp_elems(self, nl, elems):
-        """
-        Damp FONLL difference contributions if necessary.
-
-        Parameters
-        ----------
-            nl : int
-                number of *light* flavors
-            elems : list(Kernel)
-                kernels to be modified
-
-        Returns
-        -------
-            elems : list(Kernel)
-                modified kernels
-        """
-        if not self.esf.info.FONLL_damping:
-            return elems
-        nhq = nl + 1
-        # TODO: replace mass with threshold?
-        m2hq = self.esf.info.m2hq[nhq - 4]
-        power = self.esf.info.damping_powers[nhq - 4]
-        if self.esf.Q2 > m2hq:
-            damp = np.power(1.0 - m2hq / self.esf.Q2, power)
-        else:
-            damp = 0.0
-        return (damp * e for e in elems)
 
     @staticmethod
     def apply_isospin(full, z, a):
-        """
-        Apply isospin symmetry to u and d distributions.
+        """Apply isospin symmetry to u and d distributions.
 
         Parameters
         ----------
-            full : list(yadism.kernels.Kernel)
-                all participants
-            z : float
-                number of protons
-            a : float
-                atomic mass number
+        full : list(yadism.kernels.Kernel)
+            all participants
+        z : float
+            number of protons
+        a : float
+            atomic mass number
+
         """
         nucl_factors = np.array([[z, a - z], [a - z, z]]) / a
         for ker in full:
@@ -224,18 +178,18 @@ class Combiner:
 
     @staticmethod
     def drop_empty(full):
-        """
-        Drop kernels with :class:`EmptyPartonicChannel` or its partons with empty weight.
+        """Drop kernels with :class:`EmptyPartonicChannel` or its partons with empty weight.
 
         Parameters
         ----------
-            elems : list(yadism.kernels.Kernel)
-                all participants
+        elems : list(yadism.kernels.Kernel)
+            all participants
 
         Returns
         -------
-            filtered_kernels : list(yadism.kernels.Kernel)
-                improved participants
+        filtered_kernels : list(yadism.kernels.Kernel)
+            improved participants
+
         """
         filtered_kernels = []
         for ker in full:
@@ -245,13 +199,13 @@ class Combiner:
         return filtered_kernels
 
     def collect_elems(self):
-        """
-        Collects all kernels according to the |FNS|.
+        """Collect all kernels according to the |FNS|.
 
         Returns
         -------
-            elems : list(yadism.kernels.Kernel)
-                all participants
+        elems : list(yadism.kernels.Kernel)
+            all participants
+
         """
         components = self.collect()
 
