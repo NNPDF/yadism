@@ -1,6 +1,6 @@
 import pathlib
 
-from .utils import load, obs_template
+from .utils import load, obs_template, check_duplicate_kins
 
 Mn = 0.9389
 
@@ -33,6 +33,7 @@ def dump(src_path, _target):
             for d in data
         ]
         obs["TargetDIS"] = "lead"
+    check_duplicate_kins(esf, subset=["x", "Q2", "y"])
 
     is_nu = "nu" in src_path.stem
     obs["prDIS"] = "CC"
@@ -47,6 +48,6 @@ def dump(src_path, _target):
 new_names = {
     "x-sec_shift_nb": "CHORUS_CC_NB_PB_SIGMARED",
     "x-sec_shift_nu": "CHORUS_CC_NU_PB_SIGMARED",
-    "chorus_nb_pb": "CHORUS_NB_Pb",
-    "chorus_nu_pb": "CHORUS_NU_Pb",
+    "chorus_nb_pb": "CHORUS_CC_NB_PB_SIGRED",
+    "chorus_nu_pb": "CHORUS_CC_NU_PB_SIGRED",
 }
