@@ -1,6 +1,6 @@
 import pathlib
 
-from .utils import load, obs_template
+from .utils import load, obs_template, check_duplicate_kins
 
 mn = 0.938
 
@@ -47,6 +47,6 @@ def dump(src_path, _target):
 new_names = {
     "NTVNBDMNFe": "NUTEV_CC_NB_FE_SIGMARED",
     "NTVNUDMNFe": "NUTEV_CC_NU_FE_SIGMARED",
-    "NUTEV_NB_Fe": "NUTEV_NB_Fe",
-    "NUTEV_NU_Fe": "NUTEV_NU_Fe",
+    "NUTEV_NB_Fe": "NUTEV_CC_NB_Fe_SIGRED",
+    "NUTEV_NU_Fe": "NUTEV_CC_NU_Fe_SIGRED",
 }

@@ -12,10 +12,10 @@ NUTEV_CC_NU_FE_SIGMARED:
   nnpdf_id: NTVNUDMNFe
 
 # Nuclear versions of the Datasets
-NUTEV_NU_Fe_SIGMARED:
+NUTEV_CC_NU_Fe_SIGRED:
   description: NUTEV reduced cross section for neutrino-nucleon scattering on iron
   nnpdf_id: NUTEV_NU_Fe
 
-NUTEV_NB_Fe_SIGMARED:
+NUTEV_CC_NB_Fe_SIGRED:
   description: NUTEV reduced cross section for antineutrino-nucleon scattering on iron
   nnpdf_id: NUTEV_NB_Fe
