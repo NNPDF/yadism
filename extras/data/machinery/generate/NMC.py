@@ -1,7 +1,7 @@
 import pathlib
 import tempfile
 
-from .utils import load, obs_template
+from .utils import load, obs_template, check_duplicate_kins
 
 
 def dump(src_path, target):
@@ -42,6 +42,7 @@ def dump(src_path, target):
 
         obs["observables"] = {"F2_total": esf}
         obs["TargetDIS"] = "isoscalar" if "_D_" in target.parent.name else "proton"
+    check_duplicate_kins(esf, subset=["x", "Q2", "y"])
 
     obs["prDIS"] = "NC"
     obs["ProjectileDIS"] = "electron"
@@ -52,17 +53,17 @@ def dump(src_path, target):
 # renaming
 new_names = {
     "nmc_p": "NMC_NC_EM_P_SIGMARED",
-    "nmc_f2df2p": ["NMC_NC_EM_P_F2", "NMC_NC_EM_D_F2", "NMC_p_D"],
-    "nmc_al_c": "NMC96_Al_C",
-    "nmc_be_c": "NMC96_Be_C",
-    "nmc_c_d": "NMC95_C_D",
-    "nmc_c_li": "NMC95RE_C_Li",
-    "nmc_ca_c": "NMC96_Ca_C",
-    "nmc_ca_d": "NMC95RE_Ca_D",
-    "nmc_ca_li": "NMC95RE_Ca_Li",
-    "nmc_fe_c": "NMC96_Fe_C",
-    "nmc_he_d": "NMC96_He_D",
-    "nmc_li_d": "NMC96_Li_D",
-    "nmc_pb_c": "NMC96_Pb_C",
-    "nmc_sn_c": "NMC96_Sn_C",
+    "nmc_f2df2p": ["NMC_NC_EM_P_F2", "NMC_NC_EM_D_F2", "NMC_p_D", "NMC_NC_D_P_F2_NUM", "NMC_NC_D_P_F2_DEN"],
+    "nmc_al_c": ["NCM_96_NC_Al_C_F2_NUM", "NCM_96_NC_Al_C_F2_DEN"],
+    "nmc_be_c": ["NCM_96_NC_Be_C_F2_NUM", "NCM_96_NC_Be_C_F2_DEN"],
+    "nmc_c_d": ["NCM_95_NC_C_D_F2_NUM", "NCM_95_NC_C_D_F2_DEN"],
+    "nmc_c_li": ["NCM_96RE_NC_C_Li_F3_NUM", "NCM_96RE_NC_C_Li_F3_DEN"],
+    "nmc_ca_c": ["NCM_96_NC_Ca_C_F2_NUM", "NCM_96_NC_Ca_C_F2_DEN"],
+    "nmc_ca_d": ["NCM_95RE_NC_Ca_D_F2_NUM", "NCM_95RE_NC_Ca_D_F2_DEN"],
+    "nmc_ca_li": ["NCM_96RE_NC_Ca_Li_F2_NUM", "NCM_96RE_NC_Ca_Li_F2_DEN"],
+    "nmc_fe_c": ["NCM_96_NC_Fe_C_F2_NUM", "NCM_96_NC_Fe_C_F2_DEN"],
+    "nmc_he_d": ["NCM_95RE_NC_He_D_F2_NUM", "NCM_95RE_NC_He_D_F2_DEN"],
+    "nmc_li_d": ["NCM_95_NC_Li_D_F2_NUM", "NCM_95_NC_Li_D_F2_DEN"],
+    "nmc_pb_c": ["NCM_96_NC_Pb_C_F2_NUM", "NCM_96_NC_Pb_C_F2_DEN"],
+    "nmc_sn_c": ["NCM_96_NC_Sn_C_F2_NUM", "NCM_96_NC_Sn_C_F2_DEN"],
 }
