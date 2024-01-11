@@ -2,15 +2,10 @@ arxiv: null
 hepdata: null
 
 # Nuclear Datasets
+# -> Numerators
 FNAL_E665_NC_C_D_F2_NUM:
   description: FNAL NC structure function for Nuclear data
   nnpdf_id: FNALE665_CD_N
-  y_label: F2
-  y_label_tex: $F_{2}^{\mathrm{tot}}$
-
-FNAL_E665_NC_C_D_F2_DEN:
-  description: FNAL NC structure function for Nuclear data
-  nnpdf_id: FNALE665_CD_D
   y_label: F2
   y_label_tex: $F_{2}^{\mathrm{tot}}$
 
@@ -20,27 +15,34 @@ FNAL_E665_NC_Ca_D_F2_NUM:
   y_label: F2
   y_label_tex: $F_{2}^{\mathrm{tot}}$
 
-FNAL_E665_NC_Ca_D_F2_DEN:
-  description: FNAL NC structure function for Nuclear data
-  nnpdf_id: FNALE665_CaD_D
-  y_label: F2
-  y_label_tex: $F_{2}^{\mathrm{tot}}$
-
 FNAL_E665_NC_Pb_D_F2_NUM:
   description: FNAL NC structure function for Nuclear data
   nnpdf_id: FNALE665_PbD_N
   y_label: F2
   y_label_tex: $F_{2}^{\mathrm{tot}}$
 
-FNAL_E665_NC_Pb_D_F2_DEN:
-  description: FNAL NC structure function for Nuclear data
-  nnpdf_id: FNALE665_PbD_D
-  y_label: F2
-  y_label_tex: $F_{2}^{\mathrm{tot}}$
-
 FNAL_E665_NC_Xe_D_F2_NUM:
   description: FNAL NC structure function for Nuclear data
   nnpdf_id: FNALE665_XeD_N
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+
+# -> Denominators
+FNAL_E665_NC_C_D_F2_DEN:
+  description: FNAL NC structure function for Nuclear data
+  nnpdf_id: FNALE665_CD_D
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+
+FNAL_E665_NC_Ca_D_F2_DEN:
+  description: FNAL NC structure function for Nuclear data
+  nnpdf_id: FNALE665_CaD_D
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+
+FNAL_E665_NC_Pb_D_F2_DEN:
+  description: FNAL NC structure function for Nuclear data
+  nnpdf_id: FNALE665_PbD_D
   y_label: F2
   y_label_tex: $F_{2}^{\mathrm{tot}}$
 

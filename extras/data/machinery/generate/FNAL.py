@@ -1,4 +1,4 @@
-from .utils import load, obs_template
+from .utils import load, obs_template, check_duplicate_kins
 
 
 def dump(src_path, _target):
@@ -19,6 +19,7 @@ def dump(src_path, _target):
     obs = obs_template.copy()
     data = load(src_path, 0, ["-", "x", "Q2", "y"])
     esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
+    check_duplicate_kins(esf, subset=["x", "Q2"])
 
     obs["prDIS"] = "NC"
     obs["observables"] = {"F2_total": esf}
@@ -31,8 +32,8 @@ def dump(src_path, _target):
 
 # renaming
 new_names = {
-    "fnal_c_d": "FNALE665_C_D",
-    "fnal_ca_d": "FNALE665_Ca_D",
-    "fnal_pb_d": "FNALE665_Pb_D",
-    "fnal_xe_d": "FNALE665_Xe_D",
+    "fnal_c_d": ["FNAL_E665_NC_C_D_F2_NUM", "FNAL_E665_NC_C_D_F2_DEN"],
+    "fnal_ca_d": ["FNAL_E665_NC_Ca_D_F2_NUM", "FNAL_E665_NC_Ca_D_F2_DEN"],
+    "fnal_pb_d": ["FNAL_E665_NC_Pb_D_F2_NUM", "FNAL_E665_NC_Pb_D_F2_DEN"],
+    "fnal_xe_d": ["FNAL_E665_NC_Xe_D_F2_NUM", "FNAL_E665_NC_Xe_D_F2_DEN"],
 }
