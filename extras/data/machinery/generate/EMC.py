@@ -1,4 +1,4 @@
-from .utils import load, obs_template
+from .utils import load, obs_template, check_duplicate_kins
 
 
 def dump(src_path, _target):
@@ -19,6 +19,7 @@ def dump(src_path, _target):
     obs = obs_template.copy()
     data = load(src_path, 0, ["-", "x", "Q2", "y"])
     esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
+    check_duplicate_kins(esf, subset=["x", "Q2"])
 
     obs["prDIS"] = "NC"
     obs["observables"] = {"F2_total": esf}
@@ -31,9 +32,9 @@ def dump(src_path, _target):
 
 # renaming
 new_names = {
-    "emc_c_d": "EMC90_C_D",
-    "emc_ca_d": "EMC90_Ca_D",
-    "emc_cu_d": "EMC93_Cu_D",
-    "emc_fe_d": "EMC97_Fe_D",
-    "emc_sn_d": "EMC88_Sn_D",
+    "emc_c_d": ["EMC_90_NC_C_D_F2_NUM", "EMC_90_NC_C_D_F2_DEN"],
+    "emc_ca_d": ["EMC_90_NC_Ca_D_F2_NUM", "EMC_90_NC_Ca_D_F2_DEN"],
+    "emc_cu_d": ["EMC_93_NC_Cu_D_F2_NUM", "EMC_93_NC_Cu_D_F2_DEN"],
+    "emc_fe_d": ["EMC_97_NC_Fe_D_F2_NUM", "EMC_97_NC_Fe_D_F2_DEN"],
+    "emc_sn_d": ["EMC_88_NC_Sn_D_F2_NUM", "EMC_88_NC_Sn_D_F2_DEN"],
 }

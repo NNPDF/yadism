@@ -1,6 +1,7 @@
 import pathlib
 
 import numpy as np
+import pandas as pd
 import yaml
 
 from yadmark.data import pineappl_xgrid
@@ -8,6 +9,10 @@ from yadmark.data import pineappl_xgrid
 here = pathlib.Path(__file__).parent
 template = here / "template"
 runcards = here.parents[1] / "_runcards"
+
+
+class DuplicateKinematics(Exception):
+    pass
 
 
 def load(path, skiprows, fields):
@@ -80,3 +85,9 @@ def metadata(path, new_name):
         metadata["fktable_id"] = metadata["nnpdf_id"]
 
     return metadata
+
+
+def check_duplicate_kins(dict_list, subset):
+    df = pd.DataFrame(dict_list)
+    if df.duplicated(subset=subset).any():
+        raise DuplicateKinematics("There are duplicate kinematics!")
