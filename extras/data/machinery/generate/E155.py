@@ -14,7 +14,7 @@ def dump(src_path, target):
     dict
         observables dictionary, corresponding to the runcard
 
-    """
+    '''
     obs = obs_template.copy()
     data = load(src_path, 0, ["x", "Q2"])
     dict_kins = [
