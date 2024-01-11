@@ -2,32 +2,64 @@
 arxiv: null
 hepdata: null
 
-EMC90_C_D:
+# Nuclear Datasets
+# -> Numerators
+EMC_90_NC_C_D_F2_NUM:
   description: EMC NC structure function for Nuclear data
-  nnpdf_id: EMC90CD
-  y_label: F2p
+  nnpdf_id: EMC90_CD_N
+  y_label: F2
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
 
-EMC90_Ca_D:
+EMC_90_NC_Ca_D_F2_NUM:
   description: EMC NC structure function for Nuclear data
-  nnpdf_id: EMC90CaD
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+  nnpdf_id: EMC90_CaD_N
+  y_label: F2
 
-EMC93_Cu_D:
+EMC_93_NC_Cu_D_F2_NUM:
   description: EMC NC structure function for Nuclear data
-  nnpdf_id: EMC93CuD
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+  nnpdf_id: EMC93_CuD_N
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
 
-EMC97_Fe_D:
+EMC_97_NC_Fe_D_F2_NUM:
   description: EMC NC structure function for Nuclear data
-  nnpdf_id: EMC97FeD
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+  nnpdf_id: EMC97_FeD_N
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
 
-EMC88_Sn_D:
+EMC_88_NC_Sn_D_F2_NUM:
   description: EMC NC structure function for Nuclear data
-  nnpdf_id: EMC88SnD
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+  nnpdf_id: EMC88_SnD_N
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+
+# -> Denominators
+EMC_90_NC_C_D_F2_DEN:
+  description: EMC NC structure function for Nuclear data
+  nnpdf_id: EMC90_CD_D
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+
+EMC_90_NC_Ca_D_F2_DEN:
+  description: EMC NC structure function for Nuclear data
+  nnpdf_id: EMC90_CaD_D
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+
+EMC_93_NC_Cu_D_F2_DEN:
+  description: EMC NC structure function for Nuclear data
+  nnpdf_id: EMC93_CuD_D
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+
+EMC_97_NC_Fe_D_F2_DEN:
+  description: EMC NC structure function for Nuclear data
+  nnpdf_id: EMC97_FeD_D
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+
+EMC_88_NC_Sn_D_F2_DEN:
+  description: EMC NC structure function for Nuclear data
+  nnpdf_id: EMC88_SnD_D
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$

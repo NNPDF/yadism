@@ -11,10 +11,11 @@ CHORUS_CC_NU_PB_SIGMARED:
   description: CHORUS reduced cross section neutrino-nucleon scattering on lead
   nnpdf_id: CHORUSNUPb
 
-CHORUS_NU_PB:
+# Nuclear versions of the datasets
+CHORUS_CC_NU_PB_SIGRED:
   description: CHORUS reduced cross section neutrino-nucleon scattering on lead
   nnpdf_id: CHORUS_NU_Pb
 
-CHORUS_NB_PB:
+CHORUS_CC_NB_PB_SIGRED:
   description: CHORUS reduced cross section antineutrino-nucleon scattering on lead
   nnpdf_id: CHORUS_NB_Pb

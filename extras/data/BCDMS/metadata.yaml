@@ -1,5 +1,6 @@
 arxiv: null
 
+# Free Proton Datasets
 BCDMS_NC_EM_P_F2:
   description: BCDMS NC proton data
   nnpdf_id: BCDMSP
@@ -12,20 +13,36 @@ BCDMS_NC_EM_D_F2:
   y_label: F2d
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
 
-BCDMS85_Fe_D:
-  description: BCDMS NC nuclear data
-  nnpdf_id: BCDMS85FeD
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
-
-BCDMS85_N_D:
-  description: BCDMS NC nuclear data
-  nnpdf_id: BCDMS85ND
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
-
-BCDMS_D:
+# Nuclear versions of the deuteron dataset
+BCDMS_NC_D_F2:
   description: BCDMS NC nuclear data
   nnpdf_id: BCDMS_D
   y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+  y_label_tex: $F_{2}^{mathrm{tot}}$
+
+# Nuclear Datasets
+# -> Numerators
+BCDMS_85_NC_Fe_D_F2_NUM:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS85_FeD_N
+  y_label: F2
+  y_label_tex: $F_{2}^{mathrm{tot}}$
+
+BCDMS_85_NC_N_D_F2_NUM:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS85_ND_N
+  y_label: F2
+  y_label_tex: $F_{2}^{mathrm{tot}}$
+
+# -> Denominators
+BCDMS_85_NC_Fe_D_F2_DEN:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS85_FeD_D
+  y_label: F2
+  y_label_tex: $F_{2}^{mathrm{tot}}$
+
+BCDMS_85_NC_N_D_F2_DEN:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS85_ND_D
+  y_label: F2
+  y_label_tex: $F_{2}^{mathrm{tot}}$

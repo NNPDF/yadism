@@ -23,74 +23,164 @@ NMC_NC_EM_D_F2:
   nnpdf_id: NMCPD
   fktable_id: NMCPD_D
 
-NMC96_Al_C:
-  y_label: F2p
+# Nuclear versions for the datasets
+NMC_NC_D_P_F2_NUM:
+  arxiv: hep-ex/9611022
+  y_label: F2d
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
-  description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC96AlC
+  description: NMC F2 structure function, deuteron data
+  nnpdf_id: NMCPD_N
 
-NMC96_Be_C:
+NMC_NC_D_P_F2_DEN:
+  arxiv: hep-ex/9611022
   y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
-  description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC96BeC
+  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{p})}$
+  description: NMC F2 structure function, proton data
+  nnpdf_id: NMCPD_D
 
-NMC95_C_D:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+# Nuclear Datasets
+# -> Numerators
+NCM_96_NC_Al_C_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC95CD
+  nnpdf_id: NMC96_AlC_N
 
-NMC96RE_C_Li:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_96_NC_Be_C_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC96RECLI
+  nnpdf_id: NMC96_BeC_N
 
-NMC96_Ca_C:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_95_NC_C_D_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC96CaC
+  nnpdf_id: NMC95_CD_N
 
-NMC95RE_Ca_D:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_96RE_NC_C_Li_F3_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC95RECAD
+  nnpdf_id: NMC96RE_CLI_N
 
-NMC96RE_Ca_Li:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_96_NC_Ca_C_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC96RECaLi
+  nnpdf_id: NMC96_CaC_N
 
-NMC96_Fe_C:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_95RE_NC_Ca_D_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC96FeC
+  nnpdf_id: NMC95RE_CAD_N
 
-NMC95RE_He_D:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_96RE_NC_Ca_Li_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC95REHeD
+  nnpdf_id: NMC96RE_CaLi_N
 
-NMC95_Li_D:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_96_NC_Fe_C_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC95LiD
+  nnpdf_id: NMC96_FeC_N
 
-NMC96_Pb_C:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_95RE_NC_He_D_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC96PbC
+  nnpdf_id: NMC95RE_HeD_N
 
-NMC96_Sn_C:
-  y_label: F2p
-  y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
+NCM_95_NC_Li_D_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
   description: NMC F2 structure function, nuclear data
-  nnpdf_id: NMC96SnC
+  nnpdf_id: NMC95_LiD_N
+
+NCM_96_NC_Pb_C_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96_PbC_N
+
+NCM_96_NC_Sn_C_F2_NUM:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96_SnC_N
+
+# -> Denominators
+NCM_96_NC_Al_C_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96_AlC_D
+
+NCM_96_NC_Be_C_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96_BeC_D
+
+NCM_95_NC_C_D_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC95_CD_D
+
+NCM_96RE_NC_C_Li_F3_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96RE_CLI_D
+
+NCM_96_NC_Ca_C_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96_CaC_D
+
+NCM_95RE_NC_Ca_D_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC95RE_CAD_D
+
+NCM_96RE_NC_Ca_Li_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96RE_CaLi_D
+
+NCM_96_NC_Fe_C_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96_FeC_D
+
+NCM_95RE_NC_He_D_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC95RE_HeD_D
+
+NCM_95_NC_Li_D_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC95_LiD_D
+
+NCM_96_NC_Pb_C_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96_PbC_D
+
+NCM_96_NC_Sn_C_F2_DEN:
+  y_label: F2
+  y_label_tex: $F_{2}^{\mathrm{tot}}$
+  description: NMC F2 structure function, nuclear data
+  nnpdf_id: NMC96_SnC_D
