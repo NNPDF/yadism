@@ -14,7 +14,19 @@ BCDMS_NC_EM_D_F2:
   y_label_tex: $F_{2,\mathrm{tot}}^{(\mathrm{d})}$
 
 # Nuclear versions of the deuteron dataset
-BCDMS_NC_D_F2:
+BCDMS_NC_100GEV_D_F2:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS_D
+  y_label: F2p
+  y_label_tex: $F_{2}^{mathrm{tot}}$
+
+BCDMS_NC_200GEV_D_F2:
+  description: BCDMS NC nuclear data
+  nnpdf_id: BCDMS_D
+  y_label: F2p
+  y_label_tex: $F_{2}^{mathrm{tot}}$
+
+BCDMS_NC_280GEV_D_F2:
   description: BCDMS NC nuclear data
   nnpdf_id: BCDMS_D
   y_label: F2p

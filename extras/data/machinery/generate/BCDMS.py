@@ -34,9 +34,7 @@ def dump(src_path, _target):
         data = load(str(src), 0, ["-", "x", "Q2", "y"])
         esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
 
-    subset_base = ["x", "Q2"]
-    s = subset_base + ["y"] if src.stem == "bcdms_d" else subset_base
-    check_duplicate_kins(esf, subset=s)
+    check_duplicate_kins(esf, subset=["x", "Q2"])
 
     obs["prDIS"] = "NC"
     obs["observables"] = {"F2_total": esf}
@@ -52,14 +50,13 @@ def dump(src_path, _target):
 
 # renaming
 new_names = {
-    "bcd_d120": "BCDMS_NC_100GEV_EM_D_F2",
-    "bcd_d200": "BCDMS_NC_200GEV_EM_D_F2",
-    "bcd_d280": "BCDMS_NC_280GEV_EM_D_F2",
+    "bcd_d120": ["BCDMS_NC_100GEV_EM_D_F2", "BCDMS_NC_100GEV_D_F2"],
+    "bcd_d200": ["BCDMS_NC_200GEV_EM_D_F2", "BCDMS_NC_200GEV_D_F2"],
+    "bcd_d280": ["BCDMS_NC_280GEV_EM_D_F2", "BCDMS_NC_280GEV_D_F2"],
     "bcd_p100": "BCDMS_NC_100GEV_EM_P_F2",
     "bcd_p120": "BCDMS_NC_120GEV_EM_P_F2",
     "bcd_p200": "BCDMS_NC_200GEV_EM_P_F2",
     "bcd_p280": "BCDMS_NC_280GEV_EM_P_F2",
-    "bcdms_d": "BCDMS_NC_D_F2",
     "bcdms_fe_d": ["BCDMS_85_NC_Fe_D_F2_NUM", "BCDMS_85_NC_Fe_D_F2_DEN"],
     "bcdms_n_d": ["BCDMS_85_NC_N_D_F2_NUM", "BCDMS_85_NC_N_D_F2_DEN"],
 }
