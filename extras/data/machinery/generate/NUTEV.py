@@ -33,6 +33,7 @@ def dump(src_path, _target):
             for d in data
         ]
         obs["TargetDIS"] = "iron"
+    check_duplicate_kins(esf, subset=["x", "Q2"])
 
     is_nu = "NU" in src_path.stem
     obs["prDIS"] = "CC"

@@ -1,11 +1,9 @@
-import pathlib
-
 from .utils import load, obs_template, check_duplicate_kins
 
 Mn = 0.9389
 
 
-def dump(src_path, _target):
+def dump(src_path, target):
     """Compute CHORUS observables.
 
     Parameters
@@ -19,20 +17,16 @@ def dump(src_path, _target):
         observables dictionary, corresponding to the runcard
 
     """
-    src = pathlib.Path(src_path)
     obs = obs_template.copy()
 
-    if src.stem.split("_")[-1] == "pb":
-        data = load(str(src), 0, ["-", "x", "Q2", "y"])
-        esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
-        obs["TargetDIS"] = "proton"
-    else:
-        data = load(src_path, 0, ["Enu", "x", "y"])
-        esf = [
-            dict(x=d["x"], y=d["y"], Q2=2.0 * Mn * d["x"] * d["y"] * d["Enu"])
-            for d in data
-        ]
-        obs["TargetDIS"] = "lead"
+    data = load(src_path, 0, ["Enu", "x", "y"])
+    esf = [
+        dict(x=d["x"], y=d["y"], Q2=2.0 * Mn * d["x"] * d["y"] * d["Enu"])
+        for d in data
+    ]
+    tname = str(target).split("/")[-2]
+    obs["TargetDIS"] = "proton" if "SIGRED" in tname else "lead"
+    # TODO: addint the `y`-dimension should not be required here!
     check_duplicate_kins(esf, subset=["x", "Q2", "y"])
 
     is_nu = "nu" in src_path.stem
@@ -46,8 +40,6 @@ def dump(src_path, _target):
 
 # renaming
 new_names = {
-    "x-sec_shift_nb": "CHORUS_CC_NB_PB_SIGMARED",
-    "x-sec_shift_nu": "CHORUS_CC_NU_PB_SIGMARED",
-    "chorus_nb_pb": "CHORUS_CC_NB_PB_SIGRED",
-    "chorus_nu_pb": "CHORUS_CC_NU_PB_SIGRED",
+    "x-sec_shift_nb": ["CHORUS_CC_NB_PB_SIGMARED", "CHORUS_CC_NB_PB_SIGRED"],
+    "x-sec_shift_nu": ["CHORUS_CC_NU_PB_SIGMARED", "CHORUS_CC_NU_PB_SIGRED"],
 }

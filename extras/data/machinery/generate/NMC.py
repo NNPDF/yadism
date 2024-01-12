@@ -42,6 +42,8 @@ def dump(src_path, target):
 
         obs["observables"] = {"F2_total": esf}
         obs["TargetDIS"] = "isoscalar" if "_D_" in target.parent.name else "proton"
+    
+    # TODO: check the `y`-dimension should not be required here?
     check_duplicate_kins(esf, subset=["x", "Q2", "y"])
 
     obs["prDIS"] = "NC"
