@@ -1,6 +1,6 @@
 import pathlib
 
-from .utils import load, obs_template, check_duplicate_kins
+from .utils import check_duplicate_kins, load, obs_template
 
 mn = 0.938
 

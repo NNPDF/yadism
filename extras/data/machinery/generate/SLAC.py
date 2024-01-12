@@ -1,4 +1,4 @@
-from .utils import load, obs_template, check_duplicate_kins
+from .utils import check_duplicate_kins, load, obs_template
 
 
 def dump(src_path, target):

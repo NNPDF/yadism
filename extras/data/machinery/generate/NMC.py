@@ -1,7 +1,7 @@
 import pathlib
 import tempfile
 
-from .utils import load, obs_template, check_duplicate_kins
+from .utils import check_duplicate_kins, load, obs_template
 
 
 def dump(src_path, target):
@@ -42,7 +42,7 @@ def dump(src_path, target):
 
         obs["observables"] = {"F2_total": esf}
         obs["TargetDIS"] = "isoscalar" if "_D_" in target.parent.name else "proton"
-    
+
     # TODO: check the `y`-dimension should not be required here?
     check_duplicate_kins(esf, subset=["x", "Q2", "y"])
 
@@ -55,7 +55,13 @@ def dump(src_path, target):
 # renaming
 new_names = {
     "nmc_p": "NMC_NC_EM_P_SIGMARED",
-    "nmc_f2df2p": ["NMC_NC_EM_P_F2", "NMC_NC_EM_D_F2", "NMC_p_D", "NMC_NC_D_P_F2_NUM", "NMC_NC_D_P_F2_DEN"],
+    "nmc_f2df2p": [
+        "NMC_NC_EM_P_F2",
+        "NMC_NC_EM_D_F2",
+        "NMC_p_D",
+        "NMC_NC_D_P_F2_NUM",
+        "NMC_NC_D_P_F2_DEN",
+    ],
     "nmc_al_c": ["NCM_96_NC_Al_C_F2_NUM", "NCM_96_NC_Al_C_F2_DEN"],
     "nmc_be_c": ["NCM_96_NC_Be_C_F2_NUM", "NCM_96_NC_Be_C_F2_DEN"],
     "nmc_c_d": ["NCM_95_NC_C_D_F2_NUM", "NCM_95_NC_C_D_F2_DEN"],

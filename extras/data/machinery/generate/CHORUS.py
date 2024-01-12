@@ -1,4 +1,4 @@
-from .utils import load, obs_template, check_duplicate_kins
+from .utils import check_duplicate_kins, load, obs_template
 
 Mn = 0.9389
 
@@ -21,8 +21,7 @@ def dump(src_path, target):
 
     data = load(src_path, 0, ["Enu", "x", "y"])
     esf = [
-        dict(x=d["x"], y=d["y"], Q2=2.0 * Mn * d["x"] * d["y"] * d["Enu"])
-        for d in data
+        dict(x=d["x"], y=d["y"], Q2=2.0 * Mn * d["x"] * d["y"] * d["Enu"]) for d in data
     ]
     tname = str(target).split("/")[-2]
     obs["TargetDIS"] = "proton" if "SIGRED" in tname else "lead"
