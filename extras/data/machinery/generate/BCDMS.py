@@ -20,7 +20,6 @@ def dump(src_path, _target):
     """
     obs = obs_template.copy()
     src = pathlib.Path(src_path)
-    print(f"**** {src.stem}")
 
     esf = []
     if "bcd_" in src.stem:  # Proton Dataset
@@ -34,7 +33,10 @@ def dump(src_path, _target):
     else:
         data = load(str(src), 0, ["-", "x", "Q2", "y"])
         esf = [dict(x=d["x"], y=d["y"], Q2=d["Q2"]) for d in data]
-    check_duplicate_kins(esf, subset=["x", "Q2", "y"])
+
+    subset_base = ["x", "Q2"]
+    s = subset_base + ["y"] if src.stem == "bcdms_d" else subset_base
+    check_duplicate_kins(esf, subset=s)
 
     obs["prDIS"] = "NC"
     obs["observables"] = {"F2_total": esf}
