@@ -204,9 +204,9 @@ def compute_qcdnum_data(
                     )
                 # F2 and FL
                 else:
-                    w = coupling.get_weight(pid, q2, "VV") + coupling.get_weight(
-                        pid, q2, "AA"
-                    )
+                    w = coupling.get_weight(pid, q2, "VV")
+                    if observables["prDIS"] == "NC":
+                        w += coupling.get_weight(pid, q2, "AA")
                 weights.append(w)
 
             Q2s = [q2] * len(xs)
