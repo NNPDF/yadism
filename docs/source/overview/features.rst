@@ -28,7 +28,7 @@ according to their :ref:`heavyness <theory/intro:Heavyness>` (e.g.
 
 Moreover the following features are all available:
 
-1. :doc:`flavor number schemes <../theory/fns>`: |FFNS|, |ZM-VFNS|, |FONLL|
+1. :doc:`flavor number schemes <../theory/fns>`: |FFNS|, |ZM-VFNS|, |FFNS0|
 2. :doc:`scale variations <../theory/scale-variations>`: independent variations
    of factorization scale :math:`\mu_F` and renormalization scale :math:`\mu_R`
 3. :ref:`target mass corrections <theory/misc:target mass corrections>`
