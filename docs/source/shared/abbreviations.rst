@@ -93,8 +93,8 @@
 .. |FFNS| replace::
    :abbr:`FFNS (Fixed Flavor Number Scheme)`
 
-.. |FFNS0| replace::
-   :abbr:`FFNS0 (Asymptotic Fixed Flavor Number Scheme)`
+.. |FFN0| replace::
+   :abbr:`FFN0 (Asymptotic Fixed Flavor Number Scheme)`
 
 .. |VFNS| replace::
    :abbr:`VFNS (Variable Flavor Number Scheme)`
