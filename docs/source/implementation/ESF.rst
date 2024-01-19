@@ -20,7 +20,7 @@ belong to a :class:`StructureFunction` instance of the respective kind.
 
 The kinds are defined by choosing one option for each of the following classes:
 
-- ``F2`` or ``FL``
+- ``F2``, ``FL``, ``F3``, ``g1``, `gL``, `g4``
 - ``light``, ``charm``, ``bottom``, ``top``, or ``total``
 
 Sometimes an instance of a different kind it is needed to complete the
