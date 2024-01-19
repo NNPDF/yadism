@@ -9,13 +9,11 @@ from . import (
     SMC,
     COMPASS,
     HERMES,
-    HERMES97,
     HERA,
     NMC,
     NUTEV,
     POS,
     SLAC,
-    JLAB,
     utils,
 )
 
@@ -32,13 +30,11 @@ exps = {
         SMC,
         COMPASS,
         HERMES,
-        HERMES97,
         HERA,
         NMC,
         NUTEV,
         POS,
         SLAC,
-        JLAB,
     ]
 }
 

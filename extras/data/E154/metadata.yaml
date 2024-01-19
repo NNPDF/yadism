@@ -1,5 +1,5 @@
-E155:
+E154:
   description: Measurements with Polarised beams
-  nnpdf_id: E155
+  nnpdf_id: E154
   y_label: A1
-  y_label_tex: $g1/f1$
+  y_label_tex: $g1$
