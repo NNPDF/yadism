@@ -151,24 +151,6 @@ class Combiner:
             else:
                 heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
 
-            # Add missing contributions
-            for ihq in range(sfh + 1, 7):
-                if not masses[ihq]:
-                    continue
-                if "FFN0" in self.scheme:
-                    heavy_comps[sfh].extend(
-                        asy.kernels.generate_missing_asy(
-                            self.esf,
-                            nf,
-                            ihq,
-                            self.esf.info.theory["pto_evol"],
-                            icoupl=sfh,
-                        )
-                    )
-                else:
-                    heavy_comps[sfh].extend(
-                        heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
-                    )
             comps.append(heavy_comps[sfh])
         return comps
 

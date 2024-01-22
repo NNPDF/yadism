@@ -5,7 +5,7 @@ from scipy.interpolate import RectBivariateSpline
 
 grid_path = pathlib.Path(__file__).parent / "grids"
 
-x_grid = np.load(grid_path / "x.npy")
+eta_grid = np.load(grid_path / "eta.npy")
 xi_grid = np.load(grid_path / "xi.npy")
 
 interpolators = {}
@@ -20,7 +20,7 @@ def interpolator(coeff, nf, variation):
 
     # load grid
     coeff = np.load(grid_path / grid_name)
-    grid_interpolator = RectBivariateSpline(xi_grid, x_grid, coeff)
+    grid_interpolator = RectBivariateSpline(xi_grid, eta_grid, coeff)
 
     # store result
     interpolators[grid_name] = grid_interpolator
