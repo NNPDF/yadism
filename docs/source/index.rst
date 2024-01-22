@@ -52,7 +52,7 @@ In particular:
    :hidden:
 
    overview/features.rst
-   Tutorials <overview/tutorials.ipynb>
+   overview/tutorials/tutorials.rst
 
 .. toctree::
    :maxdepth: 1
