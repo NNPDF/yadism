@@ -5,7 +5,7 @@ The following tutorials provide a brief introduction on some of the main feature
 These tutorials show how to:
 
 * prepare the observable and theory cards required for any yadism computation
-* compute observables by convoluting yadism predictions to |PDF|
+* compute observables by convoluting yadism predictions with a |PDF|
 * tabulate the yadism predictions into fast-interpolation grids for later use
 
 .. toctree::
