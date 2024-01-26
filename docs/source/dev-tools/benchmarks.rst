@@ -137,16 +137,16 @@ APFEL++
 -------
 
 
-|APFEL++| is a C++ rewriting of the Fortran 77 evolution code |APFEL|. However, |APFEL++| is based on a completely new code design and 
-guarantees a better performance along with a more optimal memory management. 
+|APFEL++| is a C++ rewriting of the Fortran 77 evolution code |APFEL|. However, |APFEL++| is based on a completely new code design and
+guarantees a better performance along with a more optimal memory management.
 |APFEL++| is suitable for a wide range of tasks: from the solution of the DGLAP evolution equations to the computation of DIS
-and single-inclusive-annihilation cross sections. 
+and single-inclusive-annihilation cross sections.
 
-|APFEL++| is also currently interfaced to PARTONS, a software dedicated to the phenomenology of Generalised Parton Distributions (GPDs) and TMDs, 
+|APFEL++| is also currently interfaced to PARTONS, a software dedicated to the phenomenology of Generalised Parton Distributions (GPDs) and TMDs,
 and to xFitter.
 
 
 SF in APFEL++
 ~~~~~~~~~~~~~
 
-The |APFEL++| definitions follows the one of |APFEL|
+The |APFEL++| definitions follow the ones of |APFEL|
