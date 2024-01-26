@@ -76,6 +76,7 @@ recommonmark = "^0.7.1"
 sphinxcontrib-bibtex = "^2.3.0"
 sphinxcontrib-details-directive = "^0.1.0"
 nbsphinx = "^0.8.6"
+ipykernel = "^6.13.0"
 
 [tool.poetry.extras]
 mark = ["banana-hep", "sqlalchemy"]
@@ -104,6 +105,7 @@ docs-view = { "shell" = "cd docs; make view" }
 docs-server = { "shell" = "cd docs; make server" }
 docs-clean = { "shell" = "cd docs; make clean" }
 docs-cleanall = { "shell" = "cd docs; make cleanall" }
+docs-install-nb = { "shell" = "python -m ipykernel install --user --name=$(basename $(poetry env info -p))" }
 
 [tool.poetry-dynamic-versioning]
 enable = true
