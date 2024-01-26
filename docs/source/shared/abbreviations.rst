@@ -141,6 +141,10 @@
 
    <a href="http://eko.readthedocs.io/"><abbr title="Evolutionary Kernel Operators">eko</abbr></a>
 
+.. |pineko| raw:: html
+
+   <a href="http://pineko.readthedocs.io/">pineko</a>
+
 .. |banana| raw:: html
 
    <a href="http://banana-hep.readthedocs.io/"><abbr title="Benchmarking AgaiNst Apfel aNd Anything">banana</abbr></a>
