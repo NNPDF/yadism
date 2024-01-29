@@ -4,6 +4,7 @@ Defines the :py:class:`StructureFunction` class.
 .. todo::
     refer to the sf-esf overview
 """
+
 import logging
 
 from .esf import esf, tmc

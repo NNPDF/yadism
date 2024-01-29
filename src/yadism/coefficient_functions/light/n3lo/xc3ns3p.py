@@ -3,6 +3,7 @@ Note that here the m refers to odd-N, but it actually corresponds to
 :math:`\nu + \bar{\nu}`. Vice versa for the minus combination.
 To generate `c3np3a,c3np3c` we follow `xcdiff3p.f` or the reference paper :cite:`Davies:2016ruz`.
 """
+
 import numba as nb
 import numpy as np
 
@@ -107,8 +108,7 @@ def c3ns3b(y, args):
             + 294.906 * dl1
             - 729.359
         )
-        + nf**2
-        * (64.0 * d81 * dl1**3 - 464.0 * d81 * dl1**2 + 7.67505 * dl1 + 1.00830)
+        + nf**2 * (64.0 * d81 * dl1**3 - 464.0 * d81 * dl1**2 + 7.67505 * dl1 + 1.00830)
     )
     res = dm * res
     return res

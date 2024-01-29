@@ -13,6 +13,7 @@ combined:
 - process + FNS(3) + SV
 - process + IC + FNS(2) + SV
 """
+
 import pathlib
 
 import numpy as np
@@ -273,9 +274,7 @@ class BenchmarkFlavorNumberScheme(ApfelBenchmark):
                 for x in observables.default_card["interpolation_xgrid"][12::3]
             ]
         )
-        kins.extend(
-            [dict(x=0.001, Q2=Q**2) for Q in np.geomspace(1, 1e4, 5).tolist()]
-        )
+        kins.extend([dict(x=0.001, Q2=Q**2) for Q in np.geomspace(1, 1e4, 5).tolist()])
         obs_updates = observables.build(
             [
                 "F2_charm",

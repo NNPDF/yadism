@@ -53,16 +53,20 @@ class RSL:
         self.loc = loc
         if isinstance(args, dict):
             self.args = {
-                k: np.array(args[k], dtype=float)
-                if k in args and args[k] is not None
-                else np.array([], dtype=float)
+                k: (
+                    np.array(args[k], dtype=float)
+                    if k in args and args[k] is not None
+                    else np.array([], dtype=float)
+                )
                 for k in ["reg", "sing", "loc"]
             }
         else:
             self.args = {
-                k: np.array(args, dtype=float)
-                if args is not None
-                else np.array([], dtype=float)
+                k: (
+                    np.array(args, dtype=float)
+                    if args is not None
+                    else np.array([], dtype=float)
+                )
                 for k in ["reg", "sing", "loc"]
             }
 

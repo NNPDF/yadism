@@ -1,4 +1,5 @@
 """Implementation of factorization and renormalization scale variations."""
+
 import logging
 import time
 

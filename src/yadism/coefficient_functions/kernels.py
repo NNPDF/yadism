@@ -3,6 +3,7 @@
 Kernels are a combination of the coupling structure (which parton with which weight)
 and the respective 'raw' mathematical coefficient function.
 """
+
 import copy
 import importlib
 from numbers import Number

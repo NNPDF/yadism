@@ -25,6 +25,7 @@ asked by the user, that is the physical kinematic point at which one would like
 to evaluate the physical structure function).
 
 """
+
 import abc
 
 import numba as nb
