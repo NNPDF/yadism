@@ -1,4 +1,5 @@
 """Common factors see :cite:`Larin:1996wd` (Table 2)."""
+
 import numba as nb
 import numpy as np
 

@@ -1,6 +1,7 @@
 """
 Test the DistributionVec class and its methods.
 """
+
 import numpy as np
 import pytest
 from eko.interpolation import InterpolatorDispatcher, XGrid
