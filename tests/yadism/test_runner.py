@@ -75,7 +75,6 @@ class TestRunner:
             MP=1.0,
             Q0=2.0,
             HQ="POLE",
-            IC=1,
             TMC=0,
             RenScaleVar=True,
             FactScaleVar=False,

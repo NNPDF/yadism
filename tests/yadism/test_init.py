@@ -24,7 +24,6 @@ theory_dict = {
     "NfFF": 3,
     "DAMP": 0,
     "MP": 0.938,
-    "IC": 0,
     "HQ": "POLE",
     "mc": 2,
     "mb": 4,
