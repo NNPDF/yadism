@@ -1,5 +1,4 @@
-"""
-Output related utilities.
+"""Output related utilities.
 
 For the main output (that is the computed |PDF|
 independent |DIS| operator) three outputs are provided:

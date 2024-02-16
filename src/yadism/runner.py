@@ -1,4 +1,4 @@
-"""This module contains the main loop for the DIS calculations.
+r"""This module contains the main loop for the DIS calculations.
 
 There are two ways of using ``yadism``:
 

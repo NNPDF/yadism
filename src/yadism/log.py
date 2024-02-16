@@ -1,3 +1,4 @@
+"""Module controlling the log outputs."""
 import logging
 import os
 
@@ -22,8 +23,19 @@ def setup(
     log_to_stdout=log_to_stdout,
     log_file=log_file,
 ):
-    """
-    Init logging
+    """Initialize log outputs.
+
+    Parameters
+    ----------
+    console: rich.console.Console
+        rich high level console interface
+    log_level: str
+        logging level
+    log_to_stdout: boolean-like
+        switch on/off printing on STD output
+    log_file: str-like
+        redirect output logs to file
+
     """
     logger.setLevel(log_level)
     ekologger.setLevel(log_level)
