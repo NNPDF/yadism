@@ -1,4 +1,5 @@
 """Utilities to help run APFEL++ benchmarks."""
+
 import numpy as np
 from eko import basis_rotation as br
 
@@ -62,7 +63,7 @@ def map_apfelpy_sf(init, observables, fns):
         "F2": init.InitializeF2NCObjectsMassive,
         "FL": init.InitializeFLNCObjectsMassive,
     }
-    MAP_FFNS0_NC = {
+    MAP_FFN0_NC = {
         "F2": init.InitializeF2NCObjectsMassiveZero,
         "FL": init.InitializeFLNCObjectsMassiveZero,
     }
@@ -76,8 +77,8 @@ def map_apfelpy_sf(init, observables, fns):
         return MAP_ZM_NC
     if fns == "FFNS":
         return MAP_FFNS_NC
-    if fns == "FFNS0":
-        return MAP_FFNS0_NC
+    if fns == "FFN0":
+        return MAP_FFN0_NC
 
 
 def couplings(ap, pids, proc_type, obs_name):
@@ -100,7 +101,6 @@ def couplings(ap, pids, proc_type, obs_name):
 
     """
 
-    # Effective charges
     def _fBq(Q):
         if proc_type == "EM":
             # For Q=0 we only have electric charges
@@ -300,7 +300,7 @@ def compute_apfelpy_data(theory, observables, pdf):
 
     # Setting the theory
     fns = theory["FNS"]
-    if fns not in ["ZM-VFNS", "FFNS", "FFNS0"]:
+    if fns not in ["ZM-VFNS", "FFNS", "FFN0"]:
         raise ValueError(f"APFEL++ does not contain {fns}.")
 
     # Perturbative Order

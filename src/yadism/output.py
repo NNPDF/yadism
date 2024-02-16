@@ -12,6 +12,7 @@ independent |DIS| operator) three outputs are provided:
   interfacing to other codes (but *no loading* is supported from this format)
 
 """
+
 import copy
 import pathlib
 import tarfile

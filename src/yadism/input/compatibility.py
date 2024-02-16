@@ -111,7 +111,7 @@ def update_fns(theory):
     if fns == "ZM-VFNS":
         for fl in hqfl:
             theory[f"ZM{fl}"] = True
-    elif "FONLL" in fns:
+    elif fns == "FONLL-FFNS" or fns == "FONLL-FFN0":
         # enforce correct settings moving all thresholds to 0 or oo
         for k, fl in enumerate(hqfl):
             if k + 4 <= nf:
@@ -126,7 +126,7 @@ def update_fns(theory):
                 # to produce FONLL
                 theory[f"k{fl}Thr"] = np.inf
                 theory[f"ZM{fl}"] = False
-    elif "FFN" in fns:
+    elif fns == "FFNS" or fns == "FFN0":
         # enforce correct settings moving all thresholds to 0 or oo
         for k, fl in enumerate(hqfl):
             if k + 4 <= nf:

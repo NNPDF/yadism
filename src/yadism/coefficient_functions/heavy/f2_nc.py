@@ -1,4 +1,5 @@
 """Massive :math:`F_2^{NC}` components."""
+
 import LeProHQ
 import numpy as np
 

@@ -1,4 +1,5 @@
-"""Common factors see :ref:`Larin:1996wd` (Table 2)"""
+"""Common factors see :cite:`Larin:1996wd` (Table 2)."""
+
 import numba as nb
 import numpy as np
 
@@ -10,7 +11,7 @@ d243 = 1.0 / 243.0
 
 
 def nc_color_factor(coupling_constants, nf, channel, skip_heavylight):
-    """Returns the |N3LO| color factor.
+    """Compute a |N3LO| color factor.
 
     Parameters
     ----------
@@ -49,7 +50,7 @@ def nc_color_factor(coupling_constants, nf, channel, skip_heavylight):
 
 @nb.njit("f8(f8[:])", cache=True)
 def fl(nc_weights):
-    """:math:`fl_{11}` Non Singlet as defined in :ref:`Larin:1996wd` (Table 2) and generalized for |NC|"""
+    """:math:`fl_{11}` Non Singlet as defined in :cite:`Larin:1996wd` (Table 2) and generalized for |NC|."""
     # fl = [2.0, 0.5, 0.0, 0.5, 0.2, 0.5]
     avg = np.mean(nc_weights)
     return 3 * avg
@@ -57,7 +58,7 @@ def fl(nc_weights):
 
 @nb.njit("f8(f8[:])", cache=True)
 def fls(nc_weights):
-    """:math:`fl_{11}` pure Singlet as defined in :ref:`Larin:1996wd` (Table 2) and generalized for |NC|"""
+    """:math:`fl_{11}` pure Singlet as defined in :cite:`Larin:1996wd` (Table 2) and generalized for |NC|."""
     avg_2 = np.mean(nc_weights) ** 2
     sum_w2 = np.mean(nc_weights**2)
     # fls = [1.0, 0.1, 0.0, 0.1, 0.01818181818, 0.1]
@@ -66,5 +67,5 @@ def fls(nc_weights):
 
 @nb.njit("f8(f8[:])", cache=True)
 def flg(nc_weights):
-    """:math:`fl_{11}^g` pure Singlet as defined in :ref:`Larin:1996wd` (Table 2) and generalized for |NC|"""
+    """:math:`fl_{11}^g` pure Singlet as defined in :cite:`Larin:1996wd` (Table 2) and generalized for |NC|."""
     return fls(nc_weights)

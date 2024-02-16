@@ -1,4 +1,5 @@
 """Generator for positivity datasets."""
+
 import copy
 
 import yaml

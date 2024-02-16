@@ -1,4 +1,5 @@
 """Polarized, asymptotic coefficient functions from :cite:`Bierenbaum:2022biv`."""
+
 import numba as nb
 import numpy as np
 

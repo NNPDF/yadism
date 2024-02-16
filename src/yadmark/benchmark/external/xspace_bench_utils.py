@@ -1,4 +1,5 @@
 """Benchmark to xspace_bench (the original FONLL implementation)."""
+
 import numpy as np
 from eko.couplings import Couplings, couplings_mod_ev
 from eko.io import dictlike, runcards, types

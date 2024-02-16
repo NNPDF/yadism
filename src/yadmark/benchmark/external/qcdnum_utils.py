@@ -1,4 +1,5 @@
 """Benchmark to QCDNUM."""
+
 import pathlib
 
 import numpy as np
