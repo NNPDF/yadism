@@ -124,16 +124,12 @@ class Runner:
             sv_manager=sv_manager,
         )
         # pass theory params
-        intrinsic_range = []
-        if theory["IC"] == 1:
-            intrinsic_range.append(4)
         theory_params = dict(
             pto=pto,
             pto_evol=pto_evol,
             scheme=theory["FNS"],
             nf_ff=theory["NfFF"],
             ZMq=(new_theory["ZMc"], new_theory["ZMb"], new_theory["ZMt"]),
-            intrinsic_range=intrinsic_range,
             m2hq=masses,
             TMC=theory["TMC"],
             target=new_observables["TargetDIS"],
@@ -151,7 +147,6 @@ class Runner:
         )
         self.configs = RunnerConfigs(theory=theory_params, managers=managers)
         logger.info("FNS: %s, NfFF: %d", theory["FNS"], theory["NfFF"])
-        logger.info("Intrinsic: %s", intrinsic_range)
         logger.info(
             "projectile: %s, target: {Z: %g, A: %g}",
             new_observables["ProjectileDIS"],
