@@ -138,9 +138,7 @@ class Combiner:
                     ),
                 )
             else:
-                heavy_comps[sfh].extend(
-                    intrinsic.kernels.generate(self.esf, ihq=sfh)
-                )
+                heavy_comps[sfh].extend(intrinsic.kernels.generate(self.esf, ihq=sfh))
 
             if "FFN0" in self.scheme:
                 heavy_comps[sfh].extend(
