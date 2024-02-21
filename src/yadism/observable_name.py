@@ -5,6 +5,7 @@ them. For instance, it checks what kind of observable is being dealt
 with and whether or not the given flavor is heavy.
 
 """
+
 fake_kind = "??"
 sfs = ["F2", "FL", "F3", "g1", "gL", "g4"]
 # xs = ["XSreduced", "XSyreduced"]

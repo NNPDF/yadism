@@ -1,4 +1,5 @@
 """Module controlling the log outputs."""
+
 import logging
 import os
 

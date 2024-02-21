@@ -1,4 +1,5 @@
 """Yet Another DIS Module."""
+
 from . import version
 from .runner import Runner
 
