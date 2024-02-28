@@ -1,0 +1,5 @@
+COMPASS15:
+  description: Measurements with Polarised beams
+  nnpdf_id: COMPASS15
+  y_label: A1
+  y_label_tex: $g1$
