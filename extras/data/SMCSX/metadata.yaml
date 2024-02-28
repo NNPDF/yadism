@@ -1,0 +1,5 @@
+SMCSX:
+  description: Measurements with Polarised beams
+  nnpdf_id: SMCSX
+  y_label: A1
+  y_label_tex: $g1$
