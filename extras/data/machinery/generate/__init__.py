@@ -62,7 +62,7 @@ def main(args):
     for i in args.inputs:
         path = utils.runcards.parent / i
         exp = exps[
-            list(filter(lambda e, path=path: e in path.parent.name, exps.keys()))[0]
+            list(filter(lambda e, path=path: e == path.parent.name, exps.keys()))[0]
         ]
         try:
             new_name = exp.new_names[path.stem]
