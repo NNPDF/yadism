@@ -1,6 +1,7 @@
 """Note, the factor `fl11` is disabled for charged currents according to `xcdiff3p.f`.
 To generate `c2nm3a,c2nm3c` we follow `xcdiff3p.f` or the reference paper :cite:`Davies:2016ruz`.
 """
+
 import numba as nb
 import numpy as np
 
@@ -97,8 +98,7 @@ def c2ns3b(y, args):
             + 294.906 * dl1
             - 729.359
         )
-        + nf**2
-        * (64.0 * d81 * dl1**3 - 464.0 * d81 * dl1**2 + 7.67505 * dl1 + 1.00830)
+        + nf**2 * (64.0 * d81 * dl1**3 - 464.0 * d81 * dl1**2 + 7.67505 * dl1 + 1.00830)
     )
     res = dm * res
     return res

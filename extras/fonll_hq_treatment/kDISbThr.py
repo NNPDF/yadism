@@ -1,4 +1,5 @@
 """Vary `kbThr` inside yadism."""
+
 import copy
 import pathlib
 

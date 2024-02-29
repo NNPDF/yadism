@@ -1,4 +1,5 @@
 """Benchmarking tools"""
+
 import pathlib
 import traceback
 

@@ -30,7 +30,6 @@ also incoming projectiles, different type of currents, SV and TMC.
    :align: center
 
 .. [#f1] Only for NfFF=3
-.. [#f2] Only for charm threshold (FFNS3 to FFNS4 interpolation)
 
 .. csv-table:: Banchmarks coverage
    :file: ./bench-coverage.csv
@@ -131,5 +130,23 @@ In |xspace-bench| |SF| are defined as follows:
 
 Given these definitions, benchmarks with `yadism` are possible only in the region
 :math:`m^2_{charm} < Q^2 < m^2_{bottom}` selecting  either |ZM-VFNS| with :math:`F_X^{total}`
-or |FFNS| with NfFF=3 and FONLL with NfFF=4.
+or |FFNS| with NfFF=3.
 FONLL is implemented in the so called `scheme A` with and without damping factor.
+
+APFEL++
+-------
+
+
+|APFEL++| is a C++ rewriting of the Fortran 77 evolution code |APFEL|. However, |APFEL++| is based on a completely new code design and
+guarantees a better performance along with a more optimal memory management.
+|APFEL++| is suitable for a wide range of tasks: from the solution of the DGLAP evolution equations to the computation of DIS
+and single-inclusive-annihilation cross sections.
+
+|APFEL++| is also currently interfaced to PARTONS, a software dedicated to the phenomenology of Generalised Parton Distributions (GPDs) and TMDs,
+and to xFitter.
+
+
+SF in APFEL++
+~~~~~~~~~~~~~
+
+The |APFEL++| definitions follow the ones of |APFEL|

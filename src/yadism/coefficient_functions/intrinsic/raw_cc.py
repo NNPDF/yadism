@@ -16,26 +16,18 @@ def omx(y):
 def f2sv(y):
     return (
         -0.3333333333333333
-        * (
-            (-1 + y)
-            * (15 + 4 * np.pi**2 - 12 * li2(y / (-1 + y)) - 9 * np.log(1 - y))
-        )
+        * ((-1 + y) * (15 + 4 * np.pi**2 - 12 * li2(y / (-1 + y)) - 9 * np.log(1 - y)))
         / y
     )
 
 
 def flsv(y):
-    return (15 + 4 * np.pi**2 - 12 * li2(y / (-1 + y)) - 3 * np.log(1 - y)) / (
-        3.0 * y
-    )
+    return (15 + 4 * np.pi**2 - 12 * li2(y / (-1 + y)) - 3 * np.log(1 - y)) / (3.0 * y)
 
 
 def f3sv(y):
     return (
-        -5
-        - (4 * np.pi**2) / 3.0
-        + 4 * li2(y / (-1 + y))
-        + (3 - 2 / y) * np.log(1 - y)
+        -5 - (4 * np.pi**2) / 3.0 + 4 * li2(y / (-1 + y)) + (3 - 2 / y) * np.log(1 - y)
     )
 
 

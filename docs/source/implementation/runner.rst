@@ -59,10 +59,6 @@ Some **handlers objects** are used to dispatch some isolated services. They are
 mostly not defined internally in :mod:`yadism` package, but mainly imported from
 :mod:`eko`.
 
-Another common trait that characterize these handlers is the presence of a
-method :func:`from_dict`, with which the object can be created loading the
-required options directly from a suitable dictionary (that in a :class:`Runner`
-object is always either `theory` or `observable` dictionary).
 
 Interpolator Dispatcher
 ~~~~~~~~~~~~~~~~~~~~~~~

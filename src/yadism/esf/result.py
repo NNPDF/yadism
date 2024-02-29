@@ -86,8 +86,8 @@ class ESFResult:
             lnF = 1.0 if o[3] == 0 else (np.log((1 / xiF) ** 2)) ** o[3]
             lnR = 1.0 if o[2] == 0 else (np.log((1 / xiR) ** 2)) ** o[2]
             prefactor = (a_s ** o[0]) * (alph_qed ** o[1]) * lnR * lnF
-            res += prefactor * np.einsum("aj,aj", v, pdfs)
-            err += prefactor * np.einsum("aj,aj", e, pdfs)
+            res += prefactor * np.einsum("aj,aj", v, pdfs, optimize="optimal")
+            err += prefactor * np.einsum("aj,aj", e, pdfs, optimize="optimal")
 
         return dict(x=self.x, Q2=self.Q2, result=res, error=err)
 

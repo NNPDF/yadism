@@ -1,4 +1,5 @@
 """Export predictions to PineAPPL."""
+
 import json
 
 import numpy as np

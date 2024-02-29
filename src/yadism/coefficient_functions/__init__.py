@@ -1,4 +1,5 @@
 """Collect all kernels for given |FNS|."""
+
 import numpy as np
 from eko.matchings import nf_default
 
@@ -38,7 +39,6 @@ class Combiner:
     def __init__(self, esf):
         self.esf = esf
         self.masses = {4 + i: not mass for i, mass in enumerate(esf.info.ZMq)}
-        self.intrinsic = esf.info.intrinsic_range
         self.obs_name = esf.info.obs_name
         self.nf = nf_default(esf.Q2, esf.info.threshold)
         self.target = esf.info.target
@@ -130,17 +130,15 @@ class Combiner:
             if hq not in (0, sfh):
                 continue
 
-            if sfh in self.intrinsic:  # heavy quark is intrinsic
-                if "FFN0" in self.scheme:
-                    heavy_comps[sfh].extend(
-                        asy.kernels.generate_intrinsic_asy(
-                            self.esf, nf, self.esf.info.theory["pto_evol"], ihq=sfh
-                        ),
-                    )
-                else:
-                    heavy_comps[sfh].extend(
-                        intrinsic.kernels.generate(self.esf, ihq=sfh)
-                    )
+            # heavy quark is intrinsic
+            if "FFN0" in self.scheme:
+                heavy_comps[sfh].extend(
+                    asy.kernels.generate_intrinsic_asy(
+                        self.esf, nf, self.esf.info.theory["pto_evol"], ihq=sfh
+                    ),
+                )
+            else:
+                heavy_comps[sfh].extend(intrinsic.kernels.generate(self.esf, ihq=sfh))
 
             if "FFN0" in self.scheme:
                 heavy_comps[sfh].extend(
@@ -151,24 +149,6 @@ class Combiner:
             else:
                 heavy_comps[sfh].extend(heavy.kernels.generate(self.esf, nf, ihq=sfh))
 
-            # Add missing contributions
-            for ihq in range(sfh + 1, 7):
-                if not masses[ihq]:
-                    continue
-                if "FFN0" in self.scheme:
-                    heavy_comps[sfh].extend(
-                        asy.kernels.generate_missing_asy(
-                            self.esf,
-                            nf,
-                            ihq,
-                            self.esf.info.theory["pto_evol"],
-                            icoupl=sfh,
-                        )
-                    )
-                else:
-                    heavy_comps[sfh].extend(
-                        heavy.kernels.generate_missing(self.esf, nf, ihq, icoupl=sfh)
-                    )
             comps.append(heavy_comps[sfh])
         return comps
 

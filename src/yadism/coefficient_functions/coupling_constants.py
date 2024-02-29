@@ -1,4 +1,5 @@
 """Coupling between QCD particles and EW particles."""
+
 import logging
 
 import numpy as np

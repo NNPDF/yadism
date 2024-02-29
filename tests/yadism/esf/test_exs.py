@@ -25,11 +25,15 @@ def test_xs_coeffs_unpolarized():
     assert xs_coeffs_unpolarized("XSHERANCAVG", x=0.5, Q2=10, y=0.1)[2] == 0.0
 
     assert (
-        xs_coeffs_unpolarized("XSHERANC", x=0.5, Q2=10, y=0.1, params=dict(projectilePID=-1))[0]
+        xs_coeffs_unpolarized(
+            "XSHERANC", x=0.5, Q2=10, y=0.1, params=dict(projectilePID=-1)
+        )[0]
         == 1.0
     )
 
-    heracc = xs_coeffs_unpolarized("XSHERACC", x=0.5, Q2=10, y=0.1, params=dict(projectilePID=1))
+    heracc = xs_coeffs_unpolarized(
+        "XSHERACC", x=0.5, Q2=10, y=0.1, params=dict(projectilePID=1)
+    )
     assert heracc[0] + heracc[2] == 1 / 2.0
 
     chorus = xs_coeffs_unpolarized(
@@ -89,6 +93,7 @@ def test_xs_coeffs_polarized():
 
     with pytest.raises(ValueError):
         xs_coeffs_polarized("dflgl")
+
 
 def test_alpha_qed():
     xs = XS("XSHERANC", MockRunner(MockCouplingConstants(-1)))

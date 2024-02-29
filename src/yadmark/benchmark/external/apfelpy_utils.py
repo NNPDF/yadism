@@ -1,11 +1,12 @@
 """Utilities to help run APFEL++ benchmarks."""
+
 import numpy as np
 from eko import basis_rotation as br
 
 # Q2 knots specs
 NQ = 250
-QMin = 1
-QMax = 200
+QMIN = 1
+QMAX = 200
 
 # Map observables names to APFEL++ methods
 MAP_HEAVINESS = {
@@ -15,6 +16,69 @@ MAP_HEAVINESS = {
     "light": 0,  # TODO: Check combination
     "total": 0,
 }
+
+PROJECTILE_PIDS = {
+    "electron": 11,
+    "positron": -11,
+    "neutrino": 12,
+    "antineutrino": -12,
+}
+
+
+def map_apfelpy_sf(init, observables, fns):
+    """Get required structure function.
+
+    Parameters
+    ----------
+    init: ap.initializers
+        Apfel++ initializers
+    observables: dict
+        observables runcard
+    fns: str
+        flavor number scheme
+
+    Returns
+    -------
+        Apfel++ structure function initalizer
+    """
+    MAP_ZM_CC = {
+        "F2m": init.InitializeF2CCMinusObjectsZM,
+        "FLm": init.InitializeFLCCMinusObjectsZM,
+        "F3m": init.InitializeF3CCMinusObjectsZM,
+        "F2p": init.InitializeF2CCPlusObjectsZM,
+        "FLp": init.InitializeFLCCPlusObjectsZM,
+        "F3p": init.InitializeF3CCPlusObjectsZM,
+    }
+
+    MAP_ZM_NC = {
+        "F2": init.InitializeF2NCObjectsZM,
+        "FL": init.InitializeFLNCObjectsZM,
+        "F3": init.InitializeF3NCObjectsZM,
+        "g1": init.Initializeg1NCObjectsZM,
+        "gL": init.InitializegLNCObjectsZM,
+        "g4": init.Initializeg4NCObjectsZM,
+    }
+
+    MAP_FFNS_NC = {
+        "F2": init.InitializeF2NCObjectsMassive,
+        "FL": init.InitializeFLNCObjectsMassive,
+    }
+    MAP_FFN0_NC = {
+        "F2": init.InitializeF2NCObjectsMassiveZero,
+        "FL": init.InitializeFLNCObjectsMassiveZero,
+    }
+
+    if observables["prDIS"] == "CC":
+        if PROJECTILE_PIDS[observables["ProjectileDIS"]] > 0:
+            return MAP_ZM_CC
+        raise ValueError(f"{observables['ProjectileDIS']} not available in Apfel++")
+
+    if fns == "ZM-VFNS":
+        return MAP_ZM_NC
+    if fns == "FFNS":
+        return MAP_FFNS_NC
+    if fns == "FFN0":
+        return MAP_FFN0_NC
 
 
 def couplings(ap, pids, proc_type, obs_name):
@@ -37,7 +101,6 @@ def couplings(ap, pids, proc_type, obs_name):
 
     """
 
-    # Effective charges
     def _fBq(Q):
         if proc_type == "EM":
             # For Q=0 we only have electric charges
@@ -76,9 +139,9 @@ def tabulate_nc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
         SF objects in Zero-Mass Flavour Number Scheme
     nq: int
         number of Q points
-    QMin: float
+    qmin: float
         minimal value of Q
-    QMax: float
+    qmax: float
         maximal value of Q
     thrs: list
         list of quark masses and thresholds
@@ -119,9 +182,9 @@ def tabulate_cc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
         list of SF objects in Zero-Mass Flavour Number Scheme
     nq: int
         number of Q points
-    QMin: float
+    qmin: float
         minimal value of Q
-    QMax: float
+    qmax: float
         maximal value of Q
     thrs: list
         list of quark masses and thresholds
@@ -226,55 +289,42 @@ def compute_apfelpy_data(theory, observables, pdf):
         theory["mb"] * theory["kbThr"],
         theory["mt"] * theory["ktThr"],
     ]
+    masses = [
+        0,
+        0,
+        0,
+        theory["mc"],
+        theory["mb"],
+        theory["mt"],
+    ]
 
     # Setting the theory
     fns = theory["FNS"]
-    if fns != "ZM-VFNS":
-        raise ValueError("APFEL++ benchmark contains only ZM-VFNS.")
+    if fns not in ["ZM-VFNS", "FFNS", "FFN0"]:
+        raise ValueError(f"APFEL++ does not contain {fns}.")
 
     # Perturbative Order
     pto = theory["PTO"]
 
     # Couplings
-    alphas = ap.AlphaQCD(theory["alphas"], theory["Qref"], thrs, pto)
-    alphas = ap.TabulateObject(alphas, 2 * NQ, QMin, QMax, 3)
+    alphas = ap.AlphaQCD(theory["alphas"], theory["Qref"], masses, thrs, pto)
+    alphas = ap.TabulateObject(alphas, 2 * NQ, QMIN, QMAX, 3)
 
     # Map Yadism observables to Apfel++ Objects
-    init = ap.initializers
-    if observables["prDIS"] == "CC":
-        projectile_pids = {
-            "electron": 11,
-            "positron": -11,
-            "neutrino": 12,
-            "antineutrino": -12,
-        }
-        if projectile_pids[observables["ProjectileDIS"]] > 0:
-            apfelpy_structure_functions = {
-                "F2m": init.InitializeF2CCMinusObjectsZM,
-                "FLm": init.InitializeFLCCMinusObjectsZM,
-                "F3m": init.InitializeF3CCMinusObjectsZM,
-                "F2p": init.InitializeF2CCPlusObjectsZM,
-                "FLp": init.InitializeFLCCPlusObjectsZM,
-                "F3p": init.InitializeF3CCPlusObjectsZM,
-            }
-    else:
-        apfelpy_structure_functions = {
-            "F2": init.InitializeF2NCObjectsZM,
-            "FL": init.InitializeFLNCObjectsZM,
-            "F3": init.InitializeF3NCObjectsZM,
-            "g1": init.Initializeg1NCObjectsZM,
-            "gL": init.InitializegLNCObjectsZM,
-            "g4": init.Initializeg4NCObjectsZM,
-        }
+    apfelpy_structure_functions = map_apfelpy_sf(ap.initializers, observables, fns)
 
     # Initialize DGLAP Object
-    dglapobj = ap.initializers.InitializeDglapObjectsQCD(xgrid, thrs)
+    dglapobj = ap.initializers.InitializeDglapObjectsQCD(xgrid, masses, thrs)
 
     apf_tab = {}
     for obs_name, kinematics in observables["observables"].items():
         apf_tab[obs_name] = []
 
         sf_name, heaviness = obs_name.split("_")
+        if fns != "ZM-VFNS" and heaviness == "total":
+            raise ValueError(
+                "total is not provided in APFEL++ for massive calculations."
+            )
         pids = MAP_HEAVINESS[heaviness]
 
         # Define the couplings
@@ -300,14 +350,15 @@ def compute_apfelpy_data(theory, observables, pdf):
                 alphas.Evaluate,
             )
             # Tabulate PDFs
-            tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, NQ, QMin, QMax, 3)
+            tabulatedPDFs = ap.TabulateObjectSetD(evolvedPDFs, NQ, QMIN, QMAX, 3)
 
             # Initialize structure functions
+            eff_thrs = thrs if fns == "ZM_VFNS" else masses
             if observables["prDIS"] == "CC":
                 sfobj = []
                 for sign in ["p", "m"]:
                     tmp_sf = apfelpy_structure_functions[f"{sf_name}{sign}"](
-                        xgrid, thrs
+                        xgrid, eff_thrs
                     )
                     sfobj.append(
                         ap.builders.BuildStructureFunctions(
@@ -320,9 +371,9 @@ def compute_apfelpy_data(theory, observables, pdf):
                             theory["XIF"],
                         )
                     )
-                tab_sf = tabulate_cc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
+                tab_sf = tabulate_cc(ap, obs_name, sfobj, NQ, QMIN, QMAX, thrs)
             else:
-                sfobj = apfelpy_structure_functions[sf_name](xgrid, thrs)
+                sfobj = apfelpy_structure_functions[sf_name](xgrid, eff_thrs)
                 sfobj = ap.builders.BuildStructureFunctions(
                     sfobj,
                     tabulatedPDFs.EvaluateMapxQ,
@@ -332,10 +383,16 @@ def compute_apfelpy_data(theory, observables, pdf):
                     theory["XIR"],
                     theory["XIF"],
                 )
-                tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMin, QMax, thrs)
+                tab_sf = tabulate_nc(ap, obs_name, sfobj, NQ, QMIN, QMAX, thrs)
 
+            # shift convolution for massive
+            x_eval = x
+            if fns == "FFNS" and heaviness != "light":
+                m_h = masses[MAP_HEAVINESS[heaviness] - 1]
+                eta = Q2 / (Q2 + 4 * m_h**2)
+                x_eval = x / eta
             # compute the actual result
-            result = tab_sf.EvaluatexQ(x, np.sqrt(Q2))
+            result = tab_sf.EvaluatexQ(x_eval, np.sqrt(Q2))
 
             # take over the kinematics
             r = kin.copy()

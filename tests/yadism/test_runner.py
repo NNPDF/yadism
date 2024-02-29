@@ -9,7 +9,6 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 import yadism.input.compatibility
-import yadism.input.inspector
 from yadism import log, runner, sf
 
 
@@ -54,18 +53,9 @@ class TestRunner:
     @given(st.data())
     @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
     def test_init(self, monkeypatch, data):
-        @dataclasses.dataclass
-        class FakeInspector:
-            theory: dict
-            observables: dict
-
-            def perform_all_checks(self):
-                pass
-
         def fake_update(*args):
             return args
 
-        monkeypatch.setattr(yadism.input.inspector, "Inspector", FakeInspector)
         monkeypatch.setattr(yadism.input.compatibility, "update", fake_update)
 
         pto = data.draw(st.integers(0, 3))
@@ -85,7 +75,6 @@ class TestRunner:
             MP=1.0,
             Q0=2.0,
             HQ="POLE",
-            IC=1,
             TMC=0,
             RenScaleVar=True,
             FactScaleVar=False,
@@ -94,6 +83,7 @@ class TestRunner:
             MZ=100.0,
             GF=1.0,
             FONLLParts="full",
+            n3lo_cf_variation=0,
         )
         xgrid = np.geomspace(1e-5, 1.0, 6)
         observables = dict(

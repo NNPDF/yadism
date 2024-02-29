@@ -11,9 +11,10 @@ from ..partonic_channel import RSL
 class PartonicChannelAsy(pc.PartonicChannel):
     """Massless limit of a coeficient function."""
 
-    def __init__(self, *args, m2hq):
+    def __init__(self, *args, m2hq, n3lo_cf_variation=0):
         super().__init__(*args)
         self.L = np.log(self.ESF.Q2 / m2hq)
+        self.n3lo_cf_variation = n3lo_cf_variation
 
 
 class PartonicChannelAsyLLIntrinsic(PartonicChannelAsy):

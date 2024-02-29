@@ -1,4 +1,5 @@
 """Benchmark yadism against apfel."""
+
 import pathlib
 
 dataroot = pathlib.Path(__file__).parents[2]

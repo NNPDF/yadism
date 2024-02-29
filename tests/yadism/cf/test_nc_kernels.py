@@ -29,6 +29,7 @@ class MockSF:
         self.coupling_constants = MockCouplingConstants()
         self.m2hq = [1.0, 2.0, 3.0]
         self.threshold = Atlas(matching_scales=self.m2hq, origin=(1.65**2, 4))
+        self.theory = {"n3lo_cf_variation": 0}
 
 
 class MockESF:

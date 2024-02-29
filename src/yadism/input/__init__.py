@@ -1,15 +1,4 @@
 """
-Goal
-----
-
-These subpackage has the main goal of parsing and validate user input, in
-particular the following three operations are performed:
-
-#. **constraints**: constraints on single fields are enforced, raising an error
-    for each violation
-#. **cross-constraints**: constraints involving multiple fields are enforced,
-    raising an error for each violation
-
 Note
 ----
 

@@ -1,4 +1,5 @@
 """Localized implementation of BenchmarkRunner."""
+
 import numpy as np
 import pandas as pd
 from banana.benchmark.runner import BenchmarkRunner

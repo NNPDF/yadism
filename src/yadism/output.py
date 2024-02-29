@@ -1,5 +1,4 @@
-"""
-Output related utilities.
+"""Output related utilities.
 
 For the main output (that is the computed |PDF|
 independent |DIS| operator) three outputs are provided:
@@ -13,6 +12,7 @@ independent |DIS| operator) three outputs are provided:
   interfacing to other codes (but *no loading* is supported from this format)
 
 """
+
 import copy
 import pathlib
 import tarfile

@@ -28,6 +28,7 @@ unpolarized :ref:`kinds<kinds def>`).
 
 FFNS
 ----
+
 As the name |FFNS| suggests we are considering a fixed number of flavors
 :math:`n_f=n_l+1` with :math:`n_l` light flavors and **1 (and only 1) heavy
 flavor** with a finite mass :math:`m`. The number of light quarks :math:`n_l` is
@@ -119,12 +120,26 @@ This scheme is adequate for :math:`Q^2\gg m^2`.
 patches in which :math:`n_f` is constant (and they are of course different from
 the quark masses, that are always considered to be zero or infinite).
 
+FFN0
+----
+
+This is the high-virtuality limit :math:`Q^2 \gg m^2` of the |FFNS|, where only the
+collinear logs :math:`\log(Q^2/m^2)` are retained, but all power-like heavy quark mass
+corrections are neglected. These collinear logs are the finite expansion of the
+|DGLAP| evolution if the heavy quark would be considered massless. Thus these
+terms are the overlap between the |FFNS| using :math:`n_l` light quarks and one
+heavy quark and |FFNS| using :math:`n_l+1` light quarks.
+These terms are needed in the construction of the FONLL scheme :cite:`forte-fonll`.
+
+
 FONLL
 -----
-| FONLL :cite:`forte-fonll` is a |GM-VFNS| that includes parts of the |DGLAP| equations into the
-  matching conditions.
-| That is: two different schemes are considered, and they are matched at a given
-  scale, accounting for the resummation of collinear logarithms.
+
+FONLL :cite:`forte-fonll` is a |GM-VFNS| that includes parts of the |DGLAP| equations into the
+matching conditions, i.e., two different schemes are considered, and they are matched at a given
+scale, accounting for the resummation of collinear logarithms.
+Hence, FONLL relies on both coefficient functions and evolution kernels, so yadism is not
+solely responsible for the scheme, but also |eko| and |pineko|.
 
 In the original paper the prescription is only presented for the charm
 contributions, but we extend it here to an arbitrary quark.

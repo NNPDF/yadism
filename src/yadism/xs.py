@@ -1,3 +1,10 @@
+"""Module that computes a physical observable.
+
+The observable could be structure functions or some linear
+combination of them.
+
+"""
+
 import logging
 
 from .esf import exs
@@ -6,8 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class CrossSection:
-    """
-    Represents an abstract structure function.
+    r"""Represents an abstract structure function.
 
     This class acts as an intermediate handler between the :py:class:`Runner`
     exposed to the outside and the :py:class:`EvaluatedStructureFunction`
@@ -15,10 +21,10 @@ class CrossSection:
 
     Parameters
     ----------
-        obs_name : ObservableName
-            name
-        runner : yadism.runner.Runner
-            parent reference
+    obs_name : ObservableName
+        name
+    runner : yadism.runner.Runner
+        parent reference
     """
 
     def __init__(self, obs_name, runner):
@@ -36,16 +42,17 @@ class CrossSection:
 
     @property
     def elements(self):
+        """Collect the evaluated observable."""
         return self.exss
 
     def load(self, kinematic_configs):
-        """
-        Loads all kinematic configurations from the run card.
+        r"""Load all kinematic configurations from the run card.
 
         Parameters
         ----------
-            kinematic_configs : list(dict)
-                run card input
+        kinematic_configs : list(dict)
+            run card input
+
         """
         self.exss = []
         for kinematics in kinematic_configs:
@@ -56,15 +63,30 @@ class CrossSection:
             )
 
     def get_esf(self, obs_name, kin):
-        return self.runner.get_sf(obs_name).get_esf(obs_name, kin, use_raw=False)
+        r"""Get the observable in question for given kinematics.
 
-    def get_result(self):
-        """
-        Collects the results from all childrens.
+        Parameters
+        ----------
+        obs_name: str
+            name of the observable
+        kin: dict
+            contains the kinematic specs
 
         Returns
         -------
-            output : list(ESFResult)
-                all children outputs
+        get_sf:
+            observable evaluated on some kinematics
+
+        """
+        return self.runner.get_sf(obs_name).get_esf(obs_name, kin, use_raw=False)
+
+    def get_result(self):
+        r"""Collect the results from all childrens.
+
+        Returns
+        -------
+        output : list(ESFResult)
+            all children outputs
+
         """
         return list(elem.get_result() for elem in self.elements)
