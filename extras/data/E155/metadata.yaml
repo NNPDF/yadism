@@ -1,5 +1,23 @@
-E155:
-  description: Measurements with Polarised beams
-  nnpdf_id: E155
-  y_label: G1F1
-  y_label_tex: $g1/f1$
+nnpdf_id: null
+fktable_id: null
+hepdata: https://www.hepdata.net/record/ins530798
+
+E155_NC_9GEV_EN_G1:
+  description: polarized structure function $g_1$ in E155 with neutron target
+  y_label: g1
+  y_label_tex: $2xg_1$
+
+E155_NC_9GEV_EN_F1:
+  description: polarized structure function $F_1$ in E155 with neutron target
+  y_label: F1
+  y_label_tex: $2xF_1$
+
+E155_NC_9GEV_EP_G1:
+  description: polarized structure function $g_1$ in E155 with proton target
+  y_label: g1
+  y_label_tex: $2xg_1$
+
+E155_NC_9GEV_EP_F1:
+  description: polarized structure function $F_1$ in E155 with proton target
+  y_label: F1
+  y_label_tex: $2xF_1$

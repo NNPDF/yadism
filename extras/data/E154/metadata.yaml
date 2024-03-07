@@ -1,5 +1,8 @@
-E154:
-  description: Measurements with Polarised beams
-  nnpdf_id: E154
+nnpdf_id: null
+fktable_id: null
+
+E154_NC_9GEV_EN_G1:
+  description: polarized structure function $g_1$ in E154 with neutron target
   y_label: g1
-  y_label_tex: $g1$
+  y_label_tex: $2xg_1$
+  hepdata: https://www.hepdata.net/record/ins443170
