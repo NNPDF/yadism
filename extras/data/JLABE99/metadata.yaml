@@ -1,5 +1,5 @@
 JLABE99:
   description: Measurements with Polarised beams
   nnpdf_id: JLABE99
-  y_label: A1
+  y_label: G1F1
   y_label_tex: $g1/f1$

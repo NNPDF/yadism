@@ -1,5 +1,5 @@
 E142:
   description: Measurements with Polarised beams
   nnpdf_id: E142
-  y_label: A1
+  y_label: g1
   y_label_tex: $g1$
