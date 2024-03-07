@@ -2,4 +2,4 @@ SMCSX:
   description: Measurements with Polarised beams
   nnpdf_id: SMCSX
   y_label: A1
-  y_label_tex: $g1/f1$
+  y_label_tex: $A_1$
