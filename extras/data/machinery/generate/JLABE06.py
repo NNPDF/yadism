@@ -1,6 +1,6 @@
 from .utils import load, obs_template
 def dump(src_path, target):
-    '''Generate the input card for SMCSX measurements.
+    '''Generate the input card for JLABE06 measurements.
 
     Parameters
     ----------
@@ -39,7 +39,6 @@ def dump(src_path, target):
 
 
 # renaming
-new_names = { 
- 'smcsx_mud_g1': ['SMCSX_NC_24GEV_MUD_G1', 'SMCSX_NC_24GEV_MUD_F1'],
-    'smcsx_mup_g1': ['SMCSX_NC_17GEV_MUP_G1', 'SMCSX_NC_17GEV_MUP_F1'],
+new_names = {
+    'jlabe06_en_g1f1': ['JLABE06_NC_3GEV_EN_G1', 'JLABE06_NC_3GEV_EN_F1'],
 }

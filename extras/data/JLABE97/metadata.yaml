@@ -1,5 +1,5 @@
-SMCSX:
+JLABE97:
   description: Measurements with Polarised beams
-  nnpdf_id: SMCSX
+  nnpdf_id: JLABE97
   y_label: A1
-  y_label_tex: $g1/f1$
+  y_label_tex: $g1$
