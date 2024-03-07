@@ -1,6 +1,8 @@
 from .utils import load, obs_template
+
+
 def dump(src_path, target):
-    '''Generate the input card for E143 measurements.
+    """Generate the input card for E143 measurements.
 
     Parameters
     ----------
@@ -12,14 +14,12 @@ def dump(src_path, target):
     dict
         observables dictionary, corresponding to the runcard
 
-    '''
+    """
     obs = obs_template.copy()
     data = load(src_path, 0, ["x", "Q2"])
     dict_kins = [
-        dict(x=d["x"]["mid"], y=d["y"]["mid"], Q2=d["Q2"]["mid"])
-        for d in data
+        dict(x=d["x"]["mid"], y=d["y"]["mid"], Q2=d["Q2"]["mid"]) for d in data
     ]
-
 
     obs["PolarizationDIS"] = 0.0 if "_F1" in target.parent.name else 1.0
     observable_name = "F1_total" if "_F1" in target.parent.name else "g1_total"
@@ -39,7 +39,7 @@ def dump(src_path, target):
 
 
 # renaming
-new_names = { 
- 'e143_ep_g1': 'E143_NC_4GEV_EP_G1',
-    'e143_ed_g1': 'E143_NC_8GEV_ED_G1',
+new_names = {
+    "e143_ep_g1": "E143_NC_4GEV_EP_G1",
+    "e143_ed_g1": "E143_NC_8GEV_ED_G1",
 }
