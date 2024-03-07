@@ -3,7 +3,7 @@ fktable_id: null
 hepdata: https://www.hepdata.net/record/ins717523
 
 JLABEG1B_NC_4GEV_ED_F1:
-  description: polarized structure function $F_1$ in JLABEG1B with deuteron target
+  description: unpolarized structure function $F_1$ in JLABEG1B with deuteron target
   y_label: 2xF1
   y_label_tex: $2xF_1$
 
@@ -13,7 +13,7 @@ JLABEG1B_NC_4GEV_ED_G1:
   y_label_tex: $2xg_1$
 
 JLABEG1B_NC_3GEV_EP_F1:
-  description: polarized structure function $F_1$ in JLABEG1B with proton target
+  description: unpolarized structure function $F_1$ in JLABEG1B with proton target
   y_label: 2xF1
   y_label_tex: $2xF_1$
 

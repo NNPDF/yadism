@@ -8,7 +8,7 @@ SMCSX_NC_17GEV_MUP_G1:
   y_label_tex: $2xg_1$
 
 SMCSX_NC_17GEV_MUP_F1:
-  description: polarized structure function $F_1$ in SMCSX with proton target
+  description: unpolarized structure function $F_1$ in SMCSX with proton target
   y_label: 2xF1
   y_label_tex: $2xF_1$
 
@@ -18,6 +18,6 @@ SMCSX_NC_24GEV_MUD_G1:
   y_label_tex: $2xg_1$
 
 SMCSX_NC_24GEV_MUD_F1:
-  description: polarized structure function $F_1$ in SMCSX with deuteron target
+  description: unpolarized structure function $F_1$ in SMCSX with deuteron target
   y_label: 2xF1
   y_label_tex: $2xF_1$

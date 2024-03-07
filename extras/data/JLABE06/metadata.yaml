@@ -3,7 +3,7 @@ fktable_id: null
 arxiv: https://arxiv.org/abs/1603.03612
 
 JLABE06_NC_3GEV_EN_F1:
-  description: polarized structure function $F_1$ in JLABE06 with neutron target
+  description: unpolarized structure function $F_1$ in JLABE06 with neutron target
   y_label: 2xF1
   y_label_tex: $2xF_1$
 

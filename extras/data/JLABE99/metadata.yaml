@@ -3,7 +3,7 @@ fktable_id: null
 hepdata: https://www.hepdata.net/record/ins650244
 
 JLABE99_NC_3GEV_EN_F1:
-  description: polarized structure function $F_1$ in JLABE99 with neutron target
+  description: unpolarized structure function $F_1$ in JLABE99 with neutron target
   y_label: 2xF1
   y_label_tex: $2xF_1$
 
