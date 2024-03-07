@@ -2,6 +2,7 @@ import pathlib
 
 import numpy as np
 import yaml
+
 from yadmark.data import pineappl_xgrid
 
 here = pathlib.Path(__file__).parent
