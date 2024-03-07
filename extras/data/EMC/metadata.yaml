@@ -1,5 +1,5 @@
 EMC:
   description: Measurements with Polarised beams
   nnpdf_id: EMC
-  y_label: A1
+  y_label: g1
   y_label_tex: $g1$
