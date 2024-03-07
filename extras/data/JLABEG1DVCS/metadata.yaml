@@ -1,5 +1,5 @@
 JLABEG1DVCS:
   description: Measurements with Polarised beams
   nnpdf_id: JLABEG1DVCS
-  y_label: A1
+  y_label: G1F1
   y_label_tex: $g1/f1$
