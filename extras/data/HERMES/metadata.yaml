@@ -4,15 +4,15 @@ hepdata: https://www.hepdata.net/record/ins726689
 
 HERMES_NC_7GEV_EN_G1:
   description: polarized structure function $g_1$ in HERMES with neutron target
-  y_label: g1
+  y_label: 2xg1
   y_label_tex: $2xg_1$
 
 HERMES_NC_7GEV_EP_G1:
   description: polarized structure function $g_1$ in HERMES with proton target
-  y_label: g1
+  y_label: 2xg1
   y_label_tex: $2xg_1$
 
 HERMES_NC_7GEV_ED_G1:
   description: polarized structure function $g_1$ in HERMES with deuteron target
-  y_label: g1
+  y_label: 2xg1
   y_label_tex: $2xg_1$
