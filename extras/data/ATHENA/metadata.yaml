@@ -1,0 +1,67 @@
+nnpdf_id: null
+fktable_id: null
+
+# For Sqrt_s=29 GeV and beam energies (5, 41) GeV
+ATHENA_NC_29GEV_EP_G1:
+  description: polarized structure function $g_1$ from ATHENA projections
+  y_label: 2xg1
+  y_label_tex: $2xg_1$
+  hepdata: null
+
+ATHENA_NC_29GEV_EP_F1:
+  description: polarized structure function $F_1$ from ATHENA projections
+  y_label: 2xF1
+  y_label_tex: $2xF_1$
+  hepdata: null
+
+# For Sqrt_s=45 GeV and beam energies (5, 100) GeV
+ATHENA_NC_45GEV_EP_G1:
+  description: polarized structure function $g_1$ from ATHENA projections
+  y_label: 2xg1
+  y_label_tex: $2xg_1$
+  hepdata: null
+
+ATHENA_NC_45GEV_EP_F1:
+  description: polarized structure function $F_1$ from ATHENA projections
+  y_label: 2xF1
+  y_label_tex: $2xF_1$
+  hepdata: null
+
+# For Sqrt_s=63 GeV and beam energies (10, 100) GeV
+ATHENA_NC_63GEV_EP_G1:
+  description: polarized structure function $g_1$ from ATHENA projections
+  y_label: 2xg1
+  y_label_tex: $2xg_1$
+  hepdata: null
+
+ATHENA_NC_63GEV_EP_F1:
+  description: polarized structure function $F_1$ from ATHENA projections
+  y_label: 2xF1
+  y_label_tex: $2xF_1$
+  hepdata: null
+
+# For Sqrt_s=105 GeV and beam energies (10, 275) GeV
+ATHENA_NC_105GEV_EP_G1:
+  description: polarized structure function $g_1$ from ATHENA projections
+  y_label: 2xg1
+  y_label_tex: $2xg_1$
+  hepdata: null
+
+ATHENA_NC_105GEV_EP_F1:
+  description: polarized structure function $F_1$ from ATHENA projections
+  y_label: 2xF1
+  y_label_tex: $2xF_1$
+  hepdata: null
+
+# For Sqrt_s=140 GeV and beam energies (18, 275) GeV
+ATHENA_NC_140GEV_EP_G1:
+  description: polarized structure function $g_1$ from ATHENA projections
+  y_label: 2xg1
+  y_label_tex: $2xg_1$
+  hepdata: null
+
+ATHENA_NC_140GEV_EP_F1:
+  description: polarized structure function $F_1$ from ATHENA projections
+  y_label: 2xF1
+  y_label_tex: $2xF_1$
+  hepdata: null

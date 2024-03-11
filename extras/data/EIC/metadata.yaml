@@ -1,0 +1,41 @@
+nnpdf_id: null
+fktable_id: null
+
+# For Sqrt_s=43 GeV and beam energies (5, 41) GeV
+EIC_NC_43GEV_EP_G1:
+  description: polarized structure function $g_1$ from EIC projections
+  y_label: 2xg1
+  y_label_tex: $2xg_1$
+  hepdata: null
+
+EIC_NC_43GEV_EP_F1:
+  description: polarized structure function $F_1$ from EIC projections
+  y_label: 2xF1
+  y_label_tex: $2xF_1$
+  hepdata: null
+
+# For Sqrt_s=67 GeV and beam energies (5, 100) GeV
+EIC_NC_67GEV_EP_G1:
+  description: polarized structure function $g_1$ from EIC projections
+  y_label: 2xg1
+  y_label_tex: $2xg_1$
+  hepdata: null
+
+EIC_NC_67GEV_EP_F1:
+  description: polarized structure function $F_1$ from EIC projections
+  y_label: 2xF1
+  y_label_tex: $2xF_1$
+  hepdata: null
+
+# For Sqrt_s=211 GeV and beam energies (18, 275) GeV
+EIC_NC_211GEV_EP_G1:
+  description: polarized structure function $g_1$ from EIC projections
+  y_label: 2xg1
+  y_label_tex: $2xg_1$
+  hepdata: null
+
+EIC_NC_211GEV_EP_F1:
+  description: polarized structure function $F_1$ from EIC projections
+  y_label: 2xF1
+  y_label_tex: $2xF_1$
+  hepdata: null
