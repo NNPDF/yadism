@@ -9,7 +9,7 @@ EIC_NC_43GEV_EP_G1CHARM:
   hepdata: null
 
 EIC_NC_43GEV_EP_F1CHARM:
-  description: polarized structure function $F_1$ from EIC projections
+  description: unpolarized structure function $F_1$ from EIC projections
   y_label: 2xF1
   y_label_tex: $2xF_1$
   hepdata: null
@@ -22,7 +22,7 @@ EIC_NC_67GEV_EP_G1CHARM:
   hepdata: null
 
 EIC_NC_67GEV_EP_F1CHARM:
-  description: polarized structure function $F_1$ from EIC projections
+  description: unpolarized structure function $F_1$ from EIC projections
   y_label: 2xF1
   y_label_tex: $2xF_1$
   hepdata: null
@@ -35,7 +35,7 @@ EIC_NC_211GEV_EP_G1CHARM:
   hepdata: null
 
 EIC_NC_211GEV_EP_F1CHARM:
-  description: polarized structure function $F_1$ from EIC projections
+  description: unpolarized structure function $F_1$ from EIC projections
   y_label: 2xF1
   y_label_tex: $2xF_1$
   hepdata: null
