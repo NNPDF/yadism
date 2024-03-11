@@ -12,7 +12,7 @@ class NeutralCurrentBase(pc.PartonicChannel):
     thresholds.
     """
 
-    def __init__(self, *args, m2hq):
+    def __init__(self, *args, m2hq, n3lo_cf_variation=0):
         self.m2hq = m2hq
         super().__init__(*args)
         # FH - Vogt comparison prefactor
@@ -21,6 +21,7 @@ class NeutralCurrentBase(pc.PartonicChannel):
         # common variables
         self._xi = self.ESF.Q2 / m2hq
         self._eta = lambda z: self._xi / 4.0 * (1.0 / z - 1.0) - 1.0
+        self.n3lo_cf_variation = n3lo_cf_variation
 
     def decorator(self, f):
         """
@@ -36,11 +37,11 @@ class NeutralCurrentBase(pc.PartonicChannel):
             f : callable
                 output
         """
-        if self.is_below_threshold(self.ESF.x):
+        if self.is_below_pair_threshold(self.ESF.x):
             return lambda: pc.RSL()
         return f
 
-    def is_below_threshold(self, z):
+    def is_below_pair_threshold(self, z):
         """
         Checks if the available energy is below production threshold or not
 
@@ -51,7 +52,7 @@ class NeutralCurrentBase(pc.PartonicChannel):
 
         Returns
         -------
-            is_below_threshold : bool
+            is_below_pair_threshold : bool
                 is the partonic energy sufficient to create the heavy quark
                 pair?
 

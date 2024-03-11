@@ -106,7 +106,7 @@ class EvaluatedStructureFunction:
     def compute_local(self):
         """
         Here is where the local caching is actually implemented: if the
-        coefficient functions are already computed don't do nothing,
+        coefficient functions are already computed don't do anything,
         otherwise call :py:meth:`_compute_component` (checks are per flavour).
 
         In any case no output is provided, but the result is stored in
@@ -116,11 +116,12 @@ class EvaluatedStructureFunction:
         if self._computed:
             return
         cfc = cf.Combiner(self)
-        full_orders = [(o, 0, 0, 0) for o in self.orders]
         # prepare scale variations
         sv_manager = self.info.configs.managers["sv_manager"]
         if sv_manager is not None:
             full_orders = sv.build_orders(self.info.configs.theory["pto"])
+        else:
+            full_orders = [(o, 0, 0, 0) for o in self.orders]
         # init orders with 0
         for o in full_orders:
             self.res.orders[o] = [self.zeros, self.zeros]

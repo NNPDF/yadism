@@ -151,7 +151,6 @@ class Sandbox(Runner):
         #  t["FNS"] = "FFNS"
         t["NfFF"] = 4
         t["PTO"] = 1
-        #  t["kDISbThr"] = 10
         #  t["mb"] = 1e6
         #  t["mt"] = 1e7
         self.run([t], [o], [

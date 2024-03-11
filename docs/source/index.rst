@@ -52,7 +52,7 @@ In particular:
    :hidden:
 
    overview/features.rst
-   overview/tutorials/index.rst
+   overview/tutorials/tutorials.rst
 
 .. toctree::
    :maxdepth: 1
@@ -84,9 +84,8 @@ In particular:
    :caption: Dev Tools
    :hidden:
 
-   dev-tools/tests.rst
+   dev-tools/benchmarks.rst
    dev-tools/yadmark.rst
-   dev-tools/metrics.rst
    dev-tools/code-todos.rst
 
 .. toctree::

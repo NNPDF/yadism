@@ -93,6 +93,9 @@
 .. |FFNS| replace::
    :abbr:`FFNS (Fixed Flavor Number Scheme)`
 
+.. |FFN0| replace::
+   :abbr:`FFN0 (Asymptotic Fixed Flavor Number Scheme)`
+
 .. |VFNS| replace::
    :abbr:`VFNS (Variable Flavor Number Scheme)`
 
@@ -137,6 +140,10 @@
 .. |eko| raw:: html
 
    <a href="http://eko.readthedocs.io/"><abbr title="Evolutionary Kernel Operators">eko</abbr></a>
+
+.. |pineko| raw:: html
+
+   <a href="http://pineko.readthedocs.io/">pineko</a>
 
 .. |banana| raw:: html
 

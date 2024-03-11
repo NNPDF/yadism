@@ -1,6 +1,5 @@
 import LeProHQ
 import numpy as np
-from scipy.integrate import quad
 
 from ..partonic_channel import RSL
 from . import partonic_channel as pc
@@ -13,7 +12,7 @@ class GluonVV(pc.NeutralCurrentBase):
         """
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -30,7 +29,7 @@ class GluonVV(pc.NeutralCurrentBase):
         """
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -53,7 +52,7 @@ class GluonAA(GluonVV):
         """
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -70,7 +69,7 @@ class GluonAA(GluonVV):
         """
 
         def cg(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -94,7 +93,7 @@ class SingletVV(pc.NeutralCurrentBase):
         """
 
         def cq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -118,7 +117,7 @@ class SingletAA(pc.NeutralCurrentBase):
         """
 
         def cq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -142,7 +141,7 @@ class NonSinglet(pc.NeutralCurrentBase):
         """
 
         def dq(z, _args):
-            if self.is_below_threshold(z):
+            if self.is_below_pair_threshold(z):
                 return 0.0
             return (
                 self._FHprefactor
@@ -151,4 +150,8 @@ class NonSinglet(pc.NeutralCurrentBase):
                 * (LeProHQ.dq1("x2g1", "VV", self._xi, self._eta(z)))
             )
 
-        return RSL(dq)
+        def Adler(_x, _args):
+            # add minus sign
+            return -LeProHQ.Adler("x2g1", "VV", self._xi)
+
+        return RSL(dq, loc=Adler)

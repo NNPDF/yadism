@@ -1,4 +1,5 @@
 """Implementation of factorization and renormalization scale variations."""
+
 import logging
 import time
 
@@ -154,7 +155,7 @@ class ScaleVariations:
             return []
         # get the two ingredients: matrices and projectors
         fmatrices = self.fact_matrices(nf)
-        projectors = br.ad_projectors(nf)
+        projectors = br.ad_projectors(nf, False)
         # join everything together
         added_ker_sv = []
         for (o, oqed, _, _), ker in ker_orders:

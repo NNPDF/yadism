@@ -146,10 +146,3 @@ Procedures
 - **scheme C**: varying the scales in the context of |PDF| determination only in
   the coefficient functions corresponds to scheme C in
   :cite:`AbdulKhalek:2019ihb`.
-
-Sector Isolated
----------------
-
-.. todo::
-
-   Independent singlet/non-singlet scale variations

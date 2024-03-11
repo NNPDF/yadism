@@ -16,8 +16,8 @@ The actual physical combination are not as many as flavors, indeed |QCD| is
 flavor blind (in the massless case, and the only difference in the massive case
 are the value of the masses themselves).
 
-In particular there are 3 relevant combinations, as described in
-:doc:`../theory/coeff-funcs`.
+In particular there are 3 relevant combinations, for polarized and
+unpolarized |DIS| as described in :doc:`../theory/coeff-funcs`.
 
 .. todo::
 
@@ -37,11 +37,8 @@ In particular there are 3 relevant combinations, as described in
      (partons, operator, operator-error) by convolutions
 
 
-Rearrange Singlet & Non-singlet
--------------------------------
+Singlet & Non-singlet
+---------------------
 
-.. todo::
-
-   describe redefinition of the singlet -> pure singlet from Vogt notation
-
-   essentially include the already written note
+For the distinction about singlet and non-singlet coefficient function,
+see :doc:`../theory/nonsinglet`.
