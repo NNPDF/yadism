@@ -2,26 +2,26 @@ nnpdf_id: null
 fktable_id: null
 
 # For Sqrt_s=15 GeV and beam energies (3.5, 20) GeV
-EIcC_NC_15GEV_EP_G1:
+EIcC_NC_15GEV_EP_G1CHARM:
   description: polarized structure function $g_1^c$ from EIcC projections
   y_label: 2xg1c
   y_label_tex: $2xg_1^c$
   hepdata: null
 
-EIcC_NC_15GEV_EP_F1:
+EIcC_NC_15GEV_EP_F1CHARM:
   description: polarized structure function $F_1$ from EIcC projections
   y_label: 2xF1
   y_label_tex: $2xF_1$
   hepdata: null
 
 # For Sqrt_s=22 GeV and beam energies (5, 25) GeV
-EIcC_NC_22GEV_EP_G1:
+EIcC_NC_22GEV_EP_G1CHARM:
   description: polarized structure function $g_1^c$ from EIcC projections
   y_label: 2xg1c
   y_label_tex: $2xg_1^c$
   hepdata: null
 
-EIcC_NC_22GEV_EP_F1:
+EIcC_NC_22GEV_EP_F1CHARM:
   description: polarized structure function $F_1$ from EIcC projections
   y_label: 2xF1
   y_label_tex: $2xF_1$
