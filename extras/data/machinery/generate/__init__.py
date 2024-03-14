@@ -22,9 +22,6 @@ from . import (
     SLAC,
     SMC,
     SMCSX,
-    EIC,
-    EIcC,
-    ATHENA,
     utils,
 )
 
@@ -54,9 +51,6 @@ exps = {
         NUTEV,
         POS,
         SLAC,
-        EIC,
-        EIcC,
-        ATHENA,
     ]
 }
 
