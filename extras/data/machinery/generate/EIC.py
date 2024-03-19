@@ -41,7 +41,7 @@ def dump(src_path, target):
 
 # renaming
 new_names = {
-    "EIC_5_41_A1c_100fb-1": ["EIC_NC_41GEV_EP_G1", "EIC_NC_41GEV_EP_F1"],
-    "EIC_5_100_A1c_100fb-1": ["EIC_NC_100GEV_EP_G1", "EIC_NC_100GEV_EP_F1"],
-    "EIC_18_275_A1c_100fb-1": ["EIC_NC_275GEV_EP_G1", "EIC_NC_275GEV_EP_F1"],
+    "EIC_5_41_A1c_100fb-1": ["EIC_NC_43GEV_EP_G1", "EIC_NC_43GEV_EP_F1"],
+    "EIC_5_100_A1c_100fb-1": ["EIC_NC_67GEV_EP_G1", "EIC_NC_67GEV_EP_F1"],
+    "EIC_18_275_A1c_100fb-1": ["EIC_NC_211GEV_EP_G1", "EIC_NC_211GEV_EP_F1"],
 }
