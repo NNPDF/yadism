@@ -64,7 +64,7 @@ pytest-cov = "^4.0.0"
 pytest-env = "^0.6.2"
 hypothesis = "^6.39.3"
 asv = "^0.4.2"
-pylint = "^2.9.3"
+pylint = "^3.1.0"
 
 [tool.poetry.group.docs]
 optional = true
