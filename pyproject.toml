@@ -1,6 +1,6 @@
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.1.0"]
+build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry]
 name = "yadism"
@@ -36,19 +36,19 @@ packages = [
 "Changelog" = "https://github.com/N3PDF/yadism/releases"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.9,<3.13"
 numpy = "^1.22.0"
 scipy = "^1.10.0"
-numba = "^0.57.0"
-eko = "^0.14.0"
-pandas = "^1.3.0"
+numba = "^0.59.0"
+eko = "^0.14.2"
+pandas = "^2.1.4"
 rich = "^12.4.4"
 adani = "^0.14.1"
 LeProHQ = "^0.2.5"
 # pineappl dependency
-pineappl = { version = "^0.6.0", optional = true }
+pineappl = { version = "^0.7.0", optional = true }
 # yadmark
-banana-hep = { version = "^0.6.11", optional = true }
+banana-hep = { version = "^0.6.13", optional = true }
 sqlalchemy = { version = "^1.4.21", optional = true }
 
 [tool.poetry.group.dev.dependencies]
