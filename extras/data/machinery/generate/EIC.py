@@ -1,5 +1,6 @@
-from .utils import *
 import numpy as np
+
+from .utils import *
 
 
 def dump(src_path, target):

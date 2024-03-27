@@ -1,4 +1,5 @@
 from . import (
+    ATHENA,
     BCDMS,
     CHORUS,
     COMPASS,
@@ -7,6 +8,7 @@ from . import (
     E143,
     E154,
     E155,
+    EIC,
     EMC,
     HERA,
     HERMES,
@@ -22,9 +24,7 @@ from . import (
     SLAC,
     SMC,
     SMCSX,
-    EIC,
     EIcC,
-    ATHENA,
     utils,
 )
 
