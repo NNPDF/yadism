@@ -1,7 +1,6 @@
 from . import (
     BCDMS,
     CHORUS,
-    COMPASS,
     COMPASS15,
     E142,
     E143,
