@@ -22,8 +22,8 @@ if channel not in ['q', 'g']:
 order = int(sys.argv[5])
 
 hs_version = sys.argv[6]
-if hs_version not in ["klmv", "abmp", "abbdvss"]:
-    raise ValueError("Set hs_version to 'klmv', 'abmp' or 'abbdvss'")
+if hs_version not in ["klmv", "abmp", "gm"]:
+    raise ValueError("Set hs_version to 'klmv', 'abmp' or 'gm'")
 # klmv = Kawamura, Lo Presti, Moch, Vogt: approximation from [arXiv:1205.5727]
 # abmp = Alekhin, Blumlein, Moch, Placakyte: approximation from [arXiv:1701.05838]
 # gm = approximation from Giacomo Magni, based on the results of [arXiv:2403.00513]
@@ -32,7 +32,7 @@ if hs_version not in ["klmv", "abmp", "abbdvss"]:
 mufrac = 1.0
 verbose = True
 
-hs_version = "exact" if channel == 'q' else "abbdvss"
+hs_version = "exact" if channel == 'q' else "gm"
 if order > 1:
     massive = adani.ApproximateCoefficientFunction(order, kind, channel, True, hs_version)
 elif order == 1:
