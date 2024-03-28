@@ -3,21 +3,21 @@ fktable_id: null
 arxiv: https://inspirehep.net/literature/499139
 
 SMCSX_NC_17GEV_MUP_G1:
-  description: polarized structure function $g_1$ in SMCSX with proton target
+  description: small-$x$ polarized structure function $g_1$ in the SMC experiment with proton target
   y_label: 2xg1
   y_label_tex: $2xg_1$
 
 SMCSX_NC_17GEV_MUP_F1:
-  description: unpolarized structure function $F_1$ in SMCSX with proton target
+  description: small-$x$ unpolarized structure function $F_1$ in the SMC experiment with proton target
   y_label: 2xF1
   y_label_tex: $2xF_1$
 
 SMCSX_NC_24GEV_MUD_G1:
-  description: polarized structure function $g_1$ in SMCSX with deuteron target
+  description: small-$x$ polarized structure function $g_1$ in the SMC experiment with deuteron target
   y_label: 2xg1
   y_label_tex: $2xg_1$
 
 SMCSX_NC_24GEV_MUD_F1:
-  description: unpolarized structure function $F_1$ in SMCSX with deuteron target
+  description: small-$x$ unpolarized structure function $F_1$ in the SMC experiment with deuteron target
   y_label: 2xF1
   y_label_tex: $2xF_1$
