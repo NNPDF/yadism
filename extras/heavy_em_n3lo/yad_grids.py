@@ -11,14 +11,34 @@ here.mkdir(exist_ok=True)
 
 nf = int(sys.argv[1])
 n_threads = int(sys.argv[2])
-channel = sys.argv[3]
-order = int(sys.argv[4])
-try:
-    variation = int(sys.argv[5])
-except IndexError:
-    variation = 0
+kind = sys.argv[3]
+if kind not in ['2', 'L']:
+    raise ValueError("Set kind to '2' or 'L'")
+
+channel = sys.argv[4]
+if channel not in ['q', 'g']:
+    raise ValueError("Set channel to 'g' or 'q'")
+
+order = int(sys.argv[5])
+
+hs_version = sys.argv[6]
+if hs_version not in ["klmv", "abmp", "abbdvss"]:
+    raise ValueError("Set hs_version to 'abmp' or 'abbdvss'")
+# klmv = Kawamura, Lo Presti, Moch, Vogt: approximation from [arXiv:1205.5727]
+# abmp = Alekhin, Blumlein, Moch, Placakyte: approximation from [arXiv:1701.05838]
+# abbdvss = Ablinger, Behring, Blumlein, De Freitas, von Manteuffel, Schneider, Schonwald: approximation from [arXiv:2403.00513]
+
+
 mufrac = 1.0
 verbose = True
+
+hs_version = "exact" if channel == 'q' else "abmp"
+if order > 1:
+    massive = adani.ApproximateCoefficientFunction(order, kind, channel, True, hs_version)
+elif order == 1:
+    massive = adani.ExactCoefficientFunction(order, kind, channel)
+else:
+    raise ValueError("Set order to 1, 2 or 3!")
 
 
 def x_eta(eta, m2Q2):
@@ -30,46 +50,14 @@ def function_to_exe_in_parallel(pair):
     m2Q2 = 1 / xi
     m2mu2 = 1 / xi
     x = x_eta(eta, m2Q2)
-    if order == 3:
-        if channel == "2g":
-            return adani.C2_g3_approximation(
-                x, m2Q2, m2mu2, nf, v=variation, method_flag=1
-            )
-        elif channel == "2q":
-            return adani.C2_ps3_approximation(x, m2Q2, m2mu2, nf, v=variation)
-        elif channel == "Lg":
-            return adani.CL_g3_approximation(
-                x, m2Q2, m2mu2, nf, v=variation, method_flag=1
-            )
-        elif channel == "Lq":
-            return adani.CL_ps3_approximation(x, m2Q2, m2mu2, nf, v=variation)
-        else:
-            raise ValueError("Set channel to one of these: 2g 2q Lg Lq")
-    # TODO: do we really want this?
-    ## NNLO approximated
-    elif order == 2:
-        if channel == "2g":
-            return adani.C2_g2_approximation(x, m2Q2, m2mu2, v=variation)
-        elif channel == "2q":
-            return adani.C2_ps2_approximation(x, m2Q2, m2mu2, v=variation)
-        elif channel == "Lg":
-            return adani.CL_g2_approximation(x, m2Q2, m2mu2, v=variation)
-        elif channel == "Lq":
-            return adani.CL_ps2_approximation(x, m2Q2, m2mu2, v=variation)
-        else:
-            raise ValueError("Set channel to one of these: 2g 2q Lg Lq")
-    ## NNLO exact
-    elif order == 0:
-        if channel == "2g":
-            return adani.C2_g2(x, m2Q2, m2mu2)
-        elif channel == "2q":
-            return adani.C2_ps2(x, m2Q2, m2mu2)
-        elif channel == "Lg":
-            return adani.CL_g2(x, m2Q2, m2mu2)
-        elif channel == "Lq":
-            return adani.CL_ps2(x, m2Q2, m2mu2)
-        else:
-            raise ValueError("Set channel to one of these: 2g 2q Lg Lq")
+    
+    res = massive.fxBand(x, m2Q2, m2mu2, nf)
+
+    return [
+        res.GetLower(),
+        res.GetCentral(),
+        res.GetHigher()
+    ]
 
 
 def run(n_threads, eta_grid, xi_grid):
@@ -84,7 +72,9 @@ def run(n_threads, eta_grid, xi_grid):
 
 
 if __name__ == "__main__":
-    output_file = f"C{channel}_nf{nf}_var{variation}.npy"
+    output_files = {}
+    for variation in range(-1, 1+1):
+        output_files[variation] = f"C{channel}_nf{nf}_var{variation}.npy"
     etafname = here / "eta.npy"
     eta_grid = np.load(etafname)
     xifname = here / "xi.npy"
@@ -105,7 +95,10 @@ if __name__ == "__main__":
     if verbose:
         print("total running time: ", time.perf_counter() - start)
 
-    res_mat = res_vec.reshape(len(xi_grid), len(eta_grid))
-    if verbose:
-        print("Saving grid in ", output_file)
-    np.save(here / output_file, res_mat)
+    res_mat = res_vec.reshape(len(xi_grid), len(eta_grid), 3)
+    for variation in range(-1, 1 + 1):
+        if order == 1 and variation in [-1, 1]:
+            continue
+        if verbose:
+            print("Saving grid in ", here / output_files[variation])
+        np.save(here / output_files[variation], res_mat[variation + 1])
