@@ -26,7 +26,7 @@ if hs_version not in ["klmv", "abmp", "abbdvss"]:
     raise ValueError("Set hs_version to 'klmv', 'abmp' or 'abbdvss'")
 # klmv = Kawamura, Lo Presti, Moch, Vogt: approximation from [arXiv:1205.5727]
 # abmp = Alekhin, Blumlein, Moch, Placakyte: approximation from [arXiv:1701.05838]
-# abbdvss = Ablinger, Behring, Blumlein, De Freitas, von Manteuffel, Schneider, Schonwald: approximation from [arXiv:2403.00513]
+# gm = approximation from Giacomo Magni, based on the results of [arXiv:2403.00513]
 
 
 mufrac = 1.0
