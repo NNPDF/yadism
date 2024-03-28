@@ -7,6 +7,8 @@ from . import raw_nc
 
 
 class AsyLLGluon(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, '2', 'g', "abmp")
+        
     def NLO(self):
         def cg_LL_NLO(z, args):
             L = args[0]
@@ -25,12 +27,14 @@ class AsyLLGluon(pc.NeutralCurrentBaseAsy):
         def cg_LL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.C2_g3_highscale_LL(z, nf) * L**3
+            return self.hs3.LL(z, nf) * L**3
 
         return RSL(cg_LL_N3LO, args=[self.L, self.nf])
 
 
 class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, '2', 'g', "abmp")
+        
     def NLO(self):
         def cg_NLL_NLO(z, _args):
             return raw_nc.c2g1am0_a0(z)
@@ -48,12 +52,14 @@ class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
         def cg_NLL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.C2_g3_highscale_NLL(z, nf) * L**2
+            return self.hs3.NLL(z, nf) * L**2
 
         return RSL(cg_NLL_N3LO, args=[self.L, self.nf])
 
 
 class AsyNNLLGluon(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, '2', 'g', "abmp")
+
     def NNLO(self):
         def cg_NNLL_NNLO(z, _args):
             return raw_nc.c2g2am0_a0(z)
@@ -64,22 +70,27 @@ class AsyNNLLGluon(pc.NeutralCurrentBaseAsy):
         def cg_NNLL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.C2_g3_highscale_N2LL(z, nf) * L
+            return self.hs3.N2LL(z, nf) * L
 
         return RSL(cg_NNLL_N3LO, args=[self.L, self.nf])
 
 
 class AsyNNNLLGluon(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, '2', 'g', "abmp")
+    variation_map = {-1: 2, 0:0, 1:1}
+
     def N3LO(self):
         def cg_NNNLL_N3LO(z, args):
             nf = int(args[0])
             variation = int(args[1])
-            return adani.C2_g3_highscale_N3LL(z, nf, variation)
+            return adani.self.hs3.N3LL(z, nf, variation).ToVect()[self.variation_map[variation]]
 
         return RSL(cg_NNNLL_N3LO, args=[self.nf, self.n3lo_cf_variation])
 
 
 class AsyLLSinglet(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, '2', 'q', "exact")
+
     def NNLO(self):
         def cps_LL_NNLO(z, args):
             L = args[0]
@@ -91,12 +102,14 @@ class AsyLLSinglet(pc.NeutralCurrentBaseAsy):
         def cps_LL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.C2_ps3_highscale_LL(z, nf) * L**3
+            return adani.self.hs3.LL(z, nf) * L**3
 
         return RSL(cps_LL_N3LO, args=[self.L, self.nf])
 
 
 class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, '2', 'q', "exact")
+
     def NNLO(self):
         def cps_NLL_NNLO(z, args):
             L = args[0]
@@ -108,12 +121,14 @@ class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
         def cps_NLL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.C2_ps3_highscale_NLL(z, nf) * L**2
+            return adani.self.hs3.NLL(z, nf) * L**2
 
         return RSL(cps_NLL_N3LO, args=[self.L, self.nf])
 
 
 class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, '2', 'q', "exact")
+
     def NNLO(self):
         def cps_NNLL_NNLO(z, _args):
             return raw_nc.c2ps2am0_a0(z)
@@ -124,16 +139,18 @@ class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
         def cps_NNLL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.C2_ps3_highscale_N2LL(z, nf) * L
+            return adani.self.hs3.N2LL(z, nf) * L
 
         return RSL(cps_NNLL_N3LO, args=[self.L, self.nf])
 
 
 class AsyNNNLLSinglet(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, '2', 'q', "exact")
+
     def N3LO(self):
         def cps_NNNLL_N3LO(z, args):
             nf = int(args[0])
-            return adani.C2_ps3_highscale_N3LL(z, nf)
+            return adani.self.hs3.N3LL(z, nf).GetCentral()
 
         return RSL(cps_NNNLL_N3LO, args=[self.nf])
 

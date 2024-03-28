@@ -100,5 +100,5 @@ if __name__ == "__main__":
         if order == 1 and variation in [-1, 1]:
             continue
         if verbose:
-            print("Saving grid in ", here / output_files[variation])
+            print(f"Saving {variation} grid in ", here / output_files[variation])
         np.save(here / output_files[variation], res_mat[variation + 1])

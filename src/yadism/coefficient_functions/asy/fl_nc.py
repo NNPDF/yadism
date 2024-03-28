@@ -11,6 +11,8 @@ class AsyLLGluon(EmptyPartonicChannel):
 
 
 class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, 'L', 'g')
+
     def NLO(self):
         def cg_NLL_NLO(z, _args):
             return raw_nc.clg1am0_a0(z)
@@ -27,12 +29,14 @@ class AsyNLLGluon(pc.NeutralCurrentBaseAsy):
     def N3LO(self):
         def cg_NLL_N3LO(z, args):
             L = -args[0]
-            return adani.CL_g3_highscale_NLL(z) * L**2
+            return self.hs3.NLL(z) * L**2
 
         return RSL(cg_NLL_N3LO, args=[self.L])
 
 
 class AsyNNLLGluon(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, 'L', 'g')
+
     def NNLO(self):
         def cg_NNLL_NNLO(z, _args):
             return raw_nc.clg2am0_a0(z)
@@ -43,16 +47,18 @@ class AsyNNLLGluon(pc.NeutralCurrentBaseAsy):
         def cg_NNLL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.CL_g3_highscale_N2LL(z, nf) * L
+            return self.hs3.N2LL(z, nf) * L
 
         return RSL(cg_NNLL_N3LO, args=[self.L, self.nf])
 
 
 class AsyNNNLLGluon(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, 'L', 'g')
+
     def N3LO(self):
         def cg_NNNLL_N3LO(z, args):
             nf = int(args[0])
-            return adani.CL_g3_highscale_N3LL(z, nf)
+            return self.hs3.N3LL(z, nf).GetCentral()
 
         return RSL(cg_NNNLL_N3LO, args=[self.nf])
 
@@ -62,6 +68,8 @@ class AsyLLSinglet(EmptyPartonicChannel):
 
 
 class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, 'L', 'q')
+
     def NNLO(self):
         def cps_NLL_NNLO(z, args):
             L = args[0]
@@ -72,12 +80,14 @@ class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
     def N3LO(self):
         def cps_NLL_N3LO(z, args):
             L = -args[0]
-            return adani.CL_ps3_highscale_NLL(z) * L**2
+            return self.hs3.NLL(z) * L**2
 
         return RSL(cps_NLL_N3LO, args=[self.L])
 
 
 class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, 'L', 'q')
+
     def NNLO(self):
         def cps_NNLL_NNLO(z, _args):
             return raw_nc.clps2am0_a0(z)
@@ -87,16 +97,18 @@ class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
     def N3LO(self):
         def cps_NNLL_N3LO(z, args):
             L = -args[0]
-            return adani.CL_ps3_highscale_N2LL(z) * L
+            return self.hs3.N2LL(z) * L
 
         return RSL(cps_NNLL_N3LO, args=[self.L])
 
 
 class AsyNNNLLSinglet(pc.NeutralCurrentBaseAsy):
+    hs3 = adani.HighScaleSplitLogs(3, 'L', 'q')
+
     def N3LO(self):
         def cps_NNNLL_N3LO(z, args):
             nf = int(args[0])
-            return adani.CL_ps3_highscale_N3LL(z, nf)
+            return self.hs3.N3LL(z, nf).GetCentral()
 
         return RSL(cps_NNNLL_N3LO, args=[self.nf])
 
