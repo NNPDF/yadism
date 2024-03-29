@@ -43,7 +43,7 @@ numba = "^0.59.0"
 eko = "^0.14.2"
 pandas = "^2.1.4"
 rich = "^12.4.4"
-adani = "^0.14.1"
+adani = "^1.0.0"
 LeProHQ = "^0.2.5"
 # pineappl dependency
 pineappl = { version = "^0.7.0", optional = true }
