@@ -83,7 +83,7 @@ class AsyNNNLLGluon(pc.NeutralCurrentBaseAsy):
         def cg_NNNLL_N3LO(z, args):
             nf = int(args[0])
             variation = int(args[1])
-            return adani.self.hs3.N3LL(z, nf, variation).ToVect()[self.variation_map[variation]]
+            return self.hs3.N3LL(z, nf, variation).ToVect()[self.variation_map[variation]]
 
         return RSL(cg_NNNLL_N3LO, args=[self.nf, self.n3lo_cf_variation])
 
@@ -102,7 +102,7 @@ class AsyLLSinglet(pc.NeutralCurrentBaseAsy):
         def cps_LL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.self.hs3.LL(z, nf) * L**3
+            return self.hs3.LL(z, nf) * L**3
 
         return RSL(cps_LL_N3LO, args=[self.L, self.nf])
 
@@ -121,7 +121,7 @@ class AsyNLLSinglet(pc.NeutralCurrentBaseAsy):
         def cps_NLL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.self.hs3.NLL(z, nf) * L**2
+            return self.hs3.NLL(z, nf) * L**2
 
         return RSL(cps_NLL_N3LO, args=[self.L, self.nf])
 
@@ -139,7 +139,7 @@ class AsyNNLLSinglet(pc.NeutralCurrentBaseAsy):
         def cps_NNLL_N3LO(z, args):
             L = -args[0]
             nf = int(args[1])
-            return adani.self.hs3.N2LL(z, nf) * L
+            return self.hs3.N2LL(z, nf) * L
 
         return RSL(cps_NNLL_N3LO, args=[self.L, self.nf])
 
@@ -150,7 +150,7 @@ class AsyNNNLLSinglet(pc.NeutralCurrentBaseAsy):
     def N3LO(self):
         def cps_NNNLL_N3LO(z, args):
             nf = int(args[0])
-            return adani.self.hs3.N3LL(z, nf).GetCentral()
+            return self.hs3.N3LL(z, nf).GetCentral()
 
         return RSL(cps_NNNLL_N3LO, args=[self.nf])
 
