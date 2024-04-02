@@ -12,11 +12,11 @@ here.mkdir(exist_ok=True)
 nf = int(sys.argv[1])
 n_threads = int(sys.argv[2])
 kind = sys.argv[3]
-if kind not in ['2', 'L']:
+if kind not in ["2", "L"]:
     raise ValueError("Set kind to '2' or 'L'")
 
 channel = sys.argv[4]
-if channel not in ['q', 'g']:
+if channel not in ["q", "g"]:
     raise ValueError("Set channel to 'g' or 'q'")
 
 order = int(sys.argv[5])
@@ -32,9 +32,11 @@ if hs_version not in ["klmv", "abmp", "gm"]:
 mufrac = 1.0
 verbose = True
 
-hs_version = "exact" if channel == 'q' else "gm"
+hs_version = "exact" if channel == "q" else "gm"
 if order > 1:
-    massive = adani.ApproximateCoefficientFunction(order, kind, channel, True, hs_version)
+    massive = adani.ApproximateCoefficientFunction(
+        order, kind, channel, True, hs_version
+    )
 elif order == 1:
     massive = adani.ExactCoefficientFunction(order, kind, channel)
 else:
@@ -50,14 +52,10 @@ def function_to_exe_in_parallel(pair):
     m2Q2 = 1 / xi
     m2mu2 = 1 / xi
     x = x_eta(eta, m2Q2)
-    
+
     res = massive.fxBand(x, m2Q2, m2mu2, nf)
 
-    return [
-        res.GetLower(),
-        res.GetCentral(),
-        res.GetHigher()
-    ]
+    return [res.GetLower(), res.GetCentral(), res.GetHigher()]
 
 
 def run(n_threads, eta_grid, xi_grid):
@@ -73,7 +71,7 @@ def run(n_threads, eta_grid, xi_grid):
 
 if __name__ == "__main__":
     output_files = {}
-    for variation in range(-1, 1+1):
+    for variation in range(-1, 1 + 1):
         output_files[variation] = f"C{channel}_nf{nf}_var{variation}.npy"
     etafname = here / "eta.npy"
     eta_grid = np.load(etafname)

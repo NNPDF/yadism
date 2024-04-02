@@ -19,7 +19,6 @@ class AsySinglet(pc.NeutralCurrentBaseAsy):
 
 
 class AsyNLLGluon(AsyGluon):
-
     def NLO(self):
         def cg_NLL_NLO(z, _args):
             return raw_nc.clg1am0_a0(z)
@@ -42,7 +41,6 @@ class AsyNLLGluon(AsyGluon):
 
 
 class AsyNNLLGluon(AsyGluon):
-
     def NNLO(self):
         def cg_NNLL_NNLO(z, _args):
             return raw_nc.clg2am0_a0(z)
@@ -59,7 +57,6 @@ class AsyNNLLGluon(AsyGluon):
 
 
 class AsyNNNLLGluon(AsyGluon):
-
     def N3LO(self):
         def cg_NNNLL_N3LO(z, args):
             nf = int(args[0])
@@ -73,7 +70,6 @@ class AsyLLSinglet(EmptyPartonicChannel):
 
 
 class AsyNLLSinglet(AsySinglet):
-
     def NNLO(self):
         def cps_NLL_NNLO(z, args):
             L = args[0]
@@ -90,7 +86,6 @@ class AsyNLLSinglet(AsySinglet):
 
 
 class AsyNNLLSinglet(AsySinglet):
-
     def NNLO(self):
         def cps_NNLL_NNLO(z, _args):
             return raw_nc.clps2am0_a0(z)
@@ -106,7 +101,6 @@ class AsyNNLLSinglet(AsySinglet):
 
 
 class AsyNNNLLSinglet(AsySinglet):
-
     def N3LO(self):
         def cps_NNNLL_N3LO(z, args):
             nf = int(args[0])

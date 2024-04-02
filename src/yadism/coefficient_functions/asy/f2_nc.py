@@ -15,7 +15,6 @@ class AsySinglet(pc.NeutralCurrentBaseAsy):
 
 
 class AsyLLGluon(AsyGluon):
-
     def NLO(self):
         def cg_LL_NLO(z, args):
             L = args[0]
@@ -40,7 +39,6 @@ class AsyLLGluon(AsyGluon):
 
 
 class AsyNLLGluon(AsyGluon):
-
     def NLO(self):
         def cg_NLL_NLO(z, _args):
             return raw_nc.c2g1am0_a0(z)
@@ -64,7 +62,6 @@ class AsyNLLGluon(AsyGluon):
 
 
 class AsyNNLLGluon(AsyGluon):
-
     def NNLO(self):
         def cg_NNLL_NNLO(z, _args):
             return raw_nc.c2g2am0_a0(z)
@@ -95,7 +92,6 @@ class AsyNNNLLGluon(AsyGluon):
 
 
 class AsyLLSinglet(AsySinglet):
-
     def NNLO(self):
         def cps_LL_NNLO(z, args):
             L = args[0]
@@ -113,7 +109,6 @@ class AsyLLSinglet(AsySinglet):
 
 
 class AsyNLLSinglet(AsySinglet):
-
     def NNLO(self):
         def cps_NLL_NNLO(z, args):
             L = args[0]
@@ -131,7 +126,6 @@ class AsyNLLSinglet(AsySinglet):
 
 
 class AsyNNLLSinglet(AsySinglet):
-
     def NNLO(self):
         def cps_NNLL_NNLO(z, _args):
             return raw_nc.c2ps2am0_a0(z)
@@ -148,7 +142,6 @@ class AsyNNLLSinglet(AsySinglet):
 
 
 class AsyNNNLLSinglet(AsySinglet):
-
     def N3LO(self):
         def cps_NNNLL_N3LO(z, args):
             nf = int(args[0])
