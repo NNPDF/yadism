@@ -93,7 +93,7 @@ if __name__ == "__main__":
         print("total running time: ", time.perf_counter() - start)
 
     res_mat = res_vec.reshape(len(xi_grid), len(eta_grid), 3)
-    
+
     for variation in range(-1, 1 + 1):
         if order == 1 and variation in [-1, 1]:
             continue
