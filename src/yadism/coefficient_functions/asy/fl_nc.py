@@ -37,7 +37,7 @@ class AsyNLLGluon(AsyGluon):
             L = -args[0]
             # this term does not depend on nf so setting it to zero
             nf = 0
-            return self.hs3.NLL(z, nf) * L**2
+            return self.hs3.NLL(z, nf=0) * L**2
 
         return RSL(cg_NLL_N3LO, args=[self.L])
 
