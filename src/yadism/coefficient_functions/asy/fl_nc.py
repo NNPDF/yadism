@@ -36,7 +36,7 @@ class AsyNLLGluon(AsyGluon):
         def cg_NLL_N3LO(z, args):
             L = -args[0]
             # this term does not depend on nf so setting it to zero
-            return self.hs3.NLL(z, nf=0) * L**2
+            return self.hs3.NLL(z, 0) * L**2
 
         return RSL(cg_NLL_N3LO, args=[self.L])
 
@@ -82,7 +82,7 @@ class AsyNLLSinglet(AsySinglet):
         def cps_NLL_N3LO(z, args):
             L = -args[0]
             # this term does not depend on nf so setting it to zero
-            return self.hs3.NLL(z, nf=0) * L**2
+            return self.hs3.NLL(z, 0) * L**2
 
         return RSL(cps_NLL_N3LO, args=[self.L])
 
@@ -98,7 +98,7 @@ class AsyNNLLSinglet(AsySinglet):
         def cps_NNLL_N3LO(z, args):
             L = -args[0]
             # this term does not depend on nf so setting it to zero
-            return self.hs3.N2LL(z, nf=0) * L
+            return self.hs3.N2LL(z, 0) * L
 
         return RSL(cps_NNLL_N3LO, args=[self.L])
 
