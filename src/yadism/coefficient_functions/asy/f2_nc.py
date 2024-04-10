@@ -84,7 +84,7 @@ class AsyNNNLLGluon(AsyGluon):
         def cg_NNNLL_N3LO(z, args):
             nf = int(args[0])
             variation = int(args[1])
-            return self.hs3.N3LL(z, nf, variation).ToVect()[
+            return self.hs3.N3LL(z, nf).ToVect()[
                 self.variation_map[variation]
             ]
 
