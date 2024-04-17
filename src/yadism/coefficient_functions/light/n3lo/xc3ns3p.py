@@ -153,7 +153,7 @@ def c3nm3c(y, args):
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c3np3a(y, args):
     # Here we need to remove the fl02 diagrams
-    return c3nm3a(y, [args[0], False]) + c3q3dfp(y, args)
+    return c3nm3a(y, args) + c3q3dfp(y, args)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
