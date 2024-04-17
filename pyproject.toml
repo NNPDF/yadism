@@ -70,12 +70,11 @@ pylint = "^3.1.0"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-Sphinx = "^4.1.1"
-sphinx-rtd-theme = "^0.5.2"
-recommonmark = "^0.7.1"
-sphinxcontrib-bibtex = "^2.3.0"
+Sphinx = "^7.0.0"
+sphinx-rtd-theme = "^1.0.0"
+sphinxcontrib-bibtex = "^2.4.1"
 sphinxcontrib-details-directive = "^0.1.0"
-nbsphinx = "^0.8.6"
+nbsphinx = "^0.8.8"
 ipykernel = "^6.13.0"
 
 [tool.poetry.extras]
