@@ -249,7 +249,7 @@ class CouplingConstants:
             * self.propagator_factor("phph", Q2)
             * self.partonic_coupling("phph", pid, quark_coupling_type)
         )
-        # pure photon exchane
+        # pure photon exchange
         if self.obs_config["process"] == "EM":
             return w_phph
         # allow Z to be mixed in

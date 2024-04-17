@@ -25,7 +25,7 @@ class NonSinglet(f2_nc.NonSinglet):
         """
 
         return RSL(
-            nnlo.xc3ns2p.c3np2a, nnlo.xc3ns2p.c3ns2b, nnlo.xc3ns2p.c3np2c, [self.nf]
+            nnlo.xc3ns2p.c3nm2a, nnlo.xc3ns2p.c3ns2b, nnlo.xc3ns2p.c3nm2c, [self.nf]
         )
 
     def N3LO(self):
@@ -34,9 +34,9 @@ class NonSinglet(f2_nc.NonSinglet):
         """
 
         return RSL(
-            n3lo.xc3ns3p.c3np3a,
+            n3lo.xc3ns3p.c3nm3a,
             n3lo.xc3ns3p.c3ns3b,
-            n3lo.xc3ns3p.c3np3c,
+            n3lo.xc3ns3p.c3nm3c,
             [self.nf, False],
         )
 
