@@ -37,7 +37,7 @@ class NonSinglet(f2_nc.NonSinglet):
             n3lo.xc3ns3p.c3nm3a,
             n3lo.xc3ns3p.c3ns3b,
             n3lo.xc3ns3p.c3nm3c,
-            [self.nf, False],
+            [self.nf, True],
         )
 
 
