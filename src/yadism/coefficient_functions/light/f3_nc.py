@@ -1,8 +1,9 @@
 """See :mod:`f3_cc` docstring for the name conventions."""
 
-from .. import partonic_channel as pc
+from .. import partonic_channel as epc
 from ..partonic_channel import RSL
 from . import f2_nc, n3lo, nlo, nnlo
+from . import partonic_channel as pc
 
 
 class NonSinglet(f2_nc.NonSinglet):
@@ -27,13 +28,24 @@ class NonSinglet(f2_nc.NonSinglet):
             n3lo.xc3ns3p.c3nm3a,
             n3lo.xc3ns3p.c3ns3b,
             n3lo.xc3ns3p.c3nm3c,
-            [self.nf, True],
+            [self.nf],
         )
 
 
-class Gluon(pc.EmptyPartonicChannel):
+class Gluon(epc.EmptyPartonicChannel):
     pass
 
 
-class Singlet(pc.EmptyPartonicChannel):
+class Singlet(epc.EmptyPartonicChannel):
     pass
+
+
+class Valence(pc.LightBase):
+
+    def N3LO(self):
+        """Part proportional to :math:`fl_{02}` of :eqref:`2.11` :cite:`Davies:2016ruz`."""
+
+        return RSL(
+            n3lo.xc3ns3p.c3nsv3a,
+            [self.nf],
+        )

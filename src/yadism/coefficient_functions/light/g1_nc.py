@@ -1,3 +1,4 @@
+from .. import partonic_channel as epc
 from ..partonic_channel import RSL
 from . import nlo, nnlo
 from . import partonic_channel as pc
@@ -82,3 +83,7 @@ class Singlet(pc.LightBase):
 
         """
         return RSL(nnlo.g1.singlet_reg, args=[self.nf])
+
+
+class Valence(epc.EmptyPartonicChannel):
+    pass

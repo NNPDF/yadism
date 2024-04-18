@@ -30,3 +30,7 @@ class Gluon(epc.EmptyPartonicChannel):
 
 class Singlet(epc.EmptyPartonicChannel):
     pass
+
+
+class Valence(epc.EmptyPartonicChannel):
+    pass

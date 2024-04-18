@@ -33,3 +33,7 @@ class NonSingletOdd(fl_nc.NonSinglet):
             loc=n3lo.xclns3p.clnm3c,
             args=dict(reg=[self.nf, 0]),
         )
+
+
+class Valence(fl_nc.Valence):
+    pass

@@ -35,3 +35,7 @@ class NonSingletOdd(f2_nc.NonSinglet):
             n3lo.xc2ns3p.c2nm3c,
             [self.nf, 0],
         )
+
+
+class Valence(f2_nc.Valence):
+    pass

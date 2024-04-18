@@ -189,7 +189,7 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     weights : dict
         mapping pid -> weight for q and g channel
     """
-    weights = {"ns": {}, "g": {}, "s": {}}
+    weights = {"ns": {}, "g": {}, "s": {}, "v": {}}
     # determine couplings
     projectile_pid = coupling_constants.obs_config["projectilePID"]
     if projectile_pid in [-11, 12]:
@@ -217,6 +217,8 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     for q in weights["ns"]:
         weights["s"][q] = tot_ch_sq / norm / 2
         weights["s"][-q] = tot_ch_sq / norm / 2
+        weights["v"][q] = weights["s"][q]
+        weights["v"][-q] = -weights["s"][-q]
     return weights
 
 
