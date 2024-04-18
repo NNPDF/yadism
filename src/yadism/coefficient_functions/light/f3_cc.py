@@ -1,5 +1,5 @@
 """
-Note that the source files in fortran follow :cite:`vogt-f3cc` notation
+Note that the source files (given in fortran) follow the notations in :cite:`vogt-f3cc`
 where the odd-N moments are called minus even if they correspond to :math:`\nu + \bar{\nu}`,
 while even-N moments are called plus even if they correspond to :math:`\nu - \bar{\nu}`.
 This convention is changed in :cite:`Davies:2016ruz` where the |N3LO| CC results are presented
