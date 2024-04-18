@@ -14,7 +14,7 @@ Note
     *   Check the theory reference for details on
         :doc:`../theory/scale-variations`
 
-    *   The source files in fortran follows :cite:`vogt-f3cc` notation
+    *   The source files (available in fortran) follow the notations in :cite:`vogt-f3cc`
         where the odd-N moments are called minus even if they correspond to :math:`\nu + \bar{\nu}`.
         This convention is changed in :cite:`Davies:2016ruz` where the complete |N3LO| CC results are presented
         for the first time. Referred equations are not always in agreement with the code conventions.
