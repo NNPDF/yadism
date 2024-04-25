@@ -123,7 +123,18 @@ class CouplingConstants:
                 )
         raise ValueError(f"Unknown mode: {mode}")
 
-    def partonic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
+    def nc_partonic_coupling(self, pid):
+        """Neutral bosons-quark couplings."""
+        qph = {
+            "V": self.electric_charge[pid],
+            "A": 0,  # axial coupling of the photon to the quark is not there of course
+        }
+        qZ = {"V": self.vectorial_coupling(pid), "A": self.weak_isospin_3[pid]}
+        return qph, qZ
+
+    def partonic_coupling_fl2(
+        self, mode, pid, quark_coupling_type, cc_mask=None, nf=None
+    ):
         """Compute the coupling of the boson to the parton.
 
         Parameters
@@ -148,21 +159,65 @@ class CouplingConstants:
         if mode == "WW":
             return np.sum(self.theory_config["CKM"].masked(cc_mask)(pid))
         # load couplings
-        qph = {
-            "V": self.electric_charge[pid],
-            "A": 0,  # axial coupling of the photon to the quark is not there of course
-        }
-        qZ = {"V": self.vectorial_coupling(pid), "A": self.weak_isospin_3[pid]}
+        qph, qZ = self.nc_partonic_coupling(pid)
+
         first = quark_coupling_type[0]
         second = quark_coupling_type[1]
         # switch mode
         if mode == "phph":
             return qph[first] * qph[second]
-        elif mode == "phZ":
+        if mode == "phZ":
             return qph[first] * qZ[second]
-        elif mode == "ZZ":
+        if mode == "ZZ":
             return qZ[first] * qZ[second]
         raise ValueError(f"Unknown mode: {mode}")
+
+    def partonic_coupling_fl11(self, mode, pid, nf, quark_coupling_type):
+        """Compute the coupling of the boson to the parton for the flavor class :math:`f_{l11}`.
+
+        This is a generalization of :cite:`Larin:1996wd` (Table 2) for NC.
+        See also pag. 27. This coupling is given by :math:`Tr(Q_f) Q_f`.
+
+        Parameters
+        ----------
+        mode : str
+            scattered bosons
+        pid : int
+            parton identifier
+        quark_coupling_type : str
+            flag to distinguish for heavy quarks between vectorial and axial-vectorial
+            coupling
+
+        Returns
+        -------
+        float
+            partonic coupling
+        """
+        # select quark coupling
+        first = quark_coupling_type[0]
+        second = quark_coupling_type[1]
+
+        def switch_mode(quark):
+            qph, qZ = self.nc_partonic_coupling(quark)
+            if mode == "phph":
+                return qph[first], qph[second]
+            if mode == "phZ":
+                return qph[first], qZ[second]
+            if mode == "ZZ":
+                return qZ[first], qZ[second]
+            return ValueError(f"Unknown mode {mode}")
+
+        # load linear coupling
+        g1, _ = switch_mode(abs(pid))
+
+        # compute traces
+        # TODO: do we care about skip_heavylight here ??
+        pids = range(1, nf + 1)
+        trace = 0
+        for quark in pids:
+            _, g2 = switch_mode(quark)
+            trace += g2
+        return g1 * trace
 
     def propagator_factor(self, mode, Q2):
         r"""Compute propagator correction to account for different bosons (:math:`\\eta` in PDG).
@@ -200,11 +255,8 @@ class CouplingConstants:
             return eta_W
         raise ValueError(f"Unknown mode: {mode}")
 
-    def get_weight(self, pid, Q2, quark_coupling_type, cc_mask=None):
+    def get_weight(self, pid, Q2, quark_coupling_type, cc_mask=None, nf=None):
         """Compute the weight for the pid contributions to the structure function.
-
-        Combine the charges, both on the leptonic side and the hadronic side, as well
-        as propagator changes and/or corrections.
 
         Parameters
         ----------
@@ -227,7 +279,9 @@ class CouplingConstants:
         if self.obs_config["process"] == "CC":
             return self.leptonic_coupling(
                 "WW", quark_coupling_type
-            ) * self.partonic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
+            ) * self.partonic_coupling_fl2(
+                "WW", pid, quark_coupling_type, cc_mask=cc_mask
+            )
         # NC or EM
         # are we in positivity mode?
         # Note that for yadism the values None and "all" are equivalent
@@ -244,10 +298,52 @@ class CouplingConstants:
             if abs(pid) != pos_pid:
                 return 0.0
 
+        partonic_coupling = self.partonic_coupling_fl2
+        return self.get_nc_weight(partonic_coupling, pid, Q2, quark_coupling_type)
+
+    def get_fl11_weight(self, pid, Q2, quark_coupling_type, nf):
+        """Same as :func:`get_weight`but now for the NC flavor class :math:`f_{l11}`.
+
+        Parameters
+        ----------
+        pid : int
+            particle identifier
+        Q2 : float
+            DIS virtuality
+        quark_coupling_type : str
+            flag to distinguish for heavy quarks between vectorial and axial-vectorial
+            coupling
+        nf : float
+            number of active flavors
+
+        Returns
+        -------
+        float
+            weight
+        """
+        # in CC there is no such class of diagrams
+        if self.obs_config["process"] == "CC":
+            return 0.0
+
+        # if we are are we in positivity mode, we fallback to the standard coupling
+        if (
+            self.obs_config["nc_pos_charge"] is not None
+            and self.obs_config["nc_pos_charge"] != "all"
+        ):
+            return self.get_weight(pid, Q2, quark_coupling_type)
+
+        partonic_coupling = self.partonic_coupling_fl11
+        return self.get_nc_weight(partonic_coupling, pid, Q2, quark_coupling_type, nf)
+
+    def get_nc_weight(self, partonic_coupling, pid, Q2, quark_coupling_type, nf=None):
+        """Combine the charges, both on the leptonic side and the hadronic side,
+        as well as propagator changes and/or corrections.
+        """
+        # NC or EM
         w_phph = (
             self.leptonic_coupling("phph", quark_coupling_type)
             * self.propagator_factor("phph", Q2)
-            * self.partonic_coupling("phph", pid, quark_coupling_type)
+            * partonic_coupling("phph", pid, quark_coupling_type, nf=nf)
         )
         # pure photon exchange
         if self.obs_config["process"] == "EM":
@@ -259,52 +355,16 @@ class CouplingConstants:
                 2
                 * self.leptonic_coupling("phZ", quark_coupling_type)
                 * self.propagator_factor("phZ", Q2)
-                * self.partonic_coupling("phZ", pid, quark_coupling_type)
+                * partonic_coupling("phZ", pid, quark_coupling_type, nf=nf)
             )
             # true Z contributions
             w_ZZ = (
                 self.leptonic_coupling("ZZ", quark_coupling_type)
                 * self.propagator_factor("ZZ", Q2)
-                * self.partonic_coupling("ZZ", pid, quark_coupling_type)
+                * partonic_coupling("ZZ", pid, nf, quark_coupling_type, nf=nf)
             )
             return w_phph + w_phZ + w_ZZ
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
-
-    # def linear_partonic_coupling(self, pid):
-    #     """Return the linear vectorial partonic coupling. Defined only for |NC|.
-
-    #     Parameters
-    #     ----------
-    #     pid : int
-    #         particle identifier
-
-    #     Returns
-    #     -------
-    #     float
-    #         weight
-    #     """
-    #     if self.obs_config["process"] == "CC":
-    #         return 0.0
-    #     # NC or EM
-    #     # are we in positivity mode?
-    #     if (
-    #         self.obs_config["nc_pos_charge"] is not None
-    #         and self.obs_config["nc_pos_charge"] != "all"
-    #     ):
-    #         pos = self.obs_config["nc_pos_charge"][0]
-    #         pos_pid = 1 + br.quark_names.index(pos)
-    #         if abs(pid) != pos_pid:
-    #             return 0.0
-
-    #     w_ph = self.electric_charge[pid]
-    #     # pure EM charge
-    #     if self.obs_config["process"] == "EM":
-    #         return w_ph
-    #     # allow Z to be mixed in
-    #     if self.obs_config["process"] == "NC":
-    #         w_ZV = self.vectorial_coupling(pid)
-    #         return w_ph + w_ZV
-    #     raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod
     def from_dict(cls, theory, observables):
