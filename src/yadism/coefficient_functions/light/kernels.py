@@ -151,13 +151,15 @@ def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False):
         ns_partons[q] = w
         ns_partons[-q] = w if not is_pv else -w
         tot_ch_sq += w
-    # gluon coupling = charge average (omitting the *2/2)
-    ch_av = tot_ch_sq / len(pids) if not is_pv else 0.0
-    # same for singlet
+
+    # compute gluon, singlet or valence
+    ch_av = tot_ch_sq / len(pids)
+    if is_pv:
+        v_partons = {q: np.sign(q) * ch_av for q in [*pids, *(-q for q in pids)]}
+        return {"ns": ns_partons, "v": v_partons}
+    # gluon and singlet coupling = charge average (omitting the *2/2)
     s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
-    # same for valence, but minus for \bar{q}
-    v_partons = {q: np.sign(q) * ch_av for q in [*pids, *(-q for q in pids)]}
-    return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons, "v": v_partons}
+    return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons}   
 
 def nc_fl11_weights(coupling_constants, Q2, nf, skip_heavylight=False):
     """Compute the light NC weight for the flavor class :math:`f_{l11}`.
