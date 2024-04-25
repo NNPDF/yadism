@@ -11,7 +11,7 @@ from .xcdiff3p import c2q3dfp, c2q3dfpc
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2np3a_fl2(y, args):
-    """The math:`f_{l2}`: regular piece of the non singlet coefficient."""
+    """The math:`fl_{2}`: regular piece of the non singlet coefficient."""
     nf = args[0]
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
@@ -116,7 +116,7 @@ def c2ns3b_fl2(y, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2np3c_fl2(y, args):
-    """The math:`f_{l2}`: local piece of the non singlet coefficient."""
+    """The math:`fl_{2}`: local piece of the non singlet coefficient."""
     nf = args[0]
     dl1 = np.log(1.0 - y)
     res = (

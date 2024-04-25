@@ -339,7 +339,7 @@ def generate_single_flavor_light(esf, nf, ihq):
         )
 
     s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
-    # TODO: if we are N3LO need to add upp the fl11 diagrams
+    # TODO: if we are N3LO need to add up the fl11 diagrams
     return (
         Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
         Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),

@@ -25,9 +25,15 @@ class NonSinglet(pc.LightBase):
         """
         |ref| implements :eqref:`8`, :cite:`vogt-flnc`.
         """
+        if self.is_fl11:
+            return RSL(
+                n3lo.xclns3p.clnp3a_fl11,
+                loc=n3lo.xclns3p.clnp3c_fl11,
+                args=dict(reg=[self.nf], loc=[self.nf]),
+            )
         return RSL(
-            n3lo.xclns3p.clnp3a,
-            loc=n3lo.xclns3p.clnp3c,
+            n3lo.xclns3p.clnp3a_fl2,
+            loc=n3lo.xclns3p.clnp3c_fl2,
             args=dict(reg=[self.nf], loc=[self.nf]),
         )
 
@@ -51,7 +57,9 @@ class Gluon(pc.LightBase):
         """
         |ref| implements :eqref:`10`, :cite:`vogt-flnc`.
         """
-        return RSL(n3lo.xclsg3p.clg3a, args=[self.nf])
+        if self.is_fl11:
+            return RSL(n3lo.xclsg3p.clg3a_fl11, args=[self.nf])
+        return RSL(n3lo.xclsg3p.clg3a_fl2, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
@@ -66,4 +74,6 @@ class Singlet(pc.LightBase):
         """
         |ref| implements :eqref:`9`, :cite:`vogt-flnc`.
         """
-        return RSL(n3lo.xclsg3p.cls3a, args=[self.nf])
+        if self.is_fl11:
+            return RSL(n3lo.xclsg3p.cls3a_fl11, args=[self.nf])
+        return RSL(n3lo.xclsg3p.cls3a_fl2, args=[self.nf])

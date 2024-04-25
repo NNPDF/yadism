@@ -1,5 +1,5 @@
 """Note, the factor `fl11` is disabled for charged currents according to `xcdiff3p.f`.
-To generate `clnm3a,clnm3c` we follow `xcdiff3p.f` or the reference paper :cite:`Davies:2016ruz`
+To generate `clnm3a_fl2,clnm3c_fl2` we follow `xcdiff3p.f` or the reference paper :cite:`Davies:2016ruz`
 """
 
 import numba as nb
@@ -12,9 +12,9 @@ from .xcdiff3p import clq3dfp
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def clnp3a(y, args):
+def clnp3a_fl2(y, args):
+    """The math:`fl_{2}`: regular piece of the non singlet coefficient."""
     nf = args[0]
-    fl11 = args[1]
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
     li2 = nielsen(1, 1, y).real
@@ -59,8 +59,17 @@ def clnp3a(y, args):
         )
         * 64.0
         * d81
-        + fl11
-        * nf
+    )
+    return res
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def clnp3a_fl11(y, args):
+    """The math:`fl_{11}`: regular piece of the non singlet coefficient."""
+    nf = args[0]
+    dl = np.log(y)
+    return (
+        nf
         * (
             (107.0 + 321.05 * y - 54.62 * y**2) * (1.0 - y)
             - 26.717
@@ -71,21 +80,21 @@ def clnp3a(y, args):
         )
         * y
     )
-    return res
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def clnp3c(y, args):
+def clnp3c_fl2(y, args):
+    """The math:`fl_{2}`: local piece of the non singlet coefficient."""
     nf = args[0]
     res = 0.113 + nf * 0.006
     return res
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def clnm3a(y, args):
-    return clnp3a(y, args) - clq3dfp(y, args)
+def clnm3a_fl2(y, args):
+    return clnp3a_fl2(y, args) - clq3dfp(y, args)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def clnm3c(y, args):
-    return clnp3c(y, args)
+def clnm3c_fl2(y, args):
+    return clnp3c_fl2(y, args)

@@ -87,7 +87,6 @@ def generate(esf, nf):
     )
     kernels_list = [ns, g, s]
 
-    # TODO: split coefficients in fl and g1 ...
     # at N3LO we need to add also the fl11 diagrams
     if 3 in esf.orders:
         weights_fl11 = nc_weights(
@@ -153,8 +152,7 @@ def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False, is_fl11
         else:
             coupling = coupling_constants.get_weight
 
-            # TODO: do we need skipheavlylight here??
-            # TODO: do AA contribute for fl11 ??
+            # TODO: do AA contribute to fl11 ??
             if is_fl11:
                 coupling = coupling_constants.get_fl11_weight
             w = coupling(q, Q2, "VV", nf=nf) + coupling(q, Q2, "AA", nf=nf)

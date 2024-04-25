@@ -210,8 +210,7 @@ class CouplingConstants:
         # load linear coupling
         g1, _ = switch_mode(abs(pid))
 
-        # compute traces
-        # TODO: do we care about skip_heavylight here ??
+        # compute trace
         pids = range(1, nf + 1)
         trace = 0
         for quark in pids:

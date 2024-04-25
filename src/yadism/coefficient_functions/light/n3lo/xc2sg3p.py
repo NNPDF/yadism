@@ -6,7 +6,7 @@ from .common import d9, d81
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2s3a_fl2(y, args):
-    """The math:`f_{l2}`: regular piece of the singlet coefficient."""
+    """The math:`fl_{2}`: regular piece of the singlet coefficient."""
     nf = args[0]
     y1 = 1.0 - y
     dl = np.log(y)
@@ -85,7 +85,7 @@ def c2s3c_fl11(y, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2g3a_fl2(y, args):
-    """The math:`f_{l2}`: regular piece of the gluon coefficient."""
+    """The math:`fl_{2}`: regular piece of the gluon coefficient."""
     nf = args[0]
     yi = 1.0 / y
     dl = np.log(y)
@@ -156,7 +156,7 @@ def c2g3a_fl11(y, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2g3c_fl2(y, args):
-    """The math:`f_{l2}`: local piece of the gluon coefficient."""
+    """The math:`fl_{2}`: local piece of the gluon coefficient."""
     nf = args[0]
     res = 0.625 * nf
     return res
