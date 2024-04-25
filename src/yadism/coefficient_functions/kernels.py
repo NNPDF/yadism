@@ -8,9 +8,8 @@ import copy
 import importlib
 from numbers import Number
 
+import numpy as np
 from eko import basis_rotation as br
-
-# from .light.n3lo.common import nc_color_factor
 
 
 def import_local(kind, process, sibling):
@@ -316,26 +315,31 @@ def generate_single_flavor_light(esf, nf, ihq):
         )
 
     # NC
-    if not is_pv:
-        w = esf.info.coupling_constants.get_weight(
-            ihq, esf.Q2, "VV"
-        ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
-    else:
+    if is_pv:
         w = esf.info.coupling_constants.get_weight(
             ihq, esf.Q2, "VA"
         ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+    else:
+        w = esf.info.coupling_constants.get_weight(
+            ihq, esf.Q2, "VV"
+        ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+
     ns_partons = {}
     ns_partons[ihq] = w
     ns_partons[-ihq] = w if not is_pv else -w
-    ch_av = w / nf if not is_pv else 0.0  # omitting again *2/2
-    # all quarks from 1 up to and including nf form the singlet
-    s_partons = {}
-    for pid in range(1, nf + 1):
-        s_partons[pid] = ch_av
-        s_partons[-pid] = ch_av
-    # fl = nc_color_factor(esf.info.coupling_constants, nf, "ns", False)
-    # flps = nc_color_factor(esf.info.coupling_constants, nf, "s", False)
-    # flg = nc_color_factor(esf.info.coupling_constants, nf, "g", False)
+    ch_av = w / nf  # omitting again *2/2
+
+    # all quarks from 1 up to and including nf for the singlet and valence
+    pids = range(1, nf + 1)
+    if is_pv:
+        v_partons = {q: np.sign(q) * ch_av for q in [*pids, *(-q for q in pids)]}
+        return (
+            Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
+            Kernel(v_partons, light_cfs.Valence(esf, nf)),
+        )
+
+    s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
+    # TODO: if we are N3LO need to add upp the fl11 diagrams
     return (
         Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
         Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),

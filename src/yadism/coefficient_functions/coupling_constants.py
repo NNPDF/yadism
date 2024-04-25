@@ -304,6 +304,9 @@ class CouplingConstants:
     def get_fl11_weight(self, pid, Q2, quark_coupling_type, nf):
         """Same as :func:`get_weight`but now for the NC flavor class :math:`fl_{11}`.
 
+        Combine the charges, both on the leptonic side and the hadronic side,
+        as well as propagator changes and/or corrections.
+
         Parameters
         ----------
         pid : int
@@ -336,9 +339,7 @@ class CouplingConstants:
         return self.get_nc_weight(partonic_coupling, pid, Q2, quark_coupling_type, nf)
 
     def get_nc_weight(self, partonic_coupling, pid, Q2, quark_coupling_type, nf=None):
-        """Combine the charges, both on the leptonic side and the hadronic side,
-        as well as propagator changes and/or corrections.
-        """
+        """Combine the NC couplings."""
         # NC or EM
         w_phph = (
             self.leptonic_coupling("phph", quark_coupling_type)

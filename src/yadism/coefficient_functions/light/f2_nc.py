@@ -1,4 +1,3 @@
-from .. import partonic_channel as epc
 from ..partonic_channel import RSL
 from . import n3lo, nlo, nnlo
 from . import partonic_channel as pc
@@ -96,15 +95,11 @@ class Singlet(pc.LightBase):
         """
         if self.is_fl11:
             return RSL(
-            n3lo.xc2sg3p.c2s3a_fl11,
-            loc=n3lo.xc2sg3p.c2s3c_fl11,
-            args=[self.nf],
-        )
+                n3lo.xc2sg3p.c2s3a_fl11,
+                loc=n3lo.xc2sg3p.c2s3c_fl11,
+                args=[self.nf],
+            )
         return RSL(
             n3lo.xc2sg3p.c2s3a_fl2,
             args=[self.nf],
         )
-
-
-class Valence(epc.EmptyPartonicChannel):
-    pass

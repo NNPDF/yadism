@@ -83,7 +83,3 @@ class Singlet(pc.LightBase):
 
         """
         return RSL(nnlo.g1.singlet_reg, args=[self.nf])
-
-
-class Valence(epc.EmptyPartonicChannel):
-    pass

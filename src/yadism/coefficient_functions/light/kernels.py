@@ -27,26 +27,30 @@ def generate(esf, nf):
     kind = esf.info.obs_name.kind
     pcs = import_pc_module(kind, esf.process)
     coupling = esf.info.coupling_constants
+    is_pv = esf.info.obs_name.is_parity_violating
     if esf.process == "CC":
         weights_even = kernels.cc_weights_even(
             coupling,
             esf.Q2,
             br.quark_names[:nf],
             nf,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         ns_even = kernels.Kernel(weights_even["ns"], pcs.NonSingletEven(esf, nf))
-        g = kernels.Kernel(weights_even["g"], pcs.Gluon(esf, nf))
-        s = kernels.Kernel(weights_even["s"], pcs.Singlet(esf, nf))
-        v = kernels.Kernel(weights_even["v"], pcs.Valence(esf, nf))
         weights_odd = kernels.cc_weights_odd(
             esf.info.coupling_constants,
             esf.Q2,
             br.quark_names[:nf],
             nf,
-            esf.info.obs_name.is_parity_violating,
+            is_pv,
         )
         ns_odd = kernels.Kernel(weights_odd["ns"], pcs.NonSingletOdd(esf, nf))
+
+        if is_pv:
+            v = kernels.Kernel(weights_even["v"], pcs.Valence(esf, nf))
+            return (ns_even, ns_odd, v)
+        g = kernels.Kernel(weights_even["g"], pcs.Gluon(esf, nf))
+        s = kernels.Kernel(weights_even["s"], pcs.Singlet(esf, nf))
         return (ns_even, g, s, ns_odd, v)
 
     # NC standard weights
@@ -54,11 +58,11 @@ def generate(esf, nf):
         esf.info.coupling_constants,
         esf.Q2,
         nf,
-        esf.info.obs_name.is_parity_violating,
+        is_pv,
     )
 
     # let's separate according to parity
-    if esf.info.obs_name.is_parity_violating:
+    if is_pv:
         ns = kernels.Kernel(
             weights["ns"],
             pcs.NonSinglet(esf, nf),

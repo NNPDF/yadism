@@ -1,4 +1,3 @@
-from .. import partonic_channel as epc
 from ..partonic_channel import RSL
 from . import n3lo, nlo, nnlo
 from . import partonic_channel as pc
@@ -29,7 +28,7 @@ class NonSinglet(pc.LightBase):
         return RSL(
             n3lo.xclns3p.clnp3a,
             loc=n3lo.xclns3p.clnp3c,
-            args=dict(reg=[self.nf, self.fl], loc=[self.nf]),
+            args=dict(reg=[self.nf], loc=[self.nf]),
         )
 
 
@@ -52,7 +51,7 @@ class Gluon(pc.LightBase):
         """
         |ref| implements :eqref:`10`, :cite:`vogt-flnc`.
         """
-        return RSL(n3lo.xclsg3p.clg3a, args=[self.nf, self.flg])
+        return RSL(n3lo.xclsg3p.clg3a, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
@@ -67,8 +66,4 @@ class Singlet(pc.LightBase):
         """
         |ref| implements :eqref:`9`, :cite:`vogt-flnc`.
         """
-        return RSL(n3lo.xclsg3p.cls3a, args=[self.nf, self.flps])
-
-
-class Valence(epc.EmptyPartonicChannel):
-    pass
+        return RSL(n3lo.xclsg3p.cls3a, args=[self.nf])
