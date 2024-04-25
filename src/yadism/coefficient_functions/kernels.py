@@ -10,7 +10,7 @@ from numbers import Number
 
 from eko import basis_rotation as br
 
-from .light.n3lo.common import nc_color_factor
+# from .light.n3lo.common import nc_color_factor
 
 
 def import_local(kind, process, sibling):
@@ -217,8 +217,8 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     for q in weights["ns"]:
         weights["s"][q] = tot_ch_sq / norm / 2
         weights["s"][-q] = tot_ch_sq / norm / 2
-        weights["v"][q] = weights["s"][q]
-        weights["v"][-q] = -weights["s"][-q]
+        weights["v"][q] = tot_ch_sq / norm / 2
+        weights["v"][-q] = -tot_ch_sq / norm / 2
     return weights
 
 
@@ -333,11 +333,11 @@ def generate_single_flavor_light(esf, nf, ihq):
     for pid in range(1, nf + 1):
         s_partons[pid] = ch_av
         s_partons[-pid] = ch_av
-    fl = nc_color_factor(esf.info.coupling_constants, nf, "ns", False)
-    flps = nc_color_factor(esf.info.coupling_constants, nf, "s", False)
-    flg = nc_color_factor(esf.info.coupling_constants, nf, "g", False)
+    # fl = nc_color_factor(esf.info.coupling_constants, nf, "ns", False)
+    # flps = nc_color_factor(esf.info.coupling_constants, nf, "s", False)
+    # flg = nc_color_factor(esf.info.coupling_constants, nf, "g", False)
     return (
-        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf, fl=fl)),
-        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf, flg=flg)),
-        Kernel(s_partons, light_cfs.Singlet(esf, nf, flps=flps)),
+        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
+        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),
+        Kernel(s_partons, light_cfs.Singlet(esf, nf)),
     )

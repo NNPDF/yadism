@@ -3,11 +3,11 @@
 # import numba as nb
 # import numpy as np
 
-# d3 = 1 / 3.0
-# d9 = 1 / 9.0
-# d27 = 1.0 / 27.0
-# d81 = 1.0 / 81.0
-# d243 = 1.0 / 243.0
+d3 = 1 / 3.0
+d9 = 1 / 9.0
+d27 = 1.0 / 27.0
+d81 = 1.0 / 81.0
+d243 = 1.0 / 243.0
 
 
 # def nc_color_factor(coupling_constants, nf, channel, skip_heavylight):
@@ -34,7 +34,7 @@
 #     w_pc = np.array(
 #         [coupling_constants.linear_partonic_coupling(pid) for pid in pids], dtype=float
 #     )
-#     # if skip_heavylight the last pid couplig is set to 0
+#     # if skip_heavylight the last pid coupling is set to 0
 #     if skip_heavylight:
 #         w_pc[-1] = 0
 #     if not w_pc.any():
@@ -58,7 +58,7 @@
 
 # @nb.njit("f8(f8[:])", cache=True)
 # def fls(nc_weights):
-#     """:math:`fl_{11}` pure Singlet as defined in :cite:`Larin:1996wd` (Table 2) and generalized for |NC|."""
+#     """:math:`fl_{11}` Singlet as defined in :cite:`Larin:1996wd` (Table 2) and generalized for |NC|."""
 #     avg_2 = np.mean(nc_weights) ** 2
 #     sum_w2 = np.mean(nc_weights**2)
 #     # fls = [1.0, 0.1, 0.0, 0.1, 0.01818181818, 0.1]
@@ -67,5 +67,5 @@
 
 # @nb.njit("f8(f8[:])", cache=True)
 # def flg(nc_weights):
-#     """:math:`fl_{11}^g` pure Singlet as defined in :cite:`Larin:1996wd` (Table 2) and generalized for |NC|."""
+#     """:math:`fl_{11}^g` gluon as defined in :cite:`Larin:1996wd` (Table 2) and generalized for |NC|."""
 #     return fls(nc_weights)
