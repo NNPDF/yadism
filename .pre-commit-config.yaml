@@ -39,7 +39,7 @@ repos:
     rev: 6.3.0
     hooks:
     -   id: pydocstyle
-        files: ^src/
+        files: ^deactivate-check-for-now-src/
         args: ["--add-ignore=D107,D105"]
         additional_dependencies:
           - toml

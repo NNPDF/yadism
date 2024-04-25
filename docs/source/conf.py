@@ -14,15 +14,13 @@
 import os
 import pathlib
 
-from recommonmark.transform import AutoStructify
-
 here = pathlib.Path(__file__).parent
 
 # -- Project information -----------------------------------------------------
 
 project = "yadism"
-copyright = "2019-2022, the N3PDF team"  # pylint: disable=redefined-builtin
-author = "N3PDF team"
+copyright = "2019-2024, the NNPDF team"  # pylint: disable=redefined-builtin
+author = "NNPDF team"
 
 # -- General configuration ---------------------------------------------------
 
@@ -46,7 +44,6 @@ extensions = [
     # particularly in markdown. See
     # https://recommonmark.readthedocs.io/en/latest/#linking-to-headings-in-other-files
     "sphinx.ext.autosectionlabel",
-    "recommonmark",
     "sphinx.ext.napoleon",
     "sphinx.ext.graphviz",
     "sphinxcontrib.bibtex",
@@ -352,5 +349,4 @@ def setup(app):
         },
         True,
     )
-    app.add_transform(AutoStructify)
     app.connect("builder-inited", run_apidoc)
