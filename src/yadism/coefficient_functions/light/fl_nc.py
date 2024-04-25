@@ -23,18 +23,23 @@ class NonSinglet(pc.LightBase):
 
     def N3LO(self):
         """
-        |ref| implements :eqref:`8`, :cite:`vogt-flnc`.
+        |ref| implements the flavor class :math:`fl_{2}` of :eqref:`8`, :cite:`vogt-flnc`.
         """
-        if self.is_fl11:
-            return RSL(
-                n3lo.xclns3p.clnp3a_fl11,
-                loc=n3lo.xclns3p.clnp3c_fl11,
-                args=dict(reg=[self.nf], loc=[self.nf]),
-            )
         return RSL(
             n3lo.xclns3p.clnp3a_fl2,
             loc=n3lo.xclns3p.clnp3c_fl2,
             args=dict(reg=[self.nf], loc=[self.nf]),
+        )
+
+
+class NonSingletFL11(pc.LightBase):
+    def N3LO(self):
+        """
+        |ref| implements the flavor class :math:`fl_{11}` of :eqref:`8`, :cite:`vogt-flnc`.
+        """
+        return RSL(
+            n3lo.xclns3p.clnp3a_fl11,
+            args=dict(reg=[self.nf]),
         )
 
 
@@ -55,11 +60,17 @@ class Gluon(pc.LightBase):
 
     def N3LO(self):
         """
-        |ref| implements :eqref:`10`, :cite:`vogt-flnc`.
+        |ref| implements the flavor class :math:`fl_{2}` of :eqref:`10`, :cite:`vogt-flnc`.
         """
-        if self.is_fl11:
-            return RSL(n3lo.xclsg3p.clg3a_fl11, args=[self.nf])
         return RSL(n3lo.xclsg3p.clg3a_fl2, args=[self.nf])
+
+
+class GluonFL11(pc.LightBase):
+    def N3LO(self):
+        """
+        |ref| implements the flavor class :math:`fl_{11}` of :eqref:`10`, :cite:`vogt-flnc`.
+        """
+        return RSL(n3lo.xclsg3p.clg3a_fl11, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
@@ -72,8 +83,14 @@ class Singlet(pc.LightBase):
 
     def N3LO(self):
         """
-        |ref| implements :eqref:`9`, :cite:`vogt-flnc`.
+        |ref| implements the flavor class :math:`fl_{2}` of :eqref:`9`, :cite:`vogt-flnc`.
         """
-        if self.is_fl11:
-            return RSL(n3lo.xclsg3p.cls3a_fl11, args=[self.nf])
         return RSL(n3lo.xclsg3p.cls3a_fl2, args=[self.nf])
+
+
+class SingletFL11(pc.LightBase):
+    def N3LO(self):
+        """
+        |ref| implements the flavor class :math:`fl_{11}` of :eqref:`9`, :cite:`vogt-flnc`.
+        """
+        return RSL(n3lo.xclsg3p.cls3a_fl11, args=[self.nf])

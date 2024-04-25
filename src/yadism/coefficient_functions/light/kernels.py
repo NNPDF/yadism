@@ -94,18 +94,15 @@ def generate(esf, nf):
         )
         ns_fl11 = kernels.Kernel(
             weights_fl11["ns"],
-            pcs.NonSinglet(esf, nf, is_fl11=True),
-            min_order=3,
+            pcs.NonSingletFL11(esf, nf),
         )
         g_fl11 = kernels.Kernel(
             weights_fl11["g"],
-            pcs.Gluon(esf, nf, is_fl11=True),
-            min_order=3,
+            pcs.GluonFL11(esf, nf),
         )
         s_fl11 = kernels.Kernel(
             weights_fl11["s"],
-            pcs.Singlet(esf, nf, is_fl11=True),
-            min_order=3,
+            pcs.SingletFL11(esf, nf),
         )
         kernels_list.extend([ns_fl11, g_fl11, s_fl11])
     return kernels_list
