@@ -125,7 +125,7 @@ def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False, is_fl11
         skip_heavylight : bool
             prevent the last quark to couple to the boson
         is_fl11 : bool
-            if True compute the coupling of the flavor class :math:`f_{l11}`
+            if True compute the coupling of the flavor class :math:`fl_{11}`
 
     Returns
     -------

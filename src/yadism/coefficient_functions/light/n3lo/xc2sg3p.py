@@ -55,9 +55,10 @@ def c2s3a_fl2(y, args):
     res = nf * (c2s31 + nf * c2s32)
     return res
 
+
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2s3a_fl11(y, args):
-    """The math:`f_{l11}`: regular piece of the singlet coefficient."""
+    """The math:`fl_{11}`: regular piece of the singlet coefficient."""
     nf = args[0]
     y1 = 1.0 - y
     dl = np.log(y)
@@ -76,9 +77,9 @@ def c2s3a_fl11(y, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2s3c_fl11(y, args):
-    """The math:`f_{l11}`: local piece of the Singlet coefficient."""
+    """The math:`fl_{11}`: local piece of the Singlet coefficient."""
     nf = args[0]
-    res = - nf * 11.8880
+    res = -nf * 11.8880
     return res
 
 
@@ -133,7 +134,7 @@ def c2g3a_fl2(y, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2g3a_fl11(y, args):
-    """The math:`f_{l11}`: regular piece of the gluon coefficient."""
+    """The math:`fl_{11}`: regular piece of the gluon coefficient."""
     nf = args[0]
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
@@ -149,8 +150,9 @@ def c2g3a_fl11(y, args):
         + y * dl**3 * (520.0 * d81 + 11.27 * y)
         + 60.0 * d81 * y * dl**4
     )
-    res = nf ** 2 * c2g3F
+    res = nf**2 * c2g3F
     return res
+
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2g3c_fl2(y, args):

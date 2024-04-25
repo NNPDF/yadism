@@ -173,7 +173,7 @@ class CouplingConstants:
         raise ValueError(f"Unknown mode: {mode}")
 
     def partonic_coupling_fl11(self, mode, pid, nf, quark_coupling_type):
-        """Compute the coupling of the boson to the parton for the flavor class :math:`f_{l11}`.
+        """Compute the coupling of the boson to the parton for the flavor class :math:`fl_{11}`.
 
         This is a generalization of :cite:`Larin:1996wd` (Table 2) for NC.
         See also pag. 27. This coupling is given by :math:`Tr(Q_f) Q_f`.
@@ -302,7 +302,7 @@ class CouplingConstants:
         return self.get_nc_weight(partonic_coupling, pid, Q2, quark_coupling_type)
 
     def get_fl11_weight(self, pid, Q2, quark_coupling_type, nf):
-        """Same as :func:`get_weight`but now for the NC flavor class :math:`f_{l11}`.
+        """Same as :func:`get_weight`but now for the NC flavor class :math:`fl_{11}`.
 
         Parameters
         ----------
