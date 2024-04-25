@@ -63,24 +63,6 @@ def clnp3a_fl2(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
-def clnp3a_fl11(y, args):
-    """The math:`fl_{11}`: regular piece of the non singlet coefficient."""
-    nf = args[0]
-    dl = np.log(y)
-    return (
-        nf
-        * (
-            (107.0 + 321.05 * y - 54.62 * y**2) * (1.0 - y)
-            - 26.717
-            - 320 * d81 * dl**3
-            - 640.0 * d81 * dl**2
-            + 9.773 * dl
-            + y * dl * (363.8 + 68.32 * dl)
-        )
-        * y
-    )
-
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def clnp3c_fl2(y, args):

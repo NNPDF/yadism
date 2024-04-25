@@ -67,28 +67,6 @@ def c2np3a_fl2(y, args):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def c2np3a_fl11(y, args):
-    """The math:`fl_{11}`: regular piece of the non singlet coefficient."""
-    nf = args[0]
-    y1 = 1.0 - y
-    dl = np.log(y)
-    dl1 = np.log(1.0 - y)
-    res = (
-        nf
-        * (
-            (126.42 - 50.29 * y - 50.15 * y**2) * y1
-            - 26.717
-            - 960.0 * d243 * dl**2 * (dl + 5.0)
-            + 59.59 * dl
-            - y * dl**2 * (101.8 + 34.79 * dl + 3.070 * dl**2)
-            - 9.075 * y * y1 * dl1
-        )
-        * y
-    )
-    return res
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
 def c2ns3b_fl2(y, args):
     nf = args[0]
     dl1 = np.log(1.0 - y)
@@ -149,14 +127,6 @@ def c2np3c_fl2(y, args):
         )
     )
     return res
-
-
-@nb.njit("f8(f8,f8[:])", cache=True)
-def c2np3c_fl11(y, args):
-    """The math:`fl_{11}`: local piece of the non singlet coefficient."""
-    nf = args[0]
-    return -nf * 11.8880
-
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2nm3a_fl2(y, args):
