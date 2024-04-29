@@ -84,26 +84,10 @@ def dump_polarized(src_path, target):
 
     # We make a case distinction for several experiments:
     obs = obs_template.copy()
-    if "ATHENA" in target.parent.name:
-        data = np.genfromtxt(src_path)
-        dict_kins = [dict(x=float(d[0]), y=float(d[2]), Q2=float(d[1])) for d in data]
-
-        obs["PolarizationDIS"] = 0.0 if "_F1" in target.parent.name else 1.0
-        observable_name = "F1_total" if "_F1" in target.parent.name else "g1_total"
-
-    elif "EIC" in target.parent.name:
-        data = np.genfromtxt(src_path)
+    data = np.genfromtxt(src_path)
+    
+    if "ATHENA" in target.parent.name or "EIC" in target.parent.name or "EIcC" in target.parent.name:
         dict_kins = [dict(x=float(d[0]), y=0.0, Q2=float(d[1])) for d in data]
-
-        obs["PolarizationDIS"] = 0.0 if "_F1" in target.parent.name else 1.0
-        observable_name = "F1_charm" if "_F1" in target.parent.name else "g1_charm"
-
-    elif "EIcC" in target.parent.name:
-        data = np.genfromtxt(src_path)
-        dict_kins = [dict(x=float(d[0]), y=0.0, Q2=float(d[1])) for d in data]
-
-        obs["PolarizationDIS"] = 0.0 if "_F1" in target.parent.name else 1.0
-        observable_name = "F1_charm" if "_F1" in target.parent.name else "g1_charm"
 
     else:
         data = load(src_path, 0, ["x", "Q2"])
@@ -111,10 +95,14 @@ def dump_polarized(src_path, target):
             dict(x=d["x"]["mid"], y=d["y"]["mid"], Q2=d["Q2"]["mid"]) for d in data
         ]
 
-        obs["PolarizationDIS"] = 0.0 if "_F1" in target.parent.name else 1.0
-        observable_name = "F1_total" if "_F1" in target.parent.name else "g1_total"
+    heavyness = "total"
+    if "EIC" in target.parent.name or "EIcC" in target.parent.name:
+        heavyness = "charm"
 
+    obs["PolarizationDIS"] = 0.0 if "_F1" in target.parent.name else 1.0
+    observable_name = f"F1_{heavyness}" if "_F1" in target.parent.name else f"g1_{heavyness}"
     obs["observables"] = {observable_name: dict_kins}
+
     if "_ep_" in str(src_path.stem) or "_mup_" in str(src_path.stem):
         obs["TargetDIS"] = "proton"
     elif "_en_" in str(src_path.stem) or "_mun_" in str(src_path.stem):
