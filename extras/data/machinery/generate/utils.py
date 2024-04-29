@@ -85,8 +85,12 @@ def dump_polarized(src_path, target):
     # We make a case distinction for several experiments:
     obs = obs_template.copy()
     data = np.genfromtxt(src_path)
-    
-    if "ATHENA" in target.parent.name or "EIC" in target.parent.name or "EIcC" in target.parent.name:
+
+    if (
+        "ATHENA" in target.parent.name
+        or "EIC" in target.parent.name
+        or "EIcC" in target.parent.name
+    ):
         dict_kins = [dict(x=float(d[0]), y=0.0, Q2=float(d[1])) for d in data]
 
     else:
@@ -100,7 +104,9 @@ def dump_polarized(src_path, target):
         heavyness = "charm"
 
     obs["PolarizationDIS"] = 0.0 if "_F1" in target.parent.name else 1.0
-    observable_name = f"F1_{heavyness}" if "_F1" in target.parent.name else f"g1_{heavyness}"
+    observable_name = (
+        f"F1_{heavyness}" if "_F1" in target.parent.name else f"g1_{heavyness}"
+    )
     obs["observables"] = {observable_name: dict_kins}
 
     if "_ep_" in str(src_path.stem) or "_mup_" in str(src_path.stem):
