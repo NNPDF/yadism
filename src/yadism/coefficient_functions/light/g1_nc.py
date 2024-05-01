@@ -1,4 +1,3 @@
-from .. import partonic_channel as epc
 from ..partonic_channel import RSL
 from . import nlo, nnlo
 from . import partonic_channel as pc
