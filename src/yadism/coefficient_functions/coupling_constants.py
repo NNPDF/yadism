@@ -132,9 +132,7 @@ class CouplingConstants:
         qZ = {"V": self.vectorial_coupling(pid), "A": self.weak_isospin_3[pid]}
         return qph, qZ
 
-    def partonic_coupling_fl2(
-        self, mode, pid, quark_coupling_type, cc_mask=None, nf=None
-    ):
+    def partonic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
         """Compute the coupling of the boson to the parton.
 
         Parameters
@@ -176,7 +174,13 @@ class CouplingConstants:
         """Compute the coupling of the boson to the parton for the flavor class :math:`fl_{11}`.
 
         This is a generalization of :cite:`Larin:1996wd` (Table 2) for NC.
-        See also pag. 27. This coupling is given by :math:`Tr(Q_f) Q_f`.
+        See also pag. 27. This coupling is given by :
+
+        .. :math:
+            W_{q,bb'} = \frac{Tr(Q_b)}{n_f} Q_b'
+
+        the gluon and pure singlet coupling are then build after summing on all the
+        different electroweak channels.
 
         Parameters
         ----------
@@ -184,6 +188,8 @@ class CouplingConstants:
             scattered bosons
         pid : int
             parton identifier
+        nf : int
+            number of active flavors
         quark_coupling_type : str
             flag to distinguish for heavy quarks between vectorial and axial-vectorial
             coupling
@@ -193,30 +199,28 @@ class CouplingConstants:
         float
             partonic coupling
         """
-        # select quark coupling
+        # In CC there is not such flavor class
+        if mode == "WW":
+            return 0
+
         first = quark_coupling_type[0]
         second = quark_coupling_type[1]
 
-        def switch_mode(quark):
+        def switch_mode(quark, coupling_type):
             qph, qZ = self.nc_partonic_coupling(quark)
-            if mode == "phph":
-                return qph[first], qph[second]
-            if mode == "phZ":
-                return qph[first], qZ[second]
-            if mode == "ZZ":
-                return qZ[first], qZ[second]
-            return ValueError(f"Unknown mode {mode}")
+            if mode in ["phph", "Zph"]:
+                return qph[coupling_type]
+            if mode in ["phZ", "ZZ"]:
+                return qZ[coupling_type]
+            raise ValueError(f"Unknown mode: {mode}")
 
-        # load linear coupling
-        g1, _ = switch_mode(abs(pid))
-
-        # compute trace
+        # first coupling contribute with a mean
         pids = range(1, nf + 1)
-        trace = 0
-        for quark in pids:
-            _, g2 = switch_mode(quark)
-            trace += g2
-        return g1 * trace
+        g1 = np.mean([switch_mode(quark, first) for quark in pids])
+        # the second coupling is just the linear coupling
+        g2 = switch_mode(abs(pid), second)
+
+        return g1 * g2
 
     def propagator_factor(self, mode, Q2):
         r"""Compute propagator correction to account for different bosons (:math:`\\eta` in PDG).
@@ -254,8 +258,11 @@ class CouplingConstants:
             return eta_W
         raise ValueError(f"Unknown mode: {mode}")
 
-    def get_weight(self, pid, Q2, quark_coupling_type, cc_mask=None, nf=None):
+    def get_weight(self, pid, Q2, quark_coupling_type, cc_mask=None):
         """Compute the weight for the pid contributions to the structure function.
+
+        Combine the charges, both on the leptonic side and the hadronic side, as well
+        as propagator changes and/or corrections.
 
         Parameters
         ----------
@@ -297,53 +304,10 @@ class CouplingConstants:
             if abs(pid) != pos_pid:
                 return 0.0
 
-        partonic_coupling = self.partonic_coupling_fl2
-        return self.get_nc_weight(partonic_coupling, pid, Q2, quark_coupling_type)
-
-    def get_fl11_weight(self, pid, Q2, quark_coupling_type, nf):
-        """Same as :func:`get_weight`but now for the NC flavor class :math:`fl_{11}`.
-
-        Combine the charges, both on the leptonic side and the hadronic side,
-        as well as propagator changes and/or corrections.
-
-        Parameters
-        ----------
-        pid : int
-            particle identifier
-        Q2 : float
-            DIS virtuality
-        quark_coupling_type : str
-            flag to distinguish for heavy quarks between vectorial and axial-vectorial
-            coupling
-        nf : float
-            number of active flavors
-
-        Returns
-        -------
-        float
-            weight
-        """
-        # in CC there is no such class of diagrams
-        if self.obs_config["process"] == "CC":
-            return 0.0
-
-        # if we are are we in positivity mode, we fallback to the standard coupling
-        if (
-            self.obs_config["nc_pos_charge"] is not None
-            and self.obs_config["nc_pos_charge"] != "all"
-        ):
-            return self.get_weight(pid, Q2, quark_coupling_type)
-
-        partonic_coupling = self.partonic_coupling_fl11
-        return self.get_nc_weight(partonic_coupling, pid, Q2, quark_coupling_type, nf)
-
-    def get_nc_weight(self, partonic_coupling, pid, Q2, quark_coupling_type, nf=None):
-        """Combine the NC couplings."""
-        # NC or EM
         w_phph = (
             self.leptonic_coupling("phph", quark_coupling_type)
             * self.propagator_factor("phph", Q2)
-            * partonic_coupling("phph", pid, quark_coupling_type, nf=nf)
+            * self.partonic_coupling("phph", pid, quark_coupling_type)
         )
         # pure photon exchange
         if self.obs_config["process"] == "EM":
@@ -355,15 +319,79 @@ class CouplingConstants:
                 2
                 * self.leptonic_coupling("phZ", quark_coupling_type)
                 * self.propagator_factor("phZ", Q2)
-                * partonic_coupling("phZ", pid, quark_coupling_type, nf=nf)
+                * self.partonic_coupling("phZ", pid, quark_coupling_type)
             )
             # true Z contributions
             w_ZZ = (
                 self.leptonic_coupling("ZZ", quark_coupling_type)
                 * self.propagator_factor("ZZ", Q2)
-                * partonic_coupling("ZZ", pid, nf, quark_coupling_type, nf=nf)
+                * self.partonic_coupling("ZZ", pid, quark_coupling_type)
             )
             return w_phph + w_phZ + w_ZZ
+        raise ValueError(f"Unknown process: {self.obs_config['process']}")
+
+    def get_fl11_weight(self, pid, Q2, nf, quark_coupling_type):
+        """Same as :func:`get_weight`but now for the NC flavor class :math:`fl_{11}`.
+
+        Combine the charges, both on the leptonic side and the hadronic side,
+        as well as propagator changes and/or corrections.
+
+        Parameters
+        ----------
+        pid : int
+            particle identifier
+        Q2 : float
+            DIS virtuality
+        nf : int
+            number of active flavors
+        quark_coupling_type : str
+            flag to distinguish for heavy quarks between vectorial and axial-vectorial
+            coupling
+
+        Returns
+        -------
+        float
+            weight
+        """
+        # in CC there is no such class of diagrams
+        if self.obs_config["process"] == "CC":
+            return 0.0
+
+        # TODO: what does positivity mode means for this coupling ?
+        if (
+            self.obs_config["nc_pos_charge"] is not None
+            and self.obs_config["nc_pos_charge"] != "all"
+        ):
+            return 0.0
+
+        w_phph = (
+            self.leptonic_coupling("phph", quark_coupling_type)
+            * self.propagator_factor("phph", Q2)
+            * self.partonic_coupling_fl11("phph", pid, nf, quark_coupling_type)
+        )
+        # pure photon exchange
+        if self.obs_config["process"] == "EM":
+            return w_phph
+        # allow Z to be mixed in
+        if self.obs_config["process"] == "NC":
+            # photon-Z interference, this class is not symmetric
+            w_phZ = (
+                self.leptonic_coupling("phZ", quark_coupling_type)
+                * self.propagator_factor("phZ", Q2)
+                * self.partonic_coupling_fl11("phZ", pid, nf, quark_coupling_type)
+            )
+            w_Zph = (
+                self.leptonic_coupling("phZ", quark_coupling_type)
+                * self.propagator_factor("phZ", Q2)
+                * self.partonic_coupling_fl11("Zph", pid, nf, quark_coupling_type)
+            )
+            # true Z contributions
+            w_ZZ = (
+                self.leptonic_coupling("ZZ", quark_coupling_type)
+                * self.propagator_factor("ZZ", Q2)
+                * self.partonic_coupling_fl11("ZZ", pid, nf, quark_coupling_type)
+            )
+            return w_phph + w_phZ + w_Zph + w_ZZ
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod

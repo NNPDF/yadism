@@ -88,49 +88,46 @@ def generate(esf, nf):
     kernels_list = [ns, g, s]
 
     # at N3LO we need to add also the fl11 diagrams
-    if 3 in esf.orders:
-        weights_fl11 = nc_weights(
-            esf.info.coupling_constants, esf.Q2, nf, is_pv=False, is_fl11=True
-        )
+    if esf.info.configs.theory["pto"] == 3:
+
+        gluon_fl11 = pcs.GluonFL11(esf, nf)
+        quark_fl11 = pcs.QuarkFL11(esf, nf)
+        weights_fl11 = nc_fl11_weights(esf.info.coupling_constants, esf.Q2, nf)
         ns_fl11 = kernels.Kernel(
             weights_fl11["ns"],
-            pcs.NonSingletFL11(esf, nf),
+            quark_fl11,
         )
-        g_fl11 = kernels.Kernel(
-            weights_fl11["g"],
-            pcs.GluonFL11(esf, nf),
-        )
+        g_fl11 = kernels.Kernel(weights_fl11["g"], gluon_fl11)
         s_fl11 = kernels.Kernel(
             weights_fl11["s"],
-            pcs.SingletFL11(esf, nf),
+            quark_fl11,
         )
         kernels_list.extend([ns_fl11, g_fl11, s_fl11])
     return kernels_list
 
 
-def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False, is_fl11=False):
+def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False):
     """
     Compute light NC weights.
 
     Parameters
     ----------
-        coupling_constants : CouplingConstants
-            manager for coupling constants
-        Q2 : float
-            W virtuality
-        nf : int
-            number of light flavors
-        is_pv: bool
-            True if observable violates parity conservation
-        skip_heavylight : bool
-            prevent the last quark to couple to the boson
-        is_fl11 : bool
-            if True compute the coupling of the flavor class :math:`fl_{11}`
+    coupling_constants : CouplingConstants
+        manager for coupling constants
+    Q2 : float
+        W virtuality
+    nf : int
+        number of light flavors
+    is_pv: bool
+        True if observable violates parity conservation
+    skip_heavylight : bool
+        prevent the last quark to couple to the boson
+
 
     Returns
     -------
-        weights : dict
-            mapping pid -> weight for ns, g and s channel
+    weights : dict
+        mapping pid -> weight for ns, g and s channel
     """
     # quark couplings
     tot_ch_sq = 0
@@ -147,12 +144,9 @@ def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False, is_fl11
                 q, Q2, "VA"
             ) + coupling_constants.get_weight(q, Q2, "AV")
         else:
-            coupling = coupling_constants.get_weight
-
-            # TODO: do AA contribute to fl11 ??
-            if is_fl11:
-                coupling = coupling_constants.get_fl11_weight
-            w = coupling(q, Q2, "VV", nf=nf) + coupling(q, Q2, "AA", nf=nf)
+            w = coupling_constants.get_weight(
+                q, Q2, "VV", nf=nf
+            ) + coupling_constants.get_weight(q, Q2, "AA", nf=nf)
         ns_partons[q] = w
         ns_partons[-q] = w if not is_pv else -w
         tot_ch_sq += w
@@ -165,4 +159,53 @@ def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False, is_fl11
 
     # gluon and singlet coupling = charge average (omitting the *2/2)
     s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
+    return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons}
+
+
+def nc_fl11_weights(coupling_constants, Q2, nf, skip_heavylight=False):
+    """Compute the NC weights for the flavor class :math:`fl_{11}`.
+
+    For the time being we don't have such diagrams for parity violating
+    structure functions.
+
+    Parameters
+    ----------
+    coupling_constants : CouplingConstants
+        manager for coupling constants
+    Q2 : float
+        W virtuality
+    nf : int
+        number of light flavors
+    skip_heavylight : bool
+        prevent the last quark to couple to the boson
+
+    Returns
+    -------
+    weights : dict
+        mapping pid -> weight for ns, g and s channel
+    """
+    # quark couplings
+    ns_partons = {}
+    tot_ch_sq = 0
+    pids = range(1, nf + 1)
+
+    for q in pids:
+        # we don't want this quark to couple to the photon (because it is treated separately),
+        # but still let it take part in the average
+        if skip_heavylight and q == nf:
+            continue
+        w = coupling_constants.get_fl11_weight(
+            q, Q2, nf, "VV"
+        ) + coupling_constants.get_fl11_weight(q, Q2, nf, "AA")
+        ns_partons[q] = w
+        ns_partons[-q] = w
+        tot_ch_sq += w
+
+    # compute gluon, singlet (S) (omitting the *2/2)
+    # NOTE: what we call singlet (S) is actually the pure singlet (PS) coefficient.
+    # Here the contribution of the singlet PDF to the NS coefficient
+    # and the contribution of the singlet PDF to the S coefficient
+    # do not cancel completely.
+    ch_av = tot_ch_sq / len(pids)
+    s_partons = {q: ch_av - ns_partons[q] for q in [*pids, *(-q for q in pids)]}
     return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons}
