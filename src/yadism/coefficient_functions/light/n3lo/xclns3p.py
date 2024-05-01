@@ -63,7 +63,6 @@ def clnp3a_fl2(y, args):
     return res
 
 
-
 @nb.njit("f8(f8,f8[:])", cache=True)
 def clnp3c_fl2(y, args):
     """The math:`fl_{2}`: local piece of the non singlet coefficient."""

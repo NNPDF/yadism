@@ -128,6 +128,7 @@ def c2np3c_fl2(y, args):
     )
     return res
 
+
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c2nm3a_fl2(y, args):
     return c2np3a_fl2(y, args) - c2q3dfp(y, args)

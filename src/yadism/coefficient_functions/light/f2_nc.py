@@ -43,6 +43,7 @@ class NonSinglet(pc.LightBase):
             [self.nf],
         )
 
+
 class Gluon(pc.LightBase):
     def NLO(self):
         r"""
@@ -89,16 +90,20 @@ class Singlet(pc.LightBase):
             args=[self.nf],
         )
 
+
 class GluonFL11(pc.LightBase):
     """Gluon flavor class :math:`fl_{11}`."""
+
     def N3LO(self):
         """
         |ref| implements the flavor class :math:`fl_{11}` of :eqref:`4.13`, :cite:`vogt-f2nc`.
         """
         return RSL(n3lo.xc2sg3p.c2g3a_fl11, args=[self.nf])
-    
+
+
 class QuarkFL11(pc.LightBase):
     """Quark flavor class :math:`fl_{11}`."""
+
     def N3LO(self):
         """
         |ref| implements the flavor class :math:`fl_{11}` of :eqref:`4.12`, :cite:`vogt-f2nc`.
