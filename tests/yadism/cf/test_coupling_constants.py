@@ -130,6 +130,7 @@ class TestCouplingConstanst:
         with pytest.raises(ValueError, match="Unknown projectile"):
             coupl.CouplingConstants.from_dict(th_d, obs_d)
 
+    # TODO: add a test here
     # def test_linear_partonic_coupling(self):
     #     th_d = dict(
     #         SIN2TW=0.5,

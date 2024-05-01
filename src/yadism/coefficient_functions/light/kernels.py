@@ -88,7 +88,7 @@ def generate(esf, nf):
     kernels_list = [ns, g, s]
 
     # at N3LO we need to add also the fl11 diagrams
-    if esf.info.configs.theory["pto"] == 3:
+    if esf.info.theory["pto"] == 3:
 
         gluon_fl11 = pcs.GluonFL11(esf, nf)
         quark_fl11 = pcs.QuarkFL11(esf, nf)
@@ -145,8 +145,8 @@ def nc_weights(coupling_constants, Q2, nf, is_pv, skip_heavylight=False):
             ) + coupling_constants.get_weight(q, Q2, "AV")
         else:
             w = coupling_constants.get_weight(
-                q, Q2, "VV", nf=nf
-            ) + coupling_constants.get_weight(q, Q2, "AA", nf=nf)
+                q, Q2, "VV"
+            ) + coupling_constants.get_weight(q, Q2, "AA")
         ns_partons[q] = w
         ns_partons[-q] = w if not is_pv else -w
         tot_ch_sq += w

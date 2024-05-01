@@ -47,5 +47,5 @@ class Valence(pc.LightBase):
 
         return RSL(
             n3lo.xc3ns3p.c3nsv3a,
-            [self.nf],
+            args=[self.nf],
         )

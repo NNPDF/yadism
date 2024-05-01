@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 from eko.matchings import Atlas
 
@@ -7,10 +8,12 @@ from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.intrinsic import kernels as iker
 from yadism.coefficient_functions.light import kernels as lker
 
-from .test_nc_n3lo_color_fact import MockCouplingConstants as MockCC
 
+class MockCouplingConstants:
 
-class MockCouplingConstants(MockCC):
+    def __init__(self):
+        self.charges = {pid: np.random.rand() for pid in range(1, 7)}
+
     def get_weight(self, _pid, _q2, qct):
         if qct == "VV":
             return 1
@@ -22,6 +25,9 @@ class MockCouplingConstants(MockCC):
             return 8
         raise ValueError(f"Unkown {qct}")
 
+    def get_fl11_weight(self, _pid, _q2, _nf, qct):
+        return self.get_weight(_pid, _q2, qct)
+
 
 class MockSF:
     def __init__(self, n):
@@ -29,7 +35,7 @@ class MockSF:
         self.coupling_constants = MockCouplingConstants()
         self.m2hq = [1.0, 2.0, 3.0]
         self.threshold = Atlas(matching_scales=self.m2hq, origin=(1.65**2, 4))
-        self.theory = {"n3lo_cf_variation": 0}
+        self.theory = {"n3lo_cf_variation": 0, "pto": 3}
 
 
 class MockESF:
@@ -63,8 +69,8 @@ def test_generate_light_pc():
     esf = MockESF("F2_light", 0.1, 10)
     for nf in [3, 5]:
         w = lker.generate(esf, nf)
-        # ns, g, s
-        ps = [mkpc(nf, 9), {21: 9}, mkpc(nf, 9)]
+        # ns, g, s, fl11ns, fl11g, fl11ps
+        ps = [mkpc(nf, 9), {21: 9}, mkpc(nf, 9), mkpc(nf, 9), {21: 9}, mkpc(nf, 0)]
         check(ps, w)
 
 
@@ -72,8 +78,8 @@ def test_generate_light_pv():  # pc = parity violating
     esf = MockESF("F3_light", 0.1, 10)
     for nf in [3, 5]:
         w = lker.generate(esf, nf)
-        # ns, g, s
-        ps = [mkpv(nf, 6), {21: 0}, mkpv(nf, 0)]
+        # ns, v
+        ps = [mkpv(nf, 6), mkpv(nf, 6)]
         check(ps, w)
 
 

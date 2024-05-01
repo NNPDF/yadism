@@ -285,9 +285,7 @@ class CouplingConstants:
         if self.obs_config["process"] == "CC":
             return self.leptonic_coupling(
                 "WW", quark_coupling_type
-            ) * self.partonic_coupling_fl2(
-                "WW", pid, quark_coupling_type, cc_mask=cc_mask
-            )
+            ) * self.partonic_coupling("WW", pid, quark_coupling_type, cc_mask=cc_mask)
         # NC or EM
         # are we in positivity mode?
         # Note that for yadism the values None and "all" are equivalent
