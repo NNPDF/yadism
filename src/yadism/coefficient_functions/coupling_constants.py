@@ -355,12 +355,14 @@ class CouplingConstants:
         if self.obs_config["process"] == "CC":
             return 0.0
 
-        # TODO: what does positivity mode means for this coupling ?
         if (
             self.obs_config["nc_pos_charge"] is not None
             and self.obs_config["nc_pos_charge"] != "all"
         ):
-            return 0.0
+            pos = self.obs_config["nc_pos_charge"][0]
+            pos_pid = 1 + br.quark_names.index(pos)
+            if abs(pid) != pos_pid:
+                return 0.0
 
         w_phph = (
             self.leptonic_coupling("phph", quark_coupling_type)

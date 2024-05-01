@@ -51,7 +51,7 @@ def generate(esf, nf):
             return (ns_even, ns_odd, v)
         g = kernels.Kernel(weights_even["g"], pcs.Gluon(esf, nf))
         s = kernels.Kernel(weights_even["s"], pcs.Singlet(esf, nf))
-        return (ns_even, g, s, ns_odd, v)
+        return (ns_even, g, s, ns_odd)
 
     # NC standard weights
     weights = nc_weights(
@@ -98,11 +98,7 @@ def generate(esf, nf):
             quark_fl11,
         )
         g_fl11 = kernels.Kernel(weights_fl11["g"], gluon_fl11)
-        s_fl11 = kernels.Kernel(
-            weights_fl11["s"],
-            quark_fl11,
-        )
-        kernels_list.extend([ns_fl11, g_fl11, s_fl11])
+        kernels_list.extend([ns_fl11, g_fl11])
     return kernels_list
 
 
@@ -185,7 +181,7 @@ def nc_fl11_weights(coupling_constants, Q2, nf, skip_heavylight=False):
         mapping pid -> weight for ns, g and s channel
     """
     # quark couplings
-    ns_partons = {}
+    quark_partons = {}
     tot_ch_sq = 0
     pids = range(1, nf + 1)
 
@@ -197,15 +193,14 @@ def nc_fl11_weights(coupling_constants, Q2, nf, skip_heavylight=False):
         w = coupling_constants.get_fl11_weight(
             q, Q2, nf, "VV"
         ) + coupling_constants.get_fl11_weight(q, Q2, nf, "AA")
-        ns_partons[q] = w
-        ns_partons[-q] = w
+        quark_partons[q] = w
+        quark_partons[-q] = w
         tot_ch_sq += w
 
-    # compute gluon, singlet (S) (omitting the *2/2)
-    # NOTE: what we call singlet (S) is actually the pure singlet (PS) coefficient.
-    # Here the contribution of the singlet PDF to the NS coefficient
-    # and the contribution of the singlet PDF to the S coefficient
-    # do not cancel completely.
+    # compute gluon
     ch_av = tot_ch_sq / len(pids)
-    s_partons = {q: ch_av - ns_partons[q] for q in [*pids, *(-q for q in pids)]}
-    return {"ns": ns_partons, "g": {21: ch_av}, "s": s_partons}
+
+    # NOTE: since here we are implementing the plain coupling
+    # Q1 * Tr[Q2] / nf, we have not th quark sector into singlet
+    # and non singlet
+    return {"ns": quark_partons, "g": {21: ch_av}}

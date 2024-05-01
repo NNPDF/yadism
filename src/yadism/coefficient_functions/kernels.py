@@ -297,6 +297,7 @@ def generate_single_flavor_light(esf, nf, ihq):
             nf,
             is_pv,
         )
+        ns_even = Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf))
         w_odd = cc_weights_odd(
             esf.info.coupling_constants,
             esf.Q2,
@@ -304,15 +305,19 @@ def generate_single_flavor_light(esf, nf, ihq):
             nf,
             is_pv,
         )
-        return (
-            Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf)),
-            Kernel({21: w_even["g"][21] / (nf)}, light_cfs.Gluon(esf, nf)),
-            Kernel(
-                {k: v / (nf) for k, v in w_even["s"].items()},
-                light_cfs.Singlet(esf, nf),
-            ),
-            Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf)),
+        ns_odd = Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf))
+
+        if is_pv:
+            v = Kernel(
+                {k: np.sign(k) * c / (nf) for k, c in w_even["s"].items()},
+                light_cfs.Valence(esf, nf),
+            )
+            return (ns_even, ns_odd, v)
+        g = Kernel({21: w_even["g"][21] / (nf)}, light_cfs.Gluon(esf, nf))
+        s = Kernel(
+            {k: v / (nf) for k, v in w_even["s"].items()}, light_cfs.Singlet(esf, nf)
         )
+        return (ns_even, g, s, ns_odd)
 
     # NC
     if is_pv:
@@ -339,9 +344,24 @@ def generate_single_flavor_light(esf, nf, ihq):
         )
 
     s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
-    # TODO: if we are N3LO need to add up the fl11 diagrams
-    return (
+    kernels_list = [
         Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
         Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),
         Kernel(s_partons, light_cfs.Singlet(esf, nf)),
-    )
+    ]
+
+    if esf.info.theory["pto"] == 3:
+        w = esf.info.coupling_constants.get_fl11_weight(
+            ihq, esf.Q2, nf, "VV"
+        ) + esf.info.coupling_constants.get_fl11_weight(ihq, esf.Q2, nf, "AA")
+        quark_partons = {}
+        quark_partons[ihq] = w
+        quark_partons[-ihq] = w
+        ch_av = w / nf
+        kernels_list.extend(
+            [
+                Kernel(quark_partons, light_cfs.QuarkFL11(esf, nf)),
+                Kernel({21: ch_av}, light_cfs.GluonFL11(esf, nf)),
+            ]
+        )
+    return kernels_list
