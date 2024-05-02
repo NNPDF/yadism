@@ -262,6 +262,7 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
             # @F3-sign@
             weights["ns"][sign * q] = w / 2 * (1 if not is_pv else sign)
             weights["ns"][-sign * q] = -w / 2 * (1 if not is_pv else sign)
+        tot_ch_sq += w
     # add valence
     for q in weights["ns"]:
         weights["v"][q] = tot_ch_sq / norm / 2
