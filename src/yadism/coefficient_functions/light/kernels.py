@@ -47,7 +47,7 @@ def generate(esf, nf):
         ns_odd = kernels.Kernel(weights_odd["ns"], pcs.NonSingletOdd(esf, nf))
 
         if is_pv:
-            v = kernels.Kernel(weights_even["v"], pcs.Valence(esf, nf))
+            v = kernels.Kernel(weights_odd["v"], pcs.Valence(esf, nf))
             return (ns_even, ns_odd, v)
         g = kernels.Kernel(weights_even["g"], pcs.Gluon(esf, nf))
         s = kernels.Kernel(weights_even["s"], pcs.Singlet(esf, nf))

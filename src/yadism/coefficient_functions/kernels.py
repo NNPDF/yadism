@@ -190,7 +190,7 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     weights : dict
         mapping pid -> weight for q and g channel
     """
-    weights = {"ns": {}, "g": {}, "s": {}, "v": {}}
+    weights = {"ns": {}, "g": {}, "s": {}}
     # determine couplings
     projectile_pid = coupling_constants.obs_config["projectilePID"]
     if projectile_pid in [-11, 12]:
@@ -218,8 +218,6 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     for q in weights["ns"]:
         weights["s"][q] = tot_ch_sq / norm / 2
         weights["s"][-q] = tot_ch_sq / norm / 2
-        weights["v"][q] = tot_ch_sq / norm / 2
-        weights["v"][-q] = -tot_ch_sq / norm / 2
     return weights
 
 
@@ -244,7 +242,7 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
     weights : dict
         mapping pid -> weight for q and g channel
     """
-    weights = {"ns": {}}
+    weights = {"ns": {}, "v": {}}
     # determine couplings
     projectile_pid = coupling_constants.obs_config["projectilePID"]
     if projectile_pid in [-11, 12]:
@@ -252,6 +250,8 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
     else:
         rest = 0
     # quark couplings
+    tot_ch_sq = 0
+    norm = len(cc_mask)
     # iterate: include the heavy quark itself, since it can run in the singlet sector diagrams
     for q in range(1, min(nf + 2, 6 + 1)):
         sign = 1 if q % 2 == rest else -1
@@ -262,6 +262,10 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
             # @F3-sign@
             weights["ns"][sign * q] = w / 2 * (1 if not is_pv else sign)
             weights["ns"][-sign * q] = -w / 2 * (1 if not is_pv else sign)
+    # add valence
+    for q in weights["ns"]:
+        weights["v"][q] = tot_ch_sq / norm / 2
+        weights["v"][-q] = -tot_ch_sq / norm / 2
     return weights
 
 
@@ -311,7 +315,7 @@ def generate_single_flavor_light(esf, nf, ihq):
 
         if is_pv:
             v = Kernel(
-                {k: np.sign(k) * c / (nf) for k, c in w_even["s"].items()},
+                {k: np.sign(k) * c / (nf) for k, c in w_odd["s"].items()},
                 light_cfs.Valence(esf, nf),
             )
             return (ns_even, ns_odd, v)
