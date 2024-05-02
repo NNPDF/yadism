@@ -118,7 +118,7 @@ def test_nc_fl11_weights():
         fl11_weights = lker.nc_fl11_weights(coupl_const, Q2, nf)
         fl2_weights = lker.nc_weights(coupl_const, Q2, nf, False)
 
-        # build rations to fl2
+        # build ratios to fl2
         mean_e += coupl_const.electric_charge[nf]
         mean_e2 += coupl_const.electric_charge[nf] ** 2
         w3 = mean_e**2 / nf / mean_e2
