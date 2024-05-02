@@ -171,15 +171,17 @@ class CouplingConstants:
         raise ValueError(f"Unknown mode: {mode}")
 
     def partonic_coupling_fl11(self, mode, pid, nf, quark_coupling_type):
-        """Compute the coupling of the boson to the parton for the flavor class :math:`fl_{11}`.
+        r"""Compute the coupling of the boson to the parton for the flavor class :math:`fl_{11}`.
 
-        This is a generalization of :cite:`Larin:1996wd` (Table 2) for NC.
-        See also pag. 27. This coupling is given by :
+        This is a generalization of :cite:`Larin:1996wd` Table 2 (see also pag. 27 there) for |NC|.
+        The coupling is given by:
 
-        .. :math:
-            W_{q,bb'} = \frac{Tr(Q_b)}{n_f} Q_b'
+        .. math::
 
-        the gluon and pure singlet coupling are then build after summing on all the
+            W_{q,bb'} = \frac{\text{tr}(Q_b)}{n_f} Q_b'
+
+        where the trace refers to flavor space.
+        The gluon and pure singlet couplings are then build by summing over all the
         different electroweak channels.
 
         Parameters
@@ -223,7 +225,7 @@ class CouplingConstants:
         return g1 * g2
 
     def propagator_factor(self, mode, Q2):
-        r"""Compute propagator correction to account for different bosons (:math:`\\eta` in PDG).
+        r"""Compute propagator correction to account for different bosons (:math:`\eta` in PDG).
 
         Parameters
         ----------
@@ -329,7 +331,7 @@ class CouplingConstants:
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     def get_fl11_weight(self, pid, Q2, nf, quark_coupling_type):
-        """Same as :func:`get_weight`but now for the NC flavor class :math:`fl_{11}`.
+        """Same as :func:`get_weight` but now for the |NC| flavor class :math:`fl_{11}`.
 
         Combine the charges, both on the leptonic side and the hadronic side,
         as well as propagator changes and/or corrections.
@@ -374,7 +376,7 @@ class CouplingConstants:
             return w_phph
         # allow Z to be mixed in
         if self.obs_config["process"] == "NC":
-            # photon-Z interference, this class is not symmetric
+            # photon-Z interference, this class is not symmetric on the partonic side
             w_phZ = (
                 self.leptonic_coupling("phZ", quark_coupling_type)
                 * self.propagator_factor("phZ", Q2)
