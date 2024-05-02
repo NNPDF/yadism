@@ -89,6 +89,8 @@ class Kernel:
             return "singlet"
         elif "Gluon" in cls:
             return "gluon"
+        elif "Valence" in cls:
+            return "valence"
         elif any(
             [x in cls for x in ["Intrinsic", "Splus", "Sminus", "Rplus", "Rminus"]]
         ):
