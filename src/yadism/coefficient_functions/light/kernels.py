@@ -94,7 +94,7 @@ def generate(esf, nf):
         quark_fl11 = pcs.QuarkFL11(esf, nf)
         weights_fl11 = nc_fl11_weights(esf.info.coupling_constants, esf.Q2, nf)
         ns_fl11 = kernels.Kernel(
-            weights_fl11["ns"],
+            weights_fl11["q"],
             quark_fl11,
         )
         g_fl11 = kernels.Kernel(weights_fl11["g"], gluon_fl11)
@@ -203,4 +203,4 @@ def nc_fl11_weights(coupling_constants, Q2, nf, skip_heavylight=False):
     # NOTE: since here we are implementing the plain coupling
     # Q1 * Tr[Q2] / nf, we have not decomposed the quark sector
     # into singlet and non singlet for this class of diagrams
-    return {"ns": quark_partons, "g": {21: ch_av}}
+    return {"q": quark_partons, "g": {21: ch_av}}
