@@ -175,17 +175,17 @@ QCD corrections.
 - :math:`C_{ns}` is always the leading contribution as correspond
   to diagram in which the incoming flavor is coupling directly to the
   electroweak boson.
-- :math:`C_{g}` is  suppressed suppressed by :math:`\mathcal{O}(a_s)`
+- :math:`C_{g}` is suppressed by :math:`\mathcal{O}(a_s)`
   as the gluon need to radiate a quark-antiquark pair before coupling
   with a electroweak boson.
-- :math:`C_{ps},C_{v}` are suppressed suppressed by :math:`\mathcal{O}(a_s^2)` or
+- :math:`C_{ps},C_{v}` are suppressed by :math:`\mathcal{O}(a_s^2)` or
   :math:`\mathcal{O}(a_s^3)` respectively as they are related to diagrams
   where the incoming flavor line is not coupling directly with the electroweak boson.
 
 
-From N3LO an new class of diagrams, called :math:`fl_{11}`, can appear for
-the parity conserving structure functions, bot in the quark and gluon sector
-:cite:`Larin:1996wd`. In these diagram the incoming and outgoing bosons are
+From N3LO on a new class of diagrams, called :math:`fl_{11}`, can appear for
+the parity conserving structure functions, both in the quark and gluon sector
+:cite:`Larin:1996wd`. In these diagrams the incoming and outgoing bosons are
 coupling to different fermion lines (open or in loops) and thus generate
 contributions that  are not proportional to the coupling squared :math:`g_q^2`,
 or its average :math:`\ev{g^2}`, but rather to :math:`\ev{g} g_q` for quarks or
