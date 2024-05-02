@@ -201,6 +201,6 @@ def nc_fl11_weights(coupling_constants, Q2, nf, skip_heavylight=False):
     ch_av = tot_ch_sq / len(pids)
 
     # NOTE: since here we are implementing the plain coupling
-    # Q1 * Tr[Q2] / nf, we have not th quark sector into singlet
-    # and non singlet
+    # Q1 * Tr[Q2] / nf, we have not decomposed the quark sector
+    # into singlet and non singlet for this class of diagrams
     return {"ns": quark_partons, "g": {21: ch_av}}
