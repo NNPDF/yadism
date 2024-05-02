@@ -70,6 +70,7 @@ def c3nm3a(y, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c3nsv3a(y, args):
+    # contributions from flavor class fl02
     nf = args[0]
     y1 = 1.0 - y
     dl = np.log(y)
