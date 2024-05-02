@@ -173,7 +173,7 @@ class CouplingConstants:
     def partonic_coupling_fl11(self, mode, pid, nf, quark_coupling_type):
         r"""Compute the coupling of the boson to the parton for the flavor class :math:`fl_{11}`.
 
-        This is a generalization of :cite:`Larin:1996wd` Table 2 (see also pag. 27 there) for |NC|.
+        This is a generalization of :cite:`Larin:1996wd` Table 2 (see also p. 27 there) for |NC|.
         The coupling is given by:
 
         .. math::
