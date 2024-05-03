@@ -5,8 +5,9 @@ from yadism.coefficient_functions.asy import kernels as aker
 from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.light import kernels as lker
 
-from .test_nc_kernels import check, mkpids
+from .test_nc_kernels import check
 from .test_nc_kernels import mkpc as mkpc_even
+from .test_nc_kernels import mkpids
 from .test_nc_kernels import mkpv as mkpv_odd
 
 
@@ -42,7 +43,6 @@ class MockESF:
         self.process = "CC"
 
 
-
 def mkpc_odd(nf, w, sgn):  # pc = parity conserving
     return dict(
         zip(
@@ -62,6 +62,7 @@ def mkpv_even(nf, w, sgn):  # pv = parity violating
         )
     )
 
+
 def mkpv_valence(nf, w):  # pv = parity violating
     return dict(
         zip(
@@ -70,6 +71,7 @@ def mkpv_valence(nf, w):  # pv = parity violating
             + [(-1) ** (j) * w for j in range(nf)],
         )
     )
+
 
 def test_generate_light_pc():
     for sgn in [True, False]:
