@@ -265,8 +265,8 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
         tot_ch_sq += w
     # add valence
     for q in weights["ns"]:
-        weights["v"][q] = tot_ch_sq / norm / 2
-        weights["v"][-q] = -tot_ch_sq / norm / 2
+        weights["v"][sign * q] = tot_ch_sq / norm / 2
+        weights["v"][-sign * q] = -tot_ch_sq / norm / 2
     return weights
 
 

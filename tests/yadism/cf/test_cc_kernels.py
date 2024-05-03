@@ -5,6 +5,10 @@ from yadism.coefficient_functions.asy import kernels as aker
 from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.light import kernels as lker
 
+from .test_nc_kernels import check, mkpids
+from .test_nc_kernels import mkpc as mkpc_even
+from .test_nc_kernels import mkpv as mkpv_odd
+
 
 class MockCouplingConstants:
     def __init__(self, projectilePID):
@@ -32,65 +36,70 @@ class MockSF:
 
 class MockESF:
     def __init__(self, sf, projectilePID, x, Q2):
-        self.sf = MockSF(sf, projectilePID)
+        self.info = MockSF(sf, projectilePID)
         self.x = x
         self.Q2 = Q2
         self.process = "CC"
 
 
-def mkpids(nf, sgn):
-    """-+1, +-2, -+3, ... +-nf"""
-    return [(-1) ** (j + (0 if sgn else 1)) * j for j in range(1, nf + 1)]
 
-
-def mkpc(nf, w, sgn):  # pc = parity conserving
-    return dict(zip(mkpids(nf, sgn), [w] * nf))
-
-
-def mkpv(nf, w, sgn):  # pv = parity violating
+def mkpc_odd(nf, w, sgn):  # pc = parity conserving
     return dict(
-        zip(mkpids(nf, sgn), [(-1) ** (j + (1 if sgn else 0)) * w for j in range(nf)])
+        zip(
+            mkpids(nf),
+            [(-1) ** (j + (1 if not sgn else 0)) * w for j in range(nf)]
+            + [(-1) ** (j + (1 if sgn else 0)) * w for j in range(nf)],
+        )
     )
 
 
-def mksinglet(nf, w):
-    return dict(zip([i for i in range(-nf, nf + 1) if i != 0], [w] * (2 * nf)))
+def mkpv_even(nf, w, sgn):  # pv = parity violating
+    return dict(
+        zip(
+            mkpids(nf),
+            [(-1) ** (j + (1 if sgn else 0)) * w for j in range(nf)]
+            + [(-1) ** (j + (1 if sgn else 0)) * w for j in range(nf)],
+        )
+    )
+
+def mkpv_valence(nf, w):  # pv = parity violating
+    return dict(
+        zip(
+            mkpids(nf),
+            [(-1) ** (j + 1) * w for j in range(nf)]
+            + [(-1) ** (j) * w for j in range(nf)],
+        )
+    )
+
+def test_generate_light_pc():
+    for sgn in [True, False]:
+        esf = MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10)
+        for nf in [3, 5]:
+            w = lker.generate(esf, nf)
+            norm = {3: 1, 4: 3, 5: 7}[nf]
+            # q, g
+            ps = [
+                mkpc_even(nf, 0.5 * norm),
+                {21: (nf + 1) * norm / nf / 2.0},
+                mkpc_even(nf, (nf + 1) * norm / nf / 2.0),
+                mkpc_odd(nf, 0.5 * norm, sgn),
+            ]
+            check(ps, w)
 
 
-def check(ps, w):
-    assert len(w) == len(ps)
-    for e, k in zip(ps, w):
-        assert pytest.approx(e) == k.partons
-
-
-# def test_generate_light_pc():
-#     for sgn in [True, False]:
-#         esf = MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10)
-#         for nf in [3, 4, 5]:
-#             w = lker.generate(esf, nf)
-#             norm = {3: 1, 4: 3, 5: 7}[nf]
-#             # q, g
-#             ps = [
-#                 mkpc(nf, norm, sgn),
-#                 {21: (nf + 1) * norm / nf / 2.0},
-#                 mksinglet(nf, (nf + 1) * norm / nf / 2.0),
-#             ]
-#             check(ps, w)
-
-
-# def test_generate_light_pv():
-#     for sgn in [True, False]:
-#         esf = MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10)
-#         for nf in [3, 4, 5]:
-#             w = lker.generate(esf, nf)
-#             norm = {3: 1, 4: 3, 5: 7}[nf]
-#             # q, g
-#             ps = [
-#                 mkpv(nf, norm, sgn),
-#                 {21: (-1 if sgn else 1) * (nf + 1) * norm / nf / 2.0},
-#                 mksinglet(nf, (-1 if sgn else 1) * (nf + 1) * norm / nf / 2.0),
-#             ]
-#             check(ps, w)
+def test_generate_light_pv():
+    for sgn in [True, False]:
+        esf = MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10)
+        for nf in [3, 5]:
+            w = lker.generate(esf, nf)
+            norm = {3: 1, 4: 3, 5: 7}[nf]
+            # q, g
+            ps = [
+                mkpv_even(nf, 0.5 * norm, sgn),
+                mkpv_odd(nf, 0.5 * norm),
+                mkpv_valence(nf, (nf + 1) * norm / nf / 2.0),
+            ]
+            check(ps, w)
 
 
 # def test_generate_heavy_pc():
