@@ -63,16 +63,6 @@ def mkpv_even(nf, w, sgn):  # pv = parity violating
     )
 
 
-def mkpv_valence(nf, w):  # pv = parity violating
-    return dict(
-        zip(
-            mkpids(nf),
-            [(-1) ** (j + 1) * w for j in range(nf)]
-            + [(-1) ** (j) * w for j in range(nf)],
-        )
-    )
-
-
 def test_generate_light_pc():
     for sgn in [True, False]:
         esf = MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10)
@@ -99,7 +89,7 @@ def test_generate_light_pv():
             ps = [
                 mkpv_even(nf, 0.5 * norm, sgn),
                 mkpv_odd(nf, 0.5 * norm),
-                mkpv_valence(nf, (nf + 1) * norm / nf / 2.0),
+                mkpv_odd(nf, (nf + 1) * norm / nf / 2.0),
             ]
             check(ps, w)
 
