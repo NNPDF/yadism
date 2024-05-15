@@ -29,7 +29,7 @@ class NonSingletOdd(fl_nc.NonSinglet):
         |ref| implements the difference between :eqref:`2.10`, and :eqref:`3.7`, :cite:`Davies:2016ruz`
         """
         return RSL(
-            n3lo.xclns3p.clnm3a,
-            loc=n3lo.xclns3p.clnm3c,
-            args=dict(reg=[self.nf, 0]),
+            n3lo.xclns3p.clnm3a_fl2,
+            loc=n3lo.xclns3p.clnm3c_fl2,
+            args=dict(reg=[self.nf]),
         )

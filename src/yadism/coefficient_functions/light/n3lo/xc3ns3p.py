@@ -14,14 +14,9 @@ from .xcdiff3p import c3q3dfp, c3q3dfpc
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c3nm3a(y, args):
     nf = args[0]
-    has_color_fact = args[1]
     y1 = 1.0 - y
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
-    if has_color_fact:
-        fl02 = 1.0
-    else:
-        fl02 = 0.0
     res = (
         -1853.0
         - 5709.0 * y
@@ -69,7 +64,20 @@ def c3nm3a(y, args):
             - dl * dl1 * (39.99 + 5.103 * dl - 16.30 * dl1)
             + 0.0647 * y * dl**4
         )
-        + fl02
+    )
+    return res
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def c3nsv3a(y, args):
+    # contributions from flavor class fl02
+    nf = args[0]
+    y1 = 1.0 - y
+    dl = np.log(y)
+    dl1 = np.log(1.0 - y)
+    fl02 = 1
+    res = (
+        fl02
         * nf
         * (
             48.79
@@ -152,7 +160,6 @@ def c3nm3c(y, args):
 
 @nb.njit("f8(f8,f8[:])", cache=True)
 def c3np3a(y, args):
-    # Here we need to remove the fl02 diagrams
     return c3nm3a(y, args) + c3q3dfp(y, args)
 
 

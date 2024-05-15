@@ -30,8 +30,8 @@ class NonSingletOdd(f2_nc.NonSinglet):
         """
 
         return RSL(
-            n3lo.xc2ns3p.c2nm3a,
-            n3lo.xc2ns3p.c2ns3b,
-            n3lo.xc2ns3p.c2nm3c,
-            [self.nf, 0],
+            n3lo.xc2ns3p.c2nm3a_fl2,
+            n3lo.xc2ns3p.c2ns3b_fl2,
+            n3lo.xc2ns3p.c2nm3c_fl2,
+            [self.nf],
         )

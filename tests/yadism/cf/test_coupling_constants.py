@@ -3,6 +3,13 @@ import pytest
 
 import yadism.coefficient_functions.coupling_constants as coupl
 
+from .test_nc_kernels import MockCouplingConstants
+
+
+class MockCouplingEMConstants(MockCouplingConstants):
+    def __init__(self):
+        self.charges = {1: -1 / 3, 2: 2 / 3, 3: -1 / 3, 4: 2 / 3, 5: -1 / 3, 6: 2 / 3}
+
 
 class TestCouplingConstanst:
     def test_vectorial(self):
@@ -130,7 +137,7 @@ class TestCouplingConstanst:
         with pytest.raises(ValueError, match="Unknown projectile"):
             coupl.CouplingConstants.from_dict(th_d, obs_d)
 
-    def test_linear_partonic_coupling(self):
+    def test_partonic_coupling_fl11(self):
         th_d = dict(
             SIN2TW=0.5,
             MZ=80,
@@ -144,10 +151,14 @@ class TestCouplingConstanst:
             NCPositivityCharge=None,
         )
         coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
+        eq = np.array(list(MockCouplingEMConstants().charges.values()), dtype=float)
         for pid in range(1, 7):
+            mean_e = np.mean(eq[:pid])
+
+            # quark coupling type is the average * charge
             np.testing.assert_allclose(
-                coupl_const.linear_partonic_coupling(pid),
-                coupl_const.electric_charge[pid],
+                coupl_const.partonic_coupling_fl11("phph", pid, pid, "VV"),
+                coupl_const.electric_charge[pid] * mean_e,
             )
 
 

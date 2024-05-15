@@ -1,9 +1,7 @@
 import numpy as np
 
 from yadism.coefficient_functions.light import f2_nc, fl_nc
-from yadism.coefficient_functions.light.n3lo.common import nc_color_factor
 
-from .test_nc_n3lo_color_fact import MockCouplingEMConstants as EMcc
 from .test_pc_general import MockESF
 
 
@@ -12,8 +10,8 @@ def test_N3LO_labels():
     x = 0.1
     esf = MockESF(x, Q2)
     nf = 3
-    fl_ns = fl_nc.NonSinglet(esf, nf, fl=0.123)
-    f2_ns = f2_nc.NonSinglet(esf, nf, fl=0.123)
+    fl_ns = fl_nc.NonSinglet(esf, nf)
+    f2_ns = f2_nc.NonSinglet(esf, nf)
 
     assert fl_ns.N3LO().args["reg"] is not None
     assert fl_ns.N3LO().args["loc"] is not None
@@ -21,15 +19,15 @@ def test_N3LO_labels():
     assert f2_ns.N3LO().args["loc"] is not None
     assert f2_ns.N3LO().args["sing"] is not None
 
-    fl_g = fl_nc.Gluon(esf, nf, flg=0.123)
-    f2_g = f2_nc.Gluon(esf, nf, flg=0.123)
+    fl_g = fl_nc.Gluon(esf, nf)
+    f2_g = f2_nc.Gluon(esf, nf)
 
     assert fl_g.N3LO().args["reg"] is not None
     assert f2_g.N3LO().args["reg"] is not None
     assert f2_g.N3LO().args["loc"] is not None
 
-    fl_s = fl_nc.Singlet(esf, nf, flps=0.456)
-    f2_s = f2_nc.Singlet(esf, nf, flps=0.456)
+    fl_s = fl_nc.Singlet(esf, nf)
+    f2_s = f2_nc.Singlet(esf, nf)
 
     assert fl_s.N3LO().args["reg"] is not None
     assert f2_s.N3LO().args["reg"] is not None
@@ -102,8 +100,7 @@ class Test_Blumlein_results:
                 ],
             ]
         )
-        f2_ps_ref = np.zeros_like(f2_ns_ref)
-        f2_ps_ref[:, 0] = [
+        f2_ps_ref = [
             8.888925046728956 * 1e8,
             5.373502609122133 * 1e7,
             2.5352195227940553 * 1e6,
@@ -113,7 +110,7 @@ class Test_Blumlein_results:
             -3137.28378116819,
             283.9008035816346,
         ]
-        f2_d33_ref = np.array(
+        f2_q_d33_ref = np.array(
             [
                 [0.11297488044669358, 0, -47.55183089138901],
                 [0.3846176156886669, 0, -47.55183089138901],
@@ -126,14 +123,24 @@ class Test_Blumlein_results:
             ]
         )
         f2_g_ref = [
-            1.9022667488882987 * 1e9,
-            1.1075727407048894 * 1e8,
-            4.633431643625137 * 1e6,
-            127247.50899966789,
-            -8106.81444096241,
-            -12000.774806464418,
-            -13210.389099316533,
-            30448.822287690055,
+            1.902266748856789 * 1e9,
+            1.1075727412736598 * 1e8,
+            4.633432754458097 * 1e6,
+            127252.68332628548,
+            -8105.512855135481,
+            -12008.601884916112,
+            -13224.020410038176,
+            30459.55719448865,
+        ]
+        f2_g_d33_ref = [
+            0.3150953791683738,
+            -0.5687703649017806,
+            -11.108329596244673,
+            -51.74326617587184,
+            -13.015858269289614,
+            78.27078451693676,
+            136.31310721643484,
+            -107.34906798594845,
         ]
 
         f2_ns_result = []
@@ -141,62 +148,48 @@ class Test_Blumlein_results:
         f2_g_result = []
         for x in self.xgrid:
             esf = MockESF(x, self.Q2)
-            f2_ns = f2_nc.NonSinglet(
-                esf, self.nf, fl=nc_color_factor(EMcc(), self.nf, "ns", False)
-            ).N3LO()
-            f2_s = f2_nc.Singlet(
-                esf,
-                self.nf,
-                flps=nc_color_factor(EMcc(), self.nf, "s", False),
-            ).N3LO()
-            f2_g = f2_nc.Gluon(
-                esf, self.nf, flg=nc_color_factor(EMcc(), self.nf, "g", False)
-            ).N3LO()
+            f2_ns = f2_nc.NonSinglet(esf, self.nf).N3LO()
+            f2_s = f2_nc.Singlet(esf, self.nf).N3LO()
+            f2_g = f2_nc.Gluon(esf, self.nf).N3LO()
+            f2_q_fl11 = f2_nc.QuarkFL11(esf, self.nf).N3LO()
+            f2_g_fl11 = f2_nc.GluonFL11(esf, self.nf).N3LO()
             f2_ns_result.append(
                 [
                     f2_ns.reg(x, f2_ns.args["reg"]),
                     f2_ns.sing(x, f2_ns.args["sing"]),
                     f2_ns.loc(x, f2_ns.args["loc"]),
+                    f2_q_fl11.reg(x, f2_q_fl11.args["reg"]),
+                    f2_q_fl11.loc(x, f2_q_fl11.args["loc"]),
                 ]
             )
-            f2_s_result.append(
+            f2_s_result.append(f2_s.reg(x, f2_s.args["reg"]))
+            f2_g_result.append(
                 [
-                    f2_s.reg(x, f2_s.args["reg"]),
-                    0,
-                    f2_s.loc(x, f2_s.args["loc"]),
+                    f2_g.reg(x, f2_g.args["reg"]),
+                    f2_g_fl11.reg(x, f2_g_fl11.args["reg"]),
                 ]
             )
-            f2_g_result.append(f2_g.reg(x, f2_g.args["reg"]))
 
         f2_ns_result = np.array(f2_ns_result)
-        f2_s_result = np.array(f2_s_result)
+        f2_g_result = np.array(f2_g_result)
         # ns,+ reg
-        np.testing.assert_allclose(
-            f2_ns_result[:, 0], (f2_ns_ref + self.w2 * f2_d33_ref)[:, 0], rtol=3e-4
-        )
+        np.testing.assert_allclose(f2_ns_result[:, 0], f2_ns_ref[:, 0], rtol=3e-4)
+        np.testing.assert_allclose(f2_ns_result[:, 3], f2_q_d33_ref[:, 0], rtol=3e-4)
         # ns,+ singular
-        np.testing.assert_allclose(
-            f2_ns_result[:, 1], (f2_ns_ref + self.w2 * f2_d33_ref)[:, 1], rtol=2e-6
-        )
+        np.testing.assert_allclose(f2_ns_result[:, 1], f2_ns_ref[:, 1], rtol=2e-6)
         # ns,+ local
         # Vogt results are shifted, while Bluemlein are exact
         shift = 25.10 + 0.0155 * self.nf**2 - 0.387 * self.nf
         np.testing.assert_allclose(
-            f2_ns_result[:, -1] - shift,
-            (f2_ns_ref + self.w2 * f2_d33_ref)[:, -1],
-            rtol=8e-3,
+            f2_ns_result[:, 2] - shift, f2_ns_ref[:, -1], rtol=8e-3
         )
+        np.testing.assert_allclose(f2_ns_result[:, -1], f2_q_d33_ref[:, -1], rtol=4e-6)
+
         # singlet
-        np.testing.assert_allclose(
-            (f2_s_result)[:, 0],
-            (f2_ps_ref + (self.w3 - self.w2) * f2_d33_ref)[:, 0],
-            rtol=8e-4,
-        )
-        np.testing.assert_allclose(
-            (f2_s_result)[:, -1], (self.w3 - self.w2) * f2_d33_ref[:, -1], rtol=4e-6
-        )
+        np.testing.assert_allclose(f2_s_result, f2_ps_ref, rtol=8e-4)
         # gluon
-        np.testing.assert_allclose(f2_g_result, f2_g_ref, rtol=8e-4)
+        np.testing.assert_allclose(f2_g_result[:, 0], f2_g_ref, rtol=8e-4)
+        np.testing.assert_allclose(f2_g_result[:, 1], f2_g_d33_ref, rtol=8e-4)
 
     def test_fl(self):
         fl_ns_ref = np.array(
@@ -223,7 +216,7 @@ class Test_Blumlein_results:
                 -728.12411392513,
             ]
         )
-        fl_d33_ref = np.array(
+        fl_q_d33_ref = np.array(
             [
                 0.19797247888820696,
                 0.9628781089693601,
@@ -237,14 +230,26 @@ class Test_Blumlein_results:
         )
         fl_g_ref = np.array(
             [
-                1.2106216978076596 * 1e9,
-                8.382304197777772 * 1e7,
-                4.832896727758477 * 1e6,
-                184640.45098163967,
-                -5449.957803132391,
-                -10502.729562784296,
-                -13506.745147798696,
-                10306.870686520539,
+                1.210621697704403 * 1e9,
+                8.382304167123571 * 1e7,
+                4.8328963437255705 * 1e6,
+                184641.55589959846,
+                -5449.737920292786,
+                -10505.515829842048,
+                -13510.657754038137,
+                10311.159403774058,
+            ]
+        )
+        fl_g_d33_ref = np.array(
+            [
+                1.032566445095237,
+                3.065420125245358,
+                3.840329070099055,
+                -11.049179587736642,
+                -2.198828396045277,
+                27.862670577519946,
+                39.12606239440606,
+                -42.88717253518674,
             ]
         )
 
@@ -253,29 +258,29 @@ class Test_Blumlein_results:
         fl_g_result = []
         for x in self.xgrid:
             esf = MockESF(x, self.Q2)
-            fl_ns = fl_nc.NonSinglet(
-                esf, self.nf, fl=nc_color_factor(EMcc(), self.nf, "ns", False)
-            ).N3LO()
-            fl_s = fl_nc.Singlet(
-                esf,
-                self.nf,
-                flps=nc_color_factor(EMcc(), self.nf, "s", False),
-            ).N3LO()
-            fl_g = fl_nc.Gluon(
-                esf, self.nf, flg=nc_color_factor(EMcc(), self.nf, "g", False)
-            ).N3LO()
+            fl_ns = fl_nc.NonSinglet(esf, self.nf).N3LO()
+            fl_s = fl_nc.Singlet(esf, self.nf).N3LO()
+            fl_g = fl_nc.Gluon(esf, self.nf).N3LO()
+            fl_q_fl11 = fl_nc.QuarkFL11(esf, self.nf).N3LO()
+            fl_g_fl11 = fl_nc.GluonFL11(esf, self.nf).N3LO()
             fl_ns_result.append(
                 [
                     fl_ns.reg(x, fl_ns.args["reg"]),
                     0,
                     fl_ns.loc(x, fl_ns.args["loc"]),
+                    fl_q_fl11.reg(x, fl_q_fl11.args["reg"]),
                 ]
             )
             fl_s_result.append(fl_s.reg(x, fl_s.args["reg"]))
-            fl_g_result.append(fl_g.reg(x, fl_g.args["reg"]))
+            fl_g_result.append(
+                [
+                    fl_g.reg(x, fl_g.args["reg"]),
+                    fl_g_fl11.reg(x, fl_g_fl11.args["reg"]),
+                ]
+            )
 
         fl_ns_result = np.array(fl_ns_result)
-        fl_s_result = np.array(fl_s_result)
+        fl_g_result = np.array(fl_g_result)
 
         # Less accurate since Vogt et al. parametrization contains
         # a local part (not physical) that is used to fine tune the accuracy
@@ -283,14 +288,20 @@ class Test_Blumlein_results:
         # ns,+
         np.testing.assert_allclose(
             fl_ns_result[:, 0],
-            fl_ns_ref + self.w2 * fl_d33_ref,
-            rtol=2e-3,
+            fl_ns_ref,
+            rtol=3e-3,
+        )
+        np.testing.assert_allclose(
+            fl_ns_result[:, 3],
+            fl_q_d33_ref,
+            rtol=8e-4,
         )
         # singlet
         np.testing.assert_allclose(
             fl_s_result,
-            fl_ps_ref + (self.w3 - self.w2) * fl_d33_ref,
+            fl_ps_ref,
             rtol=7e-4,
         )
         # gluon
-        np.testing.assert_allclose(fl_g_result, fl_g_ref, rtol=9e-4)
+        np.testing.assert_allclose(fl_g_result[:, 0], fl_g_ref, rtol=9e-4)
+        np.testing.assert_allclose(fl_g_result[:, 1], fl_g_d33_ref, rtol=4e-4)
