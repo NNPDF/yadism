@@ -215,7 +215,7 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     # gluon coupling = charge sum
     weights["g"][21] = tot_ch_sq / norm / 2
     # add singlet
-    for q in weights["ns"]:
+    for q in range(1, nf + 1):
         weights["s"][q] = tot_ch_sq / norm / 2
         weights["s"][-q] = tot_ch_sq / norm / 2
     return weights
@@ -263,7 +263,7 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
             weights["ns"][sign * q] = w / 2 * (1 if not is_pv else sign)
             weights["ns"][-sign * q] = -w / 2 * (1 if not is_pv else sign)
         tot_ch_sq += w
-    # add valence
+    # add valence, here there is no need to distinguish up and down.
     for q in range(1, nf + 1):
         weights["v"][q] = tot_ch_sq / norm / 2
         weights["v"][-q] = -tot_ch_sq / norm / 2
