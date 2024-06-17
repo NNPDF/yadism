@@ -169,7 +169,7 @@ def tabulate_nc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
     elif "bottom" in obs_name:
         tab_sf = ap.TabulateObjectD(sfobj[5].Evaluate, nq, qmin, qmax, 3, thrs)
     else:
-        raise ValueError(f"'(total, light, charm, botton)' not found in {obs_name}!")
+        raise ValueError(f"'(total, light, charm, bottom)' not found in {obs_name}!")
     return tab_sf
 
 
