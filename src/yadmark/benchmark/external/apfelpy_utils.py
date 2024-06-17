@@ -249,7 +249,7 @@ def tabulate_cc(ap, obs_name, sfobj, nq, qmin, qmax, thrs):
             thrs,
         )
     else:
-        raise ValueError(f"'(total, light, charm, botton)' not found in {obs_name}!")
+        raise ValueError(f"'(total, light, charm, bottom)' not found in {obs_name}!")
     return tab_sf
 
 
