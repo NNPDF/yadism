@@ -58,8 +58,8 @@ def test_pineappl_pol(tmp_path: pathlib.Path):
     out = run_yadism(theory_card, oo)
     dump_pineappl_to_file(out, pl, "g1_light")
     g = pineappl.grid.Grid.read(pl)
-    assert g.key_values()["polarized"] == "True"
+    assert g.key_values()["convolution_type_1"] == "PolPDF"
 
     dump_pineappl_to_file(out, pl, "F2_total")
     f = pineappl.grid.Grid.read(pl)
-    assert f.key_values()["polarized"] == "False"
+    assert f.key_values()["convolution_type_1"] == "UnpolPDF"
