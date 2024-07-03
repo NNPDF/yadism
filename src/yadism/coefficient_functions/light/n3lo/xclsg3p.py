@@ -5,9 +5,9 @@ from .common import d27, d81
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def cls3a(y, args):
+def cls3a_fl2(y, args):
+    """The math:`fl_{2}`: regular piece of the singlet coefficient."""
     nf = args[0]
-    flps = args[1]
     dl = np.log(y)
     y1 = 1.0 - y
     dl1 = np.log(1.0 - y)
@@ -31,6 +31,18 @@ def cls3a(y, args):
         - 384.0 * d27 * dl**2
         + 40.239 / y * y1**2
     )
+    res = nf * (cls31 + nf * cls32)
+    return res
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def cls3a_fl11(y, args):
+    """The math:`fl_{11}`: regular piece of the singlet coefficient."""
+    # Note here the source file contains a typo and the
+    # proper color factor is flps = fls - fl, not just fls.
+    # see https://arxiv.org/pdf/hep-ph/0411112.pdf eq 9.
+    nf = args[0]
+    dl = np.log(y)
     cls3F = (
         (107.0 + 321.05 * y - 54.62 * y**2) * (1.0 - y)
         - 26.717
@@ -39,17 +51,13 @@ def cls3a(y, args):
         + 9.773 * dl
         + y * dl * (363.8 + 68.32 * dl)
     ) * y
-    # Note here the source file cointain a typo and the
-    # proper color factor is flps = fls - fl, not just fls.
-    # see https://arxiv.org/pdf/hep-ph/0411112.pdf eq 9.
-    res = nf * (cls31 + (flps) * cls3F + nf * cls32)
-    return res
+    return nf * cls3F
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def clg3a(y, args):
+def clg3a_fl2(y, args):
+    """The math:`fl_{11}`: regular piece of the gluon coefficient."""
     nf = args[0]
-    flg = args[1]
     dl = np.log(y)
     y1 = 1.0 - y
     dl1 = np.log(1.0 - y)
@@ -76,6 +84,17 @@ def clg3a(y, args):
         + 480.0 * d27 * dl**3
         + 88.5037 / y * y1
     )
+    res = nf * (clg31 + nf * (clg32))
+    return res
+
+
+@nb.njit("f8(f8,f8[:])", cache=True)
+def clg3a_fl11(y, args):
+    """The math:`fl_{11}`: regular piece of the gluon coefficient."""
+    nf = args[0]
+    dl = np.log(y)
+    y1 = 1.0 - y
+    dl1 = np.log(1.0 - y)
     clg3F = (
         (
             -0.0105 * dl1**3
@@ -90,5 +109,4 @@ def clg3a(y, args):
         - (15.40 - 2.201 * y) * y * dl**2
         - (71.66 - 0.121 * y) * y * dl
     )
-    res = nf * (clg31 + nf * (clg32 + flg * clg3F))
-    return res
+    return nf**2 * clg3F

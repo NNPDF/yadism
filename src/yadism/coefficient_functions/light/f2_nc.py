@@ -34,13 +34,13 @@ class NonSinglet(pc.LightBase):
 
     def N3LO(self):
         """
-        |ref| implements :eqref:`4.11`, :cite:`vogt-f2nc`.
+        |ref| implements the flavor class :math:`fl_{2}` of :eqref:`4.11`, :cite:`vogt-f2nc`.
         """
         return RSL(
-            n3lo.xc2ns3p.c2np3a,
-            n3lo.xc2ns3p.c2ns3b,
-            n3lo.xc2ns3p.c2np3c,
-            [self.nf, self.fl],
+            n3lo.xc2ns3p.c2np3a_fl2,
+            n3lo.xc2ns3p.c2ns3b_fl2,
+            n3lo.xc2ns3p.c2np3c_fl2,
+            [self.nf],
         )
 
 
@@ -68,9 +68,9 @@ class Gluon(pc.LightBase):
 
     def N3LO(self):
         """
-        |ref| implements :eqref:`4.13`, :cite:`vogt-f2nc`.
+        |ref| implements the flavor class :math:`fl_{2}` of :eqref:`4.13`, :cite:`vogt-f2nc`.
         """
-        return RSL(n3lo.xc2sg3p.c2g3a, loc=n3lo.xc2sg3p.c2g3c, args=[self.nf, self.flg])
+        return RSL(n3lo.xc2sg3p.c2g3a_fl2, loc=n3lo.xc2sg3p.c2g3c_fl2, args=[self.nf])
 
 
 class Singlet(pc.LightBase):
@@ -83,10 +83,33 @@ class Singlet(pc.LightBase):
 
     def N3LO(self):
         """
-        |ref| implements :eqref:`4.12`, :cite:`vogt-f2nc`.
+        |ref| implements the flavor class :math:`fl_{2}` of :eqref:`4.12`, :cite:`vogt-f2nc`.
         """
         return RSL(
-            n3lo.xc2sg3p.c2s3a,
-            loc=n3lo.xc2sg3p.c2s3c,
-            args=[self.nf, self.flps],
+            n3lo.xc2sg3p.c2s3a_fl2,
+            args=[self.nf],
+        )
+
+
+class GluonFL11(pc.LightBase):
+    """Gluon flavor class :math:`fl_{11}`."""
+
+    def N3LO(self):
+        """
+        |ref| implements the flavor class :math:`fl_{11}` of :eqref:`4.13`, :cite:`vogt-f2nc`.
+        """
+        return RSL(n3lo.xc2sg3p.c2g3a_fl11, args=[self.nf])
+
+
+class QuarkFL11(pc.LightBase):
+    """Quark flavor class :math:`fl_{11}`."""
+
+    def N3LO(self):
+        """
+        |ref| implements the flavor class :math:`fl_{11}` of :eqref:`4.12`, :cite:`vogt-f2nc`.
+        """
+        return RSL(
+            n3lo.xc2sg3p.c2s3a_fl11,
+            loc=n3lo.xc2sg3p.c2s3c_fl11,
+            args=[self.nf],
         )

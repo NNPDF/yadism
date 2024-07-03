@@ -1,4 +1,4 @@
-"""Note, the factor `fl11` is disabled for charged currents according to `xcdiff3p.f`.
+"""Note, the factor `fl11` is not contributing to charged currents according to `xcdiff3p.f`.
 To generate `c2nm3a,c2nm3c` we follow `xcdiff3p.f` or the reference paper :cite:`Davies:2016ruz`.
 """
 
@@ -10,10 +10,9 @@ from .xcdiff3p import c2q3dfp, c2q3dfpc
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def c2np3a(y, args):
+def c2np3a_fl2(y, args):
+    """The math:`fl_{2}`: regular piece of the non singlet coefficient."""
     nf = args[0]
-    fl11 = args[1]
-    y1 = 1.0 - y
     dl = np.log(y)
     dl1 = np.log(1.0 - y)
     res = (
@@ -63,23 +62,12 @@ def c2np3a(y, args):
             - 19.09 * dl1
             + dl * dl1 * (-96.07 - 12.46 * dl + 85.88 * dl1)
         )
-        + fl11
-        * nf
-        * (
-            (126.42 - 50.29 * y - 50.15 * y**2) * y1
-            - 26.717
-            - 960.0 * d243 * dl**2 * (dl + 5.0)
-            + 59.59 * dl
-            - y * dl**2 * (101.8 + 34.79 * dl + 3.070 * dl**2)
-            - 9.075 * y * y1 * dl1
-        )
-        * y
     )
     return res
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def c2ns3b(y, args):
+def c2ns3b_fl2(y, args):
     nf = args[0]
     dl1 = np.log(1.0 - y)
     dm = 1.0 / (1.0 - y)
@@ -105,9 +93,9 @@ def c2ns3b(y, args):
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def c2np3c(y, args):
+def c2np3c_fl2(y, args):
+    """The math:`fl_{2}`: local piece of the non singlet coefficient."""
     nf = args[0]
-    fl11 = args[1]
     dl1 = np.log(1.0 - y)
     res = (
         +256.0 * d81 * dl1**6
@@ -137,16 +125,15 @@ def c2np3c(y, args):
             - 103.2521
             + 0.0155
         )
-        - fl11 * nf * 11.8880
     )
     return res
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def c2nm3a(y, args):
-    return c2np3a(y, args) - c2q3dfp(y, args)
+def c2nm3a_fl2(y, args):
+    return c2np3a_fl2(y, args) - c2q3dfp(y, args)
 
 
 @nb.njit("f8(f8,f8[:])", cache=True)
-def c2nm3c(y, args):
-    return c2np3c(y, args) - c2q3dfpc(y, args)
+def c2nm3c_fl2(y, args):
+    return c2np3c_fl2(y, args) - c2q3dfpc(y, args)

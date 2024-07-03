@@ -1,16 +1,20 @@
+import numpy as np
 import pytest
 from eko.matchings import Atlas
 
 from yadism import observable_name as on
+from yadism.coefficient_functions import coupling_constants as cc
 from yadism.coefficient_functions.asy import kernels as aker
 from yadism.coefficient_functions.heavy import kernels as hker
 from yadism.coefficient_functions.intrinsic import kernels as iker
 from yadism.coefficient_functions.light import kernels as lker
 
-from .test_nc_n3lo_color_fact import MockCouplingConstants as MockCC
 
+class MockCouplingConstants:
 
-class MockCouplingConstants(MockCC):
+    def __init__(self):
+        self.charges = {pid: np.random.rand() for pid in range(1, 7)}
+
     def get_weight(self, _pid, _q2, qct):
         if qct == "VV":
             return 1
@@ -22,6 +26,9 @@ class MockCouplingConstants(MockCC):
             return 8
         raise ValueError(f"Unkown {qct}")
 
+    def get_fl11_weight(self, _pid, _q2, _nf, qct):
+        return self.get_weight(_pid, _q2, qct)
+
 
 class MockSF:
     def __init__(self, n):
@@ -29,7 +36,7 @@ class MockSF:
         self.coupling_constants = MockCouplingConstants()
         self.m2hq = [1.0, 2.0, 3.0]
         self.threshold = Atlas(matching_scales=self.m2hq, origin=(1.65**2, 4))
-        self.theory = {"n3lo_cf_variation": 0}
+        self.theory = {"n3lo_cf_variation": 0, "pto": 3}
 
 
 class MockESF:
@@ -63,8 +70,8 @@ def test_generate_light_pc():
     esf = MockESF("F2_light", 0.1, 10)
     for nf in [3, 5]:
         w = lker.generate(esf, nf)
-        # ns, g, s
-        ps = [mkpc(nf, 9), {21: 9}, mkpc(nf, 9)]
+        # ns, g, s, fl11ns, fl11g, fl11ps
+        ps = [mkpc(nf, 9), {21: 9}, mkpc(nf, 9), mkpc(nf, 9), {21: 9}]
         check(ps, w)
 
 
@@ -72,8 +79,8 @@ def test_generate_light_pv():  # pc = parity violating
     esf = MockESF("F3_light", 0.1, 10)
     for nf in [3, 5]:
         w = lker.generate(esf, nf)
-        # ns, g, s
-        ps = [mkpv(nf, 6), {21: 0}, mkpv(nf, 0)]
+        # ns, v
+        ps = [mkpv(nf, 6), mkpv(nf, 6)]
         check(ps, w)
 
 
@@ -85,6 +92,51 @@ def test_generate_heavy():
         # gVV, gAA, sVV, sAA
         ps = [{21: 1}, {21: 8}, mkpc(nf, 1), mkpc(nf, 8)]
         check(ps, w)
+
+
+def test_nc_fl11_weights():
+    # Test the the flavor decomposition of the fl11 diagrams is the same as we get from
+    # the yadism implementation
+    th_d = dict(
+        SIN2TW=0.5,
+        MZ=80,
+        CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
+    )
+    obs_d = dict(
+        projectilePID=11,
+        PolarizationDIS=0.0,
+        prDIS="EM",
+        PropagatorCorrection=0,
+        NCPositivityCharge=None,
+    )
+    coupl_const = cc.CouplingConstants.from_dict(th_d, obs_d)
+
+    Q2 = 1.0
+    mean_e = 0
+    mean_e2 = 0
+    for nf in range(1, 7):
+        fl11_weights = lker.nc_fl11_weights(coupl_const, Q2, nf)
+        fl2_weights = lker.nc_weights(coupl_const, Q2, nf, False)
+
+        # build ratios to fl2
+        mean_e += coupl_const.electric_charge[nf]
+        mean_e2 += coupl_const.electric_charge[nf] ** 2
+        w3 = mean_e**2 / nf / mean_e2
+        w2 = 3 * mean_e / nf
+
+        # test gluon coupling
+        np.testing.assert_allclose(fl11_weights["g"][21], fl2_weights["g"][21] * w3)
+
+        # test the quark sector
+        # now need to sum over all the pids
+        q = 0
+        ns = 0
+        ps = 0
+        for pid, c in fl11_weights["q"].items():
+            ns += w2 * fl2_weights["ns"][pid]
+            ps += (w3 - w2) * fl2_weights["s"][pid]
+            q += c
+        np.testing.assert_allclose(ns + ps, q)
 
 
 @pytest.mark.skip

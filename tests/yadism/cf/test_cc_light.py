@@ -78,8 +78,7 @@ class Test_Blumlein_results:
                 ],
             ]
         )
-        f3_d33_ref = np.zeros_like(f3_ns_ref)
-        f3_d33_ref[:, 0] = [
+        f3_d33_ref = [
             335157.49517575925,
             81453.24831397024,
             5166.17350678876,
@@ -91,9 +90,11 @@ class Test_Blumlein_results:
         ]
 
         f3_ns_result = []
+        f3_v_result = []
         for x in self.xgrid:
             esf = MockESF(x, self.Q2)
             f3_ns = f3_cc.NonSingletOdd(esf, self.nf).N3LO()
+            f3_v = f3_cc.Valence(esf, self.nf).N3LO()
             f3_ns_result.append(
                 [
                     f3_ns.reg(x, f3_ns.args["reg"]),
@@ -101,20 +102,23 @@ class Test_Blumlein_results:
                     f3_ns.loc(x, f3_ns.args["loc"]),
                 ]
             )
+            f3_v_result.append(f3_v.reg(x, f3_v.args["reg"]))
 
         # ns,+, reg part
         np.testing.assert_allclose(
-            np.array(f3_ns_result)[:, 0], (f3_ns_ref + f3_d33_ref)[:, 0], rtol=3e-4
+            np.array(f3_ns_result)[:, 0], f3_ns_ref[:, 0], rtol=3e-4
         )
         # ns,+, sing part
         np.testing.assert_allclose(
-            np.array(f3_ns_result)[:, 1], (f3_ns_ref + f3_d33_ref)[:, 1], rtol=2e-6
+            np.array(f3_ns_result)[:, 1], f3_ns_ref[:, 1], rtol=2e-6
         )
         # ns,+ local part
         # Vogt results are shifted, while Bluemlein are exact
         shift = +22.80 + 0.386 * self.nf - 0.0081 * self.nf**2
         np.testing.assert_allclose(
             np.array(f3_ns_result)[:, -1] - shift,
-            (f3_ns_ref + f3_d33_ref)[:, -1],
+            f3_ns_ref[:, -1],
             rtol=8e-3,
         )
+        # v, reg part
+        np.testing.assert_allclose(f3_v_result, f3_d33_ref, rtol=3e-4)
