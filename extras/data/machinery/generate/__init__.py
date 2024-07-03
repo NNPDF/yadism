@@ -36,7 +36,6 @@ exps = {
         EMC,
         SMC,
         SMCSX,
-        COMPASS,
         COMPASS15,
         HERMES,
         HERMES97,
