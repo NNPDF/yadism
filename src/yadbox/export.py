@@ -106,7 +106,8 @@ def dump_pineappl_to_file(output, filename, obsname):
     # Define the convolution type of the initial state hadron
     conv_type = "PolPDF" if obsname.startswith("g") else "UnpolPDF"
     grid.set_key_value("convolution_type_1", conv_type)
+    grid.set_key_value("convolution_type_2", str(None))
 
     # dump file
     grid.optimize()
-    grid.write(filename)
+    grid.write_lz4(filename)
