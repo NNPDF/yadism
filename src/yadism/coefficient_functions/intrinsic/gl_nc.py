@@ -1,9 +1,9 @@
 from ..partonic_channel import EmptyPartonicChannel
 
 
-class Splus(EmptyPartonicChannel):
+class Rplus(EmptyPartonicChannel):
     pass
 
-class Sminus(EmptyPartonicChannel):
-    pass
 
+class Rminus(EmptyPartonicChannel):
+    pass
