@@ -1,4 +1,5 @@
-from ..partonic_channel import RSL
+from ..light import f2_nc as light
+from ..partonic_channel import RSL, EmptyPartonicChannel
 from . import g1_nc_raw as raw
 from . import partonic_channel as pc
 
@@ -54,3 +55,15 @@ class AsyNLLGluon(pc.PartonicChannelAsy):
 class AsyNNLLGluon(pc.PartonicChannelAsy):
     def NNLO(self):
         return RSL(raw.c2g_NNLL_reg, args=[self.L])
+
+
+class AsyLLIntrinsic(EmptyPartonicChannel):
+    pass
+
+
+class AsyNLLIntrinsicMatching(EmptyPartonicChannel):
+    pass
+
+
+class AsyNLLIntrinsicLight(EmptyPartonicChannel):
+    pass
