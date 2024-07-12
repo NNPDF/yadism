@@ -1,8 +1,55 @@
-from . import BCDMS, CHORUS, HERA, NMC, NUTEV, POS, SLAC, utils
+from . import (
+    BCDMS,
+    CHORUS,
+    COMPASS15,
+    E142,
+    E143,
+    E154,
+    E155,
+    EMC,
+    HERA,
+    HERMES,
+    HERMES97,
+    JLABE06,
+    JLABE97,
+    JLABE99,
+    JLABEG1B,
+    JLABEG1DVCS,
+    NMC,
+    NUTEV,
+    POS,
+    SLAC,
+    SMC,
+    SMCSX,
+    utils,
+)
 
 exps = {
     getattr(m, "__name__").rsplit(".", maxsplit=1)[-1]: m
-    for m in [BCDMS, CHORUS, HERA, NMC, NUTEV, POS, SLAC]
+    for m in [
+        BCDMS,
+        CHORUS,
+        E142,
+        E143,
+        E154,
+        E155,
+        EMC,
+        SMC,
+        SMCSX,
+        COMPASS15,
+        HERMES,
+        HERMES97,
+        JLABE06,
+        JLABE97,
+        JLABE99,
+        JLABEG1B,
+        JLABEG1DVCS,
+        HERA,
+        NMC,
+        NUTEV,
+        POS,
+        SLAC,
+    ]
 }
 
 
@@ -25,7 +72,7 @@ def main(args):
     for i in args.inputs:
         path = utils.runcards.parent / i
         exp = exps[
-            list(filter(lambda e, path=path: e in path.parent.name, exps.keys()))[0]
+            list(filter(lambda e, path=path: e == path.parent.name, exps.keys()))[0]
         ]
         try:
             new_name = exp.new_names[path.stem]
