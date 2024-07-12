@@ -143,5 +143,5 @@ def update_fns(theory):
     if "PTODIS" not in theory or theory["PTODIS"] is None:
         theory["PTODIS"] = theory["PTO"]
 
-    if "FONLLParts" not in theory:
+    if "FONLLParts" not in theory or theory["FONLLParts"] is None:
         theory["FONLLParts"] = "full"
