@@ -18,7 +18,7 @@ jobs:
   apfel:
     runs-on: ubuntu-latest
     container:
-      image: docker://ghcr.io/n3pdf/bench-dis:latest
+      image: docker://ghcr.io/nnpdf/bench-dis:latest
 
     steps:
       - uses: actions/checkout@v2
@@ -36,7 +36,7 @@ jobs:
   qcdnum:
     runs-on: ubuntu-latest
     container:
-      image: docker://ghcr.io/n3pdf/bench-dis:latest
+      image: docker://ghcr.io/nnpdf/bench-dis:latest
 
     steps:
       - uses: actions/checkout@v2
@@ -51,7 +51,7 @@ jobs:
   xspace-bench:
     runs-on: ubuntu-latest
     container:
-      image: docker://ghcr.io/n3pdf/bench-dis:latest
+      image: docker://ghcr.io/nnpdf/bench-dis:latest
 
     steps:
       - uses: actions/checkout@v2

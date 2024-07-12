@@ -44,9 +44,9 @@ def update_scale_variations(theory):
             theory runcard
     """
     if "RenScaleVar" not in theory:
-        theory["RenScaleVar"] = not np.isclose(theory["XIR"], 1.0)
+        theory["RenScaleVar"] = True
     if "FactScaleVar" not in theory:
-        theory["FactScaleVar"] = not np.isclose(theory["XIF"], 1.0)
+        theory["FactScaleVar"] = True
 
 
 def update_target(obs):
@@ -140,8 +140,8 @@ def update_fns(theory):
     else:
         raise ValueError(f"Scheme '{fns}' not recognized.")
 
-    if "PTODIS" not in theory:
+    if "PTODIS" not in theory or theory["PTODIS"] is None:
         theory["PTODIS"] = theory["PTO"]
 
-    if "FONLLParts" not in theory:
+    if "FONLLParts" not in theory or theory["FONLLParts"] is None:
         theory["FONLLParts"] = "full"

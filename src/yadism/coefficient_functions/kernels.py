@@ -8,9 +8,8 @@ import copy
 import importlib
 from numbers import Number
 
+import numpy as np
 from eko import basis_rotation as br
-
-from .light.n3lo.common import nc_color_factor
 
 
 def import_local(kind, process, sibling):
@@ -90,6 +89,8 @@ class Kernel:
             return "singlet"
         elif "Gluon" in cls:
             return "gluon"
+        elif "Valence" in cls:
+            return "valence"
         elif any(
             [x in cls for x in ["Intrinsic", "Splus", "Sminus", "Rplus", "Rminus"]]
         ):
@@ -214,7 +215,7 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     # gluon coupling = charge sum
     weights["g"][21] = tot_ch_sq / norm / 2
     # add singlet
-    for q in weights["ns"]:
+    for q in range(1, nf + 1):
         weights["s"][q] = tot_ch_sq / norm / 2
         weights["s"][-q] = tot_ch_sq / norm / 2
     return weights
@@ -241,7 +242,7 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
     weights : dict
         mapping pid -> weight for q and g channel
     """
-    weights = {"ns": {}}
+    weights = {"ns": {}, "v": {}}
     # determine couplings
     projectile_pid = coupling_constants.obs_config["projectilePID"]
     if projectile_pid in [-11, 12]:
@@ -249,6 +250,8 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
     else:
         rest = 0
     # quark couplings
+    tot_ch_sq = 0
+    norm = len(cc_mask)
     # iterate: include the heavy quark itself, since it can run in the singlet sector diagrams
     for q in range(1, min(nf + 2, 6 + 1)):
         sign = 1 if q % 2 == rest else -1
@@ -259,6 +262,11 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
             # @F3-sign@
             weights["ns"][sign * q] = w / 2 * (1 if not is_pv else sign)
             weights["ns"][-sign * q] = -w / 2 * (1 if not is_pv else sign)
+        tot_ch_sq += w
+    # add valence, here there is no need to distinguish up and down.
+    for q in range(1, nf + 1):
+        weights["v"][q] = tot_ch_sq / norm / 2
+        weights["v"][-q] = -tot_ch_sq / norm / 2
     return weights
 
 
@@ -296,6 +304,7 @@ def generate_single_flavor_light(esf, nf, ihq):
             nf,
             is_pv,
         )
+        ns_even = Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf))
         w_odd = cc_weights_odd(
             esf.info.coupling_constants,
             esf.Q2,
@@ -303,39 +312,63 @@ def generate_single_flavor_light(esf, nf, ihq):
             nf,
             is_pv,
         )
-        return (
-            Kernel(w_even["ns"], light_cfs.NonSingletEven(esf, nf)),
-            Kernel({21: w_even["g"][21] / (nf)}, light_cfs.Gluon(esf, nf)),
-            Kernel(
-                {k: v / (nf) for k, v in w_even["s"].items()},
-                light_cfs.Singlet(esf, nf),
-            ),
-            Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf)),
+        ns_odd = Kernel(w_odd["ns"], light_cfs.NonSingletOdd(esf, nf))
+
+        if is_pv:
+            v = Kernel(
+                {k: np.sign(k) * c / (nf) for k, c in w_odd["s"].items()},
+                light_cfs.Valence(esf, nf),
+            )
+            return (ns_even, ns_odd, v)
+        g = Kernel({21: w_even["g"][21] / (nf)}, light_cfs.Gluon(esf, nf))
+        s = Kernel(
+            {k: v / (nf) for k, v in w_even["s"].items()}, light_cfs.Singlet(esf, nf)
         )
+        return (ns_even, g, s, ns_odd)
 
     # NC
-    if not is_pv:
-        w = esf.info.coupling_constants.get_weight(
-            ihq, esf.Q2, "VV"
-        ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
-    else:
+    if is_pv:
         w = esf.info.coupling_constants.get_weight(
             ihq, esf.Q2, "VA"
         ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AV")
+    else:
+        w = esf.info.coupling_constants.get_weight(
+            ihq, esf.Q2, "VV"
+        ) + esf.info.coupling_constants.get_weight(ihq, esf.Q2, "AA")
+
     ns_partons = {}
     ns_partons[ihq] = w
     ns_partons[-ihq] = w if not is_pv else -w
-    ch_av = w / nf if not is_pv else 0.0  # omitting again *2/2
-    # all quarks from 1 up to and including nf form the singlet
-    s_partons = {}
-    for pid in range(1, nf + 1):
-        s_partons[pid] = ch_av
-        s_partons[-pid] = ch_av
-    fl = nc_color_factor(esf.info.coupling_constants, nf, "ns", False)
-    flps = nc_color_factor(esf.info.coupling_constants, nf, "s", False)
-    flg = nc_color_factor(esf.info.coupling_constants, nf, "g", False)
-    return (
-        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf, fl=fl)),
-        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf, flg=flg)),
-        Kernel(s_partons, light_cfs.Singlet(esf, nf, flps=flps)),
-    )
+    ch_av = w / nf  # omitting again *2/2
+
+    # all quarks from 1 up to and including nf for the singlet and valence
+    pids = range(1, nf + 1)
+    if is_pv:
+        v_partons = {q: np.sign(q) * ch_av for q in [*pids, *(-q for q in pids)]}
+        return (
+            Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
+            Kernel(v_partons, light_cfs.Valence(esf, nf)),
+        )
+
+    s_partons = {q: ch_av for q in [*pids, *(-q for q in pids)]}
+    kernels_list = [
+        Kernel(ns_partons, light_cfs.NonSinglet(esf, nf)),
+        Kernel({21: ch_av}, light_cfs.Gluon(esf, nf)),
+        Kernel(s_partons, light_cfs.Singlet(esf, nf)),
+    ]
+
+    if esf.info.theory["pto"] == 3:
+        w = esf.info.coupling_constants.get_fl11_weight(
+            ihq, esf.Q2, nf, "VV"
+        ) + esf.info.coupling_constants.get_fl11_weight(ihq, esf.Q2, nf, "AA")
+        quark_partons = {}
+        quark_partons[ihq] = w
+        quark_partons[-ihq] = w
+        ch_av = w / nf
+        kernels_list.extend(
+            [
+                Kernel(quark_partons, light_cfs.QuarkFL11(esf, nf)),
+                Kernel({21: ch_av}, light_cfs.GluonFL11(esf, nf)),
+            ]
+        )
+    return kernels_list

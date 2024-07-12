@@ -24,7 +24,7 @@ class EvaluatedStructureFunction:
 
     This class implements the structure for all
     the coefficient functions' providers, for a single kinematic point (x,
-    Q2), but all the flavours (singlet, nonsinglet, gluon).
+    Q2), but all the flavours (singlet, nonsinglet, valence, gluon).
 
     Since the coefficient functions in general are distributions they are
     provided with an internal representation, that respects the interface

@@ -85,8 +85,8 @@ def dump_pineappl_to_file(output, filename, obsname):
     grid.set_remapper(remapper)
 
     # set the initial state PDF ids for the grid
-    grid.set_key_value("initial_state_1", "2212")
-    grid.set_key_value("initial_state_2", str(lepton_pid))
+    grid.set_key_value("convolution_particle_1", "2212")
+    grid.set_key_value("convolution_particle_2", str(lepton_pid))
     grid.set_key_value("theory", json.dumps(output.theory))
     grid.set_key_value("runcard", json.dumps(output.observables))
     grid.set_key_value("yadism_version", yadism.__version__)
@@ -103,8 +103,11 @@ def dump_pineappl_to_file(output, filename, obsname):
         grid.set_key_value("x3_label_tex", "$y$")
         grid.set_key_value("x3_unit", "")
     grid.set_key_value("y_label", obsname)
-    grid.set_key_value("polarized", str(obsname.startswith("g")))
+    # Define the convolution type of the initial state hadron
+    conv_type = "PolPDF" if obsname.startswith("g") else "UnpolPDF"
+    grid.set_key_value("convolution_type_1", conv_type)
+    grid.set_key_value("convolution_type_2", str(None))
 
     # dump file
     grid.optimize()
-    grid.write(filename)
+    grid.write_lz4(filename)
