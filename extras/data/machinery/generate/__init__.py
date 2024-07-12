@@ -1,4 +1,5 @@
 from . import (
+    ATHENA,
     BCDMS,
     CHORUS,
     COMPASS15,
@@ -6,6 +7,7 @@ from . import (
     E143,
     E154,
     E155,
+    EIC,
     EMC,
     HERA,
     HERMES,
@@ -21,6 +23,7 @@ from . import (
     SLAC,
     SMC,
     SMCSX,
+    EIcC,
     utils,
 )
 
@@ -49,6 +52,9 @@ exps = {
         NUTEV,
         POS,
         SLAC,
+        EIC,
+        EIcC,
+        ATHENA,
     ]
 }
 
