@@ -63,7 +63,7 @@ def plot_q2_grid(kDISbThrs: dict, obs_suffix: str):
     for tid, kDISbThr in kDISbThrs.items():
         gp = pathlib.Path(f"./grids/{tid}/{obsfn}.pineappl.lz4")
         g = pineappl.grid.Grid.read(gp)
-        conv = g.convolute_with_one(2212, p.xfxQ2, p.alphasQ2)
+        conv = g.convolve_with_one(2212, p.xfxQ2, p.alphasQ2)
         data.append(conv)
         q2s = g.bin_left(0)
         xs = g.bin_left(1)
@@ -96,7 +96,7 @@ def plot_q2_fk(kDISbThrs: dict, obs_suffix: str):
     for tid, kDISbThr in kDISbThrs.items():
         gp = pathlib.Path(f"./fktables/{tid}/{obsfn}.pineappl.lz4")
         g = pineappl.fk_table.FkTable.read(gp)
-        conv = g.convolute_with_one(2212, p.xfxQ2)
+        conv = g.convolve_with_one(2212, p.xfxQ2)
         data.append(conv)
         q2s = g.bin_left(0)
         xs = g.bin_left(1)

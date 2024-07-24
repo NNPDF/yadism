@@ -46,7 +46,7 @@ rich = "^12.4.4"
 adani = "^1.0.2"
 LeProHQ = "^0.2.5"
 # pineappl dependency
-pineappl = { version = "^0.7.4", optional = true }
+pineappl = { version = "^0.8.2", optional = true }
 # yadmark
 banana-hep = { version = "^0.6.13", optional = true }
 sqlalchemy = { version = "^1.4.21", optional = true }
