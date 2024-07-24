@@ -47,7 +47,7 @@ Essentially the flow of an execution is the following:
    :class:`~yadism.coefficient_functions.Combiner` for the relevant
    :class:`~yadism.coefficient_functions.kernels.Kernel`
 7. all the :class:`~yadism.coefficient_functions.kernels.Kernel` are numerically
-   convoluted with the |PDF| interpolation polynomials
+   convolved with the |PDF| interpolation polynomials
 8. all the results are collected in an :class:`~yadism.output.Output` object and
    returned to the user
 9. (**user** initiated) the :class:`~yadism.output.Output` object might be

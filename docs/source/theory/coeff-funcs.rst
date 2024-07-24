@@ -66,7 +66,7 @@ for variable flavor scheme like FONLL.
 Distributions
 -------------
 
-To obtain a physical observable one has to convolute the coefficient functions with the |PDF|
+To obtain a physical observable one has to convolve the coefficient functions with the |PDF|
 
 .. math ::
     \sigma = \sum_j f_j \otimes c_j = \sum_j \int\limits_x^1 \frac {dz}{z} f_j(x/z) c_j(z)

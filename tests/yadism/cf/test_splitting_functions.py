@@ -123,7 +123,7 @@ class BenchmarkSFEKO:
 #     def test_pqg0pgq0(self):
 #         nf = 3
 #         i = interpolation.InterpolatorDispatcher(interpolation.make_grid(30,20),4,mode_N=False)
-#         o_pqg = conv.convolute_operator(sf.lo.pqg(nf), i)
-#         o_pgq = conv.convolute_operator(sf.nlo.pgq0(nf),i)
-#         o_pqg0pgq0 = conv.convolute_operator(sf.nlo.pqg0pgg0(nf),i)
+#         o_pqg = conv.convolve_operator(sf.lo.pqg(nf), i)
+#         o_pgq = conv.convolve_operator(sf.nlo.pgq0(nf),i)
+#         o_pqg0pgq0 = conv.convolve_operator(sf.nlo.pqg0pgg0(nf),i)
 #         np.testing.assert_allclose(o_pqg0pgq0[0], o_pqg[0] @ o_pgq[0])

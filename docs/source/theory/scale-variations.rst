@@ -71,7 +71,7 @@ Where :math:`a` (:math:`= 1,2,3,L`) is the kind of structure functions considere
 Than the explicit coefficient functions can be computed from |DGLAP| and
 :math:`\alpha_s` running (see :cite:`nnlo-sv-singlet,nnlo-sv-nonsinglet`),
 resulting in process and kind independent elements (the actual anomalous
-dimension of the two runnings) convoluted with lower order coefficient
+dimension of the two runnings) convolved with lower order coefficient
 functions:
 
 .. math::

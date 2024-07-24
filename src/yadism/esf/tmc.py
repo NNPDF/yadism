@@ -181,9 +181,9 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         return out
 
-    def _convolute_FX(self, kind, ker):
+    def _convolve_FX(self, kind, ker):
         r"""
-            Implement generic structure to convolute any function `ker` with `F2`.
+            Implement generic structure to convolve any function `ker` with `F2`.
 
             This method is provided for internal use, in order to factorize the
             machinery for TMC integrals.
@@ -202,7 +202,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                         \left[ a + \sum_{i} ((F_X \otimes k) \otimes w_i)
                         \right] f_i \\
                     & = \left[ a + \sum_{i,j} \underbrace{{F_X}_j ((w_j \otimes
-                        k)}_{\texttt{_convolute_FX}} \otimes w_i) \right] f_i
+                        k)}_{\texttt{_convolve_FX}} \otimes w_i) \right] f_i
                 \end{align*}
 
             where :math:`\tilde{F}_X` is the target mass corrected structure
@@ -215,13 +215,13 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                 kind : str
                     observable kind
                 ker : callable
-                    the kernel function to be convoluted with structure functions
+                    the kernel function to be convolved with structure functions
 
         """
         # check domain
         if self.xi < min(self.sf.runner.configs.interpolator.xgrid.raw):
             raise ValueError(
-                f"xi outside xgrid - cannot convolute starting from xi={self.xi}"
+                f"xi outside xgrid - cannot convolve starting from xi={self.xi}"
             )
         # iterate grid
         res = ESFResult(self.xi, self.Q2, None)
@@ -245,7 +245,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
     def _h2(self):
         r"""
-            Compute raw integral over `F2`, making use of :py:meth:`_convolute_FX`.
+            Compute raw integral over `F2`, making use of :py:meth:`_convolve_FX`.
 
             .. math::
                 :nowrap:
@@ -264,13 +264,13 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         """
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
-        # so to achieve a total 1/z^2 we need to convolute with z/xi
+        # so to achieve a total 1/z^2 we need to convolve with z/xi
         # as we get a 1/z by the measure and an evaluation of 1/xi*xi/z
-        return self._convolute_FX("F2", h2_ker)
+        return self._convolve_FX("F2", h2_ker)
 
     def _g2(self):
         r"""
-            Compute nested integral over `F2`, making use of :py:meth:`_convolute_FX`.
+            Compute nested integral over `F2`, making use of :py:meth:`_convolve_FX`.
 
             .. math::
                 :nowrap:
@@ -290,9 +290,9 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
 
         """
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
-        # so to achieve a total (z-xi)/z^2 we need to convolute with 1-z
+        # so to achieve a total (z-xi)/z^2 we need to convolve with 1-z
         # as we get a 1/z by the measure and an evaluation of 1-xi/z
-        return self._convolute_FX("F2", g2_ker)
+        return self._convolve_FX("F2", g2_ker)
 
     def _k1(self):
         r"""
@@ -311,7 +311,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
     def _k2(self):
         r"""
             Compute the raw integral that enters the computation of `g`
-            making use of :py:meth:`_convolute_FX`.
+            making use of :py:meth:`_convolve_FX`.
 
             .. math::
                 :nowrap:
@@ -330,7 +330,7 @@ class EvaluatedStructureFunctionTMC(abc.ABC):
                     ESF output for the integral
 
         """
-        return self._convolute_FX("g1", k2_ker)
+        return self._convolve_FX("g1", k2_ker)
 
 
 class ESFTMC_F2(EvaluatedStructureFunctionTMC):
@@ -498,7 +498,7 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
 
     def _h3(self):
         r"""
-            Compute raw integral over `F3`, making use of :py:meth:`_convolute_FX`.
+            Compute raw integral over `F3`, making use of :py:meth:`_convolve_FX`.
 
             .. math::
                 :nowrap:
@@ -516,8 +516,8 @@ class ESFTMC_F3(EvaluatedStructureFunctionTMC):
 
         """
         # convolution is given by dz/z f(xi/z) * g(z) z=xi..1
-        # so to achieve a total 1/z we need to convolute with 1
-        return self._convolute_FX("F3", h3_ker)
+        # so to achieve a total 1/z we need to convolve with 1
+        return self._convolve_FX("F3", h3_ker)
 
     def _get_result_exact(self):
         # collect F3

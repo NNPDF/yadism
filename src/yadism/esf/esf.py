@@ -72,7 +72,7 @@ class EvaluatedStructureFunction:
             raise ValueError("Kinematics 'Q2' must be in the range (0,∞)")
         # check domain
         if x < min(configs.interpolator.xgrid.raw):
-            raise ValueError(f"x outside xgrid - cannot convolute starting from x={x}")
+            raise ValueError(f"x outside xgrid - cannot convolve starting from x={x}")
 
         self.x = x
         self.Q2 = kinematics["Q2"]
@@ -140,7 +140,7 @@ class EvaluatedStructureFunction:
                     continue
                 # compute convolution point
                 convolution_point = cfe.coeff.convolution_point()
-                val, err = conv.convolute_vector(
+                val, err = conv.convolve_vector(
                     rsl, self.info.configs.managers["interpolator"], convolution_point
                 )
                 # add the factor x from the LHS
