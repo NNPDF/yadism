@@ -58,7 +58,7 @@ scale variation formula <theory/scale-variations:Factorization>`.
 
 What is done in ``yadism`` is to implement everything to depend only on the
 *original* coefficients :math:`\textbf{c}_a^{(i)}`, and not to depend recursively
-on the convoluted ones :math:`\textbf{c}_a^{(i,j)}`, in order to limit the number
+on the convolved ones :math:`\textbf{c}_a^{(i,j)}`, in order to limit the number
 of extra numerical convolutions to a single one.
 
 In this case we are avoiding the disadvantages of the previous section, only
@@ -66,7 +66,7 @@ partially paying for giving up on of the advantages: these convolutions would
 involve only splitting functions, and never the coefficient functions'
 expressions, and for this same reason they are also considerably easier.
 
-Applying convoluted kernels
+Applying convolved kernels
 ---------------------------
 
 Since the convolutions are done numerically it is needed to integrate ahead of
@@ -148,7 +148,7 @@ in the theory section.
 
 Without the scale variations the interpolation is done completely on the |PDF|,
 as described in :doc:`interpolation`, and the interpolation polynomials would
-then be used to convolute numerically the coefficient functions:
+then be used to convolve numerically the coefficient functions:
 
 .. math::
 

@@ -2,7 +2,7 @@ Kernels
 =======
 
 The coefficient functions consist of the partonic cross-sections, that have to
-be convoluted with the PDFs in order to obtain the hadronic structure functions,
+be convolved with the PDFs in order to obtain the hadronic structure functions,
 according to the factorization theorem:
 
 .. math::

@@ -51,7 +51,7 @@ def quad_ker_sing(z, x, is_log, areas, sing, pdf_at_x, sing_args):
 
 def convolution(rsl, x, pdf_func):
     r"""
-    Convolute a :py:class:`yadism.coefficient_functions.partonic_channel.RSL`
+    Convolve a :py:class:`yadism.coefficient_functions.partonic_channel.RSL`
     instance with a function ``pdf_func``.
 
     The definition of the convolution performed is:
@@ -77,7 +77,7 @@ def convolution(rsl, x, pdf_func):
     x : scalar
         the kinematics point at which the convoution is evaluated
     pdf_func : callable
-        the function to be convoluted with ``rsl`` (usually a PDF, or a PDF
+        the function to be convolved with ``rsl`` (usually a PDF, or a PDF
         interpolator)
 
     Returns
@@ -168,9 +168,9 @@ def convolution(rsl, x, pdf_func):
     return res, err
 
 
-def convolute_operator(fnc, interpolator):
+def convolve_operator(fnc, interpolator):
     """
-    Convolute function over all basis functions over all grid points.
+    Convolve function over all basis functions over all grid points.
 
     Parameters
     ----------
@@ -203,9 +203,9 @@ def convolute_operator(fnc, interpolator):
     return op_res, op_err
 
 
-def convolute_vector(cf, interpolator, convolution_point):
+def convolve_vector(cf, interpolator, convolution_point):
     """
-    Convolute function over all basis functions.
+    Convolve function over all basis functions.
 
     Parameters
     ----------

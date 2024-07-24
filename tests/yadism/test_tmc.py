@@ -69,7 +69,7 @@ class TestAbstractTMC:
             obj = MockTMC(objSF, {"x": 0.99, "Q2": 1})
             obj.get_result()
 
-    def test_convolute_F2_empty(self):
+    def test_convolve_F2_empty(self):
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF1(MockSF):
@@ -88,17 +88,17 @@ class TestAbstractTMC:
         objSF = MockSF1(1, xg)
         obj = MockTMC(objSF, {"x": 0.99, "Q2": 1})
         # test 0 function
-        res = obj._convolute_FX(  # pylint: disable=protected-access
+        res = obj._convolve_FX(  # pylint: disable=protected-access
             "F2", lambda _x, _args: 0
         )
         is0(res)
         # test constant function
-        res = obj._convolute_FX(  # pylint: disable=protected-access
+        res = obj._convolve_FX(  # pylint: disable=protected-access
             "F2", lambda _x, _args: 1
         )
         is0(res)
         # test random function
-        res = obj._convolute_FX("F2", np.exp)  # pylint: disable=protected-access
+        res = obj._convolve_FX("F2", np.exp)  # pylint: disable=protected-access
         is0(res)
         # test h2
         res = obj._h2()  # pylint: disable=protected-access
@@ -107,7 +107,7 @@ class TestAbstractTMC:
         res = obj._g2()  # pylint: disable=protected-access
         is0(res)
 
-    def test_convolute_F2_delta(self):
+    def test_convolve_F2_delta(self):
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF2(MockSF):
@@ -124,9 +124,9 @@ class TestAbstractTMC:
         # build objects
         objSF = MockSF2(1, xg)
         obj = MockTMC(objSF, {"x": 0.99, "Q2": 1})
-        # convolute with constant function
+        # convolve with constant function
         # res_const = int_xi^1 du/u 1 F2(u)
-        res_const = obj._convolute_FX(  # pylint: disable=protected-access
+        res_const = obj._convolve_FX(  # pylint: disable=protected-access
             "F2", lambda x, args: 1
         )
         assert isinstance(res_const, ESFResult)
@@ -164,7 +164,7 @@ class TestAbstractTMC:
             integral_with_pdf = np.matmul(res_h2.orders[lo][0][0], pdf_lin)
             assert pytest.approx(integral_with_pdf, 1 / 1000.0) == c * (-np.log(obj.xi))
 
-    def test_convolute_F2_xi_of_domain(self):
+    def test_convolve_F2_xi_of_domain(self):
         xg = np.array([0.2, 0.6, 1.0])
 
         class MockSF3(MockSF):

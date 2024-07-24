@@ -136,7 +136,7 @@ def test_intrinsic_nlo():
                             iobj = icls(esf, nf, m1sq=m2hq)
                         order = lambda pc, o=o: pc.__getattribute__(o)()
                         a = (
-                            conv.convolute_vector(order(iobj), interp, z)[0]
+                            conv.convolve_vector(order(iobj), interp, z)[0]
                             if order(iobj)
                             else 0.0
                         )
@@ -145,7 +145,7 @@ def test_intrinsic_nlo():
                             for iasycls in iasyclss:
                                 iasyobj = iasycls(esf, nf, m2hq=m2hq)
                                 if order(iasyobj):
-                                    b += conv.convolute_vector(
+                                    b += conv.convolve_vector(
                                         order(iasyobj), interp, z
                                     )[0]
                         np.testing.assert_allclose(

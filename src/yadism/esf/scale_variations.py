@@ -9,7 +9,7 @@ from eko import beta
 from scipy.special import binom
 
 from ..coefficient_functions import splitting_functions as split
-from .conv import convolute_operator
+from .conv import convolve_operator
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ class ScaleVariations:
                     continue
                 start_time = time.perf_counter()
                 # TODO add error propagation
-                res, _err = convolute_operator(fnc(nf), self.interpolator)
+                res, _err = convolve_operator(fnc(nf), self.interpolator)
                 self.operators[(l, nf)] = res
                 logger.info(
                     "computing %s - took: %f s", l, time.perf_counter() - start_time
