@@ -8,7 +8,7 @@ As in the docs pdf (`dis.pdf`)  aux variables are defined (`xi`, `rho` that is
 called `rhop` in the code) directly in `F2light.f`
 
 ## Integration
-Source: `ConvolvePDFwithDISOperators.f` for `I2`
+Source: `ConvolutePDFwithDISOperators.f` for `I2`
 Source: `ComputeDISOperators.f` for `OpI2`
 
 The integration is already provided, since it is precomputed on a grid. The
