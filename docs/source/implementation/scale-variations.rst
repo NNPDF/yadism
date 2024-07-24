@@ -67,7 +67,7 @@ involve only splitting functions, and never the coefficient functions'
 expressions, and for this same reason they are also considerably easier.
 
 Applying convolved kernels
----------------------------
+--------------------------
 
 Since the convolutions are done numerically it is needed to integrate ahead of
 time the full operator: indeed the splitting functions act as operator on
