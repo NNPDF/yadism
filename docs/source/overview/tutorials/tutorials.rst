@@ -15,4 +15,4 @@ These tutorials show how to:
 
    Getting Started <getting_started.ipynb>
    Compare to Data <compare_data.ipynb>
-   Compute a FONLL observable <fonll.ipynb>
+   Compute an FONLL observable <fonll.ipynb>
