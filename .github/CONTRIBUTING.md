@@ -1,56 +1,58 @@
-# Contributing to Yadism
+# How to Contribute
 
-If you are not a member of development team pleas look below for [external
-contributions guidelines](.github/contributing.md#external-contributions).
+:tada: Thanks, for considering to contribute to yadism!
 
-## Internal development
+:pray: For the sake of simplicity we switch below to imperative
+language, however, please read a "Please" in front of everything.
 
-### Branching model
+- :brain: Be reasonable and use common sense when contributing: we
+  added some points we would like to highlight below
+- :family: Follow our [Code of
+  Conduct](https://github.com/NNPDF/yadism/blob/master/.github/CODE_OF_CONDUCT.md)
+  and use the provided [Issue
+  Templates](https://github.com/NNPDF/yadism/issues/new/choose)
+- :1234: Use the _almost_ standard [SemVer](https://semver.org/) for version numbers
 
-The development it's following some conventions to improve collaboration:
+## Tools
 
-- the _almost_ standard [SemVer](https://semver.org/) it's adopted for versions'
-  numbers
-- the popular [git flow
-  model](https://nvie.com/posts/a-successful-git-branching-model/) it's used for
-  managing git branches
-  - in order to help you with the management consider using [`git flow`](https://github.com/petervanderdoes/gitflow-avh) CLI tool (and the corresponding [shell completion](https://github.com/petervanderdoes/git-flow-completion)), or the original version of [`git flow`](https://github.com/nvie/gitflow).
+- :envelope: [`poetry`](https://github.com/python-poetry/poetry) is the
+  dependency manager and packaging back-end of choice for this
+  project - see the official [installation
+  guide](https://python-poetry.org/docs/#installation)
+- :hash: [`poery-dynamic-versioning`](https://github.com/mtkennerly/poetry-dynamic-versioning),
+  is used to update the package version based on VCS status (tags and
+  commits); note that since the version is dumped in output object,
+  this is to be used not only for releases, but whenever output is
+  generated (and intended to be used)
+- :parking: [`pre-commit`](https://pre-commit.com/) is used to enforce
+  automation and standardize the tools for all developers; if you want
+  to contribute to this project, install it and activate it
 
-#### Caveat
+## Docs
 
-- remember to base all the pull requests on GitHub to `develop` (and not
-  `main`/`master`)
-- while using `git flow` to merge feature branches remember to use the `-k`
-  (keep) option, for GitHub compatibility (such that the PR will result merged,
-  and not closed)
+- :books: in order to run the notebooks in the environment, you need first to install
+  the environment kernel:
+  ```sh
+  poe docs-install-nb
+  ```
+  thanks to [Nikolai Janakiev](https://janakiev.com/blog/jupyter-virtual-envs/#add-virtual-environment-to-jupyter-notebook)
 
-### Installation
+## Testing
 
-#### Development tools
+- :elephant: Make sure to not break the old tests (unless there was a
+  mistake)
+- :hatching_chick: Write new tests for your new code - the coverage
+  should be back to 100% if possible
 
-Please, install in your favorite way the following tools:
+## Style Conventions
 
-- `poetry`, follow [installation
-  instructions](https://python-poetry.org/docs/#installation)
-- `poetry-dynamic-versioning`, used to manage the version (see
-  [repo](https://github.com/mtkennerly/poetry-dynamic-versioning))
-- `pre-commit`, to run maintenance hooks before commits (see
-  [instructions](https://pre-commit.com/#install))
+### Python Styleguide
 
-### Unit Tests
+- :blue_book: Use [numpy documentation
+  guide](https://numpydoc.readthedocs.io/en/latest/format.html)
 
-To run test install the package and just run `pytest` in the project root
-(configurations are in `pyproject.toml`).
+### Git
 
-## External contributions
-
-Currently the main guideline we would like to highlight is to use [GitHub
-issues](https://github.com/N3PDF/yadism/issues) for requests, bugs reporting,
-and any other communication, and [GitHub pull
-requests](https://github.com/N3PDF/yadism/pulls) for code contributions.
-
-External pull requests should be applied to the latest release branch, if not
-available choose simply `develop` as base, and it will be moved to a suitable
-one by maintainers.
-
-Please take the time to fulfill the provided template.
+- :octocat: Make sure the commit message is written properly ([This
+  blogpost](https://chris.beams.io/posts/git-commit/) explains it
+  nicely)

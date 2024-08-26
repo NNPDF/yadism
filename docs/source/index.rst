@@ -7,6 +7,19 @@ Yadism documentation
 
 `yadism` is a wonderful 😉 package for computing |DIS| observables.
 
+Citation Policy
+~~~~~~~~~~~~~~~
+
+When using our code please cite
+
+- our DOI: |DOI|_
+- our paper: |arxiv|_
+
+.. |DOI| image:: https://zenodo.org/badge/219968694.svg
+.. _DOI: https://zenodo.org/badge/latestdoi/219968694
+.. |arxiv| image:: https://img.shields.io/badge/arXiv-2401.15187-b31b1b?labelColor=222222
+.. _arxiv: https://arxiv.org/abs/2401.15187
+
 Design Goals
 ~~~~~~~~~~~~
 

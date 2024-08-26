@@ -33,7 +33,14 @@ poetry install
 ```
 
 To install `poetry` and the other recommended tools, follow the
-[instructions](.github/CONTRIBUTING.md#development-tools).
+[instructions](.github/CONTRIBUTING.md).
+
+
+## Citation policy
+When using our code please cite
+- our DOI: <a href="https://zenodo.org/badge/latestdoi/219968694"><img src="https://zenodo.org/badge/219968694.svg" alt="DOI"></a>
+- our paper: [![arXiv](https://img.shields.io/badge/arXiv-2401.15187-b31b1b?labelColor=222222)](https://arxiv.org/abs/2401.15187)
+
 
 ## Development
 
@@ -43,8 +50,8 @@ development and improve collaboration.
 
 ## Contributing or contacting the authors
 
-For any kind of interaction consider before to read [external contribution
-guidelines](.github/contributing.md#external-contributions), otherwise just send
+For any kind of interaction consider before to read the [contribution
+guidelines](.github/contributing.md), otherwise just send
 an email to the authors:
 
 - [Alessandro Candido](mailto:alessandro.candido@mi.infn.it)
