@@ -11,7 +11,7 @@ class AsyLLGluon(EmptyPartonicChannel):
 
 
 class AsyGluon(pc.NeutralCurrentBaseAsy):
-    hs3 = adani.HighScaleSplitLogs(3, "L", "g", "gm")
+    hs3 = adani.HighScaleSplitLogs(3, "L", "g", "exact")
 
 
 class AsySinglet(pc.NeutralCurrentBaseAsy):
