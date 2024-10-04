@@ -77,7 +77,9 @@ def update_target(obs):
         obs["TargetDIS"] = {
             "Z": 23.403,
             "A": 49.618,
-        }  # Fe=26 and we don't know how these factors got inside APFEL
+        }  # For Fe in principle Z=26 and A=56. The alternative values are
+        # specifically for the NuTeV experiment to account for contaminations
+        # in the target.
         # iron = 10 0 026 056 0
         obs["TargetDISid"] = "1000260560"
     elif target == "lead":
