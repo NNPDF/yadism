@@ -77,7 +77,9 @@ def update_target(obs):
         obs["TargetDIS"] = {
             "Z": 23.403,
             "A": 49.618,
-        }  # Fe=26 and we don't know how these factors got inside APFEL
+        }  # This target corresponds to NuTeV and has been determined through a
+        # survey of the steel. See page 323 of the PhD thesis of David
+        # Alexander Mason: https://inspirehep.net/files/15b639af43688d59f1ba65ec9cde7ec7
         # iron = 10 0 026 056 0
         obs["TargetDISid"] = "1000260560"
     elif target == "lead":
