@@ -14,11 +14,11 @@ repos:
       - id: debug-statements
         exclude: "debug.py"
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.8.0
+    rev: 24.10.0
     hooks:
       - id: black
   - repo: https://github.com/asottile/blacken-docs
-    rev: 1.18.0
+    rev: 1.19.0
     hooks:
       - id: blacken-docs
   - repo: https://github.com/pycqa/isort
@@ -27,7 +27,7 @@ repos:
       - id: isort
         args: ["--profile", "black"]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.17.0
+    rev: v3.18.0
     hooks:
       - id: pyupgrade
   - repo: https://github.com/hadialqattan/pycln
@@ -44,6 +44,6 @@ repos:
         additional_dependencies:
           - toml
   - repo: https://github.com/pre-commit/pre-commit
-    rev: v4.0.0
+    rev: v4.0.1
     hooks:
       - id: validate_manifest
