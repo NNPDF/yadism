@@ -46,6 +46,21 @@ class CouplingConstants:
         # neutrinos
         for pid in [12, 14, 16]:
             self.weak_isospin_3[pid] = 1 / 2
+
+        # BSM couplings -------------------------------------------------------
+        # Temporary couplings to Olq3
+        self.BSM_couplings = {21: 0}
+        self.weak_isospin_3 = {21: 0}
+        for q in range(1, 7):
+            self.BSM_couplings[q] = -1 if q % 2 == 0 else 1  # u if stmt else d
+        # leptons: 11 = e-(!)
+        for pid in [11, 13, 15]:
+            self.BSM_couplings[pid] = 1
+        # neutrinos
+        # CC not yet implemented
+        for pid in [12, 14, 16]:
+            self.BSM_couplings[pid] = 0
+
         self.log()
 
     def log(self):
