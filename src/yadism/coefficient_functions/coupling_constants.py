@@ -247,10 +247,22 @@ class CouplingConstants:
             * (1.0 - self.theory_config["sin2theta_weak"])
         )
         eta_phZ /= 1 - self.obs_config["propagatorCorrection"]
+
+        # Need to specify Wilson coefficient?
+        C_4F = 1
+        # Modify with more precise value
+        alpha = 1 / 137
+        # Should get it from param card
+        BSM_scale = 1000
+        eta_ph4F = ((C_4F) / (4 * np.pi*alpha)) *(Q2/BSM_scale**2)
         if mode == "phZ":
             return eta_phZ
         if mode == "ZZ":
             return eta_phZ**2
+        if mode == "ph4F":
+            return eta_ph4F
+        if mode == "Z4F":
+            return eta_phZ * eta_ph4F
         if mode == "WW":
             eta_W = (
                 (eta_phZ / 2)
