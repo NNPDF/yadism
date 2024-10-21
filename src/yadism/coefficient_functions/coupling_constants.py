@@ -49,17 +49,20 @@ class CouplingConstants:
 
         # BSM couplings -------------------------------------------------------
         # Temporary couplings to Olq3
-        self.BSM_couplings = {21: 0}
-        self.weak_isospin_3 = {21: 0}
+        self.BSM_coupling_vectorial = {21: 0}
+        self.BSM_coupling_axial = {21: 0}
         for q in range(1, 7):
-            self.BSM_couplings[q] = -1 if q % 2 == 0 else 1  # u if stmt else d
+            self.BSM_coupling_vectorial[q] = -1 if q % 2 == 0 else 1  # u if stmt else d
+            self.BSM_coupling_axial[q] = -1 if q % 2 == 0 else 1  # u if stmt else d
         # leptons: 11 = e-(!)
         for pid in [11, 13, 15]:
-            self.BSM_couplings[pid] = 1
+            self.BSM_coupling_vectorial[pid] = 1
+            self.BSM_coupling_axial[pid] = 1
         # neutrinos
         # CC not yet implemented
         for pid in [12, 14, 16]:
-            self.BSM_couplings[pid] = 0
+            self.BSM_coupling_vectorial[pid] = 0
+            self.BSM_coupling_axial[pid] = 0
 
         self.log()
 
@@ -107,9 +110,14 @@ class CouplingConstants:
         # load Z coupling
         projectile_v = 0.0
         projectile_a = 0.0
-        if mode in ["phZ", "ZZ"]:
+        if mode in ["phZ", "ZZ", "Z4F"]:
             projectile_v = self.vectorial_coupling(abs(projectile_pid))
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]
+            projectile_BSM_v = self.BSM_coupling_vectorial(abs(projectile_pid))
+            projectile_BSM_a = self.BSM_coupling_axial[abs(projectile_pid)]
+        if mode in ["ph4F"]:
+            projectile_BSM_v = self.BSM_coupling_vectorial(abs(projectile_pid))
+            projectile_BSM_a = self.BSM_coupling_axial[abs(projectile_pid)]
         # switch mode
         if mode == "phph":
             if quark_coupling_type in ["VV", "AA"]:
@@ -136,6 +144,26 @@ class CouplingConstants:
                 return 2.0 * projectile_v * projectile_a + pol * (
                     projectile_v**2 + projectile_a**2
                 )
+        elif mode == "ph4F":
+            if quark_coupling_type in ["VV", "AA"]:
+                return self.electric_charge[abs(projectile_pid)] * (
+                    projectile_BSM_v + pol * projectile_BSM_a
+                )
+            else:
+                return self.electric_charge[abs(projectile_pid)] * (
+                    projectile_BSM_a + pol * projectile_BSM_v
+                )
+        elif mode == "Z4F":
+            if quark_coupling_type in ["VV", "AA"]:
+                return (
+                    projectile_v * projectile_BSM_v
+                    + projectile_a * projectile_BSM_a
+                    + pol * (projectile_v * projectile_BSM_a + projectile_BSM_v * projectile_a)
+                )
+            else:
+                return projectile_v * projectile_BSM_a + projectile_BSM_v * projectile_a + pol * (
+                    projectile_v * projectile_BSM_v + projectile_a * projectile_BSM_a
+                )
         raise ValueError(f"Unknown mode: {mode}")
 
     def nc_partonic_coupling(self, pid):
@@ -145,6 +173,10 @@ class CouplingConstants:
             "A": 0,  # axial coupling of the photon to the quark is not there of course
         }
         qZ = {"V": self.vectorial_coupling(pid), "A": self.weak_isospin_3[pid]}
+
+        qBSM = {
+
+        }
         return qph, qZ
 
     def partonic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
@@ -264,7 +296,7 @@ class CouplingConstants:
         eta_phZ /= 1 - self.obs_config["propagatorCorrection"]
 
         # Need to specify Wilson coefficient?
-        C_4F = 1
+        C_4F = 1/4
         # Modify with more precise value
         alpha = 1 / 137
         # Should get it from param card
