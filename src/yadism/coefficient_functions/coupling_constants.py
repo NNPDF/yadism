@@ -113,10 +113,10 @@ class CouplingConstants:
         if mode in ["phZ", "ZZ", "Z4F"]:
             projectile_v = self.vectorial_coupling(abs(projectile_pid))
             projectile_a = self.weak_isospin_3[abs(projectile_pid)]
-            projectile_BSM_v = self.BSM_coupling_vectorial(abs(projectile_pid))
+            projectile_BSM_v = self.BSM_coupling_vectorial[abs(projectile_pid)]
             projectile_BSM_a = self.BSM_coupling_axial[abs(projectile_pid)]
         if mode in ["ph4F"]:
-            projectile_BSM_v = self.BSM_coupling_vectorial(abs(projectile_pid))
+            projectile_BSM_v = self.BSM_coupling_vectorial[abs(projectile_pid)]
             projectile_BSM_a = self.BSM_coupling_axial[abs(projectile_pid)]
         # switch mode
         if mode == "phph":
@@ -158,11 +158,21 @@ class CouplingConstants:
                 return (
                     projectile_v * projectile_BSM_v
                     + projectile_a * projectile_BSM_a
-                    + pol * (projectile_v * projectile_BSM_a + projectile_BSM_v * projectile_a)
+                    + pol
+                    * (
+                        projectile_v * projectile_BSM_a
+                        + projectile_BSM_v * projectile_a
+                    )
                 )
             else:
-                return projectile_v * projectile_BSM_a + projectile_BSM_v * projectile_a + pol * (
-                    projectile_v * projectile_BSM_v + projectile_a * projectile_BSM_a
+                return (
+                    projectile_v * projectile_BSM_a
+                    + projectile_BSM_v * projectile_a
+                    + pol
+                    * (
+                        projectile_v * projectile_BSM_v
+                        + projectile_a * projectile_BSM_a
+                    )
                 )
         raise ValueError(f"Unknown mode: {mode}")
 
@@ -301,12 +311,12 @@ class CouplingConstants:
         eta_phZ /= 1 - self.obs_config["propagatorCorrection"]
 
         # Need to specify Wilson coefficient?
-        C_4F = 1/4
+        C_4F = 1 / 4
         # Modify with more precise value
         alpha = 1 / 137
         # Should get it from param card
         BSM_scale = 1000
-        eta_ph4F = ((C_4F) / (4 * np.pi*alpha)) *(Q2/BSM_scale**2)
+        eta_ph4F = ((C_4F) / (4 * np.pi * alpha)) * (Q2 / BSM_scale**2)
         if mode == "phZ":
             return eta_phZ
         if mode == "ZZ":
@@ -391,7 +401,20 @@ class CouplingConstants:
                 * self.propagator_factor("ZZ", Q2)
                 * self.partonic_coupling("ZZ", pid, quark_coupling_type)
             )
-            return w_phph + w_phZ + w_ZZ
+            # photon-4F interference
+            w_ph4F = (
+                2
+                * self.leptonic_coupling("ph4F", quark_coupling_type)
+                * self.propagator_factor("ph4F", Q2)
+                * self.partonic_coupling("ph4F", pid, quark_coupling_type)
+            )
+            # Z-4F interference
+            w_Z4F = (
+                self.leptonic_coupling("Z4F", quark_coupling_type)
+                * self.propagator_factor("Z4F", Q2)
+                * self.partonic_coupling("Z4F", pid, quark_coupling_type)
+            )
+            return w_phph + w_phZ + w_ZZ + w_ph4F + w_Z4F
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     def get_fl11_weight(self, pid, Q2, nf, quark_coupling_type):
