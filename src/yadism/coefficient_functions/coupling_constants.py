@@ -174,10 +174,11 @@ class CouplingConstants:
         }
         qZ = {"V": self.vectorial_coupling(pid), "A": self.weak_isospin_3[pid]}
 
-        qBSM = {
-
+        q4F = {
+            "V": self.BSM_coupling_vectorial[pid],
+            "A": self.BSM_coupling_axial[pid],
         }
-        return qph, qZ
+        return qph, qZ, q4F
 
     def partonic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
         """Compute the coupling of the boson to the parton.
@@ -204,7 +205,7 @@ class CouplingConstants:
         if mode == "WW":
             return np.sum(self.theory_config["CKM"].masked(cc_mask)(pid))
         # load couplings
-        qph, qZ = self.nc_partonic_coupling(pid)
+        qph, qZ, q4F = self.nc_partonic_coupling(pid)
 
         first = quark_coupling_type[0]
         second = quark_coupling_type[1]
@@ -215,6 +216,10 @@ class CouplingConstants:
             return qph[first] * qZ[second]
         if mode == "ZZ":
             return qZ[first] * qZ[second]
+        if mode == "ph4F":
+            return qph[first] * q4F[second]
+        if mode == "Z4F":
+            return qZ[first] * q4F[second]
         raise ValueError(f"Unknown mode: {mode}")
 
     def partonic_coupling_fl11(self, mode, pid, nf, quark_coupling_type):
