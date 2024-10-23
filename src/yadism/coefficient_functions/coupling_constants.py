@@ -273,12 +273,13 @@ class CouplingConstants:
         second = quark_coupling_type[1]
 
         def switch_mode(quark, coupling_type):
-            qph, qZ = self.nc_partonic_coupling(quark)
-            if mode in ["phph", "Zph"]:
+            qph, qZ, q4F = self.nc_partonic_coupling(quark)
+            if mode in ["phph", "Zph", "4Fph"]:
                 return qph[coupling_type]
-            if mode in ["phZ", "ZZ"]:
+            if mode in ["phZ", "ZZ", "4FZ"]:
                 return qZ[coupling_type]
-            raise ValueError(f"Unknown mode: {mode}")
+            if mode in ["ph4F", "Z4F"]:
+                return q4F[coupling_type]
 
         # first coupling contribute with a mean
         pids = range(1, nf + 1)
@@ -412,7 +413,8 @@ class CouplingConstants:
             )
             # Z-4F interference
             w_Z4F = (
-                self.leptonic_coupling("Z4F", quark_coupling_type)
+                2
+                * self.leptonic_coupling("Z4F", quark_coupling_type)
                 * self.propagator_factor("Z4F", Q2)
                 * self.partonic_coupling("Z4F", pid, quark_coupling_type)
             )
@@ -482,7 +484,29 @@ class CouplingConstants:
                 * self.propagator_factor("ZZ", Q2)
                 * self.partonic_coupling_fl11("ZZ", pid, nf, quark_coupling_type)
             )
-            return w_phph + w_phZ + w_Zph + w_ZZ
+            # photon-4F interference
+            w_ph4F = (
+                self.leptonic_coupling("ph4F", quark_coupling_type)
+                * self.propagator_factor("ph4F", Q2)
+                * self.partonic_coupling("ph4F", pid, quark_coupling_type)
+            )
+            w_4Fph = (
+                self.leptonic_coupling("ph4F", quark_coupling_type)
+                * self.propagator_factor("ph4F", Q2)
+                * self.partonic_coupling("ph4F", pid, quark_coupling_type)
+            )
+            # Z-4F interference
+            w_Z4F = (
+                self.leptonic_coupling("Z4F", quark_coupling_type)
+                * self.propagator_factor("Z4F", Q2)
+                * self.partonic_coupling("Z4F", pid, quark_coupling_type)
+            )
+            w_4FZ = (
+                self.leptonic_coupling("Z4F", quark_coupling_type)
+                * self.propagator_factor("Z4F", Q2)
+                * self.partonic_coupling("Z4F", pid, quark_coupling_type)
+            )
+            return w_phph + w_phZ + w_Zph + w_ZZ + w_ph4F + w_4Fph + w_Z4F + w_4FZ
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod
