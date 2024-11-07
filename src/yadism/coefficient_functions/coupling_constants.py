@@ -480,10 +480,8 @@ class CKM2Matrix:
         return "CKM(" + str(self.m).replace("\n", "") + ")"
 
     def __eq__(self, other) -> bool:
-        eq = True
-        for a, b in zip(self.__dict__, other.__dict__):
-            eq = a == b
-        return eq
+        """Equal method."""
+        return (self.m == other.m).all()
 
     def __getitem__(self, key):
         """Allow pid and strings as key.
