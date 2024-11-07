@@ -416,7 +416,7 @@ class CouplingConstants:
         if isinstance(ckm_matrix, str):
             ckm_matrix = CKM2Matrix.from_str(ckm_matrix)
         elif isinstance(ckm_matrix, list):
-            ckm_matrix = CKM2Matrix(np.array([ckm_matrix]) ** 2)
+            ckm_matrix = CKM2Matrix(np.array(ckm_matrix) ** 2)
         theory_config = {
             "MZ2": theory.get("MZ", 91.1876)
             ** 2,  # TODO remove defaults to the PDG2020 value
@@ -478,6 +478,12 @@ class CKM2Matrix:
     def __repr__(self):
         """Return string representation."""
         return "CKM(" + str(self.m).replace("\n", "") + ")"
+
+    def __eq__(self, other) -> bool:
+        eq = True
+        for a, b in zip(self.__dict__, other.__dict__):
+            eq = a == b
+        return eq
 
     def __getitem__(self, key):
         """Allow pid and strings as key.
