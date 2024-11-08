@@ -132,6 +132,24 @@ class TestCouplingConstanst:
         coupl_const = coupl.CouplingConstants.from_dict(th_d, obs_d)
         assert coupl_const.theory_config["MW2"] == MW**2
 
+        new_th_ckm = dict(
+            SIN2TW=sin2tw,
+            MZ=MZ,
+            CKM=[
+                0.97428,
+                0.22530,
+                0.003470,
+                0.22520,
+                0.97345,
+                0.041000,
+                0.00862,
+                0.04030,
+                0.999152,
+            ],
+        )
+        new_coupl_const = coupl.CouplingConstants.from_dict(new_th_ckm, obs_d)
+        assert coupl_const.theory_config["CKM"] == new_coupl_const.theory_config["CKM"]
+
         # Unknown projectile
         obs_d["ProjectileDIS"] = 0
         with pytest.raises(ValueError, match="Unknown projectile"):
