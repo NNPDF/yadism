@@ -19,27 +19,16 @@ channel = sys.argv[4]
 if channel not in ["q", "g"]:
     raise ValueError("Set channel to 'g' or 'q'")
 
-order = int(sys.argv[5])
-
-if sys.argv[6] not in ["klmv", "abmp", "gm"]:
-    raise ValueError("Set hs_version to 'klmv', 'abmp' or 'gm'")
-# klmv = Kawamura, Lo Presti, Moch, Vogt: approximation from [arXiv:1205.5727]
-# abmp = Alekhin, Blumlein, Moch, Placakyte: approximation from [arXiv:1701.05838]
-# gm = approximation from Giacomo Magni, based on the results of [arXiv:2403.00513]
-
+order = 3
 
 mufrac = 1.0
 verbose = True
 
-hs_version = "exact" if channel == "q" else sys.argv[6]
-if order > 1:
-    massive = adani.ApproximateCoefficientFunction(
-        order, kind, channel, True, hs_version
-    )
-elif order == 1:
-    massive = adani.ExactCoefficientFunction(order, kind, channel)
-else:
-    raise ValueError("Set order to 1, 2 or 3!")
+hs_version = "exact"
+
+massive = adani.ApproximateCoefficientFunction(
+    order, kind, channel, True, hs_version
+)
 
 
 def x_eta(eta, m2Q2):
@@ -79,7 +68,7 @@ if __name__ == "__main__":
 
     if verbose:
         print(
-            f"Computation of the grid for the coefficient function C{kind}{channel} for nf = {nf}, and µ/Q = {mufrac}"
+            f"Computation of the grid for the coefficient function C_{kind}{channel}^{order} for nf = {nf}, and µ/Q = {mufrac}"
         )
         print(f"Size of the grid (eta,xi) = ({len(eta_grid)},{len(xi_grid)})")
         print(
@@ -95,8 +84,6 @@ if __name__ == "__main__":
     res_mat = res_vec.reshape(len(xi_grid), len(eta_grid), 3)
 
     for variation in range(-1, 1 + 1):
-        if order == 1 and variation in [-1, 1]:
-            continue
         if verbose:
             print(f"Saving {variation} grid in ", here / output_files[variation])
         np.save(here / output_files[variation], res_mat[:, :, variation + 1])
