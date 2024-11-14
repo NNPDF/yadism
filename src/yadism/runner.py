@@ -198,6 +198,37 @@ class Runner:
             if isinstance(obs, SF):
                 obs.drop_cache()
 
+    def replace_nans_with_0(self, out):
+        """ Replace any NaNs in output with 0.0
+
+            The small-x (i.e. large eta) limit is not addressed in LeProHQ because
+            the high energy limit of the polarized case is not known and that is the
+            main purpose of LeProHQ. As a result LeProHQ may return NaNs in the
+            small-x limit, which this function replaces with 0.0.
+
+            Note that the value of x where this plays a role is below the
+            experimental regime and thus this does not affect the description of
+            data, but only e.g. the grids used for the FIATLUX photon computation.
+        """
+
+        out2 = copy.deepcopy(out)
+
+        # Loop through each observable in the dictionary
+        for observable, points in out2.items():
+            # Skip the keys that are not an observable
+            if observable in ['xgrid', 'polynomial_degree', 'is_log', 'pids', 'projectilePID']:
+                continue
+
+            # Loop over the kinematic points
+            for point in points:
+                # Loop over each perturbative order
+                for values in point.orders.values():
+                    # `values` is a tuple containing the computed values and the integration error
+                    for tup in range(2):
+                        # Set any NaN or inf values in the array to 0
+                        values[tup][~np.isfinite(values[tup])] = 0.0 # Computed value
+        return out2
+
     def get_result(self):
         """Compute coefficient functions grid for requested kinematic points.
 
@@ -263,6 +294,7 @@ class Runner:
         self.console.print(f"[cyan]took {diff:.2f} s")
 
         out = copy.deepcopy(self._output)
+        out = self.replace_nans_with_0(out)
         return out
 
 
