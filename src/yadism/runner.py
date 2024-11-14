@@ -216,7 +216,7 @@ class Runner:
         # Loop through each observable in the dictionary
         for observable, points in out2.items():
             # Skip the keys that are not an observable
-            if observable in ['xgrid', 'polynomial_degree', 'is_log', 'pids', 'projectilePID']:
+            if observable not in observable_name.kinds:
                 continue
 
             # Loop over the kinematic points
