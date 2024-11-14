@@ -201,14 +201,14 @@ class Runner:
     def replace_nans_with_0(self, out):
         """ Replace any NaNs in output with 0.0
 
-            The small-x (i.e. large eta) limit is not addressed in LeProHQ because
-            the high energy limit of the polarized case is not known and that is the
-            main purpose of LeProHQ. As a result LeProHQ may return NaNs in the
-            small-x limit, which this function replaces with 0.0.
+        The small-x (i.e. large eta) limit is not addressed in LeProHQ because
+        the high energy limit of the polarized case is not known and that is the
+        main purpose of LeProHQ. As a result LeProHQ may return NaNs in the
+        small-x limit, which this function replaces with 0.0.
 
-            Note that the value of x where this plays a role is below the
-            experimental regime and thus this does not affect the description of
-            data, but only e.g. the grids used for the FIATLUX photon computation.
+        Note that the value of x where this plays a role is below the
+        experimental regime and thus this does not affect the description of
+        data, but only e.g. the grids used for the FIATLUX photon computation.
         """
 
         out2 = copy.deepcopy(out)
