@@ -226,7 +226,7 @@ class Runner:
                     # `values` is a tuple containing the computed values and the integration error
                     for tup in range(2):
                         # Set any NaN or inf values in the array to 0
-                        values[tup][~np.isfinite(values[tup])] = 0.0 # Computed value
+                        values[tup][~np.isfinite(values[tup])] = 0.0
         return out2
 
     def get_result(self):
