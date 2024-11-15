@@ -199,7 +199,7 @@ class Runner:
                 obs.drop_cache()
 
     def replace_nans_with_0(self, out):
-        """ Replace any NaNs in output with 0.0
+        """Replace any NaNs in output with 0.0
 
         The small-x (i.e. large eta) limit is not addressed in LeProHQ because
         the high energy limit of the polarized case is not known and that is the
