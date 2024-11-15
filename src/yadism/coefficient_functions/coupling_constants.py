@@ -481,7 +481,7 @@ class CKM2Matrix:
 
     def __eq__(self, other) -> bool:
         """Equal method."""
-        return (self.m == other.m).all()
+        return np.allclose(self.m, other.m)
 
     def __getitem__(self, key):
         """Allow pid and strings as key.
