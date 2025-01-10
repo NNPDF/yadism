@@ -33,7 +33,7 @@ couplings to the photon propagator and coupling squared:
 
 .. math ::
     \eta_{\gamma\gamma} &= 1\\
-    \eta_{\gamma Z} &= \frac{4\sin^2(\theta_w)}{1 - \sin^2(\theta_w)} \cdot \frac{Q^2}{Q^2 + M_Z^2}\\
+    \eta_{\gamma Z} &= \frac{1}{4 \cos^2(\theta_w) \sin^2(\theta_w)} \cdot \frac{Q^2}{Q^2 + M_Z^2}\\
     \eta_{ZZ} &= \eta_{\gamma Z}^2\\
     \eta_W &= \left(\frac{\eta_{\gamma Z}}{2} \frac{1 + Q^2/M_Z^2}{1 + Q^2/M_W^2}\right)^2
 
