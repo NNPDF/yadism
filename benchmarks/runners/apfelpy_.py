@@ -1,5 +1,5 @@
 """
-    Compare the Yadism results with APFEL++'s.
+Compare the Yadism results with APFEL++'s.
 """
 
 import pathlib
