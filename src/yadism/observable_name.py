@@ -7,7 +7,7 @@ with and whether or not the given flavor is heavy.
 """
 
 fake_kind = "??"
-sfs = ["F2", "FL", "F3", "g1", "gL", "g4"]
+sfs = ["F2", "FL", "F3", "g1", "gL", "g4", "F4", "F5"]
 # xs = ["XSreduced", "XSyreduced"]
 xs = [
     "XSHERANC",

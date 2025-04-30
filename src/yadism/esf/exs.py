@@ -8,6 +8,12 @@ GEV_CM2_CONV = 3.893793e10
 "Conversion factor from GeV^-2 to 10^-38 cm^2"
 
 
+# TODO: For both `xs_coeffs_unpolarized` and `EvaluatedCrossSection.get_result()`,
+# instead of returning an array of 3 elements, now it should return 5, with the
+# las two corresponding to `F4` and `F5`. This is what will allow us to compute
+# the (differential) cross-sections.
+
+
 def xs_coeffs_polarized(kind):
     """Compute coefficients in the definition of a given polarized cross section.
 
