@@ -1,11 +1,6 @@
-"""
-Test the interface provided for the user.
-"""
-
-from collections.abc import Iterable
+"""Test the interface provided for the user."""
 
 import numpy as np
-import pytest
 
 import yadism
 
@@ -13,6 +8,7 @@ import yadism
 
 theory_dict = {
     "Q0": 1,
+    "nf0": 3,
     "PTO": 0,
     "alphas": 0.118,
     "Qref": 91.2,
@@ -21,7 +17,7 @@ theory_dict = {
     "XIR": 1,
     "TMC": 0,
     "FNS": "FFNS",
-    "NfFF": 3,
+    "NfFF": 5,
     "DAMP": 0,
     "MP": 0.938,
     "HQ": "POLE",
@@ -41,10 +37,12 @@ theory_dict = {
     "GF": 1.1663787e-05,
     "SIN2TW": 0.23126,
     "ModEv": "EXA",
+    "n3lo_cf_variation": 0,
+    "FONLLparts": "full",
 }
 
 obs_dict = {
-    "observables": {"F2_light": []},
+    "observables": {"F3_charm": [{"Q2": 2.0, "x": 0.1, "y": 0.0}]},
     "interpolation_xgrid": [0.001, 0.01, 0.1, 0.5, 1.0],
     "prDIS": "EM",
     "PolarizationDIS": 0.0,
@@ -53,16 +51,17 @@ obs_dict = {
     "PropagatorCorrection": 0.0,
     "interpolation_is_log": 1.0,
     "interpolation_polynomial_degree": 4,
+    "NCPositivityCharge": None,
 }
 
 
-@pytest.mark.skip
 class TestInit:
     def test_run_yadism(self):
-        o1 = yadism.run_yadism(theory_dict, obs_dict)
-        o2 = yadism.runner.Runner(theory_dict, obs_dict).get_result().get_raw()
-        for k in o1:
-            if k in o2:
-                if isinstance(o1[k], Iterable):
-                    o1[k] = list(o1[k])
-                assert np.all(o1[k] == o2[k])
+        for current in ["EM", "NC", "CC"]:
+            obs_dict["prDIS"] = current
+            o1 = yadism.run_yadism(theory_dict, obs_dict)
+            o1 = o1["F3_charm"][0].get_raw()
+            o2 = yadism.runner.Runner(theory_dict, obs_dict).get_result().get_raw()
+            for k in o1:
+                if k in o2:
+                    assert np.all(o1[k] == o2[k])
