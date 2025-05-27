@@ -4,8 +4,6 @@ import numpy as np
 
 import yadism
 
-# import yadism.runner as Runner
-
 theory_dict = {
     "Q0": 1,
     "nf0": 3,
@@ -38,11 +36,10 @@ theory_dict = {
     "SIN2TW": 0.23126,
     "ModEv": "EXA",
     "n3lo_cf_variation": 0,
-    "FONLLparts": "full",
 }
 
 obs_dict = {
-    "observables": {"F3_charm": [{"Q2": 2.0, "x": 0.1, "y": 0.0}]},
+    "observables": {"": []},
     "interpolation_xgrid": [0.001, 0.01, 0.1, 0.5, 1.0],
     "prDIS": "EM",
     "PolarizationDIS": 0.0,
@@ -56,12 +53,17 @@ obs_dict = {
 
 
 class TestInit:
+
+    kin_point = {"Q2": 2.0, "x": 0.1, "y": 0.1}
+
     def test_run_yadism(self):
-        for current in ["EM", "NC", "CC"]:
-            obs_dict["prDIS"] = current
-            o1 = yadism.run_yadism(theory_dict, obs_dict)
-            o1 = o1["F3_charm"][0].get_raw()
-            o2 = yadism.runner.Runner(theory_dict, obs_dict).get_result().get_raw()
-            for k in o1:
-                if k in o2:
-                    assert np.all(o1[k] == o2[k])
+        for obs in ["XSHERACC_charm", "XSHERACC_light"]:
+            for current in ["EM", "NC", "CC"]:
+                obs_dict["prDIS"] = current
+                obs_dict["observables"] = {obs: [self.kin_point]}
+                o1 = yadism.run_yadism(theory_dict, obs_dict)
+                o1 = o1[obs][0].get_raw()
+                o2 = yadism.runner.Runner(theory_dict, obs_dict).get_result().get_raw()
+                for k in o1:
+                    if k in o2:
+                        assert np.all(o1[k] == o2[k])
