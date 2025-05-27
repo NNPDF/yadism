@@ -43,14 +43,19 @@ class MockESF:
         self.process = "CC"
 
 
-def mkpc_odd(nf, w, sgn):  # pc = parity conserving
-    return dict(
+def mkpc_odd(nf, w, sgn, ihq_only=False):  # pc = parity conserving
+    full_weights = dict(
         zip(
             mkpids(nf),
             [(-1) ** (j + (1 if not sgn else 0)) * w for j in range(nf)]
             + [(-1) ** (j + (1 if sgn else 0)) * w for j in range(nf)],
         )
     )
+    if ihq_only:
+        idx = 1 if sgn else 0
+        pids = [(-1) ** (i + idx) * (i + 1) for i in range(nf)]
+        return {k: ((-1) ** (nf + 1) if k < 0 else 1) * full_weights[k] for k in pids}
+    return full_weights
 
 
 def mkpv_even(nf, w, sgn):  # pv = parity violating
@@ -94,16 +99,15 @@ def test_generate_light_pv():
             check(ps, w)
 
 
-# def test_generate_heavy_pc():
-#     for sgn in [True, False]:
-#         esf = MockESF("F2_charm", 11 * (1 if sgn else -1), 0.1, 10)
-#         for nf in [3, 4, 5]:
-#             w = hker.generate(esf, nf)
-#             qnorm = {3: 2, 4: 4, 5: 8}[nf]
-#             gnorm = {3: 4, 4: 10, 5: 24}[nf]
-#             # q, g
-#             ps = [mkpc(nf, qnorm, sgn), {21: gnorm}]
-#             check(ps, w)
+def test_generate_heavy_pc():
+    for sgn in [True, False]:
+        esf = MockESF("F2_charm", 11 * (1 if sgn else -1), 0.1, 10)
+        for nf in [3, 4, 5]:
+            w = hker.generate(esf, nf, ihq=4)
+            gnorm = {3: 4, 4: 5, 5: 6}[nf]
+            # q, g
+            ps = [mkpc_odd(nf, 2, sgn, ihq_only=True), {21: gnorm}]
+            check(ps, w)
 
 
 # def test_generate_heavy_pv():

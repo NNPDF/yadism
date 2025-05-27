@@ -316,7 +316,7 @@ def generate_single_flavor_light(esf, nf, ihq):
 
         if is_pv:
             v = Kernel(
-                {k: np.sign(k) * c / (nf) for k, c in w_odd["s"].items()},
+                {k: np.sign(k) * c / (nf) for k, c in w_odd["v"].items()},
                 light_cfs.Valence(esf, nf),
             )
             return (ns_even, ns_odd, v)
