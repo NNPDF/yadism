@@ -134,7 +134,7 @@ class Sandbox(Runner):
         if not path.exists():
             raise FileNotFoundError(f"PineAPPL file {path} not found!")
         g = pineappl.grid.Grid.read(str(path))
-        r = g.key_values()["runcard"]
+        r = g.metadata["runcard"]
         runcard = yaml.safe_load(r)
         t = runcard["theory"]
         o = runcard["observables"]
