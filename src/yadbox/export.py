@@ -29,7 +29,7 @@ def dump_pineappl_to_file(output, filename, obsname):
     interpolation_polynomial_degree = output["polynomial_degree"]
     lepton_pid = output["projectilePID"]
 
-    # Instantiate the objecs required to construct a new Grid
+    # Instantiate the objects required to construct a new Grid
     channels = [pineappl.boc.Channel([([pid], 1.0)]) for pid in output["pids"]]
     first_esf_result = output[obsname][0]
     orders = [pineappl.boc.Order(*o, 0) for o in first_esf_result.orders]
