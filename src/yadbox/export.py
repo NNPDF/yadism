@@ -27,7 +27,6 @@ def dump_pineappl_to_file(output, filename, obsname):
     interpolation_xgrid = output["xgrid"]["grid"]
     # interpolation_is_log = self["interpolation_is_log"]
     interpolation_polynomial_degree = output["polynomial_degree"]
-    lepton_pid = output["projectilePID"]
 
     # Instantiate the objects required to construct a new Grid
     channels = [pineappl.boc.Channel([([pid], 1.0)]) for pid in output["pids"]]
@@ -50,10 +49,12 @@ def dump_pineappl_to_file(output, filename, obsname):
     bin_limits = pineappl.boc.BinsWithFillLimits.from_fill_limits(
         fill_limits=list(map(float, range(0, bins + 1)))
     )
+
+    q2grid = np.array([obs.Q2 for obs in output[obsname]])
     interpolations = [
         pineappl.interpolation.Interp(
-            min=1,
-            max=1e3,
+            min=q2grid.min(),
+            max=q2grid.max(),
             nodes=50,
             order=3,
             reweight_meth=pineappl.interpolation.ReweightingMethod.NoReweight,
@@ -72,7 +73,7 @@ def dump_pineappl_to_file(output, filename, obsname):
     ]
 
     grid = pineappl.grid.Grid(
-        pid_basis=pineappl.pids.PidBasis.Evol,
+        pid_basis=pineappl.pids.PidBasis.Pdg,
         channels=channels,
         orders=orders,
         bins=bin_limits,
