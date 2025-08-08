@@ -23,10 +23,9 @@ def test_pineappl_sf(tmp_path: pathlib.Path):
     assert pl.exists()
     g = pineappl.grid.Grid.read(pl)
     assert g.bin_dimensions() == 2
-    for k in range(1 + 1):
-        np.testing.assert_allclose(g.bin_left(k), g.bin_right(k))
-    np.testing.assert_allclose(g.bin_left(0), np.array([10.0]))
-    np.testing.assert_allclose(g.bin_left(1), np.array([0.1]))
+    bin_limits = g.bin_limits()[0]
+    np.testing.assert_allclose(bin_limits[0][0], np.array([10.0]))
+    np.testing.assert_allclose(bin_limits[1][0], np.array([0.1]))
 
 
 def test_pineappl_xs(tmp_path: pathlib.Path):
@@ -41,11 +40,11 @@ def test_pineappl_xs(tmp_path: pathlib.Path):
     assert pl.exists()
     g = pineappl.grid.Grid.read(pl)
     assert g.bin_dimensions() == 3
-    for k in range(1 + 1):
-        np.testing.assert_allclose(g.bin_left(k), g.bin_right(k))
-    np.testing.assert_allclose(g.bin_left(0), np.array([10.0]))
-    np.testing.assert_allclose(g.bin_left(1), np.array([0.1]))
-    np.testing.assert_allclose(g.bin_left(2), np.array([0.3]))
+
+    bin_limits = g.bin_limits()[0]
+    np.testing.assert_allclose(bin_limits[0][0], np.array([10.0]))
+    np.testing.assert_allclose(bin_limits[1][0], np.array([0.1]))
+    np.testing.assert_allclose(bin_limits[2][0], np.array([0.3]))
 
 
 def test_pineappl_pol(tmp_path: pathlib.Path):
@@ -58,8 +57,8 @@ def test_pineappl_pol(tmp_path: pathlib.Path):
     out = run_yadism(theory_card, oo)
     dump_pineappl_to_file(out, pl, "g1_light")
     g = pineappl.grid.Grid.read(pl)
-    assert g.key_values()["convolution_type_1"] == "PolPDF"
+    assert g.convolutions[0].convolution_types.polarized
 
     dump_pineappl_to_file(out, pl, "F2_total")
     f = pineappl.grid.Grid.read(pl)
-    assert f.key_values()["convolution_type_1"] == "UnpolPDF"
+    assert not f.convolutions[0].convolution_types.polarized

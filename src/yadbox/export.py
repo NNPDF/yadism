@@ -27,25 +27,61 @@ def dump_pineappl_to_file(output, filename, obsname):
     interpolation_xgrid = output["xgrid"]["grid"]
     # interpolation_is_log = self["interpolation_is_log"]
     interpolation_polynomial_degree = output["polynomial_degree"]
-    lepton_pid = output["projectilePID"]
 
-    # init pineappl objects
-    lumi_entries = [
-        pineappl.lumi.LumiEntry([(pid, lepton_pid, 1.0)]) for pid in output["pids"]
-    ]
+    # Instantiate the objects required to construct a new Grid
+    channels = [pineappl.boc.Channel([([pid], 1.0)]) for pid in output["pids"]]
     first_esf_result = output[obsname][0]
-    orders = [pineappl.grid.Order(*o) for o in first_esf_result.orders]
+    orders = [pineappl.boc.Order(*o, 0) for o in first_esf_result.orders]
+    polarized = obsname.startswith("g")
+    convolution_types = pineappl.convolutions.ConvType(
+        polarized=polarized, time_like=False
+    )
+    convolutions = [
+        pineappl.convolutions.Conv(convolution_types=convolution_types, pid=2212)
+    ]
+    kinematics = [pineappl.boc.Kinematics.Scale(0), pineappl.boc.Kinematics.X(0)]
+    scale_funcs = pineappl.boc.Scales(
+        ren=pineappl.boc.ScaleFuncForm.Scale(0),
+        fac=pineappl.boc.ScaleFuncForm.Scale(0),
+        frg=pineappl.boc.ScaleFuncForm.NoScale(0),
+    )
     bins = len(output[obsname])
-    bin_limits = list(map(float, range(0, bins + 1)))
-    # subgrid params
-    params = pineappl.subgrid.SubgridParams()
-    params.set_reweight(False)
-    params.set_x_bins(len(interpolation_xgrid))
-    params.set_x_max(interpolation_xgrid[-1])
-    params.set_x_min(interpolation_xgrid[0])
-    params.set_x_order(interpolation_polynomial_degree)
+    bin_limits = pineappl.boc.BinsWithFillLimits.from_fill_limits(
+        fill_limits=list(map(float, range(0, bins + 1)))
+    )
 
-    grid = pineappl.grid.Grid.create(lumi_entries, orders, bin_limits, params)
+    q2grid = np.array([obs.Q2 for obs in output[obsname]])
+    interpolations = [
+        pineappl.interpolation.Interp(
+            min=q2grid.min(),
+            max=q2grid.max(),
+            nodes=50,
+            order=3,
+            reweight_meth=pineappl.interpolation.ReweightingMethod.NoReweight,
+            map=pineappl.interpolation.MappingMethod.ApplGridH0,
+            interpolation_meth=pineappl.interpolation.InterpolationMethod.Lagrange,
+        ),  # Interpolation on the Scale
+        pineappl.interpolation.Interp(
+            min=interpolation_xgrid[0],
+            max=interpolation_xgrid[-1],
+            nodes=len(interpolation_xgrid),
+            order=interpolation_polynomial_degree,
+            reweight_meth=pineappl.interpolation.ReweightingMethod.ApplGridX,
+            map=pineappl.interpolation.MappingMethod.ApplGridF2,
+            interpolation_meth=pineappl.interpolation.InterpolationMethod.Lagrange,
+        ),  # Interpolation on momentum fraction x
+    ]
+
+    grid = pineappl.grid.Grid(
+        pid_basis=pineappl.pids.PidBasis.Pdg,
+        channels=channels,
+        orders=orders,
+        bins=bin_limits,
+        convolutions=convolutions,
+        interpolations=interpolations,
+        kinematics=kinematics,
+        scale_funcs=scale_funcs,
+    )
     limits = []
     on = observable_name.ObservableName(obsname)
     is_xs = on.kind in observable_name.xs
@@ -54,11 +90,10 @@ def dump_pineappl_to_file(output, filename, obsname):
     for bin_, obs in enumerate(output[obsname]):
         x = obs.x
         Q2 = obs.Q2
-
-        limits.append((Q2, Q2))
-        limits.append((x, x))
+        kins = [(Q2, Q2), (x, x)]
         if is_xs:
-            limits.append((obs.y, obs.y))
+            kins.append((obs.y, obs.y))
+        limits.append(kins)
 
         # add all orders
         for o, (v, _e) in obs.orders.items():
@@ -72,41 +107,35 @@ def dump_pineappl_to_file(output, filename, obsname):
                 # grid is empty? skip
                 if not any(np.array(pid_values) != 0):
                     continue
-                subgrid = pineappl.import_only_subgrid.ImportOnlySubgridV1(
-                    pid_values[np.newaxis, :, np.newaxis],
-                    [Q2],
-                    interpolation_xgrid,
-                    [1.0],
+                subgrid = pineappl.subgrid.ImportSubgridV1(
+                    array=pid_values[np.newaxis, :],
+                    node_values=[[Q2], interpolation_xgrid],
                 )
-                grid.set_subgrid(order_index, bin_, pid_index, subgrid)
+                grid.set_subgrid(order_index, bin_, pid_index, subgrid.into())
     # set the correct observables
     normalizations = [1.0] * bins
-    remapper = pineappl.bin.BinRemapper(normalizations, limits)
-    grid.set_remapper(remapper)
+    bin_configs = pineappl.boc.BinsWithFillLimits.from_limits_and_normalizations(
+        limits=limits,
+        normalizations=normalizations,
+    )
+    grid.set_bwfl(bin_configs)
 
-    # set the initial state PDF ids for the grid
-    grid.set_key_value("convolution_particle_1", "2212")
-    grid.set_key_value("convolution_particle_2", str(lepton_pid))
-    grid.set_key_value("theory", json.dumps(output.theory))
-    grid.set_key_value("runcard", json.dumps(output.observables))
-    grid.set_key_value("yadism_version", yadism.__version__)
-    grid.set_key_value("lumi_id_types", "pdg_mc_ids")
+    # set metadata
+    grid.set_metadata("theory", json.dumps(output.theory))
+    grid.set_metadata("runcard", json.dumps(output.observables))
+    grid.set_metadata("yadism_version", yadism.__version__)
     # set bin information
-    grid.set_key_value("x1_label", "Q2")
-    grid.set_key_value("x1_label_tex", "$Q^2$")
-    grid.set_key_value("x1_unit", "GeV^2")
-    grid.set_key_value("x2_label", "x")
-    grid.set_key_value("x2_label_tex", "$x$")
-    grid.set_key_value("x2_unit", "")
+    grid.set_metadata("x1_label", "Q2")
+    grid.set_metadata("x1_label_tex", "$Q^2$")
+    grid.set_metadata("x1_unit", "GeV^2")
+    grid.set_metadata("x2_label", "x")
+    grid.set_metadata("x2_label_tex", "$x$")
+    grid.set_metadata("x2_unit", "")
     if is_xs:
-        grid.set_key_value("x3_label", "y")
-        grid.set_key_value("x3_label_tex", "$y$")
-        grid.set_key_value("x3_unit", "")
-    grid.set_key_value("y_label", obsname)
-    # Define the convolution type of the initial state hadron
-    conv_type = "PolPDF" if obsname.startswith("g") else "UnpolPDF"
-    grid.set_key_value("convolution_type_1", conv_type)
-    grid.set_key_value("convolution_type_2", str(None))
+        grid.set_metadata("x3_label", "y")
+        grid.set_metadata("x3_label_tex", "$y$")
+        grid.set_metadata("x3_unit", "")
+    grid.set_metadata("y_label", obsname)
 
     # dump file
     grid.optimize()
