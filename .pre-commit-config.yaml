@@ -15,7 +15,7 @@ repos:
       - id: debug-statements
         exclude: "debug.py"
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 25.11.0
+    rev: 25.12.0
     hooks:
       - id: black
   - repo: https://github.com/asottile/blacken-docs
@@ -45,6 +45,6 @@ repos:
         additional_dependencies:
           - toml
   - repo: https://github.com/pre-commit/pre-commit
-    rev: v4.5.0
+    rev: v4.5.1
     hooks:
       - id: validate_manifest
