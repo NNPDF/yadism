@@ -34,9 +34,9 @@ class Test_g1_raw:
         for z in self.zs:
             vals_NNLL.append(
                 [
-                    g1_nc_raw.c2ns_NNLL_reg(z, [0]),
-                    g1_nc_raw.c2ns_NNLL_sing(z, [0]),
-                    g1_nc_raw.c2ns_NNLL_loc(z, [0]),
+                    g1_nc_raw.c2ns_NNLL_reg(z, np.atleast_1d(np.asarray([0], dtype=float))),
+                    g1_nc_raw.c2ns_NNLL_sing(z, np.atleast_1d(np.asarray([0], dtype=float))),
+                    g1_nc_raw.c2ns_NNLL_loc(z, np.atleast_1d(np.asarray([0], dtype=float))),
                 ]
             )
         np.testing.assert_allclose(vals_NNLL, refs_NNLL)
@@ -46,16 +46,16 @@ class Test_g1_raw:
             for z in self.zs:
                 vals_LL.append(
                     [
-                        g1_nc_raw.c2ns_LL_reg(z, [L]),
-                        g1_nc_raw.c2ns_LL_sing(z, [L]),
-                        g1_nc_raw.c2ns_LL_loc(z, [L]),
+                        g1_nc_raw.c2ns_LL_reg(z, np.atleast_1d(np.asarray([L], dtype=float))),
+                        g1_nc_raw.c2ns_LL_sing(z, np.atleast_1d(np.asarray([L], dtype=float))),
+                        g1_nc_raw.c2ns_LL_loc(z, np.atleast_1d(np.asarray([L], dtype=float))),
                     ]
                 )
                 vals_NLL.append(
                     [
-                        g1_nc_raw.c2ns_NLL_reg(z, [L]),
-                        g1_nc_raw.c2ns_NLL_sing(z, [L]),
-                        g1_nc_raw.c2ns_NLL_loc(z, [L]),
+                        g1_nc_raw.c2ns_NLL_reg(z, np.atleast_1d(np.asarray([L], dtype=float))),
+                        g1_nc_raw.c2ns_NLL_sing(z, np.atleast_1d(np.asarray([L], dtype=float))),
+                        g1_nc_raw.c2ns_NLL_loc(z, np.atleast_1d(np.asarray([L], dtype=float))),
                     ]
                 )
             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
@@ -84,14 +84,14 @@ class Test_g1_raw:
         ]
         vals_NNLL = []
         for z in self.zs:
-            vals_NNLL.append(g1_nc_raw.c2ps_NNLL_reg(z, [0]))
+            vals_NNLL.append(g1_nc_raw.c2ps_NNLL_reg(z, np.atleast_1d(np.asarray([0], dtype=float))))
         np.testing.assert_allclose(vals_NNLL, refs_NNLL)
         for L in self.Ls:
             vals_LL = []
             vals_NLL = []
             for z in self.zs:
-                vals_LL.append(g1_nc_raw.c2ps_LL_reg(z, [L]))
-                vals_NLL.append(g1_nc_raw.c2ps_NLL_reg(z, [L]))
+                vals_LL.append(g1_nc_raw.c2ps_LL_reg(z, np.atleast_1d(np.asarray([L], dtype=float))))
+                vals_NLL.append(g1_nc_raw.c2ps_NLL_reg(z, np.atleast_1d(np.asarray([L], dtype=float))))
             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
             np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
 
@@ -116,14 +116,14 @@ class Test_g1_raw:
         ]
         vals_NNLL = []
         for z in self.zs:
-            vals_NNLL.append(g1_nc_raw.c2g_NNLL_reg(z, [0]))
+            vals_NNLL.append(g1_nc_raw.c2g_NNLL_reg(z, np.atleast_1d(np.asarray([0], dtype=float))))
         np.testing.assert_allclose(vals_NNLL, refs_NNLL)
         for L in self.Ls:
             vals_LL = []
             vals_NLL = []
             for z in self.zs:
-                vals_LL.append(g1_nc_raw.c2g_LL_reg(z, [L]))
-                vals_NLL.append(g1_nc_raw.c2g_NLL_reg(z, [L]))
+                vals_LL.append(g1_nc_raw.c2g_LL_reg(z, np.atleast_1d(np.asarray([L], dtype=float))))
+                vals_NLL.append(g1_nc_raw.c2g_NLL_reg(z, np.atleast_1d(np.asarray([L], dtype=float))))
             np.testing.assert_allclose(vals_LL, L**2 * np.array(refs_LL))
             np.testing.assert_allclose(vals_NLL, L * np.array(refs_NLL))
 

@@ -221,6 +221,9 @@ class Runner:
 
             # Loop over the kinematic points
             for point in points:
+                # If there is no point, skip it
+                if point is None:
+                    continue
                 # Loop over each perturbative order
                 for values in point.orders.values():
                     # `values` is a tuple containing the computed values and the integration error
