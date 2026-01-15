@@ -36,11 +36,11 @@ packages = [
 "Changelog" = "https://github.com/N3PDF/yadism/releases"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
-numpy = "^1.22.0"
+python = ">=3.9,<3.14"
+numpy = ">=2"
 scipy = "^1.10.0"
-numba = "^0.59.0"
-eko = "^0.14.2"
+numba = ">=0.59.0,<=0.62.0"
+eko = ">=0.15.2"
 pandas = "^2.1.4"
 rich = "^12.4.4"
 adani = "^1.0.2"
@@ -147,7 +147,7 @@ extension-pkg-whitelist = [
   "apfel",
   "QCDNUM",
   "xspace_bench",
-  "scipy.special",
+  "scipy",
   "pineappl",
   "apfelpy",
   "adani"
