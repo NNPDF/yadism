@@ -1151,7 +1151,7 @@ devel = ["colorama", "json-spec", "jsonschema", "pylint", "pytest", "pytest-benc
 name = "fonttools"
 version = "4.60.2"
 description = "Tools to manipulate font files"
-optional = true
+optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 markers = "python_version < \"3.11\" and extra == \"mark\""
@@ -2991,6 +2991,7 @@ files = [
     {file = "packaging-24.2-py3-none-any.whl", hash = "sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759"},
     {file = "packaging-24.2.tar.gz", hash = "sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"},
 ]
+markers = {main = "extra == \"mark\""}
 
 [[package]]
 name = "pandas"
