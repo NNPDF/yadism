@@ -6,7 +6,7 @@ import time
 import numpy as np
 from eko import basis_rotation as br
 from eko import beta
-from scipy.special import binom  # pylint: disable=all
+from scipy.special import binom
 
 from ..coefficient_functions import splitting_functions as split
 from .conv import convolve_operator
