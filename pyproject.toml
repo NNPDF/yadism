@@ -147,7 +147,7 @@ extension-pkg-whitelist = [
   "apfel",
   "QCDNUM",
   "xspace_bench",
-  "scipy.special",
+  "scipy",
   "pineappl",
   "apfelpy",
   "adani"
