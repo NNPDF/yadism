@@ -1,6 +1,6 @@
 import numpy as np
 from eko import constants
-from scipy.special import spence # pylint: disable=no-name-in-module
+from scipy.special import spence  # pylint: disable=all
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split

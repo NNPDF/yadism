@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.special import spence # pylint: disable=no-name-in-module
+from scipy.special import spence  # pylint: disable=all
 
 
 def li2(x):
