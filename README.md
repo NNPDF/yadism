@@ -47,13 +47,3 @@ When using our code please cite
 Members of the development team should always follow the [contribution
 guidelines](.github/contributing.md), to have a uniform strategy in code
 development and improve collaboration.
-
-## Contributing or contacting the authors
-
-For any kind of interaction consider before to read the [contribution
-guidelines](.github/contributing.md), otherwise just send
-an email to the authors:
-
-- [Alessandro Candido](mailto:alessandro.candido@mi.infn.it)
-- [Felix Hekhorn](mailto:felix.hekhorn@mi.infn.it)
-- [Giacomo Magni](mailto:gmagni@nikhef.nl)
