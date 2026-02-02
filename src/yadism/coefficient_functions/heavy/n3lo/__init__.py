@@ -20,6 +20,7 @@ def interpolator(coeff, nf, variation):
 
     # load grid
     coeff = np.load(grid_path / grid_name)
+    coeff = np.nan_to_num(coeff, nan=0.0)
     grid_interpolator = RectBivariateSpline(xi_grid, eta_grid, coeff)
 
     # store result
