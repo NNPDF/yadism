@@ -66,15 +66,13 @@ class Runner:
 
     banner = rich.align.Align(
         rich.panel.Panel.fit(
-            inspect.cleandoc(
-                r"""  __     __       _ _
+            inspect.cleandoc(r"""  __     __       _ _
                      \ \   / /      | (_)
                       \ \_/ /_ _  __| |_ ___ _ __ ___
                        \   / _` |/ _` | / __| '_ ` _ \
                         | | (_| | (_| | \__ \ | | | | |
                         |_|\__,_|\__,_|_|___/_| |_| |_|
-                """
-            ),
+                """),
             rich.box.SQUARE,
             padding=1,
             style="magenta",

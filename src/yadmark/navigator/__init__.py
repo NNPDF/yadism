@@ -16,8 +16,7 @@ def yelp(*args):
     Help function (renamed to avoid clash of names) - short cut: h.
     """
     if len(args) == 0:
-        print(
-            f"""Welcome to yadmark navigator - the yadism benchmark skript!
+        print(f"""Welcome to yadmark navigator - the yadism benchmark skript!
 Available variables:
     {bnav.help_vars}
     o = "{bnav.o}" -> query observables
@@ -29,8 +28,7 @@ Available functions:
     compare(id,id) - compare externals
     check_log(id) - check logs passed
     crashed_log(id) - print crashed logs
-"""
-        )
+""")
     elif len(args) == 1:
         return help(*args)
     return None
