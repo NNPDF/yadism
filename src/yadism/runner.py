@@ -274,7 +274,9 @@ class Runner:
                 Q2 = None
 
                 # compute
-                for idx, elem in sorted(enumerate(obs.elements), key=lambda indexed: indexed[1].Q2):
+                for idx, elem in sorted(
+                    enumerate(obs.elements), key=lambda indexed: indexed[1].Q2
+                ):
                     # if we're changing Q2, drop cache
                     if Q2 is not None and Q2 != elem.Q2:
                         self.drop_cache()
