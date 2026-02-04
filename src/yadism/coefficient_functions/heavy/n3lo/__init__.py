@@ -35,7 +35,7 @@ def interpolator(coeff, nf, variation):
 
     # load grid
     coeff = np.load(grid_path / grid_name)
-    if np.isnan(coeff).sum() != 0:
+    if np.isnan(coeff).any():
         coeff = fill_nans_nearest_neighbor(xi_grid, eta_grid, coeff)
     grid_interpolator = RectBivariateSpline(xi_grid, eta_grid, coeff)
 
