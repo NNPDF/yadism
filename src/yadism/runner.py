@@ -214,7 +214,8 @@ class Runner:
         # Loop through each observable in the dictionary
         for observable, points in out2.items():
             # Skip the keys that are not an observable
-            if observable not in observable_name.kinds:
+            if not observable_name.ObservableName.is_valid(observable):
+                logger.critical("Some NaNs are encountered and set to zero!")
                 continue
 
             # Loop over the kinematic points
