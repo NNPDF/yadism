@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.9...HEAD)
 
+### Fixed
+- Fix coefficient functions computed using `adani` (see [adani#77](https://github.com/niclaurenti/adani/pull/77) for more details)
+
 ## [0.13.9](https://github.com/NNPDF/yadism/compare/v0.13.8...v0.13.9) - 2026-01-26
 Re-release of v0.13.8 (see comment below), else unchanged.
 
