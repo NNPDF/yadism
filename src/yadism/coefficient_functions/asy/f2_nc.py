@@ -7,11 +7,11 @@ from . import raw_nc
 
 
 class AsyGluon(pc.NeutralCurrentBaseAsy):
-    hs3 = adani.HighScaleSplitLogs(3, "2", "g", "gm")
+    hs3 = adani.HighScaleSplitLogs(3, "2", "g")
 
 
 class AsySinglet(pc.NeutralCurrentBaseAsy):
-    hs3 = adani.HighScaleSplitLogs(3, "2", "q", "exact")
+    hs3 = adani.HighScaleSplitLogs(3, "2", "q")
 
 
 class AsyLLGluon(AsyGluon):
