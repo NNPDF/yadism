@@ -100,23 +100,6 @@ astroid = ["astroid (>=2,<5)"]
 test = ["astroid (>=2,<5)", "pytest (<9.0)", "pytest-cov", "pytest-xdist"]
 
 [[package]]
-name = "asv"
-version = "0.4.2"
-description = "Airspeed Velocity: A simple Python history benchmarking tool"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-groups = ["test"]
-files = [
-    {file = "asv-0.4.2.tar.gz", hash = "sha256:9134f56b7a2f465420f17b5bb0dee16047a70f01029c996b7ab3f197de2d0779"},
-]
-
-[package.dependencies]
-six = ">=1.4"
-
-[package.extras]
-hg = ["python-hglib (>=1.5)"]
-
-[[package]]
 name = "attrs"
 version = "25.4.0"
 description = "Classes Without Boilerplate"
@@ -4648,7 +4631,7 @@ version = "1.17.0"
 description = "Python 2 and 3 compatibility utilities"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
-groups = ["main", "docs", "test"]
+groups = ["main", "docs"]
 files = [
     {file = "six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"},
     {file = "six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"},
@@ -5223,4 +5206,4 @@ mark = ["banana-hep", "sqlalchemy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.14"
-content-hash = "fe0f8b3dc1a5a0bbb28cf37a61e836593a0cd463767269df3c5cb375f5c21e4c"
+content-hash = "cf3ec01cce151176b8267a4cd87d102b7df3b4594ea7de07049433742b8ce92d"

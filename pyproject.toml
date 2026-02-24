@@ -63,7 +63,6 @@ pytest = "^7.2.0"
 pytest-cov = "^4.0.0"
 pytest-env = "^0.6.2"
 hypothesis = "^6.39.3"
-asv = "^0.4.2"
 pylint = "^3.1.0"
 
 [tool.poetry.group.docs]
@@ -93,12 +92,6 @@ lint-warnings = "pylint src/ --exit-zero"
 sandbox = "python benchmarks/runners/sandbox.py"
 navigator = "yadnav --config benchmarks/banana.yaml"
 nav = "yadnav --config benchmarks/banana.yaml"
-asv-run = "asv run --config benchmarks/asv.conf.json master..HEAD"
-asv-preview = "asv preview --config benchmarks/asv.conf.json"
-asv-publish = "asv publish --config benchmarks/asv.conf.json"
-asv-show = "asv show --config benchmarks/asv.conf.json"
-asv-clean = { "shell" = "rm -rf benchmarks/env benchmarks/html benchmarks/results" }
-asv = ["asv-run", "asv-publish", "asv-preview"]
 docs = { "shell" = "cd docs; make html" }
 docs-view = { "shell" = "cd docs; make view" }
 docs-server = { "shell" = "cd docs; make server" }
