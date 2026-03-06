@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.9...HEAD)
+## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.10...HEAD)
+
+### Changed
+- Drop support for Python 3.9 ([#351](https://github.com/NNPDF/yadism/pull/351))
+
+## [0.13.10](https://github.com/NNPDF/yadism/compare/v0.13.9...v0.13.10) - 2026-02-24
 
 ### Fixed
 - Fix coefficient functions computed using `adani` (see [adani#77](https://github.com/niclaurenti/adani/pull/77) for more details) ([#347](https://github.com/NNPDF/yadism/pull/347))
