@@ -112,6 +112,12 @@ def xs_coeffs_unpolarized(kind, y, x=None, Q2=None, params=None):
         # NUTEV neutrino dis
         if kind == "XSNUTEVNU":
             norm = GEV_CM2_CONV * params["GF"] ** 2 * mn / (2.0 * np.pi)
+    if kind == "DSIGMADXDQ2":
+        norm = (
+            params["GF"] ** 2
+            / (2 * np.pi * x)
+            * (params["M2W"] / (Q2 + params["M2W"])) ** 2
+        )
     return np.array([yp, -yL, f3sign * ym]) * norm
 
 

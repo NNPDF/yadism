@@ -20,6 +20,7 @@ xs = [
     "F1",
     "g5",
     "XSFPFCC",
+    "DSIGMADXDQ2",
 ]
 kinds = sfs + xs + [fake_kind]
 # external flavors:
