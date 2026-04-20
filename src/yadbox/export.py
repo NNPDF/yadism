@@ -138,5 +138,4 @@ def dump_pineappl_to_file(output, filename, obsname):
     grid.set_metadata("y_label", obsname)
 
     # dump file
-    grid.optimize()
     grid.write_lz4(filename)
