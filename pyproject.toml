@@ -44,7 +44,6 @@ eko = ">=0.15.2"
 pandas = "^2.1.4"
 rich = "^12.4.4"
 adani = ">=1.0.6"
-idna = ">=3.15"
 LeProHQ = "^0.2.5"
 # pineappl dependency
 pineappl = { version = "^1.1.0", optional = true }
