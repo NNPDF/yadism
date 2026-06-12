@@ -2,31 +2,37 @@
 
 [[package]]
 name = "adani"
-version = "1.0.6"
+version = "1.0.8"
 description = "Code computing approximate DIS N3LO coefficients"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "adani-1.0.6-cp310-cp310-macosx_15_0_arm64.whl", hash = "sha256:0312327ce8b8c91256a7649986a6a565a74a8b5c176e89fd467dc0c2a0ffcb40"},
-    {file = "adani-1.0.6-cp310-cp310-macosx_15_0_x86_64.whl", hash = "sha256:ccd5164e92e846b8436488730598eab6a4fdfbed9bd5800de56f58de16898b46"},
-    {file = "adani-1.0.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0a748970899ccc5e321f1ffeaa90647c9dcd69214d6dd11f1dcf70381f54b8e4"},
-    {file = "adani-1.0.6-cp311-cp311-macosx_15_0_arm64.whl", hash = "sha256:d0b5e79e8c82417f66515a096e197b723b44bfd1fa4deb807fc0147fbbc3840b"},
-    {file = "adani-1.0.6-cp311-cp311-macosx_15_0_x86_64.whl", hash = "sha256:1ffedd3c5acd8bf1fe37488e68f2f943cb070de6f3f9e6a6988204cfdd088380"},
-    {file = "adani-1.0.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:938a444162f51e91eaf7300668ba195ee9b62d41d2cb796b01f248e96ea2594a"},
-    {file = "adani-1.0.6-cp312-cp312-macosx_15_0_arm64.whl", hash = "sha256:6194eda7e22a6c52f7129f6e829264539d2b33606c472a9808fc938095592b9d"},
-    {file = "adani-1.0.6-cp312-cp312-macosx_15_0_x86_64.whl", hash = "sha256:d2c51dd706b79f04b61ba9f5904ea0ccbecf4090b69549577028173355127f07"},
-    {file = "adani-1.0.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4dd96ca93da3b2d62eac8ed302965ccb24aff026b7ce9e95d3b2ed2c86c09924"},
-    {file = "adani-1.0.6-cp313-cp313-macosx_15_0_arm64.whl", hash = "sha256:083c7b6b4c9db95384068cf8ce5d153e01806fa7d643db0c472c6bcaeb310a0a"},
-    {file = "adani-1.0.6-cp313-cp313-macosx_15_0_x86_64.whl", hash = "sha256:c61d7134945e45aa041ee6ef142b83d87bbcf5622979175dc3e16f818e096be9"},
-    {file = "adani-1.0.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:aa80dd1a6ef855febfac21149238ad3c673d6e1fb4d3fdb1368db924ed9e2b66"},
-    {file = "adani-1.0.6-cp38-cp38-macosx_15_0_arm64.whl", hash = "sha256:1a93b22e74747b33f34b2681d72a9bd9e618fc2cc5293024915b114a6f24b2fd"},
-    {file = "adani-1.0.6-cp38-cp38-macosx_15_0_x86_64.whl", hash = "sha256:f10aaf434145d6b1261f434e4408d03e6d93f4dd9fc6d7c98a97a2b3aaabee6f"},
-    {file = "adani-1.0.6-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2c1ed3a9b141e70ab9a647d93de37099bd5015162dfffda978252df9e718e9a9"},
-    {file = "adani-1.0.6-cp39-cp39-macosx_15_0_arm64.whl", hash = "sha256:c932cf2d9cb1ca9165153150684bf4927fbdac1f0fa884631fa9bebc999e20f4"},
-    {file = "adani-1.0.6-cp39-cp39-macosx_15_0_x86_64.whl", hash = "sha256:0760975c19158d2c7d14327413c3dd4ee7cf81797b84a7e4a5a838f606962be1"},
-    {file = "adani-1.0.6-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:40cb09ce9a87a4da81a7bd89cc5d72101f3805592d8fb09eb40dbc10bdfc0edd"},
-    {file = "adani-1.0.6.tar.gz", hash = "sha256:a943fd4e7da9aa4a8dce7bbe9730625213465f8cede9afefd528d57918bbf2e7"},
+    {file = "adani-1.0.8-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:895a9f49fd60a3726e147fa843e4839e3557b4d4bec1a82ab5c33db5510d1c82"},
+    {file = "adani-1.0.8-cp310-cp310-macosx_15_0_x86_64.whl", hash = "sha256:393d86f8b27c2af23d26f2272e5af367821503209944e42cf4f534e6bfd2a432"},
+    {file = "adani-1.0.8-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:0690774a3dc5ee329c68c44643719aeb9a719560bdd7c1fd6a98af4cd4b29a08"},
+    {file = "adani-1.0.8-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:c975bc4d4ea23d347851c18fd3c19d683ec1469d91e7ec8f66fccb79a6df0f48"},
+    {file = "adani-1.0.8-cp311-cp311-macosx_15_0_x86_64.whl", hash = "sha256:411a124014c5eba6325a7ae4af603ee6c5bd5faa2f46cae6561daf0ed968494f"},
+    {file = "adani-1.0.8-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:ed6c3e0c6a570711b47c243973b36831c2eede09830cfdfa825bf2a5542eb96d"},
+    {file = "adani-1.0.8-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:99ed838c23c8d8471ff42293dd85bf3d7ffd8980a76a0f597a2e8564997a3152"},
+    {file = "adani-1.0.8-cp312-cp312-macosx_15_0_x86_64.whl", hash = "sha256:743d45c23fcf109ab4e16208b4db388c80cb9be6876c8dbfa85337ce59d19444"},
+    {file = "adani-1.0.8-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a35979a6a1c869afca6c08cf72b5d37f6ecec743c13878fc74237dba68d50155"},
+    {file = "adani-1.0.8-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:56fdf16411e7cbecd40d285e57ede8d7f169a4029e0a1ec21d18e577f81665be"},
+    {file = "adani-1.0.8-cp313-cp313-macosx_15_0_x86_64.whl", hash = "sha256:2067413f172356b3477c72335fd53ef76b9bc149453f9533b017706699612154"},
+    {file = "adani-1.0.8-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a9a335bb5c266313034e2e215afdb83d4db51904ea08174047db2511878b964a"},
+    {file = "adani-1.0.8-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:e17f311e1b2775fcb355428e4efa6579af4d4b7511ec8d9ba060312ee45df4bf"},
+    {file = "adani-1.0.8-cp314-cp314-macosx_15_0_x86_64.whl", hash = "sha256:a579b89d331375876c95f9a751c49b107256bf1fcff7a31600acaf9ca118d309"},
+    {file = "adani-1.0.8-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:8a89f9f42cc218e1c847d85172ee2c46dbd56a8860c958063c571b9e3d958510"},
+    {file = "adani-1.0.8-cp314-cp314t-macosx_14_0_arm64.whl", hash = "sha256:64b6d338eb56a83c0aad265edbf56f6bd46f2c81cc4426737c331953ab51253b"},
+    {file = "adani-1.0.8-cp314-cp314t-macosx_15_0_x86_64.whl", hash = "sha256:0463e29cdd836367d5810081fbdf60f19379679c0ecd81b781fb4d02b33d1d53"},
+    {file = "adani-1.0.8-cp314-cp314t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:8ede93afe2b37768d1cf92a2f0272c928135795ff86770c47522301a9083ac82"},
+    {file = "adani-1.0.8-cp38-cp38-macosx_14_0_arm64.whl", hash = "sha256:72ee5b1a28c8dfcfa1b804dccb57e8302f60359b89b603fdd23de9250f9016ac"},
+    {file = "adani-1.0.8-cp38-cp38-macosx_15_0_x86_64.whl", hash = "sha256:97a8b8a42c2553e90aee7a0fabc183cedab1d8f2e46b39f96d8879c49d9d33ec"},
+    {file = "adani-1.0.8-cp38-cp38-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:e3e4971c9c51e3a0329ebe9dd4fb17356526376bc61cf3bb23867f362d6e188d"},
+    {file = "adani-1.0.8-cp39-cp39-macosx_14_0_arm64.whl", hash = "sha256:b9b80b4df108e8f6ccb5ddc09a774c46d3436668381d7d498f04c556540b58d1"},
+    {file = "adani-1.0.8-cp39-cp39-macosx_15_0_x86_64.whl", hash = "sha256:2b6e9d79476b8874a2ab0f0b6510ff5cfbeabe52edb2c4ae6fc340a9e563d8b5"},
+    {file = "adani-1.0.8-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4dfc93e365d0c117bb04948de32a8843ad603a5fdfd2b3d86a0f300330156336"},
+    {file = "adani-1.0.8.tar.gz", hash = "sha256:e8ca13d21ac2c4a165de0e67c6c355c54915dfd786890b6cf11945cfa93745e4"},
 ]
 
 [[package]]
@@ -3708,4 +3714,4 @@ mark = ["banana-hep", "sqlalchemy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">3.11,<3.15"
-content-hash = "facfc9445ca3c0ae01ced99e2fd141e6841c61ddd3389e6fb0023a6cbb2bc27c"
+content-hash = "ceecb07ae947fc8f484b04e0e2eee8d44830d6e71f5fe00b57134d62f7377afe"

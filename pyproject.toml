@@ -43,7 +43,7 @@ numba = ">=0.65.0"
 eko = { git = "https://github.com/NNPDF/eko.git", branch = "py314" }
 pandas = "^2.1.4"
 rich = "^12.4.4"
-adani = ">=1.0.6"
+adani = ">=1.0.8"
 LeProHQ = "^0.2.5"
 # pineappl dependency
 pineappl = { version = "^1.1.0", optional = true }
