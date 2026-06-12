@@ -20,10 +20,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install Python 3.14
+      - name: Install Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: ${{ vars.PYTHON_VERSION_WORKFLOWS }}
 
       - name: Install yadism
         run: |
@@ -37,56 +37,45 @@ jobs:
           python -c "import apfel"
 
   qcdnum:
-  runs-on: ubuntu-latest
-
-  steps:
-    - uses: actions/checkout@v2
-
-    - name: Install Python 3.14
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.14"
-
-    - name: Install yadism
-      run: |
-        python -m pip install --upgrade pip
-        pip install .
-
-    - name: Run qcdnum benchmarks
-      run: |
-        pytest benchmarks/runners/qcdnum_.py
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ vars.PYTHON_VERSION_WORKFLOWS }}
+
       - name: Install yadism
         run: |
           python -m pip install --upgrade pip
           pip install .
-      - name: Run apfel benchmarks
+
+      - name: Run qcdnum benchmarks
         run: |
           pytest benchmarks/runners/qcdnum_.py
 
   xspace-bench:
-  runs-on: ubuntu-latest
-
-  steps:
-    - uses: actions/checkout@v2
-
-    - name: Install Python 3.14
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.14"
-
-    - name: Install yadism
-      run: |
-        python -m pip install --upgrade pip
-        pip install .
-
-    - name: Run qcdnum benchmarks
-      run: |
-        pytest benchmarks/runners/qcdnum_.py
+    runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ vars.PYTHON_VERSION_WORKFLOWS }}
+
+      - name: Install yadism
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: Run qcdnum benchmarks
+        run: |
+          pytest benchmarks/runners/qcdnum_.py
+
       - uses: actions/checkout@v2
       - name: Install yadism
         run: |
