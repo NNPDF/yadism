@@ -1,16 +1,15 @@
-In order to compute all the N3LO grids run
-```
+In order to compute the pre-tabulated aN3LO heavy coefficient functions,
+first run:
+
+```sh
 python produce_grids.py
+```
 
-cores=4
-order=3
+to generate the kinematic values `xi` and `eta` from which the coefficient
+functions will be tabulated on.
 
-for nf in 3 4 5; do
-    for kind in 2 L; do
-        for channel in g q; do
-            python yad_grids.py $nf $cores $kind $channel $order gm;
-        done
-    done
-done
+Then, run the following command to compute the coefficient functions:
 
+```sh
+./generate_grids.sh
 ```
