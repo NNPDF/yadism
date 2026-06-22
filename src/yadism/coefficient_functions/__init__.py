@@ -130,15 +130,21 @@ class Combiner:
             if hq not in (0, sfh):
                 continue
 
-            # heavy quark is intrinsic
-            if "FFN0" in self.scheme:
-                heavy_comps[sfh].extend(
-                    asy.kernels.generate_intrinsic_asy(
-                        self.esf, nf, self.esf.info.theory["pto_evol"], ihq=sfh
-                    ),
-                )
-            else:
-                heavy_comps[sfh].extend(intrinsic.kernels.generate(self.esf, ihq=sfh))
+            # heavy quark is intrinsic - only charm is supported as intrinsic
+            if sfh == 4:
+                if "FFN0" in self.scheme:
+                    heavy_comps[sfh].extend(
+                        asy.kernels.generate_intrinsic_asy(
+                            self.esf,
+                            nf,
+                            self.esf.info.theory["pto_evol"],
+                            ihq=sfh,
+                        ),
+                    )
+                else:
+                    heavy_comps[sfh].extend(
+                        intrinsic.kernels.generate(self.esf, ihq=sfh)
+                    )
 
             if "FFN0" in self.scheme:
                 heavy_comps[sfh].extend(
