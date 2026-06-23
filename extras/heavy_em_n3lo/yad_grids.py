@@ -26,7 +26,12 @@ verbose = True
 
 if order > 1:
     massive = adani.ApproximateCoefficientFunction(
-        order, kind, channel, True, adani.Exact
+        order,
+        kind,
+        channel,
+        1.0,
+        True,
+        adani.Exact,
     )
 elif order == 1:
     massive = adani.ExactCoefficientFunction(order, kind, channel)
