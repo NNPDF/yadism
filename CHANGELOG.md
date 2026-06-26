@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.10...HEAD)
 
 ### Changed
+- Drop support for Python 3.10, support Python 3.14 ([#383](https://github.com/NNPDF/yadism/pull/383))
 - Drop support for Python 3.9 ([#351](https://github.com/NNPDF/yadism/pull/351))
 
 ## [0.13.10](https://github.com/NNPDF/yadism/compare/v0.13.9...v0.13.10) - 2026-02-24

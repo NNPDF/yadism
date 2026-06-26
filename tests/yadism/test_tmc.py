@@ -98,7 +98,9 @@ class TestAbstractTMC:
         )
         is0(res)
         # test random function
-        res = obj._convolve_FX("F2", np.exp)  # pylint: disable=protected-access
+        res = obj._convolve_FX(  # pylint: disable=protected-access
+            "F2", lambda x, _args: np.exp(x)
+        )
         is0(res)
         # test h2
         res = obj._h2()  # pylint: disable=protected-access
