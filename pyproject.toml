@@ -59,7 +59,7 @@ pylint = "^2.9.3"
 pdbpp = "^0.10.3"
 ipython = "^8.10.0"
 # benchmark
-asv = "^0.4.2"
+asv = "^0.6.0"
 virtualenv = "^20.13.2"
 
 [tool.poetry.group.test]
