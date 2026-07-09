@@ -10,5 +10,6 @@ jobs:
     uses: NNPDF/workflows/.github/workflows/python-poetry-pypi.yml@v2
     with:
       poetry-extras: "-E mark -E box"
+      python-version: "3.14"
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
