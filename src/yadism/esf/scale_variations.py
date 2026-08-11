@@ -28,6 +28,7 @@ def build_orders(order):
             order configurations
     """
     orders = []
+    order = 3
     for alphas_power in range(order + 1):
         for lnf_power in range(alphas_power + 1):
             for lnrf_power in range(max(alphas_power, 1)):
@@ -52,7 +53,7 @@ class ScaleVariations:
         activate_fact : bool
             activate factorization scale variation
         """
-        self.order = order
+        self.order = 3
         self.interpolator = interpolator
         self.activate_ren = activate_ren
         self.activate_fact = activate_fact

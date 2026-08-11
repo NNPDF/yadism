@@ -56,6 +56,7 @@ def c220(labs, matrices, nf):
 
 def sector_mapping(order, matrices, nf):
     smap = {}
+    order = 3
     if order >= 1:
         smap.update({(1, 1, 0): joint_lo(c110, matrices, nf, add_gluonic=False)})
     if order >= 2:
