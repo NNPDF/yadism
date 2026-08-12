@@ -136,6 +136,14 @@ class Runner:
             M2target=theory["MP"] ** 2,
             fonllparts=new_theory["FONLLParts"],
             n3lo_cf_variation=theory["n3lo_cf_variation"],
+            # also accept only one number as cf variation
+            if isinstance(n3lo_cf_variation, int): 
+                n3lo_cf_variation = {
+                    "C2g": n3lo_cf_variation,
+                    "C2q": n3lo_cf_variation,
+                    "CLg": n3lo_cf_variation,
+                    "CLq": n3lo_cf_variation,
+                }
         )
         logger.info(
             "PTO: %d, PTO@evolution: %d, process: %s",
