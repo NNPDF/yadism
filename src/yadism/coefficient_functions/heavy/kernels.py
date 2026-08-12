@@ -78,7 +78,6 @@ def generate(esf, nf, ihq):
         if "FL" in kind:
             n3lo_g_variation = esf.info.theory["n3lo_cf_variation"][2]
             n3lo_q_variation = esf.info.theory["n3lo_cf_variation"][3]
-        else
         gVV = kernels.Kernel(
             weights["gVV"],
             pcs.GluonVV(esf, nf, m2hq=m2hq, n3lo_cf_variation=n3lo_g_variation),
