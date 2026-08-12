@@ -121,6 +121,12 @@ class Runner:
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
         )
+        
+        # The n3lo_cf_variations are ordered as (C2g, C2q, CLg, CLq)
+        # If only one number is passed, all are set to that
+        if isinst(theory["n3lo_cf_variation"], int):
+            n3lo_cf_variation = (n3lo_cf_variation, n3lo_cf_variation, n3lo_cf_variation, n3lo_cf_variation)
+            
         # pass theory params
         theory_params = dict(
             pto=pto,
@@ -135,9 +141,7 @@ class Runner:
             M2W=theory["MW"] ** 2,
             M2target=theory["MP"] ** 2,
             fonllparts=new_theory["FONLLParts"],
-            # the n3lo_cf_variations are ordered as (C2g, C2q, CLg, CLq)
             n3lo_cf_variation=theory["n3lo_cf_variation"],
-            )
         )
         logger.info(
             "PTO: %d, PTO@evolution: %d, process: %s",
