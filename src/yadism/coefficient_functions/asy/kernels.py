@@ -109,6 +109,10 @@ def generate_heavy_asy(esf, nf, pto_evol, ihq):
         if not is_pv:
             n3lo_cf_variation = esf.info.theory["n3lo_cf_variation"]
             for c, channel in (("g", "Gluon"), ("s", "Singlet")):
+                if c == "g":
+                    variation = n3lo_cf_variation[0]
+                if c == "s":
+                    variation = n3lo_cf_variation[1]
                 for res in range(pto_evol + 1):
                     name = "Asy" + ("N" * res) + "LL" + channel
                     for av in ("AA", "VV"):
@@ -119,7 +123,7 @@ def generate_heavy_asy(esf, nf, pto_evol, ihq):
                                     esf,
                                     nf,
                                     m2hq=m2hq,
-                                    n3lo_cf_variation=n3lo_cf_variation,
+                                    n3lo_cf_variation=variation,
                                 ),
                             )
                         )
