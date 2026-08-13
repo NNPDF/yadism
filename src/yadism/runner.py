@@ -125,7 +125,7 @@ class Runner:
         # The n3lo_cf_variations are ordered as (C2g, C2q, CLg, CLq)
         # If only one number is passed, all are set to that
         if isinstance(theory["n3lo_cf_variation"], int):
-            n3lo_cf_variation = (n3lo_cf_variation, n3lo_cf_variation, n3lo_cf_variation, n3lo_cf_variation)
+            theory["n3lo_cf_variation"] = (theory["n3lo_cf_variation"], theory["n3lo_cf_variation"], theory["n3lo_cf_variation"], theory["n3lo_cf_variation"])
             
         # pass theory params
         theory_params = dict(
