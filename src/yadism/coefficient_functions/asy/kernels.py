@@ -118,7 +118,7 @@ def generate_heavy_asy(esf, nf, pto_evol, ihq):
                 n3lo_g_variation = 0
                 n3lo_q_variation = 0
             for c, channel in (("g", "Gluon"), ("s", "Singlet")):
-                variation = n3lo_cf_variation[0 if c == "g" else 1]
+                variation = n3lo_g_variation if c == "g" else n3lo_q_variation
                 for res in range(pto_evol + 1):
                     name = "Asy" + ("N" * res) + "LL" + channel
                     for av in ("AA", "VV"):
