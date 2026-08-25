@@ -219,7 +219,6 @@ class Runner:
 
         # Loop through each observable in the dictionary
         for observable, points in out2.items():
-
             # Skip the keys that are not an observable
             if not observable_name.ObservableName.is_valid(observable):
                 continue
