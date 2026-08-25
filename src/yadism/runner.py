@@ -219,9 +219,9 @@ class Runner:
 
         # Loop through each observable in the dictionary
         for observable, points in out2.items():
+
             # Skip the keys that are not an observable
             if not observable_name.ObservableName.is_valid(observable):
-                logger.critical("Some NaNs are encountered and set to zero!")
                 continue
 
             # Loop over the kinematic points
@@ -235,6 +235,8 @@ class Runner:
                     for tup in range(2):
                         # Set any NaN or inf values in the array to 0
                         values[tup][~np.isfinite(values[tup])] = 0.0
+                        logger.critical(f"NaNs are encountered and set to zero at x = {point.x}!")
+
         return out2
 
     def get_result(self):
