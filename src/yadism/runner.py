@@ -235,7 +235,7 @@ class Runner:
                     for tup in range(2):
                         # Set any NaN or inf values in the array to 0
                         values[tup][~np.isfinite(values[tup])] = 0.0
-                        logger.critical(f"NaNs are encountered and set to zero at x = {point.x}!")
+                        logger.critical(f"NaNs are encountered and set to zero at [x,Q2] = [{point.x}, {point.Q2}].!")
 
         return out2
 
