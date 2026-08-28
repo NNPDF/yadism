@@ -22,7 +22,11 @@ def interpolator(coeff, nf, variation):
     coeff = np.load(grid_path / grid_name)
     grid_interpolator = RectBivariateSpline(xi_grid, eta_grid, coeff)
 
-    # store result
-    interpolators[grid_name] = grid_interpolator
 
-    return grid_interpolator
+    def evaluate(xi, eta):
+         # `grid=False`: point evaluation. `.item()` avoids array->scalar `TypeError`.
+         return grid_interpolator(xi, eta, grid=False).item()
+
+    # store result
+    interpolators[grid_name] = evaluate
+    return evaluate
