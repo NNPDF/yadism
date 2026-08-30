@@ -46,6 +46,26 @@ class CouplingConstants:
         # neutrinos
         for pid in [12, 14, 16]:
             self.weak_isospin_3[pid] = 1 / 2
+
+        # BSM couplings -------------------------------------------------------
+        # Temporary couplings to Olq3
+        self.Olq3_coupling_vectorial = {21: 0}
+        self.Olq3_coupling_axial = {21: 0}
+        for q in range(1, 7):
+            self.Olq3_coupling_vectorial[q] = (
+                -1 if q % 2 == 0 else 1
+            )  # u if stmt else d
+            self.Olq3_coupling_axial[q] = -1 if q % 2 == 0 else 1  # u if stmt else d
+        # leptons: 11 = e-(!)
+        for pid in [11, 13, 15]:
+            self.Olq3_coupling_vectorial[pid] = 1
+            self.Olq3_coupling_axial[pid] = 1
+        # neutrinos
+        # CC not yet implemented
+        for pid in [12, 14, 16]:
+            self.Olq3_coupling_vectorial[pid] = 0
+            self.Olq3_coupling_axial[pid] = 0
+
         self.log()
 
     def log(self):
@@ -90,11 +110,18 @@ class CouplingConstants:
         ):
             pol *= -1
         # load Z coupling
-        projectile_v = 0.0
-        projectile_a = 0.0
-        if mode in ["phZ", "ZZ"]:
-            projectile_v = self.vectorial_coupling(abs(projectile_pid))
-            projectile_a = self.weak_isospin_3[abs(projectile_pid)]
+        projectile_Z_v = 0.0
+        projectile_Z_a = 0.0
+        projectile_Olq3_v = 0.0
+        projectile_Olq3_a = 0.0
+        if mode in ["phZ", "ZZ", "Z0lq3"]:
+            projectile_Z_v = self.vectorial_coupling(abs(projectile_pid))
+            projectile_Z_a = self.weak_isospin_3[abs(projectile_pid)]
+            projectile_Olq3_v = self.Olq3_coupling_vectorial[abs(projectile_pid)]
+            projectile_Olq3_a = self.Olq3_coupling_axial[abs(projectile_pid)]
+        if mode in ["ph0lq3"]:
+            projectile_Olq3_v = self.Olq3_coupling_vectorial[abs(projectile_pid)]
+            projectile_Olq3_a = self.Olq3_coupling_axial[abs(projectile_pid)]
         # switch mode
         if mode == "phph":
             if quark_coupling_type in ["VV", "AA"]:
@@ -104,22 +131,52 @@ class CouplingConstants:
         elif mode == "phZ":
             if quark_coupling_type in ["VV", "AA"]:
                 return self.electric_charge[abs(projectile_pid)] * (
-                    projectile_v + pol * projectile_a
+                    projectile_Z_v + pol * projectile_Z_a
                 )
             else:
                 return self.electric_charge[abs(projectile_pid)] * (
-                    projectile_a + pol * projectile_v
+                    projectile_Z_a + pol * projectile_Z_v
                 )
         elif mode == "ZZ":
             if quark_coupling_type in ["VV", "AA"]:
                 return (
-                    projectile_v**2
-                    + projectile_a**2
-                    + 2.0 * pol * projectile_v * projectile_a
+                    projectile_Z_v**2
+                    + projectile_Z_a**2
+                    + 2.0 * pol * projectile_Z_v * projectile_Z_a
                 )
             else:
-                return 2.0 * projectile_v * projectile_a + pol * (
-                    projectile_v**2 + projectile_a**2
+                return 2.0 * projectile_Z_v * projectile_Z_a + pol * (
+                    projectile_Z_v**2 + projectile_Z_a**2
+                )
+        elif mode == "ph0lq3":
+            if quark_coupling_type in ["VV", "AA"]:
+                return self.electric_charge[abs(projectile_pid)] * (
+                    projectile_Olq3_v + pol * projectile_Olq3_a
+                )
+            else:
+                return self.electric_charge[abs(projectile_pid)] * (
+                    projectile_Olq3_a + pol * projectile_Olq3_v
+                )
+        elif mode == "Z0lq3":
+            if quark_coupling_type in ["VV", "AA"]:
+                return (
+                    projectile_Z_v * projectile_Olq3_v
+                    + projectile_Z_a * projectile_Olq3_a
+                    + pol
+                    * (
+                        projectile_Z_v * projectile_Olq3_a
+                        + projectile_Olq3_v * projectile_Z_a
+                    )
+                )
+            else:
+                return (
+                    projectile_Z_v * projectile_Olq3_a
+                    + projectile_Olq3_v * projectile_Z_a
+                    + pol
+                    * (
+                        projectile_Z_v * projectile_Olq3_v
+                        + projectile_Z_a * projectile_Olq3_a
+                    )
                 )
         raise ValueError(f"Unknown mode: {mode}")
 
@@ -130,7 +187,12 @@ class CouplingConstants:
             "A": 0,  # axial coupling of the photon to the quark is not there of course
         }
         qZ = {"V": self.vectorial_coupling(pid), "A": self.weak_isospin_3[pid]}
-        return qph, qZ
+
+        qOlq3 = {
+            "V": self.Olq3_coupling_vectorial[pid],
+            "A": self.Olq3_coupling_axial[pid],
+        }
+        return qph, qZ, qOlq3
 
     def partonic_coupling(self, mode, pid, quark_coupling_type, cc_mask=None):
         """Compute the coupling of the boson to the parton.
@@ -157,7 +219,7 @@ class CouplingConstants:
         if mode == "WW":
             return np.sum(self.theory_config["CKM"].masked(cc_mask)(pid))
         # load couplings
-        qph, qZ = self.nc_partonic_coupling(pid)
+        qph, qZ, qOlq3 = self.nc_partonic_coupling(pid)
 
         first = quark_coupling_type[0]
         second = quark_coupling_type[1]
@@ -168,6 +230,10 @@ class CouplingConstants:
             return qph[first] * qZ[second]
         if mode == "ZZ":
             return qZ[first] * qZ[second]
+        if mode == "ph0lq3":
+            return qph[first] * qOlq3[second]
+        if mode == "Z0lq3":
+            return qZ[first] * qOlq3[second]
         raise ValueError(f"Unknown mode: {mode}")
 
     def partonic_coupling_fl11(self, mode, pid, nf, quark_coupling_type):
@@ -209,12 +275,13 @@ class CouplingConstants:
         second = quark_coupling_type[1]
 
         def switch_mode(quark, coupling_type):
-            qph, qZ = self.nc_partonic_coupling(quark)
-            if mode in ["phph", "Zph"]:
+            qph, qZ, qOlq3 = self.nc_partonic_coupling(quark)
+            if mode in ["phph", "Zph", "Olq3ph"]:
                 return qph[coupling_type]
-            if mode in ["phZ", "ZZ"]:
+            if mode in ["phZ", "ZZ", "Olq3Z"]:
                 return qZ[coupling_type]
-            raise ValueError(f"Unknown mode: {mode}")
+            if mode in ["ph0lq3", "Z0lq3"]:
+                return qOlq3[coupling_type]
 
         # first coupling contribute with a mean
         pids = range(1, nf + 1)
@@ -247,10 +314,22 @@ class CouplingConstants:
             * (1.0 - self.theory_config["sin2theta_weak"])
         )
         eta_phZ /= 1 - self.obs_config["propagatorCorrection"]
+
+        # Need to specify Wilson coefficient?
+        C_Olq3 = 1 / 4
+        # Modify with more precise value
+        alpha = 1 / 137
+        # Should get it from param card
+        BSM_scale = 1000
+        eta_phOlq3 = ((C_Olq3) / (4 * np.pi * alpha)) * (Q2 / BSM_scale**2)
         if mode == "phZ":
             return eta_phZ
         if mode == "ZZ":
             return eta_phZ**2
+        if mode == "ph0lq3":
+            return eta_phOlq3
+        if mode == "Z0lq3":
+            return eta_phZ * eta_phOlq3
         if mode == "WW":
             eta_W = (
                 (eta_phZ / 2)
@@ -327,7 +406,21 @@ class CouplingConstants:
                 * self.propagator_factor("ZZ", Q2)
                 * self.partonic_coupling("ZZ", pid, quark_coupling_type)
             )
-            return w_phph + w_phZ + w_ZZ
+            # photon-Olq3 interference
+            w_ph0lq3 = (
+                2
+                * self.leptonic_coupling("ph0lq3", quark_coupling_type)
+                * self.propagator_factor("ph0lq3", Q2)
+                * self.partonic_coupling("ph0lq3", pid, quark_coupling_type)
+            )
+            # Z-Olq3 interference
+            w_Z0lq3 = (
+                2
+                * self.leptonic_coupling("Z0lq3", quark_coupling_type)
+                * self.propagator_factor("Z0lq3", Q2)
+                * self.partonic_coupling("Z0lq3", pid, quark_coupling_type)
+            )
+            return w_phph + w_phZ + w_ZZ + w_ph0lq3 + w_Z0lq3
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     def get_fl11_weight(self, pid, Q2, nf, quark_coupling_type):
@@ -393,7 +486,31 @@ class CouplingConstants:
                 * self.propagator_factor("ZZ", Q2)
                 * self.partonic_coupling_fl11("ZZ", pid, nf, quark_coupling_type)
             )
-            return w_phph + w_phZ + w_Zph + w_ZZ
+            # photon-Olq3 interference
+            w_ph0lq3 = (
+                self.leptonic_coupling("ph0lq3", quark_coupling_type)
+                * self.propagator_factor("ph0lq3", Q2)
+                * self.partonic_coupling("ph0lq3", pid, quark_coupling_type)
+            )
+            w_Olq3ph = (
+                self.leptonic_coupling("ph0lq3", quark_coupling_type)
+                * self.propagator_factor("ph0lq3", Q2)
+                * self.partonic_coupling("ph0lq3", pid, quark_coupling_type)
+            )
+            # Z-Olq3 interference
+            w_Z0lq3 = (
+                self.leptonic_coupling("Z0lq3", quark_coupling_type)
+                * self.propagator_factor("Z0lq3", Q2)
+                * self.partonic_coupling("Z0lq3", pid, quark_coupling_type)
+            )
+            w_Olq3Z = (
+                self.leptonic_coupling("Z0lq3", quark_coupling_type)
+                * self.propagator_factor("Z0lq3", Q2)
+                * self.partonic_coupling("Z0lq3", pid, quark_coupling_type)
+            )
+            return (
+                w_phph + w_phZ + w_Zph + w_ZZ + w_ph0lq3 + w_Olq3ph + w_Z0lq3 + w_Olq3Z
+            )
         raise ValueError(f"Unknown process: {self.obs_config['process']}")
 
     @classmethod
