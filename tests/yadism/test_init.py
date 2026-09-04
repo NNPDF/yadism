@@ -35,7 +35,7 @@ theory_dict = {
     "GF": 1.1663787e-05,
     "SIN2TW": 0.23126,
     "ModEv": "EXA",
-    "n3lo_cf_variation": 0,
+    "n3lo_cf_variation": (0, 0, 0, 0),
 }
 
 obs_dict = {
