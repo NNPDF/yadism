@@ -129,6 +129,10 @@ class Runner:
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
         )
+
+        # implement n3lo cf variations:
+        if isinstance(theory["n3lo_cf_variation"], int):
+            theory["n3lo_cf_variation"] = (theory["n3lo_cf_variation"], theory["n3lo_cf_variation"], theory["n3lo_cf_variation"], theory["n3lo_cf_variation"])
         # pass theory params
         intrinsic_range = []
         if theory["IC"] == 1:

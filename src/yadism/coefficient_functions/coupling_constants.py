@@ -321,6 +321,19 @@ class CouplingConstants:
         CouplingConstants
             created object
         """
+        ckm_matrix = theory["CKM"]
+        if isinstance(ckm_matrix, str):
+            ckm_matrix = CKM2Matrix.from_str(ckm_matrix)
+        elif isinstance(ckm_matrix, list):
+            ckm_matrix = CKM2Matrix(np.array(ckm_matrix) ** 2)
+        theory_config = {
+            "MZ2": theory.get("MZ", 91.1876)
+            ** 2,  # TODO remove defaults to the PDG2020 value
+            "CKM": ckm_matrix,
+            "sin2theta_weak": theory.get(
+                "SIN2TW", 0.23121
+            ),  # TODO remove defaults to the PDG2020 value
+        }
         theory_config = {
             "MZ2": theory.get("MZ", 91.1876)
             ** 2,  # TODO remove defaults to the PDG2020 value
