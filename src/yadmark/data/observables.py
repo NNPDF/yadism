@@ -15,6 +15,7 @@ default_card = dict(
     TargetDIS="proton",
     NCPositivityCharge=None,
     observables={},
+    n3lo_cf_variation=(0, 0, 0, 0),
 )
 default_card = dict(sorted(default_card.items()))
 

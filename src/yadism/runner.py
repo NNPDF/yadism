@@ -121,6 +121,12 @@ class Runner:
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
         )
+        
+        # The n3lo_cf_variations are ordered as (C2g, C2q, CLg, CLq)
+        # If only one number is passed, all are set to that
+        if isinstance(theory["n3lo_cf_variation"], int):
+            theory["n3lo_cf_variation"] = (theory["n3lo_cf_variation"], theory["n3lo_cf_variation"], theory["n3lo_cf_variation"], theory["n3lo_cf_variation"])
+            
         # pass theory params
         theory_params = dict(
             pto=pto,
@@ -215,7 +221,6 @@ class Runner:
         for observable, points in out2.items():
             # Skip the keys that are not an observable
             if not observable_name.ObservableName.is_valid(observable):
-                logger.critical("Some NaNs are encountered and set to zero!")
                 continue
 
             # Loop over the kinematic points
@@ -229,6 +234,8 @@ class Runner:
                     for tup in range(2):
                         # Set any NaN or inf values in the array to 0
                         values[tup][~np.isfinite(values[tup])] = 0.0
+                        logger.critical(f"NaNs are encountered and set to zero at [x,Q2] = [{point.x}, {point.Q2}].!")
+
         return out2
 
     def get_result(self):
