@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.11...HEAD)
+## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.12...HEAD)
+
+## [0.13.12](https://github.com/NNPDF/yadism/compare/v0.13.11...v0.13.12) - 2026-10-12
+
+### Changed
+- Decorrelated N3LO coefficient functions IHOUs. ([#388](https://github.com/NNPDF/yadism/pull/388))
+- Fixed a numpy/scipy dependency bug. ([#389](https://github.com/NNPDF/yadism/pull/389))
 
 ## [0.13.11](https://github.com/NNPDF/yadism/compare/v0.13.10...v0.13.11) - 2026-06-29
 
