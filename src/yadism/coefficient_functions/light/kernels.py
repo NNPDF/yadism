@@ -190,9 +190,10 @@ def nc_fl11_weights(coupling_constants, Q2, nf, skip_heavylight=False):
         # but still let it take part in the average
         if skip_heavylight and q == nf:
             continue
-        w = coupling_constants.get_fl11_weight(
-            q, Q2, nf, "VV"
-        ) + coupling_constants.get_fl11_weight(q, Q2, nf, "AA")
+        w = coupling_constants.get_fl11_weight(q, Q2, nf, "VV")
+        # A. Karlberg said in https://github.com/NNPDF/yadism/issues/395:
+        # "MVV's fl11 functions are for a vector coupling of the loop. The axial loop with three gluons is an anomaly-type contribution with a different coefficient function, which nobody has computed in DIS kinematics."
+        # so we don't add coupling_constants.get_fl11_weight(q, Q2, nf, "AA") here
         quark_partons[q] = w
         quark_partons[-q] = w
         tot_ch_sq += w

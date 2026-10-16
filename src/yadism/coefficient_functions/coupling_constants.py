@@ -205,22 +205,26 @@ class CouplingConstants:
         if mode == "WW":
             return 0
 
+        # Find out who is where on the fermion side
         first = quark_coupling_type[0]
         second = quark_coupling_type[1]
+        # but also on the boson side - see https://github.com/NNPDF/yadism/issues/395
+        loop, line = {
+            "phph": ("ph", "ph"),
+            "phZ": ("ph", "Z"),
+            "Zph": ("Z", "ph"),
+            "ZZ": ("Z", "Z"),
+        }[mode]
 
-        def switch_mode(quark, coupling_type):
+        def coupling(boson, quark, coupling_type):
             qph, qZ = self.nc_partonic_coupling(quark)
-            if mode in ["phph", "Zph"]:
-                return qph[coupling_type]
-            if mode in ["phZ", "ZZ"]:
-                return qZ[coupling_type]
-            raise ValueError(f"Unknown mode: {mode}")
+            return (qph if boson == "ph" else qZ)[coupling_type]
 
-        # first coupling contribute with a mean
+        # first coupling contributes with a mean
         pids = range(1, nf + 1)
-        g1 = np.mean([switch_mode(quark, first) for quark in pids])
+        g1 = np.mean([coupling(loop, quark, first) for quark in pids])
         # the second coupling is just the linear coupling
-        g2 = switch_mode(abs(pid), second)
+        g2 = coupling(line, abs(pid), second)
 
         return g1 * g2
 
