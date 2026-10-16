@@ -71,7 +71,7 @@ def test_generate_light_pc():
     for nf in [3, 5]:
         w = lker.generate(esf, nf)
         # ns, g, s, fl11ns, fl11g, fl11ps
-        ps = [mkpc(nf, 9), {21: 9}, mkpc(nf, 9), mkpc(nf, 9), {21: 9}]
+        ps = [mkpc(nf, 9), {21: 9}, mkpc(nf, 9), mkpc(nf, 1), {21: 1}]
         check(ps, w)
 
 

@@ -358,9 +358,9 @@ def generate_single_flavor_light(esf, nf, ihq):
     ]
 
     if esf.info.theory["pto"] == 3:
-        w = esf.info.coupling_constants.get_fl11_weight(
-            ihq, esf.Q2, nf, "VV"
-        ) + esf.info.coupling_constants.get_fl11_weight(ihq, esf.Q2, nf, "AA")
+        w = esf.info.coupling_constants.get_fl11_weight(ihq, esf.Q2, nf, "VV")
+        # There is no + esf.info.coupling_constants.get_fl11_weight(ihq, esf.Q2, nf, "AA") here,
+        # because see discussion in nc_fl11_weights
         quark_partons = {}
         quark_partons[ihq] = w
         quark_partons[-ihq] = w
