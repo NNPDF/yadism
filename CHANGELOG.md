@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.12...HEAD)
 
+### Fixed
+- Fix bug for coupling of fl11-type diagrams. Thank you Alexander Karlberg (@alexanderkarlberg). ([#396](https://github.com/NNPDF/yadism/pull/396))
+
 ## [0.13.12](https://github.com/NNPDF/yadism/compare/v0.13.11...v0.13.12) - 2026-10-12
 
 ### Changed
