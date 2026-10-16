@@ -193,6 +193,8 @@ def nc_fl11_weights(coupling_constants, Q2, nf, skip_heavylight=False):
         w = coupling_constants.get_fl11_weight(q, Q2, nf, "VV")
         # A. Karlberg said in https://github.com/NNPDF/yadism/issues/395:
         # "MVV's fl11 functions are for a vector coupling of the loop. The axial loop with three gluons is an anomaly-type contribution with a different coefficient function, which nobody has computed in DIS kinematics."
+        # and then he also clarified the reason in https://github.com/NNPDF/yadism/pull/396#issuecomment-6215178106
+        # "VV = AA for massless light quarks follows from anticommuting γ5 along a single fermion line, so it holds to all orders (modulo γ5-scheme issues) only when both currents attach to the same line or trace. In fl11 the two currents sit on different fermion lines, so γ5 can’t be moved between them and the argument doesn’t apply."
         # so we don't add coupling_constants.get_fl11_weight(q, Q2, nf, "AA") here
         quark_partons[q] = w
         quark_partons[-q] = w
