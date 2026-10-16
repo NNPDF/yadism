@@ -11,26 +11,26 @@ from ..special.nielsen import nielsen
 from ..special.zeta import zeta2, zeta3
 
 
-@nb.njit("f8(i8,i8,f8)", cache=True)
+@nb.njit(cache=True)
 def wgplg(m,n,z):
     return nielsen(m,n,z).real
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clg1am0_a0(x):
     res = tr * 16e0 * x * ( 1e0 - x )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2g1am0_aq(x):
     res = tr * ( 4e0 - 8e0 * x + 8e0 * x**2 )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2g1am0_a0(x):
     res = tr * ( ( 4e0 - 8e0 * x + 8e0 * x**2 ) * np.log( ( 1e0 - x ) / x ) - 4e0 + 32e0 * x - 32e0 * x**2 )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clg2am0_af(x):
     dlx=np.log(x)
     dlm=np.log(1.0e0-x)
@@ -38,7 +38,7 @@ def clg2am0_af(x):
     res = tr * ca * c1
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clg2am0_aq(x):
     dlx=np.log(x)
     dlm=np.log(1.0e0-x)
@@ -47,7 +47,7 @@ def clg2am0_aq(x):
     res = tr * ( ca * a1 + cf * b1 )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clg2am0_a0(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -61,7 +61,7 @@ def clg2am0_a0(x):
     res = tr * ( ca * a2 + cf * b2 )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2g2am0_aqf(x):
     dlx=np.log(x)
     dlm=np.log(1.0e0-x)
@@ -69,7 +69,7 @@ def c2g2am0_aqf(x):
     res = tr * ca * c1
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2g2am0_af(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -80,7 +80,7 @@ def c2g2am0_af(x):
     res  = tr * ca * c2
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2g2am0_aq2(x):
     dlx=np.log(x)
     dlm=np.log(1.0e0-x)
@@ -89,7 +89,7 @@ def c2g2am0_aq2(x):
     res = tr * ( ca * a1 + cf * b1 )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2g2am0_aq(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -103,7 +103,7 @@ def c2g2am0_aq(x):
     res  = tr * ( ca * a2 + cf * b2 )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2g2am0_a0(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -136,21 +136,21 @@ def c2g2am0_a0(x):
     res  = tr * ( ca * a3 + cf * b3 )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clps2am0_af(x):
     dlx=np.log(x)
     c1=32.0e0/3.0e0/x+64.0e0*x*x/3.0e0 -32.0e0-32.0e0*x*dlx
     res = cf * tr * c1
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clps2am0_aq(x):
     dlx=np.log(x)
     a1=-32.0e0*x*dlx-32.0e0+64.0e0*x*x/3.0e0+32.0e0/x/3.0e0
     res = cf * tr * a1
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clps2am0_a0(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -160,14 +160,14 @@ def clps2am0_a0(x):
     res = cf * tr * a2
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ps2am0_aqf(x):
     dlx=np.log(x)
     c1=-32.0e0*x*x/3.0e0-8.0e0*x+8.0e0+32.0e0/x/3.0e0 +16.0e0*(1.0e0+x)*dlx
     res = cf * tr * c1
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ps2am0_af(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -177,14 +177,14 @@ def c2ps2am0_af(x):
     res  = cf * tr * c2
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ps2am0_aq2(x):
     dlx=np.log(x)
     a1=-16.0e0*x*x/3.0e0-4.0e0*x+4.0e0+16.0e0/x/3.0e0 +8.0e0*(1.0e0+x)*dlx
     res = cf * tr * a1
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ps2am0_aq(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -194,7 +194,7 @@ def c2ps2am0_aq(x):
     res  = cf * tr * a2
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ps2am0_a0(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -210,23 +210,23 @@ def c2ps2am0_a0(x):
     res  = cf * tr * a3
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clns2am0_aq(x):
     res = 16e0 * cf * tr * x / 3e0
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def clns2am0_a0(x):
     res = 16e0 * cf * tr * ( x * np.log( 1e0 - x ) - 2e0 * x * np.log(x) - 25e0 * x / 6e0 + 1e0 ) / 3e0
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2am0_aq2(x):
     b1=(-1e0-x)*2.0e0
     res = 2e0 * cf * tr * b1 / 3e0
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2am0_aq(x):
     dlx=np.log(x)
     dlm=np.log(1.0e0-x)
@@ -234,7 +234,7 @@ def c2ns2am0_aq(x):
     res = 2e0 * cf * tr * a1 / 3e0
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2am0_a0(x):
     dlx=np.log(x)
     dlx2=dlx*dlx
@@ -246,20 +246,20 @@ def c2ns2am0_a0(x):
     res = 2e0 * cf * tr * ( a2 + b2 ) / 3e0
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2bm0_aq2(x):
     z = 2e0 / ( 1e0 - x )
     res = z * 4e0 * cf * tr / 3e0
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2bm0_aq(x):
     dlm = np.log( 1e0 - x )
     z   = 2e0 / ( 1e0 - x )
     res = z * 2e0 * cf * tr * ( 4e0 * dlm - 29e0 / 3e0 ) / 3e0
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2bm0_a0(x):
     dlm  = np.log( 1e0 - x )
     dlm2 = dlm * dlm
@@ -267,20 +267,20 @@ def c2ns2bm0_a0(x):
     res = z * 2e0 * cf * tr * ( - 4e0 * zeta2 + 2e0 * dlm2 - 29e0 * dlm / 3e0 + 359e0 / 18e0 ) / 3e0
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2cm0_aq2(x):
     dlm = np.log( 1e0 - x )
     res = 8e0 * cf * tr * dlm / 3e0 + 2e0 * cf * tr
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2cm0_aq(x):
     dlm  = np.log( 1e0 - x )
     dlm2 = dlm * dlm
     res = 4e0 * cf * tr * ( 2e0 * dlm2 - 29e0 * dlm / 3e0 ) / 3e0 - cf * tr * ( 32e0 * zeta2 / 3e0 + 38e0 / 3e0 )
     return res
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def c2ns2cm0_a0(x):
     dlm  = np.log( 1e0 - x )
     dlm2 = dlm * dlm

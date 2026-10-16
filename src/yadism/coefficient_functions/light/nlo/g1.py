@@ -5,7 +5,7 @@ from eko.constants import TR
 from . import f2, f3
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def ns_reg(z, args):
     return f3.ns_reg(z, args)
 
@@ -17,7 +17,7 @@ ns_omx = f2.ns_omx
 ns_logomx = f2.ns_logomx
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def gluon_reg(z, args):
     nf = args[0]
     return 4.0 * nf * TR * ((2.0 * z - 1.0) * np.log((1.0 - z) / z) - 4.0 * z + 3.0)

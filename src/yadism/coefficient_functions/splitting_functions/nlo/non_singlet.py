@@ -5,7 +5,7 @@ from eko import constants
 from ... import special
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pnsm_reg(z, args):
     """
     Regular :math:`P_{ns,-}` non-singlet valence-like splitting function (common
@@ -66,7 +66,7 @@ def pnsm_reg(z, args):
     return X1NSMA
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pnsp_reg(z, args):
     """
     Regular :math:`P_{ns,+}` non-singlet singlet-like splitting function.
@@ -126,7 +126,7 @@ def pnsp_reg(z, args):
     return X1NSPA
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pns_sing(z, args):
     """
     Singular :math:`P_{ns}` non-singlet splitting function (common to plus,
@@ -157,7 +157,7 @@ def pns_sing(z, args):
     return X1NSB
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pns_loc(x, args):
     """
     Local :math:`P_{ns}` non-singlet splitting function (common to plus,

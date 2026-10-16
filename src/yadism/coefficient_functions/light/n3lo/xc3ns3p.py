@@ -11,7 +11,7 @@ from .common import d3, d27, d81, d243
 from .xcdiff3p import c3q3dfp, c3q3dfpc
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c3nm3a(y, args):
     nf = args[0]
     y1 = 1.0 - y
@@ -68,7 +68,7 @@ def c3nm3a(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c3nsv3a(y, args):
     # contributions from flavor class fl02
     nf = args[0]
@@ -96,7 +96,7 @@ def c3nsv3a(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c3ns3b(y, args):
     nf = args[0]
     dl1 = np.log(1.0 - y)
@@ -122,7 +122,7 @@ def c3ns3b(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c3nm3c(y, args):
     nf = args[0]
     dl1 = np.log(1.0 - y)
@@ -158,11 +158,11 @@ def c3nm3c(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c3np3a(y, args):
     return c3nm3a(y, args) + c3q3dfp(y, args)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c3np3c(y, args):
     return c3nm3c(y, args) + c3q3dfpc(y, args)

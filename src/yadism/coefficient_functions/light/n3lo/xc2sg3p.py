@@ -4,7 +4,7 @@ import numpy as np
 from .common import d9, d81
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c2s3a_fl2(y, args):
     """The math:`fl_{2}`: regular piece of the singlet coefficient."""
     nf = args[0]
@@ -56,7 +56,7 @@ def c2s3a_fl2(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c2s3a_fl11(y, args):
     """The math:`fl_{11}`: regular piece of the singlet coefficient."""
     nf = args[0]
@@ -75,7 +75,7 @@ def c2s3a_fl11(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c2s3c_fl11(y, args):
     """The math:`fl_{11}`: local piece of the Singlet coefficient."""
     nf = args[0]
@@ -83,7 +83,7 @@ def c2s3c_fl11(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c2g3a_fl2(y, args):
     """The math:`fl_{2}`: regular piece of the gluon coefficient."""
     nf = args[0]
@@ -132,7 +132,7 @@ def c2g3a_fl2(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c2g3a_fl11(y, args):
     """The math:`fl_{11}`: regular piece of the gluon coefficient."""
     nf = args[0]
@@ -154,7 +154,7 @@ def c2g3a_fl11(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c2g3c_fl2(y, args):
     """The math:`fl_{2}`: local piece of the gluon coefficient."""
     nf = args[0]

@@ -36,23 +36,23 @@ from . import conv
 from .result import ESFResult
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def h2_ker(z, args):
     xi = args[0]
     return 1 / xi * z
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def g2_ker(z, _args):
     return 1 - z
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def h3_ker(_z, _args):
     return 1
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def k2_ker(z, args):
     xi = args[0]
     return z * np.log(1 / z) / xi

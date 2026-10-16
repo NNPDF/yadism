@@ -8,7 +8,7 @@ from ...special import li2, zeta2, zeta3
 from ...special.nielsen import nielsen
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def singlet_reg(z, args):
     nf = args[0]
     z2 = z**2
@@ -47,7 +47,7 @@ def singlet_reg(z, args):
     )
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def gluon_reg(z, args):
     nf = args[0]
     z2 = z**2

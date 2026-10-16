@@ -4,7 +4,7 @@ import numba as nb
 import numpy as np
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c2q3dfp(y, args):
     nf = args[0]
     y1 = 1.0 - y
@@ -42,14 +42,14 @@ def c2q3dfp(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c2q3dfpc(y, args):
     nf = args[0]
     res = -0.0008 + 0.0001 * nf
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def clq3dfp(y, args):
     nf = args[0]
     y1 = 1.0 - y
@@ -82,7 +82,7 @@ def clq3dfp(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c3q3dfp(y, args):
     nf = args[0]
     y1 = 1.0 - y
@@ -120,7 +120,7 @@ def c3q3dfp(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def c3q3dfpc(y, args):
     nf = args[0]
     res = -0.0029 + 0.00006 * nf
