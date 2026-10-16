@@ -4,7 +4,7 @@ import numpy as np
 from .zeta import zeta2, zeta3
 
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def li2(X):
     """
     Reimplementation of DDILOG (C332) from CERNlib :cite:`cernlib`.
@@ -106,7 +106,7 @@ def li2(X):
     return DDILOG
 
 
-@nb.njit("f8(f8)", cache=True)
+@nb.njit(cache=True)
 def s2(z):
     x = z
 

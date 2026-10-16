@@ -4,7 +4,7 @@ import numba as nb
 import numpy as np
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def sing_from_distr_coeffs(z, coeffs):
     log_ = np.log(1 - z)
     res = 0
@@ -13,7 +13,7 @@ def sing_from_distr_coeffs(z, coeffs):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def loc_from_distr_coeffs(x, coeffs):
     log_ = np.log(1 - x)
     res = 0
@@ -23,7 +23,7 @@ def loc_from_distr_coeffs(x, coeffs):
     return res + delta
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def loc_from_delta(_, coeffs):
     return coeffs[0]
 

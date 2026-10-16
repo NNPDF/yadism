@@ -14,7 +14,7 @@ from eko import constants
 from ..partonic_channel import RSL
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pqq_reg(z, _args):
     """
     Regular part of :math:`P_{qq}` splitting function.
@@ -35,7 +35,7 @@ def pqq_reg(z, _args):
     return -2.0 * constants.CF * (1.0 + z)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pqq_sing(z, _args):
     """
     Singular part of :math:`P_{qq}` splitting function.
@@ -55,7 +55,7 @@ def pqq_sing(z, _args):
     return 4.0 * constants.CF / (1.0 - z)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pqq_local(x, _args):
     r"""
     Local part of :math:`P_{qq}` splitting function.
@@ -95,7 +95,7 @@ def pqq(_nf):
     return RSL(pqq_reg, pqq_sing, pqq_local)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pqg_single(z, _args):
     """
     :math:`P_{q_ig}` splitting function (i.e.: :math:`P_{qg}` for a single
@@ -117,7 +117,7 @@ def pqg_single(z, _args):
     return 2.0 * constants.TR * (z**2 + (1.0 - z) ** 2)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pqg_reg(z, args):
     """
     (Regular) :math:`P_{qg}` splitting function.

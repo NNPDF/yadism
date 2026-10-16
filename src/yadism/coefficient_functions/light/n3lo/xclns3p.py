@@ -11,7 +11,7 @@ from .common import d81
 from .xcdiff3p import clq3dfp
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def clnp3a_fl2(y, args):
     """The math:`fl_{2}`: regular piece of the non singlet coefficient."""
     nf = args[0]
@@ -63,7 +63,7 @@ def clnp3a_fl2(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def clnp3c_fl2(y, args):
     """The math:`fl_{2}`: local piece of the non singlet coefficient."""
     nf = args[0]
@@ -71,11 +71,11 @@ def clnp3c_fl2(y, args):
     return res
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def clnm3a_fl2(y, args):
     return clnp3a_fl2(y, args) - clq3dfp(y, args)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def clnm3c_fl2(y, args):
     return clnp3c_fl2(y, args)

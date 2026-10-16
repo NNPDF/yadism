@@ -6,7 +6,7 @@ from ... import special
 from . import non_singlet as ns
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pgq0_reg(z, _args):
     """
     (Regular) :math:`P_{gq}` splitting function.
@@ -29,7 +29,7 @@ def pgq0_reg(z, _args):
     return 2.0 * constants.CF * (2 / z - 2 + z)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pgg0_reg(z, _args):
     """
     Regular :math:`P_{gg}` splitting function.
@@ -52,7 +52,7 @@ def pgg0_reg(z, _args):
     return 4 * constants.CA * (1 / z - 2 + z - z**2)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pgg0_sing(z, _args):
     """
     Singular :math:`P_{gg}` splitting function.
@@ -75,7 +75,7 @@ def pgg0_sing(z, _args):
     return 4 * constants.CA / (1 - z)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pgg0_local(x, args):
     """
     Singular :math:`P_{gg}` splitting function.
@@ -98,7 +98,7 @@ def pgg0_local(x, args):
     return constants.CA * (4 * np.log(1 - x) + 11 / 3) - args[0] * 2 / 3
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pqq1ps_reg(z, args):
     """
     Regular :math:`P_{qq}` pure singlet splitting function.
@@ -143,7 +143,7 @@ def pqq1ps_reg(z, args):
     return X1PSA
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pqq1_reg(z, args):
     """
     Regular :math:`P_{qq}` splitting function.
@@ -164,7 +164,7 @@ def pqq1_reg(z, args):
     return pqq1ps_reg(z, args) + ns.pnsp_reg(z, args)
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def pqg1_reg(z, args):
     """
     (Regular) :math:`P_{qg}` splitting function.

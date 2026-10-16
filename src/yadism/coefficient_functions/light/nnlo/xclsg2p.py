@@ -5,7 +5,7 @@ import numba as nb
 import numpy as np
 
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def cls2a(y, args):
     nf = args[0]
     dl  = np.log(y)
@@ -13,7 +13,7 @@ def cls2a(y, args):
     res = nf * ( (15.94 - 5.212 * y) * (1.-y)**2 * dl1 + (0.421 + 1.520 * y) * dl**2 + 28.09 * (1.-y) * dl - (2.370/y - 19.27) * (1.-y)**3 )
     return res
 
-@nb.njit("f8(f8,f8[:])", cache=True)
+@nb.njit(cache=True)
 def clg2a(y, args):
     nf = args[0]
     dl  = np.log(y)
