@@ -115,14 +115,21 @@ following way:
 .. math ::
   c^R(z) = 0\,,~ c^S(z) = g(z)\,,~ c^L(x) = -\int\limits_0^x\!dz\, g(z)
 
-.. details :: derivation
+.. raw:: html
 
-  .. math ::
-    f \otimes [g]_+ &= \int\limits_x^1 \frac{dz}{z} f(x/z) \cdot \left[ g(z) \right]_+\\
-      &= \int\limits_0^1 \frac{dz}{z} f(x/z) \cdot \left[ g(z) \right]_+ - \int\limits_0^x \frac{dz}{z} f(x/z) \cdot \left[ g(z) \right]_+\\
-      &= \int\limits_0^1\!dz\, \left(\frac{f(x/z)}{z} - f(x)\right) \cdot g(z) - \int\limits_0^x\!dz\, \frac{f(x/z)}{z} \cdot g(z)\\
-      &= \int\limits_x^1\!dz\, \left(\frac{f(x/z)}{z} - f(x)\right) \cdot g(z) - f(x) \int\limits_0^x\!dz\, g(z)\\
-      &\Rightarrow c^R(z) = 0\,,~ c^S(z) = g(z)\,,~ c^L(x) = -\int\limits_0^x\!dz\, g(z)
+   <details>
+   <summary><b>derivation</b></summary>
+
+.. math ::
+  f \otimes [g]_+ &= \int\limits_x^1 \frac{dz}{z} f(x/z) \cdot \left[ g(z) \right]_+\\
+    &= \int\limits_0^1 \frac{dz}{z} f(x/z) \cdot \left[ g(z) \right]_+ - \int\limits_0^x \frac{dz}{z} f(x/z) \cdot \left[ g(z) \right]_+\\
+    &= \int\limits_0^1\!dz\, \left(\frac{f(x/z)}{z} - f(x)\right) \cdot g(z) - \int\limits_0^x\!dz\, \frac{f(x/z)}{z} \cdot g(z)\\
+    &= \int\limits_x^1\!dz\, \left(\frac{f(x/z)}{z} - f(x)\right) \cdot g(z) - f(x) \int\limits_0^x\!dz\, g(z)\\
+    &\Rightarrow c^R(z) = 0\,,~ c^S(z) = g(z)\,,~ c^L(x) = -\int\limits_0^x\!dz\, g(z)
+
+.. raw:: html
+
+   </details>
 
 - A product of a regular function and a plus distribution :math:`c(z) = r(z)\left[g(z)\right]_+`
   contributes to all three bits:
@@ -130,29 +137,43 @@ following way:
 .. math ::
   c^R(z) = (r(z)-r(1))g(z)\,,~ c^S(z) = r(1)g(z)\,,~  c^L(x) = -r(1)\int\limits_0^x\!dz\, g(z)
 
-.. details :: derivation
+.. raw:: html
 
-  .. math ::
-    f\otimes c &= \int\limits_x^1 \frac{dz}{z} f(x/z) r(z) \cdot \left[ g(z) \right]_+\\
-      &= \int\limits_0^1 \frac{dz}{z} f(x/z) r(z) \cdot \left[ g(z) \right]_+ - \int\limits_0^x \frac{dz}{z} f(x/z) r(z) \cdot \left[ g(z) \right]_+\\
-      &= \int\limits_0^1\! dz \left(\frac{f(x/z)r(z)}{z} - f(x)r(1)\right) \cdot g(z) - \int\limits_0^x\!dz\, \frac{ f(x/z) r(z)}{z} \cdot g(z)\\
-      &= \int\limits_x^1\! dz \left(\frac{f(x/z)r(z)}{z} - f(x)r(1)\right) \cdot g(z) - f(x) r(1) \int\limits_0^xdz~ g(z)\\
-      &= \int\limits_x^1\! dz \left(\frac{f(x/z)(r(z)+r(1)-r(1))}{z} - f(x)r(1)\right) \cdot g(z) - f(x) r(1) \int\limits_0^xdz~ g(z)\\
-      &= \int\limits_x^1\! dz \left(\frac{f(x/z)}{z} - f(x)\right) r(1)\cdot g(z) + \int\limits_x^1\! dz \frac{f(x/z)(r(z)-r(1)))}{z} g(z)  - f(x) r(1) \int\limits_0^x\!dz~ g(z)\\
-      &= \int\limits_x^1 \frac{dz}{ z} f(x/z)  r(1)\cdot \left[g(z)\right]_+ + \int\limits_x^1\! dz \frac{f(x/z)(r(z)-r(1)))}{z} g(z)\\
-      &\Rightarrow c^S(z) = r(1)g(z)\,,~ c^R(z) = (r(z)-r(1))g(z)\,,~  c^L(x) = -r(1)\int\limits_0^x\!dz\, g(z)
+   <details>
+   <summary><b>derivation</b></summary>
+
+.. math ::
+  f\otimes c &= \int\limits_x^1 \frac{dz}{z} f(x/z) r(z) \cdot \left[ g(z) \right]_+\\
+    &= \int\limits_0^1 \frac{dz}{z} f(x/z) r(z) \cdot \left[ g(z) \right]_+ - \int\limits_0^x \frac{dz}{z} f(x/z) r(z) \cdot \left[ g(z) \right]_+\\
+    &= \int\limits_0^1\! dz \left(\frac{f(x/z)r(z)}{z} - f(x)r(1)\right) \cdot g(z) - \int\limits_0^x\!dz\, \frac{ f(x/z) r(z)}{z} \cdot g(z)\\
+    &= \int\limits_x^1\! dz \left(\frac{f(x/z)r(z)}{z} - f(x)r(1)\right) \cdot g(z) - f(x) r(1) \int\limits_0^xdz~ g(z)\\
+    &= \int\limits_x^1\! dz \left(\frac{f(x/z)(r(z)+r(1)-r(1))}{z} - f(x)r(1)\right) \cdot g(z) - f(x) r(1) \int\limits_0^xdz~ g(z)\\
+    &= \int\limits_x^1\! dz \left(\frac{f(x/z)}{z} - f(x)\right) r(1)\cdot g(z) + \int\limits_x^1\! dz \frac{f(x/z)(r(z)-r(1)))}{z} g(z)  - f(x) r(1) \int\limits_0^x\!dz~ g(z)\\
+    &= \int\limits_x^1 \frac{dz}{ z} f(x/z)  r(1)\cdot \left[g(z)\right]_+ + \int\limits_x^1\! dz \frac{f(x/z)(r(z)-r(1)))}{z} g(z)\\
+    &\Rightarrow c^S(z) = r(1)g(z)\,,~ c^R(z) = (r(z)-r(1))g(z)\,,~  c^L(x) = -r(1)\int\limits_0^x\!dz\, g(z)
+
+.. raw:: html
+
+   </details>
 
 - A plus distribution that contains a regular function and a singular function :math:`c(z) = \left[r(z)g(z)\right]_+` can be simplified by
 
  .. math ::
    \left[r(z)g(z)\right]_+ = r(z) \left[g(z)\right]_+ - \delta(1-z) \int\limits_0^1 dy~ r(y) \left[g(y)\right]_+
 
-.. details :: derivation
+.. raw:: html
 
-  .. math ::
-    \int\limits_0^1 \!dz~ f(z) \left[r(z)g(z)\right]_+ &= \int\limits_0^1 dz \left(f(z) - f(1)\right)r(z)g(z)\\
-      &= \int\limits_0^1 \left(f(z)r(z) - f(1)r(1)\right)g(z)~dz - f(1)\int\limits_0^1\! dz(r(z)-r(1))g(z)\\
-      &= \int\limits_0^1\! dz~ f(z)\left(r(z) \left[g(z)\right]_+\right) - f(z)\left(\delta(1-z)\int\limits_0^1\! dy~ r(y) \left[g(y)\right]_+\right)
+   <details>
+   <summary><b>derivation</b></summary>
+
+.. math ::
+  \int\limits_0^1 \!dz~ f(z) \left[r(z)g(z)\right]_+ &= \int\limits_0^1 dz \left(f(z) - f(1)\right)r(z)g(z)\\
+    &= \int\limits_0^1 \left(f(z)r(z) - f(1)r(1)\right)g(z)~dz - f(1)\int\limits_0^1\! dz(r(z)-r(1))g(z)\\
+    &= \int\limits_0^1\! dz~ f(z)\left(r(z) \left[g(z)\right]_+\right) - f(z)\left(\delta(1-z)\int\limits_0^1\! dy~ r(y) \left[g(y)\right]_+\right)
+
+.. raw:: html
+
+   </details>
 
 Channels
 --------
