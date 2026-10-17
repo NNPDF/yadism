@@ -116,7 +116,7 @@ class Runner:
             interpolator=interpolator,
             threshold=matchings.Atlas(
                 matching_scales=MatchingScales(list(masses * thresholds_ratios)),
-                origin=(new_theory["Q0"] ** 2, new_theory["nf0"]),
+                origin=(new_theory["Qref"] ** 2, new_theory["nfref"]),
             ),
             coupling_constants=coupling_constants,
             sv_manager=sv_manager,
