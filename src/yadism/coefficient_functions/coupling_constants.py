@@ -446,12 +446,30 @@ class CouplingConstants:
             "positron": -11,
             "neutrino": 12,
             "antineutrino": -12,
+            "muon": 13,
+            "antimuon": -13,
+            "tau": 15,
+            "antitau": -15,
+            "e-": 11,
+            "e+": -11,
+            "mu-": 13,
+            "mu+": -13,
+            "tau-": 15,
+            "tau+": -15,
+            "neutrino_mu": 14,
+            "antineutrino_mu": -14,
+            "neutrino_tau": 16,
+            "antineutrino_tau": -16,
         }
-        if proj not in projectile_pids:
+        if proj in projectile_pids:
+            proj_pid = projectile_pids[proj]
+        elif isinstance(proj, int) and abs(proj) in [11, 12, 13, 14, 15, 16]:
+            proj_pid = proj
+        else:
             raise ValueError(f"Unknown projectile {proj}")
         obs_config = {
             "process": observables["prDIS"],
-            "projectilePID": projectile_pids[proj],
+            "projectilePID": proj_pid,
             "polarization": observables["PolarizationDIS"],
             "propagatorCorrection": observables["PropagatorCorrection"],
             "nc_pos_charge": observables["NCPositivityCharge"],

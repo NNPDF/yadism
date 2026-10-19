@@ -69,45 +69,48 @@ def mkpv_even(nf, w, sgn):  # pv = parity violating
 
 
 def test_generate_light_pc():
-    for sgn in [True, False]:
-        esf = MockESF("F2_light", 11 * (1 if sgn else -1), 0.1, 10)
-        for nf in [3, 5]:
-            w = lker.generate(esf, nf)
-            norm = {3: 1, 4: 3, 5: 7}[nf]
-            # q, g
-            ps = [
-                mkpc_even(nf, 0.5 * norm),
-                {21: (nf + 1) * norm / nf / 2.0},
-                mkpc_even(nf, (nf + 1) * norm / nf / 2.0),
-                mkpc_odd(nf, 0.5 * norm, sgn),
-            ]
-            check(ps, w)
+    for pid_base in [11, 13]:
+        for sgn in [True, False]:
+            esf = MockESF("F2_light", pid_base * (1 if sgn else -1), 0.1, 10)
+            for nf in [3, 5]:
+                w = lker.generate(esf, nf)
+                norm = {3: 1, 4: 3, 5: 7}[nf]
+                # q, g
+                ps = [
+                    mkpc_even(nf, 0.5 * norm),
+                    {21: (nf + 1) * norm / nf / 2.0},
+                    mkpc_even(nf, (nf + 1) * norm / nf / 2.0),
+                    mkpc_odd(nf, 0.5 * norm, sgn),
+                ]
+                check(ps, w)
 
 
 def test_generate_light_pv():
-    for sgn in [True, False]:
-        esf = MockESF("F3_light", 11 * (1 if sgn else -1), 0.1, 10)
-        for nf in [3, 5]:
-            w = lker.generate(esf, nf)
-            norm = {3: 1, 4: 3, 5: 7}[nf]
-            # q, g
-            ps = [
-                mkpv_even(nf, 0.5 * norm, sgn),
-                mkpv_odd(nf, 0.5 * norm),
-                mkpv_odd(nf, (nf + 1) * norm / nf / 2.0),
-            ]
-            check(ps, w)
+    for pid_base in [11, 13]:
+        for sgn in [True, False]:
+            esf = MockESF("F3_light", pid_base * (1 if sgn else -1), 0.1, 10)
+            for nf in [3, 5]:
+                w = lker.generate(esf, nf)
+                norm = {3: 1, 4: 3, 5: 7}[nf]
+                # q, g
+                ps = [
+                    mkpv_even(nf, 0.5 * norm, sgn),
+                    mkpv_odd(nf, 0.5 * norm),
+                    mkpv_odd(nf, (nf + 1) * norm / nf / 2.0),
+                ]
+                check(ps, w)
 
 
 def test_generate_heavy_pc():
-    for sgn in [True, False]:
-        esf = MockESF("F2_charm", 11 * (1 if sgn else -1), 0.1, 10)
-        for nf in [3, 4, 5]:
-            w = hker.generate(esf, nf, ihq=4)
-            gnorm = {3: 4, 4: 5, 5: 6}[nf]
-            # q, g
-            ps = [mkpc_odd(nf, 2, sgn, ihq_only=True), {21: gnorm}]
-            check(ps, w)
+    for pid_base in [11, 13]:
+        for sgn in [True, False]:
+            esf = MockESF("F2_charm", pid_base * (1 if sgn else -1), 0.1, 10)
+            for nf in [3, 4, 5]:
+                w = hker.generate(esf, nf, ihq=4)
+                gnorm = {3: 4, 4: 5, 5: 6}[nf]
+                # q, g
+                ps = [mkpc_odd(nf, 2, sgn, ihq_only=True), {21: gnorm}]
+                check(ps, w)
 
 
 # def test_generate_heavy_pv():
