@@ -123,9 +123,6 @@ def is_w_plus_projectile(projectile_pid: int) -> bool:
     )
 
 
-# Alias as suggested in #265
-is_left_handed_lepton = is_w_plus_projectile
-
 
 def cc_weights(coupling_constants, Q2, cc_mask, nf, is_pv):
     """Collect the weights of the partons.

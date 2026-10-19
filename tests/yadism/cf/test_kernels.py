@@ -70,8 +70,6 @@ class Test_operations:
 def test_is_w_plus_projectile():
     for pid in [-11, -13, -15, 12, 14, 16]:
         assert kernels.is_w_plus_projectile(pid)
-        assert kernels.is_left_handed_lepton(pid)
 
     for pid in [11, 13, 15, -12, -14, -16]:
         assert not kernels.is_w_plus_projectile(pid)
-        assert not kernels.is_left_handed_lepton(pid)
