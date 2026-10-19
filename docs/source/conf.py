@@ -13,8 +13,10 @@
 
 import os
 import pathlib
+import sys
 
 here = pathlib.Path(__file__).parent
+sys.path.append(str(here / "_ext"))
 
 # -- Project information -----------------------------------------------------
 
@@ -49,6 +51,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinx_rtd_theme",
     "nbsphinx",
+    "details",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
