@@ -28,6 +28,10 @@ def update(theory, observables):
     update_target(new_obs)
     if "alphaqed" in new_theory:
         new_theory["alphaem"] = new_theory.pop("alphaqed")
+    if "Qref" not in new_theory and "Q0" in new_theory:
+        new_theory["Qref"] = new_theory["Q0"]
+    if "nfref" not in new_theory:
+        new_theory["nfref"] = new_theory.get("nf0", None)
     # TODO: update Yadism syntax and remove PTO everywhere?
     if "QED" in new_theory:
         new_theory["order"] = (new_theory["PTO"] + 1, new_theory.pop("QED"))

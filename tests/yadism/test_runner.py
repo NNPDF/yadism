@@ -51,7 +51,7 @@ class ResultsRunner(runner.Runner):
 
 class TestRunner:
     @given(st.data())
-    @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
+    @settings(suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=None)
     def test_init(self, monkeypatch, data):
         def fake_update(*args):
             return args
@@ -67,13 +67,13 @@ class TestRunner:
             PTODIS=pto,
             FNS="ZM-VFNS",
             NfFF=3,
-            nf0=3,
+            nfref=3,
             **masses,
             **kthr,
             **zm_masses,
             MaxNfPdf=6,
             MP=1.0,
-            Q0=2.0,
+            Qref=2.0,
             HQ="POLE",
             TMC=0,
             RenScaleVar=True,
@@ -163,6 +163,54 @@ class TestRunner:
 
         monkeypatch.setattr(rich.progress, "Progress", fake_progress)
         assert results_runner.get_result() is not None
+
+    def test_legacy_q0_nf0_compatibility(self):
+        theory = dict(
+            PTO=0,
+            PTODIS=0,
+            FNS="ZM-VFNS",
+            NfFF=3,
+            nf0=3,
+            Q0=2.0,
+            mc=2.0,
+            mb=3.0,
+            mt=4.0,
+            kcThr=1.0,
+            kbThr=1.0,
+            ktThr=1.0,
+            ZMc=True,
+            ZMb=True,
+            ZMt=True,
+            MaxNfPdf=6,
+            MP=1.0,
+            HQ="POLE",
+            TMC=0,
+            RenScaleVar=True,
+            FactScaleVar=False,
+            CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
+            MW=100.0,
+            MZ=100.0,
+            GF=1.0,
+            FONLLParts="full",
+            n3lo_cf_variation=(0, 0, 0, 0),
+        )
+        xgrid = np.geomspace(1e-5, 1.0, 6)
+        observables = dict(
+            interpolation_xgrid=xgrid,
+            interpolation_polynomial_degree=len(xgrid) - 2,
+            interpolation_is_log=True,
+            prDIS="CC",
+            TargetDIS=dict(Z=1.0, A=2.0),
+            ProjectileDIS="electron",
+            PolarizationDIS=0.0,
+            PropagatorCorrection=0.0,
+            NCPositivityCharge=None,
+            observables={
+                "F2_charm": [dict(x=0.1, Q2=10.0)],
+            },
+        )
+        rn = runner.Runner(theory, observables)
+        assert rn.configs.managers["threshold"].origin == (4.0, 3)
 
 
 class TestConfig:

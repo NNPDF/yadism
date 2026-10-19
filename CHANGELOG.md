@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.12...HEAD)
 
 ### Changed
+- The flavor number scheme of structure functions is now constructed from `Qref` and `nfref` instead of `Q0` and `nf0`, all defined in the theory card (with backwards compatibility maintained). ([#398](https://github.com/NNPDF/yadism/pull/398))
 - Strip ahead-of-time type signatures from `@nb.njit` kernels to recover true just-in-time compilation behavior. ([#394](https://github.com/NNPDF/yadism/pull/394))
 
 ### Fixed

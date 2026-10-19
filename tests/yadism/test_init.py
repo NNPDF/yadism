@@ -5,11 +5,10 @@ import numpy as np
 import yadism
 
 theory_dict = {
-    "Q0": 1,
-    "nf0": 3,
     "PTO": 0,
     "alphas": 0.118,
     "Qref": 91.2,
+    "nfref": 5,
     "CKM": "0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
     "XIF": 1,
     "XIR": 1,
