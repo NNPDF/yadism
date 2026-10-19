@@ -62,6 +62,14 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             "positron": "e+",
             "neutrino": "ν",
             "antineutrino": "ν~",
+            "muon": "μ-",
+            "antimuon": "μ+",
+            "tau": "τ-",
+            "antitau": "τ+",
+            "e-": "e-",
+            "e+": "e+",
+            "mu-": "μ-",
+            "mu+": "μ+",
         }
         obj["proj"] = proj_map[ob["ProjectileDIS"]]
         obj["pol"] = ob["PolarizationDIS"]

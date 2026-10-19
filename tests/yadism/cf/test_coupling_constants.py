@@ -150,10 +150,61 @@ class TestCouplingConstanst:
         new_coupl_const = coupl.CouplingConstants.from_dict(new_th_ckm, obs_d)
         assert coupl_const.theory_config["CKM"] == new_coupl_const.theory_config["CKM"]
 
+        # Muon and additional projectiles
+        obs_d["ProjectileDIS"] = "muon"
+        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == 13
+        obs_d["ProjectileDIS"] = "antimuon"
+        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == -13
+        obs_d["ProjectileDIS"] = "tau"
+        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == 15
+        obs_d["ProjectileDIS"] = "antitau"
+        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == -15
+        obs_d["ProjectileDIS"] = 13
+        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == 13
+
         # Unknown projectile
-        obs_d["ProjectileDIS"] = 0
+        obs_d["ProjectileDIS"] = "unknown_particle"
         with pytest.raises(ValueError, match="Unknown projectile"):
             coupl.CouplingConstants.from_dict(th_d, obs_d)
+
+    def test_muon_scattering(self):
+        th_d = dict(
+            SIN2TW=0.23126,
+            MZ=91.1876,
+            MW=80.398,
+            CKM="0.97428 0.22530 0.003470 0.22520 0.97345 0.041000 0.00862 0.04030 0.999152",
+        )
+        for proj_e, proj_mu in [
+            ("electron", "muon"),
+            ("positron", "antimuon"),
+            ("electron", "mu-"),
+            ("positron", "mu+"),
+        ]:
+            for proc in ["EM", "NC", "CC"]:
+                obs_e = dict(
+                    ProjectileDIS=proj_e,
+                    PolarizationDIS=0.0,
+                    prDIS=proc,
+                    PropagatorCorrection=0,
+                    NCPositivityCharge=None,
+                )
+                obs_mu = dict(
+                    ProjectileDIS=proj_mu,
+                    PolarizationDIS=0.0,
+                    prDIS=proc,
+                    PropagatorCorrection=0,
+                    NCPositivityCharge=None,
+                )
+                cc_e = coupl.CouplingConstants.from_dict(th_d, obs_e)
+                cc_mu = coupl.CouplingConstants.from_dict(th_d, obs_mu)
+                for q in range(1, 6):
+                    w_e = cc_e.get_weight(
+                        q, 90.0, "VV" if proc != "CC" else None, cc_mask="dus"
+                    )
+                    w_mu = cc_mu.get_weight(
+                        q, 90.0, "VV" if proc != "CC" else None, cc_mask="dus"
+                    )
+                    assert np.isclose(w_e, w_mu)
 
     def test_partonic_coupling_fl11(self):
         th_d = dict(
