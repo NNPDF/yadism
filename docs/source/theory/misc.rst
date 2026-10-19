@@ -4,17 +4,15 @@ Miscellanea
 Target Mass Corrections
 -----------------------
 
-Following :cite:`Schienbein:2007gr`, :cite:`Goharipour:2020gsw` we provide three options:
+Following :cite:`Schienbein:2007gr`, :cite:`Goharipour:2020gsw`, :cite:`Ruiz:2023fnm` we provide three options:
 
-- **exact**: is the full and involves integration
-- **approximate**: is stemming from the exact, but the strcture functions in
+- **exact**: is the full formulation and involves integration
+- **approximate**: is stemming from the exact, but the structure functions in
   the integrand are evaluated at the bottom end
-- **APFEL**: the one used in APFEL, similar to the exact but with g2 in
+- **APFEL**: the one used in APFEL, similar to the exact but with :math:`g_2` in
   the review (Schienbein et al.) set to 0
 
-.. todo::
-
-   complete
+For full mathematical formulas, integral kernels, and implementation details across :math:`F_2`, :math:`F_L`, :math:`F_3`, and :math:`g_1`, see the :doc:`Target Mass Corrections implementation documentation </implementation/TMC>`.
 
 .. _fl-corrections:
 

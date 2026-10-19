@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.12...HEAD)
 
+### Added
+- Comprehensive Target Mass Corrections (TMC) documentation page covering kinematics, Nachtmann scaling, exact/approximate/APFEL formulations, observable formulas for $F_2$, $F_L$, $F_3$, $g_1$, and software architecture. ([#386](https://github.com/NNPDF/yadism/issues/386))
+
 ### Changed
 - Strip ahead-of-time type signatures from `@nb.njit` kernels to recover true just-in-time compilation behavior. ([#394](https://github.com/NNPDF/yadism/pull/394))
 
