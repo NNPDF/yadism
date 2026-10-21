@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Strip ahead-of-time type signatures from `@nb.njit` kernels to recover true just-in-time compilation behavior. ([#394](https://github.com/NNPDF/yadism/pull/394))
 
 ### Fixed
-- Fix documentation build on Read the Docs by replacing external `sphinxcontrib-details-directive` with a local Sphinx extension and removing broken layout template. ([#397](https://github.com/NNPDF/yadism/pull/397))
+- Fix documentation build on Read the Docs. ([#397](https://github.com/NNPDF/yadism/pull/397))
 - Fix bug for coupling of fl11-type diagrams. Thank you Alexander Karlberg (@alexanderkarlberg). ([#396](https://github.com/NNPDF/yadism/pull/396))
 
 ## [0.13.12](https://github.com/NNPDF/yadism/compare/v0.13.11...v0.13.12) - 2026-10-12
