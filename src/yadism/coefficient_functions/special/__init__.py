@@ -3,6 +3,7 @@ import numpy as np
 
 from .zeta import zeta2, zeta3
 
+# Voigt:2022taz, Table 1: Coefficients of the numerator and denominator polynomials for the minimax approximant
 _P = (
     0.9999999999999999502e0,
     -2.6883926818565423430e0,
@@ -20,7 +21,7 @@ _Q = (
     -3.9801343754084482956e-2,
     8.2743668974466659035e-4,
 )
-_PI = 3.14159265358979323846
+_PI = np.pi
 _PI_SQ_OVER_6 = _PI * _PI / 6.0
 _PI_SQ_OVER_12 = _PI * _PI / 12.0
 _PI_SQ_OVER_3 = _PI * _PI / 3.0
@@ -31,7 +32,7 @@ def li2(X):
     r"""Real dilogarithm :math:`Li_2(x)`.
 
     Implemented using an economized rational function approximation with
-    a maximum error of :math:`5 \times 10^{-17}` following
+    a maximum error of :math:`5 \times 10^{-17}` with respect to scipy following
     :cite:`Voigt:2022taz`.
 
     Note
