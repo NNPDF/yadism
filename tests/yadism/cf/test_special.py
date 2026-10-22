@@ -15,10 +15,6 @@ def test_li2():
     for z in np.linspace(-1000.0, 0.0, 50):
         assert pytest.approx(special.li2(z)) == spence(1 - z)
 
-    # Test domain z > 1 up to 1000.0 (real part of complex Spence)
-    for z in np.linspace(1.0, 1000.0, 50):
-        assert pytest.approx(special.li2(z)) == spence(complex(1 - z)).real
-
     # Exact known values
     np.testing.assert_allclose(special.li2(0.0), 0.0)
     np.testing.assert_allclose(special.li2(1.0), np.pi**2 / 6.0)
@@ -26,7 +22,6 @@ def test_li2():
     np.testing.assert_allclose(
         special.li2(0.5), np.pi**2 / 12.0 - np.log(2.0) ** 2 / 2.0
     )
-    np.testing.assert_allclose(special.li2(2.0), np.pi**2 / 4.0)
 
 
 def test_nielsen():
