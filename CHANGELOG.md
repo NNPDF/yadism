@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/NNPDF/yadism/compare/v0.13.12...HEAD)
 
 ### Changed
+- Add documentation for TMCs. ([#404](https://github.com/NNPDF/yadism/pull/404))
 - Strip ahead-of-time type signatures from `@nb.njit` kernels to recover true just-in-time compilation behavior. ([#394](https://github.com/NNPDF/yadism/pull/394))
 
 ### Fixed
