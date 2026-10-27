@@ -117,7 +117,7 @@ class Kernel:
 
 
 def is_w_plus_projectile(projectile_pid: int) -> bool:
-    """Return True if projectile exchanges W+ in charged-current DIS (e.g. e+, mu+, tau+, nu)."""
+    """Return True if projectile emits a $W^+$ (e.g. $e^+, \mu^+, \tau^+, \nu$)."""
     return (projectile_pid < 0 and abs(projectile_pid) % 2 == 1) or (
         projectile_pid > 0 and projectile_pid % 2 == 0
     )
