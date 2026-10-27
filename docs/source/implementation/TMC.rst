@@ -66,53 +66,45 @@ One can enable TMCs with the ``TMC`` flag in the input runcard, with multiple op
 - **TMC: 0 (Disabled)**:
   No target mass corrections are applied and the SFs are evaluated at :math:`(x,Q^2)`.
 - **TMC: 1 (APFEL)**
-  The ``APFEL`` formalism is used. TODO CITATION?? 
+  The ``APFEL`` formalism is used, including twist-4 :ref:`nnpdf-1.0`.
 - **TMC: 2 (Approx)**
   The approximation mentioned above is used to speed up the calculation.
 - **TMC: 3 (Exact)**
-  The full expression is used. TODO CITATION?? 
+  The full expression is used, including twist-6.
 
 Implemenation
 -------------
 
 Similar to how the TMC corrected structure functions are defined on top of the bare ones, the
-structures in the code form an intermediate block between the class ``StructureFunction`` 
-and the actual calculator ``EvaluatedStructureFunction`` - in a sense they are the replacement for the latter.
+structures in the code form an intermediate block between the class :class:`~yadism.esf.StructureFunction`
+and the actual calculator :class:`~yadism.esf.EvaluatedStructureFunction` - in a sense they are the replacement for the latter.
+
+The :class:`~yadism.runner` class contains the main loop for calculation and holds a list of structure function instances, 
+that will manage the calculation.
+:class:`~yadism.esf.StructureFunction` is the manager. It holds a reference to its parent runner, 
+such that it is also able to access its :class:`~yadism.esf.StructureFunction` siblings. It instantiates
+:class:`~yadism.esf.tmc.EvaluatedStructureFunctionTMC` according to the ``TMC`` flag, as opposed to
+its TMC-less sibling :class:`~yadism.esf.tmc.EvaluatedStructureFunctionTMC`.
+
+Caching
+-------
+Caching is managed at the level of :class:`~yadism.esf.StructureFunction` (SF), while the values are
+kept at the level of ``ESF``, so the SF is just routing the caller to the correct instance of
+``ESF`` to ask for values. The layout is the following:
+
+- The SF instantiates an ``ESF`` or an ``ESFTMC`` according to the ``TMC`` flag in the theory
+  dictionary, and appends it to ``self.esfs`` at load time, i.e. in ``self.load()`` (these are the
+  observables to be computed).
+- When asked for output without TMC, an ``ESF`` is called and the instance is registered:
+
+    - ``self.get_output()`` is used for getting the result, passing through.
+    - ``self.get_ESF()`` which is used for getting the instance and registering it in the cache.
+
+- With TMC turned on, an ``ESFTMC`` is called, and whenever it needs an ``ESF`` instance to compute a point
+  it asks its parent SF through the ``SF.get_ESF()`` method, in this way also passing through the
+  cache.
 
 
-
-Work in Progress notes
-----------------------
-
-
-Runner: holds a list of structure functions instances, that will act as our
-"soft singletons"
-StructureFunction: holds a reference to his parent runner, in this way its also
-able to access its StructureFunctions siblings (like F2 from FL, in order to
-compute TMCs, e.g.)
-
-Caching: it is managed at the level of StructureFunction, while the values are
-kept at the level of ESF (so the StructureFunction is just routing the caller to
-the correct instance of ESF to ask for values)
-
-Note 2 (caching)
-----------------
-Since the responsibility of caching is of SF as written above we decided the
-following layout:
-
-- SF instantiate ESF or ESFTMC according to TMC flag in theory dictionary,
-  and append it to `self.esfs` at load time, i.e. in `self.load()` (these
-  are the observables to be computed)
-- when asked for output if noTMC a ESF is called and the instance is
-  registered
-
-    - `self.get_ouput()` is used for getting the result passing through:
-    - `self.get_ESF()` is used for getting the instance and register to the
-      cache
-
-- if TMC a ESFTMC is called, and whenever he needs an ESF instance to
-  compute a point it will ask its parent SF with `SF.get_ESF()` method, in
-  this way passing through the cache
-
-
-i
+References
+----------
+See also :ref:`felix-revisited` for a more detailed explanation.
