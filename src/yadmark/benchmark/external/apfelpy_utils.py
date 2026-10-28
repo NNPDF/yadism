@@ -22,6 +22,8 @@ PROJECTILE_PIDS = {
     "positron": -11,
     "neutrino": 12,
     "antineutrino": -12,
+    "muon": 13,
+    "antimuon": -13,
 }
 
 

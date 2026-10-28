@@ -444,14 +444,25 @@ class CouplingConstants:
         projectile_pids = {
             "electron": 11,
             "positron": -11,
+            "e-": 11,
+            "e+": -11,
+            "muon": 13,
+            "antimuon": -13,
+            "mu-": 13,
+            "mu+": -13,
             "neutrino": 12,
             "antineutrino": -12,
+            "anti-neutrino": -12,
         }
-        if proj not in projectile_pids:
+        if proj in projectile_pids:
+            proj_pid = projectile_pids[proj]
+        elif isinstance(proj, (int, np.integer)) and abs(proj) in [11, 12, 13, 14]:
+            proj_pid = int(proj)
+        else:
             raise ValueError(f"Unknown projectile {proj}")
         obs_config = {
             "process": observables["prDIS"],
-            "projectilePID": projectile_pids[proj],
+            "projectilePID": proj_pid,
             "polarization": observables["PolarizationDIS"],
             "propagatorCorrection": observables["PropagatorCorrection"],
             "nc_pos_charge": observables["NCPositivityCharge"],

@@ -116,6 +116,13 @@ class Kernel:
         )
 
 
+def is_w_plus_projectile(projectile_pid: int) -> bool:
+    r"""Return True if projectile emits a $W^+$ (e.g. $e^+, \mu^+, \nu$)."""
+    return (projectile_pid < 0 and abs(projectile_pid) % 2 == 1) or (
+        projectile_pid > 0 and projectile_pid % 2 == 0
+    )
+
+
 def cc_weights(coupling_constants, Q2, cc_mask, nf, is_pv):
     """Collect the weights of the partons.
 
@@ -140,10 +147,7 @@ def cc_weights(coupling_constants, Q2, cc_mask, nf, is_pv):
     weights = {"ns": {}, "g": {}, "s": {}}
     # determine couplings
     projectile_pid = coupling_constants.obs_config["projectilePID"]
-    if projectile_pid in [-11, 12]:
-        rest = 1
-    else:
-        rest = 0
+    rest = 1 if is_w_plus_projectile(projectile_pid) else 0
     # quark couplings
     tot_ch_sq = 0
     norm = len(cc_mask)
@@ -193,10 +197,7 @@ def cc_weights_even(coupling_constants, Q2, cc_mask, nf, is_pv):
     weights = {"ns": {}, "g": {}, "s": {}}
     # determine couplings
     projectile_pid = coupling_constants.obs_config["projectilePID"]
-    if projectile_pid in [-11, 12]:
-        rest = 1
-    else:
-        rest = 0
+    rest = 1 if is_w_plus_projectile(projectile_pid) else 0
     # quark couplings
     tot_ch_sq = 0
     norm = len(cc_mask)
@@ -245,10 +246,7 @@ def cc_weights_odd(coupling_constants, Q2, cc_mask, nf, is_pv):
     weights = {"ns": {}, "v": {}}
     # determine couplings
     projectile_pid = coupling_constants.obs_config["projectilePID"]
-    if projectile_pid in [-11, 12]:
-        rest = 1
-    else:
-        rest = 0
+    rest = 1 if is_w_plus_projectile(projectile_pid) else 0
     # quark couplings
     tot_ch_sq = 0
     norm = len(cc_mask)
