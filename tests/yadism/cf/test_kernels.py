@@ -68,8 +68,8 @@ class Test_operations:
 
 
 def test_is_w_plus_projectile():
-    for pid in [-11, -13, -15, 12, 14, 16]:
+    for pid in [-11, -13, 12, 14]:
         assert kernels.is_w_plus_projectile(pid)
 
-    for pid in [11, 13, 15, -12, -14, -16]:
+    for pid in [11, 13, -12, -14]:
         assert not kernels.is_w_plus_projectile(pid)

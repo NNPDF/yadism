@@ -150,22 +150,48 @@ class TestCouplingConstanst:
         new_coupl_const = coupl.CouplingConstants.from_dict(new_th_ckm, obs_d)
         assert coupl_const.theory_config["CKM"] == new_coupl_const.theory_config["CKM"]
 
-        # Muon and additional projectiles
+        # Muon projectiles and aliases
         obs_d["ProjectileDIS"] = "muon"
-        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == 13
+        assert (
+            coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"]
+            == 13
+        )
         obs_d["ProjectileDIS"] = "antimuon"
-        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == -13
-        obs_d["ProjectileDIS"] = "tau"
-        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == 15
-        obs_d["ProjectileDIS"] = "antitau"
-        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == -15
+        assert (
+            coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"]
+            == -13
+        )
+        obs_d["ProjectileDIS"] = "mu-"
+        assert (
+            coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"]
+            == 13
+        )
+        obs_d["ProjectileDIS"] = "mu+"
+        assert (
+            coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"]
+            == -13
+        )
+        obs_d["ProjectileDIS"] = "anti-neutrino"
+        assert (
+            coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"]
+            == -12
+        )
         obs_d["ProjectileDIS"] = 13
-        assert coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"] == 13
+        assert (
+            coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"]
+            == 13
+        )
+        obs_d["ProjectileDIS"] = -13
+        assert (
+            coupl.CouplingConstants.from_dict(th_d, obs_d).obs_config["projectilePID"]
+            == -13
+        )
 
-        # Unknown projectile
-        obs_d["ProjectileDIS"] = "unknown_particle"
-        with pytest.raises(ValueError, match="Unknown projectile"):
-            coupl.CouplingConstants.from_dict(th_d, obs_d)
+        # Unknown projectile (including unsupported tau)
+        for unsupported in ["unknown_particle", "tau", "antitau", 15, -15, 16, -16]:
+            obs_d["ProjectileDIS"] = unsupported
+            with pytest.raises(ValueError, match="Unknown projectile"):
+                coupl.CouplingConstants.from_dict(th_d, obs_d)
 
     def test_muon_scattering(self):
         th_d = dict(

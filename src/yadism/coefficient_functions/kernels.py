@@ -117,11 +117,10 @@ class Kernel:
 
 
 def is_w_plus_projectile(projectile_pid: int) -> bool:
-    """Return True if projectile emits a $W^+$ (e.g. $e^+, \mu^+, \tau^+, \nu$)."""
+    r"""Return True if projectile emits a $W^+$ (e.g. $e^+, \mu^+, \nu$)."""
     return (projectile_pid < 0 and abs(projectile_pid) % 2 == 1) or (
         projectile_pid > 0 and projectile_pid % 2 == 0
     )
-
 
 
 def cc_weights(coupling_constants, Q2, cc_mask, nf, is_pv):

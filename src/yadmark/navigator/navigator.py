@@ -64,8 +64,6 @@ class NavigatorApp(bnav.navigator.NavigatorApp):
             "antineutrino": "ν~",
             "muon": "μ-",
             "antimuon": "μ+",
-            "tau": "τ-",
-            "antitau": "τ+",
             "e-": "e-",
             "e+": "e+",
             "mu-": "μ-",

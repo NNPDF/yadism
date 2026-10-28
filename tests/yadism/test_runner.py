@@ -210,7 +210,9 @@ class TestRunner:
             },
         )
         rn = runner.Runner(theory, observables)
-        assert rn.configs.managers["coupling_constants"].obs_config["projectilePID"] == 13
+        assert (
+            rn.configs.managers["coupling_constants"].obs_config["projectilePID"] == 13
+        )
 
 
 class TestConfig:
