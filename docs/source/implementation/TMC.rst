@@ -20,15 +20,44 @@ unstable.
 
 A part of these higher-twist terms however, so called target mass corrections (TMCs), are
 calculable systematically and consistently. These are required in order to correct for 
-effects relating to the non-zero mass of the target. In particular, 
-this has an effect in the large-x region. 
+effects relating to the non-zero mass of the target. Target-mass corrections account
+for these effects, which arise from the trace of the twist-2 operators in the OPE.
+Since the TMCs are not dependent on the perturbative order, they are a kinematic correction that applies to every order.
+In particular, this has an effect in the large-:math:`x`, small-:math:`Q^2` region. 
+
+The :math:`W^2` cut
+-------------------
+In DIS, among :doc:`../theory/intro <other kinematic quantities>`, we can define
+:math:`W^2 = (P+q)^2 = M^2 + 2P\dot q + q^2`
+with
+:math:`Q^2 = -q^2, \, \, \, \, x = \frac{Q^2}{2P \dot q},`
+so that
+:math:`W^2 = M^2 + Q^2\left( \frac{1}{x} - 1\right).`
+This quantity :math:`W^2` is defined as the invariant mass squared of the hadronic system,
+produced when a virtual boson interacts with the targeted nucleon.
+It is just as important as :math:`Q^2` in DIS: :math:`Q^2` sets the scale of the interaction,
+and :math:`W^2` sets the energy available to the final state. At fixed :math:`Q^2`,
+large :math:`x` means small :math:`W^2` and vice versa, so the high-:math:`x` region
+is exactly where the final state is low-mass and TMCs gain in effect.
+
+A scattering is inelastic when the nucleon breaks up, i.e. when :math:`W^2 > M^2`. 
+On the other hand, in the elastic limit of :math:`x=1`, the nucleon stays fully intact,
+and the scattering is elastic. For the proton, :math:`M \simeq 0.938` GeV, so
+:math:`W^2 \simeq 1.5 \mathrm{GeV}^2`. A process only counts as deep-inelastic when
+:math:`Q^2` is large enough for pQCD to apply, and :math:`W^2` is large enough
+to be above the resonance region.
 In the Björken limit, where 
 :math:`Q^2 >> M^2,` we can in principle neglect terms proportional to the
 expansion parameter :math:`M^2/Q^2`. 
 For a nucleon of finite mass and at low :math:`Q^2`, however, this expansion 
-parameter grows and becomes non-negligible. Target-mass corrections account
-for these effects, which arise from the trace of the twist-2 operators in the OPE.
-Since the TMCs are not dependent on the perturbative order, they are a kinematic correction that applies to every order.
+parameter grows and becomes non-negligible, so TMCs become non-negligible. 
+Therefore, :math:`W^2` is an effective measure to define the region in which TMCs,
+among other resonance effects, become large. Placing a cut on :math:`W^2`
+restricts the accesible :math:`x` range at a given :math:`Q^2` and allows us to exclude
+the region in which TMCs become important. 
+In ``NNPDF`` fits, typical values are :math:`W^2_{\mathrm{cut}} > 12.5 \mathrm{GeV}^2` and
+:math:`Q^2_{\mathrm{cut}} > 3.49 \mathrm{GeV}^2` to err on the safe side: TMCs are included,
+and cuts are placed to ensure the scattering is deep-inelastic and we are above the resonance limit.
 
 Kinematics
 ----------
@@ -42,7 +71,7 @@ One notices that in the case where :math:`M\rightarrow 0`, :math:`\xi_N \rightar
 and the TMCs disappear.
 
 The structure functions can therefore be expressed in terms of the bare (noTMC) structure functions,
-evaluated at the rescaled Nachtmann variable, for example in the case of :math:`F_2` as follows:
+evaluated at the rescaled Nachtmann variable, for example in the case of :math:`F_2` as follows :cite:`blub`:
 
 :math:`F_2^{\mathrm{TMC}}(x,Q^2) = \frac{x^2}{\xi^2_Nr^3}F_2^{\mathrm{noTMC}}(\xi_N,Q^2) + \frac{6M^2x^3}{Q^2r^4}h_2(\xi_N,Q^2) + \frac{12M^4x^4}{Q^4r^5}g_2(\xi_N,Q^2)`
 
@@ -79,7 +108,7 @@ One can enable TMCs with the ``TMC`` flag in the input runcard, with multiple op
   :math:`g_2` convolutions.
 
 Implementation
--------------
+--------------
 
 Similar to how the TMC corrected structure functions are defined on top of the bare ones, the
 structures in the code form an intermediate block between the class :class:`~yadism.esf.StructureFunction`
@@ -110,37 +139,12 @@ Caching is managed at the level of :class:`~yadism.esf.StructureFunction` (``SF`
 kept at the level of ``ESF``, so the ``SF`` is just routing the caller to the correct instance of
 ``ESF`` to ask for values:
 
-- The ``SF`` instantiates an ``ESFTMC``, and ofr each one it calls ``SF.get_ESF(kind, kinematics)`` on its parent ``SF``.
+- The ``SF`` instantiates an ``ESFTMC``, and for each one it calls ``SF.get_ESF(kind, kinematics)`` on its parent ``SF``.
   It appends this to ``self.esfs`` at load time, i.e. in ``self.load()`` (these are the observables to be computed).
   For ``F_L`` or ``F_3`` corrections it can ask for a different kind, which it reaches through the parent ``runner``.
 - The ``SF`` checks whether an ``ESF`` already exists. If yes, it returns it without recomputing, and if no, it is
   created, registered in the cache, and returned.
 
-.. code-block:
-                 Runner
-                |
-                |  holds a list of
-                v
-     StructureFunction (SF)   <-----------------------+
-       - self.esfs (cache)                            |
-                |                                     |
-                |  load(): creates one per            |
-                |  requested point                    |
-                v                                     |
-  ESFTMC  (only if TMC != 0)                          |
-       - computes TMC-corrected result                |
-                |                                     |
-                |  needs bare values:                 |
-                |  SF.get_esf(kind, (x, Q2))  --------+
-                |
-                |  SF checks cache, returns existing
-                |  ESF or creates and registers one
-                v
-  ESF  (bare structure function)
-       - computes the result
-       - holds the value
-
-
 References
 ----------
-:ref:`Schienbein:2007gr`
+:cite:`Schienbein:2007gr`
