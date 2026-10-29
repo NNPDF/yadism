@@ -63,48 +63,84 @@ In YADISM
 ---------
 
 One can enable TMCs with the ``TMC`` flag in the input runcard, with multiple options:
+
 - **TMC: 0 (Disabled)**:
   No target mass corrections are applied and the SFs are evaluated at :math:`(x,Q^2)`.
-- **TMC: 1 (APFEL)**
-  The ``APFEL`` formalism is used, including twist-4 :ref:`nnpdf-1.0`.
-- **TMC: 2 (Approx)**
-  The approximation mentioned above is used to speed up the calculation.
-- **TMC: 3 (Exact)**
-  The full expression is used, including twist-6.
+- **TMC: 1 (APFEL)**:
+  The ``APFEL`` formalism is used (see :ref:`nnpdf-1.0`). This is the expression
+  above with the :math:`g_2` term dropped, i.e. only the shifted
+  structure function and the :math:`h_2` convolution are kept.
+- **TMC: 2 (Approx)**:
+  The approximation mentioned above is used to speed up the calculation. The
+  convolutions are replaced by a simple evaluation of the bare structure
+  function at :math:`\xi_N`, so no convolution is required.
+- **TMC: 3 (Exact)**:
+  The full expression above is used, including both the :math:`h_2` and the
+  :math:`g_2` convolutions.
 
-Implemenation
+Implementation
 -------------
 
 Similar to how the TMC corrected structure functions are defined on top of the bare ones, the
 structures in the code form an intermediate block between the class :class:`~yadism.esf.StructureFunction`
 and the actual calculator :class:`~yadism.esf.EvaluatedStructureFunction` - in a sense they are the replacement for the latter.
 
-The :class:`~yadism.runner` class contains the main loop for calculation and holds a list of structure function instances, 
-that will manage the calculation.
 :class:`~yadism.esf.StructureFunction` is the manager. It holds a reference to its parent runner, 
-such that it is also able to access its :class:`~yadism.esf.StructureFunction` siblings. It instantiates
+such that it is also able to access its :class:`~yadism.esf.StructureFunction` siblings (``FL_TMC`` also 
+requires terms built from the bare ``F2``. It instantiates
 :class:`~yadism.esf.tmc.EvaluatedStructureFunctionTMC` according to the ``TMC`` flag, as opposed to
-its TMC-less sibling :class:`~yadism.esf.tmc.EvaluatedStructureFunctionTMC`.
+its TMC-less sibling :class:`~yadism.esf.tmc.EvaluatedStructureFunction`.
 
 Caching
 -------
-Caching is managed at the level of :class:`~yadism.esf.StructureFunction` (SF), while the values are
-kept at the level of ``ESF``, so the SF is just routing the caller to the correct instance of
-``ESF`` to ask for values. The layout is the following:
+A TMC-corrected structure function is built from bare structure functions at other points. Computing
+a bare strucure function is expensive, and the same bare value is often needed many times:
 
-- The SF instantiates an ``ESF`` or an ``ESFTMC`` according to the ``TMC`` flag in the theory
-  dictionary, and appends it to ``self.esfs`` at load time, i.e. in ``self.load()`` (these are the
-  observables to be computed).
-- When asked for output without TMC, an ``ESF`` is called and the instance is registered:
+- :math:`F_2^{\mathrm{TMC}}(x, Q2)` needs the bare :math:`F2` at the shifted point :math:`(\xi_N, Q^2)`.
+- In the APFEL and exact modes, it also needs the convolutions :math:`h_2` and
+  :math:`g_2`. These need the bare :math:`F2` at each interpolation-grid point
+  :math:`x_j` (at the same :math:`Q^2`).
+- Different requested points with the same :math:`Q^2` need the same grid points.
+  Also, :math:`F_L^{\mathrm{TMC}}` needs the bare :math:`F_2` in addition to the bare :math:`F_L`.
 
-    - ``self.get_output()`` is used for getting the result, passing through.
-    - ``self.get_ESF()`` which is used for getting the instance and registering it in the cache.
+We need to cache these values, because each of these quantities would be recomputed every time,
+which is redundant because we know they use the same (global) interpolation points.
 
-- With TMC turned on, an ``ESFTMC`` is called, and whenever it needs an ``ESF`` instance to compute a point
-  it asks its parent SF through the ``SF.get_ESF()`` method, in this way also passing through the
-  cache.
+Caching is managed at the level of :class:`~yadism.esf.StructureFunction` (``SF``), while the values are
+kept at the level of ``ESF``, so the ``SF`` is just routing the caller to the correct instance of
+``ESF`` to ask for values:
+
+- The ``SF`` instantiates an ``ESFTMC``, and ofr each one it calls ``SF.get_ESF(kind, kinematics)`` on its parent ``SF``.
+  It appends this to ``self.esfs`` at load time, i.e. in ``self.load()`` (these are the observables to be computed).
+  For ``F_L`` or ``F_3`` corrections it can ask for a different kind, which it reaches through the parent ``runner``.
+- The ``SF`` checks whether an ``ESF`` already exists. If yes, it returns it without recomputing, and if no, it is
+  created, registered in the cache, and returned.
+
+.. code-block:
+                 Runner
+                |
+                |  holds a list of
+                v
+     StructureFunction (SF)   <-----------------------+
+       - self.esfs (cache)                            |
+                |                                     |
+                |  load(): creates one per            |
+                |  requested point                    |
+                v                                     |
+  ESFTMC  (only if TMC != 0)                          |
+       - computes TMC-corrected result                |
+                |                                     |
+                |  needs bare values:                 |
+                |  SF.get_esf(kind, (x, Q2))  --------+
+                |
+                |  SF checks cache, returns existing
+                |  ESF or creates and registers one
+                v
+  ESF  (bare structure function)
+       - computes the result
+       - holds the value
 
 
 References
 ----------
-See also :ref:`felix-revisited` for a more detailed explanation.
+:ref:`Schienbein:2007gr`
