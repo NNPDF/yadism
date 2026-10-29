@@ -133,7 +133,7 @@ html_context = {
     "github_user": "NNPDF",
     "github_repo": "yadism",
     "github_version": "master",
-    "conf_py_path": "/docs/sphinx/source/",
+    "conf_py_path": "/docs/source/",
     "source_suffix": ".rst",
     "display_github": True,
     # footer:
