@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow muon projectiles (e.g. `"muon"`, `"antimuon"`, `"mu-"`, `"mu+"`, and their respective PIDs) in `ProjectileDIS` defined in the observable card. ([#399](https://github.com/NNPDF/yadism/pull/399))
 
 ### Changed
+- Add documentation for TMCs. ([#404](https://github.com/NNPDF/yadism/pull/404))
 - Strip ahead-of-time type signatures from `@nb.njit` kernels to recover true just-in-time compilation behavior. ([#394](https://github.com/NNPDF/yadism/pull/394))
 
 ### Fixed
