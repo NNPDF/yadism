@@ -67,8 +67,8 @@ We define the Nachtmann variable, with which we rescale :math:`x`:
 :math:`\xi_N = \frac{2x}{1+r},`
 with 
 :math:`r = \sqrt{1+\frac{4x^2M^2}{Q^2}}.`
-One notices that in the case where :math:`M\rightarrow 0`, :math:`\xi_N \rightarrow x`, 
-and the TMCs disappear.
+One notices that in the case where :math:`M\rightarrow 0` and :math:`\xi_N \rightarrow x`, 
+the TMCs disappear.
 
 The structure functions can therefore be expressed in terms of the bare (noTMC) structure functions,
 evaluated at the rescaled Nachtmann variable, for example in the case of :math:`F_2` as follows :cite:`blub`:
