@@ -83,7 +83,7 @@ Similar equations exist for :math:`F_1`, :math:`F_L`, and :math:`F_3`, all of wh
 implemented in YADISM.
 One notices that the equations above are convolutions, so a simple pointwise evaluation has been turned
 into a convolution. Given that we precompute the structure functions on an interpolation grid,
-these more complex objects need to befolded into the precomputed objects, increasing the size of the output
+these more complex objects need to be folded into the precomputed objects, increasing the size of the output
 and slowing down the calculation. YADISM therefore implemented an approximation that reduces things back
 to a simple evaluation,
 :math:`F_2^{\mathrm{TMC}}(x,Q^2) \approx \frac{x^2}{\xi^2_Nr^3}F_2^{\mathrm{noTMC}}(\xi_N,Q^2)\left(1+\frac{6M^2x\xi_N}{Q^2r}(1-\xi_N)\right)`
