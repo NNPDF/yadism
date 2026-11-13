@@ -3,11 +3,37 @@ import numpy as np
 
 from .zeta import zeta2, zeta3
 
+# Voigt:2022taz, Table 1: Coefficients of the numerator and denominator polynomials for the minimax approximant
+_P = (
+    0.9999999999999999502e0,
+    -2.6883926818565423430e0,
+    2.6477222699473109692e0,
+    -1.1538559607887416355e0,
+    2.0886077795020607837e-1,
+    -1.0859777134152463084e-2,
+)
+_Q = (
+    1.0,
+    -2.9383926818565635485e0,
+    3.2712093293018635389e0,
+    -1.7076702173954289421e0,
+    4.1596017228400603836e-1,
+    -3.9801343754084482956e-2,
+    8.2743668974466659035e-4,
+)
+_PI = np.pi
+_PI_SQ_OVER_6 = _PI * _PI / 6.0
+_PI_SQ_OVER_12 = _PI * _PI / 12.0
+_PI_SQ_OVER_3 = _PI * _PI / 3.0
+
 
 @nb.njit(cache=True)
 def li2(X):
-    """
-    Reimplementation of DDILOG (C332) from CERNlib :cite:`cernlib`.
+    r"""Real dilogarithm :math:`Li_2(x)`.
+
+    Implemented using an economized rational function approximation with
+    a maximum error of :math:`5 \times 10^{-17}` with respect to scipy following
+    :cite:`Voigt:2022taz`.
 
     Note
     ----
@@ -23,87 +49,53 @@ def li2(X):
     -------
     float
         :math:`Li_2(x)`
-
     """
-    # fmt: off
-    Z1 = 1
-    HF = Z1/2
-    PI = 3.14159265358979324
-    PI3 = PI**2/3
-    PI6 = PI**2/6
-    PI12 = PI**2/12
-
-    C = np.array([
-        +0.42996693560813697,
-        +0.40975987533077105,
-        -0.01858843665014592,
-        +0.00145751084062268,
-        -0.00014304184442340,
-        +0.00001588415541880,
-        -0.00000190784959387,
-        +0.00000024195180854,
-        -0.00000003193341274,
-        +0.00000000434545063,
-        -0.00000000060578480,
-        +0.00000000008612098,
-        -0.00000000001244332,
-        +0.00000000000182256,
-        -0.00000000000027007,
-        +0.00000000000004042,
-        -0.00000000000000610,
-        +0.00000000000000093,
-        -0.00000000000000014,
-        +0.00000000000000002,
-    ])
-
-    if X == 1:
-        H=PI6
-    elif X == -1:
-        H=-PI12
+    if X < -1.0:
+        l = np.log(1.0 - X)
+        y = 1.0 / (1.0 - X)
+        r = -_PI_SQ_OVER_6 + l * (0.5 * l - np.log(-X))
+        s = 1.0
+    elif X == -1.0:
+        return -_PI_SQ_OVER_12
+    elif X < 0.0:
+        l = np.log1p(-X)
+        y = X / (X - 1.0)
+        r = -0.5 * l * l
+        s = -1.0
+    elif X == 0.0:
+        return 0.0
+    elif X < 0.5:
+        y = X
+        r = 0.0
+        s = 1.0
+    elif X < 1.0:
+        y = 1.0 - X
+        r = _PI_SQ_OVER_6 - np.log(X) * np.log1p(-X)
+        s = -1.0
+    elif X == 1.0:
+        return _PI_SQ_OVER_6
+    elif X < 2.0:
+        l = np.log(X)
+        y = 1.0 - 1.0 / X
+        r = _PI_SQ_OVER_6 - l * (np.log(y) + 0.5 * l)
+        s = 1.0
     else:
-        T=-X
-        if T <= -2:
-            Y=-1/(1+T)
-            S=1
-            A=-PI3+HF*(np.log(-T)**2-np.log(1+1/T)**2)
-        elif T < -1:
-            Y=-1-T
-            S=-1
-            A=np.log(-T)
-            A=-PI6+A*(A+np.log(1+1/T))
-        elif T <= -HF:
-            Y=-(1+T)/T
-            S=1
-            A=np.log(-T)
-            A=-PI6+A*(-HF*A+np.log(1+T))
-        elif T < 0:
-            Y=-T/(1+T)
-            S=-1
-            A=HF*np.log(1+T)**2
-        elif T <= 1:
-            Y=T
-            S=1
-            A=0
-        else:
-            Y=1/T
-            S=-1
-            A=PI6+HF*np.log(T)**2
+        l = np.log(X)
+        y = 1.0 / X
+        r = _PI_SQ_OVER_3 - 0.5 * l * l
+        s = -1.0
 
-        H=Y+Y-1
-        ALFA=H+H
-        B1=0
-        B2=0
-        for I in range(19, 0-1, -1):
-            B0=C[I]+ALFA*B1-B2
-            B2=B1
-            B1=B0
+    y2 = y * y
+    y4 = y2 * y2
+    p = _P[0] + y * _P[1] + y2 * (_P[2] + y * _P[3]) + y4 * (_P[4] + y * _P[5])
+    q = (
+        _Q[0]
+        + y * _Q[1]
+        + y2 * (_Q[2] + y * _Q[3])
+        + y4 * (_Q[4] + y * _Q[5] + y2 * _Q[6])
+    )
 
-        H=-(S*(B0-H*B2)+A)
-
-    DDILOG=H
-    # fmt: on
-
-    return DDILOG
+    return r + s * y * p / q
 
 
 @nb.njit(cache=True)

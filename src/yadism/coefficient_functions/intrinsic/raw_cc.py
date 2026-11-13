@@ -1,10 +1,6 @@
 import numpy as np
-from scipy.special import spence  # pylint: disable=all
 
-
-def li2(x):
-    return spence(1 - x)
-
+from ..special import li2
 
 lnomx = -4.0
 

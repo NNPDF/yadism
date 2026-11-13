@@ -7,8 +7,21 @@ from yadism.coefficient_functions.special.nielsen import nielsen
 
 
 def test_li2():
+    # Test positive interval [0, 1]
     for z in np.linspace(0.0, 1.0, 50):
         assert pytest.approx(special.li2(z)) == spence(1 - z)
+
+    # Test negative domain [-1000.0, 0.0]
+    for z in np.linspace(-1000.0, 0.0, 50):
+        assert pytest.approx(special.li2(z)) == spence(1 - z)
+
+    # Exact known values
+    np.testing.assert_allclose(special.li2(0.0), 0.0)
+    np.testing.assert_allclose(special.li2(1.0), np.pi**2 / 6.0)
+    np.testing.assert_allclose(special.li2(-1.0), -np.pi**2 / 12.0)
+    np.testing.assert_allclose(
+        special.li2(0.5), np.pi**2 / 12.0 - np.log(2.0) ** 2 / 2.0
+    )
 
 
 def test_nielsen():

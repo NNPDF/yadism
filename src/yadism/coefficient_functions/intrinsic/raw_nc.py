@@ -3,11 +3,9 @@
 # pylint: skip-file
 
 import numpy as np
-from scipy.special import spence
 
+from ..special import li2
 
-def li2(x):
-    return spence(1-x)
 
 def f1_splus_raw(pc):
     return -(pc.L_xi*(-4*pc.m1sq*pc.m2sq*pc.s1hat**2 + pc.s1hat**3*(pc.s1hat + 4*pc.sigma_pm) + pc.s1hat*(2*pc.delta**2 + 7*pc.s1hat*pc.sigma_pm)*pc.sigma_pp + 2*(pc.delta**2 + 2*pc.s1hat*pc.sigma_pm)*pc.sigma_pp**2))/(2.*pc.deltap**3*pc.s1hat) + (-2*pc.delta**2*(9*pc.s1hat**3 + 4*pc.m2sq**2*pc.sigma_pp + 2*pc.s1hat*(4*pc.m2sq + pc.s1hat)*pc.sigma_pp) + pc.s1hat*(pc.s1hat*(28*pc.m1sq**2*pc.s1hat + pc.s1hat**3 + 2*pc.m1sq*pc.s1hat*(-8*pc.m2sq + 14*pc.Q2 + 3*pc.s1hat) - 3*pc.s1hat**2*pc.sigma_pm + 4*pc.m2sq*pc.sigma_mp*pc.sigma_pm) + (4*pc.m1sq*pc.m2sq*pc.s1hat + 7*pc.s1hat**2*pc.sigma_mp - 8*pc.m2sq*(2*pc.m2sq + 5*pc.s1hat)*pc.sigma_pm)*pc.sigma_pp - 3*pc.s1hat*pc.sigma_mp*pc.sigma_pp**2))/(4.*pc.deltap**2*pc.s1hat*(pc.m2sq + pc.s1hat)**2)
