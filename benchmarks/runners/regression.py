@@ -1,90 +1,74 @@
-#
-# do regression test
+from pathlib import Path
+import yaml
+from yadmark.benchmark.runner import Runner
+import lhapdf
+import pandas as pd
 
-# TODO this has to be reorganized completely
+REG_DIR = Path("regression")
+REG_INP = REG_DIR / "regression_input.yaml"
+BASELINE = REG_DIR / "baseline.yaml"
+RES = REG_DIR / "current_result.yaml"
 
-# import pytest
+class Regression(Runner):
 
-# from yadmark.benchmark.db_interface import DBInterface
+    def __init__(self):
+        super().__init__()
+        self.external = "void"
+        self.run_tests()
+        self.run_comparison()
 
+    def _load_baseline(self):
+        """
+        Load the regression baseline
+        """
+        with open(BASELINE, "r") as f:
+            self.baseline = yaml.safe_load(f)
+  
+    def _load_regression_inps(self):
+        """
+        Load the regression test inputs
+        """
+        with open(REG_INP, "r") as f:
+            data = yaml.safe_load(f)
+        return data
 
-# @pytest.mark.regression
-# class TestRegression:
-#     db = None
+    def run_tests(self):
+        """
+        Run yadism on specified reggression inputs
+        """
+        data = self._load_regression_inps()
+        results = {}
+        for t, kws in data.items():
+            kws["pdf"] = lhapdf.mkPDF(kws["pdf"])
+            results[t] = self.run_me(**kws).get_raw()
+        self.results = results
+        with open(RES, "w") as f:
+            yaml.dump(self.results, f)
 
-#     def _db(self):
-#         self.db = DBInterface("regression")
-#         return self.db
+    def update_baseline(self):
+        """
+        Update the numbers we compare the new results to.
+        """
+        with open(BASELINE, "w") as f:
+            yaml.dump(self.results, f)
 
-#     def _run(self, t_query):
-#         o_query = self.db.obs_query.noop()
-#         # self.db.run_generate_regression(t_query, o_query)
-#         self.db.run_queries_regression(t_query, o_query)
+    def run_comparison(self):
+        self._load_baseline()
+        for test in self.results.keys():
+            print(f"Comparison for {test}:")
+            for obs in self.results[test]:
+                print(f"Observable: {obs}")
+                base = self.baseline[test][obs]
+                new = self.baseline[test][obs]
+                print_comparison(base, new)
 
-#     def test_one_hot(self):
-#         self._db()
+def print_comparison(dict1, dict2):
+    comp_table = pd.DataFrame(dict1)
+    comp_table["baseline"] = comp_table["result"]
+    comp_table["new value"] = pd.DataFrame(dict2)["result"]
+    ## TODO make sure you handle division by 0 comp_table["difference [%]"] = (comp_table["new value"] - comp_table["baseline"]) / comp_table["baseline"]
+    comp_table = comp_table[comp_table.columns.difference(["error", "result"])]
+    print(comp_table)
 
-#         # test matrix
-#         features = {
-#             self.db.theory_query.XIR: [1.0, 2.0],
-#             self.db.theory_query.XIF: [1.0, 0.5],
-#             self.db.theory_query.TMC: [0, 1, 2, 3],
-#             self.db.theory_query.FNS: ["FFNS"],
-#             self.db.theory_query.NfFF: [3],
-#             self.db.theory_query.DAMP: [0],
-#         }
-#         # get the raw operator
-#         one_hot_query = self.db.theory_query.noop()
-#         for f, f_vals in features.items():
-#             one_hot_query &= f == f_vals[0]
-#         # activate one feature at a time
-#         for f, f_vals in features.items():
-#             # iterate the non-trivial values
-#             for v in f_vals[1:]:
-#                 lower_query = f == v
-#                 # make the others trivial
-#                 for g, g_vals in features.items():
-#                     # skip myself
-#                     if f is g:
-#                         continue
-#                     lower_query &= g == g_vals[0]
-#                 one_hot_query |= lower_query
-#         self._run(one_hot_query)
-
-#     def test_FNS(self):
-#         self._db()
-#         # test matrix
-#         features = {
-#             self.db.theory_query.XIR: [1.0],
-#             self.db.theory_query.XIF: [1.0],
-#             self.db.theory_query.TMC: [0],
-#             self.db.theory_query.PTO: [1],
-#         }
-#         # get the raw operator
-#         raw_query = self.db.theory_query.noop()
-#         for f, f_vals in features.items():
-#             raw_query &= f == f_vals[0]
-
-#         ffns_query = (
-#             (self.db.theory_query.FNS == "FFNS")
-#             & (self.db.theory_query.NfFF == 5)
-#             & (self.db.theory_query.DAMP == 0)
-#         )
-#         zm_vfns_query = (
-#             (self.db.theory_query.FNS == "ZM-VFNS")
-#             & self.db.theory_query.NfFF.one_of([3, 5])
-#             & (self.db.theory_query.DAMP == 0)
-#         )
-#         fonll_query = (
-#             self.db.theory_query.FNS.one_of(["FONLL-A"])
-#             & (self.db.theory_query.NfFF == 5)
-#             & self.db.theory_query.DAMP.one_of([0, 1])
-#         )
-#         total_query = raw_query & (ffns_query | zm_vfns_query | fonll_query)
-#         self._run(total_query)
-
-
-# if __name__ == "__main__":
-#     r = TestRegression()
-#     r.test_one_hot()
-#     r.test_FNS()
+if __name__ == "__main__":
+    reg = Regression()
