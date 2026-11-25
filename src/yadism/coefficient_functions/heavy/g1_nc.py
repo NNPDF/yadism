@@ -84,6 +84,10 @@ class GluonAA(GluonVV):
 
         return RSL(cg)
 
+    def N3LO(self):
+        """Currently unknown, so overwrite VV inheritance."""
+        return
+
 
 class SingletVV(pc.NeutralCurrentBase):
     def NNLO(self):
