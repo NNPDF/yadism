@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix documentation build on Read the Docs. ([#397](https://github.com/NNPDF/yadism/pull/397))
 - Fix bug for coupling of fl11-type diagrams. Thank you Alexander Karlberg (@alexanderkarlberg). ([#396](https://github.com/NNPDF/yadism/pull/396))
+- Remove N3LO contributions for heavy AA diagrams. Thank you Tanishq Sharma (@t7phy). ([#414](https://github.com/NNPDF/yadism/pull/414))
 
 ## [0.13.12](https://github.com/NNPDF/yadism/compare/v0.13.11...v0.13.12) - 2026-10-12
 
