@@ -1,9 +1,9 @@
 import numpy as np
 from eko import constants
-from scipy.special import spence  # pylint: disable=all
 
 from .. import partonic_channel as pc
 from .. import splitting_functions as split
+from ..special import li2
 
 
 class NeutralCurrentBase(pc.PartonicChannel):
@@ -114,8 +114,8 @@ class ChargedCurrentNonSinglet(ChargedCurrentBase):
         labda = self.labda
         return (
             -np.pi**2 / 6
-            + spence(1 - labda)
-            + spence((1 - x) * labda / (1 - x * labda))
+            + li2(labda)
+            + li2((1 - labda) / (1 - x * labda))
             + np.log(1 - labda) * np.log(labda)
             - np.log(1 - x) * np.log(1 - x * labda)
             - np.log(labda) * np.log(1 - x * labda)

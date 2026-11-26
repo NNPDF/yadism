@@ -86,10 +86,7 @@ def file_content(exprs):
     # pylint: skip-file
 
     import numpy as np
-    from scipy.special import spence
-
-    def li2(x):
-        return spence(1-x)
+    from ..special import li2
     """
     # write all elements
     for k, ex in exprs.items():
